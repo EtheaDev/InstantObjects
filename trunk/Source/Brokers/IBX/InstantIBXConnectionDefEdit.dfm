@@ -3,7 +3,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
   Top = 238
   BorderStyle = bsDialog
   Caption = 'InterBase Connection'
-  ClientHeight = 393
+  ClientHeight = 399
   ClientWidth = 362
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 356
+    Top = 362
     Width = 362
     Height = 2
     Align = alBottom
@@ -28,7 +28,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 362
-    Height = 356
+    Height = 362
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -58,7 +58,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
     end
     object StreamFormatLabel: TLabel
       Left = 16
-      Top = 310
+      Top = 312
       Width = 53
       Height = 13
       Caption = 'Blob &format'
@@ -71,6 +71,22 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
       Height = 13
       Caption = 'Connection &Settings'
       FocusControl = ParamsEditor
+    end
+    object Label1: TLabel
+      Left = 136
+      Top = 312
+      Width = 62
+      Height = 13
+      Caption = 'Id Data Type'
+      FocusControl = IdDataTypeComboBox
+    end
+    object Label2: TLabel
+      Left = 256
+      Top = 312
+      Width = 32
+      Height = 13
+      Caption = 'Id Size'
+      FocusControl = IdDataTypeComboBox
     end
     object LocalRadioButton: TRadioButton
       Left = 16
@@ -130,8 +146,8 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
     end
     object StreamFormatComboBox: TComboBox
       Left = 16
-      Top = 326
-      Width = 150
+      Top = 328
+      Width = 113
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
@@ -161,15 +177,34 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
       Height = 149
       TabOrder = 8
     end
+    object IdDataTypeComboBox: TComboBox
+      Left = 136
+      Top = 328
+      Width = 113
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      TabOrder = 10
+    end
+    object IdSizeEdit: TEdit
+      Left = 256
+      Top = 328
+      Width = 89
+      Height = 21
+      TabOrder = 11
+    end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 358
+    Top = 364
     Width = 362
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      362
+      35)
     object OkButton: TButton
       Left = 204
       Top = 6
