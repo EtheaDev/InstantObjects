@@ -14076,10 +14076,9 @@ var
           try
             Open;
             try
+              Value := nil;
               if not IsEmpty then
-                Value := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector)
-              else
-                Value := nil;
+                Value := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
             finally
               Close;
             end;
@@ -14107,10 +14106,9 @@ var
           try
             Open;
             try
+              Value := nil;
               if not IsEmpty then
-                Value := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector)
-              else
-                Value := nil;
+                Value := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
             finally
               Close;
             end;
