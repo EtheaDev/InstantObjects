@@ -163,11 +163,11 @@ type
   end;
 
   TPerson = class(TContact)
-  { IOMETADATA stored;
+  {IOMETADATA stored;
     BirthDate: DateTime;
     Emails: Parts(TEmail);
     Employer: Reference(TCompany);
-    Picture: Blob;
+    Picture: Graphic;
     Salary: Currency; }
     _BirthDate: TInstantDateTime;
     _Emails: TInstantParts;
@@ -472,12 +472,12 @@ begin
   _Picture.Value := Value;
 end;
 
-{ TPhone }
-
 procedure TPerson.SetSalary(Value: Currency);
 begin
   _Salary.Value := Value;
 end;
+
+{ TPhone }
 
 function TPhone.GetName: string;
 begin

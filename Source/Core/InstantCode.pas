@@ -1561,7 +1561,7 @@ begin
       Result := 'Currency';
     atBoolean:
       Result := 'Boolean';
-    atString, atMemo, atBlob:
+    atString, atMemo, atBlob, atGraphic:
       Result := 'string';
     atDateTime:
       Result := 'TDateTime';
@@ -1583,7 +1583,7 @@ const
     'TDateTime',
     '', // atBlob
     '', // atMemo
-    '', // atPicture
+    '', // atGraphic
     '', // atPart
     '', // atReference
     '', // atParts,
