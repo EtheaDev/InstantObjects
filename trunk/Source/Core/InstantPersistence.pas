@@ -12937,10 +12937,15 @@ procedure TInstantSQLResolver.AddAttributeParams(Params: TParams;
   AObject: TInstantObject; Map: TInstantAttributeMap);
 var
   I: Integer;
+  Attribute: TInstantAttribute;
 begin
   if Assigned(Params) and Assigned(AObject) and Assigned(Map) then
     for I := 0 to Pred(Map.Count) do
-      AddAttributeParam(AObject.AttributeByName(Map[I].Name), Params);
+    begin
+      Attribute := AObject.AttributeByName(Map[I].Name); 
+      if Attribute.Metadata.IsExternal = ceNo then
+        AddAttributeParam(Attribute, Params);
+    end;
 end;
 
 procedure TInstantSQLResolver.AddBaseParams(Params: TParams; AClassName,
