@@ -1,0 +1,29 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 4.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Filtering</title>
+</head>
+
+<body>
+
+<p><font face="Verdana" size="2"><b>Filtering</b></font></p>
+<p><font face="Verdana" size="2">When exposing objects through an exposer or a selector, a filter can be used to hide unwanted objects. With selectors you can select objects from the database by specifying criterias to be met for the persistent attributes of the objects. Filters, on the other hand,  allow you to determine which objects to include at business logic level. This means that objects can be shown or hidden depending on business rules defined by their class. Filters come in two flavours:
+<i> dynamic</i> and <i>static</i>.<br>
+<br>
+Dynamic filters are applied to each object when navigating through the dataset. Since only the objects that are touched during navigation are examined by the filter, this is the fastest filtering method if exposing a large number of objects. Dynamic filters are implemented via the
+<i> FilterRecord</i> event.<br>
+<br>
+Static filters can be used if you want to pre-filter the exposed objects before navigation. When applying a static filter, all objects will be examined by the filter at once. For selectors, this means that all selected objects will be retrieved from the database. Since all objects are pre-filtered, no filtering takes place during navigation. Use static filters when objects are already present in memory, when exposing a limited number of objects or when the number of objects passing the filter needs to be known during navigation. Static filters are implemented via the
+<i> Limit</i> event.<br>
+<br>
+InstantObjects Primer demonstrates both static and dynamic filtering via the Filter option available on the toolbar of the
+<i>Contacts</i>
+view.</font></p>
+
+</body>
+
+</html>

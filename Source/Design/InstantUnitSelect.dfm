@@ -8,11 +8,8 @@ inherited InstantUnitSelectForm: TInstantUnitSelectForm
         Columns = <
           item
             Caption = 'Model Units'
-            Width = -2
-            WidthType = (
-              -2)
+            Width = 140
           end>
-        SmallImages = ListImages
       end
     end
     inherited RightPanel: TPanel
@@ -20,11 +17,8 @@ inherited InstantUnitSelectForm: TInstantUnitSelectForm
         Columns = <
           item
             Caption = 'Other Units'
-            Width = -2
-            WidthType = (
-              -2)
+            Width = 140
           end>
-        SmallImages = ListImages
       end
     end
   end

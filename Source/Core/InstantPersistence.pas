@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -40,7 +41,7 @@ unit InstantPersistence;
 interface
 
 uses
-  Classes, Contnrs, SysUtils, Db, InstantClasses, InstantCommand;
+  Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand;
 
 type
   TInstantMetadatas = class;
@@ -2241,7 +2242,13 @@ const
 implementation
 
 uses
-  Windows, Mask, TypInfo, {$IFDEF D6+}MaskUtils, Variants,{$ENDIF}
+{$IFDEF MSWINDOWS}
+  Windows, Mask,
+{$ENDIF}
+{$IFDEF LINUX}
+  QMask, Types, 
+{$ENDIF}
+  TypInfo, {$IFDEF D6+}MaskUtils, Variants,{$ENDIF}
   InstantConsts, InstantUtils, InstantRtti, InstantDesignHook, InstantCode;
 
 const

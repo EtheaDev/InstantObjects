@@ -1,0 +1,35 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-us">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Exposing</title>
+</head>
+
+<body>
+
+<p><b><font face="Verdana" size="2">Exposing Objects</font></b></p>
+
+<p><font face="Verdana" size="2">Making objects available in the user interface of an application through data-aware controls is known as
+<i> exposing</i> objects. InstantObjects allows you to expose any object with published properties.<br>
+<br>
+<i>TInstantExposer</i> is the component to use when an object or part of an object that is already present in memory needs to be exposed. TInstantExposer is a TDataSet descendant, which means it can be attached to data-aware controls via a TDataSource. When an object is assigned to the
+<i> Subject</i> property of a TInstantExposer component, the object or the objects contained in the object are represented as rows in the dataset. The published properties of the exposed object(s) are represented as columns in the dataset.<br>
+<br>
+The contactbook demonstrates how exposers can be used to show and edit business objects in the user interface.
+<i> TBasicEditForm</i> is the base for all forms used by the application to edit objects. This form contains an exposer which is
+connected through a TDataSource to data-aware controls introduced in descend<span lang="da">ing</span> forms<span lang="da">
+</span>designed for editing objects of specific classes. When an object needs to be edited, it is passed to the exposer in a suitable edit form.<br>
+<br>
+When exposing business objects, relations to other objects defined in the business model are recognized and handled automatically. One-to-many relations
+are represented as nested datasets within the exposer. In addition, exposers can be linked in a master-detail fashion allowing any related object to be exposed via the referring object. The exposers
+<i> PhonesExposer</i> on the form <i> TContactEditForm</i> and <i> EmailsExposer</i> on the form
+<i> TPersonEditForm</i> are examples of detail exposers that are linked to a master exposer.<br>
+<br>
+If you study TBasicEditForm and the various descendants hereof you will notice that they contain no code for handling the editing of the object – this is done automatically by the exposer.</font></p>
+
+</body>
+
+</html>

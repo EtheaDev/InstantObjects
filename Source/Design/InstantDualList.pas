@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,8 +33,15 @@ unit InstantDualList;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  InstantDialog, StdCtrls, ExtCtrls, ComCtrls, ActnList;
+  SysUtils, Classes,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, ComCtrls, ActnList,
+{$ENDIF}
+{$IFDEF LINUX}
+  QActnList, QControls, QComCtrls, QStdCtrls, QExtCtrls,
+{$ENDIF}
+  InstantDialog;
 
 type
   TInstantDualListForm = class(TInstantDialogForm)
@@ -60,6 +68,7 @@ type
     procedure AllLeftActionExecute(Sender: TObject);
     procedure LeftViewDblClick(Sender: TObject);
     procedure RightViewDblClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     procedure MoveItem(Item: TListItem; View: TListView);
   protected
@@ -72,7 +81,7 @@ type
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 { TDualListForm }
 
@@ -186,6 +195,20 @@ begin
   LeftAction.Enabled := Assigned(RightView.Selected);
   AllRightAction.Enabled := LeftView.Items.Count > 0;
   AllLeftAction.Enabled := RightView.Items.Count > 0;
+end;
+
+procedure TInstantDualListForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+{$IFDEF MSWINDOWS}
+  LeftView.HideSelection := True;
+  LeftView.ColumnClick := False;
+  LeftView.SortType := stText;
+
+  RightView.HideSelection := True;
+  RightView.ColumnClick := False;
+  RightView.SortType := stText;
+{$ENDIF}
 end;
 
 end.

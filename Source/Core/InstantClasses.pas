@@ -24,6 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Marco Cantù (WriteEscapedData changed to avoid correct XML encodings)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -40,13 +42,17 @@ unit InstantClasses;
 interface
 
 uses
-  Classes, InstantConsts, SysUtils, Windows;
+  Classes, InstantConsts, SysUtils;
 
 const
   InstantBufferSize = 4096;
 
 type
   TChars = set of Char;
+{$IFDEF LINUX}
+    TDate = type TDateTime;
+    TTime = type TDateTime;
+{$ENDIF}
 
   EInstantError = class(Exception)
   private
@@ -392,7 +398,16 @@ type
     NextRaise: PRaiseFrame;
     ExceptAddr: Pointer;
     ExceptObject: TObject;
-    ExceptionRecord: PExceptionRecord;
+{$IFDEF MSWINDOWS}
+    ExceptionRecord: PExceptionRecord platform;
+{$ENDIF}
+{$IFDEF LINUX}
+    ExceptionAddress: LongWord platform;
+    AccessAddress: LongWord platform;
+    SignalNumber: Integer platform;
+    Exc: Pointer platform;
+    Private_2: LongWord platform;
+{$ENDIF}
   end;
 
 { Global routines }
@@ -1313,12 +1328,14 @@ begin
       end;
       Esc := Format(EscStr, [Esc]);
       WriteString(Esc);
-    end else if C in [#32..#126] then
-      WriteString(C)
+    end else//MC if C in [#32..#126] then
+      WriteString(C);
+(* MC
     else begin
       Esc := Format(EscStr, [Format('#%d', [Ord(C)])]);
       WriteString(Esc);
     end;
+*)    
   end;
 end;
 

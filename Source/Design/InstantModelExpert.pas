@@ -36,7 +36,7 @@ unit InstantModelExpert;
 interface
 
 uses
-  Classes, ToolsAPI, ToolIntf, EditIntf, InstantOTA, Menus, 
+  Classes, ToolsAPI, ToolIntf, EditIntf, InstantOTA, Menus, ImgList,
   InstantDesignResources, InstantModelExplorer, InstantCode, ExtCtrls, Forms;
 
 type
@@ -194,8 +194,10 @@ begin
   while I <= Length(Str) do
   begin
     case Str[I] of
-      #13: Column := 1;
-      #10: Inc(Line);
+      #10:begin
+            Inc(Line);
+            Column := 1;
+          end;
     else
       Inc(Column);
     end;
@@ -237,8 +239,9 @@ end;
 procedure TInstantModelExpert.AccessModelUnits(Project: IOTAProject;
   Units: TStrings; Write: Boolean);
 const
-  ModelTag = #13#10'{$R *' + SResFileExt + '}';
-  ResourceTag = #13#10'{$R *.RES}';
+
+  ModelTag = #10'{$R *' + SResFileExt + '}';
+  ResourceTag = #10'{$R *.res}';
 
   function ListToStr(List: TStrings): string;
   var
@@ -334,7 +337,7 @@ const
             InsertMode := imBefore;
             S := '';
             for I := Low(UnitNames) to High(UnitNames) do
-              S := S + UnitNames[I] + ','#13#10'  ';
+              S := S + UnitNames[I] + ','#10'  ';
             InsertText(S);
           end;
         end;
@@ -353,12 +356,11 @@ begin
   Editor := FIDEInterface.SourceEditor(Project);
   Source := FIDEInterface.ReadEditorSource(Editor);
   Pos := FindModelDef(Source, CurModelDef, Line, Column);
-
   if Write then
   begin
     SourceLen := Length(Source);
     if Units.Count > 0 then
-      NewModelDef := Format('%s {%s}', [UpperCase(ModelTag), ListToStr(Units)])
+      NewModelDef := Format('%s {%s}', [ModelTag, ListToStr(Units)])
     else
       NewModelDef := '';
     if CurModelDef = NewModelDef then
@@ -465,7 +467,7 @@ begin
   begin
     FToolImageOffset := Count;
     FToolImageCount := FResourceModule.ToolImages.Count;
-    AddImages(FResourceModule.ToolImages);
+    AddImages(TCustomImageList(FResourceModule.ToolImages));
   end;
 
   { Add 'Model Explorer' to View-menu }

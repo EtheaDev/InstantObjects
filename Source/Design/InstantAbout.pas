@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,8 +33,14 @@ unit InstantAbout;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  InstantDialog, StdCtrls, ExtCtrls;
+  SysUtils, Classes,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
+{$ENDIF}
+{$IFDEF LINUX}
+  QExtCtrls, QControls, QStdCtrls, QComCtrls, QForms, QGraphics,
+{$ENDIF}
+  InstantDialog;
 
 type
   TInstantAboutForm = class(TInstantDialogForm)
@@ -56,23 +63,37 @@ implementation
 uses
   ShellAPI, InstantUtils;
 
-{$R *.DFM}
+{$R *.dfm}
 
 procedure TInstantAboutForm.FormCreate(Sender: TObject);
 var
   S, Suffix: string;
 begin
   inherited;
+{$IFDEF MSWINDOWS}
   with InstantFileVersion(InstantModuleFileName) do
   begin
     S := Format('Version %d.%d', [Major, Minor]);
     if Release > 0 then
-      S := S + IntToStr(Release);
+      S := S +'.'+ IntToStr(Release);
     Suffix := InstantFileVersionValue(InstantModuleFileName, 'VersionSuffix');
     if Suffix <> '' then
       S := S + ' ' + Suffix;
-    VersionLabel.Caption := S;
   end;
+  BorderStyle := bsDialog;
+  //Fonts and sizes
+  TitleLabel.Font.Size := 16;
+  TitleLabel.Font.Style := [fsBold];
+{$ENDIF}
+{$IFDEF LINUX}
+  BorderStyle := fbsDialog;
+  //Fonts and sizes
+  TitleLabel.Font.Size := 18;
+  TitleLabel.Font.Style := [fsBold];
+  //Package version
+  S := Format('Version %d.%d.%d %s', [1,6,5,'MPL']);
+{$ENDIF}
+  VersionLabel.Caption := S;
 end;
 
 end.

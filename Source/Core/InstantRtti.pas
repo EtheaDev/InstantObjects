@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -81,7 +82,14 @@ function InstantIsDefaultPropertyValue(Instance: TObject;
 implementation
 
 uses
-  SysUtils, {$IFDEF D6+}Variants,{$ENDIF} Controls;
+{$IFDEF MSWINDOWS}
+  Controls,
+{$ENDIF}
+{$IFDEF LINUX}
+  InstantClasses, //only for TDate and TTime declaration
+  QControls,
+{$ENDIF}
+  {$IFDEF D6+}Variants,{$ENDIF}SysUtils;
 
 function AccessProperty(AObject: TObject; PropPath: string;
   Value: Variant): Variant;

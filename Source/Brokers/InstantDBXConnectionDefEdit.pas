@@ -32,8 +32,13 @@ unit InstantDBXConnectionDefEdit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, InstantDBX, DBXpress, DB, Grids, ValEdit, SQLExpr;
+{$IFDEF MSWINDOWS}
+  Forms, Dialogs, StdCtrls, Controls, ExtCtrls,
+{$ENDIF}
+{$IFDEF LINUX}
+  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
+{$ENDIF}
+  SysUtils, Classes, InstantDBX, DBXpress, DB, SQLExpr;
 
 type
   TInstantDBXConnectionDefEditForm = class(TForm)
@@ -46,8 +51,8 @@ type
     DriverNameEdit: TComboBox;
     DriverNameLabel: TLabel;
     OkButton: TButton;
-    ParamsEditor: TValueListEditor;
     ParamsLabel: TLabel;
+    ParamsEditor: TMemo;
     procedure FormCreate(Sender: TObject);
     procedure DriverNameEditChange(Sender: TObject);
     procedure ConnectionNameListBoxClick(Sender: TObject);
@@ -75,7 +80,7 @@ type
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 const
   SAllDrivers = '[All]';
@@ -100,6 +105,12 @@ end;
 
 procedure TInstantDBXConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+{$IFDEF MSWINDOWS}
+  BorderStyle := bsDialog;
+{$ENDIF}
+{$IFDEF LINUX}
+  BorderStyle := fbsDialog;
+{$ENDIF}
   UpdateDriverNames;
 end;
 
@@ -131,7 +142,7 @@ end;
 
 function TInstantDBXConnectionDefEditForm.GetParams: TStrings;
 begin
-  Result := ParamsEditor.Strings;
+  Result := ParamsEditor.Lines;
 end;
 
 procedure TInstantDBXConnectionDefEditForm.LoadData(
@@ -178,7 +189,7 @@ end;
 
 procedure TInstantDBXConnectionDefEditForm.SetParams(const Value: TStrings);
 begin
-  ParamsEditor.Strings := Value;
+  ParamsEditor.Lines := Value;
 end;
 
 procedure TInstantDBXConnectionDefEditForm.UpdateConnectionNames;
@@ -214,7 +225,7 @@ procedure TInstantDBXConnectionDefEditForm.UpdateParams;
 begin
   Connection.ConnectionName := ConnectionName;
   Connection.LoadParamsFromIniFile;
-  ParamsEditor.Strings := Connection.Params;
+  ParamsEditor.Lines := Connection.Params;
 end;
 
 end.

@@ -1,11 +1,10 @@
 object InstantEditForm: TInstantEditForm
   Left = 366
   Top = 273
+  Width = 297
+  Height = 220
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
   Caption = 'Edit'
-  ClientHeight = 193
-  ClientWidth = 289
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,43 +19,50 @@ object InstantEditForm: TInstantEditForm
     Left = 0
     Top = 0
     Width = 289
-    Height = 160
+    Height = 155
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 4
     TabOrder = 0
   end
-  object ButtonPanel: TPanel
+  object BottomPanel: TPanel
     Left = 0
-    Top = 160
+    Top = 155
     Width = 289
-    Height = 33
+    Height = 31
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    object OkButton: TButton
-      Left = 130
-      Top = 4
-      Width = 75
-      Height = 25
-      Anchors = [akRight, akBottom]
-      Caption = 'OK'
-      Default = True
-      ModalResult = 1
+    object ButtonPanel: TPanel
+      Left = 129
+      Top = 0
+      Width = 160
+      Height = 31
+      Align = alRight
+      BevelOuter = bvNone
       TabOrder = 0
-      OnClick = OkButtonClick
-    end
-    object CancelButton: TButton
-      Left = 210
-      Top = 4
-      Width = 75
-      Height = 25
-      Anchors = [akRight, akBottom]
-      Cancel = True
-      Caption = 'Cancel'
-      ModalResult = 2
-      TabOrder = 1
-      OnClick = CancelButtonClick
+      object OkButton: TButton
+        Left = 2
+        Top = 4
+        Width = 75
+        Height = 25
+        Caption = 'OK'
+        Default = True
+        ModalResult = 1
+        TabOrder = 0
+        OnClick = OkButtonClick
+      end
+      object CancelButton: TButton
+        Left = 82
+        Top = 4
+        Width = 75
+        Height = 25
+        Cancel = True
+        Caption = 'Cancel'
+        ModalResult = 2
+        TabOrder = 1
+        OnClick = CancelButtonClick
+      end
     end
   end
   object SubjectExposer: TInstantExposer

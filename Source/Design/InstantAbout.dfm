@@ -1,34 +1,27 @@
 inherited InstantAboutForm: TInstantAboutForm
   Left = 374
   Top = 232
+  Height = 430
   Caption = 'About InstantObjects'
-  ClientHeight = 383
-  ClientWidth = 422
   OldCreateOrder = True
-  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object TopBevel: TBevel [0]
     Left = 0
     Top = 70
-    Width = 422
+    Width = 402
     Height = 1
     Align = alTop
     Shape = bsTopLine
   end
   inherited ButtonPanel: TPanel
-    Top = 346
-    Width = 422
+    Top = 359
     Height = 37
-    inherited ButtonBevel: TBevel
-      Width = 422
-    end
     object CloseButton: TButton
-      Left = 342
+      Left = 318
       Top = 8
       Width = 75
       Height = 25
-      Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Close'
       Default = True
@@ -39,7 +32,7 @@ inherited InstantAboutForm: TInstantAboutForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 422
+    Width = 402
     Height = 70
     Align = alTop
     BevelOuter = bvNone
@@ -196,15 +189,9 @@ inherited InstantAboutForm: TInstantAboutForm
     object TitleLabel: TLabel
       Left = 88
       Top = 16
-      Width = 132
-      Height = 24
+      Width = 68
+      Height = 13
       Caption = 'InstantObjects'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -21
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
     end
     object VersionLabel: TLabel
       Left = 88
@@ -220,25 +207,19 @@ inherited InstantAboutForm: TInstantAboutForm
       ParentFont = False
     end
     object TMLabel: TLabel
-      Left = 216
-      Top = 18
-      Width = 10
-      Height = 8
+      Left = 222
+      Top = 12
+      Width = 16
+      Height = 13
       Caption = 'TM'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -7
-      Font.Name = 'Small Fonts'
-      Font.Style = []
-      ParentFont = False
       Transparent = True
     end
   end
   object ClientPanel: TPanel
     Left = 0
     Top = 71
-    Width = 422
-    Height = 275
+    Width = 402
+    Height = 288
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 8
@@ -246,8 +227,8 @@ inherited InstantAboutForm: TInstantAboutForm
     object LicenseBorderPanel: TPanel
       Left = 8
       Top = 8
-      Width = 406
-      Height = 259
+      Width = 386
+      Height = 272
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 1
@@ -256,8 +237,8 @@ inherited InstantAboutForm: TInstantAboutForm
       object LicensePanel: TPanel
         Left = 1
         Top = 1
-        Width = 404
-        Height = 257
+        Width = 384
+        Height = 270
         Align = alClient
         BevelOuter = bvNone
         BorderWidth = 8
@@ -266,8 +247,8 @@ inherited InstantAboutForm: TInstantAboutForm
         object LicenseMemo: TMemo
           Left = 8
           Top = 8
-          Width = 388
-          Height = 241
+          Width = 368
+          Height = 254
           Align = alClient
           BorderStyle = bsNone
           Color = clWhite
@@ -277,7 +258,8 @@ inherited InstantAboutForm: TInstantAboutForm
             ''
             
               'This product is subject to the Mozilla Public License Version 1.' +
-              '1 (the "License"); '
+              '1 (the '
+            '"License"); '
             
               'you may not use this product except in compliance with the Licen' +
               'se. '

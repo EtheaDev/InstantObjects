@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,27 +33,37 @@ unit InstantCommandEditor;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, InstantCode, InstantCommand;
+  SysUtils, Classes,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
+{$ENDIF}
+{$IFDEF LINUX}
+  QForms, QStdCtrls, QControls,
+{$ENDIF}
+  InstantCode, InstantCommand, ExtCtrls;
 
 type
   TInstantCommandEditorForm = class(TForm)
-    AnyCheckBox: TCheckBox;
-    AttributeEdit: TComboBox;
-    AttributeLabel: TLabel;
-    CancelButton: TButton;
     CommandTextEdit: TMemo;
-    CommandTextLabel: TLabel;
-    DistinctCheckBox: TCheckBox;
-    FromClassEdit: TComboBox;
+    BottomPanel: TPanel;
+    TopPanel: TPanel;
     FromClassLabel: TLabel;
+    FromClassEdit: TComboBox;
+    AnyCheckBox: TCheckBox;
+    AttributeLabel: TLabel;
+    AttributeEdit: TComboBox;
+    DistinctCheckBox: TCheckBox;
+    CommandTextLabel: TLabel;
+    ButtonsPanel: TPanel;
     OkButton: TButton;
+    CancelButton: TButton;
     procedure CommandTextEditChange(Sender: TObject);
     procedure FromClassEditClick(Sender: TObject);
     procedure AttributeEditClick(Sender: TObject);
     procedure AnyCheckBoxClick(Sender: TObject);
     procedure DistinctCheckBoxClick(Sender: TObject);
     procedure OkButtonClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     FCommand: TInstantIQLCommand;
     FModel: TInstantCodeModel;
@@ -99,7 +110,7 @@ implementation
 uses
   InstantPersistence, InstantPresentation;
 
-{$R *.DFM}
+{$R *.dfm}
 
 procedure TInstantCommandEditorForm.AnyCheckBoxClick(Sender: TObject);
 begin
@@ -417,6 +428,16 @@ begin
   finally
     Free;
   end;
+end;
+
+procedure TInstantCommandEditorForm.FormCreate(Sender: TObject);
+begin
+{$IFDEF MSWINDOWS}
+  BorderStyle := bsDialog;
+{$ENDIF}
+{$IFDEF LINUX}
+  BorderStyle := fbsDialog;
+{$ENDIF}
 end;
 
 end.

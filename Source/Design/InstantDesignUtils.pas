@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,7 +33,13 @@ unit InstantDesignUtils;
 interface
 
 uses
-  DB, Controls, DbCtrls, Graphics;
+  DB,
+{$IFDEF MSWINDOWS}
+  Controls, DbCtrls, Graphics, Forms, Dialogs;
+{$ENDIF}
+{$IFDEF LINUX}
+  QControls, QDbCtrls, QGraphics, QForms, QDialogs;
+{$ENDIF}
 
 procedure Busy(Enable: Boolean);
 function Confirm(const Msg: string): Boolean;
@@ -42,27 +49,26 @@ function ShortenPath(const Path: string; Canvas: TCanvas; MaxLen: Integer): stri
 implementation
 
 uses
-  Forms, Dialogs, SysUtils, TypInfo;
-
-var
-  IOCursor: TCursor;
-  IOCount: Integer;
+  SysUtils, TypInfo;
 
 procedure Busy(Enable: Boolean);
+const
+  Cursor: TCursor = 0;
+  Count: Integer = 0;
 begin
   if Enable then
   begin
-    if IOCount = 0 then
+    if Count = 0 then
     begin
-      IOCursor := Screen.Cursor;
+      Cursor := Screen.Cursor;
       Screen.Cursor := crHourglass;
     end;
-    Inc(IOCount);
-  end else if IOCount > 0 then
+    Inc(Count);
+  end else if Count > 0 then
   begin
-    Dec(IOCount);
-    if IOCount = 0 then
-      Screen.Cursor := IOCursor;
+    Dec(Count);
+    if Count = 0 then
+      Screen.Cursor := Cursor;
   end;
 end;
 
@@ -158,7 +164,4 @@ begin
   end;
 end;
 
-initialization
-  IOCursor := 0;
-  IOCount := 0;
 end.

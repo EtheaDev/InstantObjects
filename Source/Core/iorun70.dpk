@@ -28,7 +28,9 @@ package iorun70;
 
 requires
   vcl,
-  vcldb;
+  vcldb,
+  rtl,
+  visualclx;
 
 contains
   InstantUtils in 'InstantUtils.pas',
@@ -43,6 +45,7 @@ contains
   InstantTextFiler in 'InstantTextFiler.pas',
   InstantPresentation in 'InstantPresentation.pas',
   InstantAccessors in 'InstantAccessors.pas',
-  InstantConnectionManager in 'InstantConnectionManager.pas' {InstantConnectionManagerForm};
+  InstantConnectionManager in 'InstantConnectionManager.pas' {InstantConnectionManagerForm},
+  InstantImageUtils in 'InstantImageUtils.pas';
 
 end.

@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -40,8 +41,13 @@ unit InstantExplorer;
 interface
 
 uses
-  Classes, Controls, Forms, ComCtrls, ExtCtrls, Db, DbGrids, ImgList,
-  InstantPersistence, InstantPresentation;
+{$IFDEF MSWINDOWS}
+  Controls, Forms, ComCtrls, ExtCtrls, DbGrids, ImgList,
+{$ENDIF}
+{$IFDEF LINUX}
+  QControls, QForms, QComCtrls, QExtCtrls, QDBGrids, QImgList,
+{$ENDIF}
+  Classes, Db, InstantPersistence, InstantPresentation;
 
 type
   TInstantExplorer = class;
@@ -191,7 +197,9 @@ type
     property ShowHint;
     property ShowRoot: Boolean read FShowRoot write SetShowRoot default True;
     property Visible;
+{$IFDEF MSWINDOWS}
     property OnCanResize;
+{$ENDIF}
     property OnChangeNode: TInstantExplorerNodeEvent read FOnChangeNode write FOnChangeNode;
     property OnCreateNode: TInstantExplorerCreateNodeEvent read FOnCreateNode write FOnCreateNode;
     property OnCreateNodeData: TInstantExplorerCreateNodeDataEvent read FOnCreateNodeData write FOnCreateNodeData;
@@ -211,8 +219,13 @@ procedure InstantExploreObject(AObject: TObject);
 implementation
 
 uses
-  InstantClasses, InstantRtti, TypInfo, Graphics, SysUtils, StdCtrls, DbCtrls,
-  Windows;
+  SysUtils, InstantClasses, InstantRtti, TypInfo,
+{$IFDEF MSWINDOWS}
+  Graphics, StdCtrls, DbCtrls, Windows;
+{$ENDIF}
+{$IFDEF LINUX}
+  QGraphics, QStdCtrls, QDbCtrls;
+{$ENDIF}
 
 const
   NotLoaded = Pointer(-1);
@@ -223,7 +236,12 @@ var
 begin
   Form := TForm.Create(nil);
   try
+{$IFDEF MSWINDOWS}
     Form.BorderStyle := bsSizeable;
+{$ENDIF}
+{$IFDEF LINUX}
+    Form.BorderStyle := fbsSizeable;
+{$ENDIF}
     Form.Position := poScreenCenter;
     Form.Caption := 'Object Explorer';
     Form.Height := Screen.Height div 10 * 6;
@@ -618,7 +636,9 @@ begin
     with FTreeView do
     begin
       Height := Self.Height div 2;
+{$IFDEF MSWINDOWS}
       HideSelection := False;
+{$ENDIF}
       OnChange := TreeViewChange;
       OnExpanding := TreeViewExpanding;
       OnGetImageIndex := TreeViewGetImageIndex;
@@ -633,7 +653,9 @@ function TInstantExplorer.CreateTreeView(AOwner: TComponent): TTreeView;
 begin
   Result := TTreeView.Create(AOwner);
   Result.ReadOnly := True;
+{$IFDEF MSWINDOWS}
   Result.ShowRoot := ShowRoot;
+{$ENDIF}
 end;
 
 destructor TInstantExplorer.Destroy;

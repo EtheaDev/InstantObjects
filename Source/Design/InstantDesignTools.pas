@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -34,7 +35,17 @@ interface
 {$I InstantDefines.inc}
 
 uses
-  Classes, {$IFDEF D6+}DesignIntf, DesignEditors{$ELSE}DsgnIntf{$ENDIF},
+  Classes,
+{$IFDEF MSWINDOWS}
+  {$IFDEF D6+}
+    DesignIntf, DesignEditors,
+  {$ELSE}
+    DsgnIntf,
+  {$ENDIF}
+{$ENDIF}
+{$IFDEF LINUX}
+  DesignIntf, DesignEditors, ClxStrEdit,
+{$ENDIF}
   StrEdit, InstantPresentation, ColnEdit;
 
 type

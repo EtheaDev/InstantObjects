@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,17 +33,39 @@ unit InstantUnitSelect;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  InstantDualList, ComCtrls, StdCtrls, ExtCtrls, ImgList, ActnList;
+  SysUtils, Classes,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  ComCtrls, StdCtrls, ExtCtrls, ImgList, ActnList,
+{$ENDIF}
+{$IFDEF LINUX}
+  QImgList, QActnList, QControls, QComCtrls, QStdCtrls, QExtCtrls,
+{$ENDIF}
+  InstantDualList, InstantImageUtils;
 
 type
   TInstantUnitSelectForm = class(TInstantDualListForm)
     ListImages: TImageList;
+    procedure FormCreate(Sender: TObject);
   end;
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
+
+procedure TInstantUnitSelectForm.FormCreate(Sender: TObject);
+begin
+  inherited;
+  ListImages.Clear;
+  LoadMultipleImages(ListImages,'IO_UNITSELECTIMAGES');
+{$IFDEF MSWINDOWS}
+  LeftView.SmallImages := ListImages;
+  RightView.SmallImages := ListImages;
+{$ENDIF}
+{$IFDEF LINUX}
+  LeftView.Images := ListImages;
+  RightView.Images := ListImages;
+{$ENDIF}
+end;
 
 end.
- 

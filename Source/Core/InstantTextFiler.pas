@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -132,8 +133,17 @@ begin
   with Pos do
   begin
     case Ch of
+      {$IFDEF MSWINDOWS}
       #13: Column := 1;
       #10: Inc(Line);
+      {$ENDIF}
+
+      {$IFDEF LINUX}
+      #10:begin
+          Inc(Line);
+          Column := 1;
+          end;
+      {$ENDIF}
     else
       Inc(Column);
     end;
@@ -146,8 +156,17 @@ begin
   with Pos do
   begin
     case Ch of
+      {$IFDEF MSWINDOWS}
       #13: Column := 0; { Unknown }
       #10: Dec(Line);
+      {$ENDIF}
+
+      {$IFDEF LINUX}
+      #10:begin
+          Dec(Line);
+          Column := 0;
+          end;
+      {$ENDIF}
     else
       Dec(Column);
     end;
