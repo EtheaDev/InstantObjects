@@ -7377,7 +7377,7 @@ class procedure TInstantObject.ConvertToBinary(Converter: TInstantTextToBinaryCo
           Writer.WriteString(Processor.ReadData);
         atDateTime:
           Writer.WriteDate(InstantStrToDateTime(Processor.ReadData));
-        atBlob:
+        atBlob, atGraphic:
           begin
             Hex := Processor.ReadData;
             Count := Length(Hex) div 2;
@@ -11491,6 +11491,8 @@ begin
         ClearDateTime(Attribute as TInstantDateTime);
       atBlob:
         ClearBlob(Attribute as TInstantBlob);
+      atGraphic:
+        ClearBlob(Attribute as TInstantGraphic);
       atMemo:
         ClearMemo(Attribute as TInstantMemo);
       atPart:
@@ -11801,6 +11803,8 @@ begin
         ReadDateTime(Attribute as TInstantDateTime);
       atBlob:
         ReadBlob(Attribute as TInstantBlob);
+      atGraphic:
+        ReadBlob(Attribute as TInstantGraphic);
       atMemo:
         ReadMemo(Attribute as TInstantMemo);
       atPart:
@@ -11991,6 +11995,8 @@ begin
         WriteDateTime(Attribute as TInstantDateTime);
       atBlob:
         WriteBlob(Attribute as TInstantBlob);
+      atGraphic:
+        WriteBlob(Attribute as TInstantGraphic);
       atMemo:
         WriteMemo(Attribute as TInstantMemo);
       atPart:
@@ -13222,7 +13228,7 @@ var
 begin
   FieldName := Attribute.Metadata.FieldName;
   case Attribute.Metadata.AttributeType of
-    atBlob:
+    atBlob, atGraphic:
       AddBlobAttributeParam;
     atBoolean:
       AddBooleanAttributeParam;
@@ -14626,7 +14632,7 @@ begin
         ReadStringAttribute;
       atDateTime:
         ReadDateTimeAttribute;
-      atBlob:
+      atBlob, atGraphic:
         ReadBlobAttribute;
       atMemo:
         ReadMemoAttribute;
