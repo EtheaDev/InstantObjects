@@ -55,6 +55,12 @@ const
   InstantPaletteName = 'InstantObjects';
   InstantStartTagFormat= InstantTagStart + '%s' + InstantTagEnd;
   InstantUpdateCountFieldName = 'UpdateCount';
+  
+  InstantParentIdFieldName = 'ParentId';
+  InstantParentClassFieldName = 'ParentClass';
+  InstantParentAttributeFieldName = 'ParentAttribute';
+  InstantChildIdFieldName = 'ChildId';
+  InstantChildClassFieldName = 'ChildClass';
 
 resourcestring
   SAccessError = 'Cannot access attribute %s(''%s'') as type: %s';
