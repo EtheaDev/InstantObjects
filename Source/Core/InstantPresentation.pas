@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Andrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Joao Morais
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPresentation;
@@ -1146,7 +1147,7 @@ begin
   if Altered then
     Result := View.IndexOf(AObject)
   else
-    Result := InternalIndexOfObject(AObject)
+    Result := InternalIndexOfObject(AObject);
 end;
 
 function TInstantAccessor.InsertInView(Index: Integer;
@@ -2158,7 +2159,7 @@ begin
   else if RecNo <= 0 then
     Result := nil
   else
-    Result := Objects[Pred(RecNo)]
+    Result := Objects[Pred(RecNo)];
 end;
 
 function TInstantCustomExposer.GetDesignClass: TInstantCodeClass;
@@ -2233,12 +2234,12 @@ end;
 
 function TInstantCustomExposer.GetLimited: Boolean;
 begin
-  Result := Accessor.Limited
+  Result := Accessor.Limited;
 end;
 
 function TInstantCustomExposer.GetMode: TInstantAccessMode;
 begin
-  Result := Accessor.Mode
+  Result := Accessor.Mode;
 end;
 
 function TInstantCustomExposer.GetObjectClass: TClass;
@@ -2248,7 +2249,7 @@ end;
 
 function TInstantCustomExposer.GetObjectClassName: string;
 begin
-  Result := Accessor.ObjectClassName
+  Result := Accessor.ObjectClassName;
 end;
 
 function TInstantCustomExposer.GetObjectCount: Integer;
@@ -3646,7 +3647,10 @@ end;
 procedure TInstantExposer.MasterChanged(Sender: TObject);
 begin
   if MasterLink.Active then
-    Subject := MasterLink.Subject
+  begin
+    Subject := MasterLink.Subject;
+    Open;
+  end
   else
     Close;
 end;
@@ -3776,7 +3780,7 @@ end;
 
 function TInstantQueryAccessor.InternalGetObjectCount: Integer;
 begin
-  Result := Subject.ObjectCount
+  Result := Subject.ObjectCount;
 end;
 
 function TInstantQueryAccessor.InternalGetObjects(Index: Integer): TObject;
@@ -3959,7 +3963,10 @@ procedure TInstantSelector.Notification(AComponent: TComponent;
 begin
   inherited;
   if (Operation = opRemove) and (AComponent = Connector) then
+  begin
     Close;
+    FConnector := nil;
+  end;
 end;
 
 procedure TInstantSelector.PSEndTransaction(Commit: Boolean);
@@ -3997,7 +4004,7 @@ end;
 procedure TInstantSelector.PSStartTransaction;
 begin
   if HasConnector then
-    Connector.StartTransaction
+    Connector.StartTransaction;
 end;
 
 procedure TInstantSelector.ReadParamData(Reader: TReader);
