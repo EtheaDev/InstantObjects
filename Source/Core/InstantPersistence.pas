@@ -4705,8 +4705,8 @@ end;
 procedure TInstantCurrency.Assign(Source: TPersistent);
 begin
   inherited;
-  if Source is TInstantFloat then
-    Value := TInstantFloat(Source).Value;
+  if Source is TInstantCurrency then
+    Value := TInstantCurrency(Source).Value;
 end;
 
 class function TInstantCurrency.AttributeType: TInstantAttributeType;
