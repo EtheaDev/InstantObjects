@@ -1,7 +1,6 @@
-package Dclionxsql;
+package ionxsql_D5;
 
 {$R *.res}
-{$R '..\InstantNexusDbSQL.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -20,19 +19,27 @@ package Dclionxsql;
 {$STACKFRAMES OFF}
 {$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
-{$WRITEABLECONST ON}
+{$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects NexusDbSQL Design-Time Support (Delphi 5)'}
-{$DESIGNONLY}
+{$DESCRIPTION 'InstantObjects NexusDbSQL support  (Delphi 5)'}
+{$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
   vcl50,
+  vclx50,
   IOCore,
-  ionxsql50;
+  NexusDB108ll50,
+  NexusDB108sd50,
+  NexusDB108re50,
+  NexusDB108st50,
+  NexusDB108pt50,
+  NexusDB108tw50,
+  NexusDB108db50;
 
 contains
-  InstantNexusDbSQLReg in '..\InstantNexusDbSQLReg.pas';
+  InstantNexusDbSQLConnectionDefEdit in '..\InstantNexusDbSQLConnectionDefEdit.pas' {InstantNexusDbSQLConnectionDefEditForm},
+  InstantNexusDbSQL in '..\InstantNexusDbSQL.pas';
 
 end.
