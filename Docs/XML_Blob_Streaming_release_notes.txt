@@ -1,0 +1,69 @@
+XML Blob Streaming support for InstantObjects (by Carlo Barazzetta)
+-------------------------------------------------------------------
+
+Updated: 2004/05/28
+
+Changed support for XML streaming (old xml-streamed databases are incompatible).
+
+With BlobStreamformat support you can store Part, Parts and References into memo fields in XML Format!
+Without this feature you cannot change the values of those fields without an InstantOblects application.
+Using XML format you can maintain those fields manually or by an external tool.
+
+1) BlobStreamFormat property:
+A new property (BlobStreamFormat: TInstantStreamFormat) was added to many components.
+It can assume a value of sfBinary (default) or sfXML.
+
+1.a) TInstantScheme.BlobStreamFormat (public): during building databases is important to know if the fields are Bolbs or Memo.
+Some database uses different kind of fields to store binary o textual values.
+
+1.b) TInstantConnectionDef.BlobStreamFormat (published): to save this information into connection file managed by ConnectionManager.
+
+1.c) TInstantConnector.BlobStreamFormat (published): to manage this information during connection (visible into Object Inspector).
+
+2) Method changed: loading and saving Part, Parts and References:
+
+2.a) TInstantElement.LoadObjectFromStream, TInstantElement.SaveObjectFromStream
+2.b) TInstantContainer.LoadObjectsFromStream, TInstantContainer.SaveObjectsFromStream
+3.c) TInstantReferences.LoadReferencesFromStream, TInstantReferences.LoadReferencesFromStream
+
+3) Connector initialization: 
+If a connector is "maintained" internally by a ConnectionDef, it is initialized by the ConnectionDef in TInstantConnectionDef.InitConnector.
+
+3) Using Memo or Blob fields:
+AddPartAttributeParam, AddPartsAttributeParam, AddReferencesAttributeParam now uses AddBlobParam or AddMemoParam (new) to pass values into params.
+
+4) InstantConnectionManager:
+Now InstantConnectionManager form show the blobstreamformat of connectiondef.
+
+5) Guidelines of buiding brokers with blobstreamformat support:
+To correctly support blobstreamformat into broker:
+
+5.a) InstantXXXConnectionDef:
+
+Add a combobox:
+    object StreamFormatComboBox: TComboBox
+      Style = csDropDownList
+    end
+
+Add a label:
+    object StreamFormatLabel: TLabel
+      Caption = 'Blob &format'
+      FocusControl = StreamFormatComboBox
+    end
+
+Initialize combobox in formcreate:
+  AssignInstantStreamFormat(StreamFormatComboBox.Items);
+
+Add into LoadData:
+  StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat);
+
+Add into SaveData:
+  ConnectionDef.BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
+
+5.b) InstantXXX.pas:
+Add into InternalBuildDatabase:
+  Scheme.BlobStreamFormat := BlobStreamFormat;
+  
+
+
+
