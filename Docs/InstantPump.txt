@@ -1,0 +1,80 @@
+InstantPump
+===========
+Nando Dessena, 12/02/2005
+
+What is TInstantPump
+====================
+
+TInstantPump is a component that helps migrate data between InstantObjects databases. It can be of help in the following circumstances:
+
+- I have a Paradox database and want to migrate the data to a Firebird database. InstantObjects eases the creation of the new database schema, while InstantPump helps with moving the data. In the general case, you can migrate data using any combination of two InstantConnectors, provided the destination broker supports all the features you have used in the source database. For example, some brokers do not support external Parts and References, while others do.
+
+- I have decided to convert my Parts and References blobs from binary to XML format. To do that I create a new empty database, setup the source connector to use binary blobs and the destination connector to use XML blobs, and fire the InstantPump.
+
+- I need to change the datatype or size of my Id fields.
+
+What InstantPump currently can't do is migrate data between different models (for example migrate from classic blob-based collection storage to external collection storage).
+
+Using TInstantPump
+==================
+TInstantPump has two main properties and one method. Basically you hook it to a source TInstantConnector (used to retrieve the objects from the source database) and to a destination TInstantConnector (used to write the objects to the destination database).
+
+Properties
+----------
+SourceConnector: TInstantConnector
+
+Use this property to point to the source database. Set the connector's properties (UseTransactions, BlobStreamFormat, IdDataType, IdSize...) to match those of the database.
+
+DestConnector: TInstantConnector
+
+Use this property to point to the destination database. Set the connector's properties (UseTransactions, BlobStreamFormat, IdDataType, IdSize...) to match those of the database.
+
+Options: set of TInstantPumpOption
+
+Tweak the pump process.
+
+poEmptyDestBeforePump - set this flag to have the component empty each destination table before writing objects to it.
+
+Default is [poEmptyDestBeforePump].
+
+Methods
+-------
+procedure Pump(Model: TInstantModel = nil);
+
+You use this method to start pumping. Currently, passing an external model is not supported, so you should pass nil and it means the component will use the global InstantModel. This also means that all the model units should be part of the project. IOW, the TInstantPump instance currently only works inside an IO project.
+
+Events
+------
+property BeforePump: TInstantSchemeEvent
+
+Handle this event to have a chance of looking at the TInstantScheme instance built by the source connector (and possibly modify it - not tested) before the pump.
+
+property AfterPump: TInstantSchemeEvent
+
+Same as BeforePump but called after the pump process has finished.
+
+Additional info
+---------------
+Although not tested, it should be possible to use the pump without compiling the model units into the application that holds the TInstantPump instance. Just follow these steps:
+
+1) create a package to hold the model units.
+
+2) create a pump application (this could be provided with IO as a demo if it turns out useful) with no model. Compile it with run-time packages.
+
+3) have the application dynamically load the model package:
+
+H := LoadPackage(MyModel.bpl');
+
+Don't forget to do
+
+UnloadPackage(H);
+
+when you're finished.
+
+4) before calling the Pump method, load the model from an MDR or XML file:
+
+InstantModel.LoadFromFile('MyModel.xml');
+or
+InstantModel.LoadFromResFile('MyModel.mdr');
+
+5) Pump() and let me know how it goes.
