@@ -26,7 +26,7 @@
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli: porting Kylix
  * Carlo Barazzetta:
- * - Exposer Undo virtual and access to UndoBuffer
+ * - Exposer Undo virtual and access to UndoBuffer (Removed!)
  * - Exposer OnAddClassFieldDef event 
  * - Added Currency and Graphic support to exposer
  * Andrea Petrelli:
@@ -272,7 +272,6 @@ type
     procedure SetOnLimit(Value: TInstantLimitObjectsEvent);
     procedure SetOnProgress(const Value: TInstantProgressEvent);
     procedure SetSorted(Value: Boolean);
-    function GetUndoBuffer: PChar;
   protected
     { IProviderSupport }
     procedure PSGetAttributes(List: TList); override;
@@ -425,7 +424,6 @@ type
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property TotalCount: Integer read GetTotalCount;
-    property UndoBuffer: PChar read GetUndoBuffer;
   published
     property FieldOptions: TInstantFieldOptions read FFieldOptions write SetFieldOptions default [foThorough];
     property Filtered;
@@ -639,7 +637,6 @@ function InstantFindAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 function InstantGetAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 procedure InstantRegisterAccessorClass(AClass: TInstantAccessorClass);
 procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
-function ExposerGetUndoBuffer(Exposer : TInstantCustomExposer) : PChar;
 
 implementation
 
@@ -900,10 +897,6 @@ begin
   AccessorClasses.Remove(AClass);
 end;
 
-function ExposerGetUndoBuffer(Exposer : TInstantCustomExposer) : PChar;
-begin
-  Result := Exposer.FUndoBuffer;
-end;
 
 { TInstantAccessor }
 
@@ -2369,10 +2362,6 @@ begin
   Result := Accessor.TotalCount;
 end;
 
-function TInstantCustomExposer.GetUndoBuffer: PChar;
-begin
-  Result := FUndoBuffer;
-end;
 
 procedure TInstantCustomExposer.GotoActiveRecord;
 var
