@@ -620,6 +620,12 @@ type
     procedure SetReadOnly(Value: Boolean);
     procedure SetStorageName(const Value: string);
     procedure SetVisibility(Value: TInstantCodeVisibility);
+    function GetExternalLinkedName: string;
+    function GetExternalStoredName: string;
+    function GetIsExternal: TInstantContainerIsExternal;
+    procedure SetExternalLinkedName(const Value: string);
+    procedure SetExternalStoredName(const Value: string);
+    procedure SetIsExternal(const Value: TInstantContainerIsExternal);
   protected
     function GetIsDefault: Boolean; virtual;
     function GetMethodName(MethodType: TInstantCodeContainerMethodType): string;
@@ -665,6 +671,8 @@ type
     property AttributeType: TInstantAttributeType read GetAttributeType write SetAttributeType;
     property AttributeTypeName: string read GetAttributeTypeName write SetAttributeTypeName;
     property AttributeTypeText: string read GetAttributeTypeText;
+    property ExternalLinkedName: string read GetExternalLinkedName write SetExternalLinkedName;
+    property ExternalStoredName: string read GetExternalStoredName write SetExternalStoredName;
     property IncludeAddMethod: Boolean read GetIncludeAddMethod write SetIncludeAddMethod;
     property IncludeClearMethod: Boolean read GetIncludeClearMethod write SetIncludeClearMethod;
     property IncludeDeleteMethod: Boolean read GetIncludeDeleteMethod write SetIncludeDeleteMethod;
@@ -672,6 +680,7 @@ type
     property IncludeInsertMethod: Boolean read GetIncludeInsertMethod write SetIncludeInsertMethod;
     property IncludeRemoveMethod: Boolean read GetIncludeRemoveMethod write SetIncludeRemoveMethod;
     property IsDefault: Boolean read GetIsDefault write SetIsDefault;
+    property IsExternal: TInstantContainerIsExternal read GetIsExternal write SetIsExternal;
     property IsIndexed: Boolean read GetIsIndexed write SetIsIndexed;
     property IsRequired: Boolean read GetIsRequired write SetIsRequired;
     property Metadata: TInstantAttributeMetadata read GetMetadata;
@@ -1515,6 +1524,8 @@ const
 {$ENDIF}
 
   MetaKeyDefault = 'default';
+  MetaKeyExternalStored = 'externalstored';
+  MetaKeyExternalLinked = 'externallinked';
   MetaKeyFormat = 'format';
   MetaKeyIndex = 'index';
   MetaKeyRequired = 'required';
@@ -1755,6 +1766,8 @@ end;
 { TContainerTypeProcessor }
 
 procedure TContainerTypeProcessor.InternalRead;
+var
+  Token:String;
 begin
   inherited;
   with FReader do
@@ -1763,8 +1776,19 @@ begin
       SkipSpace;
       if NextChar = ';' then
         Break;
-      if SameText(ReadToken, 'default') then
+      Token:=ReadToken;
+      if SameText(Token, 'default') then
         FMetadata.IsDefault := True;
+      if SameText(Token, MetaKeyExternalStored) then
+        begin
+          FMetadata.IsExternal := ceStored;
+          FMetadata.ExternalStoredName := ReadStringValue;
+        end;
+      if SameText(Token, MetaKeyExternalLinked) then
+        begin
+          FMetadata.IsExternal := ceLinked;
+          FMetadata.ExternalLinkedName := ReadStringValue;
+        end;
     end;
 end;
 
@@ -3692,6 +3716,16 @@ begin
   Result := SingularName + 'Count';
 end;
 
+function TInstantCodeAttribute.GetExternalLinkedName: string;
+begin
+  Result := Metadata.ExternalLinkedName;
+end;
+
+function TInstantCodeAttribute.GetExternalStoredName: string;
+begin
+  Result := Metadata.ExternalStoredName;
+end;
+
 function TInstantCodeAttribute.GetFieldName: string;
 begin
   Result := InstantAttributePrefix + Name;
@@ -3750,6 +3784,11 @@ end;
 function TInstantCodeAttribute.GetIsDefault: Boolean;
 begin
   Result := Metadata.IsDefault;
+end;
+
+function TInstantCodeAttribute.GetIsExternal: TInstantContainerIsExternal;
+begin
+  Result := Metadata.IsExternal;
 end;
 
 function TInstantCodeAttribute.GetIsIndexed: Boolean;
@@ -3938,7 +3977,12 @@ procedure TInstantCodeAttribute.InternalWrite(Writer: TInstantCodeWriter);
 
 begin
   Writer.WriteFmt('%s: %s', [Name, AttributeTypeText]);
-  WriteStr(MetaKeyStored, Metadata.StorageName);
+  if Metadata.IsExternal = ceLinked then
+    WriteStr(MetaKeyExternalLinked, Metadata.ExternalLinkedName)
+  else if Metadata.IsExternal = ceStored then
+    WriteStr(MetaKeyExternalStored, Metadata.ExternalStoredName)
+  else
+    WriteStr(MetaKeyStored, Metadata.StorageName);
   WriteStr(MetaKeyDefault, Metadata.DefaultValue);
   WriteStr(MetaKeyMask, Metadata.EditMask);
   if Metadata.HasValidChars then
@@ -3992,6 +4036,16 @@ begin
   AttributeType := AttributeType;
 end;
 
+procedure TInstantCodeAttribute.SetExternalLinkedName(const Value: string);
+begin
+  Metadata.ExternalLinkedName := Value;
+end;
+
+procedure TInstantCodeAttribute.SetExternalStoredName(const Value: string);
+begin
+  Metadata.ExternalStoredName := Value;
+end;
+
 procedure TInstantCodeAttribute.SetIncludeAddMethod(const Value: Boolean);
 begin
   IncludeMethodTypes([mtAdd], Value);
@@ -4030,6 +4084,11 @@ end;
 procedure TInstantCodeAttribute.SetIsDefault(const Value: Boolean);
 begin
   Metadata.IsDefault := Value;
+end;
+
+procedure TInstantCodeAttribute.SetIsExternal(const Value: TInstantContainerIsExternal);
+begin
+  Metadata.IsExternal := Value;
 end;
 
 procedure TInstantCodeAttribute.SetIsIndexed(const Value: Boolean);
