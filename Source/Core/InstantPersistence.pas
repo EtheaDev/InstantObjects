@@ -11095,14 +11095,14 @@ var
   {MustStore: Boolean;}
 begin
   {MustStore := MustStoreMap;}
-  if {MustStore or }AObject.IsPersistent then
-  begin
+  {if MustStore or AObject.IsPersistent then
+  begin}
     Resolver := EnsureResolver(Map);
     {if MustStore then}
       Resolver.StoreMap(AObject, Map, ConflictAction, Info)
     {else if AObject.IsPersistent then
-      Resolver.DisposeMap(AObject, Map, ConflictAction, Info);}
-  end;
+      Resolver.DisposeMap(AObject, Map, ConflictAction, Info);
+  end;}
 end;
 
 { TInstantCustomResolver }
