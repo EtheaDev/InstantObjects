@@ -101,7 +101,7 @@ DebugSourceDirs=
 UsePackages=0
 [Parameters]
 RunParams=
-HostApplication=
+HostApplication=C:\Programmi\Borland\Delphi7\Bin\delphi32.exe
 Launcher=
 UseLauncher=0
 DebugCWD=
