@@ -3,7 +3,7 @@ program Pump;
 uses
   Forms,
   UFmPump in 'UFmPump.pas' {FmPump},
-  Model in '..\PrimerCross\Model.pas';
+  Model in '..\Intro\Model.pas';
 
 {$R *.res}
 {$R *.mdr} {Model}

@@ -9,14 +9,16 @@ uses
 
 type
   TFmPump = class(TForm)
-    InstantIBXConnector1: TInstantIBXConnector;
-    InstantIBXConnector2: TInstantIBXConnector;
+    SourceConnector: TInstantIBXConnector;
+    DestConnector: TInstantIBXConnector;
     IBDatabase1: TIBDatabase;
     IBDatabase2: TIBDatabase;
     EmptyBeforePumpCheckBox: TCheckBox;
-    Button1: TButton;
+    PumpButton: TButton;
     InstantPump1: TInstantPump;
-    procedure Button1Click(Sender: TObject);
+    Label1: TLabel;
+    Label3: TLabel;
+    procedure PumpButtonClick(Sender: TObject);
     procedure EmptyBeforePumpCheckBoxClick(Sender: TObject);
   private
   public
@@ -29,10 +31,13 @@ implementation
 
 {$R *.dfm}
 
-procedure TFmPump.Button1Click(Sender: TObject);
+procedure TFmPump.PumpButtonClick(Sender: TObject);
 begin
-  if MessageDlg('Begin pump?', mtConfirmation, [mbYes,mbNo], 0) = mrYes then
-    InstantPump1.Pump;
+  if MessageDlg('Begin pump?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    InstantPump1.Pump;//(AModel);
+    ShowMessage('Pump finished.');
+  end;
 end;
 
 procedure TFmPump.EmptyBeforePumpCheckBoxClick(Sender: TObject);
