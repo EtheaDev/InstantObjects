@@ -23,8 +23,7 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s):
- * Carlo Barazzetta
+ * Contributor(s): Carlo Barazzetta
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -43,11 +42,12 @@ interface
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, ImgList, Menus, ActnList, ExtCtrls,
-  StdActns,
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
+  ImgList, Menus, ActnList, ExtCtrls, StdActns,
 {$ENDIF}
 {$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList, QStdCtrls, QComCtrls, QExtCtrls,
+  QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList,
+  QStdCtrls, QComCtrls, QExtCtrls,
 {$ENDIF}
   InstantConnectionManager, InstantClasses, InstantPersistence;
 
@@ -88,10 +88,10 @@ type
     procedure EditActionExecute(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure RenameActionExecute(Sender: TObject); //CB
+    procedure RenameActionExecute(Sender: TObject);
 {$IFDEF MSWINDOWS}
     procedure ConnectionViewEditedVCL(Sender: TObject; Item: TListItem;
-      var S: String);
+      var S: string);
 {$ENDIF}
 {$IFDEF LINUX}
     procedure ConnectionViewEditedCLX(Sender: TObject; Item: TListItem;
@@ -144,7 +144,7 @@ type
     property ConnectionDefs: TInstantConnectionDefs read GetConnectionDefs;
     property FileOpenDialog: TOpenDialog read GetOpenDialog;
   public
-    function isManagerConnected : boolean;
+    function IsManagerConnected: Boolean;
     function DoBuild(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     property CurrentConnectionDef: TInstantConnectionDef read GetCurrentConnectionDef write SetCurrentConnectionDef;
     property FileName: string read GetFileName write SetFileName;
@@ -699,12 +699,15 @@ begin
     FileName := FileOpenDialog.FileName;
 end;
 
-function TInstantConnectionManagerForm.IsManagerConnected: boolean;
+function TInstantConnectionManagerForm.IsManagerConnected: Boolean;
 begin
-  Result := ConnectionManager.isConnected;
+  Result := ConnectionManager.IsConnected;
 end;
 
 initialization
   RegisterConnectionManagerExecutor(DefaultConnectionManagerExecutor);
+
+finalization
+  RegisterConnectionManagerExecutor(nil);
 
 end.
