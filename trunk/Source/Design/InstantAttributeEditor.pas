@@ -324,7 +324,13 @@ begin
       end;
     end;
 
-  inherited;
+  if not Assigned(FModel) then
+    // Do not do SubjectExposer.PostChanges when called from 
+    // ModelMaker, otherwise Container Methods settings for a
+    // new attribute are cleared.
+    SaveData
+  else
+    inherited;
 end;
 
 procedure TInstantAttributeEditorForm.PopulateClasses;
@@ -509,8 +515,8 @@ begin
     and not (Subject.AttributeType = atPart));
   EnableCtrl(ExternalStorageNameEdit, IsExternal
     and not (Subject.AttributeType = atPart));
-  EnableCtrl(AutoExternalStorageNameCheckBox, IsExternal
-    and not (Subject.AttributeType = atPart));
+  EnableCtrl(AutoExternalStorageNameCheckBox,
+    ExternalStorageNameEdit.Enabled);
 
   EnableCtrl(SizeLabel, IsString);
   EnableCtrl(SizeEdit, IsString);
@@ -581,4 +587,5 @@ begin
 end;
 
 end.
+
 
