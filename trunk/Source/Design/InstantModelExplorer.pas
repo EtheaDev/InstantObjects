@@ -164,10 +164,6 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure CompileTo(FileName: string);
-{$IFDEF MSWINDOWS}
-    procedure LoadWindowState(Desktop: TMemIniFile); override;
-    procedure SaveWindowState(Desktop: TMemIniFile; IsProject: Boolean); override;
-{$ENDIF}
     procedure Refresh;
     procedure UpdateModel;
     property FocusedClass: TInstantCodeClass read GetFocusedClass;
@@ -447,19 +443,6 @@ begin
     end;
   end;
 end;
-
-{$IFDEF MSWINDOWS}
-procedure TInstantModelExplorerForm.LoadWindowState(Desktop: TMemIniFile);
-begin
-  inherited;
-end;
-
-procedure TInstantModelExplorerForm.SaveWindowState(Desktop: TMemIniFile;
-  IsProject: Boolean);
-begin
-  inherited;
-end;
-{$ENDIF}
 
 procedure TInstantModelExplorerForm.ModelViewChange(Sender: TObject;
   Node: TTreeNode);
