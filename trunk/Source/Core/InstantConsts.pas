@@ -23,7 +23,7 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s):
+ * Contributor(s): Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -77,7 +77,6 @@ resourcestring
   SErrorDisposingObject = 'Error disposing object %s(''%s''): "%s"';
   SErrorRefreshingObject = 'Error refreshing object %s(''%s''): "%s"';
   SErrorRetrievingObject = 'Error retrieving object %s(''%s''): "%s"';
-  SErrorStoringEmbeddedObject = 'Object %s(''%s''). Cannot store embedded object.';
   SErrorStoringObject = 'Error storing object %s(''%s''): "%s"';
   SFalseString = 'False';
   SFatalError = 'Fatal Error for object %s(''%s''): "%s"';
