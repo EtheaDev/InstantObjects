@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Joao Morais
+ * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
+ * Joao Morais, Cisar Coll
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -12710,8 +12711,7 @@ function TInstantSQLGenerator.InternalGenerateDeleteExternalSQL(
 var
   WhereStr: string;
 begin
-  WhereStr := BuildWhereStr([InstantParentClassFieldName,
-    InstantParentIdFieldName]);
+  WhereStr := BuildWhereStr([InstantParentIdFieldName]);
   Result := Format('DELETE FROM %s WHERE %s',
     [EmbraceTable('%s'), WhereStr]);
 end;
@@ -12721,7 +12721,7 @@ function TInstantSQLGenerator.InternalGenerateDeleteSQL
 var
   WhereStr: string;
 begin
-  WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
+  WhereStr := BuildWhereStr([InstantIdFieldName]);
   Result := Format('DELETE FROM %s WHERE %s',
     [EmbraceTable(Map.Name), WhereStr]);
 end;
@@ -12779,9 +12779,8 @@ var
   FieldStr, WhereStr: string;
 begin
   FieldStr := Format('%s, %s', [EmbraceField('%s'), EmbraceField('%s')]);
-  WhereStr := Format('%s = :%s AND %s = :%s',
-    [EmbraceField(InstantClassFieldName), InstantClassFieldName,
-     EmbraceField(InstantIdFieldName), InstantIdFieldName]);
+  WhereStr := Format('%s = :%s',
+    [EmbraceField(InstantIdFieldName), InstantIdFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s',
     [FieldStr, EmbraceTable('%s'), WhereStr]);
 end;
@@ -12793,10 +12792,9 @@ var
 begin
   FieldStr := Format('%s, %s, %s', [EmbraceField(InstantChildClassFieldName),
     EmbraceField(InstantChildIdFieldName), EmbraceField(InstantSequenceNoFieldName)]);
-  WhereStr := Format('%s = :%s AND %s = :%s AND %s = :%s',
+  WhereStr := Format('%s = :%s AND %s = :%s',
     [EmbraceField(InstantParentClassFieldName), InstantParentClassFieldName,
-    EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName,
-    EmbraceField(InstantChildClassFieldName), InstantChildClassFieldName]);
+     EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName]); 
   Result := Format('SELECT %s FROM %s WHERE %s ORDER BY %s',
     [FieldStr, EmbraceTable('%s'), WhereStr, EmbraceField(InstantSequenceNoFieldName)]);
 end;
@@ -12807,7 +12805,7 @@ var
   FieldStr, WhereStr: string;
 begin
   FieldStr := BuildFieldList(Map, [InstantUpdateCountFieldName]);
-  WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
+  WhereStr := BuildWhereStr([InstantIdFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s',
     [FieldStr, EmbraceTable(Map.Name), WhereStr]);
 end;
@@ -12825,8 +12823,7 @@ var
 begin
   AssignmentStr := BuildAssignmentList(Map,
     [InstantIdFieldName, InstantUpdateCountFieldName]);
-  WhereStr := BuildWhereStr([InstantClassFieldName]) +
-    BuildPersistentIdCriteria;
+  WhereStr := ' (1=1) ' + BuildPersistentIdCriteria;
   Result := Format('UPDATE %s SET %s WHERE %s',
     [EmbraceTable(Map.Name), AssignmentStr, WhereStr]);
 end;
