@@ -31,7 +31,7 @@ requires
   vcl,
   dbrtl,
   dbexpress,
-  iodes70;
+  iorun70;
 
 contains
   InstantDBXConnectionDefEdit in 'InstantDBXConnectionDefEdit.pas' {InstantDBXConnectionDefEditForm},

@@ -32,7 +32,7 @@ requires
   vclx,
   dbrtl,
   vcldb,
-  iodes70,
+  iorun70,
   adsd70;
 
 contains

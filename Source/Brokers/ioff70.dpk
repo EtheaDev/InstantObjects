@@ -30,7 +30,7 @@ requires
   vcl,
   vclx,
   dbrtl,
-  iodes70,
+  iorun70,
   ff2_d70;
 
 contains

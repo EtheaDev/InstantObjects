@@ -30,7 +30,7 @@ requires
   vcl,
   vcldb,
   ibxpress,
-  iodes70;
+  iorun70;
 
 contains
   InstantIBXConnectionDefEdit in 'InstantIBXConnectionDefEdit.pas' {InstantIBXConnectionDefEditForm},
