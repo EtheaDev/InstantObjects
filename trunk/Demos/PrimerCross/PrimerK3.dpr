@@ -37,7 +37,7 @@ program PrimerK3;
 uses
   QForms,
   Main in 'Main.pas' {MainForm},
-  Model in 'Model.pas',
+  Model in 'Model/Model.pas',
   ContactView in 'ContactView.pas' {ContactViewForm: TFrame},
   BasicView in 'BasicView.pas' {BasicViewForm: TFrame},
   BasicEdit in 'BasicEdit.pas' {BasicEditForm},
