@@ -248,9 +248,9 @@ procedure TInstantFlashFilerConnector.InternalBuildDatabase(Scheme: TInstantSche
 var
   I: Integer;
 begin
+  inherited;
   if not Assigned(Scheme) then
     Exit;
-  Scheme.BlobStreamFormat := BlobStreamFormat; //CB
   with Scheme do
     for I := 0 to Pred(TableMetadataCount) do
       CreateTable(TableMetadatas[I]);

@@ -78,7 +78,7 @@ type
     function GetDatabaseExists: Boolean; override;
     function GetDatabaseName: string; override;
     function GetDBMSName: string; override;
-    procedure InternalBuildDatabase(Scheme: TInstantScheme); overload; override;
+    procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     procedure InternalCommitTransaction; override;
     procedure InternalCreateDatabase; override;
     procedure InternalRollbackTransaction; override;
@@ -620,8 +620,6 @@ end;
 procedure TInstantADOConnector.DoBuildDatabase(Scheme: TInstantScheme;
   BuildMethod: TInstantADOBuildMethod);
 begin
-  if Assigned(Scheme) then
-    Scheme.BlobStreamFormat := BlobStreamFormat; 
   case BuildMethod of
     bmDefault:
       if ProviderType in [ptMSJet, ptMSSQLServer] then
@@ -715,7 +713,7 @@ end;
 procedure TInstantADOConnector.InternalBuildDatabase(
   Scheme: TInstantScheme);
 begin
-  Scheme.BlobStreamFormat := BlobStreamFormat;
+  inherited;
   DoBuildDatabase(Scheme, bmDefault);
 end;
 
