@@ -1,0 +1,51 @@
+package ionxsql70;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'InstantObjects NexusDbSQL support'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  dbrtl,
+  vclx,
+  vcldb,
+  designide,
+  vclactnband,
+  IOCore,
+  NexusDB107ll70,
+  NexusDB107sd70,
+  NexusDB107re70,
+  NexusDB107st70,
+  NexusDB107pt70,
+  NexusDB107tw70,
+  NexusDB107db70,
+  CSP20I70;
+
+contains
+  InstantNexusDbSQLConnectionDefEdit in '..\InstantNexusDbSQLConnectionDefEdit.pas' {InstantNexusDbSQLConnectionDefEditForm},
+  InstantNexusDbSQL in '..\InstantNexusDbSQL.pas';
+
+end.

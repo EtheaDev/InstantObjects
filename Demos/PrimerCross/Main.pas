@@ -729,6 +729,7 @@ begin
     with TWelcomeForm.Create(nil) do
     try
       ShowModal;
+      ConnectionManagerAction.Execute;
     finally
       Free;
     end;

@@ -1,6 +1,6 @@
 ------------------------------------------------------------------
 
-  InstantObjects 1.6.6 for Delphi & Kylix
+  InstantObjects 1.6.7 for Delphi & Kylix
 
   Mozilla Public License 1.1 Edition
   May 2004 release
@@ -139,14 +139,29 @@ and function in the InstantObjects framework.
 
 VERSION HISTORY
 ---------------
+Version 1.6.7 (2004-11-17)
+
+- Added support for IOMETADATA Keyword in metadata class definition and
+upgrade of ObjectFoundry for ModelMaker 7 & 8 support.
+Please refer to IOMETADATA_Keyword.txt for details.
+
+- ExternalPart, ExternalParts and ExternalReferences support (under test):
+(UNDOCUMENTED)
+
+- Added InstantNexusSQL Broker
+
+- Changes to IBX Broker:
+- option to disable the use of delimited identifiers in dialect 3 databases
+- implemented InternalCreateDatabase and GetDatabaseExists
+
+- LoginPrompt support and OnLogin event in Connections based on TCustomConnection
+
 Version 1.6.6 (2004-07-29)
+- Currency Support:
+Look into Primer Demo for a little explanation.
 
-ver.1.6.6
-- Currency Support (under test):
-...
-
-- Graphic Support (under test):
-...
+- Graphic Support:
+Look into Primer Demo for a little explanation.
 
 - PrimerCross chaged for Currency and Graphic support
 

@@ -29,10 +29,12 @@ type
     EmployerLookupButton: TToolButton;
     EmployerClearButton: TToolButton;
     EmployerToolImages: TImageList;
-    PictureImage: TImage;
     PictureButton: TButton;
     SalaryLabel: TLabel;
     SalaryEdit: TDBEdit;
+    PicturePanel: TPanel;
+    PictureImage: TImage;
+    ClearButton: TButton;
     procedure EmployerClearButtonClick(Sender: TObject);
     procedure EmployerEditButtonClick(Sender: TObject);
     procedure EmployerLookupButtonClick(Sender: TObject);
@@ -41,6 +43,7 @@ type
     procedure PictureButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure ClearButtonClick(Sender: TObject);
   private
     function GetSubject: TPerson;
     procedure SetSubject(const Value: TPerson);
@@ -168,6 +171,7 @@ begin
   inherited;
 {$IFDEF MSWINDOWS}
   LoadMultipleImages(EmployerToolImages,'PERSONEMPLOYERTOOLIMAGES',HInstance);
+  PictureImage.Proportional := True;
 {$ENDIF}
 {$IFDEF LINUX}
   LoadMultipleImages(EmployerToolImages,ExtractFilePath(Application.ExeName)+'PERSONEMPLOYERTOOLIMAGES.BMP');
@@ -178,6 +182,13 @@ procedure TPersonEditForm.FormShow(Sender: TObject);
 begin
   inherited;
   Subject._Picture.AssignToPicture(PictureImage.Picture);
+end;
+
+procedure TPersonEditForm.ClearButtonClick(Sender: TObject);
+begin
+  inherited;
+  PictureImage.Picture := nil;
+  Subject._Picture.Clear;
 end;
 
 initialization

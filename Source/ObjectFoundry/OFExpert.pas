@@ -10,7 +10,10 @@ type
   private
     FOptions: TOFOptions;
     procedure AttributeEditorLoadClasses(Sender: TObject; Items: TStrings);
+    procedure AttributeEditorLoadClassAttrs(Sender: TObject;
+      const ClassName: String; Items: TStrings);
     function GetOptions: TOFOptions;
+    function IsInstantObjectClass(AClass: IMMClassBase): Boolean;
   protected
     procedure Destroyed; safecall;
     function EditAttribute(const P: IMMProperty): Boolean; stdcall;
@@ -58,29 +61,63 @@ uses
 const
   SObjectFoundry = 'ObjectFoundry';
 
+// SRM - 01 Oct 2004: begin
+// Function externalised from AttributeEditorLoadClasses function.
+function TObjectFoundryExpert.IsInstantObjectClass(AClass: IMMClassBase):
+  Boolean;
+begin
+  Result := SameText(AClass.Name, TInstantObject.ClassName) or
+    (Assigned(AClass.Ancestor) and IsInstantObjectClass(AClass.Ancestor));
+end;
+
+procedure TObjectFoundryExpert.AttributeEditorLoadClassAttrs(
+  Sender: TObject; const ClassName: String; Items: TStrings);
+var
+  i, j: Integer;
+  Attr: IMMIOAttribute;
+  Prop: IMMProperty;
+  CodeModel: IMMCodeModel;
+  AClass: IMMClassBase;
+begin
+  CodeModel := MMToolServices.CodeModel;
+  if Assigned(CodeModel) then begin
+    for i := 0 to Pred(CodeModel.ClassCount) do
+    begin
+      AClass := CodeModel.Classes[i];
+      if IsInstantObjectClass(AClass) and
+              SameText(AClass.Name, ClassName) then begin
+        for j := 0 to Pred(AClass.MemberCount) do begin
+          Attr := MemberAsAttribute(AClass.Members[j]);
+          if Assigned(Attr) and Attr.IsIOAttribute then begin
+            Prop := AttributeAsProperty(Attr);
+            if Assigned(Prop) then
+              Items.Add(Prop.Name);
+          end;    { if }
+        end;    { for }
+        Break;
+      end;    { if }
+    end;
+  end;    { if }
+end;
+
 procedure TObjectFoundryExpert.AttributeEditorLoadClasses(Sender: TObject;
   Items: TStrings);
-
-  function IsInstantObjectClass(AClass: IMMClassBase): Boolean;
-  begin
-    Result := SameText(AClass.Name, TInstantObject.ClassName) or
-      (Assigned(AClass.Ancestor) and IsInstantObjectClass(AClass.Ancestor)); 
-  end;
-
 var
   I: Integer;
   CodeModel: IMMCodeModel;
   AClass: IMMClassBase;
 begin
   CodeModel := MMToolServices.CodeModel;
-  if Assigned(CodeModel) then
+  if Assigned(CodeModel) then begin
     for I := 0 to Pred(CodeModel.ClassCount) do
     begin
       AClass := CodeModel.Classes[I];
       if IsInstantObjectClass(AClass) then
         Items.Add(AClass.Name);
     end;
+  end;    { if }
 end;
+// SRM - 01 Oct 2004: end
 
 procedure TObjectFoundryExpert.Destroyed;
 begin
@@ -96,7 +133,9 @@ begin
     try
       with TInstantAttributeEditorForm.Create(nil) do
       try
+        InMM := True;         // SRM - 14 Oct 2004
         OnLoadClasses := AttributeEditorLoadClasses;
+        OnLoadClassAttributes := AttributeEditorLoadClassAttrs; // SRM - 01 Oct 2004
         Subject := Attribute;
         Result := ShowModal = mrOK;
         if Result then

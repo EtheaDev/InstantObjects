@@ -40,6 +40,8 @@ uses
   InstantDesignResources, InstantModelExplorer, InstantCode, ExtCtrls, Forms;
 
 type
+  TIOMetaDataCheckState = (mcNeverChecked, mcCheckError, mcCheckCorrect);
+
   { When the IDE is being shut down, items in the Database-menu are
     destroyed even if they don't belong to the menu. Since we want to
     detach our items in the Database-menu when the expert is removed,
@@ -75,6 +77,7 @@ type
     FToolImageOffset: Integer;
     FUpdateDisableCount: Integer;
     FUpdateTimer: TTimer;
+    MetaDataCheckState : TIOMetaDataCheckState;
     procedure ExplorerApplyClass(Sender: TObject; AClass: TInstantCodeClass;
       ChangeInfo: TInstantCodeClassChangeInfo);
     procedure ExplorerGotoSource(Sender: TObject; const FileName: string;
@@ -107,6 +110,7 @@ type
     procedure DetachMenus;
     procedure EnumSources(Modules: TInterfaceList;
       Enumerator: TSourceEnumerator);
+    procedure CheckIOMetadataKeyword(const FileName, Source: string);
     procedure ExplorerItemClick(Sender: TObject);
     procedure GetModelModules(Modules: TInterfaceList);
     procedure IDEAfterCompilation(Sender: TObject; Succeeded: Boolean);
@@ -119,6 +123,7 @@ type
       var Cancel: Boolean);
     procedure IDEModuleNotification(Sender: TObject; NotifyCode: TNotifyCode;
       const FileName: string);
+    function IsProjectUnit(FileName: string): Boolean;
     function IsModelUnit(FileName: string): Boolean;
     procedure ShowExplorer;
     procedure UpdateModel;
@@ -153,7 +158,7 @@ implementation
 
 uses
   SysUtils, TypInfo, InstantDesignUtils, InstantUtils, InstantUnitSelect,
-  Registry, InstantConnectionManager;
+  Registry, InstantConnectionManager, Dialogs;
 
 const
   SBuilderItemCaption = 'Database &Builder...';
@@ -252,7 +257,7 @@ const
     for I := 0 to Pred(List.Count) do
     begin
       Result := Result + S + List[I];
-      S := ', ';
+      S := ', ' + sLineBreak + '            ';
     end;
   end;
 
@@ -863,7 +868,8 @@ procedure TInstantModelExpert.IDEFileNotification(Sender: TObject;
 begin
   case NotifyCode of
     fnFileOpened:
-      ;
+      if IsProjectUnit(FileName) then
+        MetaDataCheckState := mcNeverChecked;
     fnFileClosing:
       if IsModelUnit(FileName) then
         IsDirty := True;
@@ -881,6 +887,11 @@ begin
     ncEditorSelected:
       Exit;
   end;
+end;
+
+function TInstantModelExpert.IsProjectUnit(FileName: string): Boolean;
+begin
+  Result := Assigned(ActiveProject) and SameText(ActiveProject.FileName, FileName);
 end;
 
 function TInstantModelExpert.IsModelUnit(FileName: string): Boolean;
@@ -990,6 +1001,14 @@ begin
       Modules := TInterfaceList.Create;
       try
         CollectModules(Project, Modules, Units);
+        if MetaDataCheckState = mcNeverChecked then
+        begin
+          MetaDataCheckState := mcCheckCorrect;
+          EnumSources(Modules, CheckIOMetadataKeyword);
+          if MetaDataCheckState = mcCheckError then
+            MessageDlg(Format('WARNING: Project %s contains some class metadata without IOMETADATA keyword. Please refer to IOMETADATA_keyword.txt in instantobjects\doc folder.',
+              [FActiveProjectName]), mtWarning, [mbOK], 0);
+        end;
         Result := (CheckTime = 0) or
           ModuleModified(Project, CheckTime) or
           ModulesModified(Modules, CheckTime);
@@ -1144,6 +1163,12 @@ procedure TInstantModelExpert.UpdateTimerTick(Sender: TObject);
 begin
   if UpdateEnabled then
     UpdateModel;
+end;
+
+procedure TInstantModelExpert.CheckIOMetadataKeyword(const FileName, Source: string);
+begin
+  if pos('{ stored', Source) > 0 then
+    MetaDataCheckState := mcCheckError;
 end;
 
 end.

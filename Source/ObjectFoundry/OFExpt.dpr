@@ -1,6 +1,8 @@
 library OFExpt;
 
-{$R *.RES}
+{$R OFExpt_ver.res}              // SRM - 02 Nov 2004
+//{$R *.RES}                     // SRM - 02 Nov 2004
+{$R ..\Design\iodesimages.res}   // SRM - 01 Oct 2004
 
 uses
   InstantAttributeEditor in '..\Design\InstantAttributeEditor.pas' {InstantAttributeEditorForm},

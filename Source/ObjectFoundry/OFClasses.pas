@@ -242,11 +242,12 @@ var
   MT: TInstantCodeContainerMethodType;
 begin
   Tailor.Apply;
-  for MT := Low(MT) to High(MT) do
+  for MT := Low(MT) to High(MT) do begin
     if IsContainer and (MT in MethodTypes) then
       AddMethod(MT, Tailor.MethodByType[MT])
     else
       RemoveMethod(MT);
+  end;    { for }
 end;
 
 procedure TMMCodeAttribute.ApplyData;
@@ -469,6 +470,7 @@ end;
 
 procedure TMMCodeAttribute.Save;
 begin
+  Tailor.Apply;
   ApplyData;
   ApplyAttribute;
   ApplyArray;
