@@ -116,7 +116,7 @@ type
     FLimited: Boolean;
     FModel: TInstantCodeModel;
     FOnLoadClasses: TInstantStringsEvent;
-    FOnLoadClassAttributes: TInstantAttrStringsEvent;  
+    FOnLoadClassAttributes: TInstantAttrStringsEvent;
     function GetSubject: TInstantCodeAttribute;
     procedure SetSubject(const Value: TInstantCodeAttribute);
     procedure SetLimited(Value: Boolean);
@@ -429,7 +429,7 @@ procedure TInstantAttributeEditorForm.SubjectExposerTranslate(
       Name := Value;
       Delete(Name, 1, Length(Prefix));
       Value := Name;
-    end
+    end;
   end;
 
 begin
@@ -516,9 +516,9 @@ begin
   EnableCtrl(StorageNameLabel, not IsExternal or (Subject.AttributeType = atPart));
   EnableCtrl(StorageNameEdit, not IsExternal or (Subject.AttributeType = atPart));
 
-  EnableCtrl(ExternalStorageNameLabel, IsExternal and (Subject.StorageKind = skExternal)
+  EnableCtrl(ExternalStorageNameLabel, IsExternal
     and not (Subject.AttributeType = atPart));
-  EnableCtrl(ExternalStorageNameEdit, IsExternal and (Subject.StorageKind = skExternal)
+  EnableCtrl(ExternalStorageNameEdit, IsExternal 
     and not (Subject.AttributeType = atPart));
 
   EnableCtrl(SizeLabel, IsString);
@@ -533,12 +533,17 @@ end;
 procedure TInstantAttributeEditorForm.StorageKindEditChange(Sender: TObject);
 begin
   with StorageKindEdit do
-    SubjectExposer.AssignFieldValue(Field, Text);
+    if Text <> '' then
+      SubjectExposer.AssignFieldValue(Field, Text);
   UpdateControls;
+  ComputeExternalStorageName;
 end;
 
 procedure TInstantAttributeEditorForm.ExternalStorageNameEditChange(Sender: TObject);
 begin
+  with ExternalStorageNameEdit do
+    if Text <> '' then
+      SubjectExposer.AssignFieldValue(Field, Text); 
   UpdateControls;
 end;
 
@@ -556,17 +561,27 @@ procedure TInstantAttributeEditorForm.StorageNameEditChange(
 begin
   inherited;
   UpdateControls;
-  ComputeExternalStorageName;
 end;
 
 procedure TInstantAttributeEditorForm.ComputeExternalStorageName;
 
   function GetClassStorageName: string;
   begin
-    if Subject.Metadata.ClassMetadata.StorageName <> '' then
-      Result := Subject.Metadata.ClassMetadata.StorageName
-    else
-      Result := Subject.Metadata.ClassMetadata.Name;
+    if Assigned(FModel) then
+    begin
+      if Subject.Metadata.ClassMetadata.StorageName <> '' then
+        Result := Subject.Metadata.ClassMetadata.StorageName
+      else begin
+        Result := Subject.Metadata.ClassMetadata.Name;
+        // Remove the 'T' from classname
+        if (Length(Result) > 1) and (Result[1] = 'T') then
+          Delete(Result, 1, 1);
+      end;
+    end
+    else begin
+      // ToDo: Fix this up for ObjectFoundry.
+      Result := '';
+    end;
   end;
 
   function GetStorageName: string;
@@ -578,15 +593,23 @@ procedure TInstantAttributeEditorForm.ComputeExternalStorageName;
   end;
 
 begin
-  {
   if ExternalStorageNameEdit.Enabled then
-  begin
     ExternalStorageNameEdit.Text := Format('%s_%s',
-      [GetClassStorageName(), GetStorageName()]);
-  end
+      [GetClassStorageName(), GetStorageName()])
   else
     ExternalStorageNameEdit.Text := '';
-  }
+
 end;
 
 end.
+
+
+
+
+
+
+
+
+
+
+
