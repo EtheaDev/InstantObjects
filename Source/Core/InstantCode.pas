@@ -25,7 +25,8 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli: porting Kylix
- *
+ * Nando Dessena, Andrea Petrelli:
+ * - ExternalPart, ExternalParts and ExternalReferences support
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantCode;
@@ -1515,6 +1516,11 @@ type
     procedure InternalRead; override;
   end;
 
+  TPartTypeProcessor = class(TObjectTypeProcessor)
+  protected
+    procedure InternalRead; override;
+  end;
+
 const
 {$IFDEF MSWINDOWS}
   CRLF = #13#10;
@@ -1601,7 +1607,7 @@ begin
     AddObject('String', TStringTypeProcessor.Create);
     AddObject('Memo', TStringTypeProcessor.Create);
     AddObject('DateTime', TDateTimeTypeProcessor.Create);
-    AddObject('Part', TObjectTypeProcessor.Create);
+    AddObject('Part', TPartTypeProcessor.Create);
     AddObject('Reference', TObjectTypeProcessor.Create);
     AddObject('Parts', TContainerTypeProcessor.Create);
     AddObject('References', TContainerTypeProcessor.Create);
@@ -1767,29 +1773,31 @@ end;
 
 procedure TContainerTypeProcessor.InternalRead;
 var
-  Token:String;
+  Token: string;
 begin
   inherited;
   with FReader do
+  begin
     while not Finished do
     begin
       SkipSpace;
       if NextChar = ';' then
         Break;
-      Token:=ReadToken;
-      if SameText(Token, 'default') then
+      Token := ReadToken;
+      if SameText(Token, MetaKeyDefault) then
         FMetadata.IsDefault := True;
       if SameText(Token, MetaKeyExternalStored) then
-        begin
-          FMetadata.IsExternal := ceStored;
-          FMetadata.ExternalStoredName := ReadStringValue;
-        end;
+      begin
+        FMetadata.IsExternal := ceStored;
+        FMetadata.ExternalStoredName := ReadStringValue;
+      end;
       if SameText(Token, MetaKeyExternalLinked) then
-        begin
-          FMetadata.IsExternal := ceLinked;
-          FMetadata.ExternalLinkedName := ReadStringValue;
-        end;
+      begin
+        FMetadata.IsExternal := ceLinked;
+        FMetadata.ExternalLinkedName := ReadStringValue;
+      end;
     end;
+  end;
 end;
 
 { EInstantCodeError }
@@ -3162,21 +3170,21 @@ begin
   while not Reader.Finished do
   begin
     Token := LowerCase(Reader.ReadToken);
-    if Token = 'index' then
+    if Token = MetaKeyIndex then
       Reader.ReadToken
     else if Token = 'read' then
       GetterName := Reader.ReadToken
     else if Token = 'write' then
       SetterName := Reader.ReadToken
-    else if Token = 'default' then
+    else if Token = MetaKeyDefault then
       DefaultValue := Reader.ReadRestOfStatement
-    else if Token = 'stored' then
+    else if Token = MetaKeyStored then
       Stored := Reader.ReadToken
     else if Token = ';' then
       Break;
   end;
   SavePos := Reader.Position;
-  IsDefault := SameText(Reader.ReadToken, 'default');
+  IsDefault := SameText(Reader.ReadToken, MetaKeyDefault);
   if IsDefault then
     Reader.ReadEndOfStatement(True)
   else
@@ -8502,6 +8510,35 @@ procedure TInstantCodeModifier.UpdateUnit;
 begin
   UpdateClassForward(nil, nil);
   UpdateClassRegistration(nil, nil);
+end;
+
+{ TPartTypeProcessor }
+
+procedure TPartTypeProcessor.InternalRead;
+var
+  Token: string;
+begin
+  inherited;
+  with FReader do
+  begin
+    while not Finished do
+    begin
+      SkipSpace;
+      if NextChar = ';' then
+        Break;
+      Token := ReadToken;
+      if SameText(Token, MetaKeyExternalStored) then
+      begin
+        FMetadata.IsExternal := ceStored;
+        FMetadata.ExternalStoredName := ReadStringValue;
+      end;
+      if SameText(Token, MetaKeyExternalLinked) then
+      begin
+        FMetadata.IsExternal := ceLinked;
+        FMetadata.ExternalLinkedName := ReadStringValue;
+      end;
+    end;
+  end;
 end;
 
 initialization
