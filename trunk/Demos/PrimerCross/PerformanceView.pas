@@ -122,13 +122,14 @@ type
     IconImage: TImage;
     TestResultRenameItem: TMenuItem;
     TransactionsCheckBox: TCheckBox;
-    NumberLabel: TLabel;
+    ObjectsLabel: TLabel;
     ObjectsEdit: TMaskEdit;
     TestRetrieveCheckBox: TCheckBox;
     TestDisposeCheckBox: TCheckBox;
-    PoolOptionsRadioGroup: TRadioGroup;
     TestQueryCheckBox: TCheckBox;
     Series1: TBarSeries;
+    CacheSizeLabel: TLabel;
+    CacheSizeEdit: TMaskEdit;
     procedure RunButtonClick(Sender: TObject);
     procedure TestResultListViewChange(Sender: TObject; Item: TListItem;
       Change: TItemChange);
@@ -143,7 +144,6 @@ type
     procedure TestResultListViewEditedCLX(Sender: TObject; Item: TListItem; var S: WideString);
 {$ENDIF}
     procedure TransactionsCheckBoxClick(Sender: TObject);
-    procedure PoolOptionsRadioGroupClick(Sender: TObject);
     procedure TestDisposeCheckBoxClick(Sender: TObject);
     procedure TestRetrieveCheckBoxClick(Sender: TObject);
   private
@@ -509,6 +509,8 @@ var
 begin
   if not Confirm(Format('Run performance test on "%s"?', [ConnectionName])) then
     Exit;
+  TInstantSQLBroker(Connector.Broker).StatementCacheCapacity :=
+    StrToInt(Trim(CacheSizeEdit.Text));
   with TPersistenceTest.Create do
   try
     OnShowStatus := TestShowStatus;
@@ -667,20 +669,21 @@ begin
   TransactionsCheckBox.Checked := IsConnected and Connector.UseTransactions;
   ObjectsEdit.Enabled := IsConnected;
   TestRetrieveCheckBox.Enabled := IsConnected;
+  TestQueryCheckBox.Enabled := IsConnected;
   TestDisposeCheckBox.Enabled := IsConnected;
   if Assigned(Connector) and (Connector.Broker is TInstantSQLBroker) then
   begin
-    PoolOptionsRadioGroup.Visible := True;
-    PoolOptionsRadioGroup.Enabled := IsConnected;
-    if TInstantSQLBroker(Connector.Broker).UsePreparedQuery then
-      PoolOptionsRadioGroup.ItemIndex := 1
-    else if TInstantSQLBroker(Connector.Broker).StatementCacheCapacity <> 0 then
-      PoolOptionsRadioGroup.ItemIndex := 2
-    else
-      PoolOptionsRadioGroup.ItemIndex := 0;
+    CacheSizeEdit.Visible := True;
+    CacheSizeLabel.Visible := CacheSizeEdit.Visible;
+    CacheSizeEdit.Enabled := IsConnected;
+    CacheSizeLabel.Enabled := CacheSizeEdit.Enabled;
+    CacheSizeEdit.Text := IntToStr(TInstantSQLBroker(Connector.Broker).StatementCacheCapacity);
   end
   else
-    PoolOptionsRadioGroup.Visible := False;
+  begin
+    CacheSizeEdit.Visible := False;
+    CacheSizeLabel.Visible := False;
+  end;
 
   ConnectionLabel.Caption := 'Connection: ' + ConnectionName;
   UpdateChart;
@@ -690,29 +693,6 @@ procedure TPerformanceViewForm.TransactionsCheckBoxClick(Sender: TObject);
 begin
   if Assigned(Connector) then
     Connector.UseTransactions := TransactionsCheckBox.Checked;
-end;
-
-procedure TPerformanceViewForm.PoolOptionsRadioGroupClick(Sender: TObject);
-begin
-  inherited;
-  if Connector.Broker is TInstantSQLBroker then
-  case PoolOptionsRadioGroup.ItemIndex of
-    0 :
-    begin
-      TInstantSQLBroker(Connector.Broker).UsePreparedQuery := False;
-      TInstantSQLBroker(Connector.Broker).StatementCacheCapacity := 0;
-    end;
-    1 :
-    begin
-      TInstantSQLBroker(Connector.Broker).UsePreparedQuery := True;
-      TInstantSQLBroker(Connector.Broker).StatementCacheCapacity := 0;
-    end;
-    2 :
-    begin
-      TInstantSQLBroker(Connector.Broker).UsePreparedQuery := False;
-      TInstantSQLBroker(Connector.Broker).StatementCacheCapacity := -1;
-    end;
-  end;  
 end;
 
 procedure TPerformanceViewForm.SetTitleLabel(TitleLabel: TLabel);
