@@ -211,7 +211,7 @@ procedure TInstantFlashFilerConnector.InternalBuildDatabase(Scheme: TInstantSche
   procedure CreateTable(TableMetadata: TInstantTableMetadata);
   const
     FieldTypes: array[TInstantDataType] of TFieldType =
-      (ftInteger, ftFloat, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
+      (ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
   var
     I: Integer;
     Table: TFlashFilerTable;
