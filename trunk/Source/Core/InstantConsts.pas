@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s): Nando Dessena
- *
+ * - Added explicit ordering to externalstored collections.
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantConsts;
@@ -60,6 +60,7 @@ const
   InstantParentClassFieldName = 'ParentClass';
   InstantParentAttributeFieldName = 'ParentAttribute';
   InstantChildIdFieldName = 'ChildId';
+  InstantSequenceNoFieldName = 'SequenceNo';
   InstantChildClassFieldName = 'ChildClass';
 
 resourcestring
@@ -148,6 +149,7 @@ resourcestring
   SUnassignedTranslator = 'Unassigned translator';
   SUnknownAttributeClass = 'Unknown attribute class for attribute %s(''%s'')';
   SUnspecifiedCommand = 'Command is not specified';
+  SUnsupportedDataType = 'Unsupported datatype: %s';
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
   SUnsupportedUsePreparedQuery = 'UsePreparedQueries option not supported by broker of type %s';
