@@ -48,7 +48,7 @@ uses
 
 type
   TInstantStringsEvent = procedure(Sender: TObject; Items: TStrings) of object;
-  TInstantAttrStringsEvent = procedure(Sender: TObject; const ClassName: String;
+  TInstantAttrStringsEvent = procedure(Sender: TObject; const ClassName: string;
     Items: TStrings) of object;
 
   TInstantAttributeEditorForm = class(TInstantEditForm)
@@ -91,12 +91,10 @@ type
     VisibilityLabel: TLabel;
     DefaultValueLabel: TLabel;
     DefaultValueEdit: TDBEdit;
-    ExternalLinkedNameEdit: TDBComboBox;
-    ExternalLinkedNameLabel: TLabel;
-    ExternalStoredNameEdit: TDBEdit;
-    ExternalStoredNameLabel: TLabel;
-    IsExternalEdit: TDBComboBox;
-    IsExternalLabel: TLabel;
+    ExternalStorageNameEdit: TDBEdit;
+    ExternalStorageNameLabel: TLabel;
+    StorageKindEdit: TDBComboBox;
+    StorageKindLabel: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure NameEditChange(Sender: TObject);
     procedure NumericFieldGetText(Sender: TField; var Text: string;
@@ -108,10 +106,10 @@ type
     procedure SubjectExposerTranslate(Sender: TObject; Field: TField;
       var Value: Variant; Write: Boolean);
     procedure TypeEditClick(Sender: TObject);
-    procedure IsExternalEditChange(Sender: TObject);
-    procedure ExternalStoredNameEditChange(Sender: TObject);
+    procedure StorageKindEditChange(Sender: TObject);
+    procedure ExternalStorageNameEditChange(Sender: TObject);
     procedure ExternalLinkedNameEditChange(Sender: TObject);
-    procedure ExternalLinkedNameEditEnter(Sender: TObject);
+    procedure StorageNameEditChange(Sender: TObject);
   private
     // True if in ModelMaker, default is False
     FInMM: Boolean;
@@ -131,12 +129,12 @@ type
       Values: Pointer);
     procedure LoadTypes;
     procedure LoadVisibilities;
-    procedure LoadIsExternal;
+    procedure LoadStorageKind;
     procedure PopulateClasses;
-    procedure PopulateClassAttributes;
     procedure SaveData; override;
     procedure SubjectChanged; override;
     procedure UpdateControls;
+    procedure ComputeExternalStorageName;
   public
     property InMM: boolean read FInMM write FInMM;
     property Limited: Boolean read FLimited write SetLimited;
@@ -149,7 +147,8 @@ type
 implementation
 
 uses
-  InstantRtti, InstantPersistence, InstantDesignUtils, InstantImageUtils;
+  InstantRtti, InstantPersistence, InstantDesignUtils, InstantImageUtils,
+  InstantClasses;
 
 {$R *.dfm}
 
@@ -250,9 +249,9 @@ begin
   end;
 end;
 
-procedure TInstantAttributeEditorForm.LoadIsExternal;
+procedure TInstantAttributeEditorForm.LoadStorageKind;
 begin
-  with IsExternalEdit do
+  with StorageKindEdit do
     ItemIndex := SubjectExposer.GetFieldStrings(Field, Items);
 end;
 
@@ -295,6 +294,7 @@ begin
   with NameEdit do
     SubjectExposer.AssignFieldValue(Field, Text);
   UpdateControls;
+  ComputeExternalStorageName;
 end;
 
 procedure TInstantAttributeEditorForm.NumericFieldGetText(Sender: TField;
@@ -306,8 +306,7 @@ begin
     Text := IntToStr(Sender.AsInteger);
 end;
 
-procedure TInstantAttributeEditorForm.ObjectClassEditChange(
-  Sender: TObject);
+procedure TInstantAttributeEditorForm.ObjectClassEditChange(Sender: TObject);
 begin
   with ObjectClassEdit do
     SubjectExposer.AssignFieldValue(Field, Text);
@@ -404,8 +403,9 @@ begin
   inherited;
   LoadTypes;
   LoadVisibilities;
-  LoadIsExternal;
+  LoadStorageKind;
   UpdateControls;
+  ComputeExternalStorageName;
 end;
 
 procedure TInstantAttributeEditorForm.SubjectExposerInitField(
@@ -437,8 +437,8 @@ begin
     TranslateEnum('at')
   else if Field.FieldName = 'Visibility' then
     TranslateEnum('vi')
-  else if Field.FieldName = 'IsExternal' then
-    TranslateEnum('ce');
+  else if Field.FieldName = 'StorageKind' then
+    TranslateEnum('sk');
 end;
 
 procedure TInstantAttributeEditorForm.TypeEditClick(Sender: TObject);
@@ -449,7 +449,8 @@ begin
   // reliably load combo dropdown lists in MM OFExpt
   UpdateControls;
   LoadVisibilities;
-  LoadIsExternal;
+  LoadStorageKind;
+  ComputeExternalStorageName;
 end;
 
 procedure TInstantAttributeEditorForm.UpdateControls;
@@ -473,29 +474,24 @@ procedure TInstantAttributeEditorForm.UpdateControls;
   end;
 
 var
-  HasName, HasClass, HasExternalLinkedName: Boolean;
-  IsComplex, IsContainer, CanBeExternal, IsExternal, IsMaskable, IsString, IsValid: Boolean;
+  HasName, HasClass, IsComplex, IsContainer, CanBeExternal, IsExternal,
+  IsMaskable, IsString, IsValid: Boolean;
 begin
   CanBeExternal := Subject.AttributeType in [atPart, atParts, atReferences];
   if not CanBeExternal then
-    Subject.IsExternal := ceNo;
-  if (Subject.IsExternal = ceLinked) or (Subject.AttributeType = atPart) then
-    Subject.ExternalStoredName := '';
-  if (Subject.IsExternal = ceStored) then
-    Subject.ExternalLinkedName := '';
+    Subject.StorageKind := skEmbedded;
+  if Subject.AttributeType = atPart then
+    Subject.ExternalStorageName := '';
 
   HasName := NameEdit.Text <> '';
   HasClass := ObjectClassEdit.Text <> '';
   IsComplex := Subject.IsComplex;
   IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat, atCurrency, atInteger];
   IsContainer := Subject.IsContainer;
-  HasExternalLinkedName := ExternalLinkedNameEdit.Text <> '';
 
-  IsExternal := Subject.IsExternal <> ceNo;
+  IsExternal := Subject.StorageKind = skExternal;
   IsString := Subject.AttributeType in [atString, atMemo];
   IsValid := HasName and (not IsComplex or HasClass);
-  if IsValid and (Subject.IsExternal = ceLinked) then
-    IsValid := HasExternalLinkedName;
 
   DisableSubControls(DefinitionSheet, Limited);
   DisableSubControls(AccessSheet, Limited);
@@ -514,17 +510,15 @@ begin
     EnableCtrl(MethodInsertCheckBox, IsContainer);
     EnableCtrl(MethodRemoveCheckBox, IsContainer);
 
-    EnableCtrl(IsExternalEdit, CanBeExternal);
-    EnableCtrl(IsExternalLabel, CanBeExternal);
+    EnableCtrl(StorageKindEdit, CanBeExternal);
+    EnableCtrl(StorageKindLabel, CanBeExternal);
   end;
   EnableCtrl(StorageNameLabel, not IsExternal or (Subject.AttributeType = atPart));
   EnableCtrl(StorageNameEdit, not IsExternal or (Subject.AttributeType = atPart));
 
-  EnableCtrl(ExternalLinkedNameLabel, IsExternal and (Subject.IsExternal = ceLinked));
-  EnableCtrl(ExternalLinkedNameEdit, IsExternal and (Subject.IsExternal = ceLinked));
-  EnableCtrl(ExternalStoredNameLabel, IsExternal and (Subject.IsExternal = ceStored)
+  EnableCtrl(ExternalStorageNameLabel, IsExternal and (Subject.StorageKind = skExternal)
     and not (Subject.AttributeType = atPart));
-  EnableCtrl(ExternalStoredNameEdit, IsExternal and (Subject.IsExternal = ceStored)
+  EnableCtrl(ExternalStorageNameEdit, IsExternal and (Subject.StorageKind = skExternal)
     and not (Subject.AttributeType = atPart));
 
   EnableCtrl(SizeLabel, IsString);
@@ -536,60 +530,63 @@ begin
   PresentationSheet.TabVisible := IsMaskable;
 end;
 
-procedure TInstantAttributeEditorForm.IsExternalEditChange(
-  Sender: TObject);
+procedure TInstantAttributeEditorForm.StorageKindEditChange(Sender: TObject);
 begin
-  with IsExternalEdit do
+  with StorageKindEdit do
     SubjectExposer.AssignFieldValue(Field, Text);
   UpdateControls;
 end;
 
-procedure TInstantAttributeEditorForm.ExternalStoredNameEditChange(
-  Sender: TObject);
+procedure TInstantAttributeEditorForm.ExternalStorageNameEditChange(Sender: TObject);
 begin
   UpdateControls;
 end;
 
-procedure TInstantAttributeEditorForm.ExternalLinkedNameEditChange(
-  Sender: TObject);
+procedure TInstantAttributeEditorForm.ExternalLinkedNameEditChange(Sender: TObject);
 begin
   UpdateControls;
 end;
 
 procedure TInstantAttributeEditorForm.LoadClassAttributes;
-var
-  I:integer;
 begin
-  with ExternalLinkedNameEdit do
-  begin
-    Items.BeginUpdate;
-    try
-      Items.Clear;
-      if Assigned(FOnLoadClassAttributes) then begin
-          FOnLoadClassAttributes(Self, ObjectClassEdit.Text, Items);
-      end
-      else begin
-        if Assigned(FModel) then
-          if Assigned(FModel.FindClass(ObjectClassEdit.Text)) then
-            for I := 0 to Pred(FModel.FindClass(ObjectClassEdit.Text).AttributeCount) do
-              Items.Add(FModel.FindClass(ObjectClassEdit.Text).Attributes[i].Name);
-      end;
-    finally
-      Items.EndUpdate;
-    end;
-  end;
 end;
 
-procedure TInstantAttributeEditorForm.PopulateClassAttributes;
-begin
-  if ExternalLinkedNameEdit.Items.Count = 0 then
-    LoadClassAttributes;
-end;
-
-procedure TInstantAttributeEditorForm.ExternalLinkedNameEditEnter(
+procedure TInstantAttributeEditorForm.StorageNameEditChange(
   Sender: TObject);
 begin
-  PopulateClassAttributes;
+  inherited;
+  UpdateControls;
+  ComputeExternalStorageName;
+end;
+
+procedure TInstantAttributeEditorForm.ComputeExternalStorageName;
+
+  function GetClassStorageName: string;
+  begin
+    if Subject.Metadata.ClassMetadata.StorageName <> '' then
+      Result := Subject.Metadata.ClassMetadata.StorageName
+    else
+      Result := Subject.Metadata.ClassMetadata.Name;
+  end;
+
+  function GetStorageName: string;
+  begin
+    if StorageNameEdit.Text <> '' then
+      Result := StorageNameEdit.Text
+    else
+      Result := NameEdit.Text;
+  end;
+
+begin
+  {
+  if ExternalStorageNameEdit.Enabled then
+  begin
+    ExternalStorageNameEdit.Text := Format('%s_%s',
+      [GetClassStorageName(), GetStorageName()]);
+  end
+  else
+    ExternalStorageNameEdit.Text := '';
+  }
 end;
 
 end.

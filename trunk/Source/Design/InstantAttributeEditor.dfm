@@ -2,7 +2,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   Left = 229
   Top = 215
   Width = 249
-  Height = 386
+  Height = 350
   Caption = 'Attribute Editor'
   ParentFont = True
   OldCreateOrder = True
@@ -11,12 +11,12 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 241
-    Height = 321
+    Height = 292
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 233
-      Height = 313
+      Height = 284
       ActivePage = DefinitionSheet
       Align = alClient
       TabOrder = 0
@@ -62,29 +62,21 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Caption = 'Si&ze'
           FocusControl = SizeEdit
         end
-        object ExternalLinkedNameLabel: TLabel
-          Left = 8
-          Top = 248
-          Width = 92
-          Height = 13
-          Caption = 'Exter&nal Link Name'
-          FocusControl = ExternalLinkedNameEdit
-        end
-        object ExternalStoredNameLabel: TLabel
+        object ExternalStorageNameLabel: TLabel
           Left = 8
           Top = 208
           Width = 109
           Height = 13
           Caption = '&External Storage Name'
-          FocusControl = ExternalStoredNameEdit
+          FocusControl = ExternalStorageNameEdit
         end
-        object IsExternalLabel: TLabel
+        object StorageKindLabel: TLabel
           Left = 8
           Top = 168
-          Width = 49
+          Width = 61
           Height = 13
-          Caption = 'Is Exte&rnal'
-          FocusControl = IsExternalEdit
+          Caption = 'Storage &Kind'
+          FocusControl = StorageKindEdit
         end
         object NameEdit: TDBEdit
           Left = 8
@@ -130,6 +122,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           DataField = 'StorageName'
           DataSource = SubjectSource
           TabOrder = 4
+          OnChange = StorageNameEditChange
         end
         object SizeEdit: TDBEdit
           Left = 160
@@ -140,41 +133,28 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           DataSource = SubjectSource
           TabOrder = 3
         end
-        object ExternalLinkedNameEdit: TDBComboBox
+        object ExternalStorageNameEdit: TDBEdit
           Left = 8
-          Top = 264
-          Width = 210
-          Height = 21
-          DataField = 'ExternalLinkedName'
-          DataSource = SubjectSource
-          ItemHeight = 13
-          Sorted = True
-          TabOrder = 7
-          OnChange = ExternalLinkedNameEditChange
-          OnEnter = ExternalLinkedNameEditEnter
-        end
-        object ExternalStoredNameEdit: TDBEdit
-          Left = 8
-          Top = 224
+          Top = 225
           Width = 209
           Height = 21
-          DataField = 'ExternalStoredName'
+          DataField = 'ExternalStorageName'
           DataSource = SubjectSource
           TabOrder = 6
-          OnChange = ExternalStoredNameEditChange
+          OnChange = ExternalStorageNameEditChange
         end
-        object IsExternalEdit: TDBComboBox
+        object StorageKindEdit: TDBComboBox
           Left = 7
           Top = 184
           Width = 210
           Height = 21
           Style = csDropDownList
-          DataField = 'IsExternal'
+          DataField = 'StorageKind'
           DataSource = SubjectSource
           ItemHeight = 13
           Sorted = True
           TabOrder = 5
-          OnChange = IsExternalEditChange
+          OnChange = StorageKindEditChange
         end
       end
       object AccessSheet: TTabSheet
@@ -388,7 +368,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 321
+    Top = 292
     Width = 241
     inherited ButtonPanel: TPanel
       Left = 81
@@ -397,15 +377,15 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   inherited SubjectExposer: TInstantExposer
     OnInitField = SubjectExposerInitField
     OnTranslate = SubjectExposerTranslate
-    Left = 6
-    Top = 324
+    Left = 14
+    Top = 284
   end
   inherited SubjectSource: TDataSource
-    Left = 46
-    Top = 324
+    Left = 54
+    Top = 284
   end
   object TypeImages: TImageList
-    Left = 84
-    Top = 324
+    Left = 92
+    Top = 284
   end
 end
