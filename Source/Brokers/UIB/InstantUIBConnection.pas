@@ -28,6 +28,8 @@
 
 unit InstantUIBConnection;
 
+{$I ..\..\Core\InstantDefines.inc}
+
 interface
 
 uses Classes, DB, dbLogDlg, jvuib;
@@ -52,7 +54,13 @@ type
     destructor Destroy; override;
   published
     property Database: TJvUIBDataBase read FDatabase;
+    property LoginPrompt;
     property OnLogin;
+    property Connected;
+    property AfterConnect;
+    property AfterDisconnect;
+    property BeforeConnect;
+    property BeforeDisconnect;
   end;
 
 implementation
@@ -64,6 +72,9 @@ begin
   inherited;
   FDatabase := TJvUIBDataBase.Create(Self);
   FDatabase.Name := 'Database';
+{$IFDEF D5+}
+  FDatabase.SetSubComponent(True);
+{$ENDIF}
 end;
 
 destructor TInstantUIBConnection.Destroy;
