@@ -16,7 +16,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   KeyPreview = True
   OldCreateOrder = True
   Position = poScreenCenter
-  OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13

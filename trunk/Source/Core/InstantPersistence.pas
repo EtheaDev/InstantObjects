@@ -5454,8 +5454,7 @@ var
   GraphicClass : TGraphicClass;
   InstantGraphicFileFormat : TInstantGraphicFileFormat;
 begin
-  SaveDataToStream(Stream);
-  if Stream.Position <> 0 then
+  if Stream.Size > 0 then
   begin
     Stream.Position := 0;
     InstantGraphicFileFormat := InstantResolveGraphicFileType(Stream);

@@ -12,7 +12,6 @@ object MainForm: TMainForm
   Font.Style = []
   Menu = MainMenu
   OldCreateOrder = False
-  Position = poScreenCenter
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate

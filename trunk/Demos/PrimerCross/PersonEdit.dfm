@@ -59,11 +59,21 @@ inherited PersonEditForm: TPersonEditForm
           Height = 13
           Caption = 'Sa&lary'
         end
-        object PictureImage: TImage [13]
-          Left = 339
-          Top = 206
-          Width = 70
-          Height = 93
+        object PicturePanel: TPanel [13]
+          Left = 332
+          Top = 203
+          Width = 76
+          Height = 96
+          BevelOuter = bvLowered
+          Caption = 'Picture'
+          TabOrder = 14
+          object PictureImage: TImage
+            Left = 3
+            Top = 2
+            Width = 70
+            Height = 93
+            Stretch = True
+          end
         end
         inherited StreetEdit: TDBMemo
           Height = 37
@@ -167,10 +177,10 @@ inherited PersonEditForm: TPersonEditForm
         end
         object PictureButton: TButton [24]
           Left = 240
-          Top = 274
+          Top = 246
           Width = 81
           Height = 25
-          Caption = '&Picture...'
+          Caption = 'Load &Picture...'
           TabOrder = 13
           OnClick = PictureButtonClick
         end
@@ -182,6 +192,15 @@ inherited PersonEditForm: TPersonEditForm
           DataField = 'Salary'
           DataSource = SubjectSource
           TabOrder = 10
+        end
+        object ClearButton: TButton
+          Left = 240
+          Top = 274
+          Width = 81
+          Height = 25
+          Caption = '&Clear Picture'
+          TabOrder = 15
+          OnClick = ClearButtonClick
         end
       end
     end

@@ -27,6 +27,8 @@
  * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  * Nando Dessena, Andrea Petrelli:
  * - ExternalPart, ExternalParts and ExternalReferences support
+ * Steven Mitchell:
+ * - Added MetadataInfo identification tag
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantCode;
@@ -1529,6 +1531,7 @@ const
   CRLF = #10;
 {$ENDIF}
 
+  MetadataInfoID = 'IOMETADATA';       
   MetaKeyDefault = 'default';
   MetaKeyExternalStored = 'externalstored';
   MetaKeyExternalLinked = 'externallinked';
@@ -4428,8 +4431,21 @@ end;
 
 class function TInstantCodeMetadataInfo.InternalAtInstance(
   Reader: TInstantCodeReader; out Name: string): Boolean;
+var
+  SavePos: TInstantCodePos;
 begin
   Result := Reader.NextChar = '{';
+  if not Result then
+  begin
+    SavePos := Reader.Position;
+    try
+      Reader.IgnoreComments := False;
+      result := Reader.ReadMatching('{' + MetadataInfoID + ' ');
+    finally
+      Reader.IgnoreComments := True;
+      Reader.Position := SavePos;
+    end;
+  end;
 end;
 
 procedure TInstantCodeMetadataInfo.InternalRead(Reader: TInstantCodeReader);
@@ -4441,6 +4457,10 @@ var
 begin
   if not Reader.EnterComment then
     Reader.ErrorExpected('{');
+
+  if SameText(Reader.NextToken, MetadataInfoID) then
+    Reader.ReadToken;
+
   Persistence := peEmbedded;
   SaveErrorSeverity := Reader.ErrorSeverity;
   Reader.ErrorSeverity := esFatal;
@@ -4482,7 +4502,7 @@ var
   S: string;
   Start, I: Integer;
 begin
-  Writer.Write('{ ');
+  Writer.Write('{' + MetadataInfoID + ' ');   
   try
     S := ClassStatement;
     if S = '' then

@@ -25,6 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Steven Mitchell: updating for OFExpt in MM7
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -46,6 +47,8 @@ uses
 
 type
   TInstantStringsEvent = procedure(Sender: TObject; Items: TStrings) of object;
+  TInstantAttrStringsEvent = procedure(Sender: TObject; const ClassName: String;
+    Items: TStrings) of object;
 
   TInstantAttributeEditorForm = class(TInstantEditForm)
     AccessSheet: TTabSheet;
@@ -109,16 +112,18 @@ type
     procedure ExternalLinkedNameEditChange(Sender: TObject);
     procedure ExternalLinkedNameEditEnter(Sender: TObject);
   private
+    FInMM: boolean;   // True if in ModelMaker, default is False
     FLimited: Boolean;
     FModel: TInstantCodeModel;
     FOnLoadClasses: TInstantStringsEvent;
+    FOnLoadClassAttributes: TInstantAttrStringsEvent;  
     function GetSubject: TInstantCodeAttribute;
     procedure SetSubject(const Value: TInstantCodeAttribute);
     procedure SetLimited(Value: Boolean);
     procedure SetModel(const Value: TInstantCodeModel);
   protected
     procedure LoadClasses;
-    procedure LoadClassAttributes;    
+    procedure LoadClassAttributes;
     procedure LoadData; override;
     procedure LoadEnums(TypeInfo: PTypeInfo; Items: TStrings;
       Values: Pointer);
@@ -131,9 +136,11 @@ type
     procedure SubjectChanged; override;
     procedure UpdateControls;
   public
+    property InMM: boolean read FInMM write FInMM;
     property Limited: Boolean read FLimited write SetLimited;
     property Model: TInstantCodeModel read FModel write SetModel;
     property OnLoadClasses: TInstantStringsEvent read FOnLoadClasses write FOnLoadClasses;
+    property OnLoadClassAttributes: TInstantAttrStringsEvent read FOnLoadClassAttributes write FOnLoadClassAttributes;
     property Subject: TInstantCodeAttribute read GetSubject write SetSubject;
   end;
 
@@ -151,6 +158,7 @@ begin
   LoadMultipleImages(TypeImages, 'IO_ATTRIBUTEEDITORIMAGES', HInstance);
   PageControl.ActivePage := DefinitionSheet;
   ActiveControl := NameEdit;
+  FInMM := False;       
 end;
 
 function TInstantAttributeEditorForm.GetSubject: TInstantCodeAttribute;
@@ -327,7 +335,10 @@ begin
           raise Exception.Create('Name already used');
         end;
       end;
-  inherited;
+  if InMM then
+    SaveData
+  else
+    inherited;
 end;
 
 procedure TInstantAttributeEditorForm.PopulateClasses;
@@ -432,9 +443,11 @@ procedure TInstantAttributeEditorForm.TypeEditClick(Sender: TObject);
 begin
   with TypeEdit do
     SubjectExposer.AssignFieldValue(Field, Text);
+  // Controls need to be enabled first to
+  // reliably load combo dropdown lists in MM OFExpt
+  UpdateControls;
   LoadVisibilities;
   LoadIsExternal;
-  UpdateControls;
 end;
 
 procedure TInstantAttributeEditorForm.UpdateControls;
@@ -459,12 +472,15 @@ procedure TInstantAttributeEditorForm.UpdateControls;
 
 var
   HasName, HasClass, HasExternalStoredName, HasExternalLinkedName: Boolean;
-  IsComplex, IsContainer, IsExternal, IsMaskable, IsString, IsValid: Boolean;
+  IsComplex, IsContainer, CanBeExternal, IsExternal, IsMaskable, IsString, IsValid: Boolean;
 begin
-  if (Subject.AttributeType<>atParts) and (Subject.AttributeType<>atReferences) then
+  CanBeExternal := Subject.AttributeType in [atPart, atParts, atReferences];
+  if not CanBeExternal then
     Subject.IsExternal := ceNo;
-  if Subject.IsExternal = ceLinked then Subject.ExternalStoredName := '';
-  if Subject.IsExternal = ceStored then Subject.ExternalLinkedName := '';
+  if Subject.IsExternal = ceLinked then
+    Subject.ExternalStoredName := '';
+  if Subject.IsExternal = ceStored then
+    Subject.ExternalLinkedName := '';
 
   HasName := NameEdit.Text <> '';
   HasClass := ObjectClassEdit.Text <> '';
@@ -477,7 +493,7 @@ begin
   IsExternal := Subject.IsExternal <> ceNo;
   IsString := Subject.AttributeType in [atString, atMemo];
   IsValid := HasName and (not IsComplex or HasClass) and
-    (not IsExternal or (HasExternalStoredName or HasExternalLinkedName) );
+    (not IsExternal or (HasExternalStoredName or HasExternalLinkedName));
 
   DisableSubControls(DefinitionSheet, Limited);
   DisableSubControls(AccessSheet, Limited);
@@ -496,16 +512,16 @@ begin
     EnableCtrl(MethodInsertCheckBox, IsContainer);
     EnableCtrl(MethodRemoveCheckBox, IsContainer);
 
-    EnableCtrl(IsExternalEdit, IsContainer);
-    EnableCtrl(IsExternalLabel, IsContainer);
+    EnableCtrl(IsExternalEdit, CanBeExternal);
+    EnableCtrl(IsExternalLabel, CanBeExternal);
   end;
-  EnableCtrl(StorageNameLabel, not (IsContainer and IsExternal) );
-  EnableCtrl(StorageNameEdit, not (IsContainer and IsExternal) );
+  EnableCtrl(StorageNameLabel, not IsExternal);
+  EnableCtrl(StorageNameEdit, not IsExternal);
 
-  EnableCtrl(ExternalLinkedNameLabel, IsContainer and (Subject.IsExternal=ceLinked) );
-  EnableCtrl(ExternalLinkedNameEdit, IsContainer and (Subject.IsExternal=ceLinked) );
-  EnableCtrl(ExternalStoredNameLabel, IsContainer and (Subject.IsExternal=ceStored) );
-  EnableCtrl(ExternalStoredNameEdit, IsContainer and (Subject.IsExternal=ceStored) );
+  EnableCtrl(ExternalLinkedNameLabel, IsExternal and (Subject.IsExternal = ceLinked));
+  EnableCtrl(ExternalLinkedNameEdit, IsExternal and (Subject.IsExternal = ceLinked));
+  EnableCtrl(ExternalStoredNameLabel, IsExternal and (Subject.IsExternal = ceStored));
+  EnableCtrl(ExternalStoredNameEdit, IsExternal and (Subject.IsExternal = ceStored));
 
   EnableCtrl(SizeLabel, IsString);
   EnableCtrl(SizeEdit, IsString);
@@ -545,10 +561,15 @@ begin
     Items.BeginUpdate;
     try
       Items.Clear;
-      if Assigned(FModel) then
-        if Assigned(FModel.FindClass(ObjectClassEdit.Text)) then
-          for I := 0 to Pred(FModel.FindClass(ObjectClassEdit.Text).AttributeCount) do
-            Items.Add(FModel.FindClass(ObjectClassEdit.Text).Attributes[i].Name);
+      if Assigned(FOnLoadClassAttributes) then begin
+          FOnLoadClassAttributes(Self, ObjectClassEdit.Text, Items);
+      end
+      else begin
+        if Assigned(FModel) then
+          if Assigned(FModel.FindClass(ObjectClassEdit.Text)) then
+            for I := 0 to Pred(FModel.FindClass(ObjectClassEdit.Text).AttributeCount) do
+              Items.Add(FModel.FindClass(ObjectClassEdit.Text).Attributes[i].Name);
+      end;
     finally
       Items.EndUpdate;
     end;
