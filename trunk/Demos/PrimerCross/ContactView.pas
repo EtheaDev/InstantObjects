@@ -1,7 +1,7 @@
 unit ContactView;
 
 interface
-
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
 {$IFDEF VER150}
 {$WARN UNSAFE_TYPE OFF}
 {$WARN UNSAFE_CAST OFF}
@@ -9,7 +9,7 @@ interface
 {$ENDIF}
 
 uses
-  SysUtils, Classes, DB, Types,
+  SysUtils, Classes, DB, 
 {$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   ComCtrls, Grids, DBGrids, ExtCtrls, Buttons, ShellApi,

@@ -32,6 +32,8 @@ unit InstantEdit;
 
 interface
 
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
 uses
   SysUtils, Classes, DB,
 {$IFDEF MSWINDOWS}

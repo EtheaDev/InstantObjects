@@ -1,7 +1,7 @@
 unit Utility;
 
 interface
-
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
 procedure BeginBusy;
 procedure EndBusy;
 function Confirm(const Text: string): Boolean;

@@ -483,7 +483,6 @@ begin
 {$ENDIF}
   ConnectionView.Columns[0].Width := 225;
   ConnectionView.Columns[1].Width := 80;
-  ConnectionView.Columns[2].Width := 80;
   UpdateMenu;
 end;
 

@@ -647,9 +647,9 @@ uses
 {$IFDEF LINUX}
   QControls, QMask, QForms,
 {$ENDIF}
-  {$IFDEF D6+}Variants, MaskUtils,{$ENDIF} InstantClasses,
+  {$IFDEF D6+}Variants, MaskUtils, FmtBcd,{$ENDIF} InstantClasses,
   InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors,
-  DbConsts, FmtBcd;
+  DbConsts;
 
 const
   SelfFieldName = 'Self';
@@ -2744,6 +2744,8 @@ begin
   FRemovedObject := nil;
   FNewObject := AddNewObject(ActiveBuffer,
     GetBookmarkFlag(ActiveBuffer) = bfEOF);
+  if (FNewObject is TInstantObject) and (TInstantObject(FNewObject).RefCount > 1) then
+    TInstantObject(FNewObject).Release;
 end;
 
 procedure TInstantCustomExposer.InternalInsertObject(ARecNo: Integer;

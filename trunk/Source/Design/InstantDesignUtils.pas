@@ -32,6 +32,8 @@ unit InstantDesignUtils;
 
 interface
 
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
 uses
   DB,
 {$IFDEF MSWINDOWS}

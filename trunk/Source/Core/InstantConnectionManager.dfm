@@ -1,7 +1,7 @@
 object InstantConnectionManagerForm: TInstantConnectionManagerForm
   Left = 327
   Top = 305
-  Width = 393
+  Width = 350
   Height = 281
   BorderIcons = [biSystemMenu]
   Caption = 'Connection Manager'
@@ -32,7 +32,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   object ConnectionView: TListView
     Left = 0
     Top = 0
-    Width = 385
+    Width = 342
     Height = 215
     Align = alClient
     Columns = <
@@ -43,10 +43,6 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       item
         Caption = 'Type'
         Width = 80
-      end
-      item
-        Caption = 'Blob format'
-        Width = 80
       end>
     PopupMenu = ConnectionMenu
     TabOrder = 0
@@ -56,7 +52,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   object BottomPanel: TPanel
     Left = 0
     Top = 215
-    Width = 385
+    Width = 342
     Height = 32
     Align = alBottom
     TabOrder = 1
@@ -69,7 +65,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       TabOrder = 0
     end
     object ButtonsPanel: TPanel
-      Left = 223
+      Left = 180
       Top = 1
       Width = 161
       Height = 30

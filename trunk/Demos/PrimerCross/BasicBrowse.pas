@@ -1,7 +1,7 @@
 unit BasicBrowse;
 
 interface
-
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
 uses
   SysUtils, Classes, DB,
 {$IFDEF MSWINDOWS}
@@ -9,10 +9,10 @@ uses
   Grids, DBGrids, ExtCtrls, ToolWin, ComCtrls, ImgList, Menus, ActnList,
 {$ENDIF}
 {$IFDEF LINUX}
-  Qt, QGraphics, QControls, QForms, QDialogs, QStdCtrls,
+  Qt, QGraphics, QControls, QForms, QDialogs, QStdCtrls, QTypes,
   QGrids, QDBGrids, QExtCtrls, QComCtrls, QImgList, QMenus, QActnList,
 {$ENDIF}
-  InstantPresentation, QTypes;
+  InstantPresentation;
 
 const
 {$IFDEF MSWINDOWS}

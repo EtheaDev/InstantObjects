@@ -33,6 +33,8 @@ unit InstantAttributeEditor;
 
 interface
 
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
 uses
   SysUtils, Classes,
   InstantEdit, DB, InstantCode, TypInfo,

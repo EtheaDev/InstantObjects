@@ -1,7 +1,7 @@
 unit ContactEdit;
 
 interface
-
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}

@@ -43,6 +43,7 @@ unit InstantClasses;
 interface
 
 uses
+{$IFDEF D5}Windows,{$ENDIF}
   Classes, InstantConsts, SysUtils;
 
 const
@@ -372,6 +373,10 @@ const
    ('Binary format',
     'XML format');
 
+{$IFDEF D5}
+  sLineBreak = #13#10;
+{$ENDIF}
+
 function InstantBuildEndTag(const TagName: string): string;
 function InstantBuildStartTag(const TagName: string): string;
 procedure InstantCheckClass(AClass: TClass; MinimumClass: TClass);
@@ -405,7 +410,7 @@ type
     ExceptAddr: Pointer;
     ExceptObject: TObject;
 {$IFDEF MSWINDOWS}
-    ExceptionRecord: PExceptionRecord platform;
+    ExceptionRecord: PExceptionRecord {$IFNDEF VER130}platform{$ENDIF};
 {$ENDIF}
 {$IFDEF LINUX}
     ExceptionAddress: LongWord platform;

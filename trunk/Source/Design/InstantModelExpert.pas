@@ -39,6 +39,11 @@ uses
   Classes, ToolsAPI, ToolIntf, EditIntf, InstantOTA, Menus, ImgList,
   InstantDesignResources, InstantModelExplorer, InstantCode, ExtCtrls, Forms;
 
+{$IFDEF VER130}
+const
+  sLineBreak = #13#10;
+{$ENDIF}
+
 type
   TIOMetaDataCheckState = (mcNeverChecked, mcCheckError, mcCheckCorrect);
 
