@@ -4434,13 +4434,13 @@ class function TInstantCodeMetadataInfo.InternalAtInstance(
 var
   SavePos: TInstantCodePos;
 begin
-  Result := Reader.NextChar = '{';
-  if not Result then
-  begin
+  Result := False;
+  if Reader.NextChar = '{' then begin
     SavePos := Reader.Position;
     try
       Reader.IgnoreComments := False;
-      result := Reader.ReadMatching('{' + MetadataInfoID + ' ');
+      Result := Reader.ReadMatching('{' + MetadataInfoID + ' ')
+        or (Reader.NextChar = '{');
     finally
       Reader.IgnoreComments := True;
       Reader.Position := SavePos;
@@ -4460,6 +4460,8 @@ begin
 
   if SameText(Reader.NextToken, MetadataInfoID) then
     Reader.ReadToken;
+//  else //For version 1.7: check MetadataInfoID Keyword
+//    Reader.ErrorExpected(MetadataInfoID);
 
   Persistence := peEmbedded;
   SaveErrorSeverity := Reader.ErrorSeverity;
