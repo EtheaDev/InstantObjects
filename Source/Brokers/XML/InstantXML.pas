@@ -31,6 +31,7 @@ unit InstantXML;
 interface
 
 uses
+{$IFDEF VER130}{$DEFINE MSWINDOWS}FileCtrl,{$ENDIF}
   Classes, DB, InstantPersistence, InstantCommand, Contnrs;
 
 const
@@ -38,7 +39,8 @@ const
   XML_EXT = 'xml';
   DOT_XML_EXT = '.'+XML_EXT;
   XML_WILDCARD = '*'+DOT_XML_EXT;
-
+  {$IFDEF VER130}PathDelim = '\';{$ENDIF}
+  
 type
   TXMLFileFormat = (xffUtf8, xffUtf8BOT, xffIso);
 
@@ -224,21 +226,18 @@ function GetFileClassName(const FileName : string) : string; forward;
 function GetFileId(const FileName : string) : string; forward;
 function GetFileVersion(const FileName : string) : Integer; forward;
 
-
 procedure Register;
 begin
   RegisterComponents('InstantObjects', [TInstantXMLConnector]);
   RegisterComponents('InstantObjects', [TXMLFilesAccessor]);
 end;
 
-
-// note by marcoc: there is already an IncludeTrailingPathDelimiter
-{function CheckPathDelim(const Path : string) : string;
+{$IFDEF VER130}
+function IncludeTrailingPathDelimiter(const S : string) : string;
 begin
-  Result := Path;
-  if Copy(Path,length(Path),1) <> pathDelim then
-    Result := Result + PathDelim;
-end;}
+  Result := IncludeTrailingBackSlash(S);
+end;
+{$ENDIF}
 
 procedure GlobalLoadFileList(const Path: string; FileList : TStringList);
 var
@@ -920,16 +919,18 @@ begin
   try
     strStream.Write(XMLHEADER, Length(XMLHEADER));
     InstantWriteObject(strStream, sfXML, AObject);
+{$IFNDEF VER130}
     if FXMLFileFormat in [xffUtf8, xffUtf8Bot] then
       strUtf8 := AnsiToUtf8 (strStream.DataString);
+{$ELSE}
+    strUtf8 := strStream.DataString;
+{$ENDIF}
   finally
     strStream.Free;
   end;
 
   fileStream := TFileStream.Create(FileName, fmCreate);
   try
-    // if FXMLFileFormat = xffUtf8Bot then
-       // add BOT
     Result := fileStream.Write (strUtf8[1], Length (strUtf8)) <> 0;
   finally
     fileStream.Free;
@@ -966,8 +967,10 @@ begin
     fileStream.Free;
   end;
 
+{$IFNDEF VER130}
   if FXMLFileFormat in [xffUtf8, xffUtf8Bot] then
     strUtf8 := Utf8ToAnsi (strUtf8);
+{$ENDIF}
 
   strstream := TStringStream.Create (strUtf8);
   try

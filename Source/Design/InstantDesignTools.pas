@@ -34,8 +34,8 @@ interface
 
 uses
   Classes,
-{$IFDEF MSWINDOWS}
 {$I ..\core\InstantDefines.inc}
+{$IFDEF MSWINDOWS}
   {$IFDEF D6+}
     DesignIntf, DesignEditors,
   {$ELSE}
@@ -46,7 +46,7 @@ uses
 {$I ../core/InstantDefines.inc}
   DesignIntf, DesignEditors, ClxStrEdit,
 {$ENDIF}
-  StrEdit, InstantPresentation, ColnEdit;
+  StrEdit, ColnEdit, InstantPresentation;
 
 type
   TInstantSelectorEditor = class(TComponentEditor)

@@ -32,6 +32,8 @@ unit InstantAbout;
 
 interface
 
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
@@ -90,8 +92,8 @@ begin
   //Fonts and sizes
   TitleLabel.Font.Size := 18;
   TitleLabel.Font.Style := [fsBold];
-  //Package version
-  S := Format('Version %d.%d.%d %s', [1,6,6,'MPL']);
+  //Package version for Kylix
+  S := Format('Version %d.%d.%d %s', [2,0,0,'MPL']);
 {$ENDIF}
   VersionLabel.Caption := S;
 end;

@@ -1,7 +1,7 @@
 unit PersonEdit;
 
 interface
-
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
@@ -171,7 +171,9 @@ begin
   inherited;
 {$IFDEF MSWINDOWS}
   LoadMultipleImages(EmployerToolImages,'PERSONEMPLOYERTOOLIMAGES',HInstance);
+  {$IFNDEF VER130}
   PictureImage.Proportional := True;
+  {$ENDIF}
 {$ENDIF}
 {$IFDEF LINUX}
   LoadMultipleImages(EmployerToolImages,ExtractFilePath(Application.ExeName)+'PERSONEMPLOYERTOOLIMAGES.BMP');

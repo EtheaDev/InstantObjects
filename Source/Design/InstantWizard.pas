@@ -32,6 +32,8 @@ unit InstantWizard;
 
 interface
 
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
 uses
   SysUtils, Classes, InstantDialog,
 {$IFDEF MSWINDOWS}

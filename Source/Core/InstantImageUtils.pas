@@ -29,6 +29,8 @@ unit InstantImageUtils;
 
 interface
 
+{$I InstantDefines.inc}
+
 uses
   SysUtils,
 {$IFDEF MSWINDOWS}

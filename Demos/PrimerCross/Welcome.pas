@@ -1,7 +1,7 @@
 unit Welcome;
 
 interface
-
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
 {$IFDEF VER150}
 {$WARN UNSAFE_TYPE OFF}
 {$ENDIF}

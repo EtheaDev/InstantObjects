@@ -178,15 +178,13 @@ type
   public
     function CreateDataSet(const Statement: string; Params: TParams): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
-    function Execute(const Statement: string; Params: TParams): Integer; override;
+    function Execute(const AStatement: string; AParams: TParams): Integer; override;
   end;
 
   TInstantADOMSSQLResolver = class(TInstantSQLResolver)
   end;
 
   TInstantADOMSSQLQuery = class(TInstantSQLQuery)
-  protected
-    function CreateDataSet(const AStatement: string; AParams: TParams): TDataSet; override;
   end;
 
 procedure Register;
@@ -223,7 +221,15 @@ begin
         Parameter := Items[I];
         Param := Params.ParamByName(Parameter.Name);
         Parameter.DataType := Param.DataType;
-        Parameter.Assign(Param);
+        if Param.ParamType = DB.ptUnknown then
+          Parameter.Direction := pdInput else
+          Parameter.Direction := TParameterDirection(Param.ParamType);
+        Parameter.Attributes := [];
+        Parameter.NumericScale := Param.NumericScale;
+        Parameter.Precision := Param.NumericScale;
+        Parameter.Size := Param.Size;
+        Parameter.Value := Param.Value;
+//        Parameter.Assign(Param);
       end;
     end;
   end;
@@ -1040,13 +1046,18 @@ var
   Query: TADOQuery;
 begin
   Query := TADOQuery.Create(nil);
-  with Query do
-  begin
-    Connection := (Connector as TInstantADOConnector).Connection;
-    SQL.Text := Statement;
-    AssignParameters(Params, Parameters);
-  end;
-  Result := Query;
+  Try
+    Query.CursorType := ctOpenForwardOnly;
+    Query.LockType := ltReadOnly;
+    Query.Connection := (Connector as TInstantADOConnector).Connection;
+    Query.SQL.Text := Statement;
+    if Assigned(Params) then
+      AssignParameters(Params, Query.Parameters);
+    Result := Query;
+  Except
+    Query.Free;
+    raise;
+  End;    
 end;
 
 function TInstantADOMSSQLBroker.CreateResolver(
@@ -1073,14 +1084,16 @@ begin
     Result := Result + InstantEmbrace(IntToStr(Size), '()');
 end;
 
-function TInstantADOMSSQLBroker.Execute(const Statement: string;
-  Params: TParams): Integer;
+function TInstantADOMSSQLBroker.Execute(const AStatement: string;
+  AParams: TParams): Integer;
+var
+  DataSet : TADOQuery;
 begin
-  with CreateDataSet(Statement, Params) as TADOQuery do
+  DataSet := AcquireDataSet(AStatement, AParams) as TADOQuery;
   try
-    Result := ExecSQL;
+    Result := DataSet.ExecSQL;
   finally
-    Free;
+    ReleaseDataSet(DataSet);
   end;
 end;
 
@@ -1110,26 +1123,6 @@ begin
 end;
 
 { TInstantADOMSSQLQuery }
-
-function TInstantADOMSSQLQuery.CreateDataSet(const AStatement: string;
-  AParams: TParams): TDataSet;
-var
-  Query: TADOQuery;
-begin
-  Query := TADOQuery.Create(nil);
-  try
-    Query.SQL.Text := AStatement;
-    AssignParameters(AParams, Query.Parameters);
-    Query.CursorType := ctOpenForwardOnly;
-    Query.LockType := ltReadOnly;
-    Query.MaxRecords := MaxCount;
-    Query.Connection := (Connector as TInstantADOConnector).Connection;
-    Result := Query;
-  except
-    Query.Free;
-    raise;
-  end;
-end;
 
 initialization
   RegisterClass(TInstantADOConnectionDef);

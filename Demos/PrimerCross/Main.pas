@@ -1,7 +1,7 @@
 unit Main;
 
 interface
-
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
 {$IFDEF VER150}
 {$WARN UNSAFE_TYPE OFF}
 {$WARN UNSAFE_CAST OFF}
@@ -15,11 +15,10 @@ uses
   Menus, ExtCtrls, ComCtrls, ToolWin, Grids, DBGrids, ImgList, ActnList,
 {$ENDIF}
 {$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls,
+  QGraphics, QControls, QForms, QDialogs, QStdCtrls,QTypes,
   QMenus, QExtCtrls, QComCtrls, QGrids, QDBGrids, QImgList, QActnList,
 {$ENDIF}
-  InstantPersistence, BasicView, Stopwatch, InstantConnectionManager,
-  QTypes;
+  InstantPersistence, BasicView, Stopwatch, InstantConnectionManager;
 
 type
   TMainForm = class(TForm)

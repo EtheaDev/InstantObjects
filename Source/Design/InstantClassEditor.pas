@@ -32,6 +32,8 @@ unit InstantClassEditor;
 
 interface
 
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
 uses
   SysUtils, Classes, DB, Contnrs, InstantPresentation,
   InstantPersistence, InstantCode, InstantEdit,

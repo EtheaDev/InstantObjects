@@ -335,11 +335,14 @@ begin
 end;
 
 procedure TInstantIBXConnector.InternalCreateDatabase;
+{$IFDEF D7+}
 var
   db_handle: TISC_DB_HANDLE;
   tr_handle: TISC_TR_HANDLE;
+{$ENDIF}
 begin
   inherited;
+{$IFDEF D7+}
   // IBX's TIBDatabase.CreateDatabase is fatally flawed and so we have to
   // bypass it for the time being.
   Connection.CheckInactive;
@@ -355,6 +358,7 @@ begin
   finally
     Disconnect;
   end;
+{$ENDIF}
 end;
 
 function TInstantIBXConnector.GetDatabaseExists: Boolean;

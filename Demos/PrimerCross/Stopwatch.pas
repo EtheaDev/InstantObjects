@@ -2,6 +2,8 @@ unit Stopwatch;
 
 interface
 
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
 uses
   SysUtils,
 {$IFDEF MSWINDOWS}

@@ -32,6 +32,8 @@ unit InstantModelExplorer;
 
 interface
 
+{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
 uses
   SysUtils, Classes, IniFiles,
 {$IFDEF MSWINDOWS}
