@@ -11071,7 +11071,8 @@ procedure TInstantCustomRelationalBroker.StoreMap(AObject: TInstantObject;
   const AObjectId: string; Map: TInstantAttributeMap;
   ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
 
-  function MustStoreMap: Boolean;
+  // Always storing fixes #880713
+  {function MustStoreMap: Boolean;
   var
     I: Integer;
     Attrib: TInstantAttribute;
@@ -11087,20 +11088,20 @@ procedure TInstantCustomRelationalBroker.StoreMap(AObject: TInstantObject;
         Exit;
     end;
     Result := False;
-  end;
+  end;}
 
 var
   Resolver: TInstantCustomResolver;
-  MustStore: Boolean;
+  {MustStore: Boolean;}
 begin
-  MustStore := MustStoreMap;
-  if MustStore or AObject.IsPersistent then
+  {MustStore := MustStoreMap;}
+  if {MustStore or }AObject.IsPersistent then
   begin
     Resolver := EnsureResolver(Map);
-    if MustStore then
+    {if MustStore then}
       Resolver.StoreMap(AObject, Map, ConflictAction, Info)
-    else if AObject.IsPersistent then
-      Resolver.DisposeMap(AObject, Map, ConflictAction, Info);
+    {else if AObject.IsPersistent then
+      Resolver.DisposeMap(AObject, Map, ConflictAction, Info);}
   end;
 end;
 
