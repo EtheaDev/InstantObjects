@@ -357,7 +357,7 @@ type
   private
     FModel: TInstantModel;
     FTableMetadataCollection: TInstantTableMetadatas;
-    FBlobStreamFormat: TInstantStreamFormat; //CB
+    FBlobStreamFormat: TInstantStreamFormat; 
     function GetTableMetadataCollection: TInstantTableMetadatas;
     function GetTableMetadatas(Index: Integer): TInstantTableMetadata;
     function GetTableMetadataCount: Integer;
@@ -374,7 +374,7 @@ type
     function FindTableMetadata(const Name: string): TInstantTableMetadata;
     property TableMetadataCount: Integer read GetTableMetadataCount;
     property TableMetadatas[Index: Integer]: TInstantTableMetadata read GetTableMetadatas;
-    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; //CB
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; 
   end;
 
   TInstantAttributeMap = class(TInstantNamedList)
@@ -747,8 +747,8 @@ type
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
-    procedure AssignPicture(Source: TPicture); //CB
-    procedure AssignToPicture(Dest: TPicture); //CB
+    procedure AssignPicture(Source: TPicture); 
+    procedure AssignToPicture(Dest: TPicture); 
     procedure Clear;
     procedure LoadDataFromStream(AStream: TStream);
     function ReadBuffer(var Buffer; Position, Count: Integer): Integer;
@@ -767,7 +767,6 @@ type
     procedure WriteObject(Writer: TInstantWriter); override;
   end;
 
-  //CB
   TInstantGraphic = class(TInstantBlob)
   protected
     class function AttributeType: TInstantAttributeType; override;
@@ -1243,7 +1242,7 @@ type
   TInstantConnectionDef = class(TInstantCollectionItem)
   private
     FIsBuilt: Boolean;
-    FBlobStreamFormat: TInstantStreamFormat; //CB
+    FBlobStreamFormat: TInstantStreamFormat; 
   protected
     function GetCaption: string; virtual;
     procedure InitConnector(Connector: TInstantConnector); virtual;
@@ -1255,7 +1254,7 @@ type
     property Caption: string read GetCaption;
   published
     property IsBuilt: Boolean read FIsBuilt write FIsBuilt;
-    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; //CB
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; 
   end;
 
   TInstantConnectionDefs = class(TInstantCollection)
@@ -1288,7 +1287,7 @@ type
     FBeforeConnect: TNotifyEvent;
     FBeforeBuildDatabase: TInstantSchemeEvent;
     FBeforeDisconnect: TNotifyEvent;
-    FBlobStreamFormat: TInstantStreamFormat; //CB
+    FBlobStreamFormat: TInstantStreamFormat; 
     FOnGenerateId: TInstantGenerateIdEvent;
     procedure AbandonObjects;
     procedure ApplyTransactedObjectStates;
@@ -1374,7 +1373,7 @@ type
     property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase write FBeforeBuildDatabase;
     property BeforeConnect: TNotifyEvent read FBeforeConnect write FBeforeConnect;
     property BeforeDisconnect: TNotifyEvent read FBeforeDisconnect write FBeforeDisconnect;
-    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; //CB
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; 
     property OnGenerateId: TInstantGenerateIdEvent read FOnGenerateId write FOnGenerateId;
   end;
 
@@ -1530,7 +1529,7 @@ type
       ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
   public
     constructor Create(AConnector: TInstantConnector); virtual;
-    destructor destroy; override; 
+    destructor destroy; override;
     procedure BuildDatabase(Scheme: TInstantScheme);
     function CreateQuery: TInstantQuery;
     function DisposeObject(AObject: TInstantObject;
@@ -1812,7 +1811,7 @@ type
     procedure SetConnection(Value: TCustomConnection);
     procedure SetLoginPrompt(const Value: boolean);
   protected
-    procedure AssignLoginOptions; virtual;//CB
+    procedure AssignLoginOptions; virtual;
     procedure AfterConnectionChange; virtual;
     procedure BeforeConnectionChange; virtual;
     procedure CheckConnection;
@@ -1820,11 +1819,11 @@ type
     procedure InternalConnect; override;
     procedure InternalDisconnect; override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    property Connection: TCustomConnection read GetConnection write SetConnection;
   public
+    property Connection: TCustomConnection read GetConnection write SetConnection;
     function HasConnection: Boolean;
     constructor Create(AOwner : TComponent); override;
-    property LoginPrompt: boolean read FLoginPrompt write SetLoginPrompt default True; //CB
+    property LoginPrompt: boolean read FLoginPrompt write SetLoginPrompt default True; 
   end;
 
   TInstantConnectionBasedConnectionDef = class(TInstantRelationalConnectionDef)
@@ -1836,7 +1835,7 @@ type
   public
     constructor Create(Collection: TCollection); override;
   published
-    property LoginPrompt: boolean read FLoginPrompt write FLoginPrompt default True; //CB
+    property LoginPrompt: boolean read FLoginPrompt write FLoginPrompt default True; 
   end;
 
   TInstantNavigationalResolver = class;
@@ -2061,7 +2060,7 @@ type
   private
     FGenerator: TInstantSQLGenerator;
     FResolverList: TObjectList;
-    FUsePreparedQuery : boolean; //CB
+    FUsePreparedQuery : boolean; 
     function GetResolverList: TObjectList;
     function GetResolverCount: Integer;
     function GetResolvers(Index: Integer): TInstantSQLResolver;
@@ -2071,10 +2070,10 @@ type
     function EnsureResolver(AMap: TInstantAttributeMap): TInstantCustomResolver; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     property ResolverList: TObjectList read GetResolverList;
-    procedure PrepareQuery(DataSet : TDataSet); virtual; //CB
-    function ExecuteQuery(DataSet : TDataSet) : integer; virtual; //CB
-    procedure UnprepareQuery(DataSet : TDataSet); virtual; //CB
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); virtual; //CB
+    procedure PrepareQuery(DataSet : TDataSet); virtual; 
+    function ExecuteQuery(DataSet : TDataSet) : integer; virtual; 
+    procedure UnprepareQuery(DataSet : TDataSet); virtual; 
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); virtual; 
   public
     destructor Destroy; override;
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual; abstract;
@@ -2085,7 +2084,7 @@ type
     property Generator: TInstantSQLGenerator read GetGenerator;
     property ResolverCount: Integer read GetResolverCount;
     property Resolvers[Index: Integer]: TInstantSQLResolver read GetResolvers;
-    property UsePreparedQuery : boolean read FUsePreparedQuery write FUsePreparedQuery; //CB
+    property UsePreparedQuery : boolean read FUsePreparedQuery write FUsePreparedQuery; 
   end;
 
   TInstantSQLResolver = class(TInstantCustomResolver)
@@ -2098,11 +2097,10 @@ type
     FUpdateSQL: string;
     FUpdateConcurrentSQL: string;
 
-    //CB
     FPreparedDataSet : TDataSet;
     LastStatement : string;
     LastConnector : TObject;
-    function CreatePreparedQuery(const AStatement: string; AParams: TParams = nil): TDataSet; //CB
+    function CreatePreparedQuery(const AStatement: string; AParams: TParams = nil): TDataSet; 
 
     procedure AddIntegerParam(Params: TParams; const ParamName: string; Value: Integer);
     procedure AddStringParam(Params: TParams; const ParamName, Value: string);
@@ -2153,7 +2151,7 @@ type
       E: Exception): Exception; virtual;
   public
     constructor Create(ABroker: TInstantSQLBroker; AMap: TInstantAttributeMap);
-    destructor Destroy; override; //CB
+    destructor Destroy; override; 
     property Broker: TInstantSQLBroker read GetBroker;
     property DeleteConcurrentSQL: string read GetDeleteConcurrentSQL write FDeleteConcurrentSQL;
     property DeleteSQL: string read GetDeleteSQL write FDeleteSQL;
@@ -2162,7 +2160,7 @@ type
     property SelectSQL: string read GetSelectSQL write FSelectSQL;
     property UpdateConcurrentSQL: string read GetUpdateConcurrentSQL write FUpdateConcurrentSQL;
     property UpdateSQL: string read GetUpdateSQL write FUpdateSQL;
-    property UsePreparedQuery : boolean read GetUsePreparedQuery; //CB
+    property UsePreparedQuery : boolean read GetUsePreparedQuery; 
   end;
 
   TInstantSQLQuery = class(TInstantCustomRelationalQuery)
@@ -2305,9 +2303,9 @@ type
     property Step: Integer read FStep;
   end;
 
-procedure AssignInstantStreamFormat(StringList : TStrings); //CB
+procedure AssignInstantStreamFormat(StringList : TStrings); 
 function InstantAttributeTypeToDataType(AttributeType: TInstantAttributeType;
-  BlobStreamFormat: TInstantStreamFormat = sfBinary): TInstantDataType; //CB
+  BlobStreamFormat: TInstantStreamFormat = sfBinary): TInstantDataType; 
 function InstantConnectorClasses: TList;
 procedure InstantCheckConnection(Connection: TCustomConnection);
 function InstantCheckConnector(var Connector: TInstantConnector): TInstantConnector;
@@ -2332,7 +2330,7 @@ procedure InstantRegisterClasses(AClasses: array of TInstantObjectClass);
 procedure InstantUnregisterClass(AClass: TInstantObjectClass);
 procedure InstantUnregisterClasses(AClasses: array of TInstantObjectClass);
 
-function InstantResolveGraphicFileType(AStream: TStream ): TInstantGraphicFileFormat; //CB
+function InstantResolveGraphicFileType(AStream: TStream ): TInstantGraphicFileFormat; 
 procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
   AGraphicClass: TGraphicClass);
 function InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat) : TGraphicClass;
@@ -2364,7 +2362,7 @@ const
 var
   ConnectorClasses: TList;
   ClassList: TList;
-  GraphicClassList: array[TInstantGraphicFileFormat] OF TGraphicClass; //CB
+  GraphicClassList: array[TInstantGraphicFileFormat] OF TGraphicClass; 
   RuntimeModel: TInstantModel;
   ObjectNotifiers: TInstantObjectNotifiers;
   DefaultConnector: TInstantConnector;
@@ -2407,7 +2405,7 @@ end;
 
 { Global routines }
 
-procedure AssignInstantStreamFormat(StringList : TStrings); //CB
+procedure AssignInstantStreamFormat(StringList : TStrings); 
 var
   i : TInstantStreamFormat;
 begin
@@ -8037,7 +8035,6 @@ end;
 
 procedure TInstantObject.SaveState;
 begin
-  //CB: bug fixing
   if State.PersistentId = '' then
     Exit;
 
@@ -8204,7 +8201,7 @@ end;
 
 procedure TInstantConnectionDef.InitConnector(Connector: TInstantConnector);
 begin
-  Connector.BlobStreamFormat := BlobStreamFormat; //CB
+  Connector.BlobStreamFormat := BlobStreamFormat; 
 end;
 
 { TInstantConnectionDefs }
@@ -10915,8 +10912,8 @@ begin
   Connection := CreateConnection(Connector);
   try
     (Connector as TInstantConnectionBasedConnector).Connection := Connection;
-    (Connector as TInstantConnectionBasedConnector).BlobStreamFormat := BlobStreamFormat; //CB
-    (Connector as TInstantConnectionBasedConnector).LoginPrompt := LoginPrompt; //CB
+    (Connector as TInstantConnectionBasedConnector).BlobStreamFormat := BlobStreamFormat; 
+    (Connector as TInstantConnectionBasedConnector).LoginPrompt := LoginPrompt; 
   except
     Connection.Free;
     raise;
@@ -12453,7 +12450,6 @@ var
     Stream := TInstantStringStream.Create('');
     try
       (Attribute as TInstantPart).SaveObjectToStream(Stream);
-      //CB
       if Broker.Connector.BlobStreamFormat = sfBinary then
         AddBlobParam(FieldName, Stream.DataString)
       else
@@ -12470,7 +12466,6 @@ var
     Stream := TInstantStringStream.Create('');
     try
       (Attribute as TInstantParts).SaveObjectsToStream(Stream);
-      //CB
       if Broker.Connector.BlobStreamFormat = sfBinary then
         AddBlobParam(FieldName, Stream.DataString)
       else
@@ -12497,7 +12492,6 @@ var
     Stream := TInstantStringStream.Create('');
     try
       (Attribute as TInstantReferences).SaveReferencesToStream(Stream);
-      //CB
       if Broker.Connector.BlobStreamFormat = sfBinary then
         AddBlobParam(FieldName, Stream.DataString)
       else
@@ -12667,6 +12661,7 @@ var
   TransError: Exception;
   DataSet : TDataSet;
 begin
+  Result := 0;
   try
     if not UsePreparedQuery then
       Result := Broker.Execute(AStatement, AParams)
@@ -12795,7 +12790,6 @@ begin
   Params := TParams.Create;
   try
     AddBaseParams(Params, AObject.ClassName, AObjectId);
-    //CB
     if not UsePreparedQuery then
       DataSet := Broker.CreateDataSet(SelectSQL, Params)
     else
@@ -12836,7 +12830,7 @@ var
       RemoveConcurrencyParam(Params);
       RemovePersistentIdParam(Params);
     end;
-    RowsAffected := ExecuteStatement(InsertSQL, Params, Info, ConflictAction, AObject); //CB
+    RowsAffected := ExecuteStatement(InsertSQL, Params, Info, ConflictAction, AObject); 
   end;
 
   procedure UpdateMap;
