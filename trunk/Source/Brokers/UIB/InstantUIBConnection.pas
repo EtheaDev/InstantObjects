@@ -49,6 +49,7 @@ type
     destructor Destroy; override;
   published
     property Database: TJvUIBDataBase read FDatabase;
+    property OnLogin;
   end;
 
 implementation
@@ -90,7 +91,7 @@ end;
 
 function TInstantUIBConnection.Login: Boolean;
 var
-  Username, Password, OldPassword: String;
+  Username, Password: String;
 begin
   Username := FDatabase.UserName;
   Password := FDatabase.PassWord;
