@@ -32,7 +32,7 @@
  * - TInstantCurrency support
  * - TInstantGraphic support
  * - LoginPrompt support in Connections based on TCustomConnection
- *
+ * Nando Dessena
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPersistence;
@@ -1115,6 +1115,7 @@ type
     property ObjectStore: TInstantObjectStore read GetObjectStore;
     property SavedState: TInstantObjectState read GetSavedState;
     property State: TInstantObjectState read GetState;
+    procedure VerifyStoreOperation;
   protected
     procedure Abandon;
     procedure AfterAddRef; virtual;
@@ -1271,6 +1272,7 @@ type
   TInstantQuery = class;
 
   TInstantSchemeEvent = procedure(Sender: TObject; Scheme: TInstantScheme) of object;
+  TInstantGenerateIdEvent = procedure(Sender: TObject; var Id: String) of object;
 
   TInstantConnector = class(TComponent)
   private
@@ -1287,6 +1289,7 @@ type
     FBeforeBuildDatabase: TInstantSchemeEvent;
     FBeforeDisconnect: TNotifyEvent;
     FBlobStreamFormat: TInstantStreamFormat; //CB
+    FOnGenerateId: TInstantGenerateIdEvent;
     procedure AbandonObjects;
     procedure ApplyTransactedObjectStates;
     procedure ClearTransactedObjects;
@@ -1372,6 +1375,7 @@ type
     property BeforeConnect: TNotifyEvent read FBeforeConnect write FBeforeConnect;
     property BeforeDisconnect: TNotifyEvent read FBeforeDisconnect write FBeforeDisconnect;
     property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; //CB
+    property OnGenerateId: TInstantGenerateIdEvent read FOnGenerateId write FOnGenerateId;
   end;
 
   TInstantCacheNodeColor = (ncRed, ncBlack);
@@ -6070,7 +6074,6 @@ begin
       MemoryStream.Free;
     end;
   end;
-
   Changed;
 end;
 
@@ -6883,10 +6886,7 @@ end;
 
 function TInstantObject.CanStore: Boolean;
 begin
-  if IsOwned then
-    Result := Owner.CanStore
-  else
-    Result := Metadata.Persistence = peStored;
+  Result := True;
 end;
 
 procedure TInstantObject.Changed;
@@ -7418,14 +7418,7 @@ procedure TInstantObject.DoStore(ConflictAction: TInstantConflictAction);
 begin
   if (IsPersistent and not IsChanged) or IsAbandoned then
     Exit;
-  case VerifyOperation(otStore) of
-    vrCancel:
-      Exit;
-    vrAbort:
-      Abort;
-    vrError:
-      raise EInstantError.CreateResFmt(@SDeniedStore, [ClassName, Id]);
-  end;
+  VerifyStoreOperation;
   DoBeforeStore;
   CheckId;
   DisableChanges;
@@ -7437,6 +7430,18 @@ begin
   Unchanged;
   FChangeCount := 0;
   DoAfterStore;
+end;
+
+procedure TInstantObject.VerifyStoreOperation;
+begin
+  case VerifyOperation(otStore) of
+    vrCancel:
+      Exit;
+    vrAbort:
+      Abort;
+    vrError:
+      raise EInstantError.CreateResFmt(@SDeniedStore, [ClassName, Id]);
+  end;
 end;
 
 procedure TInstantObject.DoUnchange;
@@ -8120,9 +8125,10 @@ begin
     Owner.Store(ConflictAction)
   else begin
     if Metadata.Persistence = peEmbedded then
-      raise EInstantError.CreateResFmt(@SErrorStoringEmbeddedObject,
-        [ClassName, Id]);
-    PerformUpdate(DoStore, otStore, ConflictAction);
+      VerifyStoreOperation
+    else
+      // DoStore will call VerifyStoreOperation by itself.
+      PerformUpdate(DoStore, otStore, ConflictAction);
   end;
 end;
 
@@ -8534,7 +8540,12 @@ end;
 
 function TInstantConnector.InternalGenerateId: string;
 begin
-  Result := InstantGenerateId;
+  if Assigned(FOnGenerateId) then begin
+    Result := '';
+    FOnGenerateId(Self, Result);
+  end
+  else
+    Result := InstantGenerateId;
 end;
 
 procedure TInstantConnector.InternalRollbackTransaction;
@@ -12029,7 +12040,6 @@ begin
   Delete(Result, Length(Result) - Length(Delimiter), Length(Delimiter) + 2);
 end;
 
-
 function TInstantSQLGenerator.BuildParam(const AName: string): string;
 begin
   Result := ':' + AName;
@@ -12160,8 +12170,14 @@ begin
         Columns := Columns + ', ';
       with FieldMetadata do
       begin
-        Columns := Columns + EmbraceField(Name) + ' ' +
-          Broker.DataTypeToColumnType(DataType, Size);
+        {$IFDEF IO_INTEGER_IDS}
+        if Name = InstantIdFieldName then
+          Columns := Columns + EmbraceField(Name) + ' ' +
+            Broker.DataTypeToColumnType(dtInteger, Size)
+        else
+        {$ENDIF}
+          Columns := Columns + EmbraceField(Name) + ' ' +
+            Broker.DataTypeToColumnType(DataType, Size);
         if foRequired in Options then
           Columns := Columns + ' NOT NULL';
       end;
@@ -12922,7 +12938,9 @@ var
   begin
     Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
     try
-      if Stream.Size > 0 then
+      if Stream.Size = 0 then
+        (Attribute as TInstantPart).Reset
+      else
         (Attribute as TInstantPart).LoadObjectFromStream(Stream);
     finally
       Stream.Free;
@@ -12935,7 +12953,9 @@ var
   begin
     Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
     try
-      if Stream.Size > 0 then
+      if Stream.Size = 0 then
+        (Attribute as TInstantParts).Reset
+      else
         (Attribute as TInstantParts).LoadObjectsFromStream(Stream);
     finally
       Stream.Free;
@@ -12955,7 +12975,9 @@ var
   begin
     Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
     try
-      if Stream.Size > 0 then
+      if Stream.Size = 0 then
+        (Attribute as TInstantReferences).Reset
+      else
         (Attribute as TInstantReferences).LoadReferencesFromStream(Stream);
     finally
       Stream.Free;
