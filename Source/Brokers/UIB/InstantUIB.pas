@@ -107,7 +107,7 @@ type
     property OnLogin: TLoginEvent read FOnLogin write FOnLogin;
   end;
 
-  TInstantUIBBroker= class(TInstantSQLBroker)
+  TInstantUIBBroker = class(TInstantSQLBroker)
   private
     function GetDialect: Integer;
     function GetConnector: TInstantUIBConnector;
@@ -408,20 +408,22 @@ function TInstantUIBBroker.CreateDataSet(const AStatement: string;
 var
   Query: TJvUIBDataSet;
 begin
-  Query := TJvUIBDataSet.Create(NIl);
-  with Query do
-  begin
-    Database := Connector.Connection.Database;
-    FetchBlobs := True;
-    OnError := etmStayIn;
-    OnClose := etmStayIn;
-    SQL.Text := AStatement;
-    Transaction := Connector.Transaction;
-    UniDirectional := True;
+  Query := TJvUIBDataSet.Create(nil);
+  try
+    Query.Database := Connector.Connection.Database;
+    Query.FetchBlobs := True;
+    Query.OnError := etmStayIn;
+    Query.OnClose := etmStayIn;
+    Query.SQL.Text := AStatement;
+    Query.Transaction := Connector.Transaction;
+    Query.UniDirectional := True;
     if Assigned(AParams) then
       AssignDataSetParams(Query, AParams);
+    Result := Query;
+  except
+    Query.Free;
+    raise;
   end;
-  Result := Query;
 end;
 
 function TInstantUIBBroker.CreateResolver(
@@ -455,13 +457,15 @@ end;
 
 function TInstantUIBBroker.Execute(const AStatement: string;
   AParams: TParams): Integer;
+var
+  DataSet: TJvUIBDataSet;
 begin
-  with CreateDataSet(AStatement, AParams) as TJvUIBDataSet do
+  DataSet := AcquireDataSet(AStatement, AParams) as TJvUIBDataSet;
   try
-    Execute;
-    Result := RowsAffected;
+    DataSet.Execute;
+    Result := DataSet.RowsAffected;
   finally
-    Free;
+    ReleaseDataSet(DataSet);
   end;
 end;
 
