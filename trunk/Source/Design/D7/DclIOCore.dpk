@@ -6,6 +6,7 @@ package DclIOCore;
 {$R '..\..\Core\InstantExplorer.dcr'}
 {$R '..\..\Core\InstantPersistence.dcr'}
 {$R '..\..\Core\InstantConnectionManager.dcr'}
+{$R '..\..\Core\InstantPump.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
