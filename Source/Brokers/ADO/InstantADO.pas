@@ -225,11 +225,10 @@ begin
           Parameter.Direction := pdInput else
           Parameter.Direction := TParameterDirection(Param.ParamType);
         Parameter.Attributes := [];
-        Parameter.NumericScale := Param.NumericScale;
-        Parameter.Precision := Param.NumericScale;
-        Parameter.Size := Param.Size;
+        Parameter.NumericScale := 0;
+        Parameter.Precision := 0;
+        Parameter.Size := 0;
         Parameter.Value := Param.Value;
-//        Parameter.Assign(Param);
       end;
     end;
   end;
