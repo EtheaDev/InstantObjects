@@ -457,7 +457,7 @@ end;
 
 procedure TInstantConnectionManagerForm.FormCreate(Sender: TObject);
 begin
-  LoadMultipleImages(ConnectionImages,'IO_CONNECTIONMANAGERIMAGES');
+  LoadMultipleImages(ConnectionImages, 'IO_CONNECTIONMANAGERIMAGES', HInstance);
 {$IFDEF MSWINDOWS}
   BorderStyle := bsSizeable;
   ConnectionView.OnEdited := ConnectionViewEditedVCL;

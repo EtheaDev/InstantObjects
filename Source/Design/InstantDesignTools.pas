@@ -32,7 +32,7 @@ unit InstantDesignTools;
 
 interface
 
-{$I InstantDefines.inc}
+{$I ..\Core\InstantDefines.inc}
 
 uses
   Classes,
