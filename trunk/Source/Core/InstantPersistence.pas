@@ -55,7 +55,7 @@ uses
 {$IFDEF LINUX}
   QGraphics,
 {$ENDIF}
-  Dialogs, Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand;
+  Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand;
 
 type
   TInstantMetadatas = class;
@@ -6302,8 +6302,6 @@ end;
 function TInstantParts.InternalAdd(AObject: TInstantObject): Integer;
 begin
   Result := ObjectList.Add(AObject);
-  if Metadata.IsExternal=ceLinked then
-    AObject.FindAttribute(Metadata.ExternalLinkedName).AsObject:=Self.Owner;
   SetOwnerContext(AObject);
 end;
 
@@ -6348,8 +6346,6 @@ procedure TInstantParts.InternalInsert(Index: Integer;
   AObject: TInstantObject);
 begin
   ObjectList.Insert(Index, AObject);
-  if Metadata.IsExternal=ceLinked then
-    AObject.FindAttribute(Metadata.ExternalLinkedName).AsObject:=Self.Owner;
   SetOwnerContext(AObject);
 end;
 
@@ -6504,8 +6500,6 @@ function TInstantReferences.InternalAdd(
 var
   Ref: TInstantObjectReference;
 begin
-  if Metadata.IsExternal=ceLinked then
-    AObject.FindAttribute(Metadata.ExternalLinkedName).AsObject:=Self.Owner;
   Ref := CreateObjectReference(AObject);
   try
     Result := ObjectReferenceList.Add(Ref);
@@ -6516,17 +6510,12 @@ begin
 end;
 
 procedure TInstantReferences.InternalClear;
-var
-  i: integer;
 begin
-  for i:=0 to Pred(Self.Count) do
-    Self.Items[i].FindAttribute(Metadata.ExternalLinkedName).AsObject:=Nil;
   ObjectReferenceList.Clear;
 end;
 
 procedure TInstantReferences.InternalDelete(Index: Integer);
 begin
-  Self.Items[Index].FindAttribute(Metadata.ExternalLinkedName).AsObject:=Nil;
   ObjectReferenceList.Delete(Index);
 end;
 
@@ -6579,8 +6568,6 @@ procedure TInstantReferences.InternalInsert(Index: Integer;
 var
   Ref: TInstantObjectReference;
 begin
-  if Metadata.IsExternal=ceLinked then
-    AObject.FindAttribute(Metadata.ExternalLinkedName).AsObject:=Self.Owner;
   Ref := CreateObjectReference(AObject);
   try
     ObjectReferenceList.Insert(Index, Ref);
@@ -7287,10 +7274,6 @@ end;
 
 procedure TInstantObject.Dispose(ConflictAction: TInstantConflictAction);
 begin
-  {if IsOwned then
-    Owner.DisposeOwnedObject(Self, ConflictAction)
-  else
-    PerformUpdate(DoDispose, otDispose, ConflictAction);}
   PerformUpdate(DoDispose, otDispose, ConflictAction);
 end;
 
@@ -13003,19 +12986,22 @@ var
     PartObject: TInstantObject;
     SelectParams, DeleteParams: TParams;
     SelectStatement, DeleteStatement: string;
+    AttributeMetadata: TInstantAttributeMetadata;
   begin
     for i := 0 to Pred(Map.Count) do
+    begin
+      AttributeMetadata := Map[i];
       if Map[i].AttributeType = atParts then
       begin
-        if Map[i].IsExternal = ceLinked then
+        if AttributeMetadata.IsExternal = ceLinked then
         begin
-          //select and delete all
+          //select and dispose all
           SelectParams:=TParams.Create;
           try
             SelectStatement:=Format(SelectExternalLinkedSQL,
-              [ Map[i].ObjectClassMetadata.TableName,
-              Map[i].ExternalLinkedName + InstantClassFieldName,
-              Map[i].ExternalLinkedName + InstantIdFieldName ]);
+              [ AttributeMetadata.ObjectClassMetadata.TableName,
+              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
+              AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
             AddStringParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
             with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
@@ -13024,11 +13010,11 @@ var
               try
                 while not Eof do
                 begin
-                  PartObject := Map[i].ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
+                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                    Fields[1].AsString, False, False, AObject.Connector);
                   if Assigned(PartObject) then
                   try
-                    PartObject.SetPersistentId(Fields[1].AsString);
-                    Broker.DisposeObject(PartObject, caIgnore);
+                    PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                   finally
                     PartObject.Free;
                   end;
@@ -13047,25 +13033,25 @@ var
 
         if Map[i].IsExternal = ceStored then
         begin
-          //Delete all objects
+          // dispose all objects
           SelectParams:=TParams.Create;
           try
-            SelectStatement:=Format(SelectExternalStoredSQL, [Map.Items[i].ExternalStoredName]);
+            SelectStatement:=Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
             AddStringParam(SelectParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(SelectParams, InstantParentAttributeFieldName, Map[i].Name);
-            AddStringParam(SelectParams, InstantChildClassFieldName, Map[i].ObjectClassName);
+            AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+            AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
             with Broker.CreateDataSet(SelectStatement, SelectParams) do
             try
               Open;
               try
                 while not Eof do
                 begin
-                  PartObject := Map[i].ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
+                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                    Fields[1].AsString, False, False, AObject.Connector);
                   if Assigned(PartObject) then
                   try
-                    PartObject.SetPersistentId(Fields[1].AsString);
-                    Broker.DisposeObject(PartObject, caIgnore);
+                    PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                   finally
                     PartObject.Free;
                   end;
@@ -13085,58 +13071,92 @@ var
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [ Map.Items[i].ExternalStoredName,
+              [ AttributeMetadata.ExternalStoredName,
               InstantParentClassFieldName,
               InstantParentIdFieldName,
               InstantParentAttributeFieldName ]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(DeleteParams, InstantParentIdFieldName, AObject.id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, Map[i].Name);
+            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
             DeleteParams.Free;
           end;
         end;
       end;
+    end;
   end;
 
   procedure DeleteExternalReferencesMap;
   var
-    i, ii: integer;
-    DeleteParams: TParams;
-    DeleteStatement: string;
+    i: integer;
+    ReferenceObject: TInstantObject;
+    SelectParams, DeleteParams: TParams;
+    SelectStatement, DeleteStatement: string;
+    AttributeMetadata: TInstantAttributeMetadata;
   begin
     for i := 0 to Pred(Map.Count) do
-      if Map[i].AttributeType = atReferences then
+    begin
+      AttributeMetadata := Map[i];
+      if AttributeMetadata.AttributeType = atReferences then
       begin
-        if Map[i].IsExternal = ceLinked then
+        if AttributeMetadata.IsExternal = ceLinked then
         begin
-          //Store all
-          for ii:=0 to Pred((AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Count) do
-          begin
-            (AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Items[ii].CheckId;
-            (AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Items[ii].FindAttribute(Map[i].ExternalLinkedName).AsObject := Nil;
-            Broker.StoreObject((AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Items[ii], caIgnore);
+          //set all to nil
+          SelectParams:=TParams.Create;
+          try
+            SelectStatement:=Format(SelectExternalLinkedSQL,
+              [ AttributeMetadata.ObjectClassMetadata.TableName,
+              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
+              AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
+            AddStringParam(SelectParams, InstantIdFieldName, AObject.Id);
+            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
+            with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+            try
+              Open;
+              try
+                while not Eof do
+                begin
+                  ReferenceObject := AttributeMetadata.ObjectClass.Retrieve(
+                    Fields[1].AsString, False, False, AObject.Connector);
+                  if Assigned(ReferenceObject) then
+                  try
+                    ReferenceObject.AttributeByName(AttributeMetadata.ExternalLinkedName).AsObject := Nil;
+                    ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
+                  finally
+                    ReferenceObject.Free;
+                  end;
+                  Next;
+                end;
+              finally
+                Close;
+              end;
+            finally
+              Free;
+            end;
+          finally
+            SelectParams.Free;
           end;
         end;
-        if Map[i].IsExternal = ceStored then
+        if AttributeMetadata.IsExternal = ceStored then
         begin
           //Delete all links
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [ Map.Items[i].ExternalStoredName,
+              [ AttributeMetadata.ExternalStoredName,
               InstantParentClassFieldName,
               InstantParentAttributeFieldName ]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(DeleteParams, InstantParentIdFieldName, AObject.id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, Map[i].Name);
+            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
             DeleteParams.Free;
           end;
         end;
       end;
+    end;
   end;
 
 begin
@@ -13252,21 +13272,26 @@ var
   var
     i, ii: integer;
     PartObject: TInstantObject;
+    PartsAttribute: TInstantParts;
+    AttributeMetadata: TInstantAttributeMetadata;
     SelectParams, DeleteParams, InsertParams: TParams;
     SelectStatement, DeleteStatement, InsertStatement: string;
   begin
     for i := 0 to Pred(Map.Count) do
-      if Map[i].AttributeType = atParts then
+    begin
+      AttributeMetadata := Map[i];
+      if AttributeMetadata.AttributeType = atParts then
       begin
-        if Map[i].IsExternal = ceLinked then
+        PartsAttribute := TInstantParts(AObject.AttributeByName(AttributeMetadata.Name));
+        if AttributeMetadata.IsExternal = ceLinked then
         begin
           //select and delete all
           SelectParams:=TParams.Create;
           try
             SelectStatement:=Format(SelectExternalLinkedSQL,
-              [ Map[i].ObjectClassMetadata.TableName,
-              Map[i].ExternalLinkedName + InstantClassFieldName,
-              Map[i].ExternalLinkedName + InstantIdFieldName ]);
+              [ AttributeMetadata.ObjectClassMetadata.TableName,
+              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
+              AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
             AddStringParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
             with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
@@ -13275,11 +13300,11 @@ var
               try
                 while not Eof do
                 begin
-                  PartObject := Map[i].ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
+                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                    Fields[1].AsString, False, False, AObject.Connector);
                   if Assigned(PartObject) then
                   try
-                    PartObject.SetPersistentId(Fields[1].AsString);
-                    Broker.DisposeObject(PartObject, caIgnore);
+                    PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                   finally
                     PartObject.Free;
                   end;
@@ -13296,10 +13321,12 @@ var
           end;
 
           //Store all
-          for ii:=0 to Pred((AObject.AttributeByName(Map.Items[i].Name) as TInstantParts).Count) do
+          for ii:=0 to Pred(PartsAttribute.Count) do
           begin
-            (AObject.AttributeByName(Map.Items[i].Name) as TInstantParts).Items[ii].CheckId;
-            Broker.StoreObject((AObject.AttributeByName(Map.Items[i].Name) as TInstantParts).Items[ii], caIgnore);
+            PartObject := PartsAttribute.Items[ii];
+            PartObject.CheckId;
+            PartObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
+            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
           end;
         end;
 
@@ -13308,22 +13335,22 @@ var
           //Delete all objects
           SelectParams:=TParams.Create;
           try
-            SelectStatement:=Format(SelectExternalStoredSQL, [Map.Items[i].ExternalStoredName]);
+            SelectStatement:=Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
             AddStringParam(SelectParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(SelectParams, InstantParentAttributeFieldName, Map[i].Name);
-            AddStringParam(SelectParams, InstantChildClassFieldName, Map[i].ObjectClassName);
+            AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+            AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
             with Broker.CreateDataSet(SelectStatement, SelectParams) do
             try
               Open;
               try
                 while not Eof do
                 begin
-                  PartObject := Map[i].ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
+                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                    Fields[1].AsString, False, False, AObject.Connector);
                   if Assigned(PartObject) then
                   try
-                    PartObject.SetPersistentId(Fields[1].AsString);
-                    Broker.DisposeObject(PartObject, caIgnore);
+                    PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                   finally
                     PartObject.Free;
                   end;
@@ -13343,34 +13370,38 @@ var
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [ Map.Items[i].ExternalStoredName,
+              [ AttributeMetadata.ExternalStoredName,
               InstantParentClassFieldName,
               InstantParentAttributeFieldName ]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(DeleteParams, InstantParentIdFieldName, AObject.id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, Map[i].Name);
+            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
             DeleteParams.Free;
           end;          
 
           //Store all objects and links
-          for ii:=0 to Pred((AObject.AttributeByName(Map.Items[i].Name) as TInstantParts).Count) do
+          for ii:=0 to Pred(PartsAttribute.Count) do
           begin
-            (AObject.AttributeByName(Map.Items[i].Name) as TInstantParts).Items[ii].CheckId;
-            Broker.StoreObject((AObject.AttributeByName(Map.Items[i].Name) as TInstantParts).Items[ii], caIgnore);
+            // store the object
+            PartObject := PartsAttribute.Items[ii];
+            PartObject.CheckId;
+            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
+            
+            // insert the link
             InsertParams:=TParams.Create;
             try
               InsertStatement := Format( InsertExternalSQL,
-                [ Map.Items[i].ExternalStoredName ] );
+                [ AttributeMetadata.ExternalStoredName ] );
               AddStringParam(InsertParams, InstantIdFieldName, InstantGenerateId);
               AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
               AddStringParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-              AddStringParam(InsertParams, InstantParentAttributeFieldName, Map[i].Name);
+              AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               AddStringParam(InsertParams, InstantChildClassFieldName,
-                (AObject.AttributeByName(Map.Items[i].Name) as TInstantParts).Items[ii].ClassName);
+                PartsAttribute.Items[ii].ClassName);
               AddStringParam(InsertParams, InstantChildIdFieldName,
-                (AObject.AttributeByName(Map.Items[i].Name) as TInstantParts).Items[ii].Id);
+                PartsAttribute.Items[ii].Id);
               Broker.Execute(InsertStatement, InsertParams);
             finally
               InsertParams.Free;
@@ -13378,60 +13409,108 @@ var
           end;
         end;
       end;
+    end;
   end;
 
   procedure UpdateExternalReferencesMap;
   var
     i, ii: integer;
-    DeleteParams, InsertParams: TParams;
-    DeleteStatement, InsertStatement: string;
+    AttributeMetadata: TInstantAttributeMetadata;
+    ReferenceObject: TInstantObject;
+    ReferencesAttribute: TInstantReferences;
+    SelectParams, DeleteParams, InsertParams: TParams;
+    SelectStatement, DeleteStatement, InsertStatement: string;
   begin
     for i := 0 to Pred(Map.Count) do
-      if Map[i].AttributeType = atReferences then
+    begin
+      AttributeMetadata := Map[i];
+      if AttributeMetadata.AttributeType = atReferences then
       begin
-        if Map[i].IsExternal = ceLinked then
+        ReferencesAttribute := TInstantReferences(AObject.AttributeByName(AttributeMetadata.Name));
+
+        if AttributeMetadata.IsExternal = ceLinked then
         begin
+          //set all to nil
+          SelectParams:=TParams.Create;
+          try
+            SelectStatement:=Format(SelectExternalLinkedSQL,
+              [ AttributeMetadata.ObjectClassMetadata.TableName,
+              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
+              AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
+            AddStringParam(SelectParams, InstantIdFieldName, AObject.Id);
+            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
+            with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+            try
+              Open;
+              try
+                while not Eof do
+                begin
+                  ReferenceObject := AttributeMetadata.ObjectClass.Retrieve(
+                    Fields[1].AsString, False, False, AObject.Connector);
+                  if Assigned(ReferenceObject) then
+                  try
+                    ReferenceObject.AttributeByName(AttributeMetadata.ExternalLinkedName).AsObject := Nil;
+                    ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
+                  finally
+                    ReferenceObject.Free;
+                  end;
+                  Next;
+                end;
+              finally
+                Close;
+              end;
+            finally
+              Free;
+            end;
+          finally
+            SelectParams.Free;
+          end;
           //Store all
-          for ii:=0 to Pred((AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Count) do
+          for ii:=0 to Pred(ReferencesAttribute.Count) do
           begin
-            (AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Items[ii].CheckId;
-            Broker.StoreObject((AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Items[ii], caIgnore);
+            ReferenceObject := ReferencesAttribute.Items[ii];
+            ReferenceObject.CheckId;
+            ReferenceObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
+            ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
           end;
         end;
-        if Map[i].IsExternal = ceStored then
+        
+        if AttributeMetadata.IsExternal = ceStored then
         begin
           //Delete all links
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [ Map.Items[i].ExternalStoredName,
+              [ AttributeMetadata.ExternalStoredName,
               InstantParentClassFieldName,
               InstantParentIdFieldName,
               InstantParentAttributeFieldName ]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(DeleteParams, InstantParentIdFieldName, AObject.id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, Map[i].Name);
+            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
             DeleteParams.Free;
           end;
-
           //Store all links
-          for ii:=0 to Pred((AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Count) do
+          for ii:=0 to Pred(ReferencesAttribute.Count) do
           begin
+            ReferenceObject := ReferencesAttribute.Items[ii];
+            ReferenceObject.CheckId;
+            ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
+
             InsertParams:=TParams.Create;
             try
               InsertStatement := Format( InsertExternalSQL,
-                [ Map.Items[i].ExternalStoredName ] );
-
+                [ AttributeMetadata.ExternalStoredName ] );
               AddStringParam(InsertParams, InstantIdFieldName, InstantGenerateId);
               AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
               AddStringParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-              AddStringParam(InsertParams, InstantParentAttributeFieldName, Map[i].Name);              
+              AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               AddStringParam(InsertParams, InstantChildClassFieldName,
-                (AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Items[ii].ClassName);
+                ReferencesAttribute.Items[ii].ClassName);
               AddStringParam(InsertParams, InstantChildIdFieldName,
-                (AObject.AttributeByName(Map.Items[i].Name) as TInstantReferences).Items[ii].Id);
+                ReferencesAttribute.Items[ii].Id);
               Broker.Execute(InsertStatement, InsertParams);
             finally
               InsertParams.Free;
@@ -13439,6 +13518,7 @@ var
           end;
         end;
       end;
+    end;
   end;
 
 begin
@@ -13645,8 +13725,7 @@ var
     begin
       with (Attribute as TInstantReferences) do
       begin
-        (Attribute as TInstantReferences).ObjectReferenceList.Clear;
-        //Clear;
+        Clear;
         Params:=TParams.Create;
         try
           Statement:=Format(SelectExternalLinkedSQL,
@@ -13681,8 +13760,7 @@ var
     begin
       with (Attribute as TInstantReferences) do
       begin
-        //Clear;
-        (Attribute as TInstantReferences).ObjectReferenceList.Clear;
+        Clear;
         Params:=TParams.Create;
         try
           Statement:=Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
