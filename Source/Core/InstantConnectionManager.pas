@@ -23,8 +23,8 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s):
- * Carlo Barazzetta
+ * Contributor(s): Carlo Barazzetta
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantConnectionManager;
@@ -62,7 +62,7 @@ type
     ConnectorClass: TInstantConnectorClass; var Result: Boolean) of object;
 
   TInstantConnectionManager = class;
-  TInstantConnectionManagerExecutor = procedure (ConnectionManager : TInstantConnectionManager);
+  TInstantConnectionManagerExecutor = procedure (ConnectionManager: TInstantConnectionManager);
 
   TInstantConnectionManager = class(TComponent)
   private
@@ -101,27 +101,32 @@ type
     destructor Destroy; override;
     procedure LoadConnectionDefs;
     procedure SaveConnectionDefs;    
-    procedure ConnectByName(const ConnectionDefName : string);
+    procedure ConnectByName(const ConnectionDefName: string);
     procedure Execute;
-    function isConnected : boolean;
+    function IsConnected: Boolean;
     property Model: TInstantModel read GetModel write SetModel;
     property ConnectionDefs: TInstantConnectionDefs read GetConnectionDefs;
   published
     property Caption: string read FCaption write SetCaption;
     property FileName: string read FFileName write SetFileName;
-    property FileFormat : TInstantStreamFormat read FFileFormat write SetFileFormat default sfBinary;
-    property VisibleActions: TInstantConnectionManagerActionTypes read FVisibleActions write SetVisibleActions
+    property FileFormat : TInstantStreamFormat
+      read FFileFormat write SetFileFormat default sfBinary;
+    property VisibleActions: TInstantConnectionManagerActionTypes
+      read FVisibleActions write SetVisibleActions
       default [atNew, atEdit, atDelete, atRename, atConnect, atDisconnect, atBuild, atOpen];
     property OnBuild: TInstantConnectionDefEvent read FOnBuild write SetOnBuild;
     property OnConnect: TInstantConnectionDefEvent read FOnConnect write SetOnConnect;
-    property OnDisconnect: TInstantConnectionDefEvent read FOnDisconnect write SetOnDisconnect;
+    property OnDisconnect: TInstantConnectionDefEvent
+      read FOnDisconnect write SetOnDisconnect;
     property OnEdit: TInstantConnectionDefEvent read FOnEdit write SetOnEdit;
-    property OnIsConnected: TInstantConnectionDefEvent read FOnIsConnected write SetOnIsConnected;
+    property OnIsConnected: TInstantConnectionDefEvent
+      read FOnIsConnected write SetOnIsConnected;
     property OnPrepare: TInstantConnectorEvent read FOnPrepare write SetOnPrepare;
-    property OnSupportConnector: TInstantConnectorClassEvent read FOnSupportConnector write SetOnSupportConnector;
+    property OnSupportConnector: TInstantConnectorClassEvent
+      read FOnSupportConnector write SetOnSupportConnector;
   end;
 
-procedure RegisterConnectionManagerExecutor(ConnectionManagerExecutor : TInstantConnectionManagerExecutor);
+procedure RegisterConnectionManagerExecutor(ConnectionManagerExecutor: TInstantConnectionManagerExecutor);
 
 implementation
 
@@ -129,11 +134,11 @@ uses
   InstantConsts;
 
 var
-  ConnManagerExecutor : TInstantConnectionManagerExecutor;
+  _ConnectionManagerExecutor: TInstantConnectionManagerExecutor;
 
-procedure RegisterConnectionManagerExecutor(ConnectionManagerExecutor : TInstantConnectionManagerExecutor);
+procedure RegisterConnectionManagerExecutor(ConnectionManagerExecutor: TInstantConnectionManagerExecutor);
 begin
-  ConnManagerExecutor := ConnectionManagerExecutor;
+  _ConnectionManagerExecutor := ConnectionManagerExecutor;
 end;
 
 { TInstantConnectionManager }
@@ -157,7 +162,7 @@ procedure TInstantConnectionManager.SetFileName(const Value: string);
 begin
   if Value <> FFileName then
   begin
-    if SameText(ExtractFileExt(Value),'.xml') then
+    if SameText(ExtractFileExt(Value), '.xml') then
       FFileFormat := sfXML
     else
       FFileFormat := sfBinary;
@@ -169,93 +174,65 @@ end;
 procedure TInstantConnectionManager.SetFileFormat(
   const Value: TInstantStreamFormat);
 begin
-  if Value <> FFileFormat then
-    FFileFormat := Value;
+  FFileFormat := Value;
 end;
 
 procedure TInstantConnectionManager.SetModel(Value: TInstantModel);
 begin
-  if Value <> Model then
-  begin
-    FModel := Value;
-  end;
+  FModel := Value;
 end;
 
 procedure TInstantConnectionManager.SetOnBuild(
   Value: TInstantConnectionDefEvent);
 begin
-  if @Value <> @FOnBuild then
-  begin
-    FOnBuild := Value;
-  end;
+  FOnBuild := Value;
 end;
 
 procedure TInstantConnectionManager.SetOnConnect(
   Value: TInstantConnectionDefEvent);
 begin
-  if @Value <> @FOnConnect then
-  begin
-    FOnConnect := Value;
-  end;
+  FOnConnect := Value;
 end;
 
 procedure TInstantConnectionManager.SetOnDisconnect(
   Value: TInstantConnectionDefEvent);
 begin
-  if @Value <> @FOnDisconnect then
-  begin
-    FOnDisconnect := Value;
-  end;
+  FOnDisconnect := Value;
 end;
 
 procedure TInstantConnectionManager.SetOnEdit(
   Value: TInstantConnectionDefEvent);
 begin
-  if @Value <> @FOnEdit then
-  begin
-    FOnEdit := Value;
-  end;
+  FOnEdit := Value;
 end;
 
 procedure TInstantConnectionManager.SetOnIsConnected(
   Value: TInstantConnectionDefEvent);
 begin
-  if @Value <> @FOnIsConnected then
-  begin
-    FOnIsConnected := Value;
-  end;
+  FOnIsConnected := Value;
 end;
 
 procedure TInstantConnectionManager.SetOnPrepare(
   Value: TInstantConnectorEvent);
 begin
-  if @Value <> @FOnPrepare then
-  begin
-    FOnPrepare := Value;
-  end;
+  FOnPrepare := Value;
 end;
 
 procedure TInstantConnectionManager.SetOnSupportConnector(
   Value: TInstantConnectorClassEvent);
 begin
-  if @Value <> @FOnSupportConnector then
-  begin
-    FOnSupportConnector := Value;
-  end;
+  FOnSupportConnector := Value;
 end;
 
 procedure TInstantConnectionManager.SetVisibleActions(
   Value: TInstantConnectionManagerActionTypes);
 begin
-  if Value <> FVisibleActions then
-  begin
-    FVisibleActions := Value;
-  end;
+  FVisibleActions := Value;
 end;
 
 procedure TInstantConnectionManager.ConnectByName(const ConnectionDefName: string);
 var
-  Result : boolean;
+  Result: Boolean;
   ConnectionDef : TInstantConnectionDef;
 begin
   LoadConnectionDefs;
@@ -263,8 +240,7 @@ begin
   if Assigned(ConnectionDef) then
     OnConnect(Self, ConnectionDef, Result)
   else
-    raise EInstantError.CreateFmt(SConnectionDefError,
-        [ConnectionDefName,FileName]);
+    raise EInstantError.CreateFmt(SConnectionDefError, [ConnectionDefName, FileName]);
 end;
 
 destructor TInstantConnectionManager.Destroy;
@@ -310,8 +286,8 @@ begin
     except
       on E: Exception do
         raise EInstantError.CreateFmt(
-          'Error loading connection definitions from %s: %s', [DefsFileName,
-            E.Message]);
+          'Error loading connection definitions from %s: %s',
+          [DefsFileName, E.Message]);
     end;
   end;
 end;
@@ -354,43 +330,41 @@ begin
       Result := ExtractFilePath(ParamStr(0)) + FileName
     else
       Result := FileName;
-  end else
+  end
+  else
     Result := '';
 end;
 
 procedure TInstantConnectionManager.Execute;
 begin
-  if Assigned(ConnManagerExecutor) then
-    ConnManagerExecutor(self)
+  if Assigned(_ConnectionManagerExecutor) then
+    _ConnectionManagerExecutor(Self)
   else
-    //WARNING:  
-    //If you want to use the default ConnectionmanagerForm (as in a previous version of IO)
-    //simply add InstantConnectionManagerForm in uses section of your application
-    raise EInstantError.Create(SConnectionManExecNotAssigned);
+    // WARNING:
+    // If you want to use the default ConnectionManagerForm (as in previous versions of IO)
+    // simply add InstantConnectionManagerForm in an uses section of your application.
+    raise EInstantError.Create(SConnectionManagerExecutorNotAssigned);
 end;
 
 procedure TInstantConnectionManager.SetCaption(const Value: string);
 begin
-  if FCaption <> Value then
-  begin
-    FCaption := Value;
-  end;
+  FCaption := Value;
 end;
 
 function TInstantConnectionManager.isConnected: boolean;
 var
-  i : integer;
-  ConnectionDef : TInstantConnectionDef;
+  i: Integer;
+  ConnectionDef: TInstantConnectionDef;
 begin
   Result := False;
   if not Assigned(OnIsConnected) then
     Exit;
-  for i := 0 to ConnectionDefs.Count -1 do
+  for i := 0 to ConnectionDefs.Count - 1 do
   begin
-    ConnectionDef := ConnectionDefs.items[i];
-    OnIsConnected(self, ConnectionDef, Result);
+    ConnectionDef := ConnectionDefs.Items[i];
+    OnIsConnected(Self, ConnectionDef, Result);
     if Result then
-      break;
+      Break;
   end;
 end;
 

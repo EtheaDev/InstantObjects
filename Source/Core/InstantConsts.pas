@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s): Nando Dessena
- * - Added explicit ordering to externalstored collections.
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantConsts;
@@ -156,7 +156,7 @@ resourcestring
   SUnsupportedGraphicClass = 'Unsupported graphic class';
   SMissingImplementation = 'Method %s is not implemented in class %s';
   SConnectionManagerCaption = 'Connection Manager';
-  SConnectionManExecNotAssigned = 'Error: connection manager execution procedure non available';
+  SConnectionManagerExecutorNotAssigned = 'Connection manager execution procedure not assigned';
   SConnectionDefError = 'Error: connection definitions %s not found in file %s';
   SConnectionDefFilter = 'Connection files|*.con;*.xml';
 
