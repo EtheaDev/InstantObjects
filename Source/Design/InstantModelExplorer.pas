@@ -132,7 +132,6 @@ type
     procedure ViewInheritanceActionExecute(Sender: TObject);
     procedure ViewRelationsActionExecute(Sender: TObject);
     procedure ViewSourceActionExecute(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
   private
     FError: TInstantModelError;
     FModel: TInstantCodeModel;
@@ -283,6 +282,10 @@ end;
 constructor TInstantModelExplorerForm.Create(AOwner: TComponent);
 begin
   inherited;
+  LoadMultipleImages(ActionImages, 'IO_MODELEXPLORERACTIONIMAGES', HInstance);
+  LoadMultipleImages(ModelImages, 'IO_MODELEXPLORERMODELIMAGES', HInstance);
+  LoadMultipleImages(AttributeImages, 'IO_MODELEXPLORERATTRIBUTEIMAGES', HInstance);
+
   FModelView := TModelTreeView.Create(Self);
   with FModelView do
   begin
@@ -295,7 +298,7 @@ begin
     RightClickSelect := True;
 {$ENDIF}
     OnChange := ModelViewChange;
-    OnNodeDblClick := ModelViewNodeDblClick;    
+    OnNodeDblClick := ModelViewNodeDblClick;
     OnGetImageIndex := ModelViewGetImageIndex;
   end;
   FModel := TInstantCodeModel.Create;
@@ -758,13 +761,6 @@ procedure TInstantModelExplorerForm.ViewSourceActionExecute(
   Sender: TObject);
 begin
   GotoNodeSource(SelectedNode);
-end;
-
-procedure TInstantModelExplorerForm.FormCreate(Sender: TObject);
-begin
-  LoadMultipleImages(ActionImages, 'IO_MODELEXPLORERACTIONIMAGES', HInstance);
-  LoadMultipleImages(ModelImages, 'IO_MODELEXPLORERMODELIMAGES', HInstance);
-  LoadMultipleImages(AttributeImages, 'IO_MODELEXPLORERATTRIBUTEIMAGES', HInstance);
 end;
 
 initialization
