@@ -1,8 +1,8 @@
 inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
-  Left = 388
-  Top = 255
+  Left = 795
+  Top = 191
   Width = 249
-  Height = 280
+  Height = 386
   Caption = 'Attribute Editor'
   ParentFont = True
   OldCreateOrder = True
@@ -11,12 +11,12 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 241
-    Height = 215
+    Height = 328
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 233
-      Height = 207
+      Height = 320
       ActivePage = DefinitionSheet
       Align = alClient
       TabOrder = 0
@@ -61,6 +61,30 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Height = 13
           Caption = 'Si&ze'
           FocusControl = SizeEdit
+        end
+        object ExternalLinkedNameLabel: TLabel
+          Left = 8
+          Top = 248
+          Width = 92
+          Height = 13
+          Caption = 'Exter&nal Link Name'
+          FocusControl = ExternalLinkedNameEdit
+        end
+        object ExternalStoredNameLabel: TLabel
+          Left = 8
+          Top = 208
+          Width = 109
+          Height = 13
+          Caption = '&External Storage Name'
+          FocusControl = ExternalStoredNameEdit
+        end
+        object IsExternalLabel: TLabel
+          Left = 8
+          Top = 168
+          Width = 49
+          Height = 13
+          Caption = 'Is Exte&rnal'
+          FocusControl = IsExternalEdit
         end
         object NameEdit: TDBEdit
           Left = 8
@@ -115,6 +139,42 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           DataField = 'Metadata.Size'
           DataSource = SubjectSource
           TabOrder = 3
+        end
+        object ExternalLinkedNameEdit: TDBComboBox
+          Left = 8
+          Top = 264
+          Width = 210
+          Height = 21
+          DataField = 'ExternalLinkedName'
+          DataSource = SubjectSource
+          ItemHeight = 13
+          Sorted = True
+          TabOrder = 7
+          OnChange = ExternalLinkedNameEditChange
+          OnEnter = ExternalLinkedNameEditEnter
+        end
+        object ExternalStoredNameEdit: TDBEdit
+          Left = 8
+          Top = 224
+          Width = 209
+          Height = 21
+          DataField = 'ExternalStoredName'
+          DataSource = SubjectSource
+          TabOrder = 6
+          OnChange = ExternalStoredNameEditChange
+        end
+        object IsExternalEdit: TDBComboBox
+          Left = 7
+          Top = 184
+          Width = 210
+          Height = 21
+          Style = csDropDownList
+          DataField = 'IsExternal'
+          DataSource = SubjectSource
+          ItemHeight = 13
+          Sorted = True
+          TabOrder = 5
+          OnChange = IsExternalEditChange
         end
       end
       object AccessSheet: TTabSheet
@@ -328,7 +388,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 215
+    Top = 328
     Width = 241
     inherited ButtonPanel: TPanel
       Left = 81
@@ -337,13 +397,15 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   inherited SubjectExposer: TInstantExposer
     OnInitField = SubjectExposerInitField
     OnTranslate = SubjectExposerTranslate
-    Top = 222
+    Left = 6
+    Top = 324
   end
   inherited SubjectSource: TDataSource
-    Top = 222
+    Left = 46
+    Top = 324
   end
   object TypeImages: TImageList
-    Left = 197
-    Top = 6
+    Left = 84
+    Top = 324
   end
 end
