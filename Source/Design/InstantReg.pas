@@ -36,7 +36,7 @@ procedure Register;
 
 implementation
 
-{$R ..\iodesimages.res}
+{$R ../iodesimages.res}
 
 uses
   Classes, InstantConsts, InstantPersistence, InstantPresentation,

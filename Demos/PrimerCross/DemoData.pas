@@ -15,7 +15,7 @@ implementation
 uses
   SysUtils,
 {$IFDEF MSWINDOWS}
-  Windows, Dialogs,
+  Windows,
 {$ENDIF}
 {$IFDEF LINUX}
   QDialogs,

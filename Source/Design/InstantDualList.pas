@@ -30,7 +30,7 @@
 
 unit InstantDualList;
 
-{$I ..\Core\InstantDefines.inc}
+{$I ../Core/InstantDefines.inc}
 
 interface
 

@@ -492,7 +492,8 @@ end;
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Disconnect;
-  FActiveSubView.FormHide(FActiveSubView);  
+  if FActiveSubView <> nil then
+    FActiveSubView.FormHide(FActiveSubView);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);

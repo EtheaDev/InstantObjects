@@ -2,7 +2,9 @@ package DclIOCore;
 
 {$R *.res}
 {$R '../../Core/InstantPresentation.dcr'}
+{$R '../../Core/InstantExplorer.dcr'}
 {$R '../../Core/InstantPersistence.dcr'}
+{$R '../../Core/InstantPump.dcr'}
 {$R '../../Core/InstantConnectionManager.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -26,7 +28,6 @@ package DclIOCore;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects Design-Time Package (Kylix 3)'}
-{$LIBSUFFIX '_K3'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
@@ -47,6 +48,7 @@ contains
   InstantDualList in '../InstantDualList.pas' {InstantDualListForm},
   InstantEdit in '../InstantEdit.pas' {InstantEditForm},
   InstantModelExpert in '../InstantModelExpert.pas',
+  InstantModelExplorer in '../InstantModelExplorer.pas',
   InstantOTA in '../InstantOTA.pas',
   InstantReg in '../InstantReg.pas',
   InstantUnitSelect in '../InstantUnitSelect.pas' {InstantUnitSelectForm},

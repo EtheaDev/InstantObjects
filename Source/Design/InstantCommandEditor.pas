@@ -30,19 +30,19 @@
 
 unit InstantCommandEditor;
 
-{$I ..\Core\InstantDefines.inc}
+{$I ../Core/InstantDefines.inc}
 
 interface
 
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
 {$ENDIF}
 {$IFDEF LINUX}
-  QForms, QStdCtrls, QControls,
+  QForms, QStdCtrls, QControls, QExtCtrls,
 {$ENDIF}
-  InstantCode, InstantCommand, ExtCtrls;
+  InstantCode, InstantCommand;
 
 type
   TInstantCommandEditorForm = class(TForm)

@@ -5,14 +5,14 @@ interface
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, Mask,
   Grids, DBGrids, StdCtrls, ExtCtrls, ActnList, Menus, Buttons,
 {$ENDIF}
 {$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs,
+  QGraphics, QControls, QForms, QDialogs, QMask,
   QGrids, QDBGrids, QStdCtrls, QExtCtrls, QActnList, QMenus, QButtons,
 {$ENDIF}
-  BasicView, Db, InstantPresentation, Mask;
+  BasicView, Db, InstantPresentation;
 
 type
   TQueryViewForm = class(TBasicViewForm)

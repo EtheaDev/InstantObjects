@@ -1,6 +1,6 @@
 (*
  *   InstantObjects
- *   Primer Demo for Kylix 3
+ *   Primer Demo for Kylix 3 with internal storage Model
  *
  *)
 
@@ -25,11 +25,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta:
- * - cross-platform porting for Delphi & Kilix
- * - PerformanceView form changed to make tests with UsePreparedQuery
- * Salary attribute of type Currency added to Person
- * PersonEdit form and random data form changed to test Graphic support
+ * Carlo Barazzetta
  * ***** END LICENSE BLOCK ***** *)
 
 program PrimerK3;
