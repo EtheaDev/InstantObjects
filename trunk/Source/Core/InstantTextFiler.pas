@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -193,7 +193,7 @@ end;
 constructor TInstantTextFiler.Create(AStream: TStream; FreeStream: Boolean);
 begin
   if not Assigned(AStream) then
-    raise EInstantError.CreateRes(@SUnassignedStream);
+    raise EInstantError.Create(SUnassignedStream);
   FStream := AStream;
   FFreeStream := FreeStream;
   Initialize;

@@ -24,9 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
- * Marco Cantù (WriteEscapedData fixed for correct XML encodings)
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
+ * Carlo Barazzetta, Adrea Petrelli, Marco Cantù, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -63,6 +61,9 @@ type
   public
     constructor CreateRes(ResStringRec: PResStringRec; E: TObject = nil);
     constructor CreateResFmt(ResStringRec: PResStringRec;
+      const Args: array of const; E: TObject = nil);
+    constructor Create(const Msg: string; E: TObject = nil);
+    constructor CreateFmt(const Msg: string;
       const Args: array of const; E: TObject = nil);
     destructor Destroy; override;
     property OriginalException: TObject read FOriginalException;
@@ -437,7 +438,7 @@ procedure InstantCheckClass(AClass: TClass; MinimumClass: TClass);
 begin
   if Assigned(AClass) and Assigned(MinimumClass) then
     if not AClass.InheritsFrom(MinimumClass) then
-      raise EInstantError.CreateResFmt(@SInvalidClass,
+      raise EInstantError.CreateFmt(SInvalidClass,
         [AClass.ClassName, MinimumClass.ClassName]);
 end;
 procedure InstantObjectBinaryToText(Input, Output: TStream);
@@ -555,6 +556,19 @@ begin
 end;
 
 { EInstantError }
+
+constructor EInstantError.Create(const Msg: string; E: TObject);
+begin
+  inherited Create(Msg);
+  Initialize(E);
+end;
+
+constructor EInstantError.CreateFmt(const Msg: string;
+  const Args: array of const; E: TObject);
+begin
+  inherited CreateFmt(Msg, Args);
+  Initialize(E);
+end;
 
 constructor EInstantError.CreateRes(ResStringRec: PResStringRec;
   E: TObject);
@@ -872,7 +886,7 @@ begin
   begin
     Position := Position - 1;
     SkipValue;
-    raise EReadError.CreateRes(@SInvalidPropertyValue);
+    raise EReadError.Create(SInvalidPropertyValue);
   end;
   Stream := TMemoryStream.Create;
   try
@@ -902,7 +916,7 @@ function TInstantReader.ReadObject(AObject: TPersistent;
     else if ObjectClass.InheritsFrom(TInstantCollectionItem) then
       Result := TInstantCollectionItemClass(ObjectClass).CreateInstance(Arg)
     else
-      raise EInstantStreamError.CreateResFmt(@SClassNotStreamable,
+      raise EInstantStreamError.CreateFmt(SClassNotStreamable,
         [ObjectClass.ClassName]);
   end;
 
@@ -916,7 +930,7 @@ begin
     if ObjectClass.InheritsFrom(AObject.ClassType) then
       Result := AObject
     else
-      raise EInstantStreamError.CreateResFmt(@SUnexpectedClass,
+      raise EInstantStreamError.CreateFmt(SUnexpectedClass,
         [ObjectClassName, AObject.ClassName])
   else
     Result := CreateObject(ObjectClass);
@@ -992,7 +1006,7 @@ begin
   else if AObject is TInstantCollectionItem then
     TInstantCollectionItem(AObject).WriteObject(Self)
   else
-    raise EInstantStreamError.CreateResFmt(@SClassNotStreamable,
+    raise EInstantStreamError.CreateFmt(SClassNotStreamable,
       [AObject.ClassName]);
   WriteListEnd;
   ProcessObject(AObject);
@@ -1366,7 +1380,7 @@ end;
 procedure TInstantXMLProcessor.CheckToken(AToken: TInstantXMLToken);
 begin
   if not (Token = AToken) then
-    raise EInstantError.CreateResFmt(@SInvalidToken,
+    raise EInstantError.CreateFmt(SInvalidToken,
       [GetEnumName(TypeInfo(TInstantXMLToken), Ord(Token))]);
 end;
 
@@ -1712,7 +1726,7 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
           Producer.WriteData(InstantTrueString);
         end;
       else
-        raise EInstantStreamError.CreateRes(@SInvalidValueType);
+        raise EInstantStreamError.Create(SInvalidValueType);
       end;
   end;
 
@@ -1800,7 +1814,7 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
           Writer.WriteStr('');
        end;
     else
-      raise EInstantStreamError.CreateRes(@SInvalidValueType);
+      raise EInstantStreamError.Create(SInvalidValueType);
     end;
     Processor.ReadTag;
   end;

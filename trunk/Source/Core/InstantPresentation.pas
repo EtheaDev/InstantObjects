@@ -24,15 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Andrea Petrelli: porting Kylix
- * Carlo Barazzetta:
- * - Exposer Undo virtual and access to UndoBuffer (Removed!)
- * - Exposer OnAddClassFieldDef event 
- * - Added Currency and Graphic support to exposer
- * Andrea Petrelli:
- * - Added OnProgress event on TInstantSelector
- * Nando Dessena:
- * - Fixed Range Check Error in TInstantCustomExposer.LoadFieldValue
+ * Carlo Barazzetta, Andrea Petrelli, Nando Dessena
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPresentation;
@@ -752,7 +744,7 @@ function InstantFindAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 begin
   Result := InstantGetAccessorClass(ObjectClass);
   if not Assigned(Result) then
-    raise EInstantError.CreateResFmt(@SAccessorClassNotFoundFor,
+    raise EInstantError.CreateFmt(SAccessorClassNotFoundFor,
       [ObjectClass.ClassName]);
 end;
 
@@ -1065,7 +1057,7 @@ begin
     begin
       FCachedClass := GetClass(ObjectClassName);
       if not Assigned(FCachedClass) then
-        raise EInstantError.CreateResFmt(@SClassNotRegistered, [ObjectClassName]);
+        raise EInstantError.CreateFmt(SClassNotRegistered, [ObjectClassName]);
     end;
     Result := FCachedClass;
   end else
@@ -2408,10 +2400,10 @@ begin
   if Assigned(FOnFieldError) then
     FOnFieldError(Self, E, Field, Value, Write, Result)
   else if Write then
-    raise EInstantError.CreateResFmt(@SFieldWriteError,
+    raise EInstantError.CreateFmt(SFieldWriteError,
       [VarToStr(Value), Field.FieldName, E.Message], E)
   else
-    raise EInstantError.CreateResFmt(@SFieldReadError,
+    raise EInstantError.CreateFmt(SFieldReadError,
       [Field.FieldName, E.Message], E);
 end;
 
@@ -3577,7 +3569,7 @@ end;
 function TInstantExposerLink.GetMasterExposer: TInstantCustomExposer;
 begin
   if Assigned(DataSet) and not (DataSet is TInstantCustomExposer) then
-    raise EInstantError.CreateResFmt(@SInvalidMasterDataSetClass,
+    raise EInstantError.CreateFmt(SInvalidMasterDataSetClass,
       [DataSet.ClassName, TInstantCustomExposer.ClassName]);
   Result := DataSet as TInstantCustomExposer;
 end;
@@ -3945,7 +3937,7 @@ begin
   if Query.ClassType = TInstantQuery then
   begin
     if not HasConnector then
-      raise EInstantError.CreateRes(@SUnassignedConnector);
+      raise EInstantError.Create(SUnassignedConnector);
     DestroyQuery;
   end;
   Query.Params := Params;

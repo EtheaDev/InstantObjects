@@ -2616,7 +2616,7 @@ begin
     dtDateTime: Result := ftDateTime;
     dtBlob: Result := ftBlob;
   else
-    raise EInstantError.CreateResFmt(@SUnsupportedDataType,
+    raise EInstantError.CreateFmt(SUnsupportedDataType,
       [GetEnumName(TypeInfo(TInstantDataType), Ord(InstantDataType))]);
   end;
 end;
@@ -2629,7 +2629,7 @@ end;
 procedure InstantCheckConnection(Connection: TCustomConnection);
 begin
   if not Assigned(Connection) then
-    raise EInstantError.CreateRes(@SUnassignedConnection);
+    raise EInstantError.Create(SUnassignedConnection);
 end;
 
 function InstantCheckConnector(
@@ -2642,7 +2642,7 @@ begin
   end;
   Connector := DefaultConnector;
   if not Assigned(Connector) then
-    raise EInstantError.CreateRes(@SUnassignedConnector);
+    raise EInstantError.Create(SUnassignedConnector);
   Result := Connector;
 end;
 
@@ -2730,7 +2730,7 @@ function InstantFindClass(const ClassName: string): TInstantObjectClass;
 begin
   Result := InstantGetClass(Classname);
   if not Assigned(Result) then
-    raise EInstantError.CreateResFmt(@SClassNotRegistered, [ClassName]);
+    raise EInstantError.CreateFmt(SClassNotRegistered, [ClassName]);
 end;
 
 function InstantFindClassMetadata(
@@ -2738,7 +2738,7 @@ function InstantFindClassMetadata(
 begin
   Result := InstantGetClassMetadata(ClassName);
   if not Assigned(Result) then
-    raise EInstantError.CreateResFmt(@SClassNotRegistered, [ClassName]);
+    raise EInstantError.CreateFmt(SClassNotRegistered, [ClassName]);
 end;
 
 function InstantGetClass(const ClassName: string): TInstantObjectClass;
@@ -2950,7 +2950,7 @@ procedure TInstantAttributeMetadata.CheckAttributeClass(
   AClass: TInstantAttributeClass);
 begin
   if Assigned(AClass) and not IsAttributeClass(AClass) then
-    raise EInstantError.CreateResFmt(@SUnexpectedAttributeClass,
+    raise EInstantError.CreateFmt(SUnexpectedAttributeClass,
       [AttributeClassName, Name, ClassMetadataName, AClass.ClassName]);
 end;
 
@@ -2964,7 +2964,7 @@ procedure TInstantAttributeMetadata.CheckCategory(
 
 begin
   if Category <> ACategory then
-    raise EInstantError.CreateResFmt(@SUnexpectedAttributeCategory,
+    raise EInstantError.CreateFmt(SUnexpectedAttributeCategory,
       [CategoryName(Category), AttributeClassName, Name,
       ClassMetadataName, CategoryName(ACategory)]);
 end;
@@ -2972,7 +2972,7 @@ end;
 procedure TInstantAttributeMetadata.CheckIsIndexed;
 begin
   if not IsIndexed then
-    raise EInstantError.CreateResFmt(@SAttributeNotIndexed,
+    raise EInstantError.CreateFmt(SAttributeNotIndexed,
       [AttributeClassName, Name, ClassMetadataName]);
 end;
 
@@ -2983,7 +2983,7 @@ var
 begin
   AClass := AttributeClass;
   if not Assigned(AClass) then
-    raise EInstantError.CreateResFmt(@SUnsupportedType, [AttributeTypeName]);
+    raise EInstantError.CreateFmt(SUnsupportedType, [AttributeTypeName]);
   Result := AClass.Create(AObject, Self);
 end;
 
@@ -3142,7 +3142,7 @@ begin
   if I <> -1 then
     AttributeType := TInstantAttributeType(I)
   else
-    raise EInstantError.CreateResFmt(@SUnsupportedType, [Value]);
+    raise EInstantError.CreateFmt(SUnsupportedType, [Value]);
 end;
 
 procedure TInstantAttributeMetadata.SetCollection(
@@ -4221,7 +4221,7 @@ end;
 function TInstantAttribute.AccessError(
   const TypeName: string): EInstantAccessError;
 begin
-  Result := EInstantAccessError.CreateResFmt(@SAccessError,
+  Result := EInstantAccessError.CreateFmt(SAccessError,
     [ClassName, Name, TypeName]);
 end;
 
@@ -4233,14 +4233,14 @@ end;
 procedure TInstantAttribute.CheckHasMetadata;
 begin
   if not Assigned(Metadata) then
-    raise EInstantError.CreateResFmt(@SUnassignedAttributeMetadata,
+    raise EInstantError.CreateFmt(SUnassignedAttributeMetadata,
       [ClassName, Name]);
 end;
 
 function TInstantAttribute.ConversionError(
   E: Exception): EInstantConversionError;
 begin
-  Result := EInstantConversionError.CreateResFmt(@SAttributeConversionError,
+  Result := EInstantConversionError.CreateFmt(SAttributeConversionError,
     [ClassName, Name, E.Message], E);
 end;
 
@@ -4426,7 +4426,7 @@ end;
 procedure TInstantAttribute.SetMetadata(Value: TInstantAttributeMetadata);
 begin
   if Assigned(Value) and (Value.AttributeType <> AttributeType) then
-    raise EInstantError.CreateResFmt(@SMetadataMismatch, [ClassName, Name]);
+    raise EInstantError.CreateFmt(SMetadataMismatch, [ClassName, Name]);
   FMetadata := Value;
   Initialize;
 end;
@@ -4443,7 +4443,7 @@ end;
 
 procedure TInstantAttribute.StringValidationError(InvalidChar: Char);
 begin
-  raise EInstantValidationError.CreateResFmt(@SInvalidChar,
+  raise EInstantValidationError.CreateFmt(SInvalidChar,
     [InvalidChar, Ord(InvalidChar), ClassName, Name]);
 end;
 
@@ -4462,7 +4462,7 @@ end;
 function TInstantSimple.InvalidValueError(AValue: Variant;
   E: Exception): EInstantError;
 begin
-  Result := EInstantError.CreateResFmt(@SInvalidAttributeValue,
+  Result := EInstantError.CreateFmt(SInvalidAttributeValue,
     [VarToStr(AValue), ClassName, Name], E);
 end;
 
@@ -5499,10 +5499,10 @@ begin
     Stream.Position := 0;
     InstantGraphicFileFormat := InstantResolveGraphicFileType(Stream);
     if InstantGraphicFileFormat = gffUnknow then
-      raise EInstantError.CreateRes(@SUnsupportedGraphicStream);
+      raise EInstantError.Create(SUnsupportedGraphicStream);
     GraphicClass := InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat);
     if not Assigned(GraphicClass) then
-      raise EInstantError.CreateRes(@SUnsupportedGraphicClass);
+      raise EInstantError.Create(SUnsupportedGraphicClass);
     Image := GraphicClass.Create;
     Try
       Image.LoadFromStream(Stream);
@@ -5582,11 +5582,8 @@ begin
   begin
     ValidateObjectClassType(AObject.ClassType);
     if (AObject.Connector <> Connector) then
-      raise EInstantValidationError.CreateResFmt(@SInvalidConnector,
+      raise EInstantValidationError.CreateFmt(SInvalidConnector,
         [AObject.ClassName, AObject.Id, ClassName, Name]);
-    {if not AllowOwned and AObject.IsOwned then
-      raise EInstantError.CreateResFmt(@SObjectIsOwned,
-        [AObject.ClassName, AObject.Id]);}
   end;
 end;
 
@@ -5594,7 +5591,7 @@ procedure TInstantComplex.ValidateObjectClassType(
   AClass: TInstantObjectClass);
 begin
   if not (AClass.InheritsFrom(RequiredClass)) then
-    raise EInstantValidationError.CreateResFmt(@SInvalidObjectClass,
+    raise EInstantValidationError.CreateFmt(SInvalidObjectClass,
       [AClass.ClassName, ClassName, Name, RequiredClass.ClassName]);
 end;
 
@@ -5817,10 +5814,10 @@ begin
   begin
     if Metadata.StorageKind = skEmbedded then
       if AObject.IsPersistent then
-        raise EInstantValidationError.CreateResFmt(@SPersistentObjectNotAllowed,
+        raise EInstantValidationError.CreateFmt(SPersistentObjectNotAllowed,
           [AObject.ClassName, AObject.Id]);
     if Assigned(Owner) and (AObject = Owner) then
-      raise EInstantValidationError.CreateResFmt(@SOwnershipRecursion,
+      raise EInstantValidationError.CreateFmt(SOwnershipRecursion,
         [AObject.ClassName, AObject.Id]);
   end;
 end;
@@ -6124,7 +6121,7 @@ end;
 procedure TInstantContainer.CheckRange(Index: Integer);
 begin
   if (Index < 0) or (Index >= Count) then
-    raise EInstantRangeError.CreateResFmt(@SIndexOutOfBounds, [Index]);
+    raise EInstantRangeError.CreateFmt(SIndexOutOfBounds, [Index]);
 end;
 
 procedure TInstantContainer.Clear;
@@ -6375,7 +6372,7 @@ procedure TInstantContainer.ValidateObject(AObject: TInstantObject);
 begin
   inherited;
   if not Assigned(AObject) then
-    raise EInstantError.CreateResFmt(@SUnassignedObjectInAttribute,
+    raise EInstantError.CreateFmt(SUnassignedObjectInAttribute,
       [ClassName, Name]);
 end;
 
@@ -6739,10 +6736,10 @@ begin
   inherited;
   if Metadata.StorageKind = skEmbedded then
     if AObject.IsPersistent then
-      raise EInstantValidationError.CreateResFmt(@SPersistentObjectNotAllowed,
+      raise EInstantValidationError.CreateFmt(SPersistentObjectNotAllowed,
         [AObject.ClassName, AObject.Id]);
   if Assigned(Owner) and (AObject = Owner) then
-    raise EInstantError.CreateResFmt(@SOwnershipRecursion,
+    raise EInstantError.CreateFmt(SOwnershipRecursion,
       [AObject.ClassName, AObject.Id]);
 end;
 
@@ -7152,8 +7149,7 @@ begin
       SavedState.Assign(State);
     except
       on E: Exception do
-        raise EInstantError.CreateResFmt(@SFatalError, [ClassName, Id,
-          E.Message]);
+        raise EInstantError.CreateFmt(SFatalError, [ClassName, Id, E.Message]);
     end;
   Dec(FSaveStateLevel);
 end;
@@ -7199,7 +7195,7 @@ function TInstantObject.AttributeByName(
 begin
   Result := FindAttribute(AttributeName);
   if not Assigned(Result) then
-    raise EInstantError.CreateResFmt(@SAttributeNotFound, [AttributeName,
+    raise EInstantError.CreateFmt(SAttributeNotFound, [AttributeName,
       ClassName]);
 end;
 
@@ -7267,7 +7263,7 @@ begin
     if FId = '' then
       FId := GenerateId;
     if not InstantIsValidObjectId(Id) then
-      raise EInstantError.CreateResFmt(@SInvalidObjectId, [Id, ClassName]);
+      raise EInstantError.CreateFmt(SInvalidObjectId, [Id, ClassName]);
   end;
 end;
 
@@ -7312,10 +7308,10 @@ begin
   Result := FindContainer(ContainerName);
   if not Assigned(Result) then
     if ContainerName = '' then
-      raise EInstantError.CreateResFmt(@SDefaultContainerNotFound,
+      raise EInstantError.CreateFmt(SDefaultContainerNotFound,
         [ClassName])
     else
-      raise EInstantError.CreateResFmt(@SContainerNotFound, [ContainerName,
+      raise EInstantError.CreateFmt(SContainerNotFound, [ContainerName,
         ClassName]);
 end;
 
@@ -7477,7 +7473,7 @@ class procedure TInstantObject.ConvertToText(
              Reader.ReadListEnd;
           end;
       else
-        raise EInstantStreamError.CreateRes(@SInvalidValueType);
+        raise EInstantStreamError.Create(SInvalidValueType);
       end;
     end;
   end;
@@ -7552,7 +7548,7 @@ class function TInstantObject.CreateInstance(
   Arg: Pointer): TInstantStreamable;
 begin
   if Assigned(Arg) and not (TObject(Arg) is TInstantConnector) then
-    raise EInstantError.CreateResFmt(@SInvalidArgument, [ClassName,
+    raise EInstantError.CreateFmt(SInvalidArgument, [ClassName,
       TInstantConnector.ClassName]);
   Result := Create(Arg)
 end;
@@ -7705,7 +7701,7 @@ begin
     vrAbort:
       Abort;
     vrError:
-      raise EInstantError.CreateResFmt(@SDeniedDispose, [ClassName, Id]);
+      raise EInstantError.CreateFmt(SDeniedDispose, [ClassName, Id]);
   end;
   DoBeforeDispose;
   if IsOwned then
@@ -7755,7 +7751,7 @@ begin
     vrAbort:
       Abort;
     vrError:
-      raise EInstantError.CreateResFmt(@SDeniedRefresh, [ClassName, Id]);
+      raise EInstantError.CreateFmt(SDeniedRefresh, [ClassName, Id]);
   end;
   DoBeforeRefresh;
   DisableChanges;
@@ -7788,7 +7784,7 @@ begin
      vrAbort:
        Abort;
      vrError:
-       raise EInstantError.CreateResFmt(@SDeniedStore, [ClassName, Id]);
+       raise EInstantError.CreateFmt(SDeniedStore, [ClassName, Id]);
    end;
   DoBeforeStore;
   if not IsOwned then
@@ -7898,7 +7894,7 @@ begin
       if (E is EInstantError) or (E is EAbort) then
         raise
       else
-        raise EInstantError.CreateResFmt(@SFinalizationFailed,
+        raise EInstantError.CreateFmt(SFinalizationFailed,
           [ClassName, Id, E.Message], E);
   end;
   if not IsAbandoned then
@@ -7947,7 +7943,7 @@ begin
     FDefaultContainer := FindDefaultContainer;
   Result := FDefaultContainer;
   if not Assigned(Result) then
-    raise EInstantError.CreateResFmt(@SDefaultContainerNotSpecified, [ClassName])
+    raise EInstantError.CreateFmt(SDefaultContainerNotSpecified, [ClassName])
 end;
 
 function TInstantObject.GetHasDefaultContainer: Boolean;
@@ -8086,7 +8082,7 @@ begin
         if (E is EInstantError) or (E is EAbort) then
           raise
         else
-          raise EInstantError.CreateResFmt(@SInitializationFailed,
+          raise EInstantError.CreateFmt(SInitializationFailed,
             [ClassName, E.Message], E);
     end;
   finally
@@ -8338,7 +8334,7 @@ begin
         ObjectStore.AddToCache(Self);
     except
       on E: Exception do
-        raise EInstantError.CreateResFmt(@SFatalError, [ClassName, Id, E.Message]);
+        raise EInstantError.CreateFmt(SFatalError, [ClassName, Id, E.Message]);
     end;
   Dec(FSaveStateLevel);
 end;
@@ -8349,7 +8345,7 @@ constructor TInstantObject.Retrieve(const AObjectId: string;
 
   procedure RetrieveDenied;
   begin
-    raise EInstantError.CreateResFmt(@SDeniedRetrieve, [ClassName, AObjectId]);
+    raise EInstantError.CreateFmt(SDeniedRetrieve, [ClassName, AObjectId]);
   end;
 
 var
@@ -8412,7 +8408,7 @@ begin
       end;
     except
       on E: Exception do
-        raise EInstantError.CreateResFmt(@SFatalError, [ClassName, Id, E.Message]);
+        raise EInstantError.CreateFmt(SFatalError, [ClassName, Id, E.Message]);
     end;
   Inc(FSaveStateLevel);
 end;
@@ -8703,7 +8699,7 @@ function TInstantConnector.CreateQuery: TInstantQuery;
 begin
   Result := InternalCreateQuery;
   if not Assigned(Result) then
-    raise EInstantError.CreateRes(@SCapabilityNotSuppported);
+    raise EInstantError.Create(SCapabilityNotSuppported);
 end;
 
 function TInstantConnector.CreateScheme(Model: TInstantModel): TInstantScheme;
@@ -8862,7 +8858,7 @@ begin
       Exit;
     end;
   end;
-  raise EInstantError.CreateResFmt(@SIndexOutOfBounds, [Index]);
+  raise EInstantError.CreateFmt(SIndexOutOfBounds, [Index]);
 end;
 
 function TInstantConnector.GetObjectStores: TInstantObjectStores;
@@ -9257,7 +9253,7 @@ var
   Node: TInstantCacheNode;
 begin
   if Index >= Count then
-    raise EInstantError.CreateResFmt(@SIndexOutOfBounds, [Index]);
+    raise EInstantError.CreateFmt(SIndexOutOfBounds, [Index]);
   Enumerator := TInstantCacheEnumerator.Create(Self);
   try
     I := 0;
@@ -9509,7 +9505,7 @@ end;
 procedure TInstantObjectStore.CheckBroker(ABroker: TInstantBroker);
 begin
   if not Assigned(ABroker) then
-    raise EInstantError.CreateRes(@SUnassignedBroker);
+    raise EInstantError.Create(SUnassignedBroker);
 end;
 
 constructor TInstantObjectStore.Create(Collection: TCollection);
@@ -9540,7 +9536,7 @@ begin
       if (E is EInstantError) or (E is EAbort) then
         raise
       else
-        raise EInstantError.CreateResFmt(@SErrorDisposingObject,
+        raise EInstantError.CreateFmt(SErrorDisposingObject,
           [AObject.ClassName, AObject.Id, E.Message], E);
   end;
 end;
@@ -9601,7 +9597,7 @@ begin
       if (E is EInstantError) or (E is EAbort) then
         raise
       else
-        raise EInstantError.CreateResFmt(@SErrorRefreshingObject,
+        raise EInstantError.CreateFmt(SErrorRefreshingObject,
           [AObject.ClassName, AObject.Id, E.Message], E);
   end;
 end;
@@ -9640,7 +9636,7 @@ begin
       if (E is EInstantError) or (E is EAbort) then
         raise
       else
-        raise EInstantError.CreateResFmt(@SErrorRetrievingObject,
+        raise EInstantError.CreateFmt(SErrorRetrievingObject,
           [AObject.ClassName, AObjectId, E.Message], E);
   end;
 end;
@@ -9672,7 +9668,7 @@ begin
       if (E is EInstantError) or (E is EAbort) then
         raise
       else
-        raise EInstantError.CreateResFmt(@SErrorStoringObject,
+        raise EInstantError.CreateFmt(SErrorStoringObject,
           [AObject.ClassName, AObject.Id, E.Message], E);
   end;
 end;
@@ -9734,7 +9730,7 @@ begin
       AttribName := List[I];
       Result := AClassMetadata.MemberMap.Find(AttribName);
       if not Assigned(Result) then
-        raise EInstantError.CreateResFmt(@SAttributeNotFound,
+        raise EInstantError.CreateFmt(SAttributeNotFound,
           [AttribName, AClassMetadata.Name]);
       if Result.Category = acElement then
         AClassMetadata := Result.ObjectClassMetadata;
@@ -9782,7 +9778,7 @@ function TInstantQueryTranslator.GetQuery: TInstantQuery;
 begin
   Result := FQuery;
   if not Assigned(Result) then
-    raise EInstantError.CreateRes(@SUnassignedQuery);
+    raise EInstantError.Create(SUnassignedQuery);
 end;
 
 function TInstantQueryTranslator.GetResultClassName: string;
@@ -9823,7 +9819,7 @@ function TInstantBroker.GetConnector: TInstantConnector;
 begin
   Result := FConnector;
   if not Assigned(Result) then
-    raise EInstantError.CreateRes(@SUnassignedConnector);
+    raise EInstantError.Create(SUnassignedConnector);
 end;
 
 function TInstantBroker.GetDatabaseName: string;
@@ -9901,7 +9897,7 @@ function TInstantQuery.GetConnector: TInstantConnector;
 begin
   Result := FConnector;
   if not Assigned(Result) then
-    raise EInstantError.CreateRes(@SUnassignedConnector);
+    raise EInstantError.Create(SUnassignedConnector);
 end;
 
 function TInstantQuery.GetObjectClass: TClass;
@@ -10422,7 +10418,7 @@ function TInstantRelationalTranslator.GetObjectClassMetadata: TInstantClassMetad
 begin
   Result := InternalGetObjectClassMetadata;
   if not Assigned(Result) then
-    raise EInstantError.CreateResFmt(@SUnassignedClassMetadata,
+    raise EInstantError.CreateFmt(SUnassignedClassMetadata,
      [Command.ObjectClassName]);
 end;
 
@@ -10619,7 +10615,7 @@ begin
         begin
           if Assigned(Result) and
             not Result.IsAttributeClass(TInstantReference) then
-            raise EInstantError.CreateResFmt(@SUnableToQueryAttribute,
+            raise EInstantError.CreateFmt(SUnableToQueryAttribute,
               [Result.ClassMetadataName, Result.Name]);
           FieldName := FieldName + RootAttribToFieldName(AttribName);
         end else
@@ -10640,13 +10636,13 @@ begin
                 FieldName := Result.FieldName;
                 ClassMeta := Result.ObjectClassMetadata;
               end else
-                raise EInstantError.CreateResFmt(@SAttributeNotQueryable,
+                raise EInstantError.CreateFmt(SAttributeNotQueryable,
                   [Result.ClassName, Result.Name, Result.ClassMetadataName]);
             end else
-              raise EInstantError.CreateResFmt(@SClassNotQueryable,
+              raise EInstantError.CreateFmt(SClassNotQueryable,
                 [Result.ClassMetadataName]);
           end else
-            raise EInstantError.CreateResFmt(@SAttributeNotFound,
+            raise EInstantError.CreateFmt(SAttributeNotFound,
               [AttribName, ClassMeta.Name]);
         end;
       end;
@@ -11128,7 +11124,7 @@ constructor TInstantCustomResolver.Create(
   ABroker: TInstantCustomRelationalBroker);
 begin
   if not Assigned(ABroker) then
-    raise EInstantError.CreateRes(@SUnassignedBroker);
+    raise EInstantError.Create(SUnassignedBroker);
   inherited Create;
   FBroker := ABroker;
 end;
@@ -11168,7 +11164,7 @@ begin
     ObjectClassName := AObject.ClassName
   else
     ObjectClassName := '';
-  Result := EInstantKeyViolation.CreateResFmt(@SKeyViolation,
+  Result := EInstantKeyViolation.CreateFmt(SKeyViolation,
     [ObjectClassName, AObjectId], E);
 end;
 
@@ -11427,7 +11423,7 @@ begin
   Field := FieldByName(InstantUpdateCountFieldName);
   Result := Field.AsInteger <> AObject.UpdateCount;
   if Result and (ConflictAction = caFail) then
-    raise EInstantConflict.CreateResFmt(@SUpdateConflict,
+    raise EInstantConflict.CreateFmt(SUpdateConflict,
       [AObject.ClassName, AObjectId]);
 end;
 
@@ -11624,7 +11620,7 @@ begin
       end;
     end;
   end else if Map.IsRootMap and (ConflictAction = caFail) then
-    raise EInstantConflict.CreateResFmt(@SDisposeConflict,
+    raise EInstantConflict.CreateFmt(SDisposeConflict,
       [AObject.ClassName, AObject.PersistentId])
 end;
 
@@ -12885,7 +12881,7 @@ end;
 procedure TInstantSQLBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
 begin
   // must be implemented in derived broker
-  raise EInstantError.CreateResFmt(@SUnsupportedUsePreparedQuery, [ClassName]);
+  raise EInstantError.CreateFmt(SUnsupportedUsePreparedQuery, [ClassName]);
 end;
 
 destructor TInstantSQLBroker.Destroy;
@@ -12909,7 +12905,7 @@ end;
 function TInstantSQLBroker.ExecuteQuery(DataSet: TDataSet): Integer;
 begin
   // must be implemented in derived broker
-  raise EInstantError.CreateResFmt(@SUnsupportedUsePreparedQuery, [ClassName]);
+  raise EInstantError.CreateFmt(SUnsupportedUsePreparedQuery, [ClassName]);
 end;
 
 function TInstantSQLBroker.FindResolver(
@@ -13275,7 +13271,7 @@ procedure TInstantSQLResolver.CheckConflict(Info: PInstantOperationInfo;
  AObject: TInstantObject);
 begin
   if Info.Conflict then
-    raise EInstantConflict.CreateResFmt(@SUpdateConflict,
+    raise EInstantConflict.CreateFmt(SUpdateConflict,
       [AObject.ClassName, AObject.Id]);
 end;
 
@@ -13283,7 +13279,7 @@ constructor TInstantSQLResolver.Create(ABroker: TInstantSQLBroker;
   AMap: TInstantAttributeMap);
 begin
   if not Assigned(AMap) then
-    raise EInstantError.CreateRes(@SUnassignedMap);
+    raise EInstantError.Create(SUnassignedMap);
   inherited Create(ABroker);
   FMap := AMap;
 end;
@@ -13689,7 +13685,7 @@ procedure TInstantSQLResolver.InternalStoreMap(AObject: TInstantObject;
   Info: PInstantOperationInfo);
 var
   Params: TParams;
-  AInfo: PInstantOperationInfo;
+  AInfo: TInstantOperationInfo;
   NewUpdateCount, RowsAffected: Integer;
 
   procedure InsertMap;

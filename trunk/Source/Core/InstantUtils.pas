@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -522,7 +522,7 @@ begin
         InstantStrToTime(Copy(Str, Length(InstantDateFormat) + 1,
         Length(InstantTimeFormat)));
   else
-    raise EInstantConversionError.CreateResFmt(@SInvalidDateTime, [Str]);
+    raise EInstantConversionError.CreateFmt(SInvalidDateTime, [Str]);
   end;
 end;
 
