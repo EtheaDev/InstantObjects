@@ -57,7 +57,7 @@ uses
 
 procedure TInstantDesignResourceModule.DataModuleCreate(Sender: TObject);
 begin
-  LoadMultipleImages(ToolImages,'IO_DESIGNRESOURCEIMAGES');
+  LoadMultipleImages(ToolImages, 'IO_DESIGNRESOURCEIMAGES', HInstance);
 end;
 
 end.

@@ -31,7 +31,7 @@ unit InstantOTA;
 
 interface
 
-{$I InstantDefines.inc}
+{$I ..\Core\InstantDefines.inc}
 
 {$IFDEF D7+}
 {$WARN UNIT_DEPRECATED OFF}

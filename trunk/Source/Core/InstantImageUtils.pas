@@ -21,6 +21,7 @@
  * The Initial Developer of the Original Code is: Carlo Barazzetta
  *
  * Contributor(s):
+ *   Nando Dessena (fix to HInstance handling)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -38,13 +39,17 @@ uses
 {$ENDIF}
   Classes;
 
-procedure LoadMultipleImages(ImageList : TImageList; const ResourceName: string;
-  FromFile : boolean = false);
+// Loads a bitmap resource and slices it into a number of images which are
+// added to ImageList. If ResourceHandle is passed, then the resource ResourceName
+// is loaded from the specified module handle, otherwise ResourceName is
+// interpreted as a file name containing the bitmap to load.
+procedure LoadMultipleImages(ImageList: TImageList; const ResourceName: string;
+  const ResourceHandle: LongWord = 0);
 
 implementation
 
-procedure LoadMultipleImages(ImageList : TImageList; const ResourceName: string;
-  FromFile : boolean = false);
+procedure LoadMultipleImages(ImageList: TImageList; const ResourceName: string;
+  const ResourceHandle: LongWord = 0);
 var
   Picture: TPicture;
   X, Y: Integer;
@@ -56,10 +61,10 @@ begin
   ImageList.Clear;
   Picture := TPicture.Create;
   try
-    if FromFile then
+    if ResourceHandle = 0 then
       Picture.Bitmap.LoadFromFile(ResourceName)
     else
-      Picture.Bitmap.LoadFromResourceName(HInstance,ResourceName);
+      Picture.Bitmap.LoadFromResourceName(ResourceHandle, ResourceName);
     IWidth := ImageList.Width;
     IHeight := ImageList.Height;
     if Picture.Graphic is TBitmap then

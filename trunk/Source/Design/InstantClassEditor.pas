@@ -609,9 +609,9 @@ end;
 
 procedure TInstantClassEditorForm.FormCreate(Sender: TObject);
 begin
-  LoadMultipleImages(AttributeImages,'IO_CLASSEDITORATTRIBUTEIMAGES');
-  LoadMultipleImages(StateImages,'IO_CLASSEDITORSTATEIMAGES');
-  LoadMultipleImages(ActionImages,'IO_CLASSEDITORACTIONIMAGES');
+  LoadMultipleImages(AttributeImages, 'IO_CLASSEDITORATTRIBUTEIMAGES', HInstance);
+  LoadMultipleImages(StateImages, 'IO_CLASSEDITORSTATEIMAGES', HInstance);
+  LoadMultipleImages(ActionImages, 'IO_CLASSEDITORACTIONIMAGES', HInstance);
 {$IFDEF MSWINDOWS}
   BorderStyle := bsSizeable;
   IntroducedAttributesView.SmallImages := AttributeImages;

@@ -762,9 +762,9 @@ end;
 
 procedure TInstantModelExplorerForm.FormCreate(Sender: TObject);
 begin
-  LoadMultipleImages(ActionImages,'IO_MODELEXPLORERACTIONIMAGES');
-  LoadMultipleImages(ModelImages,'IO_MODELEXPLORERMODELIMAGES');
-  LoadMultipleImages(AttributeImages,'IO_MODELEXPLORERATTRIBUTEIMAGES');
+  LoadMultipleImages(ActionImages, 'IO_MODELEXPLORERACTIONIMAGES', HInstance);
+  LoadMultipleImages(ModelImages, 'IO_MODELEXPLORERMODELIMAGES', HInstance);
+  LoadMultipleImages(AttributeImages, 'IO_MODELEXPLORERATTRIBUTEIMAGES', HInstance);
 end;
 
 initialization

@@ -130,13 +130,12 @@ uses
   InstantRtti, InstantPersistence, InstantDesignUtils, InstantImageUtils;
 
 {$R *.dfm}
-{$R iodesimages.res}
 
 { TInstantAttributeEditorForm }
 
 procedure TInstantAttributeEditorForm.FormCreate(Sender: TObject);
 begin
-  LoadMultipleImages(TypeImages,'IO_ATTRIBUTEEDITORIMAGES');
+  LoadMultipleImages(TypeImages, 'IO_ATTRIBUTEEDITORIMAGES', HInstance);
   PageControl.ActivePage := DefinitionSheet;
   ActiveControl := NameEdit;
 end;

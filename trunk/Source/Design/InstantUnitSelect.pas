@@ -57,7 +57,7 @@ procedure TInstantUnitSelectForm.FormCreate(Sender: TObject);
 begin
   inherited;
   ListImages.Clear;
-  LoadMultipleImages(ListImages,'IO_UNITSELECTIMAGES');
+  LoadMultipleImages(ListImages, 'IO_UNITSELECTIMAGES', HInstance);
 {$IFDEF MSWINDOWS}
   LeftView.SmallImages := ListImages;
   RightView.SmallImages := ListImages;
