@@ -6523,7 +6523,10 @@ end;
 
 function TInstantParts.GetInstances(Index: Integer): TInstantObject;
 begin
-  Result := ObjectReferences[Index].Instance;
+  if Metadata.IsExternal = ceNo then
+    Result := inherited GetInstances(Index)
+  else
+    Result := ObjectReferences[Index].Instance;
 end;
 
 function TInstantParts.GetIsChanged: Boolean;
