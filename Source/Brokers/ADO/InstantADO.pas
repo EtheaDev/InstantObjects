@@ -171,10 +171,10 @@ type
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure PrepareQuery(DataSet : TDataSet); override; //CB
-    procedure UnprepareQuery(DataSet : TDataSet); override; //CB
-    function ExecuteQuery(DataSet : TDataSet) : integer; override; //CB
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; //CB
+    procedure PrepareQuery(DataSet : TDataSet); override; 
+    procedure UnprepareQuery(DataSet : TDataSet); override; 
+    function ExecuteQuery(DataSet : TDataSet) : integer; override; 
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; 
   public
     function CreateDataSet(const Statement: string; Params: TParams): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
@@ -621,7 +621,7 @@ procedure TInstantADOConnector.DoBuildDatabase(Scheme: TInstantScheme;
   BuildMethod: TInstantADOBuildMethod);
 begin
   if Assigned(Scheme) then
-    Scheme.BlobStreamFormat := BlobStreamFormat; //CB
+    Scheme.BlobStreamFormat := BlobStreamFormat; 
   case BuildMethod of
     bmDefault:
       if ProviderType in [ptMSJet, ptMSSQLServer] then
@@ -715,7 +715,7 @@ end;
 procedure TInstantADOConnector.InternalBuildDatabase(
   Scheme: TInstantScheme);
 begin
-  Scheme.BlobStreamFormat := BlobStreamFormat; //CB
+  Scheme.BlobStreamFormat := BlobStreamFormat;
   DoBuildDatabase(Scheme, bmDefault);
 end;
 
@@ -800,7 +800,7 @@ begin
   with DataSet do
   begin
     LocateSet := RecordSet.Clone(adLockReadOnly);
-    Criteria := Format('%s=''%s''', [InstantIdFieldName, AObjectId]);
+    Criteria := Format('%s=%s', [InstantIdFieldName, InstantQuote(AObjectId,'''')]);
     SkipCount := 0;
     Result := False;
     if not LocateSet.EOF then
@@ -1120,8 +1120,8 @@ var
 begin
   Query := TADOQuery.Create(nil);
   try
-    Query.SQL.Text := Statement;
-    AssignParameters(Params, Query.Parameters);
+    Query.SQL.Text := AStatement;
+    AssignParameters(AParams, Query.Parameters);
     Query.CursorType := ctOpenForwardOnly;
     Query.LockType := ltReadOnly;
     Query.MaxRecords := MaxCount;

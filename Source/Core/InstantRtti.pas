@@ -400,20 +400,22 @@ begin
     Exit;
   end;
   PropInfo := PropInfos[Index];
-  if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
-  begin
-    CurrencyValue := GetFloatProp(FInstance, PropInfo);
-    Result := CurrencyValue;
-  end else
   if PropInfo^.PropType^^.Kind = tkFloat then
   begin
-    Value := GetFloatProp(FInstance, PropInfo);
-    if (PropInfo.PropType^ = TypeInfo(TDateTime))
-      or (PropInfo.PropType^ = TypeInfo(TDate))
-      or (PropInfo.PropType^ = TypeInfo(TTime)) then
-      Result := VarFromDateTime(Value)
-    else
-      Result := Value;
+    if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
+    begin
+      CurrencyValue := GetFloatProp(FInstance, PropInfo);
+      Result := CurrencyValue;
+    end else
+    begin
+      Value := GetFloatProp(FInstance, PropInfo);
+      if (PropInfo.PropType^ = TypeInfo(TDateTime))
+        or (PropInfo.PropType^ = TypeInfo(TDate))
+        or (PropInfo.PropType^ = TypeInfo(TTime)) then
+        Result := VarFromDateTime(Value)
+      else
+        Result := Value;
+    end
   end else
     Result := GetPropValue(FInstance, Names[Index]);
 end;

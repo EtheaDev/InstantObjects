@@ -71,12 +71,12 @@ type
   protected
     procedure BeginMeasure;
     procedure EndMeasure(MeasureType: TMeasureType; Count: Integer);
-    procedure Run(Store, Retrieve, Dispose : boolean); virtual; abstract;
+    procedure Run(Retrieve, Dispose : boolean); virtual; abstract;
     property Stopwatch: TStopwatch read GetStopwatch;
     property TestResult: TTestResult read GetTestResult;
   public
     destructor Destroy; override;
-    procedure Execute(Store, Retrieve, Dispose : boolean);
+    procedure Execute(Retrieve, Dispose : boolean);
     function ExtractResult: TTestResult;
     property OnShowStatus: TShowStatusEvent read FOnShowStatus write FOnShowStatus;
   end;
@@ -93,7 +93,7 @@ type
     procedure TestDispose;
     procedure Operation(Method: TMethod);
   protected
-    procedure Run(Store, Retrieve, Dispose : boolean); override;
+    procedure Run(Retrieve, Dispose : boolean); override;
     property ObjectList: TStringList read GetObjectList;
   public
     destructor Destroy; override;
@@ -124,7 +124,6 @@ type
     PreparedQueryCheckBox: TCheckBox;
     NumberLabel: TLabel;
     ObjectsEdit: TMaskEdit;
-    TestStoreCheckBox: TCheckBox;
     TestRetrieveCheckBox: TCheckBox;
     TestDisposeCheckBox: TCheckBox;
     procedure RunButtonClick(Sender: TObject);
@@ -142,6 +141,8 @@ type
 {$ENDIF}
     procedure TransactionsCheckBoxClick(Sender: TObject);
     procedure PreparedQueryCheckBoxClick(Sender: TObject);
+    procedure TestDisposeCheckBoxClick(Sender: TObject);
+    procedure TestRetrieveCheckBoxClick(Sender: TObject);
   private
     FTestResults: TTestResults;
     function GetTestResults: TTestResults;
@@ -262,9 +263,9 @@ begin
 {$ENDIF}
 end;
 
-procedure TTest.Execute(Store, Retrieve, Dispose : boolean);
+procedure TTest.Execute(Retrieve, Dispose : boolean);
 begin
-  Run(Store,Retrieve,Dispose);
+  Run(Retrieve,Dispose);
 end;
 
 function TTest.ExtractResult: TTestResult;
@@ -335,12 +336,12 @@ begin
   end;
 end;
 
-procedure TPersistenceTest.Run(Store, Retrieve, Dispose : boolean);
+procedure TPersistenceTest.Run(Retrieve, Dispose : boolean);
 begin
-  Stopwatch.Start((Ord(Store)+Ord(Retrieve)+Ord(Dispose)) * Count);
+  Stopwatch.Start((1+Ord(Retrieve)+Ord(Dispose)) * Count);
   try
-    if Store then
-      Operation(TestStore);
+    //Test always store operations (necessary to test retrieve and dispose)
+    Operation(TestStore);
     if Retrieve then
       Operation(TestRetrieve);
     if Dispose then
@@ -483,7 +484,7 @@ begin
   try
     OnShowStatus := TestShowStatus;
     Count := StrToInt(Trim(ObjectsEdit.text));
-    Execute(TestStoreCheckBox.Checked, TestRetrieveCheckBox.Checked, TestDisposeCheckBox.Checked);
+    Execute(TestRetrieveCheckBox.Checked, TestDisposeCheckBox.Checked);
     AResult := ExtractResult;
     AResult.Name := ConnectionName;
     AResult.IsChecked := True;
@@ -636,7 +637,6 @@ begin
   TransactionsCheckBox.Enabled := IsConnected;
   TransactionsCheckBox.Checked := IsConnected and Connector.UseTransactions;
   ObjectsEdit.Enabled := IsConnected;
-  TestStoreCheckBox.Enabled := IsConnected;
   TestRetrieveCheckBox.Enabled := IsConnected;
   TestDisposeCheckBox.Enabled := IsConnected;
   if Assigned(Connector) and (Connector.Broker is TInstantSQLBroker) then
@@ -673,6 +673,20 @@ begin
   TitleLabel.Font.Size := 12;
 {$ENDIF}
   TitleLabel.Font.Style := [fsBold];
+end;
+
+procedure TPerformanceViewForm.TestDisposeCheckBoxClick(Sender: TObject);
+begin
+  inherited;
+  if TestDisposeCheckBox.Checked then
+    TestRetrieveCheckBox.Checked := True;
+end;
+
+procedure TPerformanceViewForm.TestRetrieveCheckBoxClick(Sender: TObject);
+begin
+  inherited;
+  if not TestRetrieveCheckBox.Checked then
+    TestDisposeCheckBox.Checked := False;
 end;
 
 initialization
