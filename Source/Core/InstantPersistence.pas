@@ -14815,6 +14815,7 @@ begin
       while not DataSet.Eof do
       begin
         ObjectReferenceList.Add(CreateObjectReference(DataSet));
+        if (MaxCount > 0) and (ObjectReferenceList.Count = MaxCount) then break; 
         DataSet.Next;
       end;
     finally
