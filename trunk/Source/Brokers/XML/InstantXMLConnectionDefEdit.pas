@@ -28,9 +28,9 @@
 
 unit InstantXMLConnectionDefEdit;
 
-interface
+{$I InstantDefines.inc}
 
-{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+interface
 
 uses
   Classes, InstantXML,
