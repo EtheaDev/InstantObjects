@@ -399,6 +399,8 @@ begin
     Screen.Cursor := crHourglass;
     try
       Application.ProcessMessages;
+      if not Connector.DatabaseExists then
+        Connector.CreateDatabase;
       Connector.BuildDatabase(Model);
       Connector.Connect;
       Try
