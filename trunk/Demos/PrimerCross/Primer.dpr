@@ -29,6 +29,8 @@
  * Carlo Barazzetta:
  * - cross-platform porting for Delphi & Kilix
  * - PerformanceView form changed to make tests with UsePreparedQuery
+ * - PerformanceView form changed to make tests with Statement Cache
+ * - PerformanceView form changed to make tests of Queries
  * Salary attribute of type Currency added to Person
  * PersonEdit form and random data form changed to test Graphic support
  * ***** END LICENSE BLOCK ***** *)

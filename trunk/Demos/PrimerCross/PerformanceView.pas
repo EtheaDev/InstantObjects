@@ -23,7 +23,7 @@ uses
   Mask;
 
 type
-  TMeasureType = (mtStore, mtRetrieve, mtDispose);
+  TMeasureType = (mtStore, mtRetrieve, mtQuery, mtDispose);
 
   TTestResult = class(TInstantCollectionItem)
   private
@@ -71,12 +71,12 @@ type
   protected
     procedure BeginMeasure;
     procedure EndMeasure(MeasureType: TMeasureType; Count: Integer);
-    procedure Run(Retrieve, Dispose : boolean); virtual; abstract;
+    procedure Run(Retrieve, Query, Dispose : boolean); virtual; abstract;
     property Stopwatch: TStopwatch read GetStopwatch;
     property TestResult: TTestResult read GetTestResult;
   public
     destructor Destroy; override;
-    procedure Execute(Retrieve, Dispose : boolean);
+    procedure Execute(Retrieve, Query, Dispose : boolean);
     function ExtractResult: TTestResult;
     property OnShowStatus: TShowStatusEvent read FOnShowStatus write FOnShowStatus;
   end;
@@ -91,9 +91,10 @@ type
     procedure TestStore;
     procedure TestRetrieve;
     procedure TestDispose;
+    procedure TestQuery;
     procedure Operation(Method: TMethod);
   protected
-    procedure Run(Retrieve, Dispose : boolean); override;
+    procedure Run(Retrieve, Query, Dispose : boolean); override;
     property ObjectList: TStringList read GetObjectList;
   public
     destructor Destroy; override;
@@ -121,11 +122,13 @@ type
     IconImage: TImage;
     TestResultRenameItem: TMenuItem;
     TransactionsCheckBox: TCheckBox;
-    PreparedQueryCheckBox: TCheckBox;
     NumberLabel: TLabel;
     ObjectsEdit: TMaskEdit;
     TestRetrieveCheckBox: TCheckBox;
     TestDisposeCheckBox: TCheckBox;
+    PoolOptionsRadioGroup: TRadioGroup;
+    TestQueryCheckBox: TCheckBox;
+    Series1: TBarSeries;
     procedure RunButtonClick(Sender: TObject);
     procedure TestResultListViewChange(Sender: TObject; Item: TListItem;
       Change: TItemChange);
@@ -140,7 +143,7 @@ type
     procedure TestResultListViewEditedCLX(Sender: TObject; Item: TListItem; var S: WideString);
 {$ENDIF}
     procedure TransactionsCheckBoxClick(Sender: TObject);
-    procedure PreparedQueryCheckBoxClick(Sender: TObject);
+    procedure PoolOptionsRadioGroupClick(Sender: TObject);
     procedure TestDisposeCheckBoxClick(Sender: TObject);
     procedure TestRetrieveCheckBoxClick(Sender: TObject);
   private
@@ -161,6 +164,7 @@ type
   public
     procedure FormCreate(Sender: TObject); override;
     procedure FormHide(Sender: TObject); override;
+    procedure FormShow(Sender: TObject); override;
     destructor Destroy; override;
     procedure UpdateControls; override;
   end;
@@ -263,9 +267,9 @@ begin
 {$ENDIF}
 end;
 
-procedure TTest.Execute(Retrieve, Dispose : boolean);
+procedure TTest.Execute(Retrieve, Query, Dispose : boolean);
 begin
-  Run(Retrieve,Dispose);
+  Run(Retrieve,Query,Dispose);
 end;
 
 function TTest.ExtractResult: TTestResult;
@@ -336,14 +340,16 @@ begin
   end;
 end;
 
-procedure TPersistenceTest.Run(Retrieve, Dispose : boolean);
+procedure TPersistenceTest.Run(Retrieve, Query, Dispose : boolean);
 begin
-  Stopwatch.Start((1+Ord(Retrieve)+Ord(Dispose)) * Count);
+  Stopwatch.Start((1+Ord(Retrieve)+Ord(Query)+Ord(Dispose)) * Count);
   try
     //Test always store operations (necessary to test retrieve and dispose)
     Operation(TestStore);
     if Retrieve then
       Operation(TestRetrieve);
+    if Query then
+      Operation(TestQuery);
     if Dispose then
       Operation(TestDispose);
   finally
@@ -387,6 +393,32 @@ begin
     end;
   finally
     EndMeasure(mtRetrieve, ObjectList.Count);
+  end;
+end;
+
+procedure TPersistenceTest.TestQuery;
+var
+  InstantQuery : TInstantQuery;
+  i : integer;
+begin
+  InstantQuery := InstantDefaultConnector.CreateQuery;
+  try
+    InstantQuery.Command := 'SELECT * FROM ANY TCompany WHERE Id = :Id';
+    InstantQuery.FetchParams(InstantQuery.Command, InstantQuery.Params);
+    BeginMeasure;
+    try
+      for I := 0 to Pred(ObjectList.Count) do
+      begin
+        InstantQuery.Params.ParamByName('Id').AsString := ObjectList[I];
+        Stopwatch.Step;
+        InstantQuery.Open;
+        InstantQuery.Close;
+      end;
+    finally
+      EndMeasure(mtQuery, ObjectList.Count);
+    end;
+  finally
+    InstantQuery.Free;
   end;
 end;
 
@@ -437,9 +469,6 @@ begin
   TestResultListView.OnEdited := TestResultListViewEditedCLX;
   TestResultListView.Columns[0].Width := 180;
 {$ENDIF}
-
-  LoadTestResults;
-  ShowTestResults;
 end;
 
 procedure TPerformanceViewForm.FormHide(Sender: TObject);
@@ -484,7 +513,7 @@ begin
   try
     OnShowStatus := TestShowStatus;
     Count := StrToInt(Trim(ObjectsEdit.text));
-    Execute(TestRetrieveCheckBox.Checked, TestDisposeCheckBox.Checked);
+    Execute(TestRetrieveCheckBox.Checked, TestQueryCheckBox.Checked, TestDisposeCheckBox.Checked);
     AResult := ExtractResult;
     AResult.Name := ConnectionName;
     AResult.IsChecked := True;
@@ -641,12 +670,17 @@ begin
   TestDisposeCheckBox.Enabled := IsConnected;
   if Assigned(Connector) and (Connector.Broker is TInstantSQLBroker) then
   begin
-    PreparedQueryCheckBox.Visible := True;
-    PreparedQueryCheckBox.Enabled := IsConnected;
-    PreparedQueryCheckBox.Checked := IsConnected and TInstantSQLBroker(Connector.Broker).UsePreparedQuery;
+    PoolOptionsRadioGroup.Visible := True;
+    PoolOptionsRadioGroup.Enabled := IsConnected;
+    if TInstantSQLBroker(Connector.Broker).UsePreparedQuery then
+      PoolOptionsRadioGroup.ItemIndex := 1
+    else if TInstantSQLBroker(Connector.Broker).StatementCacheCapacity <> 0 then
+      PoolOptionsRadioGroup.ItemIndex := 2
+    else
+      PoolOptionsRadioGroup.ItemIndex := 0;
   end
   else
-    PreparedQueryCheckBox.Visible := False;
+    PoolOptionsRadioGroup.Visible := False;
 
   ConnectionLabel.Caption := 'Connection: ' + ConnectionName;
   UpdateChart;
@@ -658,11 +692,27 @@ begin
     Connector.UseTransactions := TransactionsCheckBox.Checked;
 end;
 
-procedure TPerformanceViewForm.PreparedQueryCheckBoxClick(Sender: TObject);
+procedure TPerformanceViewForm.PoolOptionsRadioGroupClick(Sender: TObject);
 begin
   inherited;
   if Connector.Broker is TInstantSQLBroker then
-    TInstantSQLBroker(Connector.Broker).UsePreparedQuery := PreparedQueryCheckBox.Checked;
+  case PoolOptionsRadioGroup.ItemIndex of
+    0 :
+    begin
+      TInstantSQLBroker(Connector.Broker).UsePreparedQuery := False;
+      TInstantSQLBroker(Connector.Broker).StatementCacheCapacity := 0;
+    end;
+    1 :
+    begin
+      TInstantSQLBroker(Connector.Broker).UsePreparedQuery := True;
+      TInstantSQLBroker(Connector.Broker).StatementCacheCapacity := 0;
+    end;
+    2 :
+    begin
+      TInstantSQLBroker(Connector.Broker).UsePreparedQuery := False;
+      TInstantSQLBroker(Connector.Broker).StatementCacheCapacity := -1;
+    end;
+  end;  
 end;
 
 procedure TPerformanceViewForm.SetTitleLabel(TitleLabel: TLabel);
@@ -688,6 +738,24 @@ begin
   inherited;
   if not TestRetrieveCheckBox.Checked then
     TestDisposeCheckBox.Checked := False;
+end;
+
+procedure TPerformanceViewForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  Try
+    LoadTestResults;
+    ShowTestResults;
+  Except
+    On E : EReadError do
+    begin
+      ShowMessageFmt('Problems "%s" loading test results File %s: it can be in an older format!',
+        [E.Message,GetTestResultsFileName]);
+      ShowTestResults;
+    end
+    else
+      raise;
+  End;
 end;
 
 initialization

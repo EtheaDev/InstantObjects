@@ -113,8 +113,8 @@ RootDir=
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=7
-Release=0
+MinorVer=6
+Release=7
 Build=0
 Debug=0
 PreRelease=0
@@ -126,11 +126,12 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=InstantObjects.org
 FileDescription=Primer Demo
-FileVersion=1.7.0.0
+FileVersion=1.6.7.0
 InternalName=
 LegalCopyright=MPL public license
 LegalTrademarks=
 OriginalFilename=
 ProductName=
-ProductVersion=1.7
+ProductVersion=1.6.7
 Comments=
+[Excluded Packages]
