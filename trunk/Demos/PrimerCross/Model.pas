@@ -17,7 +17,7 @@ type
   TPhone = class;
 
   TAddress = class(TInstantObject)
-  { City: String(30) index;
+  { IOMETADATA City: String(30) index;
     Country: Reference(TCountry);
     State: String(4);
     Street: Memo;
@@ -47,7 +47,7 @@ type
   end;
 
   TCountry = class(TInstantObject)
-  { stored;
+  { IOMETADATA stored;
     Name: String(30); }
     _Name: TInstantString;
   private
@@ -62,7 +62,7 @@ type
   end;
 
   TPhone = class(TInstantObject)
-  { Name: String(20);
+  { IOMETADATA Name: String(20);
     Number: String(20) mask '(000) 000-0000;0;_'; }
     _Name: TInstantString;
     _Number: TInstantString;
@@ -77,7 +77,7 @@ type
   end;
 
   TEmail = class(TInstantObject)
-  { Address: String(100); }
+  { IOMETADATA Address: String(100); }
     _Address: TInstantString;
   private
     function GetAddress: string;
@@ -87,7 +87,7 @@ type
   end;
 
   TCategory = class(TInstantObject)
-  { stored;
+  { IOMETADATA stored;
     Name: String(30); }
     _Name: TInstantString;
   private
@@ -100,7 +100,7 @@ type
   end;
 
   TContact = class(TInstantObject)
-  { stored;
+  { IOMETADATA stored;
     Address: Part(TAddress);
     Category: Reference(TCategory);
     City: String(30) index;
@@ -158,7 +158,7 @@ type
   end;
 
   TPerson = class(TContact)
-  { stored;
+  { IOMETADATA stored;
     BirthDate: DateTime;
     Emails: Parts(TEmail);
     Employer: Reference(TCompany);
@@ -203,7 +203,7 @@ type
   end;
 
   TCompany = class(TContact)
-  { stored;
+  { IOMETADATA stored;
     Employees: References(TPerson); }
     _Employees: TInstantReferences;
   private
