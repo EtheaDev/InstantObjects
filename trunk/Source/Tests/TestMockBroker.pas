@@ -100,6 +100,7 @@ var
   c: TContact;
   old_id: string;
   brok: TInstantMockBroker;
+  t: TPhone;
 begin
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
   Fconn.IsDefault := True;
@@ -109,6 +110,15 @@ begin
   try
     c.Name := 'Mike';
     c.Address.City := 'Milan';
+    t := TPhone.Create;
+    t.Name := 'Home';
+    t.Number := '012 12345678';
+    c.AddPhone(t);
+    t := TPhone.Create;
+    t.Name := 'Office';
+    t.Number := '012 23456781';
+    c.AddPhone(t);
+    AssertEquals(2, c.PhoneCount);
     c.Store();
     old_id := c.id;
   finally
@@ -123,6 +133,7 @@ begin
   try
     AssertEquals(old_id, c.Id);
     AssertNotNull(c.Address);
+    AssertEquals(0, c.PhoneCount); //mock brocker cannot collect part and parts
   finally
     c.Free;
   end;
@@ -146,4 +157,4 @@ end;
 initialization
   RegisterTests([TTestMockBroker]);
 
-end. 
+end.
