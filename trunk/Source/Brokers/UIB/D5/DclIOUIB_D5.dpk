@@ -31,7 +31,7 @@ requires
   vcl50,
   vcldb50,
   IOCore,
-  IOUIB;
+  IOUIB_D5;
 
 contains
   InstantUIBReg in '..\InstantUIBReg.pas';

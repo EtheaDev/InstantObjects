@@ -29,7 +29,7 @@ package DclIOADS_D5;
 
 requires
   IOCore,
-  ioads50;
+  ioads_D5;
 
 contains
   InstantADSReg in '..\InstantADSReg.pas';
