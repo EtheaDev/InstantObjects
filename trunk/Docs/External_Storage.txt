@@ -1,0 +1,51 @@
+External Storage
+----------------
+Nando Dessena, 02/2005.
+
+Abstract
+--------
+This document describes the goals, implementation and use of external storage in InstantObjects 2.0.
+
+What is external storage
+------------------------
+Historically, IO stores part, parts and references attributes of a class as binary blob fields in the source table. This has caused a number of shortcomings and issues, namely:
+a) inability to fully query the database from a SQL-enabled (non-IO) interface;
+b) inability to define foreign keys to enforce referential integrity at the database level;
+c) difficulty in repairing a "corrupted" (*) blob;
+d) poor retrieve performances due to missing implementation of load-on-demand feature for part, parts and references attributes;
+
+(*) note that to "corrupt" such a blob it suffices to delete a referenced object; the referencing objects can then no longer be loaded; if the referencing attribute is a "reference" attribute the fix is easy; if it's a "references" attribute it requires editing the binary blob.
+
+The addition of the XML option for blobs somehow relieved item c), at the cost of bigger blobs -> even poorer performances.
+
+External storage in IO means the ability to say that a particular part, parts or reference attribute should be mapped outside of the source class' table, that is in an additional ad-hoc intermediate table. In the case of part attributes, the intermediate table is not even needed because the relationship among the owner and the part is 1:1.
+
+How to use external storage
+---------------------------
+Here is a snippet from an example class definition with external attributes:
+
+  TTest2 = class(TInstantObject)
+  {IOMETADATA stored;
+    TestPart: Part(TTest) external;
+    TestParts: Parts(TTest) external 'Test2_TestParts';
+    TestRef: Reference(TTest);
+    TestRefs: References(TTest) external 'Test2_TestRefs'; }
+
+The TestPart attribute is an external part attribute, which means that it leads to a mapping very similar to TestRef: instead of having a blob field called TestPart, the Test2 table has a couple TestPartId/TestPartClass, and the actual object is stored in its own Test table.
+
+PLEASE NOTE that all classes involved in external storage must have the "stored" specification. "embedded" classes are only useful for "embedded" (the historical arrangement) part and parts attributes.
+
+The TestParts attribute leads to the creation of an intermediate table called Test2_TestParts which has relationships with both Test2 and Test:
+
+Test2 --1:N--> Test2_TestParts --1:1--> Test.
+
+This intermediate table has fields to hold information about the relationships and the sequence of elements in the source class' collection attribute.
+
+The mapping of the TestRefs attribute is very similar; the only difference is that the parts attribute's target object is deleted when the source object is deleted; this of course does not happen with references attributes.
+
+At design time, you can select the "external" specification in the Attribute Editor. The "Storage Kind" combo-box allows to choose between Embedded (the classic model) and External (the new model). For Part attributes, that (in addition to defining the target class "stored" and not "embedded") is enough. For Parts and References you also need to type the External Storage Name, that is the name the intermediate table will have. Personally I use the "<source table name>_<attribute name>" convention, but everyone is of course free to choose a different naming scheme.
+
+Credits
+-------
+The initial implementation is by Andrea Petrelli, which is has written most of the code.
+Nando Dessena contributed some ideas, the Part implementation, refactoring and this doc.
