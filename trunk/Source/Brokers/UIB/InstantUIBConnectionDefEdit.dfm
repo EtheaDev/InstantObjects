@@ -1,8 +1,8 @@
 object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
-  Left = 914
-  Top = 281
+  Left = 320
+  Top = 199
   BorderStyle = bsDialog
-  Caption = 'InterBase Connection'
+  Caption = 'UIB Connection'
   ClientHeight = 399
   ClientWidth = 362
   Color = clBtnFace

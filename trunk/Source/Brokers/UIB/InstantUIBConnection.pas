@@ -20,6 +20,10 @@
  *
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
+ * Contributor(s):
+ * Carlo Barazzetta:
+ * - OnLogin event support
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantUIBConnection;
@@ -28,13 +32,18 @@ interface
 
 uses Classes, DB, jvuib;
 
+resourcestring
+  SLoginPromptFailure = 'Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file.';
+
 type
   TInstantUIBConnection = class(TCustomConnection)
   private
     FDatabase: TJvUIBDataBase;
+    function Login: Boolean;
   protected
     procedure DoConnect; override;
     procedure DoDisconnect; override;
+    function GetConnected: Boolean; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -56,12 +65,15 @@ end;
 destructor TInstantUIBConnection.Destroy;
 begin
   FDatabase.Free;
+  FDatabase := nil;
   inherited;
 end;
 
 procedure TInstantUIBConnection.DoConnect;
 begin
   inherited;
+  if LoginPrompt then
+    Login;
   FDatabase.Connected := True;
 end;
 
@@ -69,6 +81,38 @@ procedure TInstantUIBConnection.DoDisconnect;
 begin
   inherited;
   FDatabase.Connected := False;
+end;
+
+function TInstantUIBConnection.GetConnected: Boolean;
+begin
+  Result := assigned(FDatabase) and FDatabase.Connected;
+end;
+
+function TInstantUIBConnection.Login: Boolean;
+var
+  Username, Password, OldPassword: String;
+begin
+  Username := FDatabase.UserName;
+  Password := FDatabase.PassWord;
+  if Assigned(OnLogin) then
+  begin
+    result := True;
+    OnLogin(Self, UserName, Password);
+  end
+  else
+  begin
+    if Assigned(LoginDialogExProc) then
+      result := LoginDialogExProc(FDatabase.DatabaseName, Username, Password, False)
+    else
+    begin
+      raise EDatabaseError.Create(SLoginPromptFailure);
+    end;
+    if result then
+    begin
+      FDatabase.UserName := Username;
+      FDatabase.PassWord := Password;
+    end;
+  end;
 end;
 
 end.
