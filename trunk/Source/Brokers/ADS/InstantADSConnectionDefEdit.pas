@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -53,9 +54,12 @@ type
     LocalCheckBox: TCheckBox;
     RemoteCheckBox: TCheckBox;
     InternetCheckBox: TCheckBox;
+    StreamFormatLabel: TLabel;
+    StreamFormatComboBox: TComboBox;
     procedure DatabaseEditDropDown(Sender: TObject);
     procedure DirectoryButtonClick(Sender: TObject);
     procedure DictionaryButtonClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     procedure LoadAliases;
   public
@@ -166,6 +170,7 @@ begin
     LocalCheckBox.Checked := ctLocal in ConnectionTypes;
     RemoteCheckBox.Checked := ctRemote in ConnectionTypes;
     InternetCheckBox.Checked := ctInternet in ConnectionTypes; 
+    StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat); //CB
   end;
 end;
 
@@ -188,7 +193,13 @@ begin
     if InternetCheckBox.Checked then
       Include(ConnTypes, ctInternet);
     ConnectionTypes := ConnTypes;
+    BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex); //CB
   end;
+end;
+
+procedure TInstantADSConnectionDefEditForm.FormCreate(Sender: TObject);
+begin
+  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
 end;
 
 end.

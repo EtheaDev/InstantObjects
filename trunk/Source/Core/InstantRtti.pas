@@ -223,7 +223,7 @@ function InstantIsDefaultPropertyValue(Instance: TObject;
     Value: Extended;
   begin
     Value := GetFloatProp(Instance, PropInfo);
-    Result := Value = 0;;
+    Result := Value = 0;
   end;
 
   function IsDefaultInt64Prop: Boolean;
@@ -392,6 +392,7 @@ function TInstantProperties.GetValues(Index: Integer): Variant;
 var
   PropInfo: PPropInfo;
   Value: Double;
+  CurrencyValue : Currency;
 begin
   if not Assigned(FInstance) then
   begin
@@ -399,6 +400,11 @@ begin
     Exit;
   end;
   PropInfo := PropInfos[Index];
+  if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
+  begin
+    CurrencyValue := GetFloatProp(FInstance, PropInfo);
+    Result := CurrencyValue;
+  end else
   if PropInfo^.PropType^^.Kind = tkFloat then
   begin
     Value := GetFloatProp(FInstance, PropInfo);

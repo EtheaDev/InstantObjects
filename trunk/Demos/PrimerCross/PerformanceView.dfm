@@ -1,10 +1,10 @@
 inherited PerformanceViewForm: TPerformanceViewForm
-  Width = 587
+  Width = 655
   Height = 455
   object ClientPanel: TPanel
     Left = 0
     Top = 0
-    Width = 587
+    Width = 655
     Height = 455
     Align = alClient
     BevelOuter = bvNone
@@ -14,43 +14,37 @@ inherited PerformanceViewForm: TPerformanceViewForm
     object InfoPanel: TPanel
       Left = 0
       Top = 0
-      Width = 583
-      Height = 153
+      Width = 651
+      Height = 121
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite
       TabOrder = 0
       object TitleLabel: TLabel
-        Left = 56
+        Left = 40
         Top = 4
-        Width = 196
-        Height = 16
+        Width = 133
+        Height = 13
         Caption = 'Database Performance Test'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold, fsUnderline]
-        ParentFont = False
       end
       object InfoBevel: TBevel
         Left = 0
-        Top = 144
-        Width = 583
+        Top = 112
+        Width = 651
         Height = 9
         Align = alBottom
         Shape = bsBottomLine
       end
       object ConnectionLabel: TLabel
-        Left = 144
-        Top = 118
+        Left = 292
+        Top = 4
         Width = 132
         Height = 13
         Caption = 'Connection: Not Connected'
       end
       object IconImage: TImage
-        Left = 16
-        Top = 16
+        Left = 4
+        Top = 4
         Width = 32
         Height = 32
         AutoSize = True
@@ -90,20 +84,29 @@ inherited PerformanceViewForm: TPerformanceViewForm
           F8000003E0000003C00000018000000180000000000000000000000100000007
           8000001F8000001F8000001F0000001F38E0107FFDF079FFF8F9FFFF}
       end
+      object NumberLabel: TLabel
+        Left = 55
+        Top = 96
+        Width = 74
+        Height = 13
+        Alignment = taRightJustify
+        Caption = '&Objects for test:'
+        FocusControl = ObjectsEdit
+      end
       object RunButton: TButton
-        Left = 56
-        Top = 112
-        Width = 75
+        Left = 192
+        Top = 92
+        Width = 73
         Height = 25
         Caption = '&Run Now'
-        TabOrder = 2
+        TabOrder = 7
         OnClick = RunButtonClick
       end
       object InfoMemo: TMemo
-        Left = 56
-        Top = 24
-        Width = 433
-        Height = 60
+        Left = 40
+        Top = 20
+        Width = 401
+        Height = 69
         TabStop = False
         Enabled = False
         Lines.Strings = (
@@ -112,7 +115,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
             'nnection.'
           
             'The performance test will measure the speed of store, retrieve a' +
-            'nd dispose operations.'
+            'nd dispose '
+          'operations.'
           
             'Test results can be compared to other connections in the chart b' +
             'elow.')
@@ -120,20 +124,69 @@ inherited PerformanceViewForm: TPerformanceViewForm
         TabOrder = 0
       end
       object TransactionsCheckBox: TCheckBox
-        Left = 57
-        Top = 88
+        Left = 445
+        Top = 24
         Width = 129
         Height = 17
         Caption = 'Use &Transactions'
         TabOrder = 1
         OnClick = TransactionsCheckBoxClick
       end
+      object PreparedQueryCheckBox: TCheckBox
+        Left = 445
+        Top = 40
+        Width = 152
+        Height = 17
+        Caption = 'Use &Prepared Queries'
+        TabOrder = 2
+        OnClick = PreparedQueryCheckBoxClick
+      end
+      object ObjectsEdit: TMaskEdit
+        Left = 132
+        Top = 94
+        Width = 53
+        Height = 21
+        EditMask = '#########;1; '
+        MaxLength = 9
+        TabOrder = 3
+        Text = '500      '
+      end
+      object TestStoreCheckBox: TCheckBox
+        Left = 445
+        Top = 64
+        Width = 100
+        Height = 17
+        Caption = 'Test Store'
+        Checked = True
+        State = cbChecked
+        TabOrder = 4
+      end
+      object TestRetrieveCheckBox: TCheckBox
+        Left = 445
+        Top = 80
+        Width = 100
+        Height = 17
+        Caption = 'Test Retrieve'
+        Checked = True
+        State = cbChecked
+        TabOrder = 5
+      end
+      object TestDisposeCheckBox: TCheckBox
+        Left = 445
+        Top = 96
+        Width = 100
+        Height = 17
+        Caption = 'Test Dispose'
+        Checked = True
+        State = cbChecked
+        TabOrder = 6
+      end
     end
     object ResultPanel: TPanel
       Left = 0
-      Top = 153
-      Width = 583
-      Height = 298
+      Top = 121
+      Width = 651
+      Height = 330
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -141,7 +194,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
         Left = 0
         Top = 0
         Width = 209
-        Height = 298
+        Height = 330
         Align = alLeft
         BevelOuter = bvNone
         BorderWidth = 4
@@ -150,7 +203,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
           Left = 4
           Top = 4
           Width = 201
-          Height = 290
+          Height = 322
           Align = alClient
           Checkboxes = True
           Columns = <
@@ -168,16 +221,16 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object ChartPanel: TPanel
         Left = 209
         Top = 0
-        Width = 374
-        Height = 298
+        Width = 442
+        Height = 330
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
         object TestResultChart: TChart
           Left = 0
           Top = 0
-          Width = 374
-          Height = 298
+          Width = 442
+          Height = 330
           BackWall.Brush.Color = clWhite
           LeftWall.Color = clWhite
           Title.Text.Strings = (

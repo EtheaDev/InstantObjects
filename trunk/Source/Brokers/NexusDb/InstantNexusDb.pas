@@ -19,7 +19,9 @@ The Initial Developer of the Original Code is Carlo Wolter.
 Portions created by Seleqt are Copyright (C) Seleqt.
 All Rights Reserved.
 
-Contributor(s): None at the moment.
+Contributor(s):
+Carlo Barazzetta:
+  ServerName support
 
 =====================================================================
  Limited warranty and disclaimer of warranty
@@ -71,11 +73,11 @@ type
     FAliasName:   string;
     FAliasIsPath: boolean;
     FServerName:  string;
-    FAliasList:   TStringList;
   protected
     procedure InitConnector(Connector: TInstantConnector); override;
   public
-    constructor Create(Collection: TCollection); override;
+    procedure LoadAliasList(FALiasList : TStrings);
+    procedure LoadServerList(FServerList : TStrings);
     function Edit: Boolean; override;
     class function ConnectionTypeName: string; override;
     class function ConnectorClass: TInstantConnectorClass; override;
@@ -168,36 +170,57 @@ end;
 
 { TInstantNexusDbConnectionDef }
 
-constructor TInstantNexusDbConnectionDef.Create(Collection: TCollection);
+procedure TInstantNexusDbConnectionDef.LoadAliasList(FALiasList : TStrings);
 var
   Transport:  TnxWinsockTransport;
   Engine:     TnxRemoteServerEngine;
   Session:    TnxSession;
 begin
-  inherited;
 ///  CodeSite.SendMsg('create connection def');
-  AliasName   := '';
-  AliasIsPath := False;
-  ServerName  := 'NexusDb@localhost';
+  if ServerName = '' then
+    ServerName  := 'NexusDb@localhost';
+  Session := nil;
+  Engine := nil;
+  Transport := nil;
   try
     Transport := TnxWinsockTransport.Create(nil);     // Setup transport
     Transport.ServerNameRuntime := ServerName;
-    Transport.Active := True;
-    Engine := TnxRemoteServerEngine.Create(nil);      // Setup engine
-    Engine.Transport := Transport;
-    Engine.Active := True;
-    Session := TnxSession.Create(nil);                // Setup session
-    Session.ServerEngine := Engine;
-    Session.Active := True;
-    FAliasList := TStringList.Create;
-    Session.GetAliasNames(FAliasList);
-///    CodeSite.SendStringList('Alias list',FAliasList);
+    FAliasList.Clear;
+    Try
+      Transport.Active := True;
+      Engine := TnxRemoteServerEngine.Create(nil);      // Setup engine
+      Engine.Transport := Transport;
+      Engine.Active := True;
+      Session := TnxSession.Create(nil);                // Setup session
+      Session.ServerEngine := Engine;
+      Session.Active := True;
+      Session.GetAliasNames(FAliasList);
+  ///    CodeSite.SendStringList('Alias list',AliasList);
+    Except
+      //ignore connections problems
+      on EnxTransportException do ;
+    End;
   finally
     Session.Free;
     Engine.Free;
     Transport.Free;
   end;
 end;
+
+procedure TInstantNexusDbConnectionDef.LoadServerList(FServerList : TStrings);
+var
+  Transport:  TnxWinsockTransport;
+begin
+///  CodeSite.SendMsg('create connection def');
+  Transport := nil;
+  try
+    Transport := TnxWinsockTransport.Create(nil);     // Setup transport
+    Transport.GetServerNames(FServerList, 5000);
+  finally
+    Transport.Free;
+  end;
+end;
+
 
 class function TInstantNexusDbConnectionDef.ConnectionTypeName: string;
 begin
@@ -213,7 +236,6 @@ function TInstantNexusDbConnectionDef.Edit: Boolean;
 begin
 ///  CodeSite.SendMsg('edit connectiondef');
   with TInstantNexusDbConnectionDefEditForm.Create(nil) do begin
-    lbAlias.Items.AddStrings(FAliasList);
     try
       LoadData(Self);
       Result := ShowModal = mrOk;

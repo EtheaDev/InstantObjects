@@ -153,18 +153,19 @@ var
   Contact: TContact;
 begin
   Contact := ContactSelector.CurrentObject as TContact;
-  NewCompanyAction.Enabled := IsConnected;
-  NewPersonAction.Enabled := IsConnected;
-  DeleteAction.Enabled := Assigned(Contact);
-  EditAction.Enabled := Assigned(Contact);
-  ExportAction.Enabled := Assigned(Contact);
-  FilterAction.Enabled := IsConnected;
-  SortAction.Enabled := IsConnected;
-  BrowseCountryAction.Enabled := IsConnected;
-  BrowseCategoryAction.Enabled := IsConnected;
-  FindAction.Enabled := FindEdit.Text <> '';
+  NewCompanyAction.Enabled := IsConnected and Visible;
+  NewPersonAction.Enabled := IsConnected and Visible;
+  DeleteAction.Enabled := Assigned(Contact) and Visible;
+  EditAction.Enabled := Assigned(Contact) and Visible;
+  ExportAction.Enabled := Assigned(Contact) and Visible;
+  FilterAction.Enabled := IsConnected and Visible;
+  SortAction.Enabled := IsConnected and Visible;
+  BrowseCountryAction.Enabled := IsConnected and Visible;
+  BrowseCategoryAction.Enabled := IsConnected and Visible;
+  FindAction.Enabled := (FindEdit.Text <> '') and Visible;
+  IndexTabControl.Enabled := IsConnected  and Visible;
+
   FindButton.Default := FindEdit.Focused;
-  IndexTabControl.Enabled := IsConnected;
   FindPanel.Enabled := IsConnected;
 end;
 
@@ -405,8 +406,8 @@ begin
   Caption := 'Contacts';
   ContactGrid.OnDrawColumnCell := ContactGridDrawColumnCell;
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(ActionImages,'CONTACTACTIONIMAGES');
-  LoadMultipleImages(ExplorerImages,'EXPLORERCONTACTIMAGES');
+  LoadMultipleImages(ActionImages,'CONTACTACTIONIMAGES.BMP');
+  LoadMultipleImages(ExplorerImages,'EXPLORERCONTACTIMAGES.BMP');
 {$ENDIF}
 {$IFDEF LINUX}
   LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'CONTACTACTIONIMAGES.BMP',true);

@@ -162,11 +162,13 @@ type
     BirthDate: DateTime;
     Emails: Parts(TEmail);
     Employer: Reference(TCompany);
-    Picture: Blob; }
+    Picture: Blob;
+    Salary: Currency; }
     _BirthDate: TInstantDateTime;
     _Emails: TInstantParts;
     _Employer: TInstantReference;
-    _Picture: TInstantBlob;
+    _Picture: TInstantGraphic;
+    _Salary: TInstantCurrency;
   private
     function GetBirthDate: TDateTime;
     function GetEmailCount: Integer;
@@ -174,10 +176,12 @@ type
     function GetEmployer: TCompany;
     function GetMainEmailAddress: string;
     function GetPicture: string;
+    function GetSalary: Currency;
     procedure SetBirthDate(Value: TDateTime);
     procedure SetEmails(Index: Integer; Value: TEmail);
     procedure SetMainEmailAddress(const Value: string);
     procedure SetPicture(const Value: string);
+    procedure SetSalary(Value: Currency);
   protected
     procedure BeforeDispose; override;
   public
@@ -195,6 +199,7 @@ type
     property Employer: TCompany read GetEmployer;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
     property Picture: string read GetPicture write SetPicture;
+    property Salary: Currency read GetSalary write SetSalary;
   end;
 
   TCompany = class(TContact)
@@ -411,6 +416,11 @@ begin
   Result := _Picture.Value;
 end;
 
+function TPerson.GetSalary: Currency;
+begin
+  Result := _Salary.Value;
+end;
+
 function TPerson.IndexOfEmail(Email: TEmail): Integer;
 begin
   Result := _Emails.IndexOf(Email);
@@ -458,6 +468,11 @@ begin
 end;
 
 { TPhone }
+
+procedure TPerson.SetSalary(Value: Currency);
+begin
+  _Salary.Value := Value;
+end;
 
 function TPhone.GetName: string;
 begin

@@ -13,6 +13,7 @@ object InstantXXXConnectionDefEditForm: TInstantXXXConnectionDefEditForm
   Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
@@ -31,6 +32,24 @@ object InstantXXXConnectionDefEditForm: TInstantXXXConnectionDefEditForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    object StreamFormatLabel: TLabel
+      Left = 20
+      Top = 101
+      Width = 53
+      Height = 13
+      Caption = 'Blob &format'
+      FocusControl = StreamFormatComboBox
+    end
+    object StreamFormatComboBox: TComboBox
+      Left = 20
+      Top = 117
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Sorted = True
+      TabOrder = 0
+    end
   end
   object BottomPanel: TPanel
     Left = 0

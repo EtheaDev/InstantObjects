@@ -25,6 +25,13 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta:
+ * - blob streaming in XML format (Part, Parts, References)
+ * - UserPreparedQuery support
+ * - Objects Assign with different connectors
+ * - TInstantCurrency support
+ * - TInstantGraphic support
+ * - LoginPrompt support in Connections based on TCustomConnection
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -41,6 +48,12 @@ unit InstantPersistence;
 interface
 
 uses
+{$IFDEF MSWINDOWS}
+  Graphics,
+{$ENDIF}
+{$IFDEF LINUX}
+  QGraphics,
+{$ENDIF}
   Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand;
 
 type
@@ -70,9 +83,11 @@ type
   TInstantAttribute = class;
   TInstantAttributeClass = class of TInstantAttribute;
 
-  TInstantAttributeType = (atUnknown, atInteger, atFloat, atBoolean, atString,
-    atDateTime, atBlob, atMemo, atPart, atReference, atParts, atReferences);
+  TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean, atString,
+    atDateTime, atBlob, atMemo, atGraphic, atPart, atReference, atParts, atReferences);
   TInstantAttributeCategory = (acUnknown, acSimple, acElement, acContainer);
+
+  TInstantGraphicFileFormat = (gffUnknow,gffBmp,gffTiff,gffJpeg,gffPng,gffDcx,gffPcx,gffEmf,gffGif);
 
   TInstantAttributeMetadata = class(TInstantMetadata)
   private
@@ -249,7 +264,7 @@ type
   TInstantTableMetadata = class;
   TInstantFieldMetadatas = class;
 
-  TInstantDataType = (dtInteger, dtFloat, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob);
+  TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob);
   TInstantFieldOption = (foRequired, foIndexed);
   TInstantFieldOptions = set of TInstantFieldOption;
 
@@ -342,6 +357,7 @@ type
   private
     FModel: TInstantModel;
     FTableMetadataCollection: TInstantTableMetadatas;
+    FBlobStreamFormat: TInstantStreamFormat; //CB
     function GetTableMetadataCollection: TInstantTableMetadatas;
     function GetTableMetadatas(Index: Integer): TInstantTableMetadata;
     function GetTableMetadataCount: Integer;
@@ -358,6 +374,7 @@ type
     function FindTableMetadata(const Name: string): TInstantTableMetadata;
     property TableMetadataCount: Integer read GetTableMetadataCount;
     property TableMetadatas[Index: Integer]: TInstantTableMetadata read GetTableMetadatas;
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; //CB
   end;
 
   TInstantAttributeMap = class(TInstantNamedList)
@@ -592,6 +609,31 @@ type
     property Value: Double read GetValue write SetValue;
   end;
 
+  TInstantCurrency = class(TInstantNumeric)
+  private
+    FValue: Currency;
+  protected
+    class function AttributeType: TInstantAttributeType; override;
+    function GetAsFloat: Double; override;
+    function GetAsInteger: Integer; override;
+    function GetAsString: string; override;
+    function GetAsVariant: Variant; override;
+    function GetValue: Currency; virtual;
+    procedure Initialize; override;
+    procedure ReadObject(Reader: TInstantReader); override;
+    procedure SetAsFloat(AValue: Double); override;
+    procedure SetAsInteger(AValue: Integer); override;
+    procedure SetAsString(const AValue: string); override;
+    procedure SetAsVariant(AValue: Variant); override;
+    procedure SetValue(AValue: Currency); virtual;
+    procedure WriteObject(Writer: TInstantWriter); override;
+  public
+    procedure Assign(Source: TPersistent); override;
+    procedure Reset; override;
+  published
+    property Value: Currency read GetValue write SetValue;
+  end;
+
   TInstantBoolean = class(TInstantSimple)
   private
     FValue: Boolean;
@@ -699,6 +741,8 @@ type
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
+    procedure AssignPicture(Source: TPicture); //CB
+    procedure AssignToPicture(Dest: TPicture); //CB
     procedure Clear;
     procedure LoadDataFromStream(AStream: TStream);
     function ReadBuffer(var Buffer; Position, Count: Integer): Integer;
@@ -715,6 +759,12 @@ type
     class function AttributeType: TInstantAttributeType; override;
     procedure ReadObject(Reader: TInstantReader); override;
     procedure WriteObject(Writer: TInstantWriter); override;
+  end;
+
+  //CB
+  TInstantGraphic = class(TInstantBlob)
+  protected
+    class function AttributeType: TInstantAttributeType; override;
   end;
 
   TInstantComplex = class(TInstantAttribute)
@@ -1186,6 +1236,7 @@ type
   TInstantConnectionDef = class(TInstantCollectionItem)
   private
     FIsBuilt: Boolean;
+    FBlobStreamFormat: TInstantStreamFormat; //CB
   protected
     function GetCaption: string; virtual;
     procedure InitConnector(Connector: TInstantConnector); virtual;
@@ -1197,6 +1248,7 @@ type
     property Caption: string read GetCaption;
   published
     property IsBuilt: Boolean read FIsBuilt write FIsBuilt;
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; //CB
   end;
 
   TInstantConnectionDefs = class(TInstantCollection)
@@ -1228,6 +1280,7 @@ type
     FBeforeConnect: TNotifyEvent;
     FBeforeBuildDatabase: TInstantSchemeEvent;
     FBeforeDisconnect: TNotifyEvent;
+    FBlobStreamFormat: TInstantStreamFormat; //CB
     procedure AbandonObjects;
     procedure ApplyTransactedObjectStates;
     procedure ClearTransactedObjects;
@@ -1312,6 +1365,7 @@ type
     property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase write FBeforeBuildDatabase;
     property BeforeConnect: TNotifyEvent read FBeforeConnect write FBeforeConnect;
     property BeforeDisconnect: TNotifyEvent read FBeforeDisconnect write FBeforeDisconnect;
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary; //CB
   end;
 
   TInstantCacheNodeColor = (ncRed, ncBlack);
@@ -1457,7 +1511,7 @@ type
   protected
     function GetDatabaseName: string; virtual;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
-    function InternalCreateQuery: TInstantQuery; virtual;    
+    function InternalCreateQuery: TInstantQuery; virtual;
     function InternalDisposeObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
     function InternalRetrieveObject(AObject: TInstantObject; const AObjectId: string;
@@ -1466,6 +1520,7 @@ type
       ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
   public
     constructor Create(AConnector: TInstantConnector); virtual;
+    destructor destroy; override; 
     procedure BuildDatabase(Scheme: TInstantScheme);
     function CreateQuery: TInstantQuery;
     function DisposeObject(AObject: TInstantObject;
@@ -1740,11 +1795,14 @@ type
   TInstantConnectionBasedConnector = class(TInstantRelationalConnector)
   private
     FConnection: TCustomConnection;
+    FLoginPrompt: boolean;
     procedure DoAfterConnectionChange;
     procedure DoBeforeConnectionChange;
     function GetConnection: TCustomConnection;
     procedure SetConnection(Value: TCustomConnection);
+    procedure SetLoginPrompt(const Value: boolean);
   protected
+    procedure AssignLoginOptions; virtual;//CB
     procedure AfterConnectionChange; virtual;
     procedure BeforeConnectionChange; virtual;
     procedure CheckConnection;
@@ -1755,12 +1813,20 @@ type
     property Connection: TCustomConnection read GetConnection write SetConnection;
   public
     function HasConnection: Boolean;
+    constructor Create(AOwner : TComponent); override;
+    property LoginPrompt: boolean read FLoginPrompt write SetLoginPrompt default True; //CB
   end;
 
   TInstantConnectionBasedConnectionDef = class(TInstantRelationalConnectionDef)
+  private
+    FLoginPrompt: boolean;
   protected
     function CreateConnection(AOwner: TComponent): TCustomConnection; virtual; abstract;
     procedure InitConnector(Connector: TInstantConnector); override;
+  public
+    constructor Create(Collection: TCollection); override;
+  published
+    property LoginPrompt: boolean read FLoginPrompt write FLoginPrompt default True; //CB
   end;
 
   TInstantNavigationalResolver = class;
@@ -1825,6 +1891,7 @@ type
     procedure ClearDateTime(Attribute: TInstantDateTime); virtual;
     procedure ClearInteger(Attribute: TInstantInteger); virtual;
     procedure ClearFloat(Attribute: TInstantFloat); virtual;
+    procedure ClearCurrency(Attribute: TInstantCurrency); virtual;
     procedure ClearMemo(Attribute: TInstantMemo); virtual;
     procedure ClearPart(Attribute: TInstantPart); virtual;
     procedure ClearParts(Attribute: TInstantParts); virtual;
@@ -1851,6 +1918,7 @@ type
     procedure ReadDateTime(Attribute: TInstantDateTime); virtual;
     procedure ReadInteger(Attribute: TInstantInteger); virtual;
     procedure ReadFloat(Attribute: TInstantFloat); virtual;
+    procedure ReadCurrency(Attribute: TInstantCurrency); virtual;
     procedure ReadMemo(Attribute: TInstantMemo); virtual;
     procedure ReadPart(Attribute: TInstantPart); virtual;
     procedure ReadParts(Attribute: TInstantParts); virtual;
@@ -1864,6 +1932,7 @@ type
     procedure WriteBoolean(Attribute: TInstantBoolean); virtual;
     procedure WriteDateTime(Attribute: TInstantDateTime); virtual;
     procedure WriteFloat(Attribute: TInstantFloat); virtual;
+    procedure WriteCurrency(Attribute: TInstantCurrency); virtual;
     procedure WriteInteger(Attribute: TInstantInteger); virtual;
     procedure WriteMemo(Attribute: TInstantMemo); virtual;
     procedure WritePart(Attribute: TInstantPart); virtual;
@@ -1982,6 +2051,7 @@ type
   private
     FGenerator: TInstantSQLGenerator;
     FResolverList: TObjectList;
+    FUsePreparedQuery : boolean; //CB
     function GetResolverList: TObjectList;
     function GetResolverCount: Integer;
     function GetResolvers(Index: Integer): TInstantSQLResolver;
@@ -1991,6 +2061,10 @@ type
     function EnsureResolver(AMap: TInstantAttributeMap): TInstantCustomResolver; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     property ResolverList: TObjectList read GetResolverList;
+    procedure PrepareQuery(DataSet : TDataSet); virtual; //CB
+    function ExecuteQuery(DataSet : TDataSet) : integer; virtual; //CB
+    procedure UnprepareQuery(DataSet : TDataSet); virtual; //CB
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); virtual; //CB
   public
     destructor Destroy; override;
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual; abstract;
@@ -2001,6 +2075,7 @@ type
     property Generator: TInstantSQLGenerator read GetGenerator;
     property ResolverCount: Integer read GetResolverCount;
     property Resolvers[Index: Integer]: TInstantSQLResolver read GetResolvers;
+    property UsePreparedQuery : boolean read FUsePreparedQuery write FUsePreparedQuery; //CB
   end;
 
   TInstantSQLResolver = class(TInstantCustomResolver)
@@ -2012,6 +2087,13 @@ type
     FSelectSQL: string;
     FUpdateSQL: string;
     FUpdateConcurrentSQL: string;
+
+    //CB
+    FPreparedDataSet : TDataSet;
+    LastStatement : string;
+    LastConnector : TObject;
+    function CreatePreparedQuery(const AStatement: string; AParams: TParams = nil): TDataSet; //CB
+
     procedure AddIntegerParam(Params: TParams; const ParamName: string; Value: Integer);
     procedure AddStringParam(Params: TParams; const ParamName, Value: string);
     procedure CheckConflict(Info: PInstantOperationInfo; AObject: TInstantObject);
@@ -2025,6 +2107,7 @@ type
     function GetUpdateConcurrentSQL: string;
     function GetUpdateSQL: string;
     function GetBroker: TInstantSQLBroker;
+    function GetUsePreparedQuery: boolean;
   protected
     procedure AddAttributeParam(Attribute: TInstantAttribute;
       Params: TParams); virtual;
@@ -2050,6 +2133,7 @@ type
     function ReadBooleanField(DataSet: TDataSet; const FieldName: string): Boolean; virtual;
     function ReadDateTimeField(DataSet: TDataSet; const FieldName: string): TDateTime; virtual;
     function ReadFloatField(DataSet: TDataSet; const FieldName: string): Double; virtual;
+    function ReadCurrencyField(DataSet: TDataSet; const FieldName: string): Currency; virtual;
     function ReadIntegerField(DataSet: TDataSet; const FieldName: string): Integer; virtual;
     function ReadMemoField(DataSet: TDataSet; const FieldName: string): string; virtual;
     function ReadStringField(DataSet: TDataSet; const FieldName: string): string; virtual;
@@ -2059,6 +2143,7 @@ type
       E: Exception): Exception; virtual;
   public
     constructor Create(ABroker: TInstantSQLBroker; AMap: TInstantAttributeMap);
+    destructor Destroy; override; //CB
     property Broker: TInstantSQLBroker read GetBroker;
     property DeleteConcurrentSQL: string read GetDeleteConcurrentSQL write FDeleteConcurrentSQL;
     property DeleteSQL: string read GetDeleteSQL write FDeleteSQL;
@@ -2067,6 +2152,7 @@ type
     property SelectSQL: string read GetSelectSQL write FSelectSQL;
     property UpdateConcurrentSQL: string read GetUpdateConcurrentSQL write FUpdateConcurrentSQL;
     property UpdateSQL: string read GetUpdateSQL write FUpdateSQL;
+    property UsePreparedQuery : boolean read GetUsePreparedQuery; //CB
   end;
 
   TInstantSQLQuery = class(TInstantCustomRelationalQuery)
@@ -2209,8 +2295,9 @@ type
     property Step: Integer read FStep;
   end;
 
-function InstantAttributeTypeToDataType(
-  AttributeType: TInstantAttributeType): TInstantDataType;
+procedure AssignInstantStreamFormat(StringList : TStrings); //CB
+function InstantAttributeTypeToDataType(AttributeType: TInstantAttributeType;
+  BlobStreamFormat: TInstantStreamFormat = sfBinary): TInstantDataType; //CB
 function InstantConnectorClasses: TList;
 procedure InstantCheckConnection(Connection: TCustomConnection);
 function InstantCheckConnector(var Connector: TInstantConnector): TInstantConnector;
@@ -2235,6 +2322,11 @@ procedure InstantRegisterClasses(AClasses: array of TInstantObjectClass);
 procedure InstantUnregisterClass(AClass: TInstantObjectClass);
 procedure InstantUnregisterClasses(AClasses: array of TInstantObjectClass);
 
+function InstantResolveGraphicFileType(AStream: TStream ): TInstantGraphicFileFormat; //CB
+procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
+  AGraphicClass: TGraphicClass);
+function InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat) : TGraphicClass;
+
 const
   InstantClassPrefix: string = 'T';
   InstantAttributePrefix: string = '_';
@@ -2246,15 +2338,15 @@ uses
   Windows, Mask,
 {$ENDIF}
 {$IFDEF LINUX}
-  QMask, Types, 
+  QMask, Types,
 {$ENDIF}
   TypInfo, {$IFDEF D6+}MaskUtils, Variants,{$ENDIF}
   InstantConsts, InstantUtils, InstantRtti, InstantDesignHook, InstantCode;
 
 const
   AttributeClasses: array[TInstantAttributeType] of TInstantAttributeClass = (
-    nil, TInstantInteger, TInstantFloat, TInstantBoolean, TInstantString,
-    TInstantDateTime, TInstantBlob, TInstantMemo, TInstantPart,
+    nil, TInstantInteger, TInstantFloat, TInstantCurrency, TInstantBoolean, TInstantString,
+    TInstantDateTime, TInstantBlob, TInstantMemo, TInstantGraphic, TInstantPart,
     TInstantReference, TInstantParts, TInstantReferences);
   ConcurrencyParamName = 'IO_Concur';
   PersistentIdParamName = 'IO_PersId';
@@ -2262,6 +2354,7 @@ const
 var
   ConnectorClasses: TList;
   ClassList: TList;
+  GraphicClassList: array[TInstantGraphicFileFormat] OF TGraphicClass; //CB
   RuntimeModel: TInstantModel;
   ObjectNotifiers: TInstantObjectNotifiers;
   DefaultConnector: TInstantConnector;
@@ -2304,14 +2397,56 @@ end;
 
 { Global routines }
 
-function InstantAttributeTypeToDataType(
-  AttributeType: TInstantAttributeType): TInstantDataType;
-const
-  DataTypes: array[TInstantAttributeType] of TInstantDataType = (
-    dtString, dtInteger, dtFloat, dtBoolean, dtString, dtDateTime, dtBlob,
-    dtMemo, dtBlob, dtString, dtBlob, dtBlob);
+procedure AssignInstantStreamFormat(StringList : TStrings); //CB
+var
+  i : TInstantStreamFormat;
 begin
-  Result := DataTypes[AttributeType];
+  StringList.Clear;
+  for i := Low(TInstantStreamFormat) to High(TInstantStreamFormat) do
+  begin
+    StringList.Add(AInstantStreamFormatStr[i]);
+  end;
+end;
+
+function InstantAttributeTypeToDataType(AttributeType: TInstantAttributeType;
+  BlobStreamFormat: TInstantStreamFormat = sfBinary): TInstantDataType;
+const
+  DataTypesBinary: array[TInstantAttributeType] of TInstantDataType = (
+    dtString,     //atUnknown
+    dtInteger,    //atInteger
+    dtFloat,      //atFloat
+    dtCurrency,   //atCurrency
+    dtBoolean,    //atBoolean
+    dtString,     //atString
+    dtDateTime,   //atDateTime
+    dtBlob,       //atBlob
+    dtMemo,       //atMemo
+    dtBlob,       //atGraphic
+    dtBlob,       //atPart
+    dtString,     //atReference
+    dtBlob,       //atParts
+    dtBlob);      //atReferences
+
+  DataTypesXML: array[TInstantAttributeType] of TInstantDataType = (
+    dtString,     //atUnknown
+    dtInteger,    //atInteger
+    dtFloat,      //atFloat
+    dtCurrency,   //atCurrency
+    dtBoolean,    //atBoolean
+    dtString,     //atString
+    dtDateTime,   //atDateTime
+    dtBlob,       //atBlob
+    dtMemo,       //atMemo
+    dtBlob,       //atGraphic
+    dtMemo,       //atPart
+    dtString,     //atReference
+    dtMemo,       //atParts
+    dtMemo);      //atReferences
+begin
+  if BlobStreamFormat = sfBinary then
+    Result := DataTypesBinary[AttributeType]
+  else
+    Result := DataTypesXML[AttributeType];
 end;
 
 function InstantConnectorClasses: TList;
@@ -2533,6 +2668,56 @@ var
 begin
   for I := Low(AClasses) to High(AClasses) do
     InstantUnRegisterClass(AClasses[I]);
+end;
+
+function InstantResolveGraphicFileType(AStream: TStream): TInstantGraphicFileFormat;
+var
+  p: pChar;
+begin
+  Result := gffUnknow;
+  if not Assigned( AStream ) then Exit;
+  GetMem( p, 10 );
+  try
+    AStream.Position := 0;
+    AStream.Read( p[0], 10 );
+    Try
+      { bitmap format }
+      if ( p[0] = #66 ) and ( p[1] = #77 ) then Result := gffBmp
+      { tiff format }
+      else if ( ( p[0] = #73 ) and ( p[1] = #73 ) and ( p[2] = #42 ) and ( p[3] = #0 ) ) or
+         ( ( p[0] = #77 ) and ( p[1] = #77 ) and ( p[2] = #42 ) and ( p[3] =#0 ) ) then Result := gffTiff
+      { jpg format }
+      else if ( p[6] = #74 ) and ( p[7] = #70 ) and ( p[8] = #73 ) and ( p[9] = #70 ) then Result := gffJpeg
+      { png format }
+      else if ( p[0] = #137 ) and ( p[1] = #80 ) and ( p[2] = #78 ) and ( p[3] = #71 ) and
+         ( p[4] = #13 ) and ( p[5] = #10 ) and ( p[6] = #26 ) and ( p[7] = #10 ) then Result := gffPng
+      { dcx format }
+      else if ( p[0] = #177 ) and ( p[1] = #104 ) and ( p[2] = #222 ) and ( p[3] = #58 ) then Result := gffDcx
+      { pcx format }
+      else if p[0] = #10 then Result := gffPcx
+      { emf format }
+      else if ( p[0] = #215 ) and ( p[1] = #205 ) and ( p[2] = #198 ) and ( p[3] = #154 ) then Result := gffEmf
+      { emf format }
+      else if ( p[0] = #1 ) and ( p[1] = #0 ) and ( p[2] = #0 ) and ( p[3] = #0 ) then Result := gffEmf
+      { GIF format }
+      else if (p[0] = #$47) and (p[1] = #$49) and (p[2] = #$46) then Result := gffGif;
+    finally
+      AStream.Position := 0;
+    end;    
+  finally
+    Freemem( p );
+  end;
+end;
+
+procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
+  AGraphicClass: TGraphicClass);
+begin
+  GraphicClassList[InstantGraphicFileFormat] := AGraphicClass;
+end;
+
+function InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat) : TGraphicClass;
+begin
+  Result := GraphicClassList[InstantGraphicFileFormat];
 end;
 
 { TInstantMetadata }
@@ -3364,7 +3549,7 @@ end;
 function TInstantScheme.AttributeTypeToDataType(
   AttributeType: TInstantAttributeType): TInstantDataType;
 begin
-  Result := InstantAttributeTypeToDataType(AttributeType);
+  Result := InstantAttributeTypeToDataType(AttributeType, BlobStreamFormat);
 end;
 
 constructor TInstantScheme.Create(AModel: TInstantModel);
@@ -4357,6 +4542,117 @@ begin
   Writer.WriteFloat(Value);
 end;
 
+{ TInstantCurrency }
+
+procedure TInstantCurrency.Assign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TInstantFloat then
+    Value := TInstantFloat(Source).Value;
+end;
+
+class function TInstantCurrency.AttributeType: TInstantAttributeType;
+begin
+  Result := atCurrency;
+end;
+
+function TInstantCurrency.GetAsFloat: Double;
+begin
+  Result := Double(Value);
+end;
+
+function TInstantCurrency.GetAsInteger: Integer;
+begin
+  Result := Round(Value);
+end;
+
+function TInstantCurrency.GetAsString: string;
+begin
+  Result := CurrToStr(Value);
+end;
+
+function TInstantCurrency.GetAsVariant: Variant;
+begin
+  Result := Value;
+end;
+
+function TInstantCurrency.GetValue: Currency;
+begin
+  Result := FValue;
+end;
+
+procedure TInstantCurrency.Initialize;
+begin
+  if Assigned(Metadata) and (Metadata.DefaultValue <> '') then
+    try
+      FValue := StrToCurr(Metadata.DefaultValue);
+    except
+      on E: Exception do
+        raise ConversionError(E);
+    end;
+end;
+
+procedure TInstantCurrency.ReadObject(Reader: TInstantReader);
+begin
+  ReadName(Reader);
+  Value := Reader.ReadCurrency;
+end;
+
+procedure TInstantCurrency.Reset;
+begin
+  inherited;
+  if Assigned(Metadata) then
+    Initialize
+  else
+    FValue := 0;
+  Changed;
+end;
+
+procedure TInstantCurrency.SetAsFloat(AValue: Double);
+begin
+  Value := AValue;
+end;
+
+procedure TInstantCurrency.SetAsInteger(AValue: Integer);
+begin
+  Value := AValue;
+end;
+
+procedure TInstantCurrency.SetAsString(const AValue: string);
+begin
+  try
+    Value := StrToCurr(AValue)
+  except
+    on E: Exception do
+      raise ConversionError(E);
+  end;
+end;
+
+procedure TInstantCurrency.SetAsVariant(AValue: Variant);
+begin
+  try
+    Value := AValue;
+  except
+    on E: Exception do
+      raise InvalidValueError(AValue, E);
+  end;
+end;
+
+procedure TInstantCurrency.SetValue(AValue: Currency);
+begin
+  if AValue <> FValue then
+  begin
+    FValue := AValue;
+    Changed;
+  end;
+end;
+
+procedure TInstantCurrency.WriteObject(Writer: TInstantWriter);
+begin
+  WriteName(Writer);
+  Writer.WriteCurrency(Value);
+end;
+
 { TInstantBoolean }
 
 procedure TInstantBoolean.Assign(Source: TPersistent);
@@ -4958,6 +5254,46 @@ begin
   Writer.WriteBinary(SaveDataToStream);
 end;
 
+procedure TInstantBlob.AssignPicture(Source: TPicture);
+begin
+  if Assigned(Source.Graphic) then
+  begin
+    Stream.Clear;
+    Source.Graphic.SaveToStream(Stream);
+  end
+  else
+    Clear;
+  Changed;
+end;
+
+procedure TInstantBlob.AssignToPicture(Dest: TPicture);
+var
+  Image : TGraphic;
+  GraphicClass : TGraphicClass;
+  InstantGraphicFileFormat : TInstantGraphicFileFormat;
+begin
+  SaveDataToStream(Stream);
+  if Stream.Position <> 0 then
+  begin
+    Stream.Position := 0;
+    InstantGraphicFileFormat := InstantResolveGraphicFileType(Stream);
+    if InstantGraphicFileFormat = gffUnknow then
+      raise EInstantError.CreateRes(@SUnsupportedGraphicStream);
+    GraphicClass := InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat);
+    if not Assigned(GraphicClass) then
+      raise EInstantError.CreateRes(@SUnsupportedGraphicClass);
+    Image := GraphicClass.Create;
+    Try
+      Image.LoadFromStream(Stream);
+      Dest.Assign(Image);
+    Finally
+      Image.Free;
+    End;
+  end
+  else if Assigned(Dest.Graphic) then
+    Dest.Graphic := nil;
+end;
+
 { TInstantMemo }
 
 class function TInstantMemo.AttributeType: TInstantAttributeType;
@@ -5077,10 +5413,25 @@ end;
 procedure TInstantElement.LoadObjectFromStream(AStream: TStream);
 var
   Obj: TPersistent;
+  MemoryStream : TMemoryStream;
 begin
   if not Assigned(AStream) then
     Exit;
-  Obj := InstantReadObjectFromStream(AStream, nil, nil, Connector);
+
+  if Connector.BlobStreamFormat = sfBinary then
+    Obj := InstantReadObjectFromStream(AStream, nil, nil, Connector)
+  else
+  begin
+    MemoryStream := TMemoryStream.Create;
+    try
+      InstantObjectTextToBinary(AStream, MemoryStream);
+      MemoryStream.Position := 0;
+      Obj := InstantReadObjectFromStream(MemoryStream, nil, nil, Connector);
+    finally
+      MemoryStream.Free;
+    end;
+  end;
+
   try
     Value := TInstantObject(Obj) as TInstantObject
   except
@@ -5090,10 +5441,25 @@ begin
 end;
 
 procedure TInstantElement.SaveObjectToStream(AStream: TStream);
+var
+  MemoryStream : TMemoryStream;
 begin
   if not (Assigned(AStream) and Assigned(Value)) then
     Exit;
-  InstantWriteObjectToStream(AStream, Value);
+
+  if Connector.BlobStreamFormat = sfBinary then
+    InstantWriteObjectToStream(AStream, Value)
+  else
+  begin
+    MemoryStream := TMemoryStream.Create;
+    try
+      InstantWriteObjectToStream(MemoryStream, Value);
+      MemoryStream.Position := 0;
+      InstantObjectBinaryToText(MemoryStream, AStream);
+    finally
+      MemoryStream.Free;
+    end;
+  end;
 end;
 
 procedure TInstantElement.SetAsObject(AValue: TInstantObject);
@@ -5619,12 +5985,14 @@ end;
 procedure TInstantContainer.LoadObjectsFromStream(AStream: TStream);
 var
   Obj: TPersistent;
+  MemoryStream : TMemoryStream;
 begin
   if not Assigned(AStream) then
     Exit;
   Clear;
-  with AStream do
-    while Position < Size do
+  if Connector.BlobStreamFormat = sfBinary then
+  begin
+    while AStream.Position < AStream.Size do
     begin
       Obj := InstantReadObjectFromStream(AStream, nil, nil, Connector);
       try
@@ -5634,6 +6002,31 @@ begin
         raise;
       end;
     end;
+  end
+  else
+  begin
+    MemoryStream := TMemoryStream.Create;
+    try
+      //CB: I don't know why MS-SQL via ADO or via DBX returns a stream with wrong size (+1)
+      //so I've changed this test adding -1 (for other brokers this is not a problem)
+      while AStream.Position < AStream.Size -1 do
+      begin
+        MemoryStream.Clear;
+        InstantObjectTextToBinary(AStream, MemoryStream);
+        MemoryStream.Position := 0;
+        Obj := InstantReadObjectFromStream(MemoryStream, nil, nil, Connector);
+        try
+          Add(Obj as TInstantObject);
+        except
+          Obj.Free;
+          raise;
+        end;
+      end;
+    finally
+      MemoryStream.Free;
+    end;
+  end;
+
   Changed;
 end;
 
@@ -5690,12 +6083,31 @@ end;
 
 procedure TInstantContainer.SaveObjectsToStream(AStream: TStream);
 var
-  I: Integer;
+  I, P: Integer;
+  MemoryStream : TMemoryStream;
 begin
   if not Assigned(AStream) then
     Exit;
-  for I := 0 to Pred(Count) do
-    InstantWriteObjectToStream(AStream, Items[I]);
+  if Connector.BlobStreamFormat = sfBinary then
+  begin
+    for I := 0 to Pred(Count) do
+      InstantWriteObjectToStream(AStream, Items[I]);
+  end
+  else
+  begin
+    MemoryStream := TMemoryStream.Create;
+    try
+      for I := 0 to Pred(Count) do
+      begin
+        P := MemoryStream.Position;
+        InstantWriteObjectToStream(MemoryStream, Items[I]);
+        MemoryStream.Position := P;
+        InstantObjectBinaryToText(MemoryStream, AStream);
+      end;
+    finally
+      MemoryStream.Free;
+    end;
+  end;
 end;
 
 procedure TInstantContainer.SetItems(Index: Integer;
@@ -6089,12 +6501,18 @@ end;
 procedure TInstantReferences.LoadReferencesFromStream(AStream: TStream);
 var
   Obj: TPersistent;
+  ObjReference : TInstantObjectReference;
+  Processor : TInstantXMLProcessor;
+  ObjectEnd, ObjClassName, ObjId : string;
+  XMLReferencesTag : string;
 begin
   if not Assigned(AStream) then
     Exit;
   Clear;
-  with AStream do
-    while Position < Size do
+
+  if Connector.BlobStreamFormat = sfBinary then
+  begin
+    while AStream.Position < AStream.Size do
     begin
       Obj := InstantReadObjectFromStream(AStream);
       try
@@ -6103,6 +6521,34 @@ begin
       except
         Obj.Free;
         raise;
+      end;
+    end;
+  end
+  else
+  begin
+    XMLReferencesTag := Self.ClassName;
+    ObjectEnd := InstantBuildEndTag(XMLReferencesTag);
+    Processor := TInstantXMLProcessor.Create(AStream);
+    try
+      //Skip XMLReferencesTag
+      if not SameText(Processor.ReadTagName, XMLReferencesTag) then
+        exit;
+      while not SameText(Processor.PeekTag, ObjectEnd) do
+      begin
+        ObjClassName := Processor.ReadTagName; //Tag = classname
+        ObjId := Processor.ReadData; //Data = ObjectId
+        Processor.ReadTag; //closing tag
+        ObjReference := TInstantObjectReference.Create;
+        Try
+          ObjReference.ReferenceObject(ObjClassName, ObjId);
+          ObjectReferenceList.Add(ObjReference);
+        Except
+          ObjReference.Free;
+        End;
+        ObjReference.OwnsInstance := True;
+      end;
+    finally
+      Processor.Free;
       end;
     end;
   Changed;
@@ -6132,11 +6578,36 @@ end;
 procedure TInstantReferences.SaveReferencesToStream(AStream: TStream);
 var
   I: Integer;
+  InstantXMLProducer : TInstantXMLProducer;
+  XMLReferencesTag : string;
 begin
   if not Assigned(AStream) then
     Exit;
-  for I := 0 to Pred(Count) do
-    InstantWriteObjectToStream(AStream, ObjectReferences[I]);
+
+  if Connector.BlobStreamFormat = sfBinary then
+  begin
+    for I := 0 to Pred(Count) do
+      InstantWriteObjectToStream(AStream, ObjectReferences[I]);
+  end
+  else
+  begin
+    if Count = 0 then exit;
+    InstantXMLProducer := TInstantXMLProducer.Create(AStream);
+    Try
+      XMLReferencesTag := Self.ClassName;
+      InstantXMLProducer.WriteStartTag(XMLReferencesTag);
+      InstantXMLProducer.WriteEscapedData(sLineBreak);
+      for I := 0 to Pred(Count) do
+      begin
+        InstantXMLProducer.WriteStartTag(ObjectReferences[I].ObjectClassName);
+        InstantXMLProducer.WriteData(ObjectReferences[I].ObjectId);
+        InstantXMLProducer.WriteEndTag;
+      end;
+      InstantXMLProducer.WriteEndTag;
+    Finally
+      InstantXMLProducer.Free;
+    End;
+  end;
 end;
 
 procedure TInstantReferences.SetAllowOwned(Value: Boolean);
@@ -6260,6 +6731,7 @@ var
   Map: TInstantAttributeMap;
   AttribName: string;
   Attrib, SourceAttrib: TInstantAttribute;
+  ObjectReference : TInstantObjectReference;
 begin
   BeforeAssign;
   inherited;
@@ -6276,7 +6748,32 @@ begin
           if Assigned(Attrib) then
           begin
             SourceAttrib := Obj.AttributeByName(AttribName);
-            Attrib.Assign(SourceAttrib);
+
+            if (SourceAttrib is TInstantReference) and
+              (TInstantReference(SourceAttrib).Connector <> self.Connector) and
+              (TInstantReference(SourceAttrib).Value <> nil) then
+            begin
+              ObjectReference := TInstantObjectReference.Create;
+              try
+                //Save Reference informations
+                ObjectReference.Clone(TInstantReference(SourceAttrib).ObjectReference, True);
+                //Change the destination connector so the reference to source connector is lost
+                TInstantReference(SourceAttrib).Connector := self.Connector;
+                //Reassign Reference informations to destination attribute
+                TInstantReference(Attrib).ObjectReference.Clone(ObjectReference, True);
+              finally
+                ObjectReference.Free;
+              end;
+            end
+            else if (SourceAttrib is TInstantReferences) and
+              (TInstantReferences(SourceAttrib).Connector <> self.Connector) then
+            begin
+              //Change the destination connector
+              TInstantReferences(SourceAttrib).Connector := self.Connector;
+              Attrib.Assign(SourceAttrib);
+            end
+            else
+              Attrib.Assign(SourceAttrib);
           end;
         end;
   end;
@@ -6432,6 +6929,8 @@ class procedure TInstantObject.ConvertToBinary(Converter: TInstantTextToBinaryCo
           Writer.WriteInteger(StrToInt(Processor.ReadData));
         atFloat:
           Writer.WriteFloat(StrToFloat(Processor.ReadData));
+        atCurrency:
+          Writer.WriteCurrency(StrToCurr(Processor.ReadData));
         atBoolean:
           Writer.WriteBoolean(SameText(Processor.ReadData, InstantTrueString));
         atString, atMemo:
@@ -7487,6 +7986,10 @@ end;
 
 procedure TInstantObject.SaveState;
 begin
+  //CB: bug fixing
+  if State.PersistentId = '' then
+    Exit;
+
   if FSaveStateLevel = 0 then
     try
       SavedState.Assign(State);
@@ -7649,6 +8152,7 @@ end;
 
 procedure TInstantConnectionDef.InitConnector(Connector: TInstantConnector);
 begin
+  Connector.BlobStreamFormat := BlobStreamFormat; //CB
 end;
 
 { TInstantConnectionDefs }
@@ -8869,6 +9373,11 @@ end;
 function TInstantBroker.CreateQuery: TInstantQuery;
 begin
   Result := InternalCreateQuery;
+end;
+
+destructor TInstantBroker.destroy;
+begin
+  inherited;
 end;
 
 function TInstantBroker.DisposeObject(AObject: TInstantObject;
@@ -10279,6 +10788,7 @@ end;
 procedure TInstantConnectionBasedConnector.InternalConnect;
 begin
   CheckConnection;
+  AssignLoginOptions;
   Connection.Open;
 end;
 
@@ -10311,7 +10821,34 @@ begin
   end;
 end;
 
+procedure TInstantConnectionBasedConnector.AssignLoginOptions;
+begin
+  if HasConnection then
+  begin
+    Connection.LoginPrompt := FLoginPrompt;
+  end;
+end;
+
+procedure TInstantConnectionBasedConnector.SetLoginPrompt(
+  const Value: boolean);
+begin
+  FLoginPrompt := Value;
+end;
+
+constructor TInstantConnectionBasedConnector.Create(AOwner: TComponent);
+begin
+  inherited;
+  FLoginPrompt := True;
+end;
+
 { TInstantConnectionBasedConnectionDef }
+
+constructor TInstantConnectionBasedConnectionDef.Create(
+  Collection: TCollection);
+begin
+  inherited;
+  FLoginPrompt := True;
+end;
 
 procedure TInstantConnectionBasedConnectionDef.InitConnector(
   Connector: TInstantConnector);
@@ -10321,6 +10858,8 @@ begin
   Connection := CreateConnection(Connector);
   try
     (Connector as TInstantConnectionBasedConnector).Connection := Connection;
+    (Connector as TInstantConnectionBasedConnector).BlobStreamFormat := BlobStreamFormat; //CB
+    (Connector as TInstantConnectionBasedConnector).LoginPrompt := LoginPrompt; //CB
   except
     Connection.Free;
     raise;
@@ -10418,6 +10957,8 @@ begin
         ClearInteger(Attribute as TInstantInteger);
       atFloat:
         ClearFloat(Attribute as TInstantFloat);
+      atCurrency:
+        ClearCurrency(Attribute as TInstantCurrency);
       atBoolean:
         ClearBoolean(Attribute as TInstantBoolean);
       atString:
@@ -10453,6 +10994,10 @@ begin
 end;
 
 procedure TInstantNavigationalResolver.ClearFloat(Attribute: TInstantFloat);
+begin
+end;
+
+procedure TInstantNavigationalResolver.ClearCurrency(Attribute: TInstantCurrency);
 begin
 end;
 
@@ -10722,6 +11267,8 @@ begin
         ReadInteger(Attribute as TInstantInteger);
       atFloat:
         ReadFloat(Attribute as TInstantFloat);
+      atCurrency:
+        ReadCurrency(Attribute as TInstantCurrency);
       atBoolean:
         ReadBoolean(Attribute as TInstantBoolean);
       atString:
@@ -10767,6 +11314,12 @@ procedure TInstantNavigationalResolver.ReadFloat(Attribute: TInstantFloat);
 begin
   with Attribute do
     Value := FieldByName(Metadata.FieldName).AsFloat;
+end;
+
+procedure TInstantNavigationalResolver.ReadCurrency(Attribute: TInstantCurrency);
+begin
+  with Attribute do
+    Value := FieldByName(Metadata.FieldName).AsCurrency;
 end;
 
 procedure TInstantNavigationalResolver.ReadInteger(Attribute: TInstantInteger);
@@ -10904,6 +11457,8 @@ begin
         WriteInteger(Attribute as TInstantInteger);
       atFloat:
         WriteFloat(Attribute as TInstantFloat);
+      atCurrency:
+        WriteCurrency(Attribute as TInstantCurrency);
       atBoolean:
         WriteBoolean(Attribute as TInstantBoolean);
       atString:
@@ -10949,6 +11504,12 @@ procedure TInstantNavigationalResolver.WriteFloat(Attribute: TInstantFloat);
 begin
   with Attribute do
     FieldByName(Metadata.FieldName).AsFloat := Value;
+end;
+
+procedure TInstantNavigationalResolver.WriteCurrency(Attribute: TInstantCurrency);
+begin
+  with Attribute do
+    FieldByName(Metadata.FieldName).AsCurrency := Value;
 end;
 
 procedure TInstantNavigationalResolver.WriteInteger(Attribute: TInstantInteger);
@@ -11642,6 +12203,12 @@ end;
 
 { TInstantSQLBroker }
 
+procedure TInstantSQLBroker.AssignDataSetParams(DataSet : TDataSet; AParams: TParams);
+begin
+  //must be implemented in derived broker
+  raise EInstantError.CreateResFmt(@SUnsupportedUsePreparedQuery,[ClassName]);
+end;
+
 destructor TInstantSQLBroker.Destroy;
 begin
   FGenerator.Free;
@@ -11658,6 +12225,12 @@ begin
     Result := CreateResolver(AMap);
     ResolverList.Add(Result)
   end;
+end;
+
+function TInstantSQLBroker.ExecuteQuery(DataSet: TDataSet): integer;
+begin
+  //Execution must be implemented in derived broker
+  raise EInstantError.CreateResFmt(@SUnsupportedUsePreparedQuery,[ClassName]);
 end;
 
 function TInstantSQLBroker.FindResolver(
@@ -11731,6 +12304,16 @@ begin
     end;
 end;
 
+procedure TInstantSQLBroker.PrepareQuery(DataSet: TDataSet);
+begin
+  //Prepare the query in derived Broker
+end;
+
+procedure TInstantSQLBroker.UnprepareQuery(DataSet: TDataSet);
+begin
+  //Unprepare the query in derived Broker
+end;
+
 { TInstantSQLResolver }
 
 procedure TInstantSQLResolver.AddAttributeParam(Attribute: TInstantAttribute;
@@ -11745,6 +12328,15 @@ var
     Param := AddParam(Params, AFieldName, ftBlob);
     if Value <> '' then
       Param.AsBlob := Value
+  end;
+
+  procedure AddMemoParam(const AFieldName, Value: string);
+  var
+    Param: TParam;
+  begin
+    Param := AddParam(Params, AFieldName, ftMemo);
+    if Value <> '' then
+      Param.AsMemo := Value
   end;
 
   procedure AddBlobAttributeParam;
@@ -11770,6 +12362,12 @@ var
       (Attribute as TInstantFloat).Value;
   end;
 
+  procedure AddCurrencyAttributeParam;
+  begin
+    AddParam(Params, FieldName, ftBCD).AsCurrency :=
+      (Attribute as TInstantCurrency).Value;
+  end;
+
   procedure AddIntegerAttributeParam;
   begin
     AddIntegerParam(Params, FieldName, (Attribute as TInstantInteger).Value);
@@ -11793,7 +12391,11 @@ var
     Stream := TInstantStringStream.Create('');
     try
       (Attribute as TInstantPart).SaveObjectToStream(Stream);
-      AddBlobParam(FieldName, Stream.DataString)
+      //CB
+      if Broker.Connector.BlobStreamFormat = sfBinary then
+        AddBlobParam(FieldName, Stream.DataString)
+      else
+        AddMemoParam(FieldName, Stream.DataString);
     finally
       Stream.Free;
     end;
@@ -11806,7 +12408,11 @@ var
     Stream := TInstantStringStream.Create('');
     try
       (Attribute as TInstantParts).SaveObjectsToStream(Stream);
-      AddBlobParam(FieldName, Stream.DataString);
+      //CB
+      if Broker.Connector.BlobStreamFormat = sfBinary then
+        AddBlobParam(FieldName, Stream.DataString)
+      else
+        AddMemoParam(FieldName, Stream.DataString);
     finally
       Stream.Free;
     end;
@@ -11829,7 +12435,11 @@ var
     Stream := TInstantStringStream.Create('');
     try
       (Attribute as TInstantReferences).SaveReferencesToStream(Stream);
-      AddBlobParam(FieldName, Stream.DataString);
+      //CB
+      if Broker.Connector.BlobStreamFormat = sfBinary then
+        AddBlobParam(FieldName, Stream.DataString)
+      else
+        AddMemoParam(FieldName, Stream.DataString);
     finally
       Stream.Free;
     end;
@@ -11851,6 +12461,8 @@ begin
       AddDateTimeAttributeParam;
     atFloat:
       AddFloatAttributeParam;
+    atCurrency:
+      AddCurrencyAttributeParam;
     atInteger:
       AddIntegerAttributeParam;
     atMemo:
@@ -11943,14 +12555,65 @@ begin
   FMap := AMap;
 end;
 
+function TInstantSQLResolver.CreatePreparedQuery(const AStatement: string;
+  AParams: TParams): TDataSet;
+begin
+  if (FPreparedDataSet = nil) or (LastStatement <> AStatement) or (LastConnector <> Broker.Connector) then
+  begin
+    //First time or different statement/connector: create and prepare query
+    if Assigned(FPreparedDataSet) then
+    begin
+      FPreparedDataSet.Close;
+      Broker.UnprepareQuery(FPreparedDataSet);
+      FPreparedDataSet.Free;
+      FPreparedDataSet := nil;
+    end;
+    Result := Broker.CreateDataSet(AStatement,AParams);
+    try
+      FPreparedDataSet := Result;
+      LastStatement := AStatement;
+      LastConnector := Broker.Connector;
+      //Prepare the query for future uses
+      Broker.PrepareQuery(FPreparedDataSet);
+    except
+      Result.Free;
+      raise;
+    end;
+  end
+  else
+  begin
+    //Return the previous prepared query
+    if FPreparedDataSet.Active then
+      FPreparedDataSet.Close;
+    //Assign only new param values
+    Broker.AssignDataSetParams(FPreparedDataSet,AParams);
+    Result := FPreparedDataSet;
+  end;
+end;
+
+destructor TInstantSQLResolver.Destroy;
+begin
+  if Assigned(FPreparedDataSet) then
+    FPreparedDataSet.Free;
+  inherited;
+end;
+
 function TInstantSQLResolver.ExecuteStatement(const AStatement: string;
   AParams: TParams; Info: PInstantOperationInfo;
   ConflictAction: TInstantConflictAction; AObject: TInstantObject): Integer;
 var
   TransError: Exception;
+  DataSet : TDataSet;
 begin
   try
-    Result := Broker.Execute(AStatement, AParams);
+    if not UsePreparedQuery then
+      Result := Broker.Execute(AStatement, AParams)
+    else
+    begin
+      DataSet := CreatePreparedQuery(AStatement, AParams);
+      Result := Broker.ExecuteQuery(DataSet);
+    end;
+
     Info.Success := Result = 1;
     Info.Conflict := not Info.Success or (ConflictAction = caIgnore);
   except
@@ -12014,6 +12677,11 @@ begin
   Result := FUpdateSQL;
 end;
 
+function TInstantSQLResolver.GetUsePreparedQuery: boolean;
+begin
+  Result := Broker.UsePreparedQuery;
+end;
+
 procedure TInstantSQLResolver.InternalDisposeMap(AObject: TInstantObject;
   Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
   Info: PInstantOperationInfo);
@@ -12065,7 +12733,12 @@ begin
   Params := TParams.Create;
   try
     AddBaseParams(Params, AObject.ClassName, AObjectId);
-    DataSet := Broker.CreateDataSet(SelectSQL, Params);
+    //CB
+    if not UsePreparedQuery then
+      DataSet := Broker.CreateDataSet(SelectSQL, Params)
+    else
+      DataSet := CreatePreparedQuery(SelectSQL, Params);
+
     try
       DataSet.Open;
       Info.Success := not DataSet.EOF;
@@ -12078,7 +12751,8 @@ begin
       end else
         ResetAttributes;
     finally
-      DataSet.Free;
+      if not UsePreparedQuery then
+        DataSet.Free;
     end;
   finally
     Params.Free;
@@ -12100,8 +12774,7 @@ var
       RemoveConcurrencyParam(Params);
       RemovePersistentIdParam(Params);
     end;
-    RowsAffected := Broker.Execute(InsertSQL, Params);
-    Info.Success := RowsAffected = 1;
+    RowsAffected := ExecuteStatement(InsertSQL, Params, Info, ConflictAction, AObject); //CB
   end;
 
   procedure UpdateMap;
@@ -12181,6 +12854,11 @@ var
     (Attribute as TInstantFloat).Value := ReadFloatField(DataSet, AFieldName);
   end;
 
+  procedure ReadCurrencyAttribute;
+  begin
+    (Attribute as TInstantCurrency).Value := ReadCurrencyField(DataSet, AFieldName);
+  end;
+
   procedure ReadIntegerAttribute;
   begin
     (Attribute as TInstantInteger).Value :=
@@ -12254,6 +12932,8 @@ begin
         ReadIntegerAttribute;
       atFloat:
         ReadFloatAttribute;
+      atCurrency:
+        ReadCurrencyAttribute;
       atBoolean:
         ReadBooleanAttribute;
       atString:
@@ -12308,6 +12988,12 @@ function TInstantSQLResolver.ReadFloatField(DataSet: TDataSet;
   const FieldName: string): Double;
 begin
   Result := DataSet.FieldByName(FieldName).AsFloat;
+end;
+
+function TInstantSQLResolver.ReadCurrencyField(DataSet: TDataSet;
+  const FieldName: string): Currency;
+begin
+  Result := DataSet.FieldByName(FieldName).AsCurrency;
 end;
 
 function TInstantSQLResolver.ReadIntegerField(DataSet: TDataSet;
@@ -12914,11 +13600,28 @@ begin
   end;
 end;
 
+{ TInstantGraphic }
+
+class function TInstantGraphic.AttributeType: TInstantAttributeType;
+begin
+  Result := atGraphic;
+end;
+
 initialization
   RegisterClasses([TInstantClassMetadatas, TInstantClassMetadata,
     TInstantAttributeMetadatas, TInstantAttributeMetadata,
     TInstantObjectReference, TInstantConnectionDefs, TInstantConnectionDef]);
   ClassList := TList.Create;
+{$IFDEF MSWINDOWS}
+  GraphicClassList[gffBmp] := Graphics.TBitmap;
+  GraphicClassList[gffEmf] := Graphics.TMetaFile;
+{$ENDIF}
+{$IFDEF LINUX}
+  GraphicClassList[gffBmp] := QGraphics.TBitmap;
+  GraphicClassList[gffEmf] := QGraphics.TBitmap;
+  GraphicClassList[gffPng] := QGraphics.TBitmap;
+  GraphicClassList[gffJpg] := QGraphics.TBitmap;
+{$ENDIF}
   ConnectorClasses := TList.Create;
   LoadClassMetadatas;
   ObjectNotifiers := TInstantObjectNotifiers.Create;

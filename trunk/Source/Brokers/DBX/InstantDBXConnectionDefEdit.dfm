@@ -1,8 +1,8 @@
 object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
-  Left = 325
-  Top = 290
+  Left = 287
+  Top = 34
   Width = 399
-  Height = 270
+  Height = 342
   Caption = 'dbExpress Connection'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -17,7 +17,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 206
+    Top = 271
     Width = 391
     Height = 2
     Align = alBottom
@@ -27,7 +27,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 391
-    Height = 206
+    Height = 271
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -41,7 +41,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     end
     object ConnectionNameLabel: TLabel
       Left = 16
-      Top = 64
+      Top = 60
       Width = 85
       Height = 13
       Caption = '&Connection Name'
@@ -54,6 +54,14 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Height = 13
       Caption = 'Connection &Settings'
       FocusControl = ParamsEditor
+    end
+    object StreamFormatLabel: TLabel
+      Left = 16
+      Top = 228
+      Width = 53
+      Height = 13
+      Caption = 'Blob &format'
+      FocusControl = StreamFormatComboBox
     end
     object DriverNameEdit: TComboBox
       Left = 16
@@ -68,7 +76,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     end
     object ConnectionNameListBox: TListBox
       Left = 16
-      Top = 80
+      Top = 76
       Width = 136
       Height = 108
       ItemHeight = 13
@@ -80,13 +88,31 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Left = 168
       Top = 32
       Width = 209
-      Height = 156
+      Height = 233
+      TabOrder = 4
+    end
+    object StreamFormatComboBox: TComboBox
+      Left = 16
+      Top = 244
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Sorted = True
+      TabOrder = 3
+    end
+    object LoginPromptCheckBox: TCheckBox
+      Left = 16
+      Top = 198
+      Width = 137
+      Height = 17
+      Caption = '&Login Prompt'
       TabOrder = 2
     end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 208
+    Top = 273
     Width = 391
     Height = 35
     Align = alBottom

@@ -19,7 +19,8 @@ uses
   QExtCtrls, QStdCtrls, QComCtrls, QTypes,
 {$ENDIF}
   Series, TeeProcs, Chart,
-  InstantPersistence, InstantPresentation, InstantClasses, Stopwatch, DB, BasicView;
+  InstantPersistence, InstantPresentation, InstantClasses, Stopwatch, DB, BasicView,
+  Mask;
 
 type
   TMeasureType = (mtStore, mtRetrieve, mtDispose);
@@ -70,12 +71,12 @@ type
   protected
     procedure BeginMeasure;
     procedure EndMeasure(MeasureType: TMeasureType; Count: Integer);
-    procedure Run; virtual; abstract;
+    procedure Run(Store, Retrieve, Dispose : boolean); virtual; abstract;
     property Stopwatch: TStopwatch read GetStopwatch;
     property TestResult: TTestResult read GetTestResult;
   public
     destructor Destroy; override;
-    procedure Execute;
+    procedure Execute(Store, Retrieve, Dispose : boolean);
     function ExtractResult: TTestResult;
     property OnShowStatus: TShowStatusEvent read FOnShowStatus write FOnShowStatus;
   end;
@@ -92,7 +93,7 @@ type
     procedure TestDispose;
     procedure Operation(Method: TMethod);
   protected
-    procedure Run; override;
+    procedure Run(Store, Retrieve, Dispose : boolean); override;
     property ObjectList: TStringList read GetObjectList;
   public
     destructor Destroy; override;
@@ -120,7 +121,12 @@ type
     IconImage: TImage;
     TestResultRenameItem: TMenuItem;
     TransactionsCheckBox: TCheckBox;
-    procedure FormDestroy(Sender: TObject);
+    PreparedQueryCheckBox: TCheckBox;
+    NumberLabel: TLabel;
+    ObjectsEdit: TMaskEdit;
+    TestStoreCheckBox: TCheckBox;
+    TestRetrieveCheckBox: TCheckBox;
+    TestDisposeCheckBox: TCheckBox;
     procedure RunButtonClick(Sender: TObject);
     procedure TestResultListViewChange(Sender: TObject; Item: TListItem;
       Change: TItemChange);
@@ -135,10 +141,12 @@ type
     procedure TestResultListViewEditedCLX(Sender: TObject; Item: TListItem; var S: WideString);
 {$ENDIF}
     procedure TransactionsCheckBoxClick(Sender: TObject);
+    procedure PreparedQueryCheckBoxClick(Sender: TObject);
   private
     FTestResults: TTestResults;
     function GetTestResults: TTestResults;
     function GetTestResultsFileName: string;
+    procedure SetTitleLabel(TitleLabel : TLabel);
 {$IFDEF LINUX}
     procedure EditItemCaption(Item : TListItem);
 {$ENDIF}
@@ -151,6 +159,7 @@ type
     property TestResultsFileName: string read GetTestResultsFileName;
   public
     procedure FormCreate(Sender: TObject); override;
+    procedure FormHide(Sender: TObject); override;
     destructor Destroy; override;
     procedure UpdateControls; override;
   end;
@@ -253,9 +262,9 @@ begin
 {$ENDIF}
 end;
 
-procedure TTest.Execute;
+procedure TTest.Execute(Store, Retrieve, Dispose : boolean);
 begin
-  Run;
+  Run(Store,Retrieve,Dispose);
 end;
 
 function TTest.ExtractResult: TTestResult;
@@ -326,13 +335,16 @@ begin
   end;
 end;
 
-procedure TPersistenceTest.Run;
+procedure TPersistenceTest.Run(Store, Retrieve, Dispose : boolean);
 begin
-  Stopwatch.Start(3 * Count);
+  Stopwatch.Start((Ord(Store)+Ord(Retrieve)+Ord(Dispose)) * Count);
   try
-    Operation(TestStore);
-    Operation(TestRetrieve);
-    Operation(TestDispose);
+    if Store then
+      Operation(TestStore);
+    if Retrieve then
+      Operation(TestRetrieve);
+    if Dispose then
+      Operation(TestDispose);
   finally
     Stopwatch.Stop;
   end;
@@ -413,6 +425,8 @@ procedure TPerformanceViewForm.FormCreate(Sender: TObject);
 begin
   Caption := 'Performance';
   InfoMemo.BorderStyle := bsNone;
+  SetTitleLabel(TitleLabel);
+  SetTitleLabel(ConnectionLabel);
 
 {$IFDEF MSWINDOWS}
   TestResultListView.OnEdited := TestResultListViewEditedVCL;
@@ -427,8 +441,9 @@ begin
   ShowTestResults;
 end;
 
-procedure TPerformanceViewForm.FormDestroy(Sender: TObject);
+procedure TPerformanceViewForm.FormHide(Sender: TObject);
 begin
+  inherited;
   SaveTestResults;
 end;
 
@@ -467,8 +482,8 @@ begin
   with TPersistenceTest.Create do
   try
     OnShowStatus := TestShowStatus;
-    Count := 100;
-    Execute;
+    Count := StrToInt(Trim(ObjectsEdit.text));
+    Execute(TestStoreCheckBox.Checked, TestRetrieveCheckBox.Checked, TestDisposeCheckBox.Checked);
     AResult := ExtractResult;
     AResult.Name := ConnectionName;
     AResult.IsChecked := True;
@@ -620,6 +635,19 @@ begin
   RunButton.Enabled := IsConnected;
   TransactionsCheckBox.Enabled := IsConnected;
   TransactionsCheckBox.Checked := IsConnected and Connector.UseTransactions;
+  ObjectsEdit.Enabled := IsConnected;
+  TestStoreCheckBox.Enabled := IsConnected;
+  TestRetrieveCheckBox.Enabled := IsConnected;
+  TestDisposeCheckBox.Enabled := IsConnected;
+  if Assigned(Connector) and (Connector.Broker is TInstantSQLBroker) then
+  begin
+    PreparedQueryCheckBox.Visible := True;
+    PreparedQueryCheckBox.Enabled := IsConnected;
+    PreparedQueryCheckBox.Checked := IsConnected and TInstantSQLBroker(Connector.Broker).UsePreparedQuery;
+  end
+  else
+    PreparedQueryCheckBox.Visible := False;
+
   ConnectionLabel.Caption := 'Connection: ' + ConnectionName;
   UpdateChart;
 end;
@@ -628,6 +656,23 @@ procedure TPerformanceViewForm.TransactionsCheckBoxClick(Sender: TObject);
 begin
   if Assigned(Connector) then
     Connector.UseTransactions := TransactionsCheckBox.Checked;
+end;
+
+procedure TPerformanceViewForm.PreparedQueryCheckBoxClick(Sender: TObject);
+begin
+  inherited;
+  TInstantSQLBroker(Connector.Broker).UsePreparedQuery := PreparedQueryCheckBox.Checked;
+end;
+
+procedure TPerformanceViewForm.SetTitleLabel(TitleLabel: TLabel);
+begin
+{$IFDEF MSWINDOWS}
+  TitleLabel.Font.Size := 10;
+{$ENDIF}
+{$IFDEF LINUX}
+  TitleLabel.Font.Size := 12;
+{$ENDIF}
+  TitleLabel.Font.Style := [fsBold];
 end;
 
 initialization

@@ -246,7 +246,6 @@ inherited ContactViewForm: TContactViewForm
             Height = 422
             Align = alClient
             DataSource = ContactSource
-            DefaultDrawing = True
             Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
             PopupMenu = ContactGridMenu
             ReadOnly = True

@@ -150,7 +150,7 @@ end;
 procedure TBasicBrowseForm.FormCreate(Sender: TObject);
 begin
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(ActionImages,'BROWSEACTIONIMAGES');
+  LoadMultipleImages(ActionImages,'BROWSEACTIONIMAGES.BMP');
   BorderStyle := bsSingle;
   SelectItem.Default := True;
 {$ENDIF}
@@ -163,6 +163,8 @@ end;
 
 procedure TBasicBrowseForm.FormKeyPress(Sender: TObject; var Key: Char);
 begin
+  if not Visible then
+    Exit;
   case Ord(Key) of
     27:
       if LookupMode then

@@ -440,7 +440,7 @@ begin
   HasName := NameEdit.Text <> '';
   HasClass := ObjectClassEdit.Text <> '';
   IsComplex := Subject.IsComplex;
-  IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat, atInteger];
+  IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat, atCurrency, atInteger];
   IsContainer := Subject.IsContainer;
   IsString := Subject.AttributeType in [atString, atMemo];
   IsValid := HasName and (not IsComplex or HasClass);

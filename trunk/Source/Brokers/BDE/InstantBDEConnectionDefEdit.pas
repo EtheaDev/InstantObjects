@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -48,6 +49,9 @@ type
     OkButton: TButton;
     CancelButton: TButton;
     BottomBevel: TBevel;
+    StreamFormatLabel: TLabel;
+    StreamFormatComboBox: TComboBox;
+    LoginPromptCheckBox: TCheckBox;
     procedure AliasComboBoxChange(Sender: TObject);
     procedure DriverComboBoxChange(Sender: TObject);
     procedure DriverComboBoxDropDown(Sender: TObject);
@@ -70,7 +74,7 @@ implementation
 {$R *.DFM}
 
 uses
-  DbTables;
+  DbTables, InstantPersistence, InstantClasses;
 
 const
   NoAlias = '(None)';
@@ -118,6 +122,7 @@ begin
     Items.Add(NoAlias);
     ItemIndex := 0;
   end;
+  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
 end;
 
 function TInstantBDEConnectionDefEditForm.GetIsValid: Boolean;
@@ -162,6 +167,9 @@ begin
       with DriverComboBox do
         ItemIndex := Items.IndexOf(DriverName);
     end;
+    //CB
+    StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat);
+    LoginPromptCheckBox.Checked := LoginPrompt;
     UpdateControls;
     ParametersEdit.Text := Parameters;
   end;
@@ -192,6 +200,10 @@ begin
       DriverName := DriverComboBox.Text
     else
       AliasName := Alias;
+    //CB  
+    BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
+    LoginPrompt := LoginPromptCheckBox.Checked;
+
     Parameters := ParametersEdit.Text;
   end;
 end;

@@ -13,6 +13,7 @@ object InstantFlashFilerConnectionDefEditForm: TInstantFlashFilerConnectionDefEd
   Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
@@ -38,6 +39,14 @@ object InstantFlashFilerConnectionDefEditForm: TInstantFlashFilerConnectionDefEd
       Height = 13
       Caption = '&Alias/Path'
     end
+    object StreamFormatLabel: TLabel
+      Left = 16
+      Top = 61
+      Width = 53
+      Height = 13
+      Caption = 'Blob &format'
+      FocusControl = StreamFormatComboBox
+    end
     object AliasEdit: TComboBox
       Left = 16
       Top = 32
@@ -57,6 +66,16 @@ object InstantFlashFilerConnectionDefEditForm: TInstantFlashFilerConnectionDefEd
       TabOrder = 1
       OnClick = BrowseButtonClick
     end
+    object StreamFormatComboBox: TComboBox
+      Left = 16
+      Top = 77
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Sorted = True
+      TabOrder = 2
+    end
   end
   object BottomPanel: TPanel
     Left = 0
@@ -66,6 +85,9 @@ object InstantFlashFilerConnectionDefEditForm: TInstantFlashFilerConnectionDefEd
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      362
+      35)
     object OkButton: TButton
       Left = 204
       Top = 6

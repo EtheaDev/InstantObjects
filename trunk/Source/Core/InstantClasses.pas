@@ -25,7 +25,8 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli: porting Kylix
- * Marco Cantù (WriteEscapedData changed to avoid correct XML encodings)
+ * Marco Cantù (WriteEscapedData fixed for correct XML encodings)
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -365,6 +366,11 @@ type
   end;
 
   TInstantStreamFormat = (sfBinary, sfXML);
+
+const
+  AInstantStreamFormatStr : Array[TInstantStreamFormat] of string =
+   ('Binary format',
+    'XML format');
 
 function InstantBuildEndTag(const TagName: string): string;
 function InstantBuildStartTag(const TagName: string): string;
@@ -1654,6 +1660,8 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
         Producer.WriteData(IntToStr(Reader.ReadInteger));
       vaExtended:
         Producer.WriteData(FloatToStr(Reader.ReadFloat));
+      vaCurrency:
+        Producer.WriteData(CurrToStr(Reader.ReadCurrency));
       vaDate:
         Producer.WriteData(InstantDateTimeToStr(Reader.ReadDate));
       vaString, vaLString:
@@ -1673,6 +1681,19 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
           until S = '';
           Producer.WriteEscapedData(SetStr);
         end;
+(*
+      vaList: //CB:
+        begin
+          Reader.ReadListBegin;
+          while not Reader.EndOfList do
+          begin
+            Producer.WriteStartTag('ListItem');
+            ConvertPropertyValue;
+            Producer.WriteEndTag;
+          end;
+          Reader.ReadListEnd;
+        end;
+*)        
       vaIdent:
         Producer.WriteEscapedData(Reader.ReadIdent);
       vaFalse:
@@ -1750,7 +1771,12 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
       tkInteger:
         Writer.WriteInteger(StrToInt(ValueStr));
       tkFloat:
-        Writer.WriteFloat(StrToFloat(ValueStr));
+      begin
+        if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
+          Writer.WriteCurrency(StrToCurr(ValueStr))
+        else
+          Writer.WriteFloat(StrToFloat(ValueStr));
+      end;
       tkString, tkLString, tkChar:
         Writer.WriteString(ValueStr);
       tkEnumeration:

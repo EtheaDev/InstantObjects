@@ -3,7 +3,7 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
   Top = 263
   BorderStyle = bsDialog
   Caption = 'ADS Connection'
-  ClientHeight = 189
+  ClientHeight = 234
   ClientWidth = 362
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -13,11 +13,12 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
   Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 152
+    Top = 197
     Width = 362
     Height = 2
     Align = alBottom
@@ -27,7 +28,7 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 362
-    Height = 152
+    Height = 197
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -38,6 +39,14 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
       Height = 13
       Caption = '&Database'
       FocusControl = DatabaseEdit
+    end
+    object StreamFormatLabel: TLabel
+      Left = 16
+      Top = 144
+      Width = 53
+      Height = 13
+      Caption = 'Blob &format'
+      FocusControl = StreamFormatComboBox
     end
     object DatabaseEdit: TComboBox
       Left = 16
@@ -120,10 +129,20 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
         TabOrder = 2
       end
     end
+    object StreamFormatComboBox: TComboBox
+      Left = 16
+      Top = 160
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Sorted = True
+      TabOrder = 4
+    end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 154
+    Top = 199
     Width = 362
     Height = 35
     Align = alBottom

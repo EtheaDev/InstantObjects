@@ -1,6 +1,6 @@
 ------------------------------------------------------------------
 
-  InstantObjects 1.6.5 for Delphi & Kylix
+  InstantObjects 1.6.6 for Delphi & Kylix
 
   Mozilla Public License 1.1 Edition
   May 2004 release
@@ -56,21 +56,21 @@ OBJECT PERSISTENCE
 One of the major issues when developing object-oriented applications is object
 persistence. InstantObjects adresses this issue by providing a powerfull persistence
 mechanism that allows using the most common databases as storage. Storing and
-retrieving objects is a simple matter of invoking methods of the common ancestor 
-class, TInstantObject. Mapping of objects to and from tables is done automatically 
-by the persistence engine of InstantObjects. Relations between objects defined in 
-the business model are handled seamlessly.  
-  
+retrieving objects is a simple matter of invoking methods of the common ancestor
+class, TInstantObject. Mapping of objects to and from tables is done automatically
+by the persistence engine of InstantObjects. Relations between objects defined in
+the business model are handled seamlessly.
+
 
 OBJECT PRESENTATION
 
-The business objects of your application can be exposed through datasets, meaning 
-they can be tied to the data-aware controls and reporting tools of your choice. 
-TInstantExposer is the dataset component that is used to expose specific objects. 
-TInstantSelector is a special exposer that enables you to expose a group of objects 
-that is selected from the database. Exposers can be tied together in master-detail 
-relationships allowing you to expose related objects. In addition, containers within 
-exposed objects are represented as nested datasets. 
+The business objects of your application can be exposed through datasets, meaning
+they can be tied to the data-aware controls and reporting tools of your choice.
+TInstantExposer is the dataset component that is used to expose specific objects.
+TInstantSelector is a special exposer that enables you to expose a group of objects
+that is selected from the database. Exposers can be tied together in master-detail
+relationships allowing you to expose related objects. In addition, containers within
+exposed objects are represented as nested datasets.
 
 
 
@@ -139,6 +139,37 @@ and function in the InstantObjects framework.
 
 VERSION HISTORY
 ---------------
+Version 1.6.6 (2004-07-29)
+
+ver.1.6.6
+- Currency Support (under test):
+...
+
+- Graphic Support (under test):
+...
+
+- PrimerCross chaged for Currency and Graphic support
+
+ConnectionManager changes:
+- ConnectionDefs moved from Form to ConnectionManager
+- ConnectByName method added in ConnectionManager to connect without showing form
+- atOpen option added in ConnectionManager to Open connections file (.con or .xml)
+
+UserPrepareQuery support:
+- Added UsePreparedQuery support for TInstantSQLBroker
+  (more details in Preprared_Query_Support.txt).
+
+- Primer demo: PerformanceView form changed to make tests with UsePreparedQuery
+  and other options
+
+- Added support for XML streaming in blob fields (Part, Parts, References)
+  (more details in XML_Blob_Streaming_release_notes.txt)
+
+- Added OnAddClassFieldDef event and BreakThorough method to speed-up exposer's fieds creation.
+
+- Exposer's Undo method now is Virtual and UndoBuffer is available.
+
+
 Version 1.6.5 (2004-05-23) (more details in Kylix3_porting_release_notes.txt)
 
 - Kylix Porting (design, core and DbExpress broker).

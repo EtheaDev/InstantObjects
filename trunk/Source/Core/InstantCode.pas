@@ -1478,6 +1478,11 @@ type
     procedure HandleArgument(Index: Integer; const Argument: string); override;
   end;
 
+  TCurrencyTypeProcessor = class(TSimpleTypeProcessor)
+  protected
+    procedure HandleArgument(Index: Integer; const Argument: string); override;
+  end;
+
   TStringTypeProcessor = class(TSimpleTypeProcessor)
   protected
     procedure HandleArgument(Index: Integer; const Argument: string); override;
@@ -1532,6 +1537,8 @@ begin
       Result := 'Integer';
     atFloat:
       Result := 'Double';
+    atCurrency:
+      Result := 'Currency';
     atBoolean:
       Result := 'Boolean';
     atString, atMemo, atBlob:
@@ -1550,11 +1557,13 @@ const
     '',
     'Integer',
     'Double',
+    'Currency',
     'Boolean',
     'string',
     'TDateTime',
     '', // atBlob
     '', // atMemo
+    '', // atPicture
     '', // atPart
     '', // atReference
     '', // atParts,
@@ -1575,7 +1584,9 @@ begin
     AddObject('Boolean', TSimpleTypeProcessor.Create);
     AddObject('Integer', TSimpleTypeProcessor.Create);
     AddObject('Blob', TSimpleTypeProcessor.Create);
+    AddObject('Graphic', TSimpleTypeProcessor.Create);
     AddObject('Float', TFloatTypeProcessor.Create);
+    AddObject('Currency', TCurrencyTypeProcessor.Create);
     AddObject('String', TStringTypeProcessor.Create);
     AddObject('Memo', TStringTypeProcessor.Create);
     AddObject('DateTime', TDateTimeTypeProcessor.Create);
@@ -1682,6 +1693,14 @@ end;
 { TFloatTypeProcessor }
 
 procedure TFloatTypeProcessor.HandleArgument(Index: Integer;
+  const Argument: string);
+begin
+  inherited;
+end;
+
+{ TCurrencyTypeProcessor }
+
+procedure TCurrencyTypeProcessor.HandleArgument(Index: Integer;
   const Argument: string);
 begin
   inherited;

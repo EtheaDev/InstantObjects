@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -247,10 +248,12 @@ procedure TInstantFlashFilerConnector.InternalBuildDatabase(Scheme: TInstantSche
 var
   I: Integer;
 begin
-  if Assigned(Scheme) then
-    with Scheme do
-      for I := 0 to Pred(TableMetadataCount) do
-        CreateTable(TableMetadatas[I]);
+  if not Assigned(Scheme) then
+    Exit;
+  Scheme.BlobStreamFormat := BlobStreamFormat; //CB
+  with Scheme do
+    for I := 0 to Pred(TableMetadataCount) do
+      CreateTable(TableMetadatas[I]);
 end;
 
 procedure TInstantFlashFilerConnector.InternalCommitTransaction;

@@ -3,12 +3,12 @@ unit DemoData;
 interface
 
 uses
-  Classes, Model, InstantPersistence;
+  Classes, Model, InstantPersistence, RandomData;
 
 procedure CreateCategories;
 procedure CreateCountries;
 function CreateRandomCompany: TCompany;
-function CreateRandomPerson(Company: TCompany): TPerson;
+function CreateRandomPerson(Company: TCompany; out Gender : TGender): TPerson;
 
 implementation
 
@@ -20,7 +20,7 @@ uses
 {$IFDEF LINUX}
   QDialogs,
 {$ENDIF}
-  InstantUtils, RandomData;
+  InstantUtils;
 
 procedure CreateCategories;
 const
@@ -169,15 +169,17 @@ begin
   end;
 end;
 
-function CreateRandomPerson(Company: TCompany): TPerson;
+function CreateRandomPerson(Company: TCompany; out Gender : TGender): TPerson;
 var
   CompanyName: string;
 begin
   Result := TPerson.Create;
   try
-    Result.Name := RandomFullName(TGender(Random(2)));
+    Gender := TGender(Random(2));
+    Result.Name := RandomFullName(Gender);
     Result.BirthDate := Date - (20 * 365 + Random(365 * 50)); // 20 - 70 years old
     Result.Address := CreateRandomAddress;
+    Result.Salary := 922337203685470;
     CreateRandomPhones(Result, ['Home', 'Mobile']);
     if Assigned(Company) then
     begin

@@ -25,8 +25,11 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli: porting Kylix
- * Carlo Barazzetta: FileFormat support (sfBinary, sfXML)
- *
+ * Carlo Barazzetta:
+ *   - FileFormat support (sfBinary, sfXML) visible in form
+ *   - ConnectionDefs moved from Form to ConnectionManager
+ *   - ConnectByName method to connect without showing form
+ *   - atOpen option: Opens connections file (.con or .xml) 
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -50,15 +53,12 @@ uses
 {$IFDEF LINUX}
   QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList, QStdCtrls, QComCtrls, QExtCtrls,
 {$ENDIF}
-  InstantClasses, InstantPersistence;
-
-const
-  XMLStartTag = '<InstantConnectionDefs>';
-  XMLEndTag = '</InstantConnectionDefs>';
+  InstantClasses, InstantPersistence,
+  StdActns;
 
 type
   TInstantConnectionManagerActionType = (atNew, atEdit, atDelete, atRename,
-    atConnect, atDisconnect, atBuild);
+    atConnect, atDisconnect, atBuild, atOpen);
   TInstantConnectionManagerActionTypes = set of TInstantConnectionManagerActionType;
 
   TInstantConnectionDefEvent = procedure(Sender: TObject;
@@ -68,6 +68,7 @@ type
   TInstantConnectorClassEvent = procedure(Sender: TObject;
     ConnectorClass: TInstantConnectorClass; var Result: Boolean) of object;
 
+  TInstantConnectionManager = class;
   TInstantConnectionManagerForm = class(TForm)
     ActionList: TActionList;
     BuildAction: TAction;
@@ -92,6 +93,9 @@ type
     ButtonsPanel: TPanel;
     ConnectButton: TButton;
     CloseButton: TButton;
+    FileOpenAction: TFileOpen;
+    N2: TMenuItem;
+    Open1: TMenuItem;
     procedure ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
     procedure BuildActionExecute(Sender: TObject);
     procedure ConnectActionExecute(Sender: TObject);
@@ -99,10 +103,9 @@ type
     procedure DeleteActionExecute(Sender: TObject);
     procedure DisconnectActionExecute(Sender: TObject);
     procedure EditActionExecute(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure NewMenuItemClick(Sender: TObject);
-    procedure RenameActionExecute(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure RenameActionExecute(Sender: TObject); //CB
 {$IFDEF MSWINDOWS}
     procedure ConnectionViewEditedVCL(Sender: TObject; Item: TListItem;
       var S: String);
@@ -111,10 +114,10 @@ type
     procedure ConnectionViewEditedCLX(Sender: TObject; Item: TListItem;
       var S: WideString);
 {$ENDIF}
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FileOpenActionBeforeExecute(Sender: TObject);
+    procedure FileOpenActionAccept(Sender: TObject);
   private
-    FConnectionDefs: TInstantConnectionDefs;
-    FFileName: string;
-    FFileFormat: TInstantStreamFormat;
     FModel: TInstantModel;
     FOnBuild: TInstantConnectionDefEvent;
     FOnConnect: TInstantConnectionDefEvent;
@@ -124,9 +127,7 @@ type
     FOnPrepare: TInstantConnectorEvent;
     FOnSupportConnector: TInstantConnectorClassEvent;
     function ConfirmDlg(const Text: string): Boolean;
-    function GetConnectionDefs: TInstantConnectionDefs;
     function GetCurrentConnectionDef: TInstantConnectionDef;
-    function GetDefsFileName: string;
     function GetVisibleActions: TInstantConnectionManagerActionTypes;
     procedure SetCurrentConnectionDef(Value: TInstantConnectionDef);
     procedure SetFileName(const Value: string);
@@ -136,7 +137,11 @@ type
 {$IFDEF LINUX}
     procedure EditItemCaption(Item : TListItem);
 {$ENDIF}
-    property DefsFileName: string read GetDefsFileName;
+    function GetConnectionDefs: TInstantConnectionDefs;
+    function OwnerConnectionManager: TInstantConnectionManager;
+    function GetFileName: string;
+    procedure UpdateCaption;
+    procedure NewMenuItemClick(Sender: TObject);
   protected
     procedure Build(ConnectionDef: TInstantConnectionDef);
     procedure Connect(ConnectionDef: TInstantConnectionDef);
@@ -148,16 +153,12 @@ type
     function DoEdit(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     procedure DoPrepare(Connector: TInstantConnector); virtual;
     function IsConnected(ConnectionDef: TInstantConnectionDef): Boolean;
-    procedure LoadConnectionDefs(Format: TInstantStreamFormat);
     procedure PopulateConnectionDefs;
-    procedure SaveConnectionDefs(Format: TInstantStreamFormat);
     function SupportConnector(ConnectorClass: TInstantConnectorClass): Boolean;
     property ConnectionDefs: TInstantConnectionDefs read GetConnectionDefs;
   public
-    destructor Destroy; override;
     property CurrentConnectionDef: TInstantConnectionDef read GetCurrentConnectionDef write SetCurrentConnectionDef;
-    property FileName: string read FFileName write SetFileName;
-    property FileFormat: TInstantStreamFormat read FFileFormat write FFileFormat;
+    property FileName: string read GetFileName write SetFileName;
     property Model: TInstantModel read FModel write FModel;
     property VisibleActions: TInstantConnectionManagerActionTypes read GetVisibleActions write SetVisibleActions;
     property OnBuild: TInstantConnectionDefEvent read FOnBuild write FOnBuild;
@@ -170,6 +171,8 @@ type
   end;
 
   TInstantConnectionManager = class(TComponent)
+  private
+    function GetDefsFileName: string;
   private
     FCaption: string;
     FForm: TInstantConnectionManagerForm;
@@ -184,6 +187,8 @@ type
     FOnPrepare: TInstantConnectorEvent;
     FOnSupportConnector: TInstantConnectorClassEvent;
     FVisibleActions: TInstantConnectionManagerActionTypes;
+    FConnectionDefs: TInstantConnectionDefs; //CB
+    function GetConnectionDefs: TInstantConnectionDefs; //CB
     function GetCaption: string;
     function GetCurrentConnectionDef: TInstantConnectionDef;
     function GetForm: TInstantConnectionManagerForm;
@@ -201,20 +206,26 @@ type
     procedure SetOnPrepare(Value: TInstantConnectorEvent);
     procedure SetOnSupportConnector(Value: TInstantConnectorClassEvent);
     procedure SetVisibleActions(Value: TInstantConnectionManagerActionTypes);
+    property DefsFileName: string read GetDefsFileName;
   protected
     function HasForm: Boolean;
     property Form: TInstantConnectionManagerForm read GetForm;
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure LoadConnectionDefs;
+    procedure SaveConnectionDefs;    
+    procedure ConnectByName(const ConnectionDefName : string); //CB
     function Execute: Boolean;
     property CurrentConnectionDef: TInstantConnectionDef read GetCurrentConnectionDef write SetCurrentConnectionDef;
     property Model: TInstantModel read GetModel write SetModel;
+    property ConnectionDefs: TInstantConnectionDefs read GetConnectionDefs;
   published
     property Caption: string read GetCaption write SetCaption;
     property FileName: string read FFileName write SetFileName;
     property FileFormat : TInstantStreamFormat read FFileFormat write SetFileFormat default sfBinary;
     property VisibleActions: TInstantConnectionManagerActionTypes read FVisibleActions write SetVisibleActions
-      default [atNew, atEdit, atDelete, atRename, atConnect, atDisconnect, atBuild];
+      default [atNew, atEdit, atDelete, atRename, atConnect, atDisconnect, atBuild, atOpen];
     property OnBuild: TInstantConnectionDefEvent read FOnBuild write SetOnBuild;
     property OnConnect: TInstantConnectionDefEvent read FOnConnect write SetOnConnect;
     property OnDisconnect: TInstantConnectionDefEvent read FOnDisconnect write SetOnDisconnect;
@@ -349,13 +360,6 @@ begin
   end;
 end;
 
-destructor TInstantConnectionManagerForm.Destroy;
-begin
-  SaveConnectionDefs(FFileFormat);
-  inherited;
-  FConnectionDefs.Free;
-end;
-
 procedure TInstantConnectionManagerForm.Disconnect(ConnectionDef: TInstantConnectionDef);
 begin
   if Assigned(ConnectionDef) then
@@ -473,6 +477,7 @@ begin
 {$ENDIF}
   ConnectionView.Columns[0].Width := 225;
   ConnectionView.Columns[1].Width := 80;
+  ConnectionView.Columns[2].Width := 80;
   UpdateMenu;
 end;
 
@@ -488,9 +493,7 @@ end;
 
 function TInstantConnectionManagerForm.GetConnectionDefs: TInstantConnectionDefs;
 begin
-  if not Assigned(FConnectionDefs) then
-    FConnectionDefs := TInstantConnectionDefs.Create;
-  Result := FConnectionDefs;
+  Result := OwnerConnectionManager.ConnectionDefs;
 end;
 
 function TInstantConnectionManagerForm.GetCurrentConnectionDef: TInstantConnectionDef;
@@ -500,21 +503,6 @@ begin
       Result := Selected.Data
     else
       Result := nil;
-end;
-
-function TInstantConnectionManagerForm.GetDefsFileName: string;
-var
-  Path: string;
-begin
-  if FileName <> '' then
-  begin
-    Path := ExtractFilePath(FileName);
-    if Path = '' then
-      Result := ExtractFilePath(Application.ExeName) + FileName
-    else
-      Result := FileName;
-  end else
-    Result := '';
 end;
 
 function TInstantConnectionManagerForm.GetVisibleActions: TInstantConnectionManagerActionTypes;
@@ -527,6 +515,7 @@ begin
   if ConnectAction.Visible then Include(Result, atConnect);
   if DisconnectAction.Visible then Include(Result, atDisconnect);
   if BuildAction.Visible then Include(Result, atBuild);
+  if FileOpenAction.Visible then Include(Result, atOpen);
 end;
 
 function TInstantConnectionManagerForm.IsConnected(
@@ -535,45 +524,6 @@ begin
   Result := False;
   if Assigned(FOnIsConnected) then
     FOnIsConnected(Self, ConnectionDef, Result);
-end;
-
-procedure TInstantConnectionManagerForm.LoadConnectionDefs(Format: TInstantStreamFormat);
-var
-  FileStream: TFileStream;
-  MemoryStream: TMemoryStream;
-begin
-  if FileExists(DefsFileName) then
-  begin
-    try
-      if FFileFormat = sfBinary then
-      begin
-        FileStream := TFileStream.Create(DefsFileName, fmOpenRead);
-        try
-          InstantReadObjectFromStream(FileStream, ConnectionDefs);
-        finally
-          FileStream.Free;
-        end;
-      end
-      else
-      begin
-        MemoryStream := TMemoryStream.Create;
-        try
-          MemoryStream.LoadFromFile(FileName);
-          MemoryStream.Size := MemoryStream.Size - Length(XMLEndTag);
-          MemoryStream.Position := Length(XMLStartTag);
-          InstantReadObject(MemoryStream, sfXML, ConnectionDefs);
-        finally
-          MemoryStream.Free;
-        end;
-      end;
-    except
-      on E: Exception do
-        raise EInstantError.CreateFmt(
-          'Error loading connection definitions from %s: %s', [DefsFileName,
-            E.Message]);
-    end;
-  end;
-  PopulateConnectionDefs;
 end;
 
 procedure TInstantConnectionManagerForm.NewMenuItemClick(Sender: TObject);
@@ -628,6 +578,7 @@ begin
             Caption := Def.Name;
             Data := Def;
             SubItems.Add(Def.ConnectionTypeName);
+            SubItems.Add(AInstantStreamFormatStr[Def.BlobStreamFormat]);
           end;
       end;
       if Assigned(CurrentDef) then
@@ -652,35 +603,6 @@ begin
 
 end;
 
-procedure TInstantConnectionManagerForm.SaveConnectionDefs(Format: TInstantStreamFormat);
-var
-  FileStream: TFileStream;
-  MemoryStream: TMemoryStream;
-begin
-  if DefsFileName = '' then
-    Exit;
-  FileStream := TFileStream.Create(DefsFileName, fmCreate);
-  try
-    if Format = sfBinary then
-      InstantWriteObjectToStream(FileStream, ConnectionDefs)
-    else
-    begin
-      MemoryStream := TMemoryStream.Create;
-      try
-        FileStream.Write(XMLStartTag, Length(XMLStartTag));
-        InstantWriteObjectToStream(MemoryStream, ConnectionDefs);
-        MemoryStream.Position := 0;
-        InstantObjectBinaryToText(MemoryStream, FileStream);
-        FileStream.Write(XMLEndTag, Length(XMLEndTag));
-      finally
-        MemoryStream.Free;
-      end;
-    end;
-  finally
-    FileStream.Free;
-  end;
-end;
-
 procedure TInstantConnectionManagerForm.SetCurrentConnectionDef(
   Value: TInstantConnectionDef);
 var
@@ -696,11 +618,8 @@ end;
 
 procedure TInstantConnectionManagerForm.SetFileName(const Value: string);
 begin
-  if Value <> FFileName then
-  begin
-    FFileName := Value;
-    LoadConnectionDefs(FFileFormat);
-  end;
+  OwnerConnectionManager.FileName := Value;
+  PopulateConnectionDefs;
 end;
 
 procedure TInstantConnectionManagerForm.SetOnSupportConnector(
@@ -723,6 +642,7 @@ begin
   ConnectAction.Visible := atConnect in Value;
   DisconnectAction.Visible := atDisconnect in Value;
   BuildAction.Visible := atBuild in Value;
+  FileOpenAction.Visible := atOpen in Value;
 end;
 
 function TInstantConnectionManagerForm.SupportConnector(
@@ -765,14 +685,32 @@ begin
   end;
 end;
 
+function TInstantConnectionManagerForm.OwnerConnectionManager: TInstantConnectionManager;
+begin
+  Result := TInstantConnectionManager(Owner);
+end;
+
+function TInstantConnectionManagerForm.GetFileName: string;
+begin
+  Result := OwnerConnectionManager.FileName;
+end;
+
+procedure TInstantConnectionManagerForm.UpdateCaption;
+begin
+  if FileName <> '' then
+    Caption := OwnerConnectionManager.Caption + ' - '+ ExtractFileName(FileName)
+  else
+    Caption := OwnerConnectionManager.Caption;
+end;
+
 { TInstantConnectionManager }
 
 constructor TInstantConnectionManager.Create(AOwner: TComponent);
 begin
   inherited;
   FVisibleActions := [atNew, atEdit, atDelete, atRename, atConnect,
-    atDisconnect, atBuild];
-  FFileFormat := sfBinary;  
+    atDisconnect, atBuild, atOpen];
+  FFileFormat := sfBinary;
 end;
 
 function TInstantConnectionManager.Execute: Boolean;
@@ -801,8 +739,6 @@ begin
   if not Assigned(FForm) then
   begin
     FForm := TInstantConnectionManagerForm.Create(Self);
-    if FCaption <> '' then
-      FForm.Caption := FCaption;
     FForm.Model := Model;
     FForm.OnSupportConnector := FOnSupportConnector;
     FForm.VisibleActions := FVisibleActions;
@@ -812,8 +748,8 @@ begin
     FForm.OnEdit := FOnEdit;
     FForm.OnIsConnected := FOnIsConnected;
     FForm.OnPrepare := FOnPrepare;
-    FForm.FileFormat := FFileFormat;
     FForm.FileName := FFileName;
+    FForm.UpdateCaption;
   end;
   Result := FForm;
 end;
@@ -836,7 +772,7 @@ begin
   begin
     FCaption := Value;
     if HasForm then
-      Form.Caption := FCaption;
+      Form.UpdateCaption;
   end;
 end;
 
@@ -850,9 +786,12 @@ procedure TInstantConnectionManager.SetFileName(const Value: string);
 begin
   if Value <> FFileName then
   begin
+    if SameText(ExtractFileExt(Value),'.xml') then
+      FFileFormat := sfXML
+    else
+      FFileFormat := sfBinary;
     FFileName := Value;
-    if Assigned(FForm) then
-      FForm.FileName := FFileName;
+    LoadConnectionDefs;
   end;
 end;
 
@@ -860,11 +799,7 @@ procedure TInstantConnectionManager.SetFileFormat(
   const Value: TInstantStreamFormat);
 begin
   if Value <> FFileFormat then
-  begin
     FFileFormat := Value;
-    if Assigned(FForm) then
-      FForm.FileFormat := FFileFormat;
-  end;
 end;
 
 procedure TInstantConnectionManager.SetModel(Value: TInstantModel);
@@ -963,6 +898,130 @@ begin
     if Assigned(FForm) then
       FForm.VisibleActions := Value;
   end;
+end;
+
+procedure TInstantConnectionManager.ConnectByName(const ConnectionDefName: string);
+var
+  Result : boolean;
+  ConnectionDef : TInstantConnectionDef;
+begin
+  LoadConnectionDefs;
+  ConnectionDef := ConnectionDefs.Find(ConnectionDefName) as TInstantConnectionDef;
+  if Assigned(ConnectionDef) then
+    OnConnect(Self, ConnectionDef, Result)
+  else
+    raise EInstantError.CreateFmt(
+      'Error: connection definitions %s not found in file %s',
+        [ConnectionDefName,FileName]);
+end;
+
+destructor TInstantConnectionManager.Destroy;
+begin
+  FConnectionDefs.Free;
+  inherited;
+end;
+
+function TInstantConnectionManager.GetConnectionDefs: TInstantConnectionDefs;
+begin
+  if not Assigned(FConnectionDefs) then
+    FConnectionDefs := TInstantConnectionDefs.Create;
+  Result := FConnectionDefs;
+end;
+
+procedure TInstantConnectionManager.LoadConnectionDefs;
+var
+  FileStream: TFileStream;
+  MemoryStream: TMemoryStream;
+begin
+  if FileExists(DefsFileName) then
+  begin
+    try
+      if FileFormat = sfBinary then
+      begin
+        FileStream := TFileStream.Create(DefsFileName, fmOpenRead);
+        try
+          InstantReadObjectFromStream(FileStream, ConnectionDefs);
+        finally
+          FileStream.Free;
+        end;
+      end
+      else
+      begin
+        MemoryStream := TMemoryStream.Create;
+        try
+          MemoryStream.LoadFromFile(DefsFileName);
+          InstantReadObject(MemoryStream, sfXML, ConnectionDefs);
+        finally
+          MemoryStream.Free;
+        end;
+      end;
+    except
+      on E: Exception do
+        raise EInstantError.CreateFmt(
+          'Error loading connection definitions from %s: %s', [DefsFileName,
+            E.Message]);
+    end;
+  end;
+end;
+
+procedure TInstantConnectionManager.SaveConnectionDefs;
+var
+  FileStream: TFileStream;
+  MemoryStream: TMemoryStream;
+begin
+  if DefsFileName = '' then
+    Exit;
+  FileStream := TFileStream.Create(DefsFileName, fmCreate);
+  try
+    if FileFormat = sfBinary then
+      InstantWriteObjectToStream(FileStream, ConnectionDefs)
+    else
+    begin
+      MemoryStream := TMemoryStream.Create;
+      try
+        InstantWriteObjectToStream(MemoryStream, ConnectionDefs);
+        MemoryStream.Position := 0;
+        InstantObjectBinaryToText(MemoryStream, FileStream);
+      finally
+        MemoryStream.Free;
+      end;
+    end;
+  finally
+    FileStream.Free;
+  end;
+end;
+
+function TInstantConnectionManager.GetDefsFileName: string;
+var
+  Path: string;
+begin
+  if FileName <> '' then
+  begin
+    Path := ExtractFilePath(FileName);
+    if Path = '' then
+      Result := ExtractFilePath(Application.ExeName) + FileName
+    else
+      Result := FileName;
+  end else
+    Result := '';
+end;
+
+procedure TInstantConnectionManagerForm.FormClose(Sender: TObject;
+  var Action: TCloseAction);
+begin
+  OwnerConnectionManager.SaveConnectionDefs;
+end;
+
+procedure TInstantConnectionManagerForm.FileOpenActionBeforeExecute(
+  Sender: TObject);
+begin
+  FileOpenAction.Dialog.FileName := FileName;
+end;
+
+procedure TInstantConnectionManagerForm.FileOpenActionAccept(
+  Sender: TObject);
+begin
+  FileName := FileOpenAction.Dialog.FileName;
 end;
 
 end.

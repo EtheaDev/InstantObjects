@@ -1,9 +1,9 @@
 object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
-  Left = 325
-  Top = 290
+  Left = 516
+  Top = 282
   BorderStyle = bsDialog
   Caption = 'ADO Connection'
-  ClientHeight = 183
+  ClientHeight = 242
   ClientWidth = 362
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 146
+    Top = 205
     Width = 362
     Height = 2
     Align = alBottom
@@ -28,10 +28,18 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 362
-    Height = 146
+    Height = 205
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    object StreamFormatLabel: TLabel
+      Left = 32
+      Top = 152
+      Width = 53
+      Height = 13
+      Caption = 'Blob &format'
+      FocusControl = StreamFormatComboBox
+    end
     object DataLinkRadioButton: TRadioButton
       Left = 16
       Top = 16
@@ -86,10 +94,28 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
       TabOrder = 5
       OnClick = ConnectionStringButtonClick
     end
+    object StreamFormatComboBox: TComboBox
+      Left = 32
+      Top = 168
+      Width = 145
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      Sorted = True
+      TabOrder = 7
+    end
+    object LoginPromptCheckBox: TCheckBox
+      Left = 32
+      Top = 126
+      Width = 150
+      Height = 17
+      Caption = '&Login Prompt'
+      TabOrder = 6
+    end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 148
+    Top = 207
     Width = 362
     Height = 35
     Align = alBottom

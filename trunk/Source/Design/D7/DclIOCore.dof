@@ -108,13 +108,13 @@ DebugCWD=
 [Language]
 ActiveLang=
 ProjectLang=
-RootDir=C:\Work\DelphiProjects\InstantObjects17\Source\Design\
+RootDir=
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
-MinorVer=7
-Release=0
+MinorVer=6
+Release=6
 Build=0
 Debug=0
 PreRelease=0
@@ -126,11 +126,11 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=InstantObjects.org
 FileDescription=InstantObjects Design-Time Package (Delphi 7)
-FileVersion=1.7.0.0
+FileVersion=1.6.6.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=InstantObjects
-ProductVersion=1.7
+ProductVersion=1.6.6
 Comments=

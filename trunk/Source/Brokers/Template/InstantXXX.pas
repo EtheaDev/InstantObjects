@@ -162,6 +162,7 @@ end;
 
 procedure TInstantXXXConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
+  Scheme.BlobStreamFormat := BlobStreamFormat; //CB  
   { TODO: Build database from Scheme }
 end;
 

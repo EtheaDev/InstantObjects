@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
+ * Carlo Barazzetta: Currency and LoginPrompt support
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantADOConnectionDefEdit;
@@ -48,6 +49,9 @@ type
     OkButton: TButton;
     CancelButton: TButton;
     BottomBevel: TBevel;
+    StreamFormatLabel: TLabel;
+    StreamFormatComboBox: TComboBox;
+    LoginPromptCheckBox: TCheckBox;
     procedure ConnectionStringButtonClick(Sender: TObject);
     procedure DataLinkButtonClick(Sender: TObject);
     procedure DataChanged(Sender: TObject);
@@ -66,7 +70,7 @@ implementation
 {$R *.DFM}
 
 uses
-  ADODB;
+  ADODB, InstantPersistence, InstantClasses;
 
 { TInstantADOConnDefEditForm }
 
@@ -90,6 +94,7 @@ end;
 
 procedure TInstantADOConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
   UpdateControls;
 end;
 
@@ -106,6 +111,7 @@ procedure TInstantADOConnectionDefEditForm.LoadData(
   ConnectionDef: TInstantADOConnectionDef);
 begin
   with ConnectionDef do
+  begin
     if LinkFileName = '' then
     begin
       ConnectionStringRadioButton.Checked := True;
@@ -115,16 +121,25 @@ begin
       DataLinkRadioButton.Checked := True;
       DataLinkEdit.Text := LinkFileName;
     end;
+    //CB
+    StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat);
+    LoginPromptCheckBox.Checked := LoginPrompt;
+  end;
 end;
 
 procedure TInstantADOConnectionDefEditForm.SaveData(
   ConnectionDef: TInstantADOConnectionDef);
 begin
   with ConnectionDef do
+  begin
     if DataLinkRadioButton.Checked then
       ConnectionString := 'FILE NAME=' + DataLinkEdit.Text
     else
       ConnectionString := ConnectionStringEdit.Text;
+    //CB
+    BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
+    LoginPrompt := LoginPromptCheckBox.Checked;
+  end;
 end;
 
 procedure TInstantADOConnectionDefEditForm.UpdateControls;

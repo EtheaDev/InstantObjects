@@ -1,6 +1,6 @@
 object DemoDataRequestForm: TDemoDataRequestForm
-  Left = 352
-  Top = 303
+  Left = 412
+  Top = 260
   Width = 313
   Height = 195
   Caption = 'Create Random Data'
@@ -50,7 +50,7 @@ object DemoDataRequestForm: TDemoDataRequestForm
     Caption = 'OK'
     Default = True
     ModalResult = 1
-    TabOrder = 1
+    TabOrder = 2
   end
   object CancelButton: TButton
     Left = 223
@@ -60,6 +60,14 @@ object DemoDataRequestForm: TDemoDataRequestForm
     Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
-    TabOrder = 2
+    TabOrder = 3
+  end
+  object PicturesCheckBox: TCheckBox
+    Left = 40
+    Top = 100
+    Width = 201
+    Height = 17
+    Caption = 'Load people'#39's picture from files'
+    TabOrder = 1
   end
 end
