@@ -41,7 +41,7 @@ interface
 
 uses
   Classes, Db, jvuib, jvuibdataset, jvuiblib, SysUtils, InstantUIBConnection,
-  InstantPersistence, InstantClasses, InstantCommand, TypInfo;
+  InstantPersistence, InstantClasses, InstantCommand;
 
 type
   TInstantUIBOption = (uibUseDelimitedIdents);
@@ -153,7 +153,7 @@ implementation
 
 uses
   Controls, InstantConsts, InstantUIBConnectionDefEdit, InstantUtils,
-  IB, IBHeader, IBIntf;
+  TypInfo;
 
 procedure Register;
 begin
@@ -420,6 +420,7 @@ begin
     if Assigned(AParams) then
       AssignDataSetParams(Query, AParams);
     Result := Query;
+
   except
     Query.Free;
     raise;
