@@ -300,9 +300,8 @@ function TInstantClassEditorForm.EditAttribute(
     if Attribute.Metadata.ClassMetadata.StorageName <> '' then
       Result := Attribute.Metadata.ClassMetadata.StorageName
     else
-      Result := Attribute.Metadata.ClassMetadata.Name;
+      Result := Remove_T_FromClassName(Attribute.Metadata.ClassMetadata.Name);
 
-    Result := Remove_T_FromClassName(Result);
   end;
 
 begin
