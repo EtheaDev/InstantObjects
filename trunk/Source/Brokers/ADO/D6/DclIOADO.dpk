@@ -23,8 +23,8 @@ package DclIOADO;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects ADO Design-Time Support (Delphi 7)'}
-{$LIBSUFFIX '_D7'}
+{$DESCRIPTION 'InstantObjects ADO Design-Time Support (Delphi 6)'}
+{$LIBSUFFIX '_D6'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
