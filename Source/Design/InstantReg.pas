@@ -38,7 +38,7 @@ implementation
 
 uses
   Classes, InstantConsts, InstantPersistence, InstantPresentation,
-  InstantExplorer, InstantConnectionManager;
+  InstantExplorer, InstantConnectionManager, InstantPump;
 
 procedure Register;
 begin
@@ -46,7 +46,8 @@ begin
     TInstantSelector,
     TInstantExposer,
     TInstantExplorer,
-    TInstantConnectionManager
+    TInstantConnectionManager,
+    TInstantPump
   ]);
 end;
 
