@@ -30,7 +30,10 @@ unit InstantUIBConnection;
 
 interface
 
-uses Classes, DB, jvuib;
+uses Classes, DB, dbLogDlg, jvuib;
+
+const
+  UIBLoginDialog : function (const ADatabaseName: string; var AUserName, APassword: string; NameReadOnly: Boolean): Boolean = nil;
 
 resourcestring
   SLoginPromptFailure = 'Can not find default login prompt dialog.  Please add DBLogDlg to the uses section of your main file.';
@@ -102,8 +105,8 @@ begin
   end
   else
   begin
-    if Assigned(LoginDialogExProc) then
-      result := LoginDialogExProc(FDatabase.DatabaseName, Username, Password, False)
+    if Assigned(UIBLoginDialog) then
+      result := UIBLoginDialog(FDatabase.DatabaseName, Username, Password, False)
     else
     begin
       raise EDatabaseError.Create(SLoginPromptFailure);
@@ -115,5 +118,8 @@ begin
     end;
   end;
 end;
+
+initialization
+  UIBLoginDialog := LoginDialogEx;
 
 end.
