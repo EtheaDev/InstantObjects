@@ -259,11 +259,11 @@ begin
   Prop.Name := Name;
   Prop.DataName := PropTypeName;
   Prop.V9Visibility := TV9Visibility(Visibility);  // SRM - 18 Sep 2004
-  TaggedStrings[IOClassStorageName] := StorageName;
+  TaggedStrings['StorageName'] := StorageName;
   // External part(s) options
   TaggedStrings['ExternalStorageName'] := ExternalStorageName;
   TaggedIntegers['StorageKind'] := Ord(StorageKind);
-  
+
   TaggedIntegers['Size'] := Metadata.Size;
   TaggedBooleans['IsDefault'] := IsDefault;
   TaggedBooleans['IsIndexed'] := IsIndexed;
@@ -440,7 +440,7 @@ begin
   }
   Tailor.IsArray := Prop.Options[PropArray];
   ReadOnly := Prop.WriteAccess = rwNone;
-  StorageName := TaggedStrings[IOClassStorageName];
+  StorageName := TaggedStrings['StorageName'];
 
   // External part(s) options
   ExternalStorageName := TaggedStrings['ExternalStorageName'];
