@@ -121,9 +121,7 @@ var
 implementation
 
 uses
-  Contnrs,
-{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
-  Welcome, MainData, RandomData, DemoData, Utility, ContactView, PerformanceView,
+  Contnrs, Model, Welcome, MainData, RandomData, DemoData, Utility, ContactView, PerformanceView,
 {$IFDEF MSWINDOWS}
   HelpView, JPeg,
 {$ENDIF}
@@ -138,14 +136,15 @@ uses
   please add the broker unit(s) to the following list. If you have not
   installed all brokers, please remove the missing broker unit(s) from
   the list. }
+
 {$IFDEF MSWINDOWS}
   {$IFNDEF VER130}
   InstantDBX,
   {$ENDIF}
-  InstantADO, InstantBDE, InstantIBX, InstantUIB,
+  InstantADO, InstantBDE, InstantIBX,
 {$ENDIF}
 {$IFDEF LINUX}
-  InstantDBX, InstantUIB,
+  InstantDBX,
 {$ENDIF}
   InstantXML;
 

@@ -3,8 +3,7 @@ unit DemoData;
 interface
 
 uses
-{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
-  Classes, InstantPersistence, RandomData;
+  Classes, Model, InstantPersistence, RandomData;
 
 procedure CreateCategories;
 procedure CreateCountries;
@@ -180,7 +179,8 @@ begin
     Result.Name := RandomFullName(Gender);
     Result.BirthDate := Date - (20 * 365 + Random(365 * 50)); // 20 - 70 years old
     Result.Address := CreateRandomAddress;
-    Result.Salary := 922337203685470;
+//    Result.Salary := 922337203685470;
+    Result.Salary := 500 + Random(5000);
     CreateRandomPhones(Result, ['Home', 'Mobile']);
     if Assigned(Company) then
     begin

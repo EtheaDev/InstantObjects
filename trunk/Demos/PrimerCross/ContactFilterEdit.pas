@@ -12,8 +12,7 @@ uses
   QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QGrids, QDBGrids, QMask, QDBCtrls, QExtCtrls, QComCtrls,
 {$ENDIF}
-{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
-  ContactEdit, DB, InstantPresentation;
+  ContactEdit, DB, InstantPresentation, Model;
 
 type
   TContactFilterEditForm = class(TContactEditForm)

@@ -1,3 +1,8 @@
+(*
+ *   PrimerCross demo:
+ *   Model.pas with "internal storage" of Part and Parts
+ *
+ *)
 unit Model;
 
 interface

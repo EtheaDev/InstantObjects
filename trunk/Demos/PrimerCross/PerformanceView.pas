@@ -170,8 +170,7 @@ implementation
 {$R *.dfm}
 
 uses
-{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
-  DemoData, IniFiles, Utility;
+  Model, DemoData, IniFiles, Utility;
 
 { TTestResult }
 
