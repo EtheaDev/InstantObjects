@@ -1,7 +1,6 @@
 package DclIOCore;
 
 {$R *.res}
-{$R '..\iodesimages.res'}
 {$R '..\..\Core\InstantPresentation.dcr'}
 {$R '..\..\Core\InstantExplorer.dcr'}
 {$R '..\..\Core\InstantPersistence.dcr'}
