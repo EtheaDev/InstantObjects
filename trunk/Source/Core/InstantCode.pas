@@ -3974,10 +3974,15 @@ end;
 
 procedure TInstantCodeAttribute.InternalWrite(Writer: TInstantCodeWriter);
 
-  procedure WriteStr(const Name, Value: string);
+  procedure WriteStr(const Name, Value: string; const Force: Boolean = False);
   begin
-    if Value <> '' then
-      Writer.Write(' ' + Name + ' ''' + Value + '''');
+    if (Value <> '') or Force then
+    begin
+      if Value <> '' then
+        Writer.Write(' ' + Name + ' ''' + Value + '''')
+      else
+        Writer.Write(' ' + Name);
+    end;
   end;
 
   procedure WriteInt(const Name: string; Value: Integer);
@@ -3991,7 +3996,11 @@ begin
   if Metadata.IsExternal = ceLinked then
     WriteStr(MetaKeyExternalLinked, Metadata.ExternalLinkedName)
   else if Metadata.IsExternal = ceStored then
-    WriteStr(MetaKeyExternalStored, Metadata.ExternalStoredName)
+  begin
+    if Metadata.AttributeType = atPart then
+      WriteStr(MetaKeyStored, Metadata.StorageName);
+    WriteStr(MetaKeyExternalStored, Metadata.ExternalStoredName, True);
+  end
   else
     WriteStr(MetaKeyStored, Metadata.StorageName);
   WriteStr(MetaKeyDefault, Metadata.DefaultValue);
@@ -8552,7 +8561,7 @@ begin
       if SameText(Token, MetaKeyExternalStored) then
       begin
         FMetadata.IsExternal := ceStored;
-        FMetadata.ExternalStoredName := ReadStringValue;
+        FMetadata.ExternalStoredName := '';
       end;
       if SameText(Token, MetaKeyExternalLinked) then
       begin
