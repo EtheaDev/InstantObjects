@@ -4414,37 +4414,48 @@ end;
 
 class function TInstantCodeMetadataInfo.InternalAtInstance(
   Reader: TInstantCodeReader; out Name: string): Boolean;
-var
-  SavePos: TInstantCodePos;
-begin
-  Result := False;
-  if Reader.NextChar = '{' then begin
-    SavePos := Reader.Position;
-    try
-      Reader.IgnoreComments := False;
-      Result := Reader.ReadMatching('{' + MetadataInfoID + ' ')
-        or (Reader.NextChar = '{');
-    finally
-      Reader.IgnoreComments := True;
-      Reader.Position := SavePos;
+
+  function FindMetaDataTag: Boolean;
+  var
+    SavePos: TInstantCodePos;
+  begin
+    Result := False;
+    if Reader.NextChar = '{' then begin
+      SavePos := Reader.Position;
+      try
+        Reader.EnterComment;
+        Result := Reader.ReadMatching(MetadataInfoID);
+      finally
+        Reader.Position := SavePos;
+      end;
     end;
   end;
+
+begin
+  Result := FindMetaDataTag;
 end;
 
 procedure TInstantCodeMetadataInfo.InternalRead(Reader: TInstantCodeReader);
+
+  procedure ReadMetaDataTagSig;
+  begin
+    Reader.IgnoreComments := False;
+    try
+      if not Reader.ReadMatching('{' + MetadataInfoID + ' ') then
+        Reader.ErrorExpected('''{' + MetadataInfoID + ' '' tag in ' + Name,
+                False);
+    finally
+      Reader.IgnoreComments := True;
+    end;
+  end;
+
 var
   Token: string;
   SavePos: TInstantCodePos;
   Attribute: TInstantCodeAttribute;
   SaveErrorSeverity: TInstantCodeErrorSeverity;
 begin
-  if not Reader.EnterComment then
-    Reader.ErrorExpected('{');
-
-  if SameText(Reader.NextToken, MetadataInfoID) then
-    Reader.ReadToken;
-//  else //For version 1.7: check MetadataInfoID Keyword
-//    Reader.ErrorExpected(MetadataInfoID);
+  ReadMetaDataTagSig;
 
   Persistence := peEmbedded;
   SaveErrorSeverity := Reader.ErrorSeverity;
@@ -4487,7 +4498,7 @@ var
   S: string;
   Start, I: Integer;
 begin
-  Writer.Write('{' + MetadataInfoID + ' ');   
+  Writer.Write('{' + MetadataInfoID + ' ');
   try
     S := ClassStatement;
     if S = '' then
@@ -8548,6 +8559,11 @@ finalization
   DestroyTypeProcessors;
 
 end.
+
+
+
+
+
 
 
 
