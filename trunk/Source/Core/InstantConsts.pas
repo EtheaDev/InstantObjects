@@ -58,7 +58,6 @@ const
   
   InstantParentIdFieldName = 'ParentId';
   InstantParentClassFieldName = 'ParentClass';
-  InstantParentAttributeFieldName = 'ParentAttribute';
   InstantChildIdFieldName = 'ChildId';
   InstantSequenceNoFieldName = 'SequenceNo';
   InstantChildClassFieldName = 'ChildClass';

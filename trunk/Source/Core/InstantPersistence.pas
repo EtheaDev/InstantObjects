@@ -12631,8 +12631,6 @@ begin
     Broker.DataTypeToColumnType(dtString, InstantDefaultFieldSize);
   Columns := Columns + ', ' + EmbraceField(InstantParentIdFieldName) + ' ' +
     Broker.DataTypeToColumnType(Broker.Connector.IdDataType, Broker.Connector.IdSize);
-  Columns := Columns + ', ' + EmbraceField(InstantParentAttributeFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, InstantDefaultFieldSize);
   Columns := Columns + ', ' + EmbraceField(InstantChildClassFieldName) + ' ' +
     Broker.DataTypeToColumnType(dtString, InstantDefaultFieldSize);
   Columns := Columns + ', ' + EmbraceField(InstantChildIdFieldName) + ' ' +
@@ -12710,7 +12708,7 @@ var
   WhereStr: string;
 begin
   WhereStr := BuildWhereStr([InstantParentClassFieldName,
-    InstantParentIdFieldName, InstantParentAttributeFieldName]);
+    InstantParentIdFieldName]);
   Result := Format('DELETE FROM %s WHERE %s',
     [EmbraceTable('%s'), WhereStr]);
 end;
@@ -12742,18 +12740,16 @@ function TInstantSQLGenerator.InternalGenerateInsertExternalSQL(
 var
   FieldStr, ParamStr: string;
 begin
-  FieldStr := Format('%s, %s, %s, %s, %s, %s, %s',
+  FieldStr := Format('%s, %s, %s, %s, %s, %s',
     [EmbraceField(InstantIdFieldName),
     EmbraceField(InstantParentClassFieldName),
     EmbraceField(InstantParentIdFieldName),
-    EmbraceField(InstantParentAttributeFieldName),
     EmbraceField(InstantChildClassFieldName),
     EmbraceField(InstantChildIdFieldName),
     EmbraceField(InstantSequenceNoFieldName)]);
-  ParamStr := Format(':%s, :%s, :%s, :%s, :%s, :%s, :%s',
+  ParamStr := Format(':%s, :%s, :%s, :%s, :%s, :%s',
     [InstantIdFieldName,
     InstantParentClassFieldName, InstantParentIdFieldName,
-    InstantParentAttributeFieldName,
     InstantChildClassFieldName, InstantChildIdFieldName,
     InstantSequenceNoFieldName]);
   Result := Format('INSERT INTO %s (%s) VALUES (%s)',
@@ -12794,10 +12790,9 @@ var
 begin
   FieldStr := Format('%s, %s, %s', [EmbraceField(InstantChildClassFieldName),
     EmbraceField(InstantChildIdFieldName), EmbraceField(InstantSequenceNoFieldName)]);
-  WhereStr := Format('%s = :%s AND %s = :%s AND %s = :%s AND %s = :%s',
+  WhereStr := Format('%s = :%s AND %s = :%s AND %s = :%s',
     [EmbraceField(InstantParentClassFieldName), InstantParentClassFieldName,
     EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName,
-    EmbraceField(InstantParentAttributeFieldName), InstantParentAttributeFieldName,
     EmbraceField(InstantChildClassFieldName), InstantChildClassFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s ORDER BY %s',
     [FieldStr, EmbraceTable('%s'), WhereStr, EmbraceField(InstantSequenceNoFieldName)]);
@@ -13441,7 +13436,6 @@ var
             SelectStatement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
             AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
             DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
             try
@@ -13475,11 +13469,9 @@ var
             DeleteStatement := Format(DeleteExternalSQL,
               [AttributeMetadata.ExternalStorageName,
               InstantParentClassFieldName,
-              InstantParentIdFieldName,
-              InstantParentAttributeFieldName]);
+              InstantParentIdFieldName]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
             AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
             DeleteParams.Free;
@@ -13508,11 +13500,9 @@ var
           try
             DeleteStatement := Format(DeleteExternalSQL,
               [AttributeMetadata.ExternalStorageName,
-              InstantParentClassFieldName,
-              InstantParentAttributeFieldName]);
+              InstantParentClassFieldName]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
             AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
             DeleteParams.Free;
@@ -13718,7 +13708,6 @@ var
               SelectStatement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
               AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
               AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
-              AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
               DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
               try
@@ -13751,11 +13740,9 @@ var
             try
               DeleteStatement := Format(DeleteExternalSQL,
                 [AttributeMetadata.ExternalStorageName,
-                InstantParentClassFieldName,
-                InstantParentAttributeFieldName]);
+                InstantParentClassFieldName]);
               AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
               AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-              AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               Broker.Execute(DeleteStatement, DeleteParams);
             finally
               DeleteParams.Free;
@@ -13777,7 +13764,6 @@ var
                 AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
                 AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
                 AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-                AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
                 AddStringParam(InsertParams, InstantChildClassFieldName,
                   PartsAttribute.Items[ii].ClassName);
                 AddIdParam(InsertParams, InstantChildIdFieldName,
@@ -13819,11 +13805,9 @@ var
               DeleteStatement := Format(DeleteExternalSQL,
                 [AttributeMetadata.ExternalStorageName,
                 InstantParentClassFieldName,
-                InstantParentIdFieldName,
-                InstantParentAttributeFieldName]);
+                InstantParentIdFieldName]);
               AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
               AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-              AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               Broker.Execute(DeleteStatement, DeleteParams);
             finally
               DeleteParams.Free;
@@ -13842,7 +13826,6 @@ var
                 AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
                 AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
                 AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-                AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
                 AddStringParam(InsertParams, InstantChildClassFieldName,
                   ReferencesAttribute.Items[ii].ClassName);
                 AddIdParam(InsertParams, InstantChildIdFieldName,
@@ -13979,7 +13962,6 @@ var
           Statement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
           AddIdParam(Params, InstantParentIdFieldName, AObjectId);
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
-          AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
           AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
           DataSet := Broker.AcquireDataSet(Statement, Params);
           try
@@ -14047,7 +14029,6 @@ var
           Statement:=Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
           AddIdParam(Params, InstantParentIdFieldName, AObjectId);
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
-          AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
           AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
           DataSet := Broker.AcquireDataSet(Statement, Params);
           try
