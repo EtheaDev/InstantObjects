@@ -56,8 +56,7 @@ contains
   InstantReg in '..\InstantReg.pas',
   InstantUnitSelect in '..\InstantUnitSelect.pas' {InstantUnitSelectForm},
   InstantAttributeEditor in '..\InstantAttributeEditor.pas' {InstantAttributeEditorForm},
-  InstantAbout in '..\InstantAbout.pas' {InstantAboutForm},
-  InstantPump in '..\..\Core\InstantPump.pas';
+  InstantAbout in '..\InstantAbout.pas' {InstantAboutForm};
 
 end.
 
