@@ -1,0 +1,80 @@
+Instant XML2 - Release notes - Italiano
+---------------------------------------
+
+Broker per gestione InstantObjects su files in formato XML.
+
+ver. 0.6 - 20/5/2004
+- sistemata anomalia in fase di scrittura: non salvava gli oggetti ereditati nella cartella della classe di base.
+
+ver. 0.5 - 13/5/2004
+- TInstantXMLConnectionDef: aggiunto supporto attivazione versioning e selezione encoding
+- ConnectionDefEditForm: gestione in mappa di versioning e selezione encoding
+- Gestione flag Connected del TXMLFileAccessor
+- SaveToFileXML_UTF8 e LoadSaveFromFileXML_UTF8 ora restituiscono se l'operazione ha avuto successo
+- ReadInstantObject e WriteInstantObject (broker e resolver) ora restituiscono se l'operazione ha avuto successo e passano Version come parametro di output
+- DeleteInstantObject restituisce se l'operazione ha avuto successo
+- DeleteInstantObject: bug fixed: in caso di non versioning ora cancella il file.
+- InternalRetrieveMap: Info.Success dipende ora da Locate e ReadInstantObject
+
+
+ver. 0.4 - 12/5/2004
+- gestione versioning (di default a false)
+- gestione encoding xffUtf8, xffUtf8BOT, xffIso (con patch di TInstantXMLProducer.WriteEscapedData)
+- spostate alcune operazioni da broker a TXMLFileAccessor
+
+ver. 0.3 - 3/5/2004
+- messa la proprietà TInstantXMLConnectionDef sotto published (altrimenti non veniva salvata dal connection manager e si perdeva il nome della connessione)
+- Modificata TInstantXMLResolver.InternalDisposeMap: ora cancella il file XML dell'oggetto testando anche in modo corretto l'operazione!
+
+ver. 0.2
+- E' cambiata la "sintassi" del file: ora è NomeClasse.Id.UpdateCount.xml (in realtà l'update count è sempre impostato a 1 ma almeno in futuro gli oggetti già creati non dovranno essere modificati nella loro struttura.
+- Ora se la classe non trova la sua "cartella" di storage la crea automaticamente.
+- TXMLFilesAccessor accede a tutti i files (non solo quelli "archive") per togliere una dipendenza da Windows.
+
+ver. 0.1
+- Legge e scrive gli oggetti su files con questa logica:
+viene usata la catena TXMLFilesAccessor -> TInstantXMLConnector -> per accedere ai dati.
+In TXMLFilesAccessor viene definito un RootFolder all'interno del quale viene creata una cartella per ogni storage e all'interno di ogni storage ci sono gli oggetti (uno per file) con il nome del file costituito da: ClassName.Id.xml (forse andrebbe aggiunto l'updatecount dopo l'Id).
+
+Il translator command del "simil-sql" è molto stupido:
+- E' in grado di "Risolvere" solo la query Select * FROM ClassName
+- Non gestisco WHERE e ORDER-BY
+In pratica recupera da ClassName lo StorageName e accede a tutti gli oggetti presenti nella cartella, in ordine "sparso".
+
+- TXMLFilesAccessor = class(TCustomConnection)
+serve per "simulare" una connessione al DB: si occupa di "cercare" un file di un oggetto e di leggere e scrivere l'oggetto.
+
+- TInstantXMLConnectionDef = class(TInstantConnectionBasedConnectionDef)
+serve per definire i parametri di connessione: per ora è uno solo: RootFolder
+
+- TInstantXMLConnector = class(TInstantConnectionBasedConnector)
+Quando deve fare build database per ora crea le cartelle per ogni storage.
+Non gestisce le transazioni (si potrebbe fare un meccanismo semplice di commit-rollback salvando i files modificati come .bak per poi recuperarli in rollback o eliminarli in commit.
+
+- TInstantXMLBroker = class(TInstantCustomRelationalBroker)
+serve a creare un "resolver" per ogni Storage diverso
+
+- TInstantXMLResolver = class(TInstantCustomResolver)
+serve ad effettuare le operazioni di RetrieveMap DisposeMap e StoreMap degli oggetti.
+I metodi Locate, ReadInstantObject e WriteInstantObject in realtà sono dei "ponti" verso gli analoghi metodi di TXMLFilesAccessor.
+
+- TInstantXMLTranslator = class(TInstantRelationalTranslator)
+E' in grado solo di capire qual'è lo storage fisico a cui la query sta facendo riferimento
+
+- TInstantXMLQuery = class(TInstantCustomRelationalQuery)
+E' in grado di prelevare una lista di TInstantObjectReference e fornirla come lista di accesso. Si appoggia al TXMLFilesAccessor per richiedere la lista degli oggetti presenti nella cartella.
+
+
+Problemi aperti:
+- Transazioni
+- UpdateCount
+- Key-Violation (ora sovrascrive senza problemi un oggetto già esistente)
+- Translator per WHERE e ORDER-BY
+- Encoding XML parametrizzabile
+
+
+
+
+
+
+
