@@ -33,10 +33,11 @@ begin
     AssertNotNull(conn);
     conn.MockManager.AddExpectation('InternalConnect');
     conn.MockManager.AddExpectation('InternalCreateScheme');
-    conn.MockManager.AddExpectation('CreateBroker');
+    conn.MockManager.AddExpectation('CreateBroker TInstantMockBroker');
     conn.MockManager.AddExpectation('InternalDisconnect');
     conn.MockManager.EndSetUp;
     AssertEquals(4, conn.MockManager.UncoveredExpectations);
+    conn.BrokerClass := TInstantMockBroker;
     conn.BuildDatabase(InstantModel);
     conn.MockManager.Verify;
   finally
@@ -50,6 +51,7 @@ var
 begin
   conn := TInstantMockConnector.Create(nil);
   try
+    conn.BrokerClass := TInstantMockBroker;
     conn.BuildDatabase(InstantModel);
     conn.MockManager.StartSetUp;
     conn.MockManager.AddExpectation('InternalConnect');
@@ -70,6 +72,7 @@ begin
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
   conn := TInstantMockConnector.Create(nil);
   try
+    conn.BrokerClass := TInstantMockBroker;
     conn.BuildDatabase(InstantModel);
     conn.Connect;
     conn.MockManager.StartSetUp; //reset expectations

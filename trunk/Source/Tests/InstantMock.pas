@@ -6,9 +6,13 @@ uses
   InstantPersistence, Classes, UbMockObject;
 
 type
-  TInstantMockConnector = class(TInstantConnector, IUbMockObject)
+  TInstantBrokerClass = class of TInstantBroker;
+
+  TInstantMockConnector = class(TInstantConnector)
   private
     FMock: TUbMockObject;
+    FBrokerClass: TInstantBrokerClass;
+    procedure SetBrokerClass(const Value: TInstantBrokerClass);
   protected
     procedure SetMock(const Value: TUbMockObject);
     function CreateBroker: TInstantBroker; override;
@@ -19,7 +23,8 @@ type
     procedure InternalCommitTransaction; override;
     procedure InternalRollbackTransaction; override;
   public
-    property MockManager: TUbMockObject read FMock write SetMock implements IUbMockObject;
+    property MockManager: TUbMockObject read FMock write SetMock;
+    property BrokerClass: TInstantBrokerClass read FBrokerClass write SetBrokerClass;
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -31,7 +36,7 @@ type
     function Edit: Boolean; override;
   end;
 
-  TInstantMockBroker = class(TInstantBroker, IUbMockObject)
+  TInstantMockBroker = class(TInstantBroker)
   private
     FMock: TUbMockObject;
     procedure SetMock(const Value: TUbMockObject);
@@ -44,12 +49,41 @@ type
     function InternalStoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean;  override;
   public
-    property MockManager: TUbMockObject read FMock write SetMock implements IUbMockObject;
+    property MockManager: TUbMockObject read FMock write SetMock;
+    constructor Create(AConnector: TInstantConnector); override;
+    destructor Destroy; override;
+  end;
+
+  TInstantMockCRBroker = class(TInstantCustomRelationalBroker)
+  private
+    FMock: TUbMockObject;
+    procedure SetMock(const Value: TUbMockObject);
+  protected
+    function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver; override;
+    function InternalDisposeObject(AObject: TInstantObject;
+      ConflictAction: TInstantConflictAction): Boolean; override;
+    function InternalRetrieveObject(AObject: TInstantObject;
+      const AObjectId: String;
+      ConflictAction: TInstantConflictAction): Boolean;  override;
+    function InternalStoreObject(AObject: TInstantObject;
+      ConflictAction: TInstantConflictAction): Boolean;  override;
+  public
+    property MockManager: TUbMockObject read FMock write SetMock;
     constructor Create(AConnector: TInstantConnector); override;
     destructor Destroy; override;
   end;
 
 implementation
+
+function CaToStr(ConflictAction: TInstantConflictAction): string;
+begin
+  if ConflictAction = caIgnore then
+    Result := 'caIgnore'
+  else if ConflictAction = caFail then
+    Result := 'caFail'
+  else
+    Result := '???';
+end;
 
 { TMockIConnector }
 
@@ -66,8 +100,8 @@ end;
 
 function TInstantMockConnector.CreateBroker: TInstantBroker;
 begin
-  FMock.AddExpectation('CreateBroker');
-  Result := TInstantMockBroker.Create(Self);
+  FMock.AddExpectation('CreateBroker ' + FBrokerClass.ClassName);
+  Result := FBrokerClass.Create(Self);
 end;
 
 { TInstantMockConnectionDef }
@@ -171,7 +205,61 @@ begin
   FMock.AddExpectation('InternalStartTransaction');
 end;
 
+procedure TInstantMockConnector.SetBrokerClass(
+  const Value: TInstantBrokerClass);
+begin
+  FBrokerClass := Value;
+end;
+
 procedure TInstantMockConnector.SetMock(const Value: TUbMockObject);
+begin
+  FMock := Value;
+end;
+
+{ TInstantMockCRBroker }
+
+constructor TInstantMockCRBroker.Create(AConnector: TInstantConnector);
+begin
+  inherited;
+  FMock := TUbMockObject.Create;
+end;
+
+destructor TInstantMockCRBroker.Destroy;
+begin
+  FMock.Free;
+  inherited;
+end;
+
+function TInstantMockCRBroker.EnsureResolver(
+  Map: TInstantAttributeMap): TInstantCustomResolver;
+begin
+  MockManager.AddExpectation('EnsureResolver');
+end;
+
+function TInstantMockCRBroker.InternalDisposeObject(
+  AObject: TInstantObject;
+  ConflictAction: TInstantConflictAction): Boolean;
+begin
+  Result := True;
+  MockManager.AddExpectation('InternalDisposeObject ' + CaToStr(ConflictAction) + ' ' + AObject.Id);
+end;
+
+function TInstantMockCRBroker.InternalRetrieveObject(
+  AObject: TInstantObject; const AObjectId: String;
+  ConflictAction: TInstantConflictAction): Boolean;
+begin
+  Result := True;
+  MockManager.AddExpectation('InternalRetrieveObject ' + CaToStr(ConflictAction) + ' ' + AObjectId);
+end;
+
+function TInstantMockCRBroker.InternalStoreObject(AObject: TInstantObject;
+  ConflictAction: TInstantConflictAction): Boolean;
+begin
+  Result := True;
+  MockManager.AddExpectation('InternalStoreObject ' + CaToStr(ConflictAction) + ' ' + AObject.Id);
+end;
+
+procedure TInstantMockCRBroker.SetMock(const Value: TUbMockObject);
 begin
   FMock := Value;
 end;
