@@ -629,9 +629,7 @@ procedure TInstantModelExplorerForm.UpdateModel;
   end;
 
   function AddClass(Node: TTreeNode; AClass: TInstantCodeClass;
-    Text: string): TTreeNode;
-  const
-    Level: Integer = 0;
+    Text: string; var Level: Integer): TTreeNode;
   var
     I: Integer;
     SubNodes: TList;
@@ -670,7 +668,7 @@ procedure TInstantModelExplorerForm.UpdateModel;
         end;
         for I := 0 to Pred(SubItems.Count) do
           SubNodes.Add(AddClass(Result,
-            TInstantCodeClass(SubItems.Objects[I]), SubItems[I]));
+            TInstantCodeClass(SubItems.Objects[I]), SubItems[I], Level));
         RemoveInvalidNodes(Result, SubNodes);
       finally
 {$IFDEF MSWINDOWS}
@@ -689,7 +687,9 @@ var
   Nodes: TList;
   FirstNode: TTreeNode;
   I: Integer;
+  Level: Integer;
 begin
+  Level := 0;
   FSelectedNode := nil;
   ModelView.Items.BeginUpdate;
   try
@@ -711,7 +711,7 @@ begin
         begin
           AClass := Model.Classes[I];
           if (Style = msRelations) or not Assigned(AClass.BaseClass) then
-            Nodes.Add(AddClass(nil, AClass, ''));
+            Nodes.Add(AddClass(nil, AClass, '', Level));
         end;
         ModelView.AlphaSort;
         RemoveInvalidNodes(nil, Nodes);

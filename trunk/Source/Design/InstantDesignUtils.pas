@@ -54,24 +54,25 @@ implementation
 uses
   SysUtils, TypInfo;
 
+var
+  __SaveCursor: TCursor = 0;
+  __BusyCount: Integer = 0;
+
 procedure Busy(Enable: Boolean);
-const
-  Cursor: TCursor = 0;
-  Count: Integer = 0;
 begin
   if Enable then
   begin
-    if Count = 0 then
+    if __BusyCount = 0 then
     begin
-      Cursor := Screen.Cursor;
+      __SaveCursor := Screen.Cursor;
       Screen.Cursor := crHourglass;
     end;
-    Inc(Count);
-  end else if Count > 0 then
+    Inc(__BusyCount);
+  end else if __BusyCount > 0 then
   begin
-    Dec(Count);
-    if Count = 0 then
-      Screen.Cursor := Cursor;
+    Dec(__BusyCount);
+    if __BusyCount = 0 then
+      Screen.Cursor := __SaveCursor;
   end;
 end;
 
