@@ -7,7 +7,7 @@ uses
 
 type
   TAddress = class(TInstantObject)
-  { City: String(30);
+  { IOMETADATA City: String(30);
     PostalCode: String(8);
     Street: String(30); }
     _City: TInstantString;
@@ -27,7 +27,7 @@ type
   end;
 
   TPhone = class(TInstantObject)
-  { Name: String(10);
+  { IOMETADATA Name: String(10);
     Number: String(10) mask '(999) 999-9999;0;_'; }
     _Name: TInstantString;
     _Number: TInstantString;
@@ -42,7 +42,7 @@ type
   end;
 
   TContact = class(TInstantObject)
-  { stored;
+  { IOMETADATA stored;
     Address: Part(TAddress);
     Name: String(30);
     Phones: Parts(TPhone); }
@@ -72,7 +72,7 @@ type
   end;
 
   TPerson = class(TContact)
-  { stored;
+  { IOMETADATA stored;
     DateOfBirth: DateTime; }
     _DateOfBirth: TInstantDateTime;
   private
@@ -83,7 +83,7 @@ type
   end;
 
   TCompany = class(TContact)
-  { stored;
+  { IOMETADATA stored;
     ContactPerson: Reference(TPerson); }
     _ContactPerson: TInstantReference;
   private
