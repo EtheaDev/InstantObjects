@@ -16,7 +16,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is: Andrea Petrelli
+ * The Original Code is: InstantObjects UIB Support
  *
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
@@ -341,12 +341,12 @@ end;
 
 { TInstantUIBBroker}
 
-procedure TInstantUIBBroker.AssignDataSetParams(DataSet : TDataSet; AParams: TParams);
+procedure TInstantUIBBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
 var
   I: Integer;
-  BlobContent: String;
+  BlobContent: string;
   SourceParam: TParam;
-  TargetParams : TSQLParams;
+  TargetParams: TSQLParams;
 begin
   //don't call inherited!
   TargetParams := TJvUIBDataset(DataSet).Params;
@@ -364,13 +364,13 @@ begin
         TargetParams.ByNameAsDateTime[SourceParam.Name] := SourceParam.AsDateTime;
       ftBoolean:
         TargetParams.ByNameAsBoolean[SourceParam.Name] := SourceParam.AsBoolean;
-      ftBlob:
+      ftBlob, ftMemo:
       begin
-        BlobContent := SourceParam.AsBlob; 
+        BlobContent := SourceParam.AsString;
         TJvUIBDataset(DataSet).ParamsSetBlob(SourceParam.Name, BlobContent);
       end;
     else
-      raise Exception.Create('Parameter data type not supported : ' +
+      raise Exception.Create('Parameter data type not supported: ' +
         GetEnumName(TypeInfo(TFieldType), Ord(SourceParam.DataType)));
     end;
   end;
