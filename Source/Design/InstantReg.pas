@@ -24,7 +24,7 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s):
+ * Contributor(s): Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -35,6 +35,8 @@ interface
 procedure Register;
 
 implementation
+
+{$R ..\iodesimages.res}
 
 uses
   Classes, InstantConsts, InstantPersistence, InstantPresentation,
