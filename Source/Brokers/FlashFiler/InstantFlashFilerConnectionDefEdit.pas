@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -48,8 +49,11 @@ type
     AliasLabel: TLabel;
     AliasEdit: TComboBox;
     BrowseButton: TButton;
+    StreamFormatLabel: TLabel;
+    StreamFormatComboBox: TComboBox;
     procedure AliasEditDropDown(Sender: TObject);
     procedure BrowseButtonClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   protected
     procedure LoadAliasNames;
   public
@@ -103,12 +107,20 @@ procedure TInstantFlashFilerConnectionDefEditForm.LoadData(
   ConnectionDef: TInstantFlashFilerConnectionDef);
 begin
   AliasEdit.Text := ConnectionDef.AliasName;
+  StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat); //CB
 end;
 
 procedure TInstantFlashFilerConnectionDefEditForm.SaveData(
   ConnectionDef: TInstantFlashFilerConnectionDef);
 begin
   ConnectionDef.AliasName := AliasEdit.Text;
+  ConnectionDef.BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex); //CB
+end;
+
+procedure TInstantFlashFilerConnectionDefEditForm.FormCreate(
+  Sender: TObject);
+begin
+  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
 end;
 
 end.

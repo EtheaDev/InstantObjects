@@ -19,6 +19,7 @@ type
     CancelButton: TButton;
     InfoLabel: TLabel;
     OkButton: TButton;
+    PicturesCheckBox: TCheckBox;
     procedure CountEditChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private

@@ -519,7 +519,7 @@ begin
     Caption := 'Database Builder';
     Model := CodeModel.Model;
     FileName := ChangeFileExt(Project.FileName, '.con');
-    VisibleActions := [atNew, atEdit, atDelete, atRename, atBuild];
+    VisibleActions := [atNew, atEdit, atDelete, atRename, atBuild, atOpen];
     Execute;
   finally
     Free;

@@ -25,7 +25,10 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli: porting Kylix
- *
+ * Carlo Barazzetta:
+ * - Exposer Undo virtual and access to UndoBuffer
+ * - Exposer OnAddClassFieldDef event 
+ * - Added Currency and Graphic support to exposer
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPresentation;
@@ -44,6 +47,7 @@ uses
   Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantUtils;
 
 type
+  TInstantAddClassFieldDefEvent = procedure (const FieldName : string; var BreakProcess : boolean) of object; //CB
   TInstantChangeType = (ctAppearance, ctData);
   TInstantAccessMode = (amObject, amContent);
 
@@ -216,6 +220,7 @@ type
     FOnInitFieldDef: TInstantFieldDefEvent;
     FOnLimit: TInstantLimitObjectsEvent;
     FOnTranslate: TInstantFieldTranslateEvent;
+    FOnAddClassFieldDef: TInstantAddClassFieldDefEvent; //CB
     procedure AccessorChanged(Sender: TObject; ChangeType: TInstantChangeType);
     procedure CheckClass(AObject: TObject);
     procedure ClearData(Buffer: PChar);
@@ -256,6 +261,7 @@ type
     procedure SetOnCompare(Value: TInstantCompareObjectsEvent);
     procedure SetOnLimit(Value: TInstantLimitObjectsEvent);
     procedure SetSorted(Value: Boolean);
+    function GetUndoBuffer: PChar; //CB
   protected
     { IProviderSupport }
     procedure PSGetAttributes(List: TList); override;
@@ -354,9 +360,10 @@ type
     procedure SetFieldData(Field: TField; Buffer: Pointer); override;
     procedure SetFiltered(Value: Boolean); override;
     procedure SetRecNo(Value: Integer); override;
-    procedure Undo;
+    procedure Undo; virtual; //CB
     procedure UpdateCalcFields;
     procedure WriteProperty(Field: TField; Instance: TObject; Value: Variant);
+    function BreakThorough( const FieldName : string ) : boolean; virtual; //CB
     property Accessor: TInstantAccessor read GetAccessor;
     property ContainerName: string read FContainerName write SetContainerName;
     property CurrentBuffer: PChar read GetCurrentBuffer;
@@ -407,6 +414,7 @@ type
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property TotalCount: Integer read GetTotalCount;
+    property UndoBuffer: PChar read GetUndoBuffer; //CB
   published
     property FieldOptions: TInstantFieldOptions read FFieldOptions write SetFieldOptions default [foThorough];
     property Filtered;
@@ -440,6 +448,7 @@ type
     property OnInitFieldDef: TInstantFieldDefEvent read FOnInitFieldDef write FOnInitFieldDef;
     property OnLimit: TInstantLimitObjectsEvent read GetOnLimit write SetOnLimit;
     property OnTranslate: TInstantFieldTranslateEvent read FOnTranslate write FOnTranslate;
+    property OnAddClassFieldDef : TInstantAddClassFieldDefEvent read FOnAddClassFieldDef write FOnAddClassFieldDef; //CB
   end;
 
   TInstantExposerLink = class(TDetailDataLink)
@@ -618,6 +627,7 @@ function InstantFindAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 function InstantGetAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 procedure InstantRegisterAccessorClass(AClass: TInstantAccessorClass);
 procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
+function ExposerGetUndoBuffer(Exposer : TInstantCustomExposer) : PChar; //CB
 
 implementation
 
@@ -630,7 +640,7 @@ uses
 {$ENDIF}
   {$IFDEF D6+}Variants, MaskUtils,{$ENDIF} InstantClasses,
   InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors,
-  DbConsts;
+  DbConsts, FmtBcd;
 
 const
   SelfFieldName = 'Self';
@@ -644,8 +654,8 @@ function AttributeTypeToFieldType(
   AttributeType: TInstantAttributeType): TFieldType;
 const
   FieldTypes: array[TInstantAttributeType] of TFieldType = (
-    ftUnknown, ftInteger, ftFloat, ftBoolean, ftString, ftDateTime,
-    ftBlob, ftMemo, ftInteger, ftInteger, ftDataSet, ftDataSet);
+    ftUnknown, ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftDateTime,
+    ftBlob, ftMemo, ftBlob, ftInteger, ftInteger, ftDataSet, ftDataSet);
 begin
   Result := FieldTypes[AttributeType];
 end;
@@ -876,6 +886,11 @@ end;
 procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
 begin
   AccessorClasses.Remove(AClass);
+end;
+
+function ExposerGetUndoBuffer(Exposer : TInstantCustomExposer) : PChar;
+begin
+  Result := Exposer.FUndoBuffer;
 end;
 
 { TInstantAccessor }
@@ -1425,6 +1440,9 @@ const
     Index: Integer;
   begin
     Relation := AClass.ClassName + '.' + PropInfo.Name;
+      if BreakThorough(Prefix + PropInfo.Name) then
+        Exit;
+
     if (Relations.IndexOf(Relation) = -1) or
       IncludeField(Prefix + '.' + PropInfo.Name, False) then
     begin
@@ -1540,8 +1558,13 @@ begin
   Inc(Level);
   try
     if FieldName = '' then
-      Prefix := '' else
+      Prefix := ''
+    else
+    begin
+      if BreakThorough(FieldName) then
+        Exit;
       Prefix := FieldName + '.';
+    end;
     while Assigned(AClass) do
     begin
       for I := 0 to Pred(AClass.PropertyCount) do
@@ -1571,6 +1594,8 @@ begin
       DataType := FieldType;
       if FieldSize <> 0 then
         Size := FieldSize;
+      if DataType = ftBCD then
+        Precision := 18;
       Attributes := FieldAttribs;
     end;
     InitFieldDef(Result);
@@ -1581,8 +1606,14 @@ end;
 function TInstantCustomExposer.AddFieldDef(const Prefix: string;
   PropInfo: PPropInfo): TFieldDef;
 
-  function FloatFieldType(ATypeInfo: PTypeInfo): TFieldType;
+  function FloatFieldType : TFieldType;
+  var
+    ATypeInfo : PTypeInfo;
   begin
+    ATypeInfo := PropInfo.PropType^;
+    if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
+      Result := DB.ftBcd
+    else
     if ATypeInfo = TypeInfo(TDateTime) then
       Result := DB.ftDateTime
     else if ATypeInfo = TypeInfo(TDate) then
@@ -1639,7 +1670,7 @@ begin
     tkInteger:
       FieldType := ftInteger;
     tkFloat:
-      FieldType := FloatFieldType(PropInfo.PropType^);
+      FieldType := FloatFieldType;
     tkClass:
       FieldType := ftInteger;
     tkSet:
@@ -1722,6 +1753,13 @@ begin
   BM := TInstantBookmark(Bookmark^);
   UpdateBookmark(BM);
   Result := BM.RecNo > 0;
+end;
+
+function TInstantCustomExposer.BreakThorough(const FieldName: string): boolean;
+begin
+  Result := False;
+  if Assigned(FOnAddClassFieldDef) then
+    FOnAddClassFieldDef(FieldName, Result);
 end;
 
 function TInstantCustomExposer.ChangesDisabled: Boolean;
@@ -2288,6 +2326,11 @@ begin
   Result := Accessor.TotalCount;
 end;
 
+function TInstantCustomExposer.GetUndoBuffer: PChar;
+begin
+  Result := FUndoBuffer;
+end;
+
 procedure TInstantCustomExposer.GotoActiveRecord;
 var
   BM: TInstantBookmark;
@@ -2413,6 +2456,10 @@ begin
       Field.DisplayWidth := Metadata.DisplayWidth
     else
       Field.DisplayWidth := DefaultStringDisplayWidth;
+  end
+  else if Field.DataType = ftBCD then
+  begin
+    (Field as TBCDField).currency := True;
   end;
   if Assigned(FOnInitField) then
     FOnInitField(Self, Field);
@@ -2835,11 +2882,13 @@ var
   S: string;
   N: Integer;
   F: Double;
+  C: Currency;
+  Bcd : TBcd;
   D: TDateTimeRec;
   T: TTimeStamp;
   L: WordBool;
 begin
-  if not Assigned(AObject) or IsCalcField(Field) then 
+  if not Assigned(AObject) or IsCalcField(Field) then
     Exit;
   try
     if IsSelfField(Field) then
@@ -2878,6 +2927,14 @@ begin
           F := 0 else
           F := Value;
         Move(F, Buffer^, SizeOf(F));
+      end;
+    ftBCD:
+      begin
+        if Empty then
+          C := 0 else
+          C := Value;
+        CurrToBCD(C,Bcd);
+        Move(Bcd, Buffer^, SizeOf(Bcd));
       end;
     ftDate:
       begin
@@ -3164,6 +3221,8 @@ var
   S: string;
   N: Integer;
   F: Double;
+  C: Currency;
+  Bcd : TBcd;
   D: TDateTimeRec;
   T: TTimeStamp;
   L: WordBool;
@@ -3193,6 +3252,12 @@ begin
         Move(Buffer^, F, SizeOf(F));
         Value := F;
       end;
+    ftBCD:
+      begin
+        Move(Buffer^, Bcd, SizeOf(Bcd));
+        BCDToCurr(Bcd,C);
+        Value := C;
+      end;
     ftDate:
       begin
         Move(Buffer^, D, Field.DataSize);
@@ -3221,7 +3286,7 @@ begin
         Move(Buffer^, L, SizeOf(L));
         Value := GetEnumName(TypeInfo(Boolean), Integer(L));
       end;
-    ftDataSet, ftBlob, ftMemo:
+    ftDataSet, ftBlob, ftGraphic, ftMemo:
       Exit;
   end;
   try

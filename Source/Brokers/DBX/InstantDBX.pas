@@ -24,7 +24,11 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta:
+ * - blob streaming in XML format (Part, Parts, References)
+ * - Prepared queries support
+ * Carlo Barazzetta: Currency and LoginPrompt support
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantDBX;
@@ -47,14 +51,11 @@ type
     FDriverName: string;
     FGetDriverFunc: string;
     FLibraryName: string;
-    FParams: TStrings;
+    FParams: string; //CB converted from TStrings for xml streaming compatibility
     FVendorLib: string;
-    function GetParams: TStrings;
-    procedure SetParams(const Value: TStrings);
   protected
     function CreateConnection(AOwner: TComponent): TCustomConnection; override;
   public
-    destructor Destroy; override;
     function Edit: Boolean; override;
     class function ConnectionTypeName: string; override;
     class function ConnectorClass: TInstantConnectorClass; override;
@@ -63,28 +64,32 @@ type
     property DriverName: string read FDriverName write FDriverName;
     property GetDriverFunc: string read FGetDriverFunc write FGetDriverFunc;
     property LibraryName: string read FLibraryName write FLibraryName;
-    property Params: TStrings read GetParams write SetParams;
+    property Params: string read FParams write FParams;
     property VendorLib: string read FVendorLib write FVendorLib;
   end;
 
   TInstantDBXConnector = class(TInstantConnectionBasedConnector)
   private
     FTransactionDesc: TTransactionDesc;
+    FOnLogin: TSQLConnectionLoginEvent;
     function GetConnection: TSQLConnection;
     procedure SetConnection(Value: TSQLConnection);
     function GetCanTransaction: Boolean;
   protected
+    procedure AssignLoginOptions; override;//CB
     function CreateBroker: TInstantBroker; override;
     procedure InitTransactionDesc(var ATransactionDesc: TTransactionDesc); virtual;
     procedure InternalCommitTransaction; override;
     procedure InternalRollbackTransaction; override;
     procedure InternalStartTransaction; override;
     function ParamByName(const AName: string): string;
+    procedure InternalBuildDatabase(Scheme: TInstantScheme); override; //CB
   public
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
     property CanTransaction: Boolean read GetCanTransaction;
   published
     property Connection: TSQLConnection read GetConnection write SetConnection;
+    property OnLogin: TSQLConnectionLoginEvent read FOnLogin write FOnLogin;
   end;
 
   TInstantDBXBroker = class(TInstantSQLBroker)
@@ -97,6 +102,10 @@ type
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetDatabaseName: string; override;
     function InternalCreateQuery: TInstantQuery; override;
+    procedure PrepareQuery(DataSet : TDataSet); override; //CB
+    procedure UnprepareQuery(DataSet : TDataSet); override; //CB
+    function ExecuteQuery(DataSet : TDataSet) : integer; override; //CB
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; //CB
   public
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
@@ -180,12 +189,29 @@ type
     function GetSQLQuote: Char; override;
   end;
 
+procedure Register;
+
 implementation
 
 uses
-  SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts;
+  SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math;
+
+procedure Register;
+begin
+  RegisterComponents('InstantObjects', [TInstantDBXConnector]);
+end;
 
 { TInstantDBXConnector }
+
+procedure TInstantDBXConnector.AssignLoginOptions;
+begin
+  inherited;
+  if HasConnection then
+  begin
+    if Assigned(FOnLogin) and not Assigned(Connection.OnLogin) then
+      Connection.OnLogin := FOnLogin;
+  end;
+end;
 
 class function TInstantDBXConnector.ConnectionDefClass: TInstantConnectionDefClass;
 begin
@@ -197,6 +223,8 @@ begin
   if SameText(Connection.DriverName, 'INTERBASE') then
     Result := TInstantDBXInterBaseBroker.Create(Self)
   else if SameText(Connection.DriverName, 'MSSQL') then
+    Result := TInstantDBXMSSQLBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'SQLServer') then //For CoreLab DbExpress driver
     Result := TInstantDBXMSSQLBroker.Create(Self)
   else if SameText(Connection.DriverName, 'Oracle') then
     Result := TInstantDBXOracleBroker.Create(Self)
@@ -224,6 +252,13 @@ procedure TInstantDBXConnector.InitTransactionDesc(
 begin
   ATransactionDesc.TransactionID := 1;
   ATransactionDesc.GlobalID := 0;
+end;
+
+procedure TInstantDBXConnector.InternalBuildDatabase(
+  Scheme: TInstantScheme);
+begin
+  Scheme.BlobStreamFormat := BlobStreamFormat; //CB  
+  inherited;
 end;
 
 procedure TInstantDBXConnector.InternalCommitTransaction;
@@ -278,23 +313,15 @@ begin
   try
     Connection.ConnectionName := ConnectionName;
     Connection.DriverName := DriverName;
-    Connection.Params := Params;
+    Connection.Params.Text := Params;
     Connection.LibraryName := LibraryName;
     Connection.VendorLib := VendorLib;
     Connection.GetDriverFunc := GetDriverFunc;
-    Connection.LoginPrompt :=
-      (Params.Values['User_Name'] = '') or (Params.Values['Password'] = '');
   except
     Connection.Free;
     raise;
   end;
   Result := Connection;
-end;
-
-destructor TInstantDBXConnectionDef.Destroy;
-begin
-  FParams.Free;
-  inherited;
 end;
 
 function TInstantDBXConnectionDef.Edit: Boolean;
@@ -310,19 +337,14 @@ begin
   end;
 end;
 
-function TInstantDBXConnectionDef.GetParams: TStrings;
-begin
-  if not Assigned(FParams) then
-    FParams := TStringList.Create;
-  Result := FParams;
-end;
-
-procedure TInstantDBXConnectionDef.SetParams(const Value: TStrings);
-begin
-  Params.Assign(Value);
-end;
-
 { TInstantDBXBroker }
+
+procedure TInstantDBXBroker.AssignDataSetParams(DataSet: TDataSet;
+  AParams: TParams);
+begin
+  //don't call inherited!
+  AssignParams(AParams, TSQLQuery(DataSet).Params);
+end;
 
 procedure TInstantDBXBroker.AssignParam(SourceParam, TargetParam: TParam);
 begin
@@ -333,6 +355,11 @@ begin
       begin
         TargetParam.DataType := ftTimeStamp;
         TargetParam.Value := SourceParam.AsDateTime;
+      end;
+    ftCurrency:
+      begin
+        TargetParam.DataType := ftBCD;
+        TargetParam.Value := SourceParam.AsCurrency;
       end;
   else
     TargetParam.Assign(SourceParam);
@@ -395,6 +422,12 @@ begin
   end;
 end;
 
+function TInstantDBXBroker.ExecuteQuery(DataSet: TDataSet): integer;
+begin
+  //don't call inherited!
+  Result := TSQLQuery(DataSet).ExecSQL;
+end;
+
 function TInstantDBXBroker.GetConnector: TInstantDBXConnector;
 begin
   Result := inherited Connector as TInstantDBXConnector;
@@ -408,6 +441,18 @@ end;
 function TInstantDBXBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantDBXQuery.Create(Connector);
+end;
+
+procedure TInstantDBXBroker.PrepareQuery(DataSet: TDataSet);
+begin
+  inherited;
+  TSQLQuery(DataSet).Prepared := True;
+end;
+
+procedure TInstantDBXBroker.UnprepareQuery(DataSet: TDataSet);
+begin
+  inherited;
+  TSQLQuery(DataSet).Prepared := False;
 end;
 
 { TInstantDBXResolver }
@@ -450,9 +495,10 @@ const
   Types: array[TInstantDataType] of string = (
     'INTEGER',
     'DOUBLE PRECISION',
+    'DECIMAL(14,4)',
     'SMALLINT',
     'VARCHAR',
-    'BLOB',
+    'BLOB SUB_TYPE 1',
     'TIMESTAMP',
     'BLOB');
 begin
@@ -466,14 +512,14 @@ end;
 
 function TInstantDBXInterBaseBroker.GetDialect: Integer;
 begin
-  Result := StrToIntDef(Connector.ParamByName('SQLDialect'), 1);
+  Result := StrToIntDef(Connector.ParamByName('SQLDialect'), 3);
 end;
 
 function TInstantDBXInterBaseBroker.GetSQLDelimiters: string;
 begin
-  if Dialect >= 3 then
-    Result := '""'
-  else
+//  if Dialect >= 3 then
+//    Result := '""'
+//  else
     Result := inherited GetSQLDelimiters;
 end;
 
@@ -498,6 +544,7 @@ const
   Types: array[TInstantDataType] of string = (
     'INTEGER',
     'FLOAT',
+    'MONEY',
     'BIT',
     'VARCHAR',
     'TEXT',
@@ -550,6 +597,7 @@ const
   Types: array[TInstantDataType] of string = (
     'INTEGER',
     'FLOAT',
+    'DECIMAL(14,4)',
     'NUMBER(1)',
     'VARCHAR',
     'CLOB',
@@ -577,6 +625,7 @@ const
   Types: array[TInstantDataType] of string = (
     'INTEGER',
     'FLOAT',
+    'DECIMAL(14,4)',
     'SMALLINT',
     'VARCHAR',
     'CLOB (1000 K)',
@@ -617,6 +666,7 @@ const
   Types: array[TInstantDataType] of string = (
     'INTEGER',
     'FLOAT',
+    'DECIMAL(14,4)',
     'TINYINT(1)',
     'VARCHAR',
     'TEXT',

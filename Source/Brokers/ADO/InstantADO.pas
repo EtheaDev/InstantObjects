@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
+ * Carlo Barazzetta: Currency and LoginPrompt support
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantADO;
@@ -170,6 +171,10 @@ type
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
+    procedure PrepareQuery(DataSet : TDataSet); override; //CB
+    procedure UnprepareQuery(DataSet : TDataSet); override; //CB
+    function ExecuteQuery(DataSet : TDataSet) : integer; override; //CB
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; //CB
   public
     function CreateDataSet(const Statement: string; Params: TParams): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
@@ -207,17 +212,21 @@ var
   Param: TParam;
 begin
   if Assigned(Params) and Assigned(Parameters) then
+  begin
     if Parameters.Count = 0 then
       Parameters.Assign(Params)
     else
+    begin
       with Parameters do
-        for I := 0 to Pred(Count) do
-        begin
-          Parameter := Items[I];
-          Param := Params.ParamByName(Parameter.Name);
-          Parameter.DataType := Param.DataType;
-          Parameter.Assign(Param);
-        end;
+      for I := 0 to Pred(Count) do
+      begin
+        Parameter := Items[I];
+        Param := Params.ParamByName(Parameter.Name);
+        Parameter.DataType := Param.DataType;
+        Parameter.Assign(Param);
+      end;
+    end;
+  end;
 end;
 
 { TInstantADOConnectionDef }
@@ -310,6 +319,7 @@ procedure TInstantADOConnector.BuildDatabaseADOX(Scheme: TInstantScheme);
       {Unknown,         Jet,             SQL,             Oracle         MySQL            DB2}
       (adInteger,       adInteger,       adInteger,       adNumeric,     adInteger,       adInteger),      // dtInteger
       (adDouble,        adDouble,        adDouble,        adDouble,      adDouble,        adDouble),       // dtFloat
+      (adCurrency,      adCurrency,      adCurrency,      adCurrency,    adCurrency,      adCurrency),     // dtCurrency
       (adBoolean,       adBoolean,       adBoolean,       adChar,        adBoolean,       adBoolean),      // dtBoolean
       (adVarChar,       adVarWChar,      adVarChar,       adVarChar,     adVarChar,       adVarChar),      // dtString
       (adLongVarChar,   adLongVarWChar,  adLongVarChar,   adVarBinary,   adLongVarChar,   adLongVarChar),  // dtMemo
@@ -426,6 +436,7 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
       Types: array[TInstantDataType] of string = (
         'INTEGER',
         'FLOAT',
+        'DECIMAL',
         'LOGICAL',
         'VARCHAR',
         'MEMO',
@@ -444,6 +455,8 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
           case DataType of
             dtBoolean:
               Result := 'BIT';
+            dtCurrency:
+              Result := 'MONEY';
             dtMemo:
               Result := 'TEXT';
             dtBlob:
@@ -453,6 +466,8 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
           case DataType of
             dtBoolean:
               Result := 'CHAR(1)';
+            dtCurrency:
+              Result := 'DECIMAL(14,4)';
             dtDateTime:
               Result := 'DATE';
             dtBlob:
@@ -462,6 +477,8 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
           end;
         ptIBMDB2:
           case DataType of
+            dtCurrency:
+              Result := 'DECIMAL(14,4)';
             dtDateTime:
               Result := 'TIMESTAMP';
             dtBlob:
@@ -601,6 +618,8 @@ end;
 procedure TInstantADOConnector.DoBuildDatabase(Scheme: TInstantScheme;
   BuildMethod: TInstantADOBuildMethod);
 begin
+  if Assigned(Scheme) then
+    Scheme.BlobStreamFormat := BlobStreamFormat; //CB
   case BuildMethod of
     bmDefault:
       if ProviderType in [ptMSJet, ptMSSQLServer] then
@@ -694,6 +713,7 @@ end;
 procedure TInstantADOConnector.InternalBuildDatabase(
   Scheme: TInstantScheme);
 begin
+  Scheme.BlobStreamFormat := BlobStreamFormat; //CB
   DoBuildDatabase(Scheme, bmDefault);
 end;
 
@@ -1008,6 +1028,12 @@ end;
 
 { TInstantADOMSSQLBroker }
 
+procedure TInstantADOMSSQLBroker.AssignDataSetParams(DataSet: TDataSet;
+  AParams: TParams);
+begin
+  AssignParameters(AParams,TADOQuery(DataSet).Parameters);
+end;
+
 function TInstantADOMSSQLBroker.CreateDataSet(const Statement: string;
   Params: TParams): TDataSet;
 var
@@ -1035,6 +1061,7 @@ const
   Types: array[TInstantDataType] of string = (
     'INTEGER',
     'FLOAT',
+    'MONEY',
     'BIT',
     'VARCHAR',
     'TEXT',
@@ -1057,6 +1084,11 @@ begin
   end;
 end;
 
+function TInstantADOMSSQLBroker.ExecuteQuery(DataSet: TDataSet): integer;
+begin
+  Result := TADOQuery(DataSet).ExecSQL;
+end;
+
 function TInstantADOMSSQLBroker.GetSQLQuote: Char;
 begin
   Result := '''';
@@ -1065,6 +1097,16 @@ end;
 function TInstantADOMSSQLBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantADOMSSQLQuery.Create(Connector);
+end;
+
+procedure TInstantADOMSSQLBroker.PrepareQuery(DataSet: TDataSet);
+begin
+  TADOQuery(DataSet).Prepared := True;
+end;
+
+procedure TInstantADOMSSQLBroker.UnprepareQuery(DataSet: TDataSet);
+begin
+  TADOQuery(DataSet).Prepared := False;
 end;
 
 { TInstantADOMSSQLQuery }

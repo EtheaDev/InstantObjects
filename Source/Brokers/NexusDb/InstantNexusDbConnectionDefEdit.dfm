@@ -1,9 +1,9 @@
 object InstantNexusDbConnectionDefEditForm: TInstantNexusDbConnectionDefEditForm
-  Left = 265
-  Top = 262
+  Left = 280
+  Top = 242
   BorderStyle = bsDialog
   Caption = '  NexusDb Connection'
-  ClientHeight = 317
+  ClientHeight = 309
   ClientWidth = 393
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -39,11 +39,12 @@ object InstantNexusDbConnectionDefEditForm: TInstantNexusDbConnectionDefEditForm
   OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 280
+    Top = 272
     Width = 393
     Height = 2
     Align = alBottom
@@ -53,24 +54,32 @@ object InstantNexusDbConnectionDefEditForm: TInstantNexusDbConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 393
-    Height = 280
+    Height = 272
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    object AliasLabel: TLabel
+    object PathLabel: TLabel
       Left = 16
       Top = 184
       Width = 22
       Height = 13
       Caption = '&Path'
     end
-    object Label1: TLabel
-      Left = 160
+    object AliasLabel: TLabel
+      Left = 180
       Top = 4
       Width = 22
       Height = 13
       Caption = '&Alias'
       FocusControl = lbAlias
+    end
+    object ServerLabel: TLabel
+      Left = 12
+      Top = 100
+      Width = 60
+      Height = 13
+      Caption = '&Server name'
+      FocusControl = ServerComboBox
     end
     object StreamFormatLabel: TLabel
       Left = 16
@@ -86,28 +95,29 @@ object InstantNexusDbConnectionDefEditForm: TInstantNexusDbConnectionDefEditForm
       Width = 21
       Height = 21
       Caption = '...'
-      TabOrder = 0
+      TabOrder = 4
       OnClick = BrowseButtonClick
     end
     object lbAlias: TListBox
-      Left = 160
+      Left = 180
       Top = 20
-      Width = 217
+      Width = 197
       Height = 161
       ItemHeight = 13
-      TabOrder = 1
+      TabOrder = 2
     end
     object rgSelDb: TRadioGroup
-      Left = 16
+      Left = 12
       Top = 16
-      Width = 133
+      Width = 157
       Height = 73
-      Caption = '  Database Selection  '
+      Caption = '&Database Selection  '
       ItemIndex = 0
       Items.Strings = (
         'Alias'
         'Path')
-      TabOrder = 2
+      TabOrder = 0
+      OnClick = rgSelDbClick
     end
     object ePath: TEdit
       Left = 16
@@ -115,6 +125,18 @@ object InstantNexusDbConnectionDefEditForm: TInstantNexusDbConnectionDefEditForm
       Width = 333
       Height = 21
       TabOrder = 3
+    end
+    object ServerComboBox: TComboBox
+      Left = 12
+      Top = 116
+      Width = 157
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 1
+      OnCloseUp = ServerComboBoxLoadAlias
+      OnDropDown = ServerComboBoxDropDown
+      OnExit = ServerComboBoxLoadAlias
+      OnSelect = ServerComboBoxSelect
     end
     object StreamFormatComboBox: TComboBox
       Left = 16
@@ -124,12 +146,12 @@ object InstantNexusDbConnectionDefEditForm: TInstantNexusDbConnectionDefEditForm
       Style = csDropDownList
       ItemHeight = 13
       Sorted = True
-      TabOrder = 4
+      TabOrder = 5
     end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 282
+    Top = 274
     Width = 393
     Height = 35
     Align = alBottom
@@ -139,7 +161,7 @@ object InstantNexusDbConnectionDefEditForm: TInstantNexusDbConnectionDefEditForm
       393
       35)
     object OkButton: TButton
-      Left = 195
+      Left = 223
       Top = 6
       Width = 75
       Height = 25

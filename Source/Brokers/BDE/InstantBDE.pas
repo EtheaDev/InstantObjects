@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
+ * Carlo Barazzetta: Currency support
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantBDE;
@@ -61,10 +62,12 @@ type
 
   TInstantBDEConnector = class(TInstantConnectionBasedConnector)
   private
+    FOnLogin: TDatabaseLoginEvent;
     function GetConnection: TDatabase;
     procedure SetConnection(const Value: TDatabase);
     function GetDriverType: TInstantBDEDriverType;
   protected
+    procedure AssignLoginOptions; override;//CB
     function CreateBroker: TInstantBroker; override;
     function GetDatabaseExists: Boolean; override;
     function GetDatabaseName: string; override;
@@ -78,6 +81,7 @@ type
     property DriverType: TInstantBDEDriverType read GetDriverType;
   published
     property Connection: TDatabase read GetConnection write SetConnection;
+    property OnLogin: TDatabaseLoginEvent read FOnLogin write FOnLogin; //CB
   end;
 
   TInstantBDEBroker = class(TInstantRelationalBroker)
@@ -140,10 +144,16 @@ type
     property Connector: TInstantBDEConnector read GetConnector;
   end;
 
+procedure Register;
 implementation
 
 uses
   Bde, InstantConsts, InstantBDEConnectionDefEdit, Controls;
+
+procedure Register;
+begin
+  RegisterComponents('InstantObjects', [TInstantBDEConnector]);
+end;
 
 { TInstantBDEConnectionDef }
 
@@ -192,6 +202,16 @@ begin
 end;
 
 { TInstantBDEConnector }
+
+procedure TInstantBDEConnector.AssignLoginOptions;
+begin
+  inherited;
+  if HasConnection then
+  begin
+    if Assigned(FOnLogin) and not Assigned(Connection.OnLogin) then
+      Connection.OnLogin := FOnLogin;
+  end;
+end;
 
 class function TInstantBDEConnector.ConnectionDefClass: TInstantConnectionDefClass;
 begin
@@ -288,7 +308,7 @@ procedure TInstantBDEConnector.InternalBuildDatabase(Scheme: TInstantScheme);
   procedure CreateTable(TableMetadata: TInstantTableMetadata);
   const
     FieldTypes: array[TInstantDataType] of TFieldType =
-      (ftInteger, ftFloat, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
+      (ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
   var
     I: Integer;
     Table: TTable;
@@ -324,6 +344,7 @@ var
 begin
   if not Assigned(Scheme) then
     Exit;
+  Scheme.BlobStreamFormat := BlobStreamFormat; //CB  
   with Scheme do
     for I := 0 to Pred(TableMetadataCount) do
       CreateTable(TableMetadatas[I]);

@@ -160,7 +160,7 @@ procedure TCompanyEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(ActionImages,'COMPANYEDITACTIONIMAGES');
+  LoadMultipleImages(ActionImages,'COMPANYEDITACTIONIMAGES.BMP');
 {$ENDIF}
 {$IFDEF LINUX}
   LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'COMPANYEDITACTIONIMAGES.BMP',true);

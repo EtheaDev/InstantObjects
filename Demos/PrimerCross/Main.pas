@@ -11,7 +11,7 @@ interface
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, Jpeg,
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
   Menus, ExtCtrls, ComCtrls, ToolWin, Grids, DBGrids, ImgList, ActnList,
 {$ENDIF}
 {$IFDEF LINUX}
@@ -78,7 +78,7 @@ type
     FConnector: TInstantConnector;
     FStopwatch: TStopwatch;
     FSubViewList: TList;
-    procedure CreateRandomContacts(Count: Integer);
+    procedure CreateRandomContacts(Count: Integer; LoadPictures : boolean);
     procedure CreateSubViews;
     function GetIsConnected: Boolean;
     function GetStatusText: string;
@@ -91,6 +91,7 @@ type
     procedure SetStatusText(const Value: string);
     property SubViewList: TList read GetSubViewList;
     function GetConnectionName: string;
+    procedure AssignRandomPicture(Male: boolean; InstantBlob : TInstantBlob);
   protected
     procedure UpdateActions; override;
     procedure UpdateControls;
@@ -120,9 +121,9 @@ var
 implementation
 
 uses
-  Contnrs, Welcome, MainData, RandomData, DemoData, Utility, ContactView, PerformanceView,
+  Contnrs, Model, Welcome, MainData, RandomData, DemoData, Utility, ContactView, PerformanceView,
 {$IFDEF MSWINDOWS}
-  HelpView,
+  HelpView, JPeg,
 {$ENDIF}
 {$IFDEF LINUX}
   HelpViewK3,
@@ -136,15 +137,18 @@ uses
   installed all brokers, please remove the missing broker unit(s) from
   the list. }
 
+{$IFDEF MSWINDOWS}
   {$IFNDEF VER130}
   InstantDBX,
   {$ENDIF}
-  {$IFDEF MSWINDOWS}
   InstantADO,
   InstantBDE,
   InstantIBX,
-  {$ENDIF}
-  Model;
+{$ENDIF}
+{$IFDEF LINUX}
+  InstantDBX,
+{$ENDIF}
+  InstantXML;
 
 {$R *.dfm}
 
@@ -328,16 +332,17 @@ begin
       raise;
     end;
     if Confirm('Create random data?') then
-      CreateRandomContacts(50);
+      RandomDataActionExecute(nil); //CB
   finally
     if Assigned(DefaultConnector) then
       DefaultConnector.IsDefault := True;
   end;
 end;
 
-procedure TMainForm.CreateRandomContacts(Count: Integer);
+procedure TMainForm.CreateRandomContacts(Count: Integer; LoadPictures : boolean);
 var
   Companies: TObjectList;
+  Gender: TGender;
 
   function CreateRandomContact: TContact;
   var
@@ -349,7 +354,9 @@ var
         Company := Companies[Random(Companies.Count)] as TCompany
       else
         Company := nil;
-      Result := CreateRandomPerson(Company);
+      Result := CreateRandomPerson(Company, Gender);
+      if LoadPictures then
+        AssignRandomPicture(Gender=gnMale, TPerson(Result)._Picture); //CB
     end else
     begin
       Result := CreateRandomCompany;
@@ -483,14 +490,15 @@ end;
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Disconnect;
+  FActiveSubView.FormHide(FActiveSubView);  
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   Caption := Application.Title;
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(SideBarImages,'MAINSIDEBARIMAGES');
-  LoadMultipleImages(ActionImages,'MAINACTIONIMAGES');
+  LoadMultipleImages(SideBarImages,'MAINSIDEBARIMAGES.BMP');
+  LoadMultipleImages(ActionImages,'MAINACTIONIMAGES.BMP');
   with SideBar do
   begin
     BorderWidth := 4;
@@ -507,10 +515,12 @@ begin
 {$ENDIF}
 
 // To use XML format for ConnectionManager file:
-//  ConnectionManager.FileFormat := sfXML;
-//  ConnectionManager.FileName := ChangeFileExt(Application.ExeName, '.xml');
+  ConnectionManager.FileFormat := sfXML;
+  ConnectionManager.FileName := ChangeFileExt(Application.ExeName, '.xml');
 
-  ConnectionManager.FileName := ChangeFileExt(Application.ExeName, '.con');
+// To use binary format for ConnectionManager file:
+//  ConnectionManager.FileFormat := sfBinary;
+//  ConnectionManager.FileName := ChangeFileExt(Application.ExeName, '.con');
 
 
   CreateSubViews;
@@ -600,13 +610,16 @@ begin
 end;
 
 procedure TMainForm.RandomDataActionExecute(Sender: TObject);
+var
+  LoadPictures : boolean;
 begin
   with TDemoDataRequestForm.Create(nil) do
   try
     Count := 100;
     if ShowModal = mrOk then
     begin
-      CreateRandomContacts(Count);
+      LoadPictures := PicturesCheckBox.Checked;
+      CreateRandomContacts(Count, LoadPictures);
       Reset;
     end;
   finally
@@ -633,7 +646,9 @@ begin
   if Value <> FActiveSubView then
   begin
     if Assigned(FActiveSubView) then
-      FActiveSubView.Hide;
+    begin
+      FActiveSubView.FormHide(FActiveSubView);
+    end;  
     FActiveSubView := Value;
     if Assigned(FActiveSubView) then
     begin
@@ -740,5 +755,40 @@ begin
     Update;
   end;
 end;
+
+procedure TMainForm.AssignRandomPicture(Male : boolean; InstantBlob : TInstantBlob);
+const
+{$IFDEF MSWINDOWS}
+  ARandomExt : Array[0..2] of string = ('.bmp','.jpg','.emf');
+{$ENDIF}
+{$IFDEF LINUX}
+  ARandomExt : Array[0..3] of string = ('.bmp','.jpg','.emf','.png');
+{$ENDIF}
+var
+  Picture: TPicture;
+  PictureName : string;
+begin
+  PictureName := '0'+IntToStr(Random(5)+1)+ARandomExt[Random(High(ARandomExt)+1)];
+  if Male then
+    PictureName := 'man'+PictureName
+  else
+    PictureName := 'woman'+PictureName;
+  PictureName := ExtractFilePath(Application.ExeName)+'Pictures'+PathDelim+PictureName;
+  if FileExists(PictureName) then
+  begin
+    Picture := TPicture.Create;
+    try
+      Picture.LoadFromFile(PictureName);
+      InstantBlob.AssignPicture(Picture);
+    finally
+      Picture.Free;
+    end;
+  end;
+end;
+
+initialization
+{$IFDEF MSWINDOWS}
+  InstantRegisterGraphicClass(gffJpeg, TJPEGImage);
+{$ENDIF}
 
 end.

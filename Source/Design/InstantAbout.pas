@@ -91,7 +91,7 @@ begin
   TitleLabel.Font.Size := 18;
   TitleLabel.Font.Style := [fsBold];
   //Package version
-  S := Format('Version %d.%d.%d %s', [1,6,5,'MPL']);
+  S := Format('Version %d.%d.%d %s', [1,6,6,'MPL']);
 {$ENDIF}
   VersionLabel.Caption := S;
 end;

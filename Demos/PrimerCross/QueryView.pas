@@ -123,7 +123,7 @@ procedure TQueryViewForm.ActionsUpdate(Action: TBasicAction;
   var Handled: Boolean);
 begin
   inherited;
-  ExecuteAction.Enabled := IsConnected and (CommandEdit.Text <> '');
+  ExecuteAction.Enabled := IsConnected and (CommandEdit.Text <> '') and Visible;
 end;
 
 end.

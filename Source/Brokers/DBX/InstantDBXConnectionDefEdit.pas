@@ -24,6 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -53,6 +55,9 @@ type
     OkButton: TButton;
     ParamsLabel: TLabel;
     ParamsEditor: TMemo;
+    StreamFormatLabel: TLabel;
+    StreamFormatComboBox: TComboBox;
+    LoginPromptCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure DriverNameEditChange(Sender: TObject);
     procedure ConnectionNameListBoxClick(Sender: TObject);
@@ -82,6 +87,9 @@ implementation
 
 {$R *.dfm}
 
+uses
+  InstantPersistence, InstantClasses;
+  
 const
   SAllDrivers = '[All]';
 
@@ -105,6 +113,7 @@ end;
 
 procedure TInstantDBXConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
 {$IFDEF MSWINDOWS}
   BorderStyle := bsDialog;
 {$ENDIF}
@@ -150,7 +159,10 @@ procedure TInstantDBXConnectionDefEditForm.LoadData(
 begin
   DriverName := ConnectionDef.DriverName;
   ConnectionName := ConnectionDef.ConnectionName;
-  Params := ConnectionDef.Params;
+  Params.Text := ConnectionDef.Params;
+  //CB
+  StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat);
+  LoginPromptCheckBox.Checked := ConnectionDef.LoginPrompt;
 end;
 
 procedure TInstantDBXConnectionDefEditForm.SaveData(
@@ -162,7 +174,10 @@ begin
   ConnectionDef.LibraryName := Connection.LibraryName;
   ConnectionDef.VendorLib := Connection.VendorLib;
   ConnectionDef.GetDriverFunc := Connection.GetDriverFunc;
-  ConnectionDef.Params := Params;
+  ConnectionDef.Params := Params.Text;
+  //CB
+  ConnectionDef.BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
+  ConnectionDef.LoginPrompt := LoginPromptCheckBox.Checked;
 end;
 
 procedure TInstantDBXConnectionDefEditForm.SetConnectionName(

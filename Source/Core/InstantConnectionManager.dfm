@@ -1,7 +1,7 @@
 object InstantConnectionManagerForm: TInstantConnectionManagerForm
   Left = 327
   Top = 305
-  Width = 333
+  Width = 393
   Height = 281
   BorderIcons = [biSystemMenu]
   Caption = 'Connection Manager'
@@ -24,6 +24,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
     0000C0070000C0070000C0070000C0070000E00F0000F83F0000FFFF0000}
   OldCreateOrder = False
   Position = poScreenCenter
+  OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
   PixelsPerInch = 96
@@ -31,8 +32,8 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   object ConnectionView: TListView
     Left = 0
     Top = 0
-    Width = 325
-    Height = 222
+    Width = 385
+    Height = 215
     Align = alClient
     Columns = <
       item
@@ -42,6 +43,10 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       item
         Caption = 'Type'
         Width = 80
+      end
+      item
+        Caption = 'Blob stream'
+        Width = 80
       end>
     PopupMenu = ConnectionMenu
     TabOrder = 0
@@ -50,8 +55,8 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 222
-    Width = 325
+    Top = 215
+    Width = 385
     Height = 32
     Align = alBottom
     TabOrder = 1
@@ -64,7 +69,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       TabOrder = 0
     end
     object ButtonsPanel: TPanel
-      Left = 163
+      Left = 223
       Top = 1
       Width = 161
       Height = 30
@@ -122,6 +127,12 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
     object DisconnectItem: TMenuItem
       Action = DisconnectAction
     end
+    object N2: TMenuItem
+      Caption = '-'
+    end
+    object Open1: TMenuItem
+      Action = FileOpenAction
+    end
   end
   object ActionList: TActionList
     OnUpdate = ActionListUpdate
@@ -159,6 +170,19 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       Caption = '&Disconnect'
       Hint = 'Disconnect'
       OnExecute = DisconnectActionExecute
+    end
+    object FileOpenAction: TFileOpen
+      Category = 'File'
+      Caption = '&Open...'
+      Dialog.DefaultExt = '*.con'
+      Dialog.Filter = 
+        'InstantOblects connections (*.con)|*.con|InstantObjects connecti' +
+        'ons (*.xml) |*.xml'
+      Hint = 'Open configuration file'
+      ImageIndex = 7
+      ShortCut = 16463
+      BeforeExecute = FileOpenActionBeforeExecute
+      OnAccept = FileOpenActionAccept
     end
   end
 end

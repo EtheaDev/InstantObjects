@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -56,6 +57,8 @@ type
     DatabaseLabel: TLabel;
     PortEdit: TEdit;
     PortLabel: TLabel;
+    StreamFormatLabel: TLabel;
+    StreamFormatComboBox: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure DirectoryButtonClick(Sender: TObject);
     procedure LocalRemoteChange(Sender: TObject);
@@ -91,6 +94,7 @@ end;
 
 procedure TInstantDBISAMConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
   UpdateControls;
 end;
 
@@ -115,6 +119,7 @@ begin
       DatabaseEdit.Text := Directory
     else
       DatabaseEdit.Text := RemoteDatabase;
+    StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat); //CB
   end;
 end;
 
@@ -140,6 +145,7 @@ begin
       Directory := DatabaseEdit.Text
     else
       RemoteDatabase := DatabaseEdit.Text;
+    BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex); //CB
   end;
 end;
 

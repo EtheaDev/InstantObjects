@@ -145,6 +145,9 @@ resourcestring
   SUnspecifiedCommand = 'Command is not specified';
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
+  SUnsupportedUsePreparedQuery = 'UsePreparedQueries option not supported by broker of type %s';
+  SUnsupportedGraphicStream = 'Unsupported graphic stream format';
+  SUnsupportedGraphicClass = 'Unsupported graphic class';
 
 implementation
 

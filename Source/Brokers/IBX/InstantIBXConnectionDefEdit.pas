@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -51,6 +52,12 @@ type
     OkButton: TButton;
     CancelButton: TButton;
     BottomBevel: TBevel;
+    StreamFormatLabel: TLabel;
+    StreamFormatComboBox: TComboBox;
+    UseDelimitedIdentsCheckBox: TCheckBox;
+    LoginPromptCheckBox: TCheckBox;
+    ParamsLabel: TLabel;
+    ParamsEditor: TMemo;
     procedure LocalRemoteChange(Sender: TObject);
     procedure DatabaseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -68,7 +75,7 @@ implementation
 {$R *.DFM}
 
 uses
-  IB;
+  IB, InstantPersistence, InstantClasses;
 
 { TInstantIBXConnectionDefEditForm }
 
@@ -78,6 +85,7 @@ begin
   with TOpenDialog.Create(nil) do
   try
     Filter :=
+      'FireBird Database (*.fdb)|*.fdb|' +
       'InterBase Database (*.gdb)|*.gdb|' +
       'All Files (*.*)|*.*';
     if Execute then
@@ -89,6 +97,7 @@ end;
 
 procedure TInstantIBXConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
   UpdateControls;
 end;
 
@@ -109,7 +118,13 @@ begin
     ProtocolEdit.ItemIndex := Ord(NetType) - 1;
     ServerEdit.Text := ServerName;
     DatabaseEdit.Text := Path;
+    //CB
+    StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat);
+    UseDelimitedIdentsCheckBox.Checked := ibxUseDelimitedIdents in Options;
+    LoginPromptCheckBox.Checked := LoginPrompt;
+    ParamsEditor.Lines.Text := ConnectionDef.Params;
   end;
+  UpdateControls;
 end;
 
 procedure TInstantIBXConnectionDefEditForm.LocalRemoteChange(
@@ -129,6 +144,13 @@ begin
       NetType := TIBXNetType(ProtocolEdit.ItemIndex + 1);
     ServerName := ServerEdit.Text;
     Path := DatabaseEdit.Text;
+    //CB
+    BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
+    Options := [];
+    if UseDelimitedIdentsCheckBox.Checked then
+      Options := Options + [ibxUseDelimitedIdents];
+    LoginPrompt := LoginPromptCheckBox.Checked;
+    ConnectionDef.Params := ParamsEditor.Lines.Text;
   end;
 end;
 

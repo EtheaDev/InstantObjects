@@ -56,7 +56,7 @@ interface
 {$WARN UNIT_PLATFORM OFF}
 {$ENDIF}
 
-uses Forms, StdCtrls, Controls, ExtCtrls, Classes, InstantNexusDb, nxllComponent, nxdb
+uses Windows, Forms, StdCtrls, Controls, ExtCtrls, Classes, InstantNexusDb, nxllComponent, nxdb
 /// , CSIntf
     ;
 
@@ -67,16 +67,26 @@ type
     CancelButton: TButton;
     ClientPanel: TPanel;
     OkButton: TButton;
-    AliasLabel: TLabel;
+    PathLabel: TLabel;
     BrowseButton: TButton;
-    Label1: TLabel;
+    AliasLabel: TLabel;
     lbAlias: TListBox;
     rgSelDb: TRadioGroup;
     ePath: TEdit;
+    ServerComboBox: TComboBox;
+    ServerLabel: TLabel;
     StreamFormatLabel: TLabel;
     StreamFormatComboBox: TComboBox;
     procedure BrowseButtonClick(Sender: TObject);
+    procedure ServerComboBoxSelect(Sender: TObject);
+    procedure rgSelDbClick(Sender: TObject);
+    procedure ServerComboBoxLoadAlias(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure ServerComboBoxDropDown(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+  private
+    FConnectionDef : TInstantNexusDbConnectionDef;
+    procedure UpdateControls;
   protected
     procedure LoadAliasNames;
   public
@@ -100,18 +110,40 @@ begin
 end;
 
 procedure TInstantNexusDbConnectionDefEditForm.LoadAliasNames;
+var
+  OldAliasName : string;
 begin
-  // work already done by InitConnector
+  Screen.Cursor := crHourGlass;
+  if lbAlias.ItemIndex >= 0 then
+    OldAliasName := lbAlias.Items.Strings[lbAlias.ItemIndex];
+  Try
+    FConnectionDef.ServerName := ServerComboBox.Text;
+    FConnectionDef.LoadAliasList(lbAlias.Items);
+  Finally
+    if OldAliasName <> '' then
+      lbAlias.ItemIndex := lbAlias.Items.IndexOf(OldAliasName);
+    Screen.Cursor := crDefault;
+  End;
 end;
 
 procedure TInstantNexusDbConnectionDefEditForm.LoadData(ConnectionDef: TInstantNexusDbConnectionDef);
 begin
 ///  CodeSite.SendMsg('FORM load data');
+  FConnectionDef := ConnectionDef;
   if ConnectionDef.AliasIsPath then
-    ePath.Text := ConnectionDef.AliasName
+  begin
+    rgSelDb.ItemIndex := 1;
+    ePath.Text := ConnectionDef.AliasName;
+  end
   else
+  begin
+    rgSelDb.ItemIndex := 0;
+    ServerComboBox.Text := ConnectionDef.ServerName;
+    LoadAliasNames;
     lbAlias.ItemIndex := lbAlias.Items.IndexOf(ConnectionDef.AliasName);
+  end;
   StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat); //CB
+  UpdateControls;
 end;
 
 procedure TInstantNexusDbConnectionDefEditForm.SaveData(ConnectionDef: TInstantNexusDbConnectionDef);
@@ -119,7 +151,11 @@ begin
 ///  CodeSite.SendMsg('FORM save data');
   case rgSelDb.ItemIndex of
     0:  begin
-          ConnectionDef.AliasName   := lbAlias.Items.Strings[lbAlias.ItemIndex];
+          ConnectionDef.ServerName := ServerComboBox.Text;
+          if lbAlias.ItemIndex >= 0 then
+            ConnectionDef.AliasName   := lbAlias.Items.Strings[lbAlias.ItemIndex]
+          else
+            ConnectionDef.AliasName := '';
           ConnectionDef.AliasIsPath := False;       // True Alias
         end;
     1:  begin
@@ -127,8 +163,53 @@ begin
           ConnectionDef.AliasIsPath := True;        // Path
         end;
   end;
-///  CodeSite.SendBoolean('Alias '+ConnectionDef.AliasName,ConnectionDef.AliasIsPath);
   ConnectionDef.BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex); //CB
+///  CodeSite.SendBoolean('Alias '+ConnectionDef.AliasName,ConnectionDef.AliasIsPath);
+end;
+
+procedure TInstantNexusDbConnectionDefEditForm.ServerComboBoxSelect(
+  Sender: TObject);
+begin
+  LoadAliasNames;
+end;
+
+procedure TInstantNexusDbConnectionDefEditForm.rgSelDbClick(
+  Sender: TObject);
+begin
+  UpdateControls;
+end;
+
+procedure TInstantNexusDbConnectionDefEditForm.UpdateControls;
+begin
+  PathLabel.Visible := rgSelDb.ItemIndex = 1;
+  ePath.Visible := rgSelDb.ItemIndex = 1;
+  BrowseButton.Visible := rgSelDb.ItemIndex = 1;
+  AliasLabel.Visible := rgSelDb.ItemIndex = 0;
+  lbAlias.Visible := rgSelDb.ItemIndex = 0;
+  ServerComboBox.Visible := rgSelDb.ItemIndex = 0;
+  ServerLabel.Visible := rgSelDb.ItemIndex = 0;
+end;
+
+procedure TInstantNexusDbConnectionDefEditForm.ServerComboBoxLoadAlias(
+  Sender: TObject);
+begin
+  LoadAliasNames;
+end;
+
+procedure TInstantNexusDbConnectionDefEditForm.FormShow(Sender: TObject);
+begin
+  rgSelDb.SetFocus;
+end;
+
+procedure TInstantNexusDbConnectionDefEditForm.ServerComboBoxDropDown(
+  Sender: TObject);
+begin
+  Screen.Cursor := crHourGlass;
+  Try
+    FConnectionDef.LoadServerList(ServerComboBox.Items);
+  Finally
+    Screen.Cursor := crDefault;
+  End;
 end;
 
 procedure TInstantNexusDbConnectionDefEditForm.FormCreate(Sender: TObject);

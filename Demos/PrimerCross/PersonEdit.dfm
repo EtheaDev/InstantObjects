@@ -1,7 +1,7 @@
 inherited PersonEditForm: TPersonEditForm
   Left = 298
   Top = 244
-  Height = 359
+  Height = 383
   Caption = 'Person'
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
@@ -14,18 +14,19 @@ inherited PersonEditForm: TPersonEditForm
     008771100000000000111110000000000001110000000000000000000000FFFF
     0000FFFF0000FF9F0000F20F0000E0070000F0070000F8070000F8070000F807
     0000FC0F0000FE3F0000FC1F0000FC1F0000FC1F0000FE3F0000FFFF0000}
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 294
+    Top = 318
   end
   inherited ClientPanel: TPanel
-    Height = 294
+    Height = 318
     inherited PageControl: TPageControl
-      Height = 290
+      Height = 314
       inherited DetailsSheet: TTabSheet
         inherited MidBevel: TBevel
-          Height = 265
+          Height = 290
         end
         object BirthDateLabel: TLabel [8]
           Left = 136
@@ -45,17 +46,46 @@ inherited PersonEditForm: TPersonEditForm
         end
         object EmailsLabel: TLabel [10]
           Left = 240
-          Top = 88
+          Top = 104
           Width = 33
           Height = 13
           Caption = 'E-&mails'
           FocusControl = EmailsGrid
         end
-        inherited PhonesGrid: TDBGrid
-          Height = 57
-          TabOrder = 10
+        object SalaryLabel: TLabel [12]
+          Left = 8
+          Top = 264
+          Width = 29
+          Height = 13
+          Caption = 'Sa&lary'
         end
-        object BirthDateEdit: TDBEdit [18]
+        object PictureImage: TImage [13]
+          Left = 339
+          Top = 206
+          Width = 70
+          Height = 93
+        end
+        inherited StreetEdit: TDBMemo
+          Height = 37
+        end
+        inherited PhonesGrid: TDBGrid
+          Height = 76
+          TabOrder = 11
+          Columns = <
+            item
+              Expanded = False
+              FieldName = 'Name'
+              Width = 56
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'Number'
+              Width = 90
+              Visible = True
+            end>
+        end
+        object BirthDateEdit: TDBEdit [20]
           Left = 136
           Top = 200
           Width = 73
@@ -64,7 +94,7 @@ inherited PersonEditForm: TPersonEditForm
           DataSource = SubjectSource
           TabOrder = 7
         end
-        object EmployerEdit: TDBEdit [19]
+        object EmployerEdit: TDBEdit [21]
           Left = 8
           Top = 240
           Width = 129
@@ -74,14 +104,14 @@ inherited PersonEditForm: TPersonEditForm
           ReadOnly = True
           TabOrder = 8
         end
-        object EmailsGrid: TDBGrid [20]
+        object EmailsGrid: TDBGrid [22]
           Left = 240
-          Top = 104
+          Top = 120
           Width = 169
-          Height = 57
+          Height = 76
           DataSource = EmailsSource
           Options = [dgEditing, dgColLines, dgCancelOnExit]
-          TabOrder = 11
+          TabOrder = 12
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -11
@@ -91,11 +121,11 @@ inherited PersonEditForm: TPersonEditForm
             item
               Expanded = False
               FieldName = 'Address'
-              Width = 149
+              Width = 146
               Visible = True
             end>
         end
-        object EmployerToolBar: TToolBar [21]
+        object EmployerToolBar: TToolBar [23]
           Left = 140
           Top = 237
           Width = 69
@@ -135,39 +165,39 @@ inherited PersonEditForm: TPersonEditForm
             OnClick = EmployerClearButtonClick
           end
         end
-        object PictureImage: TDBImage [22]
-          Left = 339
-          Top = 172
-          Width = 70
-          Height = 93
-          DataField = 'Picture'
-          DataSource = SubjectSource
-          TabOrder = 13
-        end
-        object PictureButton: TButton [23]
+        object PictureButton: TButton [24]
           Left = 240
-          Top = 240
+          Top = 274
           Width = 81
           Height = 25
           Caption = '&Picture...'
-          TabOrder = 12
+          TabOrder = 13
           OnClick = PictureButtonClick
+        end
+        object SalaryEdit: TDBEdit
+          Left = 8
+          Top = 280
+          Width = 153
+          Height = 21
+          DataField = 'Salary'
+          DataSource = SubjectSource
+          TabOrder = 10
         end
       end
     end
   end
   inherited PhonesExposer: TInstantExposer
-    Top = 296
+    Top = 317
   end
   inherited PhonesSource: TDataSource
-    Top = 296
+    Top = 317
   end
   inherited SubjectExposer: TInstantExposer
     ObjectClassName = 'TPerson'
-    Top = 296
+    Top = 317
   end
   inherited SubjectSource: TDataSource
-    Top = 296
+    Top = 317
   end
   object EmailsExposer: TInstantExposer
     Options = []
@@ -176,15 +206,15 @@ inherited PersonEditForm: TPersonEditForm
     Mode = amContent
     ObjectClassName = 'TEmail'
     Left = 130
-    Top = 296
+    Top = 317
   end
   object EmailsSource: TDataSource
     DataSet = EmailsExposer
     Left = 162
-    Top = 296
+    Top = 317
   end
   object EmployerToolImages: TImageList
-    Left = 107
-    Top = 245
+    Left = 271
+    Top = 217
   end
 end

@@ -12,7 +12,7 @@ uses
   QGraphics, QControls, QForms, QDialogs, QStdCtrls, QExtCtrls,
   QGrids, QDBGrids, QMask, QDBCtrls, QComCtrls, QButtons, QImgList,
 {$ENDIF}
-  ContactEdit, Db, InstantPresentation, Model;
+  ContactEdit, DB, InstantPresentation, Model;
 
 type
   TPersonEditForm = class(TContactEditForm)
@@ -29,8 +29,10 @@ type
     EmployerLookupButton: TToolButton;
     EmployerClearButton: TToolButton;
     EmployerToolImages: TImageList;
-    PictureImage: TDBImage;
+    PictureImage: TImage;
     PictureButton: TButton;
+    SalaryLabel: TLabel;
+    SalaryEdit: TDBEdit;
     procedure EmployerClearButtonClick(Sender: TObject);
     procedure EmployerEditButtonClick(Sender: TObject);
     procedure EmployerLookupButtonClick(Sender: TObject);
@@ -38,6 +40,7 @@ type
       const FieldName: String; var Include: Boolean);
     procedure PictureButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     function GetSubject: TPerson;
     procedure SetSubject(const Value: TPerson);
@@ -55,7 +58,7 @@ implementation
 uses
   BasicEdit, CompanyBrowse,
 {$IFDEF MSWINDOWS}
-  ExtDlgs,
+  ExtDlgs, JPeg,
 {$ENDIF}
   InstantImageUtils;
 
@@ -126,11 +129,12 @@ begin
   try
     if Execute then
     begin
-      SubjectExposer.Edit;
+//      SubjectExposer.Edit;
       Picture := TPicture.Create;
       try
         Picture.LoadFromFile(FileName);
         PictureImage.Picture.Assign(Picture);
+        Subject._Picture.AssignPicture(Picture);
       finally
         Picture.Free;
       end;
@@ -163,11 +167,17 @@ procedure TPersonEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(EmployerToolImages,'PERSONEMPLOYERTOOLIMAGES');
+  LoadMultipleImages(EmployerToolImages,'PERSONEMPLOYERTOOLIMAGES.BMP');
 {$ENDIF}
 {$IFDEF LINUX}
   LoadMultipleImages(EmployerToolImages,ExtractFilePath(Application.ExeName)+'PERSONEMPLOYERTOOLIMAGES.BMP',true);
 {$ENDIF}
+end;
+
+procedure TPersonEditForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  Subject._Picture.AssignToPicture(PictureImage.Picture);
 end;
 
 initialization

@@ -1,16 +1,16 @@
 inherited ContactEditForm: TContactEditForm
   Left = 300
   Top = 265
+  Width = 441
+  Height = 334
   ActiveControl = NameEdit
   BorderIcons = [biSystemMenu]
   Caption = 'Contact'
-  ClientHeight = 300
-  ClientWidth = 433
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 248
+    Top = 269
     Width = 433
     TabOrder = 1
     inherited AnchorPanel: TPanel
@@ -19,11 +19,11 @@ inherited ContactEditForm: TContactEditForm
   end
   inherited ClientPanel: TPanel
     Width = 433
-    Height = 248
+    Height = 269
     TabOrder = 0
     inherited PageControl: TPageControl
       Width = 429
-      Height = 244
+      Height = 265
       inherited DetailsSheet: TTabSheet
         object NameLabel: TLabel
           Left = 8
@@ -60,7 +60,7 @@ inherited ContactEditForm: TContactEditForm
         object StateLabel: TLabel
           Left = 136
           Top = 144
-          Width = 71
+          Width = 72
           Height = 13
           Caption = 'S&tate/Province'
           FocusControl = StateEdit
