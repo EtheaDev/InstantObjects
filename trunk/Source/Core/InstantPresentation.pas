@@ -47,7 +47,7 @@ uses
   Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantUtils;
 
 type
-  TInstantAddClassFieldDefEvent = procedure (const FieldName : string; var BreakProcess : boolean) of object; //CB
+  TInstantAddClassFieldDefEvent = procedure (const FieldName : string; var BreakProcess : boolean) of object; 
   TInstantChangeType = (ctAppearance, ctData);
   TInstantAccessMode = (amObject, amContent);
 
@@ -220,7 +220,7 @@ type
     FOnInitFieldDef: TInstantFieldDefEvent;
     FOnLimit: TInstantLimitObjectsEvent;
     FOnTranslate: TInstantFieldTranslateEvent;
-    FOnAddClassFieldDef: TInstantAddClassFieldDefEvent; //CB
+    FOnAddClassFieldDef: TInstantAddClassFieldDefEvent; 
     procedure AccessorChanged(Sender: TObject; ChangeType: TInstantChangeType);
     procedure CheckClass(AObject: TObject);
     procedure ClearData(Buffer: PChar);
@@ -261,7 +261,7 @@ type
     procedure SetOnCompare(Value: TInstantCompareObjectsEvent);
     procedure SetOnLimit(Value: TInstantLimitObjectsEvent);
     procedure SetSorted(Value: Boolean);
-    function GetUndoBuffer: PChar; //CB
+    function GetUndoBuffer: PChar; 
   protected
     { IProviderSupport }
     procedure PSGetAttributes(List: TList); override;
@@ -360,10 +360,10 @@ type
     procedure SetFieldData(Field: TField; Buffer: Pointer); override;
     procedure SetFiltered(Value: Boolean); override;
     procedure SetRecNo(Value: Integer); override;
-    procedure Undo; virtual; //CB
+    procedure Undo; virtual; 
     procedure UpdateCalcFields;
     procedure WriteProperty(Field: TField; Instance: TObject; Value: Variant);
-    function BreakThorough( const FieldName : string ) : boolean; virtual; //CB
+    function BreakThorough( const FieldName : string ) : boolean; virtual; 
     property Accessor: TInstantAccessor read GetAccessor;
     property ContainerName: string read FContainerName write SetContainerName;
     property CurrentBuffer: PChar read GetCurrentBuffer;
@@ -414,7 +414,7 @@ type
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property TotalCount: Integer read GetTotalCount;
-    property UndoBuffer: PChar read GetUndoBuffer; //CB
+    property UndoBuffer: PChar read GetUndoBuffer; 
   published
     property FieldOptions: TInstantFieldOptions read FFieldOptions write SetFieldOptions default [foThorough];
     property Filtered;
@@ -448,7 +448,7 @@ type
     property OnInitFieldDef: TInstantFieldDefEvent read FOnInitFieldDef write FOnInitFieldDef;
     property OnLimit: TInstantLimitObjectsEvent read GetOnLimit write SetOnLimit;
     property OnTranslate: TInstantFieldTranslateEvent read FOnTranslate write FOnTranslate;
-    property OnAddClassFieldDef : TInstantAddClassFieldDefEvent read FOnAddClassFieldDef write FOnAddClassFieldDef; //CB
+    property OnAddClassFieldDef : TInstantAddClassFieldDefEvent read FOnAddClassFieldDef write FOnAddClassFieldDef; 
   end;
 
   TInstantExposerLink = class(TDetailDataLink)
@@ -627,7 +627,7 @@ function InstantFindAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 function InstantGetAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 procedure InstantRegisterAccessorClass(AClass: TInstantAccessorClass);
 procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
-function ExposerGetUndoBuffer(Exposer : TInstantCustomExposer) : PChar; //CB
+function ExposerGetUndoBuffer(Exposer : TInstantCustomExposer) : PChar; 
 
 implementation
 
