@@ -23,7 +23,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     Left = 0
     Top = 27
     Width = 251
-    Height = 372
+    Height = 379
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
