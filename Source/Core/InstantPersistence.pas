@@ -12661,7 +12661,6 @@ var
   TransError: Exception;
   DataSet : TDataSet;
 begin
-  Result := 0;
   try
     if not UsePreparedQuery then
       Result := Broker.Execute(AStatement, AParams)
