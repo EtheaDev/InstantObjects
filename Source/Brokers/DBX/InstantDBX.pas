@@ -180,17 +180,10 @@ type
     function GetSQLQuote: Char; override;
   end;
 
-procedure Register;
-
 implementation
 
 uses
   SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts;
-
-procedure Register;
-begin
-  RegisterComponents('InstantObjects', [TInstantDBXConnector]);
-end;
 
 { TInstantDBXConnector }
 

@@ -140,17 +140,10 @@ type
     property Connector: TInstantBDEConnector read GetConnector;
   end;
 
-procedure Register;
-
 implementation
 
 uses
   Bde, InstantConsts, InstantBDEConnectionDefEdit, Controls;
-
-procedure Register;
-begin
-  RegisterComponents('InstantObjects', [TInstantBDEConnector]);
-end;
 
 { TInstantBDEConnectionDef }
 
