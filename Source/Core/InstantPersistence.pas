@@ -2140,7 +2140,6 @@ type
   private
     FGenerator: TInstantSQLGenerator;
     FResolverList: TObjectList;
-    FUsePreparedQuery: Boolean;
     function GetResolverList: TObjectList;
     function GetResolverCount: Integer;
     function GetResolvers(Index: Integer): TInstantSQLResolver;
@@ -2150,9 +2149,6 @@ type
     function EnsureResolver(AMap: TInstantAttributeMap): TInstantCustomResolver; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     property ResolverList: TObjectList read GetResolverList;
-    procedure PrepareQuery(DataSet : TDataSet); virtual;
-    function ExecuteQuery(DataSet : TDataSet) : integer; virtual;
-    procedure UnprepareQuery(DataSet : TDataSet); virtual;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); virtual;
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual; abstract;
   public
@@ -2166,7 +2162,6 @@ type
     property Generator: TInstantSQLGenerator read GetGenerator;
     property ResolverCount: Integer read GetResolverCount;
     property Resolvers[Index: Integer]: TInstantSQLResolver read GetResolvers;
-    property UsePreparedQuery: Boolean read FUsePreparedQuery write FUsePreparedQuery;
   end;
 
   TInstantSQLResolver = class(TInstantCustomResolver)
@@ -2178,16 +2173,10 @@ type
     FSelectSQL: string;
     FUpdateSQL: string;
     FUpdateConcurrentSQL: string;
-
-    FPreparedDataSet: TDataSet;
-    LastStatement: string;
-    LastConnector: TObject;
     FSelectExternalSQL: string;
     FSelectExternalPartSQL: string;
     FDeleteExternalSQL: string;
     FInsertExternalSQL: string;
-    function CreatePreparedQuery(const AStatement: string; AParams: TParams = nil): TDataSet;
-
     procedure AddIntegerParam(Params: TParams; const ParamName: string; Value: Integer);
     procedure AddStringParam(Params: TParams; const ParamName, Value: string);
     // Adds an "Id" param, whose data type and size depends on connector settings.
@@ -2203,7 +2192,6 @@ type
     function GetUpdateConcurrentSQL: string;
     function GetUpdateSQL: string;
     function GetBroker: TInstantSQLBroker;
-    function GetUsePreparedQuery: Boolean;
     function GetSelectExternalSQL: string;
     function GetSelectExternalPartSQL: string;
     function GetDeleteExternalSQL: string;
@@ -2243,7 +2231,6 @@ type
       E: Exception): Exception; virtual;
   public
     constructor Create(ABroker: TInstantSQLBroker; AMap: TInstantAttributeMap);
-    destructor Destroy; override;
     property Broker: TInstantSQLBroker read GetBroker;
     property DeleteConcurrentSQL: string read GetDeleteConcurrentSQL write FDeleteConcurrentSQL;
     property DeleteSQL: string read GetDeleteSQL write FDeleteSQL;
@@ -2256,7 +2243,6 @@ type
     property SelectExternalPartSQL: string read GetSelectExternalPartSQL write FSelectExternalPartSQL;
     property UpdateConcurrentSQL: string read GetUpdateConcurrentSQL write FUpdateConcurrentSQL;
     property UpdateSQL: string read GetUpdateSQL write FUpdateSQL;
-    property UsePreparedQuery: Boolean read GetUsePreparedQuery;
   end;
 
   TInstantSQLQuery = class(TInstantCustomRelationalQuery)
@@ -12880,8 +12866,7 @@ end;
 
 procedure TInstantSQLBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
 begin
-  // must be implemented in derived broker
-  raise EInstantError.CreateFmt(SUnsupportedUsePreparedQuery, [ClassName]);
+  raise EInstantError.CreateFmt(SMissingImplementation, ['AssignDataSetParams', ClassName]);
 end;
 
 destructor TInstantSQLBroker.Destroy;
@@ -12900,12 +12885,6 @@ begin
     Result := CreateResolver(AMap);
     ResolverList.Add(Result)
   end;
-end;
-
-function TInstantSQLBroker.ExecuteQuery(DataSet: TDataSet): Integer;
-begin
-  // must be implemented in derived broker
-  raise EInstantError.CreateFmt(SUnsupportedUsePreparedQuery, [ClassName]);
 end;
 
 function TInstantSQLBroker.FindResolver(
@@ -12998,22 +12977,12 @@ begin
     end;
 end;
 
-procedure TInstantSQLBroker.PrepareQuery(DataSet: TDataSet);
-begin
-  //Prepare the query in derived Broker
-end;
-
 procedure TInstantSQLBroker.ReleaseDataSet(const ADataSet: TDataSet);
 begin
   if FStatementCacheCapacity <> 0 then
     ADataSet.Close
   else
     ADataSet.Free;
-end;
-
-procedure TInstantSQLBroker.UnprepareQuery(DataSet: TDataSet);
-begin
-  //Unprepare the query in derived Broker
 end;
 
 { TInstantSQLResolver }
@@ -13284,68 +13253,17 @@ begin
   FMap := AMap;
 end;
 
-function TInstantSQLResolver.CreatePreparedQuery(const AStatement: string;
-  AParams: TParams): TDataSet;
-begin
-  if (FPreparedDataSet = nil) or (LastStatement <> AStatement) or (LastConnector <> Broker.Connector) then
-  begin
-    //First time or different statement/connector: create and prepare query
-    if Assigned(FPreparedDataSet) then
-    begin
-      FPreparedDataSet.Close;
-      Broker.UnprepareQuery(FPreparedDataSet);
-      FPreparedDataSet.Free;
-      FPreparedDataSet := nil;
-    end;
-    Result := Broker.CreateDataSet(AStatement,AParams);
-    try
-      FPreparedDataSet := Result;
-      LastStatement := AStatement;
-      LastConnector := Broker.Connector;
-      //Prepare the query for future uses
-      Broker.PrepareQuery(FPreparedDataSet);
-    except
-      Result.Free;
-      raise;
-    end;
-  end
-  else
-  begin
-    //Return the previous prepared query
-    if FPreparedDataSet.Active then
-      FPreparedDataSet.Close;
-    //Assign only new param values
-    Broker.AssignDataSetParams(FPreparedDataSet,AParams);
-    Result := FPreparedDataSet;
-  end;
-end;
-
-destructor TInstantSQLResolver.Destroy;
-begin
-  if Assigned(FPreparedDataSet) then
-    FPreparedDataSet.Free;
-  inherited;
-end;
-
 function TInstantSQLResolver.ExecuteStatement(const AStatement: string;
   AParams: TParams; Info: PInstantOperationInfo;
   ConflictAction: TInstantConflictAction; AObject: TInstantObject): Integer;
 var
   TransError: Exception;
-  DataSet : TDataSet;
 begin
   {$IFDEF IO_STATEMENT_LOGGING}
   InstantLogStatement('Before: ', AStatement, AParams);
   {$ENDIF}
   try
-    if not UsePreparedQuery then
-      Result := Broker.Execute(AStatement, AParams)
-    else
-    begin
-      DataSet := CreatePreparedQuery(AStatement, AParams);
-      Result := Broker.ExecuteQuery(DataSet);
-    end;
-
+    Result := Broker.Execute(AStatement, AParams);
     Info.Success := Result = 1;
     Info.Conflict := not Info.Success or (ConflictAction = caIgnore);
   except
@@ -13435,11 +13353,6 @@ begin
   if FUpdateSQL = '' then
     FUpdateSQL := Broker.Generator.GenerateUpdateSQL(Map);
   Result := FUpdateSQL;
-end;
-
-function TInstantSQLResolver.GetUsePreparedQuery: Boolean;
-begin
-  Result := Broker.UsePreparedQuery;
 end;
 
 procedure TInstantSQLResolver.InternalDisposeMap(AObject: TInstantObject;
@@ -13655,11 +13568,7 @@ begin
   Params := TParams.Create;
   try
     AddBaseParams(Params, AObject.ClassName, AObjectId);
-    if not UsePreparedQuery then
-      DataSet := Broker.AcquireDataSet(SelectSQL, Params)
-    else
-      DataSet := CreatePreparedQuery(SelectSQL, Params);
-
+    DataSet := Broker.AcquireDataSet(SelectSQL, Params);
     try
       DataSet.Open;
       Info.Success := not DataSet.EOF;
@@ -13672,8 +13581,7 @@ begin
       end else
         ResetAttributes;
     finally
-      if not UsePreparedQuery then
-        Broker.ReleaseDataSet(DataSet);
+      Broker.ReleaseDataSet(DataSet);
     end;
   finally
     Params.Free;

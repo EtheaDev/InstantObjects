@@ -152,9 +152,9 @@ resourcestring
   SUnsupportedDataType = 'Unsupported datatype: %s';
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
-  SUnsupportedUsePreparedQuery = 'UsePreparedQueries option not supported by broker of type %s';
   SUnsupportedGraphicStream = 'Unsupported graphic stream format';
   SUnsupportedGraphicClass = 'Unsupported graphic class';
+  SMissingImplementation = 'Method %s is not implemented in class %s';
 
 implementation
 

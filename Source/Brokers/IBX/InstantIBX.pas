@@ -24,14 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta:
- * - blob streaming in XML format (Part, Parts, References)
- * - Prepared queries support
- * - OnLogin event support
- * Nando Dessena:
- * - option to disable the use of delimited identifiers in dialect 3 databases
- * - implemented InternalCreateDatabase and GetDatabaseExists
- *   NOTE: requires at least version x.07 of IBX.
+ * Carlo Barazzetta, Nando Dessena
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantIBX;
@@ -126,9 +120,6 @@ type
     function GetSQLDelimiters: string; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure PrepareQuery(DataSet : TDataSet); override;
-    procedure UnprepareQuery(DataSet : TDataSet); override;
-    function ExecuteQuery(DataSet : TDataSet) : integer; override;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
   public
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
@@ -465,16 +456,6 @@ begin
   end;
 end;
 
-function TInstantIBXBroker.ExecuteQuery(DataSet: TDataSet) : integer;
-begin
-  //don't call inherited!
-  with TIBQuery(DataSet) do
-  begin
-    ExecSQL;
-    Result := RowsAffected;
-  end;
-end;
-
 function TInstantIBXBroker.GetConnector: TInstantIBXConnector;
 begin
   Result := inherited Connector as TInstantIBXConnector;
@@ -511,18 +492,6 @@ end;
 function TInstantIBXBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantIBXQuery.Create(Connector);
-end;
-
-procedure TInstantIBXBroker.PrepareQuery(DataSet: TDataSet);
-begin
-  inherited;
-  TIBQuery(DataSet).Prepare;
-end;
-
-procedure TInstantIBXBroker.UnprepareQuery(DataSet: TDataSet);
-begin
-  inherited;
-  TIBQuery(DataSet).Unprepare;
 end;
 
 { TInstantIBXTranslator }

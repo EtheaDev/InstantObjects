@@ -119,9 +119,6 @@ type
     function GetSQLDelimiters: string; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure PrepareQuery(DataSet : TDataSet); override;
-    procedure UnprepareQuery(DataSet : TDataSet); override;
-    function ExecuteQuery(DataSet : TDataSet) : integer; override;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
   public
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
@@ -420,7 +417,6 @@ begin
     if Assigned(AParams) then
       AssignDataSetParams(Query, AParams);
     Result := Query;
-
   except
     Query.Free;
     raise;
@@ -470,16 +466,6 @@ begin
   end;
 end;
 
-function TInstantUIBBroker.ExecuteQuery(DataSet: TDataSet) : integer;
-begin
-  //don't call inherited!
-  with TJvUIBDataSet(DataSet) do
-  begin
-    Execute;
-    Result := RowsAffected;
-  end;
-end;
-
 function TInstantUIBBroker.GetConnector: TInstantUIBConnector;
 begin
   Result := inherited Connector as TInstantUIBConnector;
@@ -516,16 +502,6 @@ end;
 function TInstantUIBBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantUIBQuery.Create(Connector);
-end;
-
-procedure TInstantUIBBroker.PrepareQuery(DataSet: TDataSet);
-begin
-  inherited;
-end;
-
-procedure TInstantUIBBroker.UnprepareQuery(DataSet: TDataSet);
-begin
-  inherited;
 end;
 
 { TInstantUIBTranslator }

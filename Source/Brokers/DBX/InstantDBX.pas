@@ -102,10 +102,7 @@ type
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetDatabaseName: string; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure PrepareQuery(DataSet : TDataSet); override; //CB
-    procedure UnprepareQuery(DataSet : TDataSet); override; //CB
-    function ExecuteQuery(DataSet : TDataSet) : integer; override; //CB
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; //CB
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
   public
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
@@ -413,17 +410,11 @@ function TInstantDBXBroker.Execute(const AStatement: string;
   AParams: TParams): Integer;
 begin
   with CreateDataSet(AStatement, AParams) as TSQLQuery do
-  try
-    Result := ExecSQL;
-  finally
-    Free;
-  end;
-end;
-
-function TInstantDBXBroker.ExecuteQuery(DataSet: TDataSet): integer;
-begin
-  //don't call inherited!
-  Result := TSQLQuery(DataSet).ExecSQL;
+    try
+      Result := ExecSQL;
+    finally
+      Free;
+    end;
 end;
 
 function TInstantDBXBroker.GetConnector: TInstantDBXConnector;
@@ -439,18 +430,6 @@ end;
 function TInstantDBXBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantDBXQuery.Create(Connector);
-end;
-
-procedure TInstantDBXBroker.PrepareQuery(DataSet: TDataSet);
-begin
-  inherited;
-  TSQLQuery(DataSet).Prepared := True;
-end;
-
-procedure TInstantDBXBroker.UnprepareQuery(DataSet: TDataSet);
-begin
-  inherited;
-  TSQLQuery(DataSet).Prepared := False;
 end;
 
 { TInstantDBXResolver }

@@ -171,9 +171,6 @@ type
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure PrepareQuery(DataSet : TDataSet); override; 
-    procedure UnprepareQuery(DataSet : TDataSet); override; 
-    function ExecuteQuery(DataSet : TDataSet) : integer; override; 
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; 
   public
     function CreateDataSet(const Statement: string; Params: TParams): TDataSet; override;
@@ -1097,11 +1094,6 @@ begin
   end;
 end;
 
-function TInstantADOMSSQLBroker.ExecuteQuery(DataSet: TDataSet): integer;
-begin
-  Result := TADOQuery(DataSet).ExecSQL;
-end;
-
 function TInstantADOMSSQLBroker.GetSQLQuote: Char;
 begin
   Result := '''';
@@ -1110,16 +1102,6 @@ end;
 function TInstantADOMSSQLBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantADOMSSQLQuery.Create(Connector);
-end;
-
-procedure TInstantADOMSSQLBroker.PrepareQuery(DataSet: TDataSet);
-begin
-  TADOQuery(DataSet).Prepared := True;
-end;
-
-procedure TInstantADOMSSQLBroker.UnprepareQuery(DataSet: TDataSet);
-begin
-  TADOQuery(DataSet).Prepared := False;
 end;
 
 { TInstantADOMSSQLQuery }
