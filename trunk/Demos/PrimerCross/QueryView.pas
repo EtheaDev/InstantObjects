@@ -12,7 +12,7 @@ uses
   QGraphics, QControls, QForms, QDialogs,
   QGrids, QDBGrids, QStdCtrls, QExtCtrls, QActnList, QMenus, QButtons,
 {$ENDIF}
-  BasicView, Db, InstantPresentation;
+  BasicView, Db, InstantPresentation, Mask;
 
 type
   TQueryViewForm = class(TBasicViewForm)
@@ -29,6 +29,8 @@ type
     Splitter: TSplitter;
     TestSelector: TInstantSelector;
     TestSource: TDataSource;
+    MaxCountEdit: TMaskEdit;
+    NumberLabel: TLabel;
     procedure ExecuteActionExecute(Sender: TObject);
     procedure ExampleComboBoxClick(Sender: TObject);
     procedure TestSelectorAfterScroll(DataSet: TDataSet);
@@ -86,6 +88,7 @@ begin
   with TestSelector do
   begin
     Close;
+    TestSelector.MaxCount := StrToInt(Trim(MaxCountEdit.text));
     Command.Text := CommandEdit.Text;
     Open;
   end;

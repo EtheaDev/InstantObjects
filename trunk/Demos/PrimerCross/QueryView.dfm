@@ -1,9 +1,10 @@
 inherited QueryViewForm: TQueryViewForm
+  Width = 600
   Height = 320
   object Splitter: TSplitter
     Left = 0
     Top = 147
-    Width = 425
+    Width = 600
     Height = 6
     Cursor = crVSplit
     Align = alTop
@@ -11,7 +12,7 @@ inherited QueryViewForm: TQueryViewForm
   object CommandPanel: TPanel
     Left = 0
     Top = 0
-    Width = 425
+    Width = 600
     Height = 147
     Align = alTop
     BevelOuter = bvNone
@@ -33,10 +34,20 @@ inherited QueryViewForm: TQueryViewForm
       Caption = 'E&xample'
       FocusControl = ExampleComboBox
     end
+    object NumberLabel: TLabel
+      Left = 443
+      Top = 126
+      Width = 77
+      Height = 13
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = '&Max Count:'
+      FocusControl = MaxCountEdit
+    end
     object CommandEdit: TMemo
       Left = 30
       Top = 30
-      Width = 365
+      Width = 540
       Height = 87
       Align = alClient
       Font.Charset = ANSI_CHARSET
@@ -58,18 +69,28 @@ inherited QueryViewForm: TQueryViewForm
     object ExampleComboBox: TComboBox
       Left = 168
       Top = 121
-      Width = 221
+      Width = 281
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
       TabOrder = 1
       OnClick = ExampleComboBoxClick
     end
+    object MaxCountEdit: TMaskEdit
+      Left = 524
+      Top = 122
+      Width = 44
+      Height = 21
+      EditMask = '#########;1; '
+      MaxLength = 9
+      TabOrder = 3
+      Text = '0        '
+    end
   end
   object ResultPanel: TPanel
     Left = 0
     Top = 153
-    Width = 425
+    Width = 600
     Height = 167
     Align = alClient
     BevelOuter = bvNone
@@ -77,7 +98,7 @@ inherited QueryViewForm: TQueryViewForm
     object ResultGrid: TDBGrid
       Left = 0
       Top = 0
-      Width = 425
+      Width = 600
       Height = 167
       Align = alClient
       DataSource = TestSource
