@@ -17,3 +17,10 @@
   {$DEFINE D7+}
 {$ENDIF}
 
+{$IFDEF VER170}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9}
+  {$DEFINE D9+}
+{$ENDIF}
