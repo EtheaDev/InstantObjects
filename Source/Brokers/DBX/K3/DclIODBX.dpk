@@ -1,7 +1,7 @@
-package ioxmlK3;
+package DclIODBX;
 
 {$R *.res}
-{$R 'InstantXML.dcr'}
+{$R '../InstantDBX.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -23,14 +23,15 @@ package ioxmlK3;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects XML Support K3 0.6'}
+{$DESCRIPTION 'InstantObjects DBX Design-Time Support (Kylix 3)'}
+{$LIBPREFIX ''}
+{$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  iodesK3;
+  IODBX;
 
 contains
-  InstantXMLConnectionDefEdit in 'InstantXMLConnectionDefEdit.pas' {InstantXMLConnectionDefEditForm},
-  InstantXML in 'InstantXML.pas';
+  InstantDBXReg in '../InstantDBXReg.pas';
 
 end.

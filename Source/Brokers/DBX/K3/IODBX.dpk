@@ -1,7 +1,6 @@
-package iodbxK3;
+package IODBX;
 
 {$R *.res}
-{$R 'InstantDBX.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -23,17 +22,15 @@ package iodbxK3;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects 1.6.5 dbExpress Support'}
+{$DESCRIPTION 'InstantObjects DBX Run-Time Support (Kyix 3)'}
+{$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
-  visualclx,
-  dataclx,
-  iodesK3;
+  IOCore;
 
 contains
-  InstantDBXConnectionDefEdit in 'InstantDBXConnectionDefEdit.pas' {InstantDBXConnectionDefEditForm},
-  InstantDBX in 'InstantDBX.pas';
+  InstantDBXConnectionDefEdit in '../InstantDBXConnectionDefEdit.pas' {InstantDBXConnectionDefEditForm},
+  InstantDBX in '../InstantDBX.pas';
 
 end.
