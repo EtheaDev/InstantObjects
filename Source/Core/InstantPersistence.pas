@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Andrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Joao Morais
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPersistence;
@@ -7082,7 +7083,7 @@ end;
 
 function TInstantObject.AddObject(AObject: TInstantObject): Integer;
 begin
-  Result := DefaultContainer.Add(AObject)
+  Result := DefaultContainer.Add(AObject);
 end;
 
 function TInstantObject.AddRef: Integer;
@@ -7538,7 +7539,7 @@ begin
   if Assigned(Arg) and not (TObject(Arg) is TInstantConnector) then
     raise EInstantError.CreateFmt(SInvalidArgument, [ClassName,
       TInstantConnector.ClassName]);
-  Result := Create(Arg)
+  Result := Create(Arg);
 end;
 
 procedure TInstantObject.DeleteObject(Index: Integer);
@@ -7931,7 +7932,7 @@ begin
     FDefaultContainer := FindDefaultContainer;
   Result := FDefaultContainer;
   if not Assigned(Result) then
-    raise EInstantError.CreateFmt(SDefaultContainerNotSpecified, [ClassName])
+    raise EInstantError.CreateFmt(SDefaultContainerNotSpecified, [ClassName]);
 end;
 
 function TInstantObject.GetHasDefaultContainer: Boolean;
@@ -8100,7 +8101,7 @@ begin
     TMethod(Method).Data := Self;
     Result := Method(Params);
   end else
-    Result := Format(SMethodNotFound, [MethodName, ClassName])
+    Result := Format(SMethodNotFound, [MethodName, ClassName]);
 end;
 
 function TInstantObject.IsOperationAllowed(
@@ -13702,6 +13703,8 @@ var
         PartsAttribute := TInstantParts(AObject.AttributeByName(AttributeMetadata.Name));
         if PartsAttribute.IsChanged then
         begin
+          for ii:=0 to Pred(PartsAttribute.Count) do
+            PartsAttribute.Items[ii];
           if Map[i].StorageKind = skExternal then
           begin
             // Delete all objects
