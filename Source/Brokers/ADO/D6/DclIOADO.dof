@@ -39,7 +39,7 @@ RemoteSymbols=0
 MinStackSize=16384
 MaxStackSize=1048576
 ImageBase=4194304
-ExeDescription=InstantObjects ADO Design-Time Support (Delphi 7)
+ExeDescription=InstantObjects ADO Design-Time Support (Delphi 6)
 [Directories]
 OutputDir=
 UnitOutputDir=
@@ -85,9 +85,5 @@ OriginalFilename=
 ProductName=InstantObjects
 ProductVersion=1.7
 Comments=
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlSearchPath]
-Count=1
-Item0=$(DELPHI)\Lib\Debug
+[Excluded Packages]
+C:\Programmi\Borland\Delphi6\Bin\dclclxstd60.bpl=Borland CLX Standard Components
