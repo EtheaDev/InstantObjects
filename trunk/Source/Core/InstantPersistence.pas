@@ -966,15 +966,25 @@ type
 
   TInstantParts = class(TInstantContainer)
   private
+    FAllowOwned: Boolean;
+    FObjectReferenceList: TObjectList;
     FObjectList: TObjectList;
     function GetObjectList: TObjectList;
     procedure ClearOwnerContext(AObject: TInstantObject);
     procedure SetOwnerContext(AObject: TInstantObject);
     property ObjectList: TObjectList read GetObjectList;
+    function CreateObjectReference(AObject: TInstantObject): TInstantObjectReference;
+    function GetObjectReferenceList: TObjectList;
+    function GetObjectReferences(Index: Integer): TInstantObjectReference;
+    procedure SetObjectReferences(Index: Integer; Value: TInstantObjectReference);
+    property ObjectReferenceList: TObjectList read GetObjectReferenceList;
+    property ObjectReferences[Index: Integer]: TInstantObjectReference read GetObjectReferences write SetObjectReferences;
   protected
     class function AttributeType: TInstantAttributeType; override;
+    function GetAllowOwned: Boolean; override;
     function GetCount: Integer; override;
     function GetIsChanged: Boolean; override;
+    function GetInstances(Index: Integer): TInstantObject; override;
     function InternalAdd(AObject: TInstantObject): Integer; override;
     procedure InternalClear; override;
     procedure InternalDelete(Index: Integer); override;
@@ -986,12 +996,15 @@ type
     procedure InternalMove(CurIndex, NewIndex: Integer); override;
     procedure InternalSetItems(Index: Integer; AValue: TInstantObject); override;
     procedure ReadObject(Reader: TInstantReader); override;
+    procedure SetAllowOwned(Value: Boolean); virtual;
     procedure ValidateObject(AObject: TInstantObject); override;
     procedure WriteObject(Writer: TInstantWriter); override;
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure Unchanged; override;
+    procedure DestroyObject(Index: Integer);
+    property AllowOwned write SetAllowOwned;
   end;
 
   TInstantReferences = class(TInstantContainer)
@@ -6351,17 +6364,54 @@ begin
   if Source is TInstantParts then
   begin
     Clear;
-    with TInstantParts(Source) do
-      for I := 0 to Pred(Count) do
-      begin
-        Obj := Items[I].Clone(Self.Connector);
-        try
-          Self.Add(Obj);
-        except
-          Obj.Free;
-          raise;
+    // if not external then clone and add then object
+    if Self.Metadata.IsExternal = ceNo then
+    begin
+      with TInstantParts(Source) do
+        for I := 0 to Pred(Count) do
+        begin
+          Obj := Items[I].Clone(Self.Connector);
+          try
+            Self.Add(Obj);
+          except
+            Obj.Free;
+            raise;
+          end;
         end;
+    end
+    else
+    begin
+      // if is external
+      if TInstantParts(Source).Metadata.IsExternal=ceNo then
+      begin
+        // if is not external then clone and add the object
+        with TInstantParts(Source) do
+          for I := 0 to Pred(Count) do
+          begin
+            Obj := Items[I].Clone(Self.Connector);
+            try
+              Self.Add(Obj);
+            except
+              Obj.Free;
+              raise;
+            end;
+          end;
+      end
+      else
+      begin
+        // if source is external clone only if connector is different
+        with TInstantParts(Source) do
+        begin
+          for I := 0 to Pred(Count) do
+          begin
+            if Connector <> Self.Connector then
+              Self.Add(Items[I].Clone(Self.Connector))
+            else
+              Self.Add(Items[I]);
+          end;
+        end
       end;
+    end;
   end;
 end;
 
@@ -6376,15 +6426,42 @@ begin
     AObject.ClearOwnerContext;
 end;
 
+function TInstantParts.CreateObjectReference(
+  AObject: TInstantObject): TInstantObjectReference;
+begin
+  Result := TInstantObjectReference.Create(AObject, True);
+end;
+
 destructor TInstantParts.Destroy;
 begin
-  FObjectList.Free;
+  if Self.Metadata.IsExternal = ceNo then
+    FObjectList.Free
+  else
+    FObjectReferenceList.Free;
   inherited;
+end;
+
+procedure TInstantParts.DestroyObject(Index: Integer);
+begin
+  ObjectReferences[Index].DestroyInstance;
+end;
+
+function TInstantParts.GetAllowOwned: Boolean;
+begin
+  Result := FAllowOwned;
 end;
 
 function TInstantParts.GetCount: Integer;
 begin
-  Result := ObjectList.Count;
+  if Self.Metadata.IsExternal = ceNo then
+    Result := ObjectList.Count
+  else
+    Result := ObjectReferenceList.Count;
+end;
+
+function TInstantParts.GetInstances(Index: Integer): TInstantObject;
+begin
+  Result := ObjectReferences[Index].Instance;
 end;
 
 function TInstantParts.GetIsChanged: Boolean;
@@ -6408,68 +6485,183 @@ begin
   Result := FObjectList;
 end;
 
-function TInstantParts.InternalAdd(AObject: TInstantObject): Integer;
+function TInstantParts.GetObjectReferenceList: TObjectList;
 begin
-  Result := ObjectList.Add(AObject);
-  SetOwnerContext(AObject);
+  if not Assigned(FObjectReferenceList) then
+    FObjectReferenceList := TObjectList.Create;
+  Result := FObjectReferenceList;
+end;
+
+function TInstantParts.GetObjectReferences(
+  Index: Integer): TInstantObjectReference;
+begin
+  Result := TInstantObjectReference(ObjectReferenceList[Index]);
+end;
+
+function TInstantParts.InternalAdd(AObject: TInstantObject): Integer;
+var
+  Ref: TInstantObjectReference;
+begin
+  if Self.Metadata.IsExternal = ceNo then
+  begin
+    Result := ObjectList.Add(AObject);
+    SetOwnerContext(AObject);
+  end
+  else
+  begin
+    Ref := CreateObjectReference(AObject);
+    try
+      Result := ObjectReferenceList.Add(Ref);
+    except
+      Ref.Free;
+      raise;
+    end;
+  end;
 end;
 
 procedure TInstantParts.InternalClear;
 var
   I: Integer;
 begin
-  for I := 0 to Pred(ObjectList.Count) do
-    ClearOwnerContext(ObjectList[I] as TInstantObject);
-  ObjectList.Clear;
+  if Self.Metadata.IsExternal = ceNo then
+  begin
+    for I := 0 to Pred(ObjectList.Count) do
+      ClearOwnerContext(ObjectList[I] as TInstantObject);
+    ObjectList.Clear;
+  end
+  else
+  begin
+    for I := 0 to Pred(ObjectReferenceList.Count) do
+      if Assigned(ObjectReferences[I].Instance) then
+        ClearOwnerContext(ObjectReferences[I].Instance);
+    ObjectReferenceList.Clear;
+  end;
 end;
 
 procedure TInstantParts.InternalDelete(Index: Integer);
+var
+  Ref: TInstantObjectReference;
 begin
-  ClearOwnerContext(ObjectList[Index] as TInstantObject);
-  ObjectList.Delete(Index)
+  if Self.Metadata.IsExternal = ceNo then
+  begin
+    ClearOwnerContext(ObjectList[Index] as TInstantObject);
+    ObjectList.Delete(Index)
+  end
+  else
+  begin
+    Ref := ObjectReferences[Index];
+    if assigned(Ref.Instance) then
+      ClearOwnerContext(Ref.Instance);
+    ObjectReferenceList.Delete(Index);
+  end;
 end;
 
 procedure TInstantParts.InternalExchange(Index1,
   Index2: Integer);
 begin
-  ObjectList.Exchange(Index1, Index2);
+  if Self.Metadata.IsExternal = ceNo then
+    ObjectList.Exchange(Index1, Index2)
+  else
+    ObjectReferenceList.Exchange(Index1, Index2);
 end;
 
 function TInstantParts.InternalGetItems(Index: Integer): TInstantObject;
+var
+  Ref: TInstantObjectReference;
 begin
-  Result := ObjectList[Index] as TInstantObject;
+  if Self.Metadata.IsExternal = ceNo then
+    Result := ObjectList[Index] as TInstantObject
+  else
+  begin
+    Ref := ObjectReferences[Index];
+    if not Assigned(Ref.Instance) then
+      Result := Ref.Dereference(Connector)
+    else
+      Result := Ref.Instance;
+    if not Result.IsOwned then
+      SetOwnerContext(Result);
+  end;
 end;
 
 function TInstantParts.InternalIndexOf(
   AObject: TInstantObject): Integer;
+var
+  Ref: TInstantObjectReference;
 begin
-  Result := ObjectList.IndexOf(AObject);
+  if Self.Metadata.IsExternal = ceNo then
+    Result := ObjectList.IndexOf(AObject)
+  else
+  begin
+    for Result := 0 to Pred(Count) do
+    begin
+      Ref := ObjectReferences[Result];
+      if Ref.Equals(AObject) then
+        Exit;
+    end;
+    Result := -1;
+  end;
 end;
 
 function TInstantParts.InternalIndexOfInstance(Instance: Pointer): Integer;
+var
+  Ref: TInstantObjectReference;
 begin
-  Result := InternalIndexOf(TInstantObject(Instance));
+  if Self.Metadata.IsExternal = ceNo then
+    Result := InternalIndexOf(TInstantObject(Instance))
+  else
+  begin
+    for Result := 0 to Pred(Count) do
+    begin
+      Ref := ObjectReferences[Result];
+      if Ref.Instance = Instance then
+        Exit;
+    end;
+    Result := -1;
+  end;
 end;
 
 procedure TInstantParts.InternalInsert(Index: Integer;
   AObject: TInstantObject);
+var
+  Ref: TInstantObjectReference;
 begin
-  ObjectList.Insert(Index, AObject);
-  SetOwnerContext(AObject);
+  if Self.Metadata.IsExternal = ceNo then
+  begin
+    ObjectList.Insert(Index, AObject);
+    SetOwnerContext(AObject);
+  end
+  else
+  begin
+    Ref := CreateObjectReference(AObject);
+    try
+      ObjectReferenceList.Insert(Index, Ref);
+    except
+      Ref.Free;
+      raise;
+    end;
+  end;
 end;
 
 procedure TInstantParts.InternalMove(CurIndex,
   NewIndex: Integer);
 begin
-  ObjectList.Move(CurIndex, NewIndex);
+  if Self.Metadata.IsExternal = ceNo then
+    ObjectList.Move(CurIndex, NewIndex)
+  else
+    ObjectReferenceList.Move(CurIndex, NewIndex);
 end;
 
 procedure TInstantParts.InternalSetItems(Index: Integer;
   AValue: TInstantObject);
 begin
-  ClearOwnerContext(ObjectList[Index] as TInstantObject);
-  ObjectList[Index] := AValue;
-  SetOwnerContext(AValue);
+  if Self.Metadata.IsExternal = ceNo then
+  begin
+    ClearOwnerContext(ObjectList[Index] as TInstantObject);
+    ObjectList[Index] := AValue;
+    SetOwnerContext(AValue);
+  end
+  else
+    ObjectReferences[Index].Instance := AValue;
 end;
 
 procedure TInstantParts.ReadObject(Reader: TInstantReader);
@@ -6490,6 +6682,17 @@ begin
     end;
   end;
   Reader.ReadListEnd;
+end;
+
+procedure TInstantParts.SetAllowOwned(Value: Boolean);
+begin
+  FAllowOwned := Value;
+end;
+
+procedure TInstantParts.SetObjectReferences(Index: Integer;
+  Value: TInstantObjectReference);
+begin
+  ObjectReferenceList[Index] := Value;
 end;
 
 procedure TInstantParts.SetOwnerContext(AObject: TInstantObject);
@@ -13604,120 +13807,122 @@ var
       if AttributeMetadata.AttributeType = atPart then
       begin
         PartAttribute := TInstantPart(AObject.AttributeByName(AttributeMetadata.Name));
-        if AttributeMetadata.IsExternal = ceLinked then
-        begin
-          // Select and delete
-          SelectParams := TParams.Create;
-          try
-            SelectStatement := Format(SelectExternalLinkedSQL,
-              [AttributeMetadata.ObjectClassMetadata.TableName,
-              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-              AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+        if PartAttribute.IsChanged then begin
+          if AttributeMetadata.IsExternal = ceLinked then
+          begin
+            // Select and delete
+            SelectParams := TParams.Create;
             try
-              Open;
+              SelectStatement := Format(SelectExternalLinkedSQL,
+                [AttributeMetadata.ObjectClassMetadata.TableName,
+                AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
+                AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
+              AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
+              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
+              with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
               try
-                if not IsEmpty then
-                begin
-                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(PartObject) then
-                      PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                  finally
-                    PartObject.Free;
+                Open;
+                try
+                  if not IsEmpty then
+                  begin
+                    PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                      Fields[1].AsString, False, False, AObject.Connector);
+                    try
+                      if Assigned(PartObject) then
+                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
+                    finally
+                      PartObject.Free;
+                    end;
                   end;
+                finally
+                  Close;
                 end;
               finally
-                Close;
+                Free;
               end;
             finally
-              Free;
+              SelectParams.Free;
             end;
-          finally
-            SelectParams.Free;
+
+            // Store
+            PartObject := PartAttribute.Value;
+            PartObject.CheckId;
+            PartObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
+            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
           end;
 
-          // Store
-          PartObject := PartAttribute.Value;
-          PartObject.CheckId;
-          PartObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
-          PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-        end;
-
-        if Map[i].IsExternal = ceStored then
-        begin
-          // Delete object
-          SelectParams := TParams.Create;
-          try
-            SelectStatement := Format(SelectExternalPartStoredSQL, [AttributeMetadata.ExternalStoredName]);
-            AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
-            AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-            with Broker.CreateDataSet(SelectStatement, SelectParams) do
+          if Map[i].IsExternal = ceStored then
+          begin
+            // Delete object
+            SelectParams := TParams.Create;
             try
-              Open;
+              SelectStatement := Format(SelectExternalPartStoredSQL, [AttributeMetadata.ExternalStoredName]);
+              AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
+              AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
+              AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+              AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
+              with Broker.CreateDataSet(SelectStatement, SelectParams) do
               try
-                if not IsEmpty then
-                begin
-                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(PartObject) then
-                      PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                  finally
-                    PartObject.Free;
+                Open;
+                try
+                  if not IsEmpty then
+                  begin
+                    PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                      Fields[1].AsString, False, False, AObject.Connector);
+                    try
+                      if Assigned(PartObject) then
+                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
+                    finally
+                      PartObject.Free;
+                    end;
                   end;
+                finally
+                  Close;
                 end;
               finally
-                Close;
+                Free;
               end;
             finally
-              Free;
+              SelectParams.Free;
             end;
-          finally
-            SelectParams.Free;
-          end;
 
-          // Delete link
-          DeleteParams := TParams.Create;
-          try
-            DeleteStatement := Format(DeleteExternalSQL,
-              [AttributeMetadata.ExternalStoredName,
-              InstantParentClassFieldName,
-              InstantParentAttributeFieldName]);
-            AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
-            Broker.Execute(DeleteStatement, DeleteParams);
-          finally
-            DeleteParams.Free;
-          end;
+            // Delete link
+            DeleteParams := TParams.Create;
+            try
+              DeleteStatement := Format(DeleteExternalSQL,
+                [AttributeMetadata.ExternalStoredName,
+                InstantParentClassFieldName,
+                InstantParentAttributeFieldName]);
+              AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
+              AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
+              AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+              Broker.Execute(DeleteStatement, DeleteParams);
+            finally
+              DeleteParams.Free;
+            end;
 
-          // Store object
-          PartObject := PartAttribute.Value;
-          PartObject.CheckId;
-          PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
+            // Store object
+            PartObject := PartAttribute.Value;
+            PartObject.CheckId;
+            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
 
-          // Insert link
-          InsertParams := TParams.Create;
-          try
-            InsertStatement := Format(InsertExternalPartSQL,
-              [AttributeMetadata.ExternalStoredName]);
-            AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
-            AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
-            AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
-            AddStringParam(InsertParams, InstantChildClassFieldName,
-              PartAttribute.Value.ClassName);
-            AddIdParam(InsertParams, InstantChildIdFieldName,
-              PartAttribute.Value.Id);
-            Broker.Execute(InsertStatement, InsertParams);
-          finally
-            InsertParams.Free;
+            // Insert link
+            InsertParams := TParams.Create;
+            try
+              InsertStatement := Format(InsertExternalPartSQL,
+                [AttributeMetadata.ExternalStoredName]);
+              AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
+              AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
+              AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
+              AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+              AddStringParam(InsertParams, InstantChildClassFieldName,
+                PartAttribute.Value.ClassName);
+              AddIdParam(InsertParams, InstantChildIdFieldName,
+                PartAttribute.Value.Id);
+              Broker.Execute(InsertStatement, InsertParams);
+            finally
+              InsertParams.Free;
+            end;
           end;
         end;
       end;
@@ -13739,129 +13944,131 @@ var
       if AttributeMetadata.AttributeType = atParts then
       begin
         PartsAttribute := TInstantParts(AObject.AttributeByName(AttributeMetadata.Name));
-        if AttributeMetadata.IsExternal = ceLinked then
-        begin
-          // Select and delete all
-          SelectParams := TParams.Create;
-          try
-            SelectStatement := Format(SelectExternalLinkedSQL,
-              [AttributeMetadata.ObjectClassMetadata.TableName,
-              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-              AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+        if PartsAttribute.IsChanged then begin
+          if AttributeMetadata.IsExternal = ceLinked then
+          begin
+            // Select and delete all
+            SelectParams := TParams.Create;
             try
-              Open;
+              SelectStatement := Format(SelectExternalLinkedSQL,
+                [AttributeMetadata.ObjectClassMetadata.TableName,
+                AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
+                AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
+              AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
+              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
+              with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
               try
-                while not Eof do
-                begin
-                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(PartObject) then
-                      PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                  finally
-                    PartObject.Free;
+                Open;
+                try
+                  while not Eof do
+                  begin
+                    PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                      Fields[1].AsString, False, False, AObject.Connector);
+                    try
+                      if Assigned(PartObject) then
+                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
+                    finally
+                      PartObject.Free;
+                    end;
+                    Next;
                   end;
-                  Next;
+                finally
+                  Close;
                 end;
               finally
-                Close;
+                Free;
               end;
             finally
-              Free;
+              SelectParams.Free;
             end;
-          finally
-            SelectParams.Free;
+
+            // Store all
+            for ii:=0 to Pred(PartsAttribute.Count) do
+            begin
+              PartObject := PartsAttribute.Items[ii];
+              PartObject.CheckId;
+              PartObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
+              PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
+            end;
           end;
 
-          // Store all
-          for ii:=0 to Pred(PartsAttribute.Count) do
+          if Map[i].IsExternal = ceStored then
           begin
-            PartObject := PartsAttribute.Items[ii];
-            PartObject.CheckId;
-            PartObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
-            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-          end;
-        end;
-
-        if Map[i].IsExternal = ceStored then
-        begin
-          // Delete all objects
-          SelectParams := TParams.Create;
-          try
-            SelectStatement := Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
-            AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
-            AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-            with Broker.CreateDataSet(SelectStatement, SelectParams) do
+            // Delete all objects
+            SelectParams := TParams.Create;
             try
-              Open;
+              SelectStatement := Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
+              AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
+              AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
+              AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+              AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
+              with Broker.CreateDataSet(SelectStatement, SelectParams) do
               try
-                while not Eof do
-                begin
-                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(PartObject) then
-                      PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                  finally
-                    PartObject.Free;
+                Open;
+                try
+                  while not Eof do
+                  begin
+                    PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                      Fields[1].AsString, False, False, AObject.Connector);
+                    try
+                      if Assigned(PartObject) then
+                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
+                    finally
+                      PartObject.Free;
+                    end;
+                    Next;
                   end;
-                  Next;
+                finally
+                  Close;
                 end;
               finally
-                Close;
+                Free;
               end;
             finally
-              Free;
+              SelectParams.Free;
             end;
-          finally
-            SelectParams.Free;
-          end;
 
-          // Delete all links
-          DeleteParams := TParams.Create;
-          try
-            DeleteStatement := Format(DeleteExternalSQL,
-              [AttributeMetadata.ExternalStoredName,
-              InstantParentClassFieldName,
-              InstantParentAttributeFieldName]);
-            AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
-            Broker.Execute(DeleteStatement, DeleteParams);
-          finally
-            DeleteParams.Free;
-          end;          
-
-          // Store all objects and links
-          for ii := 0 to Pred(PartsAttribute.Count) do
-          begin
-            // Store object
-            PartObject := PartsAttribute.Items[ii];
-            PartObject.CheckId;
-            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-
-            // Insert link
-            InsertParams := TParams.Create;
+            // Delete all links
+            DeleteParams := TParams.Create;
             try
-              InsertStatement := Format(InsertExternalSQL,
-                [AttributeMetadata.ExternalStoredName]);
-              AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
-              AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
-              AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-              AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
-              AddStringParam(InsertParams, InstantChildClassFieldName,
-                PartsAttribute.Items[ii].ClassName);
-              AddIdParam(InsertParams, InstantChildIdFieldName,
-                PartsAttribute.Items[ii].Id);
-              AddIntegerParam(InsertParams, InstantSequenceNoFieldName, Succ(ii));
-              Broker.Execute(InsertStatement, InsertParams);
+              DeleteStatement := Format(DeleteExternalSQL,
+                [AttributeMetadata.ExternalStoredName,
+                InstantParentClassFieldName,
+                InstantParentAttributeFieldName]);
+              AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
+              AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
+              AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+              Broker.Execute(DeleteStatement, DeleteParams);
             finally
-              InsertParams.Free;
+              DeleteParams.Free;
+            end;
+
+            // Store all objects and links
+            for ii := 0 to Pred(PartsAttribute.Count) do
+            begin
+              // Store object
+              PartObject := PartsAttribute.Items[ii];
+              PartObject.CheckId;
+              PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
+
+              // Insert link
+              InsertParams := TParams.Create;
+              try
+                InsertStatement := Format(InsertExternalSQL,
+                  [AttributeMetadata.ExternalStoredName]);
+                AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
+                AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
+                AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
+                AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+                AddStringParam(InsertParams, InstantChildClassFieldName,
+                  PartsAttribute.Items[ii].ClassName);
+                AddIdParam(InsertParams, InstantChildIdFieldName,
+                  PartsAttribute.Items[ii].Id);
+                AddIntegerParam(InsertParams, InstantSequenceNoFieldName, Succ(ii));
+                Broker.Execute(InsertStatement, InsertParams);
+              finally
+                InsertParams.Free;
+              end;
             end;
           end;
         end;
@@ -13884,96 +14091,97 @@ var
       if AttributeMetadata.AttributeType = atReferences then
       begin
         ReferencesAttribute := TInstantReferences(AObject.AttributeByName(AttributeMetadata.Name));
-
-        if AttributeMetadata.IsExternal = ceLinked then
-        begin
-          // Set all to nil
-          SelectParams := TParams.Create;
-          try
-            SelectStatement := Format(SelectExternalLinkedSQL,
-              [AttributeMetadata.ObjectClassMetadata.TableName,
-              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-              AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+        if ReferencesAttribute.IsChanged then begin
+          if AttributeMetadata.IsExternal = ceLinked then
+          begin
+            // Set all to nil
+            SelectParams := TParams.Create;
             try
-              Open;
+              SelectStatement := Format(SelectExternalLinkedSQL,
+                [AttributeMetadata.ObjectClassMetadata.TableName,
+                AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
+                AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
+              AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
+              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
+              with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
               try
-                while not Eof do
-                begin
-                  ReferenceObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(ReferenceObject) then
-                    begin
-                      ReferenceObject.AttributeByName(AttributeMetadata.ExternalLinkedName).AsObject := nil;
-                      ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
+                Open;
+                try
+                  while not Eof do
+                  begin
+                    ReferenceObject := AttributeMetadata.ObjectClass.Retrieve(
+                      Fields[1].AsString, False, False, AObject.Connector);
+                    try
+                      if Assigned(ReferenceObject) then
+                      begin
+                        ReferenceObject.AttributeByName(AttributeMetadata.ExternalLinkedName).AsObject := nil;
+                        ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
+                      end;
+                    finally
+                      ReferenceObject.Free;
                     end;
-                  finally
-                    ReferenceObject.Free;
+                    Next;
                   end;
-                  Next;
+                finally
+                  Close;
                 end;
               finally
-                Close;
+                Free;
               end;
             finally
-              Free;
+              SelectParams.Free;
             end;
-          finally
-            SelectParams.Free;
+            // Store all
+            for ii := 0 to Pred(ReferencesAttribute.Count) do
+            begin
+              ReferenceObject := ReferencesAttribute.Items[ii];
+              ReferenceObject.CheckId;
+              ReferenceObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
+              ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
+            end;
           end;
-          // Store all
-          for ii := 0 to Pred(ReferencesAttribute.Count) do
-          begin
-            ReferenceObject := ReferencesAttribute.Items[ii];
-            ReferenceObject.CheckId;
-            ReferenceObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
-            ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
-          end;
-        end;
 
-        if AttributeMetadata.IsExternal = ceStored then
-        begin
-          // Delete all links
-          DeleteParams := TParams.Create;
-          try
-            DeleteStatement := Format(DeleteExternalSQL,
-              [AttributeMetadata.ExternalStoredName,
-              InstantParentClassFieldName,
-              InstantParentIdFieldName,
-              InstantParentAttributeFieldName]);
-            AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
-            Broker.Execute(DeleteStatement, DeleteParams);
-          finally
-            DeleteParams.Free;
-          end;
-          // Store all links
-          for ii := 0 to Pred(ReferencesAttribute.Count) do
+          if AttributeMetadata.IsExternal = ceStored then
           begin
-            ReferenceObject := ReferencesAttribute.Items[ii];
-            ReferenceObject.CheckId;
-            ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
-
-            InsertParams := TParams.Create;
+            // Delete all links
+            DeleteParams := TParams.Create;
             try
-              InsertStatement := Format(InsertExternalSQL,
-                [AttributeMetadata.ExternalStoredName]);
-              AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
-              AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
-              AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-              AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
-              AddStringParam(InsertParams, InstantChildClassFieldName,
-                ReferencesAttribute.Items[ii].ClassName);
-              AddIdParam(InsertParams, InstantChildIdFieldName,
-                ReferencesAttribute.Items[ii].Id);
-              AddIntegerParam(InsertParams, InstantSequenceNoFieldName, Succ(ii));
-              Broker.Execute(InsertStatement, InsertParams);
+              DeleteStatement := Format(DeleteExternalSQL,
+                [AttributeMetadata.ExternalStoredName,
+                InstantParentClassFieldName,
+                InstantParentIdFieldName,
+                InstantParentAttributeFieldName]);
+              AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
+              AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
+              AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+              Broker.Execute(DeleteStatement, DeleteParams);
             finally
-              InsertParams.Free;
+              DeleteParams.Free;
+            end;
+            // Store all links
+            for ii := 0 to Pred(ReferencesAttribute.Count) do
+            begin
+              ReferenceObject := ReferencesAttribute.Items[ii];
+              ReferenceObject.CheckId;
+              ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
+
+              InsertParams := TParams.Create;
+              try
+                InsertStatement := Format(InsertExternalSQL,
+                  [AttributeMetadata.ExternalStoredName]);
+                AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
+                AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
+                AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
+                AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
+                AddStringParam(InsertParams, InstantChildClassFieldName,
+                  ReferencesAttribute.Items[ii].ClassName);
+                AddIdParam(InsertParams, InstantChildIdFieldName,
+                  ReferencesAttribute.Items[ii].Id);
+                AddIntegerParam(InsertParams, InstantSequenceNoFieldName, Succ(ii));
+                Broker.Execute(InsertStatement, InsertParams);
+              finally
+                InsertParams.Free;
+              end;
             end;
           end;
         end;
@@ -14093,7 +14301,7 @@ var
         finally
           Params.Free;
         end;
-        Changed;
+        //Changed;
       end;
     end
     else if AttributeMetadata.IsExternal = ceStored then
@@ -14123,7 +14331,7 @@ var
         finally
           Params.Free;
         end;
-        Changed;
+        //Changed;
       end;
     end
     else
@@ -14142,10 +14350,11 @@ var
 
   procedure ReadPartsAttribute;
   var
-    PartObject: TInstantObject;
+    //PartObject: TInstantObject;
     Statement: string;
     Params: TParams;
     Stream: TInstantStringStream;
+    RefObject:TInstantObjectReference;
   begin
     if AttributeMetadata.IsExternal = ceLinked then
     begin
@@ -14166,11 +14375,14 @@ var
             try
               while not Eof do
               begin
-                PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
+                RefObject := TInstantObjectReference.Create(nil, True);
+                RefObject.ReferenceObject(Metadata.ObjectClass, Fields[1].AsString);
+                (Attribute as TInstantParts).ObjectReferenceList.Add(RefObject);
+                {PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
                 if Assigned(PartObject) then
                   Add(PartObject)
                 else
-                  PartObject.Free;
+                  PartObject.Free;}
                 Next;
               end;
             finally
@@ -14182,7 +14394,7 @@ var
         finally
           Params.Free;
         end;
-        Changed;
+        //Changed;
       end;
     end
     else if AttributeMetadata.IsExternal = ceStored then
@@ -14203,11 +14415,14 @@ var
             try
               while not Eof do
               begin
-                PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
+                RefObject := TInstantObjectReference.Create(nil, True);
+                RefObject.ReferenceObject(Metadata.ObjectClass, Fields[1].AsString);
+                (Attribute as TInstantParts).ObjectReferenceList.Add(RefObject);
+                {PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
                 if Assigned(PartObject) then
                   Add(PartObject)
                 else
-                  PartObject.Free;
+                  PartObject.Free;}
                 Next;
               end;
             finally
@@ -14219,7 +14434,7 @@ var
         finally
           Params.Free;
         end;
-        Changed;
+        //Changed;
       end;
     end
     else
@@ -14283,7 +14498,7 @@ var
         finally
           Params.Free;
         end;
-        Changed;
+        //Changed;
       end;
     end
     else if AttributeMetadata.IsExternal = ceStored then
@@ -14318,7 +14533,7 @@ var
         finally
           Params.Free;
         end;
-        Changed;
+        //Changed;
       end;
     end
     else
