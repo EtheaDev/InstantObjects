@@ -3,7 +3,7 @@ unit OFDefs;
 interface
 
 
-{$IFDEF MM7}
+{$IFDEF MM7+}
 uses
   MMToolsAPI, MMDiagramAPI;
 

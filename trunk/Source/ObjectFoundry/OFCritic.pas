@@ -16,7 +16,7 @@ type
     function GetAuthor: WideString; override; safecall;
     function GetCriticName: WideString; override; safecall;
     function GetDescription: WideString; override; safecall;
-    function GetHeadline: WideString; override; safecall;
+    function GetHeadLine: WideString; override; safecall;
     procedure MsgDoubleClicked(const M: IMMMessage; var Handled: Boolean); override; safecall;
     procedure Refresh; override; safecall;
   end;
@@ -54,7 +54,7 @@ begin
   Result := FDescription;
 end;
 
-function TObjectFoundryCritic.GetHeadline: WideString;
+function TObjectFoundryCritic.GetHeadLine: WideString;
 begin
   Result := FHeadline;
 end;

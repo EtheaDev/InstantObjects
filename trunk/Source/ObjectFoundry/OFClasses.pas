@@ -103,7 +103,11 @@ procedure TMMCodeAttribute.ApplyArray;
       Attribute.LinkMember(Result.Id);
     end;
     Result.Name := CountPropName;
-    Result.V9Visibility := TV9Visibility(Visibility);  // SRM - 18 Sep 2004
+{$IFDEF MM7+}                                      // SRM begin - 16 Mar 2005
+    Result.V9Visibility := TV9Visibility(Visibility);
+{$ELSE}
+    Result.Visibility := TVisibility(Visibility);
+{$ENDIF}                                          // SRM end - 16 Mar 2005
     Result.SetAccessSpec(rwMethod, rwNone);
     Getter := MemberAsMethod(Result.ReadMember);
     if Assigned(Getter) then
@@ -210,7 +214,11 @@ procedure TMMCodeAttribute.ApplyContainerMethods;
       Result.MethodKind := MMEngineDefs.mkFunction;
       Result.DataName := CodeMethod.Proc.ResultTypeName;
     end;
-    Result.V9Visibility := TV9Visibility(Visibility);  // SRM - 18 Sep 2004
+{$IFDEF MM7+}                                      // SRM begin - 16 Mar 2005
+    Result.V9Visibility := TV9Visibility(Visibility);
+{$ELSE}
+    Result.Visibility := TVisibility(Visibility);
+{$ENDIF}                                          // SRM end - 16 Mar 2005
     NewBody := CodeMethod.Proc.Body.AsString;
     if Result.SectionCount = 0 then
       Result.AddSection(NewBody)
@@ -258,7 +266,11 @@ var
 begin
   Prop.Name := Name;
   Prop.DataName := PropTypeName;
-  Prop.V9Visibility := TV9Visibility(Visibility);  // SRM - 18 Sep 2004
+{$IFDEF MM7+}                                      // SRM begin - 16 Mar 2005
+  Prop.V9Visibility := TV9Visibility(Visibility);
+{$ELSE}
+  Prop.Visibility := TVisibility(Visibility);
+{$ENDIF}                                          // SRM end - 16 Mar 2005
   TaggedStrings['StorageName'] := StorageName;
   // External part(s) options
   TaggedStrings['ExternalStorageName'] := ExternalStorageName;

@@ -1,6 +1,6 @@
 library OFExpt;
 
-{$R *.RES}                     
+{$R *.RES}
 {$R ..\Design\iodesimages.res}   
 
 uses
