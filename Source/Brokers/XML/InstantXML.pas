@@ -28,10 +28,14 @@
 
 unit InstantXML;
 
+{$I InstantDefines.inc}
+
 interface
 
 uses
-{$IFDEF VER130}{$DEFINE MSWINDOWS}FileCtrl,{$ENDIF}
+{$IFDEF MSWINDOWS}
+  FileCtrl,
+{$ENDIF}
   Classes, DB, InstantPersistence, InstantCommand, Contnrs;
 
 const
@@ -389,7 +393,7 @@ begin
   Result := Broker.Connector.Connection.CheckConflict(AObject, FStorageName, AObjectId);
 
   if Result and (ConflictAction = caFail) then
-    raise EInstantConflict.CreateResFmt(@SUpdateConflict,
+    raise EInstantConflict.CreateFmt(SUpdateConflict,
       [AObject.ClassName, AObjectId]);
 end;
 
@@ -439,7 +443,7 @@ begin
       end;
     end;
   end else if Map.IsRootMap and (ConflictAction = caFail) then
-    raise EInstantConflict.CreateResFmt(@SDisposeConflict,
+    raise EInstantConflict.CreateFmt(SDisposeConflict,
       [AObject.ClassName, AObject.PersistentId])
 end;
 
