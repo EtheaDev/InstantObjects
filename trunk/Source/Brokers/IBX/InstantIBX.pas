@@ -449,13 +449,15 @@ end;
 
 function TInstantIBXBroker.Execute(const AStatement: string;
   AParams: TParams): Integer;
+var
+  DataSet: TIBQuery;
 begin
-  with CreateDataSet(AStatement, AParams) as TIBQuery do
+  DataSet := AcquireDataSet(AStatement, AParams) as TIBQuery;
   try
-    ExecSQL;
-    Result := RowsAffected;
+    DataSet.ExecSQL;
+    Result := DataSet.RowsAffected;
   finally
-    Free;
+    ReleaseDataSet(DataSet);
   end;
 end;
 
