@@ -24,11 +24,13 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta, Andrea Petrelli: porting Kylix
  * Carlo Barazzetta:
  * - Exposer Undo virtual and access to UndoBuffer
  * - Exposer OnAddClassFieldDef event 
  * - Added Currency and Graphic support to exposer
+ * Andrea Petrelli:
+ * - Added OnProgress event on TInstantSelector
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPresentation;
@@ -47,7 +49,7 @@ uses
   Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantUtils;
 
 type
-  TInstantAddClassFieldDefEvent = procedure (const FieldName : string; var BreakProcess : boolean) of object; 
+  TInstantAddClassFieldDefEvent = procedure (const FieldName : string; var BreakProcess : boolean) of object;
   TInstantChangeType = (ctAppearance, ctData);
   TInstantAccessMode = (amObject, amContent);
 
@@ -72,6 +74,7 @@ type
     FOnChange: TInstantChangeEvent;
     FOnCompare: TInstantCompareObjectsEvent;
     FOnLimit: TInstantLimitObjectsEvent;
+    FOnProgress: TInstantProgressEvent;
     procedure DestroyView;
     function GetAltered: Boolean;
     function GetHasSubject: Boolean;
@@ -90,6 +93,7 @@ type
     procedure SetObjectClassName(const Value: string);
     procedure SetOnCompare(Value: TInstantCompareObjectsEvent);
     procedure SetOnLimit(Value: TInstantLimitObjectsEvent);
+    procedure SetOnProgress(const Value: TInstantProgressEvent);
     procedure SetSorted(Value: Boolean);
     property View: TList read GetView;
   protected
@@ -98,6 +102,7 @@ type
     function RemoveFromView(AObject: TObject): Integer;
     procedure Changed(ChangeType: TInstantChangeType); virtual;
     procedure DoLimit(AObject: TObject; var Accept: Boolean);
+    procedure DoProgress(Sender: TObject; Count: Integer; var Continue: Boolean);
     function GetConnector: TInstantConnector; virtual;
     function GetMode: TInstantAccessMode; virtual;
     function IncludeObject(AObject: TObject): Boolean;
@@ -113,7 +118,7 @@ type
     function InternalIndexOfObject(AObject: TObject): Integer; virtual;
     function InternalInsertObject(Index: Integer; AObject: TObject): Integer; virtual;
     procedure InternalRefreshObjects; virtual;
-    procedure InternalReleaseObject(AObject: TObject); virtual; 
+    procedure InternalReleaseObject(AObject: TObject); virtual;
     function InternalRemoveObject(AObject: TObject): Integer; virtual;
     property HasSubject: Boolean read GetHasSubject;
     property InternalObjects[Index: Integer]: TObject read InternalGetObjects;
@@ -160,6 +165,7 @@ type
     property OnChange: TInstantChangeEvent read FOnChange write FOnChange;
     property OnCompare: TInstantCompareObjectsEvent read FOnCompare write SetOnCompare;
     property OnLimit: TInstantLimitObjectsEvent read FOnLimit write SetOnLimit;
+    property OnProgress: TInstantProgressEvent read FOnProgress write SetOnProgress;
   end;
 
   TInstantFieldOption = (foObjects, foThorough, foRecurseNesting);
@@ -219,8 +225,9 @@ type
     FOnInitField: TInstantFieldEvent;
     FOnInitFieldDef: TInstantFieldDefEvent;
     FOnLimit: TInstantLimitObjectsEvent;
+    FOnProgress: TInstantProgressEvent;
     FOnTranslate: TInstantFieldTranslateEvent;
-    FOnAddClassFieldDef: TInstantAddClassFieldDefEvent; 
+    FOnAddClassFieldDef: TInstantAddClassFieldDefEvent;
     procedure AccessorChanged(Sender: TObject; ChangeType: TInstantChangeType);
     procedure CheckClass(AObject: TObject);
     procedure ClearData(Buffer: PChar);
@@ -242,6 +249,7 @@ type
     function GetTotalCount: Integer;
     function GetOnCompare: TInstantCompareObjectsEvent;
     function GetOnLimit: TInstantLimitObjectsEvent;
+    function GetOnProgress: TInstantProgressEvent;
     procedure GotoActiveRecord;
     procedure GotoRecord(ARecNo: Integer);
     function HasObjectClassName: Boolean;
@@ -260,8 +268,9 @@ type
     procedure SetObjectClassName(const Value: string);
     procedure SetOnCompare(Value: TInstantCompareObjectsEvent);
     procedure SetOnLimit(Value: TInstantLimitObjectsEvent);
+    procedure SetOnProgress(const Value: TInstantProgressEvent);
     procedure SetSorted(Value: Boolean);
-    function GetUndoBuffer: PChar; 
+    function GetUndoBuffer: PChar;
   protected
     { IProviderSupport }
     procedure PSGetAttributes(List: TList); override;
@@ -360,10 +369,10 @@ type
     procedure SetFieldData(Field: TField; Buffer: Pointer); override;
     procedure SetFiltered(Value: Boolean); override;
     procedure SetRecNo(Value: Integer); override;
-    procedure Undo; virtual; 
+    procedure Undo; virtual;
     procedure UpdateCalcFields;
     procedure WriteProperty(Field: TField; Instance: TObject; Value: Variant);
-    function BreakThorough( const FieldName : string ) : boolean; virtual; 
+    function BreakThorough( const FieldName : string ) : boolean; virtual;
     property Accessor: TInstantAccessor read GetAccessor;
     property ContainerName: string read FContainerName write SetContainerName;
     property CurrentBuffer: PChar read GetCurrentBuffer;
@@ -414,7 +423,7 @@ type
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property TotalCount: Integer read GetTotalCount;
-    property UndoBuffer: PChar read GetUndoBuffer; 
+    property UndoBuffer: PChar read GetUndoBuffer;
   published
     property FieldOptions: TInstantFieldOptions read FFieldOptions write SetFieldOptions default [foThorough];
     property Filtered;
@@ -447,8 +456,9 @@ type
     property OnInitField: TInstantFieldEvent read FOnInitField write FOnInitField;
     property OnInitFieldDef: TInstantFieldDefEvent read FOnInitFieldDef write FOnInitFieldDef;
     property OnLimit: TInstantLimitObjectsEvent read GetOnLimit write SetOnLimit;
+    property OnProgress: TInstantProgressEvent read GetOnProgress write SetOnProgress;
     property OnTranslate: TInstantFieldTranslateEvent read FOnTranslate write FOnTranslate;
-    property OnAddClassFieldDef : TInstantAddClassFieldDefEvent read FOnAddClassFieldDef write FOnAddClassFieldDef; 
+    property OnAddClassFieldDef : TInstantAddClassFieldDefEvent read FOnAddClassFieldDef write FOnAddClassFieldDef;
   end;
 
   TInstantExposerLink = class(TDetailDataLink)
@@ -627,7 +637,7 @@ function InstantFindAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 function InstantGetAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 procedure InstantRegisterAccessorClass(AClass: TInstantAccessorClass);
 procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
-function ExposerGetUndoBuffer(Exposer : TInstantCustomExposer) : PChar; 
+function ExposerGetUndoBuffer(Exposer : TInstantCustomExposer) : PChar;
 
 implementation
 
@@ -980,6 +990,13 @@ begin
     FOnLimit(Self, AObject, Accept);
 end;
 
+procedure TInstantAccessor.DoProgress(Sender: TObject; Count: Integer;
+  var Continue: Boolean);
+begin
+  if Assigned(FOnProgress) then
+    FOnProgress(Self, Count, Continue);
+end;
+
 procedure TInstantAccessor.EnableChanges;
 begin
   if ChangesDisabled then
@@ -1020,7 +1037,7 @@ end;
 
 function TInstantAccessor.GetAltered: Boolean;
 begin
-  Result := Limited or Sorted;
+  Result := Limited or Sorted or Assigned(FOnProgress);
 end;
 
 function TInstantAccessor.GetConnector: TInstantConnector;
@@ -1106,13 +1123,19 @@ end;
 function TInstantAccessor.GetView: TList;
 var
   I: Integer;
+  Continue:Boolean;
 begin
   if not Assigned(FView) then
   begin
+    Continue:=True;
     FView := TList.Create;
     FView.Capacity := InternalObjectCount;
     for I := 0 to Pred(InternalObjectCount) do
+    begin
+      DoProgress(InternalObjects[I], I+1, Continue);
+      if not Continue then Break;
       AddToView(InternalObjects[I]);
+    end;
   end;
   Result := FView;
 end;
@@ -1374,6 +1397,16 @@ begin
   if @Value <> @FOnLimit then
   begin
     FOnLimit := Value;
+    RefreshView;
+  end;
+end;
+
+procedure TInstantAccessor.SetOnProgress(
+  const Value: TInstantProgressEvent);
+begin
+  if @Value <> @FOnProgress then
+  begin
+    FOnProgress := Value;
     RefreshView;
   end;
 end;
@@ -2260,6 +2293,14 @@ begin
     Result := FOnLimit;
 end;
 
+function TInstantCustomExposer.GetOnProgress: TInstantProgressEvent;
+begin
+  if HasAccessor then
+    Result := Accessor.OnProgress
+  else
+    Result := FOnProgress;
+end;
+
 function TInstantCustomExposer.GetRecInfo(Buffer: PChar): PRecInfo;
 begin
   Result := PRecInfo(Buffer + FRecInfoOfs);
@@ -2425,6 +2466,7 @@ begin
       OnChange := AccessorChanged;
       OnCompare := Self.FOnCompare;
       OnLimit := Self.FOnLimit;
+      OnProgress := Self.FOnProgress;
       ObjectClass := Self.FObjectClass;
       ObjectClassName := Self.FObjectClassName;
       ContainerName := Self.FContainerName;
@@ -3425,6 +3467,17 @@ begin
     FOnLimit := Value;
     if HasAccessor then
       Accessor.OnLimit := FOnLimit;
+  end;
+end;
+
+procedure TInstantCustomExposer.SetOnProgress(
+  const Value: TInstantProgressEvent);
+begin
+  if @Value <> @OnProgress then
+  begin
+    FOnProgress := Value;
+    if HasAccessor then
+      Accessor.OnProgress := FOnProgress;
   end;
 end;
 
