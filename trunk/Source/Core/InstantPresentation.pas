@@ -2744,8 +2744,6 @@ begin
   FRemovedObject := nil;
   FNewObject := AddNewObject(ActiveBuffer,
     GetBookmarkFlag(ActiveBuffer) = bfEOF);
-  if (FNewObject is TInstantObject) and (TInstantObject(FNewObject).RefCount > 1) then
-    TInstantObject(FNewObject).Release;
 end;
 
 procedure TInstantCustomExposer.InternalInsertObject(ARecNo: Integer;
