@@ -33,7 +33,9 @@ package iodes70;
 requires
   designide,
   vcldb,
-  rtl;
+  rtl,
+  iorun70,
+  dclstd;
 
 contains
   InstantWizard in 'InstantWizard.pas',
@@ -51,20 +53,7 @@ contains
   InstantReg in 'InstantReg.pas',
   InstantUnitSelect in 'InstantUnitSelect.pas' {InstantUnitSelectForm},
   InstantAttributeEditor in 'InstantAttributeEditor.pas' {InstantAttributeEditorForm},
-  InstantUtils in '..\Core\InstantUtils.pas',
-  InstantClasses in '..\Core\InstantClasses.pas',
-  InstantCode in '..\Core\InstantCode.pas',
-  InstantConsts in '..\Core\InstantConsts.pas',
-  InstantDesignHook in '..\Core\InstantDesignHook.pas',
-  InstantCommand in '..\Core\InstantCommand.pas',
-  InstantRtti in '..\Core\InstantRtti.pas',
-  InstantTextFiler in '..\Core\InstantTextFiler.pas',
-  InstantAbout in 'InstantAbout.pas' {InstantAboutForm},
-  InstantAccessors in '..\Core\InstantAccessors.pas',
-  InstantPresentation in '..\Core\InstantPresentation.pas',
-  InstantExplorer in '..\Core\InstantExplorer.pas',
-  InstantPersistence in '..\Core\InstantPersistence.pas',
-  InstantConnectionManager in '..\Core\InstantConnectionManager.pas' {InstantConnectionManagerForm};
+  InstantAbout in 'InstantAbout.pas' {InstantAboutForm};
 
 end.
 

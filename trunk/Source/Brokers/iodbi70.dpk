@@ -27,7 +27,7 @@ package iodbi70;
 {$IMPLICITBUILD OFF}
 
 requires
-  iodes70,
+  iorun70,
   vclx,
   db324d7r;
 

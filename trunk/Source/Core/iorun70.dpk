@@ -37,7 +37,7 @@ contains
   InstantRtti in 'InstantRtti.pas',
   InstantCommand in 'InstantCommand.pas',
   InstantPersistence in 'InstantPersistence.pas',
-  InstantExplorer in 'InstantExplorer.pas' {InstantObjectExplorerForm},
+  InstantExplorer in 'InstantExplorer.pas',
   InstantDesignHook in 'InstantDesignHook.pas',
   InstantCode in 'InstantCode.pas',
   InstantTextFiler in 'InstantTextFiler.pas',

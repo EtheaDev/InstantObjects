@@ -30,7 +30,7 @@ requires
   vcl,
   vcldb,
   adortl,
-  iodes70;
+  iorun70;
 
 contains
   InstantADOX in 'InstantADOX.pas',

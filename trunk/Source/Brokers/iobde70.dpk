@@ -30,7 +30,7 @@ requires
   vcl,
   vcldb,
   bdertl,
-  iodes70;
+  iorun70;
 
 contains
   InstantBDEConnectionDefEdit in 'InstantBDEConnectionDefEdit.pas' {InstantBDEConnectionDefEditForm},

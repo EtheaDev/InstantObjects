@@ -29,7 +29,7 @@ package ioxxx70;
 requires
   vcl,
   dbrtl,
-  iodes70;
+  iorun70;
 
 contains
   InstantXXXConnectionDefEdit in 'InstantXXXConnectionDefEdit.pas' {InstantXXXConnectionDefEditForm},
