@@ -41,7 +41,7 @@ unit InstantClasses;
 interface
 
 uses
-{$IFDEF D5}Windows,{$ENDIF}
+{$IFDEF VER130}Windows,{$ENDIF}
   Classes, InstantConsts, SysUtils;
 
 const

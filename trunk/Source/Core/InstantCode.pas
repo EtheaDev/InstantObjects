@@ -1454,12 +1454,6 @@ const
 implementation
 
 uses
-{$IFDEF MSWINDOWS}
-  Forms,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms,
-{$ENDIF}
   InstantRtti, InstantConsts, InstantUtils, DB;
 
 type

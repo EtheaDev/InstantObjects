@@ -12,15 +12,14 @@ uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, ToolWin, Menus,
-  ExtCtrls, StdCtrls, Contnrs, ComCtrls, TeEngine,
+  ExtCtrls, StdCtrls, Contnrs, ComCtrls, TeEngine, Mask,
 {$ENDIF}
 {$IFDEF LINUX}
   QGraphics, QControls, QForms, QDialogs, QMenus,
-  QExtCtrls, QStdCtrls, QComCtrls, QTypes,
+  QExtCtrls, QStdCtrls, QComCtrls, QTypes, QMask,
 {$ENDIF}
   Series, TeeProcs, Chart,
-  InstantPersistence, InstantPresentation, InstantClasses, Stopwatch, DB, BasicView,
-  Mask;
+  InstantPersistence, InstantPresentation, InstantClasses, Stopwatch, DB, BasicView;
 
 type
   TMeasureType = (mtStore, mtRetrieve, mtQuery, mtDispose);

@@ -2443,7 +2443,7 @@ uses
   Windows, Mask,
 {$ENDIF}
 {$IFDEF LINUX}
-  QMask, Types,
+  Types,
 {$ENDIF}
   TypInfo, {$IFDEF D6+}MaskUtils, Variants,{$ENDIF}
   InstantUtils, InstantRtti, InstantDesignHook, InstantCode;
@@ -2480,7 +2480,9 @@ begin
       ' = ' + AParams[g].AsString;
     end;
   end;
+{$IFDEF MSWINDOWS}
   OutputDebugString(PChar(S));
+{$ENDIF}  
   if Assigned(InstantLogProc) then
     InstantLogProc(S);
 end;

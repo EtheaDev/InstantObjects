@@ -23,7 +23,6 @@ package IOCore;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects Run-Time Package (Kylix 3)'}
-{$LIBSUFFIX '_K3'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
@@ -46,8 +45,8 @@ contains
   InstantTextFiler in '../InstantTextFiler.pas',
   InstantPresentation in '../InstantPresentation.pas',
   InstantAccessors in '../InstantAccessors.pas',
-  InstantConnectionManagerForm in '..\InstantConnectionManagerForm.pas' {InstantConnectionManagerForm},
-  InstantConnectionManager in '..\InstantConnectionManager.pas',
+  InstantConnectionManagerForm in '../InstantConnectionManagerForm.pas' {InstantConnectionManagerForm},
+  InstantConnectionManager in '../InstantConnectionManager.pas',
   InstantImageUtils in '../InstantImageUtils.pas',
   InstantPump in '../InstantPump.pas';
 

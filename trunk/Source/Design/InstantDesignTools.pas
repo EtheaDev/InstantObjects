@@ -34,7 +34,7 @@ interface
 
 uses
   Classes,
-{$I ..\core\InstantDefines.inc}
+{$I ../Core/InstantDefines.inc}
 {$IFDEF MSWINDOWS}
   {$IFDEF D6+}
     DesignIntf, DesignEditors,
@@ -43,7 +43,6 @@ uses
   {$ENDIF}
 {$ENDIF}
 {$IFDEF LINUX}
-{$I ../core/InstantDefines.inc}
   DesignIntf, DesignEditors, ClxStrEdit,
 {$ENDIF}
   StrEdit, ColnEdit, InstantPresentation;

@@ -42,7 +42,7 @@ interface
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
-  Windows, Messages, 
+  Windows,  
 {$ENDIF}
 {$IFDEF LINUX}
   QTypes, 

@@ -18,7 +18,7 @@ uses
 {$IFDEF LINUX}
   QGraphics, QControls, QForms, QDialogs, QTypes,
   QComCtrls, QGrids, QDBGrids, QExtCtrls, QButtons,
-  QStdCtrls, QActnList, QImgList, QMenus,
+  QStdCtrls, QActnList, QImgList, QMenus, Types,
 {$ENDIF}
   BasicView, Model, InstantPresentation, InstantExplorer;
 
