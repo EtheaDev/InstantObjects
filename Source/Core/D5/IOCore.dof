@@ -18,7 +18,7 @@ P=1
 Q=0
 R=0
 S=0
-T=0
+T=1
 U=0
 V=1
 W=0
@@ -63,8 +63,8 @@ RootDir=C:\Work\DelphiProjects\InstantObjects17\Source\Core\
 [Version Info]
 IncludeVerInfo=1
 AutoIncBuild=0
-MajorVer=1
-MinorVer=7
+MajorVer=2
+MinorVer=0
 Release=0
 Build=0
 Debug=0
@@ -78,13 +78,13 @@ CodePage=1252
 [Version Info Keys]
 CompanyName=InstantObjects.org
 FileDescription=InstantObjects Run-Time Package (Delphi 5)
-FileVersion=1.7.0.0
+FileVersion=2.0.0.0
 InternalName=
 LegalCopyright=
 LegalTrademarks=
 OriginalFilename=
 ProductName=InstantObjects
-ProductVersion=1.7
+ProductVersion=2.0
 Comments=
 
 [HistoryLists\hlUnitAliases]
