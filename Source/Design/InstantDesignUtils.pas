@@ -44,24 +44,25 @@ implementation
 uses
   Forms, Dialogs, SysUtils, TypInfo;
 
+var
+  IOCursor: TCursor;
+  IOCount: Integer;
+
 procedure Busy(Enable: Boolean);
-const
-  Cursor: TCursor = 0;
-  Count: Integer = 0;
 begin
   if Enable then
   begin
-    if Count = 0 then
+    if IOCount = 0 then
     begin
-      Cursor := Screen.Cursor;
+      IOCursor := Screen.Cursor;
       Screen.Cursor := crHourglass;
     end;
-    Inc(Count);
-  end else if Count > 0 then
+    Inc(IOCount);
+  end else if IOCount > 0 then
   begin
-    Dec(Count);
-    if Count = 0 then
-      Screen.Cursor := Cursor;
+    Dec(IOCount);
+    if IOCount = 0 then
+      Screen.Cursor := IOCursor;
   end;
 end;
 
@@ -157,4 +158,7 @@ begin
   end;
 end;
 
+initialization
+  IOCursor := 0;
+  IOCount := 0;
 end.
