@@ -1,6 +1,6 @@
 object InstantNexusDbSQLConnectionDefEditForm: TInstantNexusDbSQLConnectionDefEditForm
-  Left = 299
-  Top = 202
+  Left = 257
+  Top = 296
   BorderStyle = bsDialog
   Caption = '  NexusDbSQL Connection'
   ClientHeight = 309
@@ -149,10 +149,8 @@ object InstantNexusDbSQLConnectionDefEditForm: TInstantNexusDbSQLConnectionDefEd
       Height = 21
       ItemHeight = 13
       TabOrder = 1
-      OnCloseUp = ServerComboBoxLoadAlias
       OnDropDown = ServerComboBoxDropDown
       OnExit = ServerComboBoxLoadAlias
-      OnSelect = ServerComboBoxSelect
     end
     object StreamFormatComboBox: TComboBox
       Left = 16
@@ -189,9 +187,6 @@ object InstantNexusDbSQLConnectionDefEditForm: TInstantNexusDbSQLConnectionDefEd
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    DesignSize = (
-      393
-      35)
     object OkButton: TButton
       Left = 223
       Top = 6
