@@ -614,6 +614,12 @@ type
     FValue: Currency;
   protected
     class function AttributeType: TInstantAttributeType; override;
+    function GetAsBoolean: Boolean; override;
+    function GetAsDateTime: TDateTime; override;
+    function GetDisplayText: string; override;
+    function GetIsDefault: Boolean; override;
+    procedure SetAsBoolean(AValue: Boolean); override;
+    procedure SetAsDateTime(AValue: TDateTime); override;
     function GetAsFloat: Double; override;
     function GetAsInteger: Integer; override;
     function GetAsString: string; override;
@@ -4556,9 +4562,19 @@ begin
   Result := atCurrency;
 end;
 
+function TInstantCurrency.GetAsBoolean: Boolean;
+begin
+  Result := Value <> 0;
+end;
+
+function TInstantCurrency.GetAsDateTime: TDateTime;
+begin
+  Result := Value;
+end;
+
 function TInstantCurrency.GetAsFloat: Double;
 begin
-  Result := Double(Value);
+  Result := Value;
 end;
 
 function TInstantCurrency.GetAsInteger: Integer;
@@ -4574,6 +4590,22 @@ end;
 function TInstantCurrency.GetAsVariant: Variant;
 begin
   Result := Value;
+end;
+
+function TInstantCurrency.GetDisplayText: string;
+begin
+  if Assigned(Metadata) and (Metadata.EditMask <> '') then
+    Result := FormatCurr(Metadata.EditMask, Value)
+  else
+    Result := inherited GetDisplayText;
+end;
+
+function TInstantCurrency.GetIsDefault: Boolean;
+begin
+  if Assigned(Metadata) and (Metadata.Defaultvalue <> '') then
+    Result := inherited GetIsDefault
+  else
+    Result := Value = 0;
 end;
 
 function TInstantCurrency.GetValue: Currency;
@@ -4606,6 +4638,18 @@ begin
   else
     FValue := 0;
   Changed;
+end;
+
+procedure TInstantCurrency.SetAsBoolean(AValue: Boolean);
+begin
+  inherited;
+  Value := Ord(AValue);
+end;
+
+procedure TInstantCurrency.SetAsDateTime(AValue: TDateTime);
+begin
+  inherited;
+  Value := AValue;
 end;
 
 procedure TInstantCurrency.SetAsFloat(AValue: Double);
@@ -7036,6 +7080,8 @@ class procedure TInstantObject.ConvertToText(
           Producer.WriteData(InstantDateTimeToStr(Reader.ReadDate));
         vaString, vaLString:
           Producer.WriteEscapedData(Reader.ReadString);
+        vaCurrency:
+          Producer.WriteEscapedData(CurrToStr(Reader.ReadCurrency));
         vaIdent:
           begin
             Reader.ReadIdent;
@@ -13620,7 +13666,7 @@ initialization
   GraphicClassList[gffBmp] := QGraphics.TBitmap;
   GraphicClassList[gffEmf] := QGraphics.TBitmap;
   GraphicClassList[gffPng] := QGraphics.TBitmap;
-  GraphicClassList[gffJpg] := QGraphics.TBitmap;
+  GraphicClassList[gffJpeg]:= QGraphics.TBitmap;
 {$ENDIF}
   ConnectorClasses := TList.Create;
   LoadClassMetadatas;

@@ -483,6 +483,8 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
               Result := 'TIMESTAMP';
             dtBlob:
               Result := 'BLOB (1000 K)';
+            dtMemo:
+              Result := 'CLOB';
           end;
       end;
       if (DataType in [dtString, dtMemo]) and (Size > 0) then

@@ -406,12 +406,12 @@ begin
   Caption := 'Contacts';
   ContactGrid.OnDrawColumnCell := ContactGridDrawColumnCell;
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(ActionImages,'CONTACTACTIONIMAGES.BMP');
-  LoadMultipleImages(ExplorerImages,'EXPLORERCONTACTIMAGES.BMP');
+  LoadMultipleImages(ActionImages,'CONTACTACTIONIMAGES',HInstance);
+  LoadMultipleImages(ExplorerImages,'EXPLORERCONTACTIMAGES',HInstance);
 {$ENDIF}
 {$IFDEF LINUX}
-  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'CONTACTACTIONIMAGES.BMP',true);
-  LoadMultipleImages(ExplorerImages,ExtractFilePath(Application.ExeName)+'EXPLORERCONTACTIMAGES.BMP',true);
+  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'CONTACTACTIONIMAGES.BMP');
+  LoadMultipleImages(ExplorerImages,ExtractFilePath(Application.ExeName)+'EXPLORERCONTACTIMAGES.BMP');
 {$ENDIF}
   FindButton.Action := FindAction; //to get glyph image
 

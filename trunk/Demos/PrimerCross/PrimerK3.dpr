@@ -25,8 +25,11 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta: cross-platform porting for Delphi & Kilix
- *
+ * Carlo Barazzetta:
+ * - cross-platform porting for Delphi & Kilix
+ * - PerformanceView form changed to make tests with UsePreparedQuery
+ * Salary attribute of type Currency added to Person
+ * PersonEdit form and random data form changed to test Graphic support
  * ***** END LICENSE BLOCK ***** *)
 
 program PrimerK3;

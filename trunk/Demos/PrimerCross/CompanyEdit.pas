@@ -160,10 +160,10 @@ procedure TCompanyEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(ActionImages,'COMPANYEDITACTIONIMAGES.BMP');
+  LoadMultipleImages(ActionImages,'COMPANYEDITACTIONIMAGES',HInstance);
 {$ENDIF}
 {$IFDEF LINUX}
-  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'COMPANYEDITACTIONIMAGES.BMP',true);
+  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'COMPANYEDITACTIONIMAGES.BMP');
 {$ENDIF}
 
   //getting glyph images

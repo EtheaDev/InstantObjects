@@ -31,7 +31,12 @@ unit InstantOTA;
 
 interface
 
-{$I ..\Core\InstantDefines.inc}
+{$IFDEF MSWINDOWS}
+{$I ..\core\InstantDefines.inc}
+{$ENDIF}
+{$IFDEF LINUX}
+{$I ../core/InstantDefines.inc}
+{$ENDIF}
 
 {$IFDEF D7+}
 {$WARN UNIT_DEPRECATED OFF}
