@@ -28,10 +28,21 @@
  * - blob streaming in XML format (Part, Parts, References)
  * - Prepared queries support
  * - OnLogin event support
- *
+ * Nando Dessena:
+ * - option to disable the use of delimited identifiers in dialect 3 databases
+ * - implemented InternalCreateDatabase and GetDatabaseExists
+ *   NOTE: requires at least version x.07 of IBX.
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantIBX;
+
+{$I ..\..\Core\InstantDefines.inc}
+
+{$IFDEF D7+}
+{$WARN UNSAFE_TYPE OFF}
+{$WARN UNSAFE_CAST OFF}
+{$WARN UNSAFE_CODE OFF}
+{$ENDIF}
 
 interface
 
@@ -55,24 +66,24 @@ type
     FServerName: string;
     FNetType: TIBXNetType;
     FOptions: TInstantIBXOptions;
-    FParams: string; //CB
+    FParams: string;
     function GetDatabaseName: string;
     function GetServerName: string;
   protected
     function CreateConnection(AOwner: TComponent): TCustomConnection; override;
-    procedure InitConnector(Connector: TInstantConnector); override; //CB
+    procedure InitConnector(Connector: TInstantConnector); override;
   public
     class function ConnectionTypeName: string; override;
     class function ConnectorClass: TInstantConnectorClass; override;
-    constructor Create(Collection: TCollection); override; //CB
+    constructor Create(Collection: TCollection); override;
     function Edit: Boolean; override;
     property DatabaseName: string read GetDatabaseName;
   published
     property Path: string read FPath write FPath;
     property NetType: TIBXNetType read FNetType write FNetType;
     property ServerName: string read GetServerName write FServerName;
-    property Options: TInstantIBXOptions read FOptions write FOptions; //CB
-    property Params: string read FParams write FParams; //CB
+    property Options: TInstantIBXOptions read FOptions write FOptions;
+    property Params: string read FParams write FParams;
   end;
 
   TInstantIBXConnector = class(TInstantConnectionBasedConnector)
@@ -89,24 +100,25 @@ type
     procedure InternalCommitTransaction; override;
     procedure InternalRollbackTransaction; override;
     procedure InternalStartTransaction; override;
-    procedure InternalCreateDatabase; override; //CB
-    procedure AssignLoginOptions; override;//CB
+    procedure InternalCreateDatabase; override;
+    procedure AssignLoginOptions; override;
+    function GetDatabaseExists: Boolean; override;
   public
-    constructor Create(AOwner: TComponent); override; //CB
+    constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
     property Transaction: TIBTransaction read GetTransaction;
   published
     property Connection: TIBDatabase read GetConnection write SetConnection;
-    property Options: TInstantIBXOptions read FOptions write FOptions default DefaultInstantIBXOptions; //CB
-    property OnLogin: TIBDatabaseLoginEvent read FOnLogin write FOnLogin; //CB
+    property Options: TInstantIBXOptions read FOptions write FOptions default DefaultInstantIBXOptions;
+    property OnLogin: TIBDatabaseLoginEvent read FOnLogin write FOnLogin;
   end;
 
   TInstantIBXBroker= class(TInstantSQLBroker)
   private
     function GetDialect: Integer;
     function GetConnector: TInstantIBXConnector;
-    function DelimitedIdentsEnabled: Boolean; //CB
+    function DelimitedIdentsEnabled: Boolean;
   protected
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetDatabaseName: string; override;
@@ -114,10 +126,10 @@ type
     function GetSQLDelimiters: string; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure PrepareQuery(DataSet : TDataSet); override; //CB
-    procedure UnprepareQuery(DataSet : TDataSet); override; //CB
-    function ExecuteQuery(DataSet : TDataSet) : integer; override; //CB
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; //CB
+    procedure PrepareQuery(DataSet : TDataSet); override;
+    procedure UnprepareQuery(DataSet : TDataSet); override;
+    function ExecuteQuery(DataSet : TDataSet) : integer; override;
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
   public
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
@@ -170,7 +182,6 @@ constructor TInstantIBXConnectionDef.Create(Collection: TCollection);
 begin
   inherited;
   FOptions := DefaultInstantIBXOptions;
-
 end;
 
 function TInstantIBXConnectionDef.CreateConnection(
@@ -181,8 +192,8 @@ begin
   Connection := TIBDatabase.Create(AOwner);
   try
     Connection.DatabaseName := DatabaseName;
-    Connection.SQLDialect := 3; //CB
-    Connection.Params.Text := Params; //CB
+    Connection.SQLDialect := 3;
+    Connection.Params.Text := Params;
   except
     Connection.Free;
     raise;
@@ -227,8 +238,7 @@ begin
     Result := FServerName;
 end;
 
-procedure TInstantIBXConnectionDef.InitConnector(
-  Connector: TInstantConnector);
+procedure TInstantIBXConnectionDef.InitConnector(Connector: TInstantConnector);
 begin
   inherited;
   (Connector as TInstantIBXConnector).Options := FOptions;
@@ -293,7 +303,7 @@ end;
 procedure TInstantIBXConnector.InternalBuildDatabase(
   Scheme: TInstantScheme);
 begin
-  Scheme.BlobStreamFormat := BlobStreamFormat; //CB
+  Scheme.BlobStreamFormat := BlobStreamFormat;
   StartTransaction;
   try
     inherited;
@@ -307,28 +317,6 @@ end;
 procedure TInstantIBXConnector.InternalCommitTransaction;
 begin
   Transaction.Commit;
-end;
-
-procedure TInstantIBXConnector.InternalCreateDatabase;
-var
-  db_handle: TISC_DB_HANDLE;
-  tr_handle: TISC_TR_HANDLE;
-begin
-  inherited;
-  // IBX's TIBDatabase.CreateDatabase is fatally flawed and so we have to
-  // bypass it for the time being.
-  with Connection do
-  begin
-    CheckInactive;
-    db_handle := nil;
-    tr_handle := nil;
-    Call(
-      isc_dsql_execute_immediate(StatusVector, @db_handle, @tr_handle, 0,
-        PChar('create database ''' + DatabaseName + ''' user ''' + Params.Values['user_name'] + ''' password ''' +
-              Params.Values['password'] + ''''), SQLDialect, nil),
-      True);
-    Disconnect;
-  end;
 end;
 
 procedure TInstantIBXConnector.InternalRollbackTransaction;
@@ -345,6 +333,48 @@ end;
 procedure TInstantIBXConnector.SetConnection(const Value: TIBDatabase);
 begin
   inherited Connection := Value;
+end;
+
+procedure TInstantIBXConnector.InternalCreateDatabase;
+var
+  db_handle: TISC_DB_HANDLE;
+  tr_handle: TISC_TR_HANDLE;
+begin
+  inherited;
+  // IBX's TIBDatabase.CreateDatabase is fatally flawed and so we have to
+  // bypass it for the time being.
+  with Connection do
+  begin
+    CheckInactive;
+    db_handle := nil;
+    tr_handle := nil;
+    Call(
+      GetGDSLibrary().isc_dsql_execute_immediate(StatusVector, @db_handle, @tr_handle, 0,
+        PChar('create database ''' + DatabaseName + ''' user ''' + Params.Values['user_name'] + ''' password ''' +
+              Params.Values['password'] + ''''), SQLDialect, nil),
+      True);
+    Disconnect;
+  end;
+end;
+
+function TInstantIBXConnector.GetDatabaseExists: Boolean;
+begin
+  AssignLoginOptions;
+  try
+    Connection.Open;
+    try
+      Result := True;
+    finally
+      Connection.Close;
+    end;
+  except
+    on E: EIBInterBaseError do begin
+      if (E.SQLCode = -902) and (E.IBErrorCode = 335544344) then
+        Result := False
+      else
+        raise;
+    end;
+  end;
 end;
 
 { TInstantIBXBroker}
@@ -403,7 +433,7 @@ const
     'DECIMAL(14,4)',
     'SMALLINT',
     'VARCHAR',
-    'BLOB SUB_TYPE 1', //CB
+    'BLOB SUB_TYPE 1',
     'TIMESTAMP',
     'BLOB');
 begin
