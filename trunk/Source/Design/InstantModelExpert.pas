@@ -23,13 +23,15 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s):
+ * Contributor(s): Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantModelExpert;
 
-{$IFDEF VER150}
+{$I ..\Core\InstantDefines.inc}
+
+{$IFDEF D7+}
 {$WARN UNIT_DEPRECATED OFF}
 {$ENDIF}
 
@@ -39,7 +41,7 @@ uses
   Classes, ToolsAPI, ToolIntf, EditIntf, InstantOTA, Menus, ImgList,
   InstantDesignResources, InstantModelExplorer, InstantCode, ExtCtrls, Forms;
 
-{$IFDEF VER130}
+{$IFNDEF D6+}
 const
   sLineBreak = #13#10;
 {$ENDIF}
