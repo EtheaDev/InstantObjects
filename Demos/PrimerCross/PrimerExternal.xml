@@ -1,0 +1,12 @@
+<TInstantConnectionDefs>
+  <TInstantIBXConnectionDef>
+    <Name>FirebirdDBExternal</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <Path>.\FirebirdDB\PRIMERDBEXTERNAL.FDB</Path>
+    <NetType>ntLocal</NetType>
+    <Options>ibxUseDelimitedIdents</Options>
+    <Params>User_Name=SYSDBA
+Password=masterkey</Params>
+  </TInstantIBXConnectionDef>
+</TInstantConnectionDefs>

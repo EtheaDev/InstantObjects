@@ -15,7 +15,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
       Left = 0
       Top = 0
       Width = 745
-      Height = 113
+      Height = 121
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite
@@ -29,14 +29,14 @@ inherited PerformanceViewForm: TPerformanceViewForm
       end
       object InfoBevel: TBevel
         Left = 0
-        Top = 104
+        Top = 112
         Width = 745
         Height = 9
         Align = alBottom
         Shape = bsBottomLine
       end
       object ConnectionLabel: TLabel
-        Left = 188
+        Left = 280
         Top = 4
         Width = 132
         Height = 13
@@ -85,96 +85,114 @@ inherited PerformanceViewForm: TPerformanceViewForm
           8000001F8000001F8000001F0000001F38E0107FFDF079FFF8F9FFFF}
       end
       object NumberLabel: TLabel
-        Left = 4
-        Top = 68
+        Left = 16
+        Top = 72
         Width = 77
         Height = 13
         Caption = '&Objects to store:'
         FocusControl = ObjectsEdit
       end
       object RunButton: TButton
-        Left = 404
-        Top = 68
-        Width = 73
+        Left = 480
+        Top = 36
+        Width = 105
         Height = 25
         Caption = '&Run Now'
-        TabOrder = 6
+        TabOrder = 7
         OnClick = RunButtonClick
       end
       object InfoMemo: TMemo
         Left = 40
-        Top = 20
-        Width = 697
-        Height = 45
+        Top = 18
+        Width = 437
+        Height = 51
         TabStop = False
         Enabled = False
         Lines.Strings = (
           
             'This page allows you to run a performance test on the current co' +
-            'nnection. The performance test will measure the speed of store, ' +
-            'retrieve and '
+            'nnection.'
           
-            'dispose operations. Test results can be compared to other connec' +
-            'tions in the chart below.')
+            'You can measure the speed of store, retrieve query and dispose o' +
+            'perations.'
+          
+            'Test results can be compared to other connections in the chart b' +
+            'elow.')
         ReadOnly = True
         TabOrder = 0
       end
       object TransactionsCheckBox: TCheckBox
-        Left = 233
-        Top = 68
-        Width = 140
+        Left = 479
+        Top = 16
+        Width = 112
         Height = 17
         Caption = 'Use &Transactions'
-        TabOrder = 1
+        TabOrder = 6
         OnClick = TransactionsCheckBoxClick
       end
-      object PreparedQueryCheckBox: TCheckBox
-        Left = 233
-        Top = 84
-        Width = 140
-        Height = 17
-        Caption = 'Use &Prepared Queries'
-        TabOrder = 2
-        OnClick = PreparedQueryCheckBoxClick
-      end
       object ObjectsEdit: TMaskEdit
-        Left = 4
-        Top = 82
+        Left = 16
+        Top = 86
         Width = 73
         Height = 21
         EditMask = '#########;1; '
         MaxLength = 9
-        TabOrder = 3
+        TabOrder = 1
         Text = '500      '
       end
       object TestRetrieveCheckBox: TCheckBox
         Left = 101
-        Top = 68
-        Width = 100
+        Top = 66
+        Width = 95
         Height = 17
         Caption = 'Test Retrieve'
         Checked = True
         State = cbChecked
-        TabOrder = 4
+        TabOrder = 2
         OnClick = TestRetrieveCheckBoxClick
       end
       object TestDisposeCheckBox: TCheckBox
         Left = 101
-        Top = 84
-        Width = 100
+        Top = 96
+        Width = 95
         Height = 17
         Caption = 'Test Dispose'
         Checked = True
         State = cbChecked
-        TabOrder = 5
+        TabOrder = 4
         OnClick = TestDisposeCheckBoxClick
+      end
+      object PoolOptionsRadioGroup: TRadioGroup
+        Left = 200
+        Top = 68
+        Width = 385
+        Height = 47
+        Caption = 'SQL brokers features'
+        Columns = 3
+        ItemIndex = 0
+        Items.Strings = (
+          'No cache'
+          'Prepared queries'
+          'Statements cache')
+        TabOrder = 5
+        OnClick = PoolOptionsRadioGroupClick
+      end
+      object TestQueryCheckBox: TCheckBox
+        Left = 101
+        Top = 81
+        Width = 95
+        Height = 17
+        Caption = 'Test Query'
+        Checked = True
+        State = cbChecked
+        TabOrder = 3
       end
     end
     object ResultPanel: TPanel
       Left = 0
-      Top = 113
+      Top = 121
       Width = 745
-      Height = 447
+      Height = 439
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
@@ -182,7 +200,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
         Left = 0
         Top = 0
         Width = 209
-        Height = 447
+        Height = 439
         Align = alLeft
         BevelOuter = bvNone
         BorderWidth = 4
@@ -191,7 +209,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
           Left = 4
           Top = 4
           Width = 201
-          Height = 439
+          Height = 431
           Align = alClient
           Checkboxes = True
           Columns = <
@@ -210,7 +228,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
         Left = 209
         Top = 0
         Width = 536
-        Height = 447
+        Height = 439
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 1
@@ -218,7 +236,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
           Left = 0
           Top = 0
           Width = 536
-          Height = 447
+          Height = 439
           BackWall.Brush.Color = clWhite
           LeftWall.Color = clWhite
           Title.Text.Strings = (
@@ -252,6 +270,20 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Marks.Visible = False
             SeriesColor = 8454143
             Title = 'Retrieve'
+            XValues.DateTime = False
+            XValues.Name = 'X'
+            XValues.Multiplier = 1.000000000000000000
+            XValues.Order = loAscending
+            YValues.DateTime = False
+            YValues.Name = 'Bar'
+            YValues.Multiplier = 1.000000000000000000
+            YValues.Order = loNone
+          end
+          object Series1: TBarSeries
+            Marks.ArrowLength = 20
+            Marks.Visible = False
+            SeriesColor = 16744576
+            Title = 'Query'
             XValues.DateTime = False
             XValues.Name = 'X'
             XValues.Multiplier = 1.000000000000000000

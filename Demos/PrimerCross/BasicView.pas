@@ -30,6 +30,7 @@ type
   public
     procedure FormCreate(Sender: TObject); virtual;
     procedure FormHide(Sender: TObject); virtual;
+    procedure FormShow(Sender: TObject); virtual;
     procedure Connect; virtual;
     procedure Disconnect; virtual;
     procedure Reset; virtual;
@@ -66,6 +67,11 @@ end;
 procedure TBasicViewForm.FormHide(Sender: TObject);
 begin
   Self.Hide;
+end;
+
+procedure TBasicViewForm.FormShow(Sender: TObject);
+begin
+  Self.Show;
 end;
 
 function TBasicViewForm.GetConnectionName: string;

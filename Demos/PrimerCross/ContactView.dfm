@@ -147,7 +147,6 @@ inherited ContactViewForm: TContactViewForm
           Left = 193
           Top = 0
           Action = ExplorerAction
-          Down = True
           Style = tbsCheck
         end
         object ToolSep5: TToolButton
