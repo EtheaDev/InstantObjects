@@ -1,5 +1,13 @@
 unit OFClasses;
 
+{ 18 Sep 2004 - Steven Mitchell
+  Modified for use in MM7.25 -
+  Use V9Visibility property inplace of Visibility
+  property in MMToolsAPI V10 IMMMember interface.
+  30 Sep 2004 - Steven Mitchell
+  Added tags for part(s) external storage params
+}
+
 interface
 
 uses
@@ -95,7 +103,7 @@ procedure TMMCodeAttribute.ApplyArray;
       Attribute.LinkMember(Result.Id);
     end;
     Result.Name := CountPropName;
-    Result.Visibility := TVisibility(Visibility);
+    Result.V9Visibility := TV9Visibility(Visibility);  // SRM - 18 Sep 2004
     Result.SetAccessSpec(rwMethod, rwNone);
     Getter := MemberAsMethod(Result.ReadMember);
     if Assigned(Getter) then
@@ -202,7 +210,7 @@ procedure TMMCodeAttribute.ApplyContainerMethods;
       Result.MethodKind := MMEngineDefs.mkFunction;
       Result.DataName := CodeMethod.Proc.ResultTypeName;
     end;
-    Result.Visibility := TVisibility(Visibility);
+    Result.V9Visibility := TV9Visibility(Visibility);  // SRM - 18 Sep 2004
     NewBody := CodeMethod.Proc.Body.AsString;
     if Result.SectionCount = 0 then
       Result.AddSection(NewBody)
@@ -249,8 +257,14 @@ var
 begin
   Prop.Name := Name;
   Prop.DataName := PropTypeName;
-  Prop.Visibility := TVisibility(Visibility);
+  Prop.V9Visibility := TV9Visibility(Visibility);  // SRM - 18 Sep 2004
   TaggedStrings['StorageName'] := StorageName;
+  // begin SRM 30 Sep 2004
+  // External part(s) options
+  TaggedStrings['ExternalStoredName'] := ExternalStoredName;
+  TaggedStrings['ExternalLinkedName'] := ExternalLinkedName;
+  TaggedIntegers['IsExternal'] := Ord(IsExternal);
+  // end SRM 30 Sep 2004
   TaggedIntegers['Size'] := Metadata.Size;
   TaggedBooleans['IsDefault'] := IsDefault;
   TaggedBooleans['IsIndexed'] := IsIndexed;
@@ -400,7 +414,7 @@ var
   FieldTypeName: string;
 begin
   Name := Prop.Name;
-  Visibility := TInstantCodeVisibility(Prop.Visibility);
+  Visibility := TInstantCodeVisibility(Prop.V9Visibility);  // SRM - 18 Sep 2004
   if Attribute.IsIOAttribute then
   begin
     { If the type of attribute field is Integer (which is considered
@@ -428,6 +442,12 @@ begin
   Tailor.IsArray := Prop.Options[PropArray];
   ReadOnly := Prop.WriteAccess = rwNone;
   StorageName := TaggedStrings['StorageName'];
+  // begin SRM 30 Sep 2004
+  // External part(s) options
+  ExternalStoredName := TaggedStrings['ExternalStoredName'];
+  ExternalLinkedName := TaggedStrings['ExternalLinkedName'];
+  IsExternal := TInstantContainerIsExternal(TaggedIntegers['IsExternal']);
+  // end SRM 30 Sep 2004
   IsDefault := TaggedBooleans['IsDefault'];
   IsIndexed := TaggedBooleans['IsIndexed'];
   IsRequired := TaggedBooleans['IsRequired'];
