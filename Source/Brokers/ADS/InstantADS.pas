@@ -26,6 +26,7 @@
  * Contributor(s):
  * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
  *
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantADS;
