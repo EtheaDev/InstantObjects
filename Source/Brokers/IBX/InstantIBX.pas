@@ -112,6 +112,7 @@ type
     property Connection: TIBDatabase read GetConnection write SetConnection;
     property Options: TInstantIBXOptions read FOptions write FOptions default DefaultInstantIBXOptions;
     property OnLogin: TIBDatabaseLoginEvent read FOnLogin write FOnLogin;
+    property LoginPrompt;
   end;
 
   TInstantIBXBroker= class(TInstantSQLBroker)
