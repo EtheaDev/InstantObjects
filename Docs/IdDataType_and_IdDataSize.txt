@@ -1,0 +1,56 @@
+IdDataType and IdDataSize
+=========================
+Nando Dessena, 02/2005.
+
+Abstract
+--------
+This feature allows you to use a different datatype than string[32] for Id fields in InstantObjects. While there's still a lot to improve to make the mapping strategy more flexible, this little feature helps those who want to use (f. ex.) an integer OID instead of a GUID, mainly for storage size and efficiency reasons.
+
+How to choose a different datatype
+----------------------------------
+Each Connector (and ConnectionDef) features two additional properties:
+
+property IdDataType: TInstantDataType default dtString;
+property IdSize: Integer default InstantDefaultFieldSize;
+
+Just set a data type (I have only tested dtString and dtInteger, and some datatypes like dtBlob and dtBoolean just don't make sense), a DataSize where applicable and build the database. Don't forget to have the same settings when you connect to the database. 
+
+If you use a datatype different than string[32], you might also need to override the default key generation mechanism (otherwise IO will generate 32-character GUIDS that might not fit into your key fields), which you do by handling the connector's OnGenerateId event. Here is the even declaration:
+
+type
+  TInstantGenerateIdEvent = procedure(Sender: TObject;
+    var Id: String) of object;
+
+property OnGenerateId: TInstantGenerateIdEvent;
+
+And here is a sample event handler that I use to generate integer IDs by means of a Firebird sequence generator (IBX broker in this example):
+
+procedure TDmMain.IBXConnectorGenerateId(Sender: TObject;
+  var Id: string);
+begin
+  if not SqlGenIdIBX.Transaction.Active then
+    SqlGenIdIBX.Transaction.StartTransaction;
+  if not SqlGenIdIBX.Prepared then
+    SqlGenIdIBX.Prepare;
+  SqlGenIdIBX.ExecQuery;
+  try
+    Id := SqlGenIdIBX.Fields[0].AsString;
+  finally
+    SqlGenIdIBX.Close;
+  end;
+end;
+
+SqlGenIdIBX is a TIBSQL instance, linked to the same instance of TIBDatabase the IBXConnector is linked to, and it holds the following query:
+
+select GEN_ID(G_ID, 1) from RDB$DATABASE
+
+Where G_ID is my sequence generator defined in the Firebird database.
+
+Remarks
+-------
+- The TInstantObject.Id property is always of type string, regardless of the datatype you choose for the mapping.
+
+Shortcomings
+------------
+- You cannot currently choose an ID datatype for a single class or table: all tables in a database share the same settings.
+- The mechanism is rather crude. In the future I'd like to add the ability to select more flexible mapping strategies (to allow mapping existing databases with IO) and introduce predefined and extensible Id generators to use instead of the OnGenerateId event. Anyway it works well enough for me.
