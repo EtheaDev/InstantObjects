@@ -24,7 +24,9 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell.
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
+ * Joao Morais
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantCode;
@@ -4527,7 +4529,7 @@ end;
 procedure TInstantCodeMetadataInfo.Organize;
 begin
   inherited;
-  Sort;
+  //Sort;
 end;
 
 procedure TInstantCodeMetadataInfo.RemoveAttribute(
