@@ -10,9 +10,10 @@ uses
 {$ENDIF}
 {$IFDEF LINUX}
   QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-  QMenus, QImgList, QActnList, QGrids, QDBGrids, QExtCtrls, QComCtrls,
+  QMenus, QImgList, QActnList, QGrids, QDBGrids, QExtCtrls, QComCtrls, QTypes,
 {$ENDIF}
-  BasicBrowse, DB, InstantPresentation, Model, QTypes;
+{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
+  BasicBrowse, DB, InstantPresentation;
   
 type
   TContactBrowseForm = class(TBasicBrowseForm)

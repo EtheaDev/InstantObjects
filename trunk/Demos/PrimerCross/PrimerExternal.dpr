@@ -1,6 +1,6 @@
 (*
  *   InstantObjects
- *   Primer Demo - with "internal storage" of Part and Parts
+ *   Primer Demo - with "external storage" of Part and Parts
  *
  *)
 
@@ -32,12 +32,12 @@
  * PersonEdit form and random data form changed to test Graphic support
  * ***** END LICENSE BLOCK ***** *)
 
-program Primer;
+program PrimerExternal;
 
 uses
   Forms,
   Main in 'Main.pas' {MainForm},
-  Model in 'Model.pas',
+  ModelExternal in 'ModelExternal.pas',
   ContactView in 'ContactView.pas' {ContactViewForm: TFrame},
   BasicView in 'BasicView.pas' {BasicViewForm: TFrame},
   BasicEdit in 'BasicEdit.pas' {BasicEditForm},
@@ -64,7 +64,7 @@ uses
   Utility in 'Utility.pas';
 
 {$R *.res}
-{$R *.mdr} {Model}
+{$R *.mdr} {ModelExternal}
 
 begin
   Application.Initialize;

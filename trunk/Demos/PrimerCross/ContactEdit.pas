@@ -12,7 +12,8 @@ uses
   QGraphics, QControls, QForms, QDialogs,
   QStdCtrls, QExtCtrls, QMask, QDBCtrls, QGrids, QDBGrids, QComCtrls,
 {$ENDIF}
-  BasicEdit, Db, InstantPresentation, Model;
+{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
+  BasicEdit, Db, InstantPresentation;
 
 type
   TContactEditForm = class(TBasicEditForm)

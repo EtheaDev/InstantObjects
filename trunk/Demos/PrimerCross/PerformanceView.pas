@@ -170,7 +170,8 @@ implementation
 {$R *.dfm}
 
 uses
-  Model, DemoData, IniFiles, Utility;
+{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
+  DemoData, IniFiles, Utility;
 
 { TTestResult }
 
@@ -661,7 +662,8 @@ end;
 procedure TPerformanceViewForm.PreparedQueryCheckBoxClick(Sender: TObject);
 begin
   inherited;
-  TInstantSQLBroker(Connector.Broker).UsePreparedQuery := PreparedQueryCheckBox.Checked;
+  if Connector.Broker is TInstantSQLBroker then
+    TInstantSQLBroker(Connector.Broker).UsePreparedQuery := PreparedQueryCheckBox.Checked;
 end;
 
 procedure TPerformanceViewForm.SetTitleLabel(TitleLabel: TLabel);

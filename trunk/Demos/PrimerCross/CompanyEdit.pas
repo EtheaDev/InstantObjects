@@ -13,7 +13,8 @@ uses
   QGraphics, QControls, QForms, QDialogs, QStdCtrls, QExtCtrls, QGrids, QDBGrids,
   QMask, QDBCtrls, QComCtrls, QMenus, QImgList, QActnList, QButtons,
 {$ENDIF}
-  ContactEdit, DB, InstantPresentation, Model;
+{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
+  ContactEdit, DB, InstantPresentation;
 
 type
   TCompanyEditForm = class(TContactEditForm)
