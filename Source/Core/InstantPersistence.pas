@@ -2816,7 +2816,8 @@ begin
       else if ( ( p[0] = #73 ) and ( p[1] = #73 ) and ( p[2] = #42 ) and ( p[3] = #0 ) ) or
          ( ( p[0] = #77 ) and ( p[1] = #77 ) and ( p[2] = #42 ) and ( p[3] =#0 ) ) then Result := gffTiff
       { jpg format }
-      else if ( p[6] = #74 ) and ( p[7] = #70 ) and ( p[8] = #73 ) and ( p[9] = #70 ) then Result := gffJpeg
+      else if ( p[6] = #74 ) and ( p[7] = #70 ) and ( p[8] = #73 ) and ( p[9] = #70 ) or
+              ( p[6] = #69 ) and ( p[7] = #120 ) and ( p[8] = #105 ) and ( p[9] = #102 ) then Result := gffJpeg
       { png format }
       else if ( p[0] = #137 ) and ( p[1] = #80 ) and ( p[2] = #78 ) and ( p[3] = #71 ) and
          ( p[4] = #13 ) and ( p[5] = #10 ) and ( p[6] = #26 ) and ( p[7] = #10 ) then Result := gffPng
