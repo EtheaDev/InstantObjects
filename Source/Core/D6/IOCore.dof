@@ -20,7 +20,7 @@ P=1
 Q=0
 R=0
 S=0
-T=0
+T=1
 U=0
 V=1
 W=0
@@ -86,8 +86,4 @@ ProductName=InstantObjects
 ProductVersion=1.7
 Comments=
 [Excluded Packages]
-C:\Programmi\Borland\Delphi6\Bin\dcldbxcds60.bpl=Borland Local DBX ClientDataset Components
 C:\Programmi\Borland\Delphi6\Bin\dclclxstd60.bpl=Borland CLX Standard Components
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
