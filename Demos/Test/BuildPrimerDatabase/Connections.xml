@@ -1,0 +1,23 @@
+<TInstantConnectionDefs>
+  <TInstantIBXConnectionDef>
+    <Name>IBX FB</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <Path>C:\IBDATA\PRIMER.FDB</Path>
+    <NetType>ntLocal</NetType>
+    <Options></Options>
+    <Params>User_Name=SYSDBA
+password=a</Params>
+  </TInstantIBXConnectionDef>
+  <TInstantBDEConnectionDef>
+    <Name>BDE PARADOX</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <DriverName>STANDARD</DriverName>
+    <Parameters>PATH=D:\BDEBROKER
+DEFAULT DRIVER=PARADOX
+ENABLE BCD=TRUE
+</Parameters>
+  </TInstantBDEConnectionDef>
+</TInstantConnectionDefs>
