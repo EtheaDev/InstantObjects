@@ -31,7 +31,6 @@ package DclIOUIB;
 requires
   vcl,
   vcldb,
-  ibxpress,
   IOCore,
   IOUIB;
 
