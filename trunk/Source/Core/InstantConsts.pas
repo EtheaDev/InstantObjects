@@ -155,6 +155,10 @@ resourcestring
   SUnsupportedGraphicStream = 'Unsupported graphic stream format';
   SUnsupportedGraphicClass = 'Unsupported graphic class';
   SMissingImplementation = 'Method %s is not implemented in class %s';
+  SConnectionManagerCaption = 'Connection Manager';
+  SConnectionManExecNotAssigned = 'Error: connection manager execution procedure non available';
+  SConnectionDefError = 'Error: connection definitions %s not found in file %s';
+  SConnectionDefFilter = 'Connection files|*.con;*.xml';
 
 implementation
 

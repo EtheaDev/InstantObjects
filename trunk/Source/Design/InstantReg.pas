@@ -40,7 +40,7 @@ implementation
 
 uses
   Classes, InstantConsts, InstantPersistence, InstantPresentation,
-  InstantExplorer, InstantConnectionManager, InstantPump;
+  InstantExplorer, InstantConnectionManager, InstantConnectionManagerForm, InstantPump;
 
 procedure Register;
 begin
