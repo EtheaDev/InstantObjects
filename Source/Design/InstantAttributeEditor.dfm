@@ -156,7 +156,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           TabOrder = 5
           OnChange = StorageKindEditChange
         end
-        object AutoCheckBox: TCheckBox
+        object AutoExternalStorageNameCheckBox: TCheckBox
           Left = 172
           Top = 212
           Width = 45
@@ -164,7 +164,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Alignment = taLeftJustify
           Caption = 'Auto'
           TabOrder = 7
-          OnClick = AutoCheckBoxClick
+          OnClick = AutoExternalStorageNameCheckBoxClick
         end
       end
       object AccessSheet: TTabSheet

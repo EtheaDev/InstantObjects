@@ -93,7 +93,7 @@ type
     ExternalStorageNameLabel: TLabel;
     StorageKindEdit: TDBComboBox;
     StorageKindLabel: TLabel;
-    AutoCheckBox: TCheckBox;
+    AutoExternalStorageNameCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure NameEditChange(Sender: TObject);
     procedure NumericFieldGetText(Sender: TField; var Text: string;
@@ -108,7 +108,7 @@ type
     procedure StorageKindEditChange(Sender: TObject);
     procedure ExternalStorageNameEditChange(Sender: TObject);
     procedure StorageNameEditChange(Sender: TObject);
-    procedure AutoCheckBoxClick(Sender: TObject);
+    procedure AutoExternalStorageNameCheckBoxClick(Sender: TObject);
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
@@ -133,11 +133,11 @@ type
     procedure ComputeExternalStorageName;
   public
     property BaseClassStorageName: string read FBaseClassStorageName write
-        FBaseClassStorageName;
+      FBaseClassStorageName;
     property Limited: Boolean read FLimited write SetLimited;
     property Model: TInstantCodeModel read FModel write SetModel;
     property OnLoadClasses: TInstantStringsEvent read FOnLoadClasses
-        write FOnLoadClasses;
+      write FOnLoadClasses;
     property Subject: TInstantCodeAttribute read GetSubject write SetSubject;
   end;
 
@@ -167,21 +167,20 @@ procedure TInstantAttributeEditorForm.LoadClasses;
 var
   I: Integer;
 begin
-  with ObjectClassEdit do
-  begin
-    Items.BeginUpdate;
-    try
-      Items.Clear;
-      if Assigned(FOnLoadClasses) then
-        FOnLoadClasses(Self, Items)
-      else if Assigned(FModel) then
+  ObjectClassEdit.Items.BeginUpdate;
+  try
+    ObjectClassEdit.Items.Clear;
+    if Assigned(FOnLoadClasses) then
+      FOnLoadClasses(Self, ObjectClassEdit.Items)
+    else
+      if Assigned(FModel) then
         for I := 0 to Pred(FModel.ClassCount) do
-          Items.Add(FModel.Classes[I].Name);
-      if Assigned(Field) then
-        ItemIndex := Items.IndexOf(Field.AsString);
-    finally
-      Items.EndUpdate;
-    end;
+          ObjectClassEdit.Items.Add(FModel.Classes[I].Name);
+    if Assigned(ObjectClassEdit.Field) then
+      ObjectClassEdit.ItemIndex :=
+        ObjectClassEdit.Items.IndexOf(ObjectClassEdit.Field.AsString);
+  finally
+    ObjectClassEdit.Items.EndUpdate;
   end;
 end;
 
@@ -247,48 +246,43 @@ end;
 
 procedure TInstantAttributeEditorForm.LoadStorageKind;
 begin
-  with StorageKindEdit do
-    ItemIndex := SubjectExposer.GetFieldStrings(Field, Items);
+  StorageKindEdit.ItemIndex :=
+    SubjectExposer.GetFieldStrings(StorageKindEdit.Field, StorageKindEdit.Items);
 end;
 
 procedure TInstantAttributeEditorForm.LoadTypes;
 var
   I: Integer;
 begin
-  with TypeEdit do
-  begin
-    ItemIndex := SubjectExposer.GetFieldStrings(Field, Items);
-    I := Items.IndexOf('Unknown');
-    if I <> -1 then
-      Items.Delete(I);
-  end;
+  TypeEdit.ItemIndex := SubjectExposer.GetFieldStrings(TypeEdit.Field,
+    TypeEdit.Items);
+  I := TypeEdit.Items.IndexOf('Unknown');
+  if I <> -1 then
+    TypeEdit.Items.Delete(I);
 end;
 
 procedure TInstantAttributeEditorForm.LoadVisibilities;
 var
   I: Integer;
 begin
-  with VisibilityEdit do
+  SubjectExposer.GetFieldStrings(VisibilityEdit.Field, VisibilityEdit.Items);
+  I := VisibilityEdit.Items.IndexOf('Default');
+  if I <> -1 then
+    VisibilityEdit.Items.Delete(I);
+  if Assigned(Subject) and Subject.IsContainer then
   begin
-    SubjectExposer.GetFieldStrings(Field, Items);
-    I := Items.IndexOf('Default');
+    I := VisibilityEdit.Items.IndexOf('Published');
     if I <> -1 then
-      Items.Delete(I);
-    if Assigned(Subject) and Subject.IsContainer then
-    begin
-      I := Items.IndexOf('Published');
-      if I <> -1 then
-        Items.Delete(I);
-    end;
-    if Assigned(Field) then
-      ItemIndex := Items.IndexOf(Field.AsString);
+      VisibilityEdit.Items.Delete(I);
   end;
+  if Assigned(VisibilityEdit.Field) then
+    VisibilityEdit.ItemIndex :=
+      VisibilityEdit.Items.IndexOf(VisibilityEdit.Field.AsString);
 end;
 
 procedure TInstantAttributeEditorForm.NameEditChange(Sender: TObject);
 begin
-  with NameEdit do
-    SubjectExposer.AssignFieldValue(Field, Text);
+  SubjectExposer.AssignFieldValue(NameEdit.Field, NameEdit.Text);
   UpdateControls;
   ComputeExternalStorageName;
 end;
@@ -304,8 +298,7 @@ end;
 
 procedure TInstantAttributeEditorForm.ObjectClassEditChange(Sender: TObject);
 begin
-  with ObjectClassEdit do
-    SubjectExposer.AssignFieldValue(Field, Text);
+  SubjectExposer.AssignFieldValue(ObjectClassEdit.Field, ObjectClassEdit.Text);
   UpdateControls;
 end;
 
@@ -321,17 +314,16 @@ var
   I: Integer;
 begin
   if Assigned(Subject.Owner) then
-    with Subject.Owner do
-      for I := 0 to Pred(AttributeCount) do
+    for I := 0 to Pred(Subject.Owner.AttributeCount) do
+    begin
+      Attribute := Subject.Owner.Attributes[I];
+      if (Attribute <> Subject) and SameText(Attribute.Name, Subject.Name) then
       begin
-        Attribute := Attributes[I];
-        if (Attribute <> Subject) and SameText(Attribute.Name, Subject.Name) then
-        begin
-          ModalResult := mrNone;
-          raise Exception.Create('Name already used');
-        end;
+        ModalResult := mrNone;
+        raise Exception.Create('Name already used');
       end;
-      
+    end;
+
   inherited;
 end;
 
@@ -418,7 +410,8 @@ procedure TInstantAttributeEditorForm.SubjectExposerTranslate(
   begin
     if Write then
       Value := Prefix + Value
-    else begin
+    else
+    begin
       Name := Value;
       Delete(Name, 1, Length(Prefix));
       Value := Name;
@@ -428,16 +421,17 @@ procedure TInstantAttributeEditorForm.SubjectExposerTranslate(
 begin
   if Field.FieldName = 'AttributeType' then
     TranslateEnum('at')
-  else if Field.FieldName = 'Visibility' then
-    TranslateEnum('vi')
-  else if Field.FieldName = 'StorageKind' then
-    TranslateEnum('sk');
+  else
+    if Field.FieldName = 'Visibility' then
+      TranslateEnum('vi')
+    else
+      if Field.FieldName = 'StorageKind' then
+        TranslateEnum('sk');
 end;
 
 procedure TInstantAttributeEditorForm.TypeEditClick(Sender: TObject);
 begin
-  with TypeEdit do
-    SubjectExposer.AssignFieldValue(Field, Text);
+  SubjectExposer.AssignFieldValue(TypeEdit.Field, TypeEdit.Text);
   // Controls need to be enabled first to
   // reliably load combo dropdown lists in MM OFExpt
   UpdateControls;
@@ -452,13 +446,12 @@ procedure TInstantAttributeEditorForm.UpdateControls;
   var
     I: Integer;
   begin
-    with Parent do
-      for I := 0 to Pred(ControlCount) do
-      begin
-        Controls[I].Enabled := not Disable;
-        if Controls[I] is TWinControl then
-          DisableSubControls(TWinControl(Controls[I]), Disable);
-      end;
+    for I := 0 to Pred(Parent.ControlCount) do
+    begin
+      Parent.Controls[I].Enabled := not Disable;
+      if Parent.Controls[I] is TWinControl then
+        DisableSubControls(TWinControl(Parent.Controls[I]), Disable);
+    end;
   end;
 
   procedure EnableCtrl(Control: TControl; Enable: Boolean);
@@ -468,7 +461,7 @@ procedure TInstantAttributeEditorForm.UpdateControls;
 
 var
   HasName, HasClass, IsComplex, IsContainer, CanBeExternal, IsExternal,
-  IsMaskable, IsString, IsValid: Boolean;
+    IsMaskable, IsString, IsValid: Boolean;
 begin
   CanBeExternal := Subject.AttributeType in [atPart, atParts, atReferences];
   if not CanBeExternal then
@@ -479,7 +472,8 @@ begin
   HasName := NameEdit.Text <> '';
   HasClass := ObjectClassEdit.Text <> '';
   IsComplex := Subject.IsComplex;
-  IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat, atCurrency, atInteger];
+  IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat, atCurrency,
+    atInteger];
   IsContainer := Subject.IsContainer;
 
   IsExternal := Subject.StorageKind = skExternal;
@@ -506,14 +500,16 @@ begin
     EnableCtrl(StorageKindEdit, CanBeExternal);
     EnableCtrl(StorageKindLabel, CanBeExternal);
   end;
-  EnableCtrl(StorageNameLabel, not IsExternal or (Subject.AttributeType = atPart));
-  EnableCtrl(StorageNameEdit, not IsExternal or (Subject.AttributeType = atPart));
+  EnableCtrl(StorageNameLabel, not IsExternal or (Subject.AttributeType =
+    atPart));
+  EnableCtrl(StorageNameEdit, not IsExternal or (Subject.AttributeType =
+    atPart));
 
   EnableCtrl(ExternalStorageNameLabel, IsExternal
     and not (Subject.AttributeType = atPart));
   EnableCtrl(ExternalStorageNameEdit, IsExternal
     and not (Subject.AttributeType = atPart));
-  EnableCtrl(AutoCheckBox, IsExternal
+  EnableCtrl(AutoExternalStorageNameCheckBox, IsExternal
     and not (Subject.AttributeType = atPart));
 
   EnableCtrl(SizeLabel, IsString);
@@ -527,24 +523,27 @@ end;
 
 procedure TInstantAttributeEditorForm.StorageKindEditChange(Sender: TObject);
 begin
-  with StorageKindEdit do
-    if Text <> '' then
-      SubjectExposer.AssignFieldValue(Field, Text);
+  if StorageKindEdit.Text <> '' then
+    SubjectExposer.AssignFieldValue(StorageKindEdit.Field,
+      StorageKindEdit.Text);
   UpdateControls;
   ComputeExternalStorageName;
 end;
 
-procedure TInstantAttributeEditorForm.ExternalStorageNameEditChange(Sender: TObject);
+procedure TInstantAttributeEditorForm.ExternalStorageNameEditChange(Sender:
+  TObject);
 begin
-  with ExternalStorageNameEdit do
-    if Text <> '' then
-      SubjectExposer.AssignFieldValue(Field, Text);
+  if ExternalStorageNameEdit.Text <> '' then
+    SubjectExposer.AssignFieldValue(ExternalStorageNameEdit.Field,
+      ExternalStorageNameEdit.Text);
   UpdateControls;
 end;
 
-procedure TInstantAttributeEditorForm.AutoCheckBoxClick(Sender: TObject);
+procedure
+  TInstantAttributeEditorForm.AutoExternalStorageNameCheckBoxClick(Sender:
+  TObject);
 begin
-  if AutoCheckBox.Checked then
+  if AutoExternalStorageNameCheckBox.Checked then
     ComputeExternalStorageName;
 end;
 
@@ -565,31 +564,21 @@ procedure TInstantAttributeEditorForm.ComputeExternalStorageName;
   end;
 
 begin
-  with ExternalStorageNameEdit do
-    if Enabled then
-    begin
-      if (Subject.ExternalStorageName <> '') and not AutoCheckBox.Checked then
-        Text := Subject.ExternalStorageName
-      else
-      if (Text = '') or AutoCheckBox.Checked then
-        Text := Format('%s_%s', [BaseClassStorageName, GetStorageName()]);
-    end
+  if ExternalStorageNameEdit.Enabled then
+  begin
+    if (Subject.ExternalStorageName <> '') and
+      not AutoExternalStorageNameCheckBox.Checked then
+      ExternalStorageNameEdit.Text := Subject.ExternalStorageName
     else
-      Text := '';
+      if (ExternalStorageNameEdit.Text = '') or
+        AutoExternalStorageNameCheckBox.Checked then
+        ExternalStorageNameEdit.Text :=
+          Format('%s_%s', [BaseClassStorageName, GetStorageName()]);
+  end
+  else
+    ExternalStorageNameEdit.Text := '';
 
 end;
 
 end.
-
-
-
-
-
-
-
-
-
-
-
-
 
