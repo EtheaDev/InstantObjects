@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -47,6 +47,7 @@ procedure Busy(Enable: Boolean);
 function Confirm(const Msg: string): Boolean;
 procedure EnableControl(Control: TControl; Enable: Boolean; Source: TDataSource);
 function ShortenPath(const Path: string; Canvas: TCanvas; MaxLen: Integer): string;
+function Remove_T_FromClassName(const AClassName: string): string;
 
 implementation
 
@@ -164,6 +165,14 @@ begin
       CutFirstDirectory(Dir);
     Result := Drive + Dir + Name;
   end;
+end;
+
+function Remove_T_FromClassName(const AClassName: string): string;
+begin
+  Result := AClassName;
+  // Remove the 'T' from classname
+  if (Length(Result) > 1) and (Result[1] = 'T') then
+    Delete(Result, 1, 1);
 end;
 
 end.
