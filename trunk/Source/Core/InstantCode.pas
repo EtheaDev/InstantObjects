@@ -3439,7 +3439,6 @@ end;
 
 procedure TInstantCodeAttributeTailor.DeleteMethods;
 begin
-  DeleteItem(FCountProp);
   DeleteItem(FAddMethod);
   DeleteItem(FClearMethod);
   DeleteItem(FDeleteMethod);
@@ -8549,3 +8548,8 @@ finalization
   DestroyTypeProcessors;
 
 end.
+
+
+
+
+
