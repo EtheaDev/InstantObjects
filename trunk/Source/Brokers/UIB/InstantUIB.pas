@@ -371,28 +371,35 @@ begin
   for I := 0 to Pred(AParams.Count) do
   begin
     SourceParam := AParams[I];
-    case SourceParam.DataType of
-      ftString:
-        TargetParams.ByNameAsString[SourceParam.Name] := SourceParam.AsString;
-      ftInteger:
-        TargetParams.ByNameAsInteger[SourceParam.Name] := SourceParam.AsInteger;
-      ftFloat:
-        TargetParams.ByNameAsDouble[SourceParam.Name] := SourceParam.AsFloat;
-      ftCurrency:
-        TargetParams.ByNameAsCurrency[SourceParam.Name] := SourceParam.AsCurrency;
-      ftDateTime:
-        TargetParams.ByNameAsDateTime[SourceParam.Name] := SourceParam.AsDateTime;
-      ftBoolean:
-        TargetParams.ByNameAsBoolean[SourceParam.Name] := SourceParam.AsBoolean;
-      ftBlob, ftMemo:
-      begin
-        BlobContent := SourceParam.AsString;
-        TJvUIBDataset(DataSet).ParamsSetBlob(SourceParam.Name, BlobContent);
-      end;
+    if SourceParam.IsNull then
+    begin
+      TargetParams.ByNameIsNull[SourceParam.Name];
+    end
     else
-      raise Exception.Create('Parameter data type not supported: ' +
-        GetEnumName(TypeInfo(TFieldType), Ord(SourceParam.DataType)));
-    end;
+    begin
+      case SourceParam.DataType of
+        ftString:
+          TargetParams.ByNameAsString[SourceParam.Name] := SourceParam.AsString;
+        ftInteger:
+          TargetParams.ByNameAsInteger[SourceParam.Name] := SourceParam.AsInteger;
+        ftFloat:
+          TargetParams.ByNameAsDouble[SourceParam.Name] := SourceParam.AsFloat;
+        ftCurrency:
+          TargetParams.ByNameAsCurrency[SourceParam.Name] := SourceParam.AsCurrency;
+        ftDateTime:
+          TargetParams.ByNameAsDateTime[SourceParam.Name] := SourceParam.AsDateTime;
+        ftBoolean:
+          TargetParams.ByNameAsBoolean[SourceParam.Name] := SourceParam.AsBoolean;
+        ftBlob, ftMemo:
+        begin
+          BlobContent := SourceParam.AsString;
+          TJvUIBDataset(DataSet).ParamsSetBlob(SourceParam.Name, BlobContent);
+        end;
+      else
+        raise Exception.Create('Parameter data type not supported: ' +
+          GetEnumName(TypeInfo(TFieldType), Ord(SourceParam.DataType)));
+      end;
+    end;  
   end;
 end;
 
