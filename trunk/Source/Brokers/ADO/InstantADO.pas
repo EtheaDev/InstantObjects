@@ -29,7 +29,7 @@
 
 unit InstantADO;
 
-{$I InstantDefines.inc}
+{$I ..\..\Core\InstantDefines.inc}
 
 {$IFDEF D7+}
 {$WARN UNSAFE_TYPE OFF}

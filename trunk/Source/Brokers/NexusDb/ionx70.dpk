@@ -1,0 +1,50 @@
+package ionx70;
+
+{$R *.res}
+{$R 'InstantNexusDb.dcr'}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'InstantObjects NexusDb support'}
+{$IMPLICITBUILD OFF}
+
+requires
+  rtl,
+  vcl,
+  dbrtl,
+  vclx,
+  iodes70,
+  vcldb,
+  designide,
+  vclactnband,
+  Nexus100sd70,
+  Nexus100ll70,
+  Nexus100re70,
+  Nexus100st70,
+  Nexus100pt70,
+  Nexus100tw70,
+  Nexus100db70;
+
+contains
+  InstantNexusDb in 'InstantNexusDb.pas',
+  InstantNexusDbConnectionDefEdit in 'InstantNexusDbConnectionDefEdit.pas' {InstantNexusDbConnectionDefEditForm};
+
+end.
