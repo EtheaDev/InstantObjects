@@ -11,7 +11,6 @@ uses
   UbMockObject;
 
 type
-
   TTestMockConnector = class(TTestCase)
   published
     procedure TestBuildDatabase;
@@ -43,7 +42,6 @@ begin
   finally
     conn.Free;
   end;
-
 end;
 
 procedure TTestMockConnector.TestConnectDisconnect;
@@ -64,7 +62,6 @@ begin
     conn.Free;
   end;
 end;
-
 
 procedure TTestMockConnector.TestTransaction;
 var
@@ -102,8 +99,6 @@ begin
     conn.Free;
   end;
 end;
-
-
 
 initialization
   RegisterTests([TTestMockConnector]);
