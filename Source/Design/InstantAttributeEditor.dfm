@@ -1,8 +1,8 @@
 inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
-  Left = 229
-  Top = 215
+  Left = 78
+  Top = 485
   Width = 249
-  Height = 350
+  Height = 358
   Caption = 'Attribute Editor'
   ParentFont = True
   OldCreateOrder = True
@@ -11,12 +11,12 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 241
-    Height = 292
+    Height = 293
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 233
-      Height = 284
+      Height = 285
       ActivePage = DefinitionSheet
       Align = alClient
       TabOrder = 0
@@ -64,7 +64,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         end
         object ExternalStorageNameLabel: TLabel
           Left = 8
-          Top = 208
+          Top = 214
           Width = 109
           Height = 13
           Caption = '&External Storage Name'
@@ -79,9 +79,9 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           FocusControl = StorageKindEdit
         end
         object NameEdit: TDBEdit
-          Left = 8
+          Left = 7
           Top = 24
-          Width = 209
+          Width = 210
           Height = 21
           DataField = 'Name'
           DataSource = SubjectSource
@@ -89,7 +89,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           OnChange = NameEditChange
         end
         object TypeEdit: TDBComboBox
-          Left = 8
+          Left = 7
           Top = 64
           Width = 137
           Height = 21
@@ -102,9 +102,9 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           OnClick = TypeEditClick
         end
         object ObjectClassEdit: TDBComboBox
-          Left = 8
+          Left = 7
           Top = 104
-          Width = 209
+          Width = 210
           Height = 21
           DataField = 'Metadata.ObjectClassName'
           DataSource = SubjectSource
@@ -115,9 +115,9 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           OnEnter = ObjectClassEditEnter
         end
         object StorageNameEdit: TDBEdit
-          Left = 8
+          Left = 7
           Top = 144
-          Width = 209
+          Width = 210
           Height = 21
           DataField = 'StorageName'
           DataSource = SubjectSource
@@ -134,9 +134,9 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           TabOrder = 3
         end
         object ExternalStorageNameEdit: TDBEdit
-          Left = 8
-          Top = 225
-          Width = 209
+          Left = 7
+          Top = 231
+          Width = 210
           Height = 21
           DataField = 'ExternalStorageName'
           DataSource = SubjectSource
@@ -155,6 +155,16 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Sorted = True
           TabOrder = 5
           OnChange = StorageKindEditChange
+        end
+        object AutoCheckBox: TCheckBox
+          Left = 172
+          Top = 212
+          Width = 45
+          Height = 17
+          Alignment = taLeftJustify
+          Caption = 'Auto'
+          TabOrder = 7
+          OnClick = AutoCheckBoxClick
         end
       end
       object AccessSheet: TTabSheet
@@ -368,10 +378,18 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 292
+    Top = 293
     Width = 241
     inherited ButtonPanel: TPanel
       Left = 81
+      inherited OkButton: TButton
+        Left = 1
+        Top = 2
+      end
+      inherited CancelButton: TButton
+        Left = 81
+        Top = 2
+      end
     end
   end
   inherited SubjectExposer: TInstantExposer
