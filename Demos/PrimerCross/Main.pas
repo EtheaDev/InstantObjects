@@ -51,6 +51,8 @@ type
     N2: TMenuItem;
     ExportItem: TMenuItem;
     ImportItem: TMenuItem;
+    N3: TMenuItem;
+    ExportModelItem: TMenuItem;
     procedure ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure ExitItemClick(Sender: TObject);
@@ -72,6 +74,7 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ExportItemClick(Sender: TObject);
     procedure ImportItemClick(Sender: TObject);
+    procedure ExportModelItemClick(Sender: TObject);
   private
     FActiveSubView: TBasicViewForm;
     FConnectionDef: TInstantConnectionDef;
@@ -478,6 +481,7 @@ begin
   try
     Filter := XMLFilter;
     DefaultExt := XMLExt;
+    InitialDir := ExtractFilePath(Application.ExeName);
     if Execute then
       ExportObjects(TContact, FileName);
   finally
@@ -660,7 +664,7 @@ begin
         Align := alClient;
         Height := Parent.ClientHeight;
         Width := Parent.ClientWidth;
-        Show;
+        FormShow(FActiveSubView);
       end;
     end;
     StatusText := '';
@@ -782,6 +786,20 @@ begin
     finally
       Picture.Free;
     end;
+  end;
+end;
+
+procedure TMainForm.ExportModelItemClick(Sender: TObject);
+begin
+  with TSaveDialog.Create(nil) do
+  try
+    Filter := XMLFilter;
+    DefaultExt := XMLExt;
+    InitialDir := ExtractFilePath(Application.ExeName);
+    if Execute then
+      InstantModel.SaveToFile(FileName);
+  finally
+    Free;
   end;
 end;
 

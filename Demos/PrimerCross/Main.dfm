@@ -169,12 +169,19 @@ object MainForm: TMainForm
         Caption = '-'
       end
       object ExportItem: TMenuItem
-        Caption = '&Export...'
+        Caption = '&Export all Contacts...'
         OnClick = ExportItemClick
       end
       object ImportItem: TMenuItem
-        Caption = '&Import...'
+        Caption = '&Import Contacts from file...'
         OnClick = ImportItemClick
+      end
+      object N3: TMenuItem
+        Caption = '-'
+      end
+      object ExportModelItem: TMenuItem
+        Caption = 'Export model...'
+        OnClick = ExportModelItemClick
       end
       object N1: TMenuItem
         Caption = '-'
