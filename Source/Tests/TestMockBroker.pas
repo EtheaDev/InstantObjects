@@ -76,16 +76,17 @@ begin
     a.Store();
     old_id := a.id;
   finally
-    a.Free;
+    FreeAndNil(a);
   end;
+  AssertNull(a);
   brok.MockManager.EndSetUp;
   brok.MockManager.AddExpectation('InternalStoreObject ' + old_id);
   brok.MockManager.Verify;
   Fconn.CommitTransaction;
   brok.MockManager.StartSetUp;
-  a := TAddress.Create;
+  a := TAddress.Retrieve(old_id);
   try
-    a.Retrieve(old_id);
+    AssertEquals(old_id, a.Id);
   finally
     a.Free;
   end;
@@ -111,15 +112,17 @@ begin
     c.Store();
     old_id := c.id;
   finally
-    c.Free;
+    FreeAndNil(c);
   end;
+  AssertNull(c);
   brok.MockManager.EndSetUp;
   brok.MockManager.AddExpectation('InternalStoreObject ' + old_id);
   brok.MockManager.Verify;
   brok.MockManager.StartSetUp;
-  c := TContact.Create;
+  c := TContact.Retrieve(old_id);
   try
-    c.Retrieve(old_id);
+    AssertEquals(old_id, c.Id);
+    AssertNotNull(c.Address);
   finally
     c.Free;
   end;
