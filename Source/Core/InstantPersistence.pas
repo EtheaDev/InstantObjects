@@ -24,21 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Andrea Petrelli: porting Kylix
- * Carlo Barazzetta:
- * - blob streaming in XML format (Part, Parts, References)
- * - UserPreparedQuery support
- * - Objects Assign with different connectors
- * - TInstantCurrency support
- * - TInstantGraphic support
- * - LoginPrompt support in Connections based on TCustomConnection
- * Nando Dessena, Andrea Petrelli:
- * - ExternalPart, ExternalParts and ExternalReferences support
- * Nando Dessena:
- * - Added OnGenerateId event as a primitive form of ID Factory.
- * - Support for changing the data type used for ID fields.
- * - Fixed Range Check Error in TInstantAttribute.GetIsDefault.
- * - Added explicit ordering to externalstored collections.
+ * Carlo Barazzetta, Andrea Petrelli, Nando Dessena
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPersistence;
@@ -89,7 +75,7 @@ type
   TInstantAttribute = class;
   TInstantAttributeClass = class of TInstantAttribute;
 
-  TInstantContainerIsExternal = (ceNo, ceStored, ceLinked);
+  TInstantStorageKind = (skEmbedded, skExternal);
   TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean, atString,
     atDateTime, atBlob, atMemo, atGraphic, atPart, atReference, atParts, atReferences);
   TInstantAttributeCategory = (acUnknown, acSimple, acElement, acContainer);
@@ -108,9 +94,8 @@ type
     FSize: Integer;
     FStorageName: string;
     FValidChars: TChars;
-    FIsExternal: TInstantContainerIsExternal;
-    FExternalStoredName: string;
-    FExternalLinkedName: string;
+    FStorageKind: TInstantStorageKind;
+    FExternalStorageName: string;
     function GetAttributeClass: TInstantAttributeClass;
     function GetAttributeClassName: string;
     function GetAttributeTypeName: string;
@@ -159,9 +144,8 @@ type
     property DefaultValue: string read FDefaultValue write FDefaultValue;
     property DisplayWidth: Integer read FDisplayWidth write FDisplayWidth default 0;
     property EditMask: string read FEditMask write FEditMask;
-    property ExternalLinkedName: string read FExternalLinkedName write FExternalLinkedName;
-    property ExternalStoredName: string read FExternalStoredName write FExternalStoredName;
-    property IsExternal: TInstantContainerIsExternal read FIsExternal write FIsExternal default ceNo;
+    property ExternalStorageName: string read FExternalStorageName write FExternalStorageName;
+    property StorageKind: TInstantStorageKind read FStorageKind write FStorageKind default skEmbedded;
     property IsIndexed: Boolean read FIsIndexed write FIsIndexed;
     property IsRequired: Boolean read FIsRequired write FIsRequired;
     property ObjectClassName: string read FObjectClassName write FObjectClassName;
@@ -280,15 +264,13 @@ type
   TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob);
   TInstantFieldOption = (foRequired, foIndexed);
   TInstantFieldOptions = set of TInstantFieldOption;
-  TInstantFieldExternalOption = (feNone, feLinked, feStored);
 
   TInstantFieldMetadata = class(TInstantMetadata)
   private
     FDataType: TInstantDataType;
     FOptions: TInstantFieldOptions;
     FSize: Integer;
-    FExternalOption: TInstantFieldExternalOption;
-    FExternalName: string;
+    FExternalTableName: string;
     FOriginalAttributeType: TInstantAttributeType;
     function GetCollection: TInstantFieldMetadatas;
     function GetTableMetadata: TInstantTableMetadata;
@@ -297,9 +279,7 @@ type
     property Collection: TInstantFieldMetadatas read GetCollection;
     property DataType: TInstantDataType read FDataType write FDataType;
     property Options: TInstantFieldOptions read FOptions write FOptions;
-    property ExternalOption: TInstantFieldExternalOption read FExternalOption
-      write FExternalOption default feNone;
-    property ExternalName: string read FExternalName write FExternalName;
+    property ExternalTableName: string read FExternalTableName write FExternalTableName;
     property Size: Integer read FSize write FSize;
     property TableMetadata: TInstantTableMetadata read GetTableMetadata;
     property OriginalAttributeType: TInstantAttributeType
@@ -314,8 +294,7 @@ type
     constructor Create(AOwner: TInstantTableMetadata);
     procedure AddFieldMetadata(const AName: string; ADataType: TInstantDataType;
       ASize: Integer; AOriginalAttributeType: TInstantAttributeType;
-      AOptions: TInstantFieldOptions = [];
-      AExternalOption: TInstantFieldExternalOption = feNone; AExternalName: string = '');
+      AOptions: TInstantFieldOptions = []; AExternalTableName: string = '');
     function Add: TInstantFieldMetadata;
     property Items[Index: Integer]: TInstantFieldMetadata read GetItems write SetItems; default;
     function Owner: TInstantTableMetadata;
@@ -2130,9 +2109,8 @@ type
     function InternalGenerateInsertSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateInsertExternalSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateSelectExternalLinkedSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateSelectExternalStoredSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateSelectExternalPartStoredSQL(Map: TInstantAttributeMap): string; virtual;
+    function InternalGenerateSelectExternalSQL(Map: TInstantAttributeMap): string; virtual;
+    function InternalGenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateUpdateConcurrentSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateUpdateSQL(Map: TInstantAttributeMap): string; virtual;
     property Delimiters: string read GetDelimiters;
@@ -2150,9 +2128,8 @@ type
     function GenerateInsertSQL(Map: TInstantAttributeMap): string;
     function GenerateInsertExternalSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectSQL(Map: TInstantAttributeMap): string;
-    function GenerateSelectExternalLinkedSQL(Map: TInstantAttributeMap): string;
-    function GenerateSelectExternalStoredSQL(Map: TInstantAttributeMap): string;
-    function GenerateSelectExternalPartStoredSQL(Map: TInstantAttributeMap): string;
+    function GenerateSelectExternalSQL(Map: TInstantAttributeMap): string;
+    function GenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string;
     function GenerateUpdateConcurrentSQL(Map: TInstantAttributeMap): string;
     function GenerateUpdateSQL(Map: TInstantAttributeMap): string;
   end;
@@ -2205,9 +2182,8 @@ type
     FPreparedDataSet: TDataSet;
     LastStatement: string;
     LastConnector: TObject;
-    FSelectExternalLinkedSQL: string;
-    FSelectExternalStoredSQL: string;
-    FSelectExternalPartStoredSQL: string;
+    FSelectExternalSQL: string;
+    FSelectExternalPartSQL: string;
     FDeleteExternalSQL: string;
     FInsertExternalSQL: string;
     function CreatePreparedQuery(const AStatement: string; AParams: TParams = nil): TDataSet;
@@ -2228,9 +2204,8 @@ type
     function GetUpdateSQL: string;
     function GetBroker: TInstantSQLBroker;
     function GetUsePreparedQuery: Boolean;
-    function GetSelectExternalLinkedSQL: string;
-    function GetSelectExternalStoredSQL: string;
-    function GetSelectExternalPartStoredSQL: string;
+    function GetSelectExternalSQL: string;
+    function GetSelectExternalPartSQL: string;
     function GetDeleteExternalSQL: string;
     function GetInsertExternalSQL: string;
   protected
@@ -2277,9 +2252,8 @@ type
     property InsertExternalSQL: string read GetInsertExternalSQL write FInsertExternalSQL;
     property Map: TInstantAttributeMap read FMap;
     property SelectSQL: string read GetSelectSQL write FSelectSQL;
-    property SelectExternalLinkedSQL: string read GetSelectExternalLinkedSQL write FSelectExternalLinkedSQL;
-    property SelectExternalStoredSQL: string read GetSelectExternalStoredSQL write FSelectExternalStoredSQL;
-    property SelectExternalPartStoredSQL: string read GetSelectExternalPartStoredSQL write FSelectExternalPartStoredSQL;
+    property SelectExternalSQL: string read GetSelectExternalSQL write FSelectExternalSQL;
+    property SelectExternalPartSQL: string read GetSelectExternalPartSQL write FSelectExternalPartSQL;
     property UpdateConcurrentSQL: string read GetUpdateConcurrentSQL write FUpdateConcurrentSQL;
     property UpdateSQL: string read GetUpdateSQL write FUpdateSQL;
     property UsePreparedQuery: Boolean read GetUsePreparedQuery;
@@ -2512,7 +2486,8 @@ var
   g: Integer;
 begin
   S := Caption + AStatement;
-  if Assigned(AParams) then begin
+  if Assigned(AParams) then
+  begin
     for g := 0 to AParams.Count - 1 do begin
       S := S + sLineBreak + '  ' +
       AParams[g].Name + ': ' + GetEnumName(TypeInfo(TFieldType), Ord(AParams[g].DataType)) +
@@ -2965,9 +2940,8 @@ begin
       Self.FObjectClassName := FObjectClassName;
       Self.FSize := FSize;
       Self.FStorageName := FStorageName;
-      Self.FIsExternal := FIsExternal;
-      Self.FExternalStoredName := FExternalStoredName;
-      Self.FExternalLinkedName := FExternalLinkedName;      
+      Self.FStorageKind := FStorageKind;
+      Self.FExternalStorageName := FExternalStorageName;
       Self.FValidChars := FValidChars;
     end;
 end;
@@ -3589,7 +3563,6 @@ end;
 constructor TInstantFieldMetadata.Create(ACollection: TInstantFieldMetadatas);
 begin
   inherited Create(ACollection);
-  FExternalOption := feNone;
   FOriginalAttributeType := atUnknown;
 end;
 
@@ -3612,8 +3585,7 @@ end;
 
 procedure TInstantFieldMetadatas.AddFieldMetadata(const AName: string;
   ADataType: TInstantDataType; ASize: Integer; AOriginalAttributeType: TInstantAttributeType;
-  AOptions: TInstantFieldOptions = []; AExternalOption: TInstantFieldExternalOption = feNone;
-  AExternalName: string = '');
+  AOptions: TInstantFieldOptions = []; AExternalTableName: string = '');
 begin
   with Add do
   begin
@@ -3622,8 +3594,7 @@ begin
     Size := ASize;
     OriginalAttributeType := AOriginalAttributeType;
     Options := AOptions;
-    ExternalOption := AExternalOption;
-    ExternalName := AExternalName;
+    ExternalTableName := AExternalTableName;
   end;
 end;
 
@@ -5759,10 +5730,10 @@ end;
 
 function TInstantPart.GetAllowOwned: Boolean;
 begin
-  if Metadata.IsExternal = ceNo then
-    Result := inherited GetAllowOwned()
+  if Metadata.StorageKind = skExternal then
+    Result := True
   else
-    Result := True;
+    Result := inherited GetAllowOwned();
 end;
 
 function TInstantPart.GetIsChanged: Boolean;
@@ -5844,7 +5815,7 @@ begin
   inherited;
   if Assigned(AObject) then
   begin
-    if Metadata.IsExternal = ceNo then
+    if Metadata.StorageKind = skEmbedded then
       if AObject.IsPersistent then
         raise EInstantValidationError.CreateResFmt(@SPersistentObjectNotAllowed,
           [AObject.ClassName, AObject.Id]);
@@ -6420,7 +6391,7 @@ begin
   begin
     Clear;
     // if not external then clone and add then object
-    if Self.Metadata.IsExternal = ceNo then
+    if Metadata.StorageKind = skEmbedded then
     begin
       with TInstantParts(Source) do
         for I := 0 to Pred(Count) do
@@ -6436,10 +6407,9 @@ begin
     end
     else
     begin
-      // if is external
-      if TInstantParts(Source).Metadata.IsExternal=ceNo then
+      if TInstantParts(Source).Metadata.StorageKind = skEmbedded then
       begin
-        // if is not external then clone and add the object
+        // if it's not external then clone and add the object
         with TInstantParts(Source) do
           for I := 0 to Pred(Count) do
           begin
@@ -6489,7 +6459,7 @@ end;
 
 destructor TInstantParts.Destroy;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     FObjectList.Free
   else
     FObjectReferenceList.Free;
@@ -6508,7 +6478,7 @@ end;
 
 function TInstantParts.GetCount: Integer;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     Result := ObjectList.Count
   else
     Result := ObjectReferenceList.Count;
@@ -6516,7 +6486,7 @@ end;
 
 function TInstantParts.GetInstances(Index: Integer): TInstantObject;
 begin
-  if Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     Result := inherited GetInstances(Index)
   else
     Result := ObjectReferences[Index].Instance;
@@ -6560,7 +6530,7 @@ function TInstantParts.InternalAdd(AObject: TInstantObject): Integer;
 var
   Ref: TInstantObjectReference;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
   begin
     Result := ObjectList.Add(AObject);
     SetOwnerContext(AObject);
@@ -6581,7 +6551,7 @@ procedure TInstantParts.InternalClear;
 var
   I: Integer;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
   begin
     for I := 0 to Pred(ObjectList.Count) do
       ClearOwnerContext(ObjectList[I] as TInstantObject);
@@ -6600,7 +6570,7 @@ procedure TInstantParts.InternalDelete(Index: Integer);
 var
   Ref: TInstantObjectReference;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
   begin
     ClearOwnerContext(ObjectList[Index] as TInstantObject);
     ObjectList.Delete(Index)
@@ -6614,10 +6584,9 @@ begin
   end;
 end;
 
-procedure TInstantParts.InternalExchange(Index1,
-  Index2: Integer);
+procedure TInstantParts.InternalExchange(Index1, Index2: Integer);
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     ObjectList.Exchange(Index1, Index2)
   else
     ObjectReferenceList.Exchange(Index1, Index2);
@@ -6627,7 +6596,7 @@ function TInstantParts.InternalGetItems(Index: Integer): TInstantObject;
 var
   Ref: TInstantObjectReference;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     Result := ObjectList[Index] as TInstantObject
   else
   begin
@@ -6641,12 +6610,11 @@ begin
   end;
 end;
 
-function TInstantParts.InternalIndexOf(
-  AObject: TInstantObject): Integer;
+function TInstantParts.InternalIndexOf(AObject: TInstantObject): Integer;
 var
   Ref: TInstantObjectReference;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     Result := ObjectList.IndexOf(AObject)
   else
   begin
@@ -6664,7 +6632,7 @@ function TInstantParts.InternalIndexOfInstance(Instance: Pointer): Integer;
 var
   Ref: TInstantObjectReference;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     Result := InternalIndexOf(TInstantObject(Instance))
   else
   begin
@@ -6678,12 +6646,11 @@ begin
   end;
 end;
 
-procedure TInstantParts.InternalInsert(Index: Integer;
-  AObject: TInstantObject);
+procedure TInstantParts.InternalInsert(Index: Integer; AObject: TInstantObject);
 var
   Ref: TInstantObjectReference;
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
   begin
     ObjectList.Insert(Index, AObject);
     SetOwnerContext(AObject);
@@ -6700,10 +6667,9 @@ begin
   end;
 end;
 
-procedure TInstantParts.InternalMove(CurIndex,
-  NewIndex: Integer);
+procedure TInstantParts.InternalMove(CurIndex, NewIndex: Integer);
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     ObjectList.Move(CurIndex, NewIndex)
   else
     ObjectReferenceList.Move(CurIndex, NewIndex);
@@ -6712,7 +6678,7 @@ end;
 procedure TInstantParts.InternalSetItems(Index: Integer;
   AValue: TInstantObject);
 begin
-  if Self.Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
   begin
     ClearOwnerContext(ObjectList[Index] as TInstantObject);
     ObjectList[Index] := AValue;
@@ -6771,7 +6737,7 @@ end;
 procedure TInstantParts.ValidateObject(AObject: TInstantObject);
 begin
   inherited;
-  if Metadata.IsExternal = ceNo then
+  if Metadata.StorageKind = skEmbedded then
     if AObject.IsPersistent then
       raise EInstantValidationError.CreateResFmt(@SPersistentObjectNotAllowed,
         [AObject.ClassName, AObject.Id]);
@@ -8925,7 +8891,8 @@ end;
 
 procedure TInstantConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
-  if Assigned(Scheme) then begin
+  if Assigned(Scheme) then
+  begin
     Scheme.BlobStreamFormat := BlobStreamFormat;
     Scheme.IdDataType := IdDataType;
     Scheme.IdSize := IdSize;
@@ -8948,7 +8915,8 @@ end;
 
 function TInstantConnector.InternalGenerateId: string;
 begin
-  if Assigned(FOnGenerateId) then begin
+  if Assigned(FOnGenerateId) then
+  begin
     Result := '';
     FOnGenerateId(Self, Result);
   end
@@ -10168,13 +10136,10 @@ procedure TInstantRelationalScheme.InitTableMetadatas(
           end
           else if AttributeType = atPart then
           begin
-            if IsExternal = ceNo then
+            if StorageKind = skEmbedded then
               FieldMetadatas.AddFieldMetadata(FieldName, AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [], feNone, '')
-            else if IsExternal = ceLinked then
-              FieldMetadatas.AddFieldMetadata(FieldName, AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [], feLinked, ExternalLinkedName)
-            else if IsExternal = ceStored then
+                Size, AttributeType, [])
+            else if StorageKind = skExternal then
             begin
               FieldMetadatas.AddFieldMetadata(FieldName + InstantClassFieldName,
                 AttributeTypeToDataType(atString), InstantDefaultFieldSize, AttributeType);
@@ -10184,15 +10149,12 @@ procedure TInstantRelationalScheme.InitTableMetadatas(
           end
           else if AttributeType in [atParts, atReferences] then
           begin
-            if IsExternal = ceNo then
+            if StorageKind = skEmbedded then
               FieldMetadatas.AddFieldMetadata(FieldName, AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [], feNone, '')
-            else if IsExternal = ceLinked then
+                Size, AttributeType, [])
+            else if StorageKind = skExternal then
               FieldMetadatas.AddFieldMetadata(FieldName, AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [], feLinked, ExternalLinkedName)
-            else if IsExternal = ceStored then
-              FieldMetadatas.AddFieldMetadata(FieldName, AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [], feStored, ExternalStoredName)
+                Size, AttributeType, [], ExternalStorageName)
           end
           else
           begin
@@ -11022,7 +10984,8 @@ end;
 
 function TInstantCustomRelationalBroker.GetStatementCache: TInstantStatementCache;
 begin
-  if not Assigned(FStatementCache) then begin
+  if not Assigned(FStatementCache) then
+  begin
     FStatementCache := TInstantStatementCache.Create(nil);
     FStatementCache.Capacity := FStatementCacheCapacity;
   end;
@@ -12508,7 +12471,7 @@ begin
       end
       else if AttributeMetadata.AttributeType = atPart then
       begin
-        if AttributeMetadata.IsExternal = ceStored then
+        if AttributeMetadata.StorageKind = skExternal then
         begin
           RefClassFieldName := FieldName + InstantClassFieldName;
           RefIdFieldName := FieldName + InstantIdFieldName;
@@ -12516,7 +12479,7 @@ begin
             StringFunc(RefIdFieldName);
           Result := Result + SpaceDelimiter;
         end
-        else if AttributeMetadata.IsExternal = ceNo then
+        else if AttributeMetadata.StorageKind = skEmbedded then
         begin
           Result := Result + StringFunc(FieldName);
           Result := Result + SpaceDelimiter;
@@ -12524,7 +12487,7 @@ begin
       end
       else if AttributeMetadata.AttributeType in [atParts, atReferences] then
       begin
-        if AttributeMetadata.IsExternal = ceNo then
+        if AttributeMetadata.StorageKind = skEmbedded then
         begin
           Result := Result + StringFunc(FieldName);
           Result := Result + SpaceDelimiter;
@@ -12639,22 +12602,16 @@ begin
   Result := InternalGenerateInsertSQL(Map);
 end;
 
-function TInstantSQLGenerator.GenerateSelectExternalLinkedSQL(
+function TInstantSQLGenerator.GenerateSelectExternalPartSQL(
   Map: TInstantAttributeMap): string;
 begin
-  Result := InternalGenerateSelectExternalLinkedSQL(Map);
+  Result := InternalGenerateSelectExternalPartSQL(Map);
 end;
 
-function TInstantSQLGenerator.GenerateSelectExternalPartStoredSQL(
+function TInstantSQLGenerator.GenerateSelectExternalSQL(
   Map: TInstantAttributeMap): string;
 begin
-  Result := InternalGenerateSelectExternalPartStoredSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateSelectExternalStoredSQL(
-  Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateSelectExternalStoredSQL(Map);
+  Result := InternalGenerateSelectExternalSQL(Map);
 end;
 
 function TInstantSQLGenerator.GenerateSelectSQL
@@ -12733,7 +12690,8 @@ begin
     begin
       FieldMetadata := FieldMetadatas[I];
       with FieldMetadata do
-        if ExternalOption = feNone then
+        // Not an "external" field
+        if ExternalTableName = '' then
         begin
           if I > 0 then
             Columns := Columns + ', ';
@@ -12833,20 +12791,7 @@ begin
   Result := Result + ' ';
 end;
 
-function TInstantSQLGenerator.InternalGenerateSelectExternalLinkedSQL(
-  Map: TInstantAttributeMap): string;
-var
-  FieldStr, WhereStr: string;
-begin
-  FieldStr := Format('%s, %s', [EmbraceField(InstantClassFieldName),
-    EmbraceField(InstantIdFieldName)]);
-  WhereStr := Format('%s = :%s AND %s = :%s',
-    [EmbraceField('%s'), InstantClassFieldName, EmbraceField('%s'), InstantIdFieldName]);
-  Result := Format('SELECT %s FROM %s WHERE %s',
-    [FieldStr, EmbraceTable('%s'), WhereStr]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateSelectExternalPartStoredSQL(
+function TInstantSQLGenerator.InternalGenerateSelectExternalPartSQL(
   Map: TInstantAttributeMap): string;
 var
   FieldStr, WhereStr: string;
@@ -12859,7 +12804,7 @@ begin
     [FieldStr, EmbraceTable('%s'), WhereStr]);
 end;
 
-function TInstantSQLGenerator.InternalGenerateSelectExternalStoredSQL(
+function TInstantSQLGenerator.InternalGenerateSelectExternalSQL(
   Map: TInstantAttributeMap): string;
 var
   FieldStr, WhereStr: string;
@@ -13031,10 +12976,10 @@ begin
       for J := 0 to Pred(TableMetadata.FieldMetadatas.Count) do
       begin
         FieldMetadata := TableMetadata.FieldMetadatas[J];
-        if FieldMetadata.ExternalOption = feStored then
+        if FieldMetadata.ExternalTableName <> '' then
         begin
           try
-            Execute(Generator.GenerateDropExternalTableSQL(FieldMetadata.ExternalName));
+            Execute(Generator.GenerateDropExternalTableSQL(FieldMetadata.ExternalTableName));
           except
           end;
         end;
@@ -13044,11 +12989,8 @@ begin
       for J := 0 to Pred(TableMetadata.FieldMetadatas.Count) do
       begin
         FieldMetadata := TableMetadata.FieldMetadatas[J];
-        if FieldMetadata.ExternalOption = feStored then
-        begin
-          if FieldMetadata.OriginalAttributeType <> atPart then
-            Execute(Generator.GenerateCreateExternalTableSQL(FieldMetadata.ExternalName));
-        end;
+        if FieldMetadata.ExternalTableName <> '' then
+          Execute(Generator.GenerateCreateExternalTableSQL(FieldMetadata.ExternalTableName));
       end;
       with TableMetadata do
         for J := 0 to Pred(IndexMetadatas.Count) do
@@ -13153,7 +13095,7 @@ var
     Stream: TInstantStringStream;
     Part: TInstantPart;
   begin
-    if Attribute.Metadata.IsExternal = ceStored then
+    if Attribute.Metadata.StorageKind = skExternal then
     begin
       Part := Attribute as TInstantPart;
       if Part.HasValue then
@@ -13265,8 +13207,8 @@ begin
     for I := 0 to Pred(Map.Count) do
     begin
       Attribute := AObject.AttributeByName(Map[I].Name); 
-      if (Attribute.Metadata.IsExternal = ceNo) or
-         ((Attribute.Metadata.IsExternal = ceStored) and (Attribute.Metadata.AttributeType = atPart)) then
+      if (Attribute.Metadata.StorageKind = skEmbedded) or
+         ((Attribute.Metadata.StorageKind = skExternal) and (Attribute.Metadata.AttributeType = atPart)) then
         AddAttributeParam(Attribute, Params);
     end;
 end;
@@ -13471,25 +13413,18 @@ begin
   Result := FSelectSQL;
 end;
 
-function TInstantSQLResolver.GetSelectExternalLinkedSQL: string;
+function TInstantSQLResolver.GetSelectExternalSQL: string;
 begin
-  if FSelectExternalLinkedSQL = '' then
-    FSelectExternalLinkedSQL := Broker.Generator.GenerateSelectExternalLinkedSQL(Map);
-  Result := FSelectExternalLinkedSQL;
+  if FSelectExternalSQL = '' then
+    FSelectExternalSQL := Broker.Generator.GenerateSelectExternalSQL(Map);
+  Result := FSelectExternalSQL;
 end;
 
-function TInstantSQLResolver.GetSelectExternalStoredSQL: string;
+function TInstantSQLResolver.GetSelectExternalPartSQL: string;
 begin
-  if FSelectExternalStoredSQL = '' then
-    FSelectExternalStoredSQL := Broker.Generator.GenerateSelectExternalStoredSQL(Map);
-  Result := FSelectExternalStoredSQL;
-end;
-
-function TInstantSQLResolver.GetSelectExternalPartStoredSQL: string;
-begin
-  if FSelectExternalPartStoredSQL = '' then
-    FSelectExternalPartStoredSQL := Broker.Generator.GenerateSelectExternalPartStoredSQL(Map);
-  Result := FSelectExternalPartStoredSQL;
+  if FSelectExternalPartSQL = '' then
+    FSelectExternalPartSQL := Broker.Generator.GenerateSelectExternalPartSQL(Map);
+  Result := FSelectExternalPartSQL;
 end;
 
 function TInstantSQLResolver.GetUpdateConcurrentSQL: string;
@@ -13533,49 +13468,12 @@ var
       AttributeMetadata := Map[i];
       if Map[i].AttributeType = atPart then
       begin
-        if AttributeMetadata.IsExternal = ceLinked then
-        begin
-          // Select and dispose
-          SelectParams := TParams.Create;
-          try
-            SelectStatement := Format(SelectExternalLinkedSQL,
-              [AttributeMetadata.ObjectClassMetadata.TableName,
-              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-              AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-            try
-              DataSet.Open;
-              try
-                if not DataSet.IsEmpty then
-                begin
-                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(PartObject) then
-                      PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                  finally
-                    PartObject.Free;
-                  end;
-                end;
-              finally
-                DataSet.Close;
-              end;
-            finally
-              Broker.ReleaseDataSet(DataSet);
-            end;
-          finally
-            SelectParams.Free;
-          end;
-        end;
-
-        if Map[i].IsExternal = ceStored then
+        if Map[i].StorageKind = skExternal then
         begin
           // Dispose object
           SelectParams := TParams.Create;
           try
-            SelectStatement := Format(SelectExternalPartStoredSQL,
+            SelectStatement := Format(SelectExternalPartSQL,
               [AttributeMetadata.FieldName + InstantClassFieldName,
                AttributeMetadata.FieldName + InstantIdFieldName,
                AttributeMetadata.ClassMetadata.TableName]);
@@ -13625,50 +13523,12 @@ var
       AttributeMetadata := Map[i];
       if Map[i].AttributeType = atParts then
       begin
-        if AttributeMetadata.IsExternal = ceLinked then
-        begin
-          //select and dispose all
-          SelectParams:=TParams.Create;
-          try
-            SelectStatement:=Format(SelectExternalLinkedSQL,
-              [ AttributeMetadata.ObjectClassMetadata.TableName,
-              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-              AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
-            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-            try
-              DataSet.Open;
-              try
-                while not DataSet.Eof do
-                begin
-                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(PartObject) then
-                      PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                  finally
-                    PartObject.Free;
-                  end;
-                  DataSet.Next;
-                end;
-              finally
-                DataSet.Close;
-              end;
-            finally
-              Broker.ReleaseDataSet(DataSet);
-            end;
-          finally
-            SelectParams.Free;
-          end;
-        end;
-
-        if Map[i].IsExternal = ceStored then
+        if Map[i].StorageKind = skExternal then
         begin
           // dispose all objects
           SelectParams := TParams.Create;
           try
-            SelectStatement := Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
+            SelectStatement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
             AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
@@ -13703,7 +13563,7 @@ var
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [AttributeMetadata.ExternalStoredName,
+              [AttributeMetadata.ExternalStorageName,
               InstantParentClassFieldName,
               InstantParentIdFieldName,
               InstantParentAttributeFieldName]);
@@ -13722,64 +13582,22 @@ var
   procedure DeleteExternalReferencesMap;
   var
     i: Integer;
-    ReferenceObject: TInstantObject;
-    SelectParams, DeleteParams: TParams;
-    SelectStatement, DeleteStatement: string;
+    DeleteParams: TParams;
+    DeleteStatement: string;
     AttributeMetadata: TInstantAttributeMetadata;
-    DataSet: TDataSet;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
       AttributeMetadata := Map[i];
       if AttributeMetadata.AttributeType = atReferences then
       begin
-        if AttributeMetadata.IsExternal = ceLinked then
-        begin
-          // set all to nil
-          SelectParams := TParams.Create;
-          try
-            SelectStatement := Format(SelectExternalLinkedSQL,
-              [AttributeMetadata.ObjectClassMetadata.TableName,
-              AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-              AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-            try
-              DataSet.Open;
-              try
-                while not DataSet.Eof do
-                begin
-                  ReferenceObject := AttributeMetadata.ObjectClass.Retrieve(
-                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(ReferenceObject) then
-                    begin
-                      ReferenceObject.AttributeByName(AttributeMetadata.ExternalLinkedName).AsObject := nil;
-                      ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
-                    end;
-                  finally
-                    ReferenceObject.Free;
-                  end;
-                  DataSet.Next;
-                end;
-              finally
-                DataSet.Close;
-              end;
-            finally
-              Broker.ReleaseDataSet(DataSet);
-            end;
-          finally
-            SelectParams.Free;
-          end;
-        end;
-        if AttributeMetadata.IsExternal = ceStored then
+        if AttributeMetadata.StorageKind = skExternal then
         begin
           // Delete all links
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [AttributeMetadata.ExternalStoredName,
+              [AttributeMetadata.ExternalStorageName,
               InstantParentClassFieldName,
               InstantParentAttributeFieldName]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
@@ -13920,56 +13738,14 @@ var
       if AttributeMetadata.AttributeType = atPart then
       begin
         PartAttribute := TInstantPart(AObject.AttributeByName(AttributeMetadata.Name));
-        if PartAttribute.IsChanged then begin
-          if AttributeMetadata.IsExternal = ceLinked then
-          begin
-            // Select and delete
-            SelectParams := TParams.Create;
-            try
-              SelectStatement := Format(SelectExternalLinkedSQL,
-                [AttributeMetadata.ObjectClassMetadata.TableName,
-                AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-                AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-              AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-              try
-                DataSet.Open;
-                try
-                  if not DataSet.IsEmpty then
-                  begin
-                    PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                    try
-                      if Assigned(PartObject) then
-                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                    finally
-                      PartObject.Free;
-                    end;
-                  end;
-                finally
-                  DataSet.Close;
-                end;
-              finally
-                Broker.ReleaseDataSet(DataSet);
-              end;
-            finally
-              SelectParams.Free;
-            end;
-
-            // Store
-            PartObject := PartAttribute.Value;
-            PartObject.CheckId;
-            PartObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
-            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-          end;
-
-          if Map[i].IsExternal = ceStored then
+        if PartAttribute.IsChanged then
+        begin
+          if Map[i].StorageKind = skExternal then
           begin
             // Delete object
             SelectParams := TParams.Create;
             try
-              SelectStatement := Format(SelectExternalPartStoredSQL,
+              SelectStatement := Format(SelectExternalPartSQL,
                 [AttributeMetadata.FieldName + InstantClassFieldName,
                  AttributeMetadata.FieldName + InstantIdFieldName,
                  AttributeMetadata.ClassMetadata.TableName]);
@@ -14027,60 +13803,14 @@ var
       if AttributeMetadata.AttributeType = atParts then
       begin
         PartsAttribute := TInstantParts(AObject.AttributeByName(AttributeMetadata.Name));
-        if PartsAttribute.IsChanged then begin
-          if AttributeMetadata.IsExternal = ceLinked then
-          begin
-            // Select and delete all
-            SelectParams := TParams.Create;
-            try
-              SelectStatement := Format(SelectExternalLinkedSQL,
-                [AttributeMetadata.ObjectClassMetadata.TableName,
-                AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-                AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-              AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-              try
-                DataSet.Open;
-                try
-                  while not DataSet.Eof do
-                  begin
-                    PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                    try
-                      if Assigned(PartObject) then
-                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                    finally
-                      PartObject.Free;
-                    end;
-                    DataSet.Next;
-                  end;
-                finally
-                  DataSet.Close;
-                end;
-              finally
-                Broker.ReleaseDataSet(DataSet);
-              end;
-            finally
-              SelectParams.Free;
-            end;
-
-            // Store all
-            for ii := 0 to Pred(PartsAttribute.Count) do
-            begin
-              PartObject := PartsAttribute.Items[ii];
-              PartObject.CheckId;
-              PartObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
-              PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-            end;
-          end;
-
-          if Map[i].IsExternal = ceStored then
+        if PartsAttribute.IsChanged then
+        begin
+          if Map[i].StorageKind = skExternal then
           begin
             // Delete all objects
             SelectParams := TParams.Create;
             try
-              SelectStatement := Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
+              SelectStatement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
               AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
               AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
               AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
@@ -14115,7 +13845,7 @@ var
             DeleteParams := TParams.Create;
             try
               DeleteStatement := Format(DeleteExternalSQL,
-                [AttributeMetadata.ExternalStoredName,
+                [AttributeMetadata.ExternalStorageName,
                 InstantParentClassFieldName,
                 InstantParentAttributeFieldName]);
               AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
@@ -14138,7 +13868,7 @@ var
               InsertParams := TParams.Create;
               try
                 InsertStatement := Format(InsertExternalSQL,
-                  [AttributeMetadata.ExternalStoredName]);
+                  [AttributeMetadata.ExternalStorageName]);
                 AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
                 AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
                 AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
@@ -14165,9 +13895,8 @@ var
     AttributeMetadata: TInstantAttributeMetadata;
     ReferenceObject: TInstantObject;
     ReferencesAttribute: TInstantReferences;
-    SelectParams, DeleteParams, InsertParams: TParams;
-    SelectStatement, DeleteStatement, InsertStatement: string;
-    DataSet: TDataSet;
+    DeleteParams, InsertParams: TParams;
+    DeleteStatement, InsertStatement: string;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
@@ -14175,63 +13904,15 @@ var
       if AttributeMetadata.AttributeType = atReferences then
       begin
         ReferencesAttribute := TInstantReferences(AObject.AttributeByName(AttributeMetadata.Name));
-        if ReferencesAttribute.IsChanged then begin
-          if AttributeMetadata.IsExternal = ceLinked then
-          begin
-            // Set all to nil
-            SelectParams := TParams.Create;
-            try
-              SelectStatement := Format(SelectExternalLinkedSQL,
-                [AttributeMetadata.ObjectClassMetadata.TableName,
-                AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-                AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-              AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-              try
-                DataSet.Open;
-                try
-                  while not DataSet.Eof do
-                  begin
-                    ReferenceObject := AttributeMetadata.ObjectClass.Retrieve(
-                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                    try
-                      if Assigned(ReferenceObject) then
-                      begin
-                        ReferenceObject.AttributeByName(AttributeMetadata.ExternalLinkedName).AsObject := nil;
-                        ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
-                      end;
-                    finally
-                      ReferenceObject.Free;
-                    end;
-                    DataSet.Next;
-                  end;
-                finally
-                  DataSet.Close;
-                end;
-              finally
-                Broker.ReleaseDataSet(DataSet);
-              end;
-            finally
-              SelectParams.Free;
-            end;
-            // Store all
-            for ii := 0 to Pred(ReferencesAttribute.Count) do
-            begin
-              ReferenceObject := ReferencesAttribute.Items[ii];
-              ReferenceObject.CheckId;
-              ReferenceObject.FindAttribute(AttributeMetadata.ExternalLinkedName).AsObject := AObject;
-              ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
-            end;
-          end;
-
-          if AttributeMetadata.IsExternal = ceStored then
+        if ReferencesAttribute.IsChanged then
+        begin
+          if AttributeMetadata.StorageKind = skExternal then
           begin
             // Delete all links
             DeleteParams := TParams.Create;
             try
               DeleteStatement := Format(DeleteExternalSQL,
-                [AttributeMetadata.ExternalStoredName,
+                [AttributeMetadata.ExternalStorageName,
                 InstantParentClassFieldName,
                 InstantParentIdFieldName,
                 InstantParentAttributeFieldName]);
@@ -14252,7 +13933,7 @@ var
               InsertParams := TParams.Create;
               try
                 InsertStatement := Format(InsertExternalSQL,
-                  [AttributeMetadata.ExternalStoredName]);
+                  [AttributeMetadata.ExternalStorageName]);
                 AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
                 AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
                 AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
@@ -14354,42 +14035,8 @@ var
   procedure ReadPartAttribute;
   var
     Stream: TInstantStringStream;
-    Params: TParams;
-    Statement: string;
-    PartDataSet: TDataSet;
   begin
-    if AttributeMetadata.IsExternal = ceLinked then
-    begin
-      with (Attribute as TInstantPart) do
-      begin
-        Params := TParams.Create;
-        try
-          Statement := Format(SelectExternalLinkedSQL,
-            [Metadata.ObjectClassMetadata.TableName,
-            AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-            AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-          AddIdParam(Params, InstantIdFieldName, AObjectId);
-          AddStringParam(Params, InstantClassFieldName, AObject.ClassName);
-          PartDataSet := Broker.AcquireDataSet(Statement, Params);
-          try
-            PartDataSet.Open;
-            try
-              Value := nil;
-              if not PartDataSet.IsEmpty then
-                Value := AttributeMetadata.ObjectClass.Retrieve(
-                  PartDataSet.Fields[1].AsString, False, False, AObject.Connector);
-            finally
-              PartDataSet.Close;
-            end;
-          finally
-            Broker.ReleaseDataSet(PartDataSet);
-          end;
-        finally
-          Params.Free;
-        end;
-      end;
-    end
-    else if AttributeMetadata.IsExternal = ceStored then
+    if AttributeMetadata.StorageKind = skExternal then
     begin
       with (Attribute as TInstantPart) do
         Value := InstantFindClass(ReadStringField(DataSet, AFieldName + InstantClassFieldName)).Retrieve(
@@ -14417,54 +14064,14 @@ var
     Stream: TInstantStringStream;
     RefObject:TInstantObjectReference;
   begin
-    if AttributeMetadata.IsExternal = ceLinked then
+    if AttributeMetadata.StorageKind = skExternal then
     begin
       with (Attribute as TInstantParts) do
       begin
         Clear;
         Params := TParams.Create;
         try
-          Statement := Format(SelectExternalLinkedSQL,
-            [Metadata.ObjectClassMetadata.TableName,
-            AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-            AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
-          AddIdParam(Params, InstantIdFieldName, AObjectId);
-          AddStringParam(Params, InstantClassFieldName, AObject.ClassName);
-          DataSet := Broker.AcquireDataSet(Statement, Params);
-          try
-            DataSet.Open;
-            try
-              while not DataSet.Eof do
-              begin
-                RefObject := TInstantObjectReference.Create(nil, True);
-                RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
-                (Attribute as TInstantParts).ObjectReferenceList.Add(RefObject);
-                {PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
-                if Assigned(PartObject) then
-                  Add(PartObject)
-                else
-                  PartObject.Free;}
-                DataSet.Next;
-              end;
-            finally
-              DataSet.Close;
-            end;
-          finally
-            Broker.ReleaseDataSet(DataSet);
-          end;
-        finally
-          Params.Free;
-        end;
-      end;
-    end
-    else if AttributeMetadata.IsExternal = ceStored then
-    begin
-      with (Attribute as TInstantParts) do
-      begin
-        Clear;
-        Params := TParams.Create;
-        try
-          Statement := Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
+          Statement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
           AddIdParam(Params, InstantParentIdFieldName, AObjectId);
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
           AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
@@ -14522,52 +14129,17 @@ var
   var
     RefObject:TInstantObjectReference;
     Stream: TInstantStringStream;
-    Statement: String;
+    Statement: string;
     Params: TParams;    
   begin
-    if AttributeMetadata.IsExternal=ceLinked then
-    begin
-      with (Attribute as TInstantReferences) do
-      begin
-        Clear;
-        Params:=TParams.Create;
-        try
-          Statement:=Format(SelectExternalLinkedSQL,
-            [ Metadata.ObjectClassMetadata.TableName,
-            AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-            AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
-          AddIdParam(Params, InstantIdFieldName, AObjectId);
-          AddStringParam(Params, InstantClassFieldName, AObject.ClassName);
-          DataSet := Broker.AcquireDataSet(Statement, Params);
-          try
-            DataSet.Open;
-            try
-              while not DataSet.Eof do
-              begin
-                RefObject := TInstantObjectReference.Create(nil, True);
-                RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
-                  (Attribute as TInstantReferences).ObjectReferenceList.Add(RefObject);
-                DataSet.Next;
-              end;
-            finally
-              DataSet.Close;
-            end;
-          finally
-            Broker.ReleaseDataSet(DataSet);
-          end;
-        finally
-          Params.Free;
-        end;
-      end;
-    end
-    else if AttributeMetadata.IsExternal = ceStored then
+    if AttributeMetadata.StorageKind = skExternal then
     begin
       with (Attribute as TInstantReferences) do
       begin
         Clear;
         Params := TParams.Create;
         try
-          Statement:=Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
+          Statement:=Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
           AddIdParam(Params, InstantParentIdFieldName, AObjectId);
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
           AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
@@ -15328,7 +14900,8 @@ function TInstantStatementCache.AddStatement(const StatementText: string;
 var
   StatementObject: TInstantStatement;
 begin
-  if Assigned(StatementImplementation) then begin
+  if Assigned(StatementImplementation) then
+  begin
     Shrink;
     StatementObject := TInstantStatement.Create(StatementImplementation);
     Result := FStatements.AddObject(StatementText, StatementObject);
@@ -15343,7 +14916,8 @@ var
   Index: Integer;
 begin
   Index := FStatements.IndexOf(StatementText);
-  if Index >= 0 then begin
+  if Index >= 0 then
+  begin
     DeleteStatement(Index);
     Result := True;
   end
