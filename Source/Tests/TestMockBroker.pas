@@ -18,6 +18,16 @@ type
     procedure TestGetBroker;
     procedure TestBuildDatabase;
     procedure TestStoreAndRetrieveAddress;
+  end;
+
+  TTestMockRelationalBroker = class(TTestCase)
+  private
+  protected
+    FConn: TInstantMockConnector;
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestGetBroker;
     procedure TestStoreAndRetrieveContact;
   end;
 
@@ -28,7 +38,6 @@ implementation
 procedure TTestMockBroker.TestModelMdx;
 begin
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
-
   AssertNotNull(InstantModel.ClassMetadatas.Find('TContact'));
 end;
 
@@ -95,16 +104,57 @@ begin
   brok.MockManager.Verify;
 end;
 
-procedure TTestMockBroker.TestStoreAndRetrieveContact;
+procedure TTestMockBroker.SetUp;
+begin
+  inherited;
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+end;
+
+procedure TTestMockBroker.TearDown;
+begin
+  FConn.Free;
+  inherited;
+end;
+
+{ TTestMockRelationalBroker }
+
+procedure TTestMockRelationalBroker.SetUp;
+begin
+  inherited;
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockCRBroker;
+end;
+
+procedure TTestMockRelationalBroker.TearDown;
+begin
+  inherited;
+  FConn.Free;
+end;
+
+procedure TTestMockRelationalBroker.TestGetBroker;
+var
+  brok: TInstantMockCRBroker;
+begin
+  brok := (Fconn.Broker as TInstantMockCRBroker);
+  AssertNotNull(brok);
+  AssertEquals(brok.ClassType, TInstantMockCRBroker);
+  brok.MockManager.StartSetUp;
+  brok.MockManager.EndSetUp;
+  Fconn.BuildDatabase(InstantModel);
+  brok.MockManager.Verify;
+end;
+
+procedure TTestMockRelationalBroker.TestStoreAndRetrieveContact;
 var
   c: TContact;
   old_id: string;
-  brok: TInstantMockBroker;
+  brok: TInstantMockCRBroker;
   t: TPhone;
 begin
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
   Fconn.IsDefault := True;
-  brok := Fconn.Broker as TInstantMockBroker;
+  brok := Fconn.Broker as TInstantMockCRBroker;
   brok.MockManager.StartSetUp;
   c := TContact.Create;
   try
@@ -126,9 +176,11 @@ begin
   end;
   AssertNull(c);
   brok.MockManager.EndSetUp;
-  brok.MockManager.AddExpectation('InternalStoreObject ' + old_id);
+  brok.MockManager.AddExpectation('InternalStoreObject caFail ' + old_id);
   brok.MockManager.Verify;
   brok.MockManager.StartSetUp;
+  brok.MockManager.AddExpectation('InternalRetrieveObject caFail ' + old_id);
+  brok.MockManager.EndSetUp;
   c := TContact.Retrieve(old_id);
   try
     AssertEquals(old_id, c.Id);
@@ -137,24 +189,10 @@ begin
   finally
     c.Free;
   end;
-  brok.MockManager.EndSetUp;
-  brok.MockManager.AddExpectation('InternalRetrieveObject ' + old_id);
   brok.MockManager.Verify;
 end;
 
-procedure TTestMockBroker.SetUp;
-begin
-  inherited;
-  FConn := TInstantMockConnector.Create(nil);
-end;
-
-procedure TTestMockBroker.TearDown;
-begin
-  FConn.Free;
-  inherited;
-end;
-
 initialization
-  RegisterTests([TTestMockBroker]);
+  RegisterTests([TTestMockBroker, TTestMockRelationalBroker]);
 
 end.
