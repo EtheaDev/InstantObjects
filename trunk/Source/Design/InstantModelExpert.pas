@@ -664,12 +664,15 @@ var
   MainMenu: TMainMenu;
   I: Integer;
 begin
-  { Remove images }
-  MainMenu := (BorlandIDEServices as INTAServices40).MainMenu;
-  if Assigned(MainMenu) and Assigned(MainMenu.Images) then
-    with MainMenu.Images do
-      for I := 0 to Pred(FToolImageCount) do
-        Delete(FToolImageOffset);
+  if not Application.Terminated then
+  begin
+    { Remove images }
+    MainMenu := (BorlandIDEServices as INTAServices40).MainMenu;
+    if Assigned(MainMenu) and Assigned(MainMenu.Images) then
+      with MainMenu.Images do
+        for I := 0 to Pred(FToolImageCount) do
+          Delete(FToolImageOffset);
+  end;
 
   { Remove items }
   FBuilderItem.Free;
