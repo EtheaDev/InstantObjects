@@ -167,10 +167,10 @@ procedure TPersonEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(EmployerToolImages,'PERSONEMPLOYERTOOLIMAGES.BMP');
+  LoadMultipleImages(EmployerToolImages,'PERSONEMPLOYERTOOLIMAGES',HInstance);
 {$ENDIF}
 {$IFDEF LINUX}
-  LoadMultipleImages(EmployerToolImages,ExtractFilePath(Application.ExeName)+'PERSONEMPLOYERTOOLIMAGES.BMP',true);
+  LoadMultipleImages(EmployerToolImages,ExtractFilePath(Application.ExeName)+'PERSONEMPLOYERTOOLIMAGES.BMP');
 {$ENDIF}
 end;
 

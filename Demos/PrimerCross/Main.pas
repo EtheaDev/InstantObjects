@@ -497,8 +497,8 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   Caption := Application.Title;
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(SideBarImages,'MAINSIDEBARIMAGES.BMP');
-  LoadMultipleImages(ActionImages,'MAINACTIONIMAGES.BMP');
+  LoadMultipleImages(SideBarImages,'MAINSIDEBARIMAGES',HInstance);
+  LoadMultipleImages(ActionImages,'MAINACTIONIMAGES',HInstance);
   with SideBar do
   begin
     BorderWidth := 4;
@@ -509,8 +509,8 @@ begin
   end;
 {$ENDIF}
 {$IFDEF LINUX}
-  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'MAINACTIONIMAGES.BMP',true);
-  LoadMultipleImages(SideBarImages,ExtractFilePath(Application.ExeName)+'MAINSIDEBARIMAGES.BMP',true);
+  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'MAINACTIONIMAGES.BMP');
+  LoadMultipleImages(SideBarImages,ExtractFilePath(Application.ExeName)+'MAINSIDEBARIMAGES.BMP');
   SideBar.Images := SideBarImages;
 {$ENDIF}
 

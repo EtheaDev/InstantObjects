@@ -150,12 +150,12 @@ end;
 procedure TBasicBrowseForm.FormCreate(Sender: TObject);
 begin
 {$IFDEF MSWINDOWS}
-  LoadMultipleImages(ActionImages,'BROWSEACTIONIMAGES.BMP');
+  LoadMultipleImages(ActionImages,'BROWSEACTIONIMAGES',HInstance);
   BorderStyle := bsSingle;
   SelectItem.Default := True;
 {$ENDIF}
 {$IFDEF LINUX}
-  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'BROWSEACTIONIMAGES.BMP',true);
+  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'BROWSEACTIONIMAGES.BMP');
   BorderStyle := fbsSingle;
 {$ENDIF}
   UpdateControls;

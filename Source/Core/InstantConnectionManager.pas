@@ -29,7 +29,7 @@
  *   - FileFormat support (sfBinary, sfXML) visible in form
  *   - ConnectionDefs moved from Form to ConnectionManager
  *   - ConnectByName method to connect without showing form
- *   - atOpen option: Opens connections file (.con or .xml) 
+ *   - atOpen option: Opens connections file (.con or .xml)
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -49,12 +49,12 @@ uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, ImgList, Menus, ActnList, ExtCtrls,
+  StdActns,
 {$ENDIF}
 {$IFDEF LINUX}
   QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList, QStdCtrls, QComCtrls, QExtCtrls,
 {$ENDIF}
-  InstantClasses, InstantPersistence,
-  StdActns;
+  InstantClasses, InstantPersistence;
 
 type
   TInstantConnectionManagerActionType = (atNew, atEdit, atDelete, atRename,
@@ -93,7 +93,7 @@ type
     ButtonsPanel: TPanel;
     ConnectButton: TButton;
     CloseButton: TButton;
-    FileOpenAction: TFileOpen;
+    FileOpenAction: TAction;
     N2: TMenuItem;
     Open1: TMenuItem;
     procedure ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
@@ -1015,13 +1015,13 @@ end;
 procedure TInstantConnectionManagerForm.FileOpenActionBeforeExecute(
   Sender: TObject);
 begin
-  FileOpenAction.Dialog.FileName := FileName;
+//  FileOpenAction.Dialog.FileName := FileName;
 end;
 
 procedure TInstantConnectionManagerForm.FileOpenActionAccept(
   Sender: TObject);
 begin
-  FileName := FileOpenAction.Dialog.FileName;
+//  FileName := FileOpenAction.Dialog.FileName;
 end;
 
 end.

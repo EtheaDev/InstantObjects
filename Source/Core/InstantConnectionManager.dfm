@@ -171,18 +171,12 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       Hint = 'Disconnect'
       OnExecute = DisconnectActionExecute
     end
-    object FileOpenAction: TFileOpen
+    object FileOpenAction: TAction
       Category = 'File'
       Caption = '&Open...'
-      Dialog.DefaultExt = '*.con'
-      Dialog.Filter = 
-        'InstantOblects connections (*.con)|*.con|InstantObjects connecti' +
-        'ons (*.xml) |*.xml'
       Hint = 'Open configuration file'
       ImageIndex = 7
       ShortCut = 16463
-      BeforeExecute = FileOpenActionBeforeExecute
-      OnAccept = FileOpenActionAccept
     end
   end
 end

@@ -44,12 +44,22 @@ uses
 // is loaded from the specified module handle, otherwise ResourceName is
 // interpreted as a file name containing the bitmap to load.
 procedure LoadMultipleImages(ImageList: TImageList; const ResourceName: string;
+{$IFDEF MSWINDOWS}
   const ResourceHandle: LongWord = 0);
+{$ENDIF}
+{$IFDEF LINUX}
+  const ResourceHandle: Cardinal = 0);
+{$ENDIF}
 
 implementation
 
 procedure LoadMultipleImages(ImageList: TImageList; const ResourceName: string;
+{$IFDEF MSWINDOWS}
   const ResourceHandle: LongWord = 0);
+{$ENDIF}
+{$IFDEF LINUX}
+  const ResourceHandle: Cardinal = 0);
+{$ENDIF}
 var
   Picture: TPicture;
   X, Y: Integer;
