@@ -23,7 +23,7 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s):
+ * Contributor(s): Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -659,7 +659,7 @@ end;
 
 procedure TInstantIQLObject.InvalidTokenError(const Token: string);
 begin
-  raise EInstantError.CreateResFmt(@SInvalidToken, [Token]);
+  raise EInstantError.CreateFmt(SInvalidToken, [Token]);
 end;
 
 procedure TInstantIQLObject.Read(Reader: TInstantIQLReader);
@@ -708,7 +708,7 @@ end;
 procedure TInstantIQLObject.UnexpectedTokenError(const ActualToken,
   ExpectedToken: string);
 begin
-  raise EInstantError.CreateResFmt(@SUnexpectedToken,
+  raise EInstantError.CreateFmt(SUnexpectedToken,
     [ActualToken, ExpectedToken]);
 end;
 
@@ -1486,12 +1486,12 @@ begin
     else
       UnreadToken;
     if not ReadChild(@FSpecifier, Reader, [TInstantIQLSpecifier]) then
-      raise EInstantIQLError.CreateRes(@SSpecifierMissing);
+      raise EInstantIQLError.Create(SSpecifierMissing);
     Token := ReadToken;
     if not SameText(Token, 'FROM') then
       UnexpectedTokenError(Token, 'FROM');
     if not ReadChild(@FClassRef, Reader, [TInstantIQLClassRef]) then
-      raise EInstantIQLError.CreateRes(@SClassReferenceMissing);
+      raise EInstantIQLError.Create(SClassReferenceMissing);
     Token := ReadToken;
     if SameText(Token, 'WHERE') then
     begin
@@ -1562,7 +1562,7 @@ function TInstantIQLCommandTranslator.GetCommand: TInstantIQLCommand;
 begin
   Result := FCommand;
   if not Assigned(Result) then
-    raise EInstantError.CreateRes(@SUnassignedCommandObject);
+    raise EInstantError.Create(SUnassignedCommandObject);
 end;
 
 function TInstantIQLCommandTranslator.GetResultClassName: string;
@@ -1599,7 +1599,7 @@ constructor TInstantIQLStatementWriter.Create(
   FreeStream: Boolean);
 begin
   if not Assigned(ATranslator) then
-    raise EInstantIQLError.CreateRes(@SUnassignedTranslator);
+    raise EInstantIQLError.Create(SUnassignedTranslator);
   FTranslator := ATranslator;
   inherited Create(AStream, FreeStream);
 end;
