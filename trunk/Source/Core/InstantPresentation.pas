@@ -373,7 +373,7 @@ type
     procedure SetRecNo(Value: Integer); override;
     procedure Undo; virtual;
     procedure UpdateCalcFields;
-    procedure WriteProperty(Field: TField; Instance: TObject; Value: Variant);
+    procedure WriteProperty(Field: TField; Instance: TObject; Value: Variant); virtual;
     function BreakThorough( const FieldName : string ) : boolean; virtual;
     property Accessor: TInstantAccessor read GetAccessor;
     property ContainerName: string read FContainerName write SetContainerName;

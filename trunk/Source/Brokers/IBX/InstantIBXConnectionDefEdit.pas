@@ -156,7 +156,9 @@ begin
     BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
     Options := [];
     if UseDelimitedIdentsCheckBox.Checked then
-      Options := Options + [ibxUseDelimitedIdents];
+      Options := Options + [ibxUseDelimitedIdents]
+    else
+      Options := Options - [ibxUseDelimitedIdents];
     LoginPrompt := LoginPromptCheckBox.Checked;
     ConnectionDef.Params := ParamsEditor.Lines.Text;
     IdDataType := TInstantDataType(IdDataTypeComboBox.ItemIndex);

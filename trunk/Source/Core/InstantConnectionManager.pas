@@ -147,7 +147,6 @@ type
     procedure Connect(ConnectionDef: TInstantConnectionDef);
     procedure Disconnect(ConnectionDef: TInstantConnectionDef);
     function Edit(ConnectionDef: TInstantConnectionDef): Boolean;
-    function DoBuild(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     function DoConnect(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     function DoDisconnect(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     function DoEdit(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
@@ -157,6 +156,7 @@ type
     function SupportConnector(ConnectorClass: TInstantConnectorClass): Boolean;
     property ConnectionDefs: TInstantConnectionDefs read GetConnectionDefs;
   public
+    function DoBuild(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     property CurrentConnectionDef: TInstantConnectionDef read GetCurrentConnectionDef write SetCurrentConnectionDef;
     property FileName: string read GetFileName write SetFileName;
     property Model: TInstantModel read FModel write FModel;

@@ -826,6 +826,7 @@ begin
   inherited;
   FFileListAccessor := TStringList.Create;
   try
+    Connector.Connection.Open;
     Connector.Connection.LoadFileList (FFileListAccessor, StorageName);
     InitObjectReferences(FFileListAccessor);
   finally
