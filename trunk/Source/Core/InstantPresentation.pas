@@ -31,6 +31,8 @@
  * - Added Currency and Graphic support to exposer
  * Andrea Petrelli:
  * - Added OnProgress event on TInstantSelector
+ * Nando Dessena:
+ * - Fixed Range Check Error in TInstantCustomExposer.LoadFieldValue
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPresentation;
@@ -2953,7 +2955,8 @@ begin
           Len := Length(S);
           if Len >= Field.DataSize then
             Len := Pred(Field.DataSize);
-          Move(S[1], Buffer^, Len);
+          if Len > 0 then
+            Move(S[1], Buffer^, Len);
         end;
       end;
     ftInteger:
