@@ -1,0 +1,16 @@
+The list instantobjetcs-cvscommit@lists.sourceforge.net
+is available fro subscription.
+
+Every subscriber will receive single / daily batched
+messages about every commit action made on CVS.
+
+This list is open to everybody, but is mainly aimed
+at IO-team programmers, so they can stay tuned with
+CVS development without the hassle of connecting
+to check for updates.
+
+Enjoy !
+
+Carlo Wolter
+Project Manager
+

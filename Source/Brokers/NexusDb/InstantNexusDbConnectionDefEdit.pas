@@ -96,7 +96,7 @@ type
 
 implementation
 
-uses FileCtrl;
+uses FileCtrl, InstantClasses, InstantPersistence;
 
 {$R *.DFM}
 

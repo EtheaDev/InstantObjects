@@ -320,7 +320,7 @@ procedure TInstantNexusDbConnector.InternalBuildDatabase(Scheme: TInstantScheme)
 
   procedure CreateTable(TableMetadata: TInstantTableMetadata);
   const
-    FieldTypes: array[TInstantDataType] of TFieldType = (ftInteger, ftFloat, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
+    FieldTypes: array[TInstantDataType] of TFieldType = ( ftInteger, ftFloat, ftCurrency, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
   var
     I: Integer;
     Table: TNexusDbTable;
