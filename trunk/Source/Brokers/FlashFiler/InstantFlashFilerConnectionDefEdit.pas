@@ -64,7 +64,7 @@ type
 implementation
 
 uses
-  FFDB, FileCtrl;
+  FFDB, FileCtrl, InstantPersistence, InstantClasses;
 
 {$R *.DFM}
 
