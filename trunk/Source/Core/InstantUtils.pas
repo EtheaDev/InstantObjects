@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -61,9 +62,11 @@ function InstantCompareText(const S1, S2: string; IgnoreCase: Boolean): Integer;
 function InstantConstArrayToVariant(AValues : array of const) : Variant;
 function InstantDateTimeToStr(DateTime: TDateTime): string;
 function InstantEmbrace(const S, Delimiters: string): string;
+{$IFDEF MSWINDOWS}
 function InstantFileVersionValue(const FileName, ValueName: string): string;
 function InstantFileVersion(const FileName: string): TInstantVersion;
 function InstantFileVersionStr(const FileName: string): string;
+{$ENDIF}
 function InstantGenerateId: string;
 function InstantIsIdentifier(Str: string): Boolean;
 function InstantIsNumeric(const Str: string): Boolean;
@@ -89,8 +92,11 @@ function InstantUnquote(const Str: string; Quote: Char): string;
 implementation
 
 uses
-  ActiveX, ComObj, {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti,
-  SysUtils, Windows;
+{$IFDEF MSWINDOWS}
+  Windows, ActiveX, ComObj,
+{$ENDIF}
+  {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti,
+  SysUtils;
 
 function InstantCharSetToStr(C: TChars): string;
 var
@@ -281,6 +287,7 @@ begin
   Result := LeftDelimiter + S + RightDelimiter;
 end;
 
+{$IFDEF MSWINDOWS}
 function InstantFileVersionStr(const FileName: string): string;
 begin
   with InstantFileVersion(FileName) do
@@ -351,13 +358,19 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 function InstantGenerateId: string;
 var
   I: Integer;
   Id: array[0..15] of Byte;
 begin
+{$IFDEF MSWINDOWS}
   OleCheck(CoCreateGuid(TGUID(Id)));
+{$ENDIF}
+{$IFDEF LINUX}
+  CreateGUID(TGUID(Id)); //Can I check errors?
+{$ENDIF}
   Result := '';
   for I := 0 to 15 do
     Result := Result + IntToHex(Id[I], 2);

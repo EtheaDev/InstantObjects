@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -1448,7 +1449,13 @@ const
 implementation
 
 uses
-  InstantRtti, InstantConsts, InstantUtils, Forms, Db;
+{$IFDEF MSWINDOWS}
+  Forms,
+{$ENDIF}
+{$IFDEF LINUX}
+  QForms,
+{$ENDIF}
+  InstantRtti, InstantConsts, InstantUtils, DB;
 
 type
   TTypeProcessor = class(TObject)
@@ -1495,7 +1502,13 @@ type
   end;
 
 const
+{$IFDEF MSWINDOWS}
   CRLF = #13#10;
+{$ENDIF}
+{$IFDEF LINUX}
+  CRLF = #10;
+{$ENDIF}
+
   MetaKeyDefault = 'default';
   MetaKeyFormat = 'format';
   MetaKeyIndex = 'index';
@@ -6389,7 +6402,12 @@ begin
         '/':
           if NextChar = '/' then
           begin
-            ReadNext(#13);
+            {$IFDEF MSWINDOWS}
+              ReadNext(#13);
+            {$ENDIF}
+            {$IFDEF LINUX}
+              ReadNext(#10);
+            {$ENDIF}
             IsComment := True;
           end;
       end;
@@ -7590,9 +7608,17 @@ begin
         while not Finished do
         begin
           Ch := ReadTextChar;
+          {$IFDEF MSWINDOWS}
           if (Ch = #13) and (NextChar = #10) then
           begin
             ReadTextChar;
+          {$ENDIF}
+
+          {$IFDEF LINUX}
+          if (Ch = #10) then
+          begin
+          {$ENDIF}
+
             DeleteFrom(StartPos);
             Exit;
           end else if not IsSpace(Ch) then
@@ -8158,6 +8184,7 @@ begin
   I := CursorPos.Offset;
   while I >= 0 do
   begin
+    {$IFDEF MSWINDOWS}
     if FCode^[I] = #13 then
     begin
       Inc(I);
@@ -8173,6 +8200,21 @@ begin
       Break;
     end;
     Dec(I);
+    {$ENDIF}
+
+    {$IFDEF LINUX}
+    if FCode^[I] = #10 then
+    begin
+      Inc(I);
+      while FCode^[I] in [' ', #9] do
+      begin
+        Result := Result + FCode^[I];
+        Inc(I);
+      end;
+      Break;
+    end;
+    Dec(I);
+    {$ENDIF}
   end;
 end;
 

@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -40,7 +41,7 @@ interface
 {$ENDIF}
 
 uses
-  Classes, Db, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantUtils;
+  Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantUtils;
 
 type
   TInstantChangeType = (ctAppearance, ctData);
@@ -328,7 +329,7 @@ type
     procedure InternalOpen; override;
     procedure InternalPost; override;
     procedure InternalRefresh; override;
-    procedure InternalReleaseObject(AObject: TObject); virtual; 
+    procedure InternalReleaseObject(AObject: TObject); virtual;
     function InternalRemoveObject(AObject: TObject): Integer; virtual;
     procedure InternalReset; virtual;
     procedure InternalSetToRecord(Buffer: PChar); override;
@@ -395,7 +396,7 @@ type
     procedure RefreshCurrentObject;
     procedure RefreshData;
     procedure Remember;
-    procedure ReleaseObject(AObject: TObject); 
+    procedure ReleaseObject(AObject: TObject);
     function RemoveObject(AObject: TObject): Integer;
     procedure Reset;
     procedure Revert;
@@ -621,8 +622,14 @@ procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
 implementation
 
 uses
-  Controls, Mask, {$IFDEF D6+}Variants, MaskUtils,{$ENDIF} InstantClasses,
-  InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors, Forms,
+{$IFDEF MSWINDOWS}
+  Controls, Mask, Forms,
+{$ENDIF}
+{$IFDEF LINUX}
+  QControls, QMask, QForms,
+{$ENDIF}
+  {$IFDEF D6+}Variants, MaskUtils,{$ENDIF} InstantClasses,
+  InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors,
   DbConsts;
 
 const

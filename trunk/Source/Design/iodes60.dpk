@@ -26,7 +26,7 @@ package iodes60;
 {$WRITEABLECONST ON}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects'}
+{$DESCRIPTION 'InstantObjects D6'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
@@ -36,7 +36,7 @@ requires
 
 contains
   InstantWizard in 'InstantWizard.pas',
-  InstantClassEditor in 'InstantClassEditor.pas',
+  InstantClassEditor in 'InstantClassEditor.pas' {InstantClassEditorForm: TIOBaseForm},
   InstantCommandEditor in 'InstantCommandEditor.pas' {InstantCommandEditorForm},
   InstantDesignResources in 'InstantDesignResources.pas' {InstantDesignResourceModule: TDataModule},
   InstantDesignTools in 'InstantDesignTools.pas',
@@ -63,7 +63,8 @@ contains
   InstantPresentation in '..\Core\InstantPresentation.pas',
   InstantExplorer in '..\Core\InstantExplorer.pas',
   InstantPersistence in '..\Core\InstantPersistence.pas',
-  InstantConnectionManager in '..\Core\InstantConnectionManager.pas' {InstantConnectionManagerForm};
+  InstantConnectionManager in '..\Core\InstantConnectionManager.pas' {InstantConnectionManagerForm},
+  InstantImageUtils in '..\Core\InstantImageUtils.pas';
 
 end.
 

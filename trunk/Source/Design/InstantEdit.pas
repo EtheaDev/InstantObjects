@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,19 +33,26 @@ unit InstantEdit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  Db, InstantPresentation, StdCtrls, ExtCtrls;
-
+  SysUtils, Classes, DB,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, StdCtrls, ExtCtrls, Controls, Forms, Dialogs,
+{$ENDIF}
+{$IFDEF LINUX}
+  QForms, QStdCtrls, QControls, QExtCtrls,
+{$ENDIF}
+  InstantPresentation;
 type
   TInstantEditForm = class(TForm)
     SubjectExposer: TInstantExposer;
     SubjectSource: TDataSource;
     EditPanel: TPanel;
+    BottomPanel: TPanel;
     ButtonPanel: TPanel;
     OkButton: TButton;
     CancelButton: TButton;
     procedure CancelButtonClick(Sender: TObject);
     procedure OkButtonClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
   private
     function GetSubject: TObject;
     procedure SetSubject(const Value: TObject);
@@ -58,7 +66,7 @@ type
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 { TInstantEditForm }
 
@@ -109,6 +117,16 @@ end;
 procedure TInstantEditForm.SubjectChanged;
 begin
   LoadData;
+end;
+
+procedure TInstantEditForm.FormCreate(Sender: TObject);
+begin
+{$IFDEF MSWINDOWS}
+  BorderStyle := bsDialog;
+{$ENDIF}
+{$IFDEF LINUX}
+  BorderStyle := fbsDialog;
+{$ENDIF}
 end;
 
 end.

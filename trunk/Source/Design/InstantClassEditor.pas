@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,9 +33,17 @@ unit InstantClassEditor;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ComCtrls, ExtCtrls, Db, Mask, DBCtrls, Contnrs, InstantPresentation,
-  InstantPersistence, InstantCode, ImgList, ActnList, Menus, InstantEdit;
+  SysUtils, Classes, DB, Contnrs, InstantPresentation,
+  InstantPersistence, InstantCode, InstantEdit,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ComCtrls, ExtCtrls, Mask, DBCtrls,
+  ImgList, ActnList, Menus;
+{$ENDIF}
+{$IFDEF LINUX}
+  QActnList, QMenus, QTypes, QImgList, QComCtrls, QControls, QExtCtrls,
+  QStdCtrls, QDBCtrls, QMask, QForms;
+{$ENDIF}
 
 type
   TInstantClassEditorForm = class(TInstantEditForm)
@@ -84,6 +93,7 @@ type
     procedure OkButtonClick(Sender: TObject);
     procedure CancelButtonClick(Sender: TObject);
     procedure AttributesMenuPopup(Sender: TObject);
+    procedure ClassSheetResize(Sender: TObject);
   private
     FBackupAttributes: TObjectList;
     FChangedAttributes: TStringList;
@@ -130,9 +140,9 @@ implementation
 
 uses
   InstantAttributeEditor, InstantDesignUtils, InstantConsts, InstantRtti,
-  TypInfo;
+  TypInfo, InstantImageUtils;
 
-{$R *.DFM}
+{$R *.dfm}
 
 resourcestring
   SConfirmDeleteAttribute = 'Delete attribute ''%s''?';
@@ -225,7 +235,7 @@ begin
       finally
         Items.EndUpdate;
       end;
-      NewItem.MakeVisible(False);
+      NewItem.MakeVisible{$IFDEF MSWINDOWS}(False){$ENDIF};
     end;
   end;
 end;
@@ -305,17 +315,15 @@ begin
     begin
       with Columns[Pred(Columns.Count)] do
       begin
+{$IFDEF MSWINDOWS}
         Width := -1;
         Width := -2;
+{$ENDIF}
+{$IFDEF LINUX}
+        Width := View.Width div 2;
+{$ENDIF}
       end;
     end;
-end;
-
-procedure TInstantClassEditorForm.FormCreate(Sender: TObject);
-begin
-  FTitle := Caption;
-  PageControl.ActivePage := ClassSheet;
-  ActiveControl := ClassNameEdit;
 end;
 
 function TInstantClassEditorForm.GetFocusedAttribute: TInstantCodeAttribute;
@@ -415,7 +423,12 @@ begin
         LoadClass(AClass);
       finally
         EndUpdate;
+{$IFDEF MSWINDOWS}
         with View.Column[1] do
+{$ENDIF}
+{$IFDEF LINUX}
+        with View.Columns.Items[1] do
+{$ENDIF}
         begin
           Width := -1;
           Width := -2;
@@ -592,6 +605,37 @@ begin
   UnitEdit.Enabled := IsNew;
   EnableControl(StorageEdit, Stored, SubjectSource);
   EnableControl(StorageLabel, Stored, SubjectSource);
+end;
+
+procedure TInstantClassEditorForm.FormCreate(Sender: TObject);
+begin
+  LoadMultipleImages(AttributeImages,'IO_CLASSEDITORATTRIBUTEIMAGES');
+  LoadMultipleImages(StateImages,'IO_CLASSEDITORSTATEIMAGES');
+  LoadMultipleImages(ActionImages,'IO_CLASSEDITORACTIONIMAGES');
+{$IFDEF MSWINDOWS}
+  BorderStyle := bsSizeable;
+  IntroducedAttributesView.SmallImages := AttributeImages;
+  InheritedAttributesView.SmallImages := AttributeImages;
+{$ENDIF}
+{$IFDEF LINUX}
+  BorderStyle := fbsSizeable;
+  IntroducedAttributesView.Images := AttributeImages;
+  InheritedAttributesView.Images := AttributeImages;
+{$ENDIF}
+  FTitle := Caption;
+  PageControl.ActivePage := ClassSheet;
+  ActiveControl := ClassNameEdit;
+  ClassSheetResize(nil);
+end;
+
+procedure TInstantClassEditorForm.ClassSheetResize(Sender: TObject);
+begin
+  inherited;
+  //simulate right-anchor (for Kylix compatibility)
+  ClassNameEdit.Width := ClassSheet.Width - 33;
+  BaseClassEdit.Width := ClassSheet.Width - 33;
+  UnitEdit.Width := ClassSheet.Width - 33;
+  StorageEdit.Width := ClassSheet.Width - 169;
 end;
 
 end.

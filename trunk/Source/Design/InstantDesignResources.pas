@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,16 +33,31 @@ unit InstantDesignResources;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ImgList;
+  SysUtils,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, ImgList,
+{$ENDIF}
+{$IFDEF LINUX}
+  QMenus, QControls, QExtCtrls, QForms, QImgList, QGraphics,
+{$ENDIF}
+  Classes;
 
 type
   TInstantDesignResourceModule = class(TDataModule)
     ToolImages: TImageList;
+    procedure DataModuleCreate(Sender: TObject);
   end;
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
+
+uses
+  InstantImageUtils;
+
+procedure TInstantDesignResourceModule.DataModuleCreate(Sender: TObject);
+begin
+  LoadMultipleImages(ToolImages,'IO_DESIGNRESOURCEIMAGES');
+end;
 
 end.

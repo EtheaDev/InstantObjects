@@ -1,13 +1,13 @@
 inherited InstantDualListForm: TInstantDualListForm
   Left = 310
+  Width = 385
+  Height = 286
   Caption = 'Dual List'
-  ClientHeight = 259
-  ClientWidth = 377
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 218
+    Top = 211
     Width = 377
     inherited ButtonBevel: TBevel
       Width = 377
@@ -37,7 +37,7 @@ inherited InstantDualListForm: TInstantDualListForm
     Left = 0
     Top = 0
     Width = 377
-    Height = 218
+    Height = 211
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 4
@@ -46,7 +46,7 @@ inherited InstantDualListForm: TInstantDualListForm
       Left = 4
       Top = 4
       Width = 165
-      Height = 210
+      Height = 203
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -54,20 +54,15 @@ inherited InstantDualListForm: TInstantDualListForm
         Left = 0
         Top = 0
         Width = 165
-        Height = 210
+        Height = 203
         Align = alClient
         Columns = <
           item
             Caption = 'Include'
-            Width = -2
-            WidthType = (
-              -2)
+            Width = 140
           end>
-        ColumnClick = False
-        HideSelection = False
         MultiSelect = True
         ReadOnly = True
-        SortType = stText
         TabOrder = 0
         ViewStyle = vsReport
         OnDblClick = LeftViewDblClick
@@ -77,7 +72,7 @@ inherited InstantDualListForm: TInstantDualListForm
       Left = 208
       Top = 4
       Width = 165
-      Height = 210
+      Height = 203
       Align = alRight
       BevelOuter = bvNone
       TabOrder = 1
@@ -85,20 +80,15 @@ inherited InstantDualListForm: TInstantDualListForm
         Left = 0
         Top = 0
         Width = 165
-        Height = 210
+        Height = 203
         Align = alClient
         Columns = <
           item
             Caption = 'Exclude'
-            Width = -2
-            WidthType = (
-              -2)
+            Width = 140
           end>
-        ColumnClick = False
-        HideSelection = False
         MultiSelect = True
         ReadOnly = True
-        SortType = stText
         TabOrder = 0
         ViewStyle = vsReport
         OnDblClick = RightViewDblClick
@@ -108,7 +98,7 @@ inherited InstantDualListForm: TInstantDualListForm
       Left = 169
       Top = 4
       Width = 39
-      Height = 210
+      Height = 203
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 2

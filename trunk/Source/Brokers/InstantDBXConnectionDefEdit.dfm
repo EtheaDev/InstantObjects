@@ -1,10 +1,9 @@
 object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
   Left = 325
   Top = 290
-  BorderStyle = bsDialog
+  Width = 399
+  Height = 270
   Caption = 'dbExpress Connection'
-  ClientHeight = 243
-  ClientWidth = 391
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -77,15 +76,12 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       TabOrder = 1
       OnClick = ConnectionNameListBoxClick
     end
-    object ParamsEditor: TValueListEditor
+    object ParamsEditor: TMemo
       Left = 168
       Top = 32
       Width = 209
       Height = 156
       TabOrder = 2
-      ColWidths = (
-        85
-        118)
     end
   end
   object BottomPanel: TPanel
@@ -101,7 +97,6 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Top = 6
       Width = 75
       Height = 25
-      Anchors = [akTop, akRight]
       Caption = 'OK'
       Default = True
       ModalResult = 1
@@ -112,7 +107,6 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Top = 6
       Width = 75
       Height = 25
-      Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
       ModalResult = 2

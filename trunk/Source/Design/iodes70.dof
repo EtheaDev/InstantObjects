@@ -3,7 +3,7 @@ IncludeVerInfo=1
 AutoIncBuild=0
 MajorVer=1
 MinorVer=6
-Release=0
+Release=5
 Build=0
 Debug=0
 PreRelease=0
@@ -11,14 +11,14 @@ Special=0
 Private=0
 
 [Version Info Keys]
-CompanyName=Seleqt
+CompanyName=InstantObjects.org
 FileDescription=InstantObjects Design Tools
-FileVersion=1.6.0.0
+FileVersion=1.6.5.0
 InternalName=
-LegalCopyright=Copyright 2001-2003 (c) Seleqt
+LegalCopyright=Mozilla Pulic License
 LegalTrademarks=
 OriginalFilename=
 ProductName=InstantObjects
-ProductVersion=1.6
+ProductVersion=1.6.5
 Comments=
 VersionSuffix=MPL

@@ -43,6 +43,7 @@ contains
   InstantTextFiler in 'InstantTextFiler.pas',
   InstantPresentation in 'InstantPresentation.pas',
   InstantAccessors in 'InstantAccessors.pas',
-  InstantConnectionManager in 'InstantConnectionManager.pas' {InstantConnectionManagerForm};
+  InstantConnectionManager in 'InstantConnectionManager.pas' {InstantConnectionManagerForm},
+  InstantImageUtils in 'InstantImageUtils.pas';
 
 end.

@@ -1,9 +1,9 @@
 ------------------------------------------------------------------
 
-  InstantObjects 1.6 for Delphi
+  InstantObjects 1.6.5 for Delphi & Kylix
 
   Mozilla Public License 1.1 Edition
-  December 2003 release
+  May 2004 release
 
   Based on Seleqt InstantObjects.
   Portions created by Seleqt are Copyright (c) 2001-2003 Seleqt.
@@ -25,9 +25,10 @@ o VERSION HISTORY
 INTRODUCTION
 ------------
 
-InstantObjects is an integrated framework for developing object-oriented business 
-solutions in Borland Delphi(tm). The framework provides the foundation for the 
-development process as well as the engine that powers the final application.
+InstantObjects is an integrated framework for developing object-oriented business
+solutions in Borland Delphi(tm) & Borland Kylix(tm). The framework provides the
+foundation for the development process as well as the engine that powers the final
+application.
 
 
 
@@ -36,25 +37,25 @@ FEATURES
 
 MODEL REALIZATION
 
-InstantObjects simplifies the process of realizing an object-oriented business model 
-into Delphi classes. The Model Explorer is a two-way tool that is integrated with the 
-Delphi IDE. With the Model Explorer you can manage the business model of your 
-application by defining classes and relations. Changes made via the Model Explorer 
-are automatically reflected in code and vice versa. When a class is created in the 
-Model Explorer, the definition of the class and its attributes are written to the 
+InstantObjects simplifies the process of realizing an object-oriented business model
+into Delphi/Kylix classes. The Model Explorer is a two-way tool that is integrated with the
+Delphi or Kylix IDE. With the Model Explorer you can manage the business model of your
+application by defining classes and relations. Changes made via the Model Explorer
+are automatically reflected in code and vice versa. When a class is created in the
+Model Explorer, the definition of the class and its attributes are written to the
 model unit along with the implementation of access methods for the defined attributes.
 
-A database for storing the business objects can be automatically generated from the 
-defined model via the Database Builder. InstantObjects supports databases available 
-via BDE, ADO, InterBase Express, dbExpress, DBISAM, FlashFiler and Advantage Database 
+A database for storing the business objects can be automatically generated from the
+defined model via the Database Builder. InstantObjects supports databases available
+via BDE, ADO, InterBase Express, dbExpress, DBISAM, FlashFiler and Advantage Database
 Server.
-  
+
 
 OBJECT PERSISTENCE
 
-One of the major issues when developing object-oriented applications is object 
-persistence. InstantObjects adresses this issue by providing a powerfull persistence 
-mechanism that allows using the most common databases as storage. Storing and 
+One of the major issues when developing object-oriented applications is object
+persistence. InstantObjects adresses this issue by providing a powerfull persistence
+mechanism that allows using the most common databases as storage. Storing and
 retrieving objects is a simple matter of invoking methods of the common ancestor 
 class, TInstantObject. Mapping of objects to and from tables is done automatically 
 by the persistence engine of InstantObjects. Relations between objects defined in 
@@ -79,7 +80,7 @@ INSTALLATION
 1. Unpack zip file to <installdir>
 
 
-2. Add the following folders to the Delphi environment library path:
+2. Add the following folders to the Delphi/Kylix environment library path:
 
    <installdir>\Source\Core
    <installdir>\Source\Brokers
@@ -87,11 +88,13 @@ INSTALLATION
 
 3. Build and install the InstantObjects design package:
 
-   <installdir>\Source\Design\iodes?0.bpk
+   <installdir>\Source\Design\iodes?0.bpk (for Delphi 5,6,7)
+   <installdir>/Source/Design/iodesK3.bpk (for Kylix 3)
 
 
 4. Build and install the desired broker package(s):
 
+   (Brokers for Delphi)
    <installdir>\Brokers\ioado?0.dpk (ADO)
    <installdir>\Brokers\iobde?0.dpk (BDE)
    <installdir>\Brokers\ioibx?0.dpk (IBX)
@@ -99,7 +102,9 @@ INSTALLATION
    <installdir>\Brokers\iodbi?0.dpk (DBISAM)
    <installdir>\Brokers\ioads?0.dpk (Advantage)
    <installdir>\Brokers\ioff?0.dpk  (FlashFiler)
-   
+
+   (Broker for Kylix)
+   <installdir>/Brokers/iodbxK3.dpk (dbExpress)
 
 
 GETTING STARTED
@@ -107,33 +112,40 @@ GETTING STARTED
 
 EXAMPLES
 
-Before you start creating your own solutions with InstantObjects, we recommend 
-that you study the example projects that have been installed into 
+Before you start creating your own solutions with InstantObjects, we recommend
+that you study the example projects that have been installed into
 <installdir>\Demos.
 
 The Demos folder contains two example projects; "Intro" and "Primer".
 
-"Intro" is a basic introduction to InstantObjects.
+"Intro" is a basic introduction to InstantObjects (no Kylix compatibility)
 
-"Primer" is a thorough demonstration and explanation of nearly all the features 
-of InstantObjects. The application implements a small business model and a user 
-interface that shows how persistent business objects can be used in a real 
-application.
+"Primer" is a thorough demonstration and explanation of nearly all the features
+of InstantObjects. The application implements a small business model and a user
+interface that shows how persistent business objects can be used in a real
+application. (compatible with Delphi and Kylix)
 
 
 DOCUMENTATION
 
-When you are ready to create your own InstantObjects solutions, please consult 
-the InstantObjects Guide io.hlp in the <installdir>\Help folder. 
+When you are ready to create your own InstantObjects solutions, please consult
+the InstantObjects Guide io.hlp in the <installdir>\Help folder.
 
-The section "User Guide" explains how to build applications with InstantObjects. 
-The section "Reference Guide" contains a detailed explanation of every class 
+The section "User Guide" explains how to build applications with InstantObjects.
+The section "Reference Guide" contains a detailed explanation of every class
 and function in the InstantObjects framework.
 
 
 
 VERSION HISTORY
 ---------------
+Version 1.6.5 (2004-05-23) (more details in Kylix3_porting_release_notes.txt)
+
+- Kylix Porting (design, core and DbExpress broker).
+
+- Kylix porting of Primer Demo.
+
+- XML format for connection file managed by connectionmanager.
 
 
 Version 1.6 (2003-12-19)

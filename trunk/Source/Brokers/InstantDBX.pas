@@ -32,6 +32,12 @@ unit InstantDBX;
 interface
 
 uses
+{$IFDEF MSWINDOWS}
+  Controls,
+{$ENDIF}
+{$IFDEF LINUX}
+  QControls,
+{$ENDIF}
   Classes, DB, DBXpress, SqlExpr, InstantPersistence, InstantCommand;
 
 type
@@ -179,7 +185,7 @@ procedure Register;
 implementation
 
 uses
-  SysUtils, Controls, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts;
+  SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts;
 
 procedure Register;
 begin

@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,9 +33,16 @@ unit InstantAttributeEditor;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  InstantEdit, Db, InstantPresentation, StdCtrls, ExtCtrls, DBCtrls, Mask,
-  InstantCode, ComCtrls, TypInfo, ImgList;
+  SysUtils, Classes,
+  InstantEdit, DB, InstantCode, TypInfo,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, DBCtrls, Mask, ComCtrls, ImgList,
+{$ENDIF}
+{$IFDEF LINUX}
+  QImgList, QStdCtrls, QDBCtrls, QMask, QControls, QComCtrls, QExtCtrls,
+{$ENDIF}
+  InstantPresentation;
 
 type
   TInstantStringsEvent = procedure(Sender: TObject; Items: TStrings) of object;
@@ -119,14 +127,16 @@ type
 implementation
 
 uses
-  InstantRtti, InstantPersistence, InstantDesignUtils;
+  InstantRtti, InstantPersistence, InstantDesignUtils, InstantImageUtils;
 
-{$R *.DFM}
+{$R *.dfm}
+{$R iodesimages.res}
 
 { TInstantAttributeEditorForm }
 
 procedure TInstantAttributeEditorForm.FormCreate(Sender: TObject);
 begin
+  LoadMultipleImages(TypeImages,'IO_ATTRIBUTEEDITORIMAGES');
   PageControl.ActivePage := DefinitionSheet;
   ActiveControl := NameEdit;
 end;

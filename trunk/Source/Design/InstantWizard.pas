@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,8 +33,14 @@ unit InstantWizard;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls, InstantDialog;
+  SysUtils, Classes, InstantDialog,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  StdCtrls, ExtCtrls, ComCtrls;
+{$ENDIF}
+{$IFDEF LINUX}
+  QExtCtrls, QControls, QStdCtrls, QComCtrls;
+{$ENDIF}
 
 type
   TInstantWizardForm = class(TInstantDialogForm)
@@ -69,7 +76,7 @@ resourcestring
   SFinishButton = 'Finish';
   SNextButton = 'Next >';
 
-{$R *.DFM}
+{$R *.dfm}
 
 function TInstantWizardForm.AllowBack: Boolean;
 begin

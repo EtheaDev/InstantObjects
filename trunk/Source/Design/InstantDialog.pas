@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Carlo Barazzetta, Adrea Petrelli: porting Kylix
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -32,18 +33,35 @@ unit InstantDialog;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls;
+  SysUtils,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
+{$ENDIF}
+{$IFDEF LINUX}
+  QExtCtrls, QControls, QStdCtrls, QComCtrls, QForms,
+{$ENDIF}
+  Classes;
 
 type
   TInstantDialogForm = class(TForm)
     ButtonPanel: TPanel;
     ButtonBevel: TBevel;
+    procedure FormCreate(Sender: TObject);
   end;
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
+
+procedure TInstantDialogForm.FormCreate(Sender: TObject);
+begin
+{$IFDEF MSWINDOWS}
+  BorderStyle := bsDialog;
+{$ENDIF}
+{$IFDEF LINUX}
+  BorderStyle := fbsDialog;
+{$ENDIF}
+end;
 
 end.
 

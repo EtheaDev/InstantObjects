@@ -1,11 +1,10 @@
 object InstantDialogForm: TInstantDialogForm
   Left = 309
   Top = 242
+  Width = 410
+  Height = 292
   BorderIcons = [biSystemMenu]
-  BorderStyle = bsDialog
   Caption = 'Dialog'
-  ClientHeight = 265
-  ClientWidth = 402
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -14,11 +13,12 @@ object InstantDialogForm: TInstantDialogForm
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object ButtonPanel: TPanel
     Left = 0
-    Top = 224
+    Top = 217
     Width = 402
     Height = 41
     Align = alBottom
