@@ -100,6 +100,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FileOpenActionBeforeExecute(Sender: TObject);
     procedure FileOpenActionExecute(Sender: TObject);
+    procedure ConnectActionUpdate(Sender: TObject);
+    procedure DisconnectActionUpdate(Sender: TObject);
   private
     FModel: TInstantModel;
     FOnBuild: TInstantConnectionDefEvent;
@@ -410,7 +412,7 @@ begin
 {$IFDEF MSWINDOWS}
   BorderStyle := bsSizeable;
   ConnectionView.OnEdited := ConnectionViewEditedVCL;
-  ConnectionView.HideSelection := True;
+  ConnectionView.HideSelection := False;
   ConnectionView.SortType := stText;
   ConnectionView.SmallImages := ConnectionImages;
 {$ENDIF}
@@ -702,6 +704,18 @@ end;
 function TInstantConnectionManagerForm.IsManagerConnected: Boolean;
 begin
   Result := ConnectionManager.IsConnected;
+end;
+
+procedure TInstantConnectionManagerForm.ConnectActionUpdate(
+  Sender: TObject);
+begin
+  ConnectAction.Enabled := Assigned(CurrentConnectionDef) and not IsManagerConnected;
+end;
+
+procedure TInstantConnectionManagerForm.DisconnectActionUpdate(
+  Sender: TObject);
+begin
+  DisconnectAction.Enabled := IsManagerConnected;
 end;
 
 initialization

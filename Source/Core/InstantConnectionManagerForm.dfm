@@ -161,11 +161,13 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       Caption = '&Connect'
       Hint = 'Connect'
       OnExecute = ConnectActionExecute
+      OnUpdate = ConnectActionUpdate
     end
     object DisconnectAction: TAction
       Caption = '&Disconnect'
       Hint = 'Disconnect'
       OnExecute = DisconnectActionExecute
+      OnUpdate = DisconnectActionUpdate
     end
     object FileOpenAction: TAction
       Category = 'File'
