@@ -109,11 +109,11 @@ type
 
   TContact = class(TInstantObject)
   { IOMETADATA stored;
-    Address: Part(TAddress) externalstored 'Contact_Address';
+    Address: Part(TAddress) external;
     Category: Reference(TCategory);
     City: String(30) index;
     Name: String(50) index;
-    Phones: Parts(TPhone) externalstored 'Contact_Phone'; }
+    Phones: Parts(TPhone) external 'Contact_Phones'; }
     _Address: TInstantPart;
     _Category: TInstantReference;
     _City: TInstantString;
@@ -168,7 +168,7 @@ type
   TPerson = class(TContact)
   {IOMETADATA stored;
     BirthDate: DateTime;
-    Emails: Parts(TEmail) externalstored 'Person_Email';
+    Emails: Parts(TEmail) external 'Person_Emails';
     Employer: Reference(TCompany);
     Picture: Graphic;
     Salary: Currency; }
@@ -212,7 +212,7 @@ type
 
   TCompany = class(TContact)
   { IOMETADATA stored;
-    Employees: References(TPerson) externalstored 'Company_Employee'; }
+    Employees: References(TPerson) external 'Company_Employees'; }
     _Employees: TInstantReferences;
   private
     function GetEmployeeCount: Integer;
