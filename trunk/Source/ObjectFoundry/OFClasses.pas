@@ -260,12 +260,10 @@ begin
   Prop.DataName := PropTypeName;
   Prop.V9Visibility := TV9Visibility(Visibility);  // SRM - 18 Sep 2004
   TaggedStrings['StorageName'] := StorageName;
-  // begin SRM 30 Sep 2004
   // External part(s) options
-  TaggedStrings['ExternalStoredName'] := ExternalStoredName;
-  TaggedStrings['ExternalLinkedName'] := ExternalLinkedName;
-  TaggedIntegers['IsExternal'] := Ord(IsExternal);
-  // end SRM 30 Sep 2004
+  TaggedStrings['ExternalStorageName'] := ExternalStorageName;
+  TaggedIntegers['StorageKind'] := Ord(StorageKind);
+  
   TaggedIntegers['Size'] := Metadata.Size;
   TaggedBooleans['IsDefault'] := IsDefault;
   TaggedBooleans['IsIndexed'] := IsIndexed;
@@ -443,12 +441,11 @@ begin
   Tailor.IsArray := Prop.Options[PropArray];
   ReadOnly := Prop.WriteAccess = rwNone;
   StorageName := TaggedStrings['StorageName'];
-  // begin SRM 30 Sep 2004
+
   // External part(s) options
-  ExternalStoredName := TaggedStrings['ExternalStoredName'];
-  ExternalLinkedName := TaggedStrings['ExternalLinkedName'];
-  IsExternal := TInstantContainerIsExternal(TaggedIntegers['IsExternal']);
-  // end SRM 30 Sep 2004
+  ExternalStorageName := TaggedStrings['ExternalStorageName'];
+  StorageKind := TInstantStorageKind(TaggedIntegers['StorageKind']);
+
   IsDefault := TaggedBooleans['IsDefault'];
   IsIndexed := TaggedBooleans['IsIndexed'];
   IsRequired := TaggedBooleans['IsRequired'];
