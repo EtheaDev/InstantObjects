@@ -10,8 +10,8 @@ type
   private
     FOptions: TOFOptions;
     procedure AttributeEditorLoadClasses(Sender: TObject; Items: TStrings);
-    procedure AttributeEditorLoadClassAttrs(Sender: TObject;
-      const ClassName: String; Items: TStrings);
+    //procedure AttributeEditorLoadClassAttrs(Sender: TObject;
+    //  const ClassName: String; Items: TStrings);
     function GetOptions: TOFOptions;
     function IsInstantObjectClass(AClass: IMMClassBase): Boolean;
   protected
@@ -56,7 +56,7 @@ implementation
 uses
   Contnrs, Windows, OFClasses, OFUtils, OFCritic, InstantAttributeEditor,
   InstantPersistence, InstantCode, Forms, Controls, Menus, MMEngineDefs,
-  OFClassRegWizard;
+  OFClassRegWizard, InstantDesignUtils;
 
 const
   SObjectFoundry = 'ObjectFoundry';
@@ -70,7 +70,7 @@ begin
     (Assigned(AClass.Ancestor) and IsInstantObjectClass(AClass.Ancestor));
 end;
 
-procedure TObjectFoundryExpert.AttributeEditorLoadClassAttrs(
+(*procedure TObjectFoundryExpert.AttributeEditorLoadClassAttrs(
   Sender: TObject; const ClassName: String; Items: TStrings);
 var
   i, j: Integer;
@@ -98,7 +98,7 @@ begin
       end;    { if }
     end;
   end;    { if }
-end;
+end; *)
 
 procedure TObjectFoundryExpert.AttributeEditorLoadClasses(Sender: TObject;
   Items: TStrings);
@@ -126,16 +126,29 @@ end;
 function TObjectFoundryExpert.EditAttribute(const P: IMMProperty): Boolean;
 var
   Attribute: TMMCodeAttribute;
+  lClass: IMMClassifier;
+
+  function GetBaseClassStorageName: String;
+  begin
+    Assert(Assigned(lClass), 'lClass is not assigned!');
+    if lClass.TaggedValues[IOClassStorageName] <> '' then
+      Result := lClass.TaggedValues[IOClassStorageName]
+    else
+      Result := lClass.Name;
+
+    Result := Remove_T_FromClassName(Result);
+  end;
+
 begin
   if Assigned(P) and P.Valid then
   begin
+    lClass := P.ClassBase;
     Attribute := TMMCodeAttribute.Create(P);
     try
       with TInstantAttributeEditorForm.Create(nil) do
       try
-        InMM := True;         // SRM - 14 Oct 2004
+        BaseClassStorageName := GetBaseClassStorageName;
         OnLoadClasses := AttributeEditorLoadClasses;
-        OnLoadClassAttributes := AttributeEditorLoadClassAttrs; // SRM - 01 Oct 2004
         Subject := Attribute;
         Result := ShowModal = mrOK;
         if Result then
