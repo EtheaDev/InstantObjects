@@ -22,7 +22,7 @@ type
   TPhone = class;
 
   TAddress = class(TInstantObject)
-  { IOMETADATA stored;
+  {IOMETADATA stored;
     City: String(30) index;
     Country: Reference(TCountry);
     State: String(4);
@@ -53,7 +53,7 @@ type
   end;
 
   TCountry = class(TInstantObject)
-  { IOMETADATA stored;
+  {IOMETADATA stored;
     Name: String(30); }
     _Name: TInstantString;
   private
@@ -68,7 +68,7 @@ type
   end;
 
   TPhone = class(TInstantObject)
-  { IOMETADATA stored;
+  {IOMETADATA stored;
     Name: String(20);
     Number: String(20) mask '(000) 000-0000;0;_'; }
     _Name: TInstantString;
@@ -84,7 +84,7 @@ type
   end;
 
   TEmail = class(TInstantObject)
-  { IOMETADATA stored;
+  {IOMETADATA stored;
     Address: String(100); }
     _Address: TInstantString;
   private
@@ -95,7 +95,7 @@ type
   end;
 
   TCategory = class(TInstantObject)
-  { IOMETADATA stored;
+  {IOMETADATA stored;
     Name: String(30); }
     _Name: TInstantString;
   private
@@ -108,7 +108,7 @@ type
   end;
 
   TContact = class(TInstantObject)
-  { IOMETADATA stored;
+  {IOMETADATA stored;
     Address: Part(TAddress) external;
     Category: Reference(TCategory);
     City: String(30) index;
@@ -211,7 +211,7 @@ type
   end;
 
   TCompany = class(TContact)
-  { IOMETADATA stored;
+  {IOMETADATA stored;
     Employees: References(TPerson) external 'Company_Employees'; }
     _Employees: TInstantReferences;
   private
