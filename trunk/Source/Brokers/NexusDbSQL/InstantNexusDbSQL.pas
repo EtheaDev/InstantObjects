@@ -421,15 +421,10 @@ end;
 
 procedure TInstantNexusDbSQLConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
-  StartTransaction;
-  try
-    inherited;
-    CommitTransaction;
-    DatabaseBuildFixup;     // Hopefully NexusDb V2 will not need this!
-  except
-    RollbackTransaction;
-    raise;
-  end;
+  // Deleted transaction wrapper as DDL actions cannot be rolled back in 
+  // accordance with advice from NexusDb ng. - SRM 09 Oct 2004
+  inherited;
+  DatabaseBuildFixup;     // Hopefully NexusDb V2 will not need this!
 end;
 
 procedure TInstantNexusDbSQLConnector.InternalCommitTransaction;
@@ -487,6 +482,8 @@ function TInstantNexusDbSQLBroker.CreateDataSet(const AStatement: string;
 var
   Query: TNexusDbQuery;
 begin
+  //CodeSite.EnterMethod('TInstantNexusDbSQLBroker.CreateDataSet');
+  //CodeSite.SendFmtMsg('SQL Statement: %s', [#13 + AStatement]);
   Query := TNexusDbQuery.Create(nil);
   with Query do
   begin
@@ -496,6 +493,7 @@ begin
       AssignDataSetParams(Query, AParams);
   end;
   Result := Query;
+  //CodeSite.ExitMethod('TInstantNexusDbSQLBroker.CreateDataSet');
 end;
 
 function TInstantNexusDbSQLBroker.CreateResolver(
@@ -517,14 +515,17 @@ const
     'DATETIME',
     'BLOB');
 begin
+  //CodeSite.EnterMethod('TInstantNexusDbSQLBroker.DataTypeToColumnType');
   Result := Types[DataType];
   if (DataType = dtString) and (Size > 0) then
     Result := Result + InstantEmbrace(IntToStr(Size), '()');
+  //CodeSite.ExitMethod('TInstantNexusDbSQLBroker.DataTypeToColumnType');
 end;
 
 function TInstantNexusDbSQLBroker.Execute(const AStatement: string;
   AParams: TParams): Integer;
 begin
+  //CodeSite.SendFmtMsg('SQL Statement: %s', [#13 + AStatement]);
   with CreateDataSet(AStatement, AParams) as TNexusDbQuery do
   try
     ExecSQL;
@@ -537,11 +538,14 @@ end;
 function TInstantNexusDbSQLBroker.ExecuteQuery(DataSet: TDataSet) : integer;
 begin
   //don't call inherited!
+  
+  //CodeSite.EnterMethod('TInstantNexusDbSQLBroker.ExecuteQuery');
   with TNexusDbQuery(DataSet) do
   begin
     ExecSQL;
     Result := RowsAffected;
   end;
+  //CodeSite.ExitMethod('TInstantNexusDbSQLBroker.ExecuteQuery');
 end;
 
 function TInstantNexusDbSQLBroker.GetConnector: TInstantNexusDbSQLConnector;
