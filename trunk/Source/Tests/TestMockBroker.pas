@@ -3,16 +3,10 @@ unit TestMockBroker;
 interface
 
 uses
-  Classes, SysUtils,
-  InstantPersistence,
-  fpcunit,
-  testregistry,
-  InstantMock,
-  UbMockObject,
-  Model;
+  Classes, SysUtils, InstantPersistence, fpcunit, testregistry, InstantMock,
+  UbMockObject, Model;
 
 type
-
   TTestMockBroker = class(TTestCase)
   private
   protected
@@ -27,9 +21,7 @@ type
     procedure TestStoreAndRetrieveContact;
   end;
 
-
 implementation
-
 
 { TTestMockBroker }
 
@@ -39,7 +31,6 @@ begin
 
   AssertNotNull(InstantModel.ClassMetadatas.Find('TContact'));
 end;
-
 
 procedure TTestMockBroker.TestGetBroker;
 var
@@ -59,6 +50,7 @@ var
   brok: TInstantMockBroker;
 begin
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+
   brok := Fconn.Broker as TInstantMockBroker;
   brok.MockManager.StartSetUp;
   brok.MockManager.EndSetUp;
@@ -73,6 +65,7 @@ var
   brok: TInstantMockBroker;
 begin
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+
   Fconn.IsDefault := True;
   Fconn.StartTransaction;
   brok := Fconn.Broker as TInstantMockBroker;
@@ -108,7 +101,6 @@ var
   brok: TInstantMockBroker;
 begin
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
-
   Fconn.IsDefault := True;
   brok := Fconn.Broker as TInstantMockBroker;
   brok.MockManager.StartSetUp;
@@ -136,7 +128,6 @@ begin
   brok.MockManager.Verify;
 end;
 
-
 procedure TTestMockBroker.SetUp;
 begin
   inherited;
@@ -152,4 +143,4 @@ end;
 initialization
   RegisterTests([TTestMockBroker]);
 
-end.
+end. 
