@@ -48,8 +48,6 @@ uses
 
 type
   TInstantStringsEvent = procedure(Sender: TObject; Items: TStrings) of object;
-  TInstantAttrStringsEvent = procedure(Sender: TObject; const ClassName: string;
-    Items: TStrings) of object;
 
   TInstantAttributeEditorForm = class(TInstantEditForm)
     AccessSheet: TTabSheet;
@@ -95,6 +93,7 @@ type
     ExternalStorageNameLabel: TLabel;
     StorageKindEdit: TDBComboBox;
     StorageKindLabel: TLabel;
+    AutoCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure NameEditChange(Sender: TObject);
     procedure NumericFieldGetText(Sender: TField; var Text: string;
@@ -108,22 +107,19 @@ type
     procedure TypeEditClick(Sender: TObject);
     procedure StorageKindEditChange(Sender: TObject);
     procedure ExternalStorageNameEditChange(Sender: TObject);
-    procedure ExternalLinkedNameEditChange(Sender: TObject);
     procedure StorageNameEditChange(Sender: TObject);
+    procedure AutoCheckBoxClick(Sender: TObject);
   private
-    // True if in ModelMaker, default is False
-    FInMM: Boolean;
+    FBaseClassStorageName: string;
     FLimited: Boolean;
     FModel: TInstantCodeModel;
     FOnLoadClasses: TInstantStringsEvent;
-    FOnLoadClassAttributes: TInstantAttrStringsEvent;
     function GetSubject: TInstantCodeAttribute;
     procedure SetSubject(const Value: TInstantCodeAttribute);
     procedure SetLimited(Value: Boolean);
     procedure SetModel(const Value: TInstantCodeModel);
   protected
     procedure LoadClasses;
-    procedure LoadClassAttributes;
     procedure LoadData; override;
     procedure LoadEnums(TypeInfo: PTypeInfo; Items: TStrings;
       Values: Pointer);
@@ -136,11 +132,12 @@ type
     procedure UpdateControls;
     procedure ComputeExternalStorageName;
   public
-    property InMM: boolean read FInMM write FInMM;
+    property BaseClassStorageName: string read FBaseClassStorageName write
+        FBaseClassStorageName;
     property Limited: Boolean read FLimited write SetLimited;
     property Model: TInstantCodeModel read FModel write SetModel;
-    property OnLoadClasses: TInstantStringsEvent read FOnLoadClasses write FOnLoadClasses;
-    property OnLoadClassAttributes: TInstantAttrStringsEvent read FOnLoadClassAttributes write FOnLoadClassAttributes;
+    property OnLoadClasses: TInstantStringsEvent read FOnLoadClasses
+        write FOnLoadClasses;
     property Subject: TInstantCodeAttribute read GetSubject write SetSubject;
   end;
 
@@ -159,7 +156,6 @@ begin
   LoadMultipleImages(TypeImages, 'IO_ATTRIBUTEEDITORIMAGES', HInstance);
   PageControl.ActivePage := DefinitionSheet;
   ActiveControl := NameEdit;
-  FInMM := False;       
 end;
 
 function TInstantAttributeEditorForm.GetSubject: TInstantCodeAttribute;
@@ -311,7 +307,6 @@ begin
   with ObjectClassEdit do
     SubjectExposer.AssignFieldValue(Field, Text);
   UpdateControls;
-  LoadClassAttributes;  
 end;
 
 procedure TInstantAttributeEditorForm.ObjectClassEditEnter(
@@ -336,10 +331,8 @@ begin
           raise Exception.Create('Name already used');
         end;
       end;
-  if InMM then
-    SaveData
-  else
-    inherited;
+      
+  inherited;
 end;
 
 procedure TInstantAttributeEditorForm.PopulateClasses;
@@ -518,7 +511,9 @@ begin
 
   EnableCtrl(ExternalStorageNameLabel, IsExternal
     and not (Subject.AttributeType = atPart));
-  EnableCtrl(ExternalStorageNameEdit, IsExternal 
+  EnableCtrl(ExternalStorageNameEdit, IsExternal
+    and not (Subject.AttributeType = atPart));
+  EnableCtrl(AutoCheckBox, IsExternal
     and not (Subject.AttributeType = atPart));
 
   EnableCtrl(SizeLabel, IsString);
@@ -543,46 +538,23 @@ procedure TInstantAttributeEditorForm.ExternalStorageNameEditChange(Sender: TObj
 begin
   with ExternalStorageNameEdit do
     if Text <> '' then
-      SubjectExposer.AssignFieldValue(Field, Text); 
+      SubjectExposer.AssignFieldValue(Field, Text);
   UpdateControls;
 end;
 
-procedure TInstantAttributeEditorForm.ExternalLinkedNameEditChange(Sender: TObject);
+procedure TInstantAttributeEditorForm.AutoCheckBoxClick(Sender: TObject);
 begin
-  UpdateControls;
-end;
-
-procedure TInstantAttributeEditorForm.LoadClassAttributes;
-begin
+  if AutoCheckBox.Checked then
+    ComputeExternalStorageName;
 end;
 
 procedure TInstantAttributeEditorForm.StorageNameEditChange(
   Sender: TObject);
 begin
-  inherited;
   UpdateControls;
 end;
 
 procedure TInstantAttributeEditorForm.ComputeExternalStorageName;
-
-  function GetClassStorageName: string;
-  begin
-    if Assigned(FModel) then
-    begin
-      if Subject.Metadata.ClassMetadata.StorageName <> '' then
-        Result := Subject.Metadata.ClassMetadata.StorageName
-      else begin
-        Result := Subject.Metadata.ClassMetadata.Name;
-        // Remove the 'T' from classname
-        if (Length(Result) > 1) and (Result[1] = 'T') then
-          Delete(Result, 1, 1);
-      end;
-    end
-    else begin
-      // ToDo: Fix this up for ObjectFoundry.
-      Result := '';
-    end;
-  end;
 
   function GetStorageName: string;
   begin
@@ -593,15 +565,23 @@ procedure TInstantAttributeEditorForm.ComputeExternalStorageName;
   end;
 
 begin
-  if ExternalStorageNameEdit.Enabled then
-    ExternalStorageNameEdit.Text := Format('%s_%s',
-      [GetClassStorageName(), GetStorageName()])
-  else
-    ExternalStorageNameEdit.Text := '';
+  with ExternalStorageNameEdit do
+    if Enabled then
+    begin
+      if (Subject.ExternalStorageName <> '') and not AutoCheckBox.Checked then
+        Text := Subject.ExternalStorageName
+      else
+      if (Text = '') or AutoCheckBox.Checked then
+        Text := Format('%s_%s', [BaseClassStorageName, GetStorageName()]);
+    end
+    else
+      Text := '';
 
 end;
 
 end.
+
+
 
 
 
