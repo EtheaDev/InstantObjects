@@ -162,7 +162,7 @@ end;
 
 procedure TInstantXXXConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
-  Scheme.BlobStreamFormat := BlobStreamFormat; //CB  
+  inherited;  
   { TODO: Build database from Scheme }
 end;
 

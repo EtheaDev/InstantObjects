@@ -83,7 +83,7 @@ type
     procedure InternalRollbackTransaction; override;
     procedure InternalStartTransaction; override;
     function ParamByName(const AName: string): string;
-    procedure InternalBuildDatabase(Scheme: TInstantScheme); override; //CB
+    procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
   public
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
     property CanTransaction: Boolean read GetCanTransaction;
@@ -254,10 +254,8 @@ begin
   ATransactionDesc.GlobalID := 0;
 end;
 
-procedure TInstantDBXConnector.InternalBuildDatabase(
-  Scheme: TInstantScheme);
+procedure TInstantDBXConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
-  Scheme.BlobStreamFormat := BlobStreamFormat; //CB  
   inherited;
 end;
 
