@@ -6527,6 +6527,7 @@ begin
     Ref := CreateObjectReference(AObject);
     try
       Result := ObjectReferenceList.Add(Ref);
+      SetOwnerContext(AObject);
     except
       Ref.Free;
       raise;
@@ -13972,7 +13973,7 @@ var
               while not DataSet.Eof do
               begin
                 RefObject := TInstantObjectReference.Create(nil, True);
-                RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
+                RefObject.ReferenceObject(DataSet.Fields[0].AsString, DataSet.Fields[1].AsString);
                 (Attribute as TInstantParts).ObjectReferenceList.Add(RefObject);
                 {PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
                 if Assigned(PartObject) then
