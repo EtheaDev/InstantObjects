@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
- * Joao Morais, Cisar Coll
+ * Joao Morais, Cesar Coll
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -9232,7 +9232,7 @@ begin
       Proc(Node.Item);
       Node := Enumerator.Next;
     end;
-  except
+  finally
     Enumerator.Free;
   end;
 end;
