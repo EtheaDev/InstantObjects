@@ -29,7 +29,7 @@ package DclIOff_D5;
 
 requires
   IOCore,
-  ioff50;
+  ioff_D5;
 
 contains
   InstantFFReg in '..\InstantFFReg.pas';
