@@ -18,7 +18,8 @@ uses
   QGraphics, QControls, QForms, QDialogs, QStdCtrls,QTypes,
   QMenus, QExtCtrls, QComCtrls, QGrids, QDBGrids, QImgList, QActnList,
 {$ENDIF}
-  InstantPersistence, BasicView, Stopwatch, InstantConnectionManager;
+  InstantPersistence, BasicView, Stopwatch,
+  InstantConnectionManagerForm, InstantConnectionManager;
 
 type
   TMainForm = class(TForm)
@@ -332,7 +333,7 @@ begin
       raise;
     end;
     if Confirm('Create random data?') then
-      RandomDataActionExecute(nil); //CB
+      RandomDataActionExecute(nil);
   finally
     if Assigned(DefaultConnector) then
       DefaultConnector.IsDefault := True;
@@ -356,7 +357,7 @@ var
         Company := nil;
       Result := CreateRandomPerson(Company, Gender);
       if LoadPictures then
-        AssignRandomPicture(Gender=gnMale, TPerson(Result)._Picture); //CB
+        AssignRandomPicture(Gender=gnMale, TPerson(Result)._Picture);
     end else
     begin
       Result := CreateRandomCompany;
@@ -591,7 +592,7 @@ end;
 
 procedure TMainForm.InitSideBar;
 
-  procedure AddShortcut(Form: TBasicViewForm; Index: Integer); //CB was TForm
+  procedure AddShortcut(Form: TBasicViewForm; Index: Integer);
   begin
     with SideBar.Items.Add do
     begin
