@@ -81,7 +81,6 @@ type
     lblIdDataType: TLabel;
     lblIdSize: TLabel;
     procedure BrowseButtonClick(Sender: TObject);
-    procedure ServerComboBoxSelect(Sender: TObject);
     procedure rgSelDbClick(Sender: TObject);
     procedure ServerComboBoxLoadAlias(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -181,12 +180,6 @@ begin
 ///  CodeSite.SendBoolean('Alias '+ConnectionDef.AliasName,ConnectionDef.AliasIsPath);
 end;
 
-procedure TInstantNexusDbSQLConnectionDefEditForm.ServerComboBoxSelect(
-  Sender: TObject);
-begin
-  LoadAliasNames;
-end;
-
 procedure TInstantNexusDbSQLConnectionDefEditForm.rgSelDbClick(
   Sender: TObject);
 begin
@@ -213,6 +206,9 @@ end;
 procedure TInstantNexusDbSQLConnectionDefEditForm.FormShow(Sender: TObject);
 begin
   rgSelDb.SetFocus;
+{$IFNDEF VER130}
+  ServerComboBox.OnCloseUp := ServerComboBoxLoadAlias;
+{$ENDIF}
 end;
 
 procedure TInstantNexusDbSQLConnectionDefEditForm.ServerComboBoxDropDown(

@@ -62,6 +62,9 @@ unit InstantNexusDbSQL;
 interface
 
 uses
+{$IFDEF MSWINDOWS}
+  Windows,
+{$ENDIF}
   Classes, Db, SysUtils, InstantPersistence, InstantClasses, InstantCommand,
   nxdb, nxsdServerEngine, nxreRemoteServerEngine, nxllComponent,
   nxllTransport, nxptBasePooledTransport, nxtwWinsockTransport,
@@ -128,6 +131,7 @@ type
   protected
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetDBMSName: string; override;
+    function GetSQLDelimiters: String; override;      // SRM - 20 Jan 2005
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
     procedure PrepareQuery(DataSet : TDataSet); override;
@@ -143,7 +147,12 @@ type
 
   TInstantNexusDbSQLResolver = class(TInstantSQLResolver);
 
-  TInstantNexusDbSQLTranslator = class(TInstantRelationalTranslator);
+  TInstantNexusDbSQLTranslator = class(TInstantRelationalTranslator)
+  protected
+    function GetDelimiters: String; override;         // SRM - 20 Jan 2005
+    function GetQuote: Char; override;                // SRM - 29 Dec 2004
+    function IncludeOrderFields: Boolean; override;   // SRM - 29 Dec 2004
+  end;
 
   TInstantNexusDbSQLQuery = class(TInstantSQLQuery)
   protected
@@ -153,8 +162,11 @@ type
 implementation
 
 uses
-  Controls, InstantConsts, InstantNexusDbSQLConnectionDefEdit, InstantUtils,
-  nxdbBase, nxsdTypes;
+  Controls, InstantConsts, InstantNexusDbSQLConnectionDefEdit,
+  InstantUtils, nxdbBase, nxsdTypes;
+
+const
+  SUndefined = 'Undefined';
 
 procedure TInstantNexusDbSQLConnectionDef.LoadAliasList(FALiasList : TStrings);
 var
@@ -208,7 +220,7 @@ end;
 
 class function TInstantNexusDbSQLConnectionDef.ConnectionTypeName: string;
 begin
-  Result := 'NexusDbSQL';
+  Result := 'NexusDb (Remote/SQL)';   // SRM - 29 Dec 2004
 end;
 
 class function TInstantNexusDbSQLConnectionDef.ConnectorClass: TInstantConnectorClass;
@@ -293,12 +305,15 @@ end;
 
 function TInstantNexusDbSQLConnector.GetDatabaseName: string;
 begin
-  Result := Database.AliasName;
+  if Assigned(Database) then          // SRM - 29 Dec 2004
+    Result := Database.AliasName
+  else                                // SRM - 29 Dec 2004
+    Result := SUndefined;             // SRM - 29 Dec 2004
 end;
 
 function TInstantNexusDbSQLConnector.GetDBMSName: string;
 begin
-  Result := 'NexusDb';
+  Result := 'NexusDb (Remote/SQL)';   // SRM - 29 Dec 2004
 end;
 
 procedure TInstantNexusDbSQLConnector.FillFieldMap(aTbl: TNexusDbTable;
@@ -429,7 +444,8 @@ end;
 
 procedure TInstantNexusDbSQLConnector.InternalCommitTransaction;
 begin
-  Database.Commit;
+  if Database.InTransaction then      // SRM - 29 Dec 2004
+    Database.Commit;
 end;
 
 procedure TInstantNexusDbSQLConnector.InternalConnect;
@@ -450,12 +466,14 @@ end;
 
 procedure TInstantNexusDbSQLConnector.InternalRollbackTransaction;
 begin
-  Database.Rollback;
+  if Database.InTransaction then      // SRM - 29 Dec 2004
+    Database.Rollback;
 end;
 
 procedure TInstantNexusDbSQLConnector.InternalStartTransaction;
 begin
-  Database.StartTransaction;
+  if not Database.InTransaction then  // SRM - 29 Dec 2004
+    Database.StartTransaction;
 end;
 
 { TInstantNexusDbSQLBroker}
@@ -494,7 +512,7 @@ begin
   end;
   Result := Query;
   //CodeSite.ExitMethod('TInstantNexusDbSQLBroker.CreateDataSet');
-end;
+end;  
 
 function TInstantNexusDbSQLBroker.CreateResolver(
   Map: TInstantAttributeMap): TInstantSQLResolver;
@@ -524,15 +542,19 @@ end;
 
 function TInstantNexusDbSQLBroker.Execute(const AStatement: string;
   AParams: TParams): Integer;
+var                               // SRM - 11 Feb 2005
+  DataSet: TNexusDbQuery;         // SRM - 11 Feb 2005
 begin
   //CodeSite.SendFmtMsg('SQL Statement: %s', [#13 + AStatement]);
-  with CreateDataSet(AStatement, AParams) as TNexusDbQuery do
+  // SRM - 11 Feb 2005: begin
+  DataSet := AcquireDataSet(AStatement, AParams) as TNexusDbQuery;
   try
-    ExecSQL;
-    Result := RowsAffected;
+    DataSet.ExecSQL;
+    Result := DataSet.RowsAffected;
   finally
-    Free;
+    ReleaseDataSet(DataSet);
   end;
+  // SRM - 11 Feb 2005: end
 end;
 
 function TInstantNexusDbSQLBroker.ExecuteQuery(DataSet: TDataSet) : integer;
@@ -555,8 +577,15 @@ end;
 
 function TInstantNexusDbSQLBroker.GetDBMSName: string;
 begin
-  Result := 'NexusDbSQL';
+  Result := 'NexusDb (Remote/SQL)';   // SRM - 29 Dec 2004
 end;
+
+// SRM - 20 Jan 2005: begin
+function TInstantNexusDbSQLBroker.GetSQLDelimiters: String;
+begin
+  Result := '""';                     
+end;
+// SRM - 20 Jan 2005: end
 
 function TInstantNexusDbSQLBroker.GetSQLQuote: Char;
 begin
@@ -597,6 +626,27 @@ begin
   else if Value = Pred(RecNo) then
     Prior;
 end;
+
+{ TInstantNexusDbSQLTranslator }
+
+// SRM - 20 Jan 2005: begin
+function TInstantNexusDbSQLTranslator.GetDelimiters: String;
+begin
+  Result := '""';
+end;
+// SRM - 20 Jan 2005: end
+
+// SRM - 29 Dec 2004: begin
+function TInstantNexusDbSQLTranslator.GetQuote: Char;
+begin
+  Result := '''';
+end;
+
+function TInstantNexusDbSQLTranslator.IncludeOrderFields: Boolean;
+begin
+  Result := True;                     
+end;
+// SRM - 29 Dec 2004: end
 
 initialization
   RegisterClass(TInstantNexusDbSQLConnectionDef);
