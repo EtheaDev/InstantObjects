@@ -1,0 +1,75 @@
+Statement cache
+===============
+Nando Dessena, 02/2005.
+
+Abstract
+--------
+This file documents the statement cache feature of Instant Objects. Please note that the statement cache supersedes the UsePreparedQuery setting (see Prepared_Query_Support.txt) which is no longer supported.
+
+What is it
+----------
+The statement cache is a broker-level memory pool (for SQL-based brokers only) in which Instant Objects stores all the SQL statement object instances (typically they are TDataSet derivatives) it executes, in order to reuse them later. The rationale behind this is that preparing a SQL statement in a C/S scenario is a costly operation, and since a SQL-based IO broker generates a reasonably small number of different SQL queries, it pays (in terms of execution speed) to be able to reuse them, and it doesn't cost much memory.
+
+How to use it
+-------------
+The statement cache is disabled by default, and it is enabled by setting the Integer property StatementCacheCapacity of TInstantSQLBroker to a value <> 0. Here is an example:
+
+(InstantDefaultConnector.Broker as TInstantSQLBroker).StatementCacheCapacity := -1;
+
+This will only work for SQL-based brokers (otherwise an invalid cast exception is raised) and will setup an unlimited size cache, which means that each and every SQL statement is cached and reused.
+
+Setting StatementCacheCapacity to 0 disables the feature, while setting it to a value > 0 means setting up a limited size cache.
+
+NOTE: currently every value > 0 is treated the same as -1, that is the cache is always boundless. It is my intention to finish the implementation but I need to find a shrink policy (basically decide which objects are to be deleted when the cache reaches its limit to make room for the new objects) that is both effective and efficient - help appreciated here. BTW, the current, unlimited setting suits my projects well enough for the time being.
+
+The cache is in effect as long as the connector is active. Closing the connection has the side effect of emptying the cache. This makes the feature less attractive in multithreaded/server application scenarios, unless connection pooling at the IO level is also used.
+
+Supporting the statement cache
+------------------------------
+All the existing supported SQL-based brokers have been adapted to support the statement cache. There is an outstanding problem with the UIB broker, in the form of an "invalid BLOB id" error message, when classic/internal storage is used.
+A new broker that wishes to support it will have to be developed according to the following notes.
+
+TInstantSQLBroker.AcquireDataset and TInstantSQLBroker.ReleaseDataSet should be used every time a dataset is needed. It is no longer allowed to directly free a dataset. When the statement cache is disabled, ReleaseDataSet will free the dataset. Here is an example from the IBX broker:
+
+function TInstantIBXBroker.Execute(const AStatement: string;
+  AParams: TParams): Integer;
+var
+  DataSet: TIBQuery;
+begin
+  DataSet := AcquireDataSet(AStatement, AParams) as TIBQuery;
+  try
+    DataSet.ExecSQL;
+    Result := DataSet.RowsAffected;
+  finally
+    ReleaseDataSet(DataSet);
+  end;
+end;
+
+AcquireDataSet may eventually call CreateDataSet to do the job, so CreateDataSet should be overridden in derived brokers as usual.
+
+TInstantSQLQuery.CreateDataSet has been renamed AcquireDataSet, and an additional ReleaseDataSet method has been introduced. Here are the default implementations:
+
+function TInstantSQLQuery.AcquireDataSet(const AStatement: string;
+  AParams: TParams): TDataSet;
+begin
+  Result := (Connector.Broker as TInstantSQLBroker).AcquireDataSet(AStatement, AParams);
+end;
+
+procedure TInstantSQLQuery.ReleaseDataSet(const DataSet: TDataSet);
+begin
+  (Connector.Broker as TInstantSQLBroker).ReleaseDataSet(DataSet);
+end;
+
+It shouldn't be necessary to override them. Brokers that did override CreateDataSet, like in TInstantADOMSSQLQuery, have been revised and changed.
+
+To add statement cache support to a SQL broker, it suffices to ensure that every call to CreateDataSet is changed to AcquireDataSet and is paired with a call to ReleaseDataSet(DataSet) and NOT DataSet.Free. The IBX broker is a good example.
+
+Compatibility notes
+-------------------
+Since the statement cache has proved at least as beneficial as the "UsePreparedQuery" setting in all tests (and much more effective in some cases), we have deprecated and removed the latter. Thus, the following broker methods:
+
+    procedure PrepareQuery(DataSet : TDataSet); override;
+    procedure UnprepareQuery(DataSet : TDataSet); override;
+    function ExecuteQuery(DataSet : TDataSet) : integer; override;
+
+do no longer exist.
