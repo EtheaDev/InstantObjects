@@ -134,9 +134,6 @@ type
     function GetSQLDelimiters: String; override;      // SRM - 20 Jan 2005
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure PrepareQuery(DataSet : TDataSet); override;
-    procedure UnprepareQuery(DataSet : TDataSet); override;
-    function ExecuteQuery(DataSet : TDataSet) : integer; override;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
   public
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
@@ -557,19 +554,6 @@ begin
   // SRM - 11 Feb 2005: end
 end;
 
-function TInstantNexusDbSQLBroker.ExecuteQuery(DataSet: TDataSet) : integer;
-begin
-  //don't call inherited!
-  
-  //CodeSite.EnterMethod('TInstantNexusDbSQLBroker.ExecuteQuery');
-  with TNexusDbQuery(DataSet) do
-  begin
-    ExecSQL;
-    Result := RowsAffected;
-  end;
-  //CodeSite.ExitMethod('TInstantNexusDbSQLBroker.ExecuteQuery');
-end;
-
 function TInstantNexusDbSQLBroker.GetConnector: TInstantNexusDbSQLConnector;
 begin
   Result := inherited Connector as TInstantNexusDbSQLConnector;
@@ -595,18 +579,6 @@ end;
 function TInstantNexusDbSQLBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantNexusDbSQLQuery.Create(Connector);
-end;
-
-procedure TInstantNexusDbSQLBroker.PrepareQuery(DataSet: TDataSet);
-begin
-  inherited;
-  TNexusDbQuery(DataSet).Prepare;
-end;
-
-procedure TInstantNexusDbSQLBroker.UnprepareQuery(DataSet: TDataSet);
-begin
-  inherited;
-  TNexusDbQuery(DataSet).Unprepare;
 end;
 
 { TInstantNexusDbSQLQuery }
