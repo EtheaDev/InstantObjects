@@ -3,7 +3,8 @@ unit DemoData;
 interface
 
 uses
-  Classes, Model, InstantPersistence, RandomData;
+{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
+  Classes, InstantPersistence, RandomData;
 
 procedure CreateCategories;
 procedure CreateCountries;

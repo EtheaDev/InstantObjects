@@ -13,13 +13,8 @@ inherited ContactFilterEditForm: TContactFilterEditForm
     0000F00F0000E0070000C00300008001000080010000FFFF0000FFFF0000}
   PixelsPerInch = 96
   TextHeight = 13
-  inherited ButtonPanel: TPanel
-    Top = 247
-  end
   inherited ClientPanel: TPanel
-    Height = 247
     inherited PageControl: TPageControl
-      Height = 243
       inherited DetailsSheet: TTabSheet
         inherited PhonesLabel: TLabel
           Visible = False
@@ -54,7 +49,7 @@ inherited ContactFilterEditForm: TContactFilterEditForm
             Width = 153
             Height = 80
             AutoSize = False
-            Caption =
+            Caption = 
               'Use the fields to the left to specify values or part of values t' +
               'hat must be matched for objects to be included in the view.'
             WordWrap = True
@@ -65,7 +60,7 @@ inherited ContactFilterEditForm: TContactFilterEditForm
             Width = 153
             Height = 70
             AutoSize = False
-            Caption =
+            Caption = 
               'Uncheck Dynamic to apply the filter on all objects at once inste' +
               'ad of dynamically when browsing.'
             WordWrap = True

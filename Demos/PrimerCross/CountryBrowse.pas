@@ -14,7 +14,8 @@ uses
   QImgList, QMenus, QActnList, QGrids, QDBGrids, QExtCtrls,
   QComCtrls, QStdCtrls,
 {$ENDIF}
-  InstantPresentation, Model;
+{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
+  InstantPresentation;
 
 type
   TCountryBrowseForm = class(TBasicBrowseForm)
