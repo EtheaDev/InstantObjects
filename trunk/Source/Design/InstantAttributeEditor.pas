@@ -24,8 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
- * Steven Mitchell: updating for OFExpt in MM7
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -33,7 +32,7 @@ unit InstantAttributeEditor;
 
 interface
 
-{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+{$I ..\Core\InstantDefines.inc}
 
 uses
   SysUtils, Classes,
@@ -114,7 +113,8 @@ type
     procedure ExternalLinkedNameEditChange(Sender: TObject);
     procedure ExternalLinkedNameEditEnter(Sender: TObject);
   private
-    FInMM: boolean;   // True if in ModelMaker, default is False
+    // True if in ModelMaker, default is False
+    FInMM: Boolean;
     FLimited: Boolean;
     FModel: TInstantCodeModel;
     FOnLoadClasses: TInstantStringsEvent;
@@ -473,15 +473,15 @@ procedure TInstantAttributeEditorForm.UpdateControls;
   end;
 
 var
-  HasName, HasClass, HasExternalStoredName, HasExternalLinkedName: Boolean;
+  HasName, HasClass, HasExternalLinkedName: Boolean;
   IsComplex, IsContainer, CanBeExternal, IsExternal, IsMaskable, IsString, IsValid: Boolean;
 begin
   CanBeExternal := Subject.AttributeType in [atPart, atParts, atReferences];
   if not CanBeExternal then
     Subject.IsExternal := ceNo;
-  if Subject.IsExternal = ceLinked then
+  if (Subject.IsExternal = ceLinked) or (Subject.AttributeType = atPart) then
     Subject.ExternalStoredName := '';
-  if Subject.IsExternal = ceStored then
+  if (Subject.IsExternal = ceStored) then
     Subject.ExternalLinkedName := '';
 
   HasName := NameEdit.Text <> '';
@@ -489,13 +489,13 @@ begin
   IsComplex := Subject.IsComplex;
   IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat, atCurrency, atInteger];
   IsContainer := Subject.IsContainer;
-  HasExternalStoredName := ExternalStoredNameEdit.Text <> '';
   HasExternalLinkedName := ExternalLinkedNameEdit.Text <> '';
 
   IsExternal := Subject.IsExternal <> ceNo;
   IsString := Subject.AttributeType in [atString, atMemo];
-  IsValid := HasName and (not IsComplex or HasClass) and
-    (not IsExternal or (HasExternalStoredName or HasExternalLinkedName));
+  IsValid := HasName and (not IsComplex or HasClass);
+  if IsValid and (Subject.IsExternal = ceLinked) then
+    IsValid := HasExternalLinkedName;
 
   DisableSubControls(DefinitionSheet, Limited);
   DisableSubControls(AccessSheet, Limited);
@@ -517,13 +517,15 @@ begin
     EnableCtrl(IsExternalEdit, CanBeExternal);
     EnableCtrl(IsExternalLabel, CanBeExternal);
   end;
-  EnableCtrl(StorageNameLabel, not IsExternal);
-  EnableCtrl(StorageNameEdit, not IsExternal);
+  EnableCtrl(StorageNameLabel, not IsExternal or (Subject.AttributeType = atPart));
+  EnableCtrl(StorageNameEdit, not IsExternal or (Subject.AttributeType = atPart));
 
   EnableCtrl(ExternalLinkedNameLabel, IsExternal and (Subject.IsExternal = ceLinked));
   EnableCtrl(ExternalLinkedNameEdit, IsExternal and (Subject.IsExternal = ceLinked));
-  EnableCtrl(ExternalStoredNameLabel, IsExternal and (Subject.IsExternal = ceStored));
-  EnableCtrl(ExternalStoredNameEdit, IsExternal and (Subject.IsExternal = ceStored));
+  EnableCtrl(ExternalStoredNameLabel, IsExternal and (Subject.IsExternal = ceStored)
+    and not (Subject.AttributeType = atPart));
+  EnableCtrl(ExternalStoredNameEdit, IsExternal and (Subject.IsExternal = ceStored)
+    and not (Subject.AttributeType = atPart));
 
   EnableCtrl(SizeLabel, IsString);
   EnableCtrl(SizeEdit, IsString);
