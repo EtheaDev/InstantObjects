@@ -25,7 +25,8 @@
  *
  * Contributor(s):
  * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
- *
+ * Nando Dessena:
+ * - Support for changing the data type used for ID fields.
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantIBXConnectionDefEdit;
@@ -58,6 +59,10 @@ type
     LoginPromptCheckBox: TCheckBox;
     ParamsLabel: TLabel;
     ParamsEditor: TMemo;
+    IdDataTypeComboBox: TComboBox;
+    Label1: TLabel;
+    IdSizeEdit: TEdit;
+    Label2: TLabel;
     procedure LocalRemoteChange(Sender: TObject);
     procedure DatabaseButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -75,7 +80,7 @@ implementation
 {$R *.DFM}
 
 uses
-  IB, InstantPersistence, InstantClasses;
+  IB, InstantPersistence, InstantClasses, InstantConsts;
 
 { TInstantIBXConnectionDefEditForm }
 
@@ -97,7 +102,10 @@ end;
 
 procedure TInstantIBXConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
-  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
+  AssignInstantStreamFormat(StreamFormatComboBox.Items);
+  AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
+  IdDataTypeComboBox.ItemIndex := Ord(dtString);
+  IdSizeEdit.Text := IntToStr(InstantDefaultFieldSize);
   UpdateControls;
 end;
 
@@ -118,11 +126,12 @@ begin
     ProtocolEdit.ItemIndex := Ord(NetType) - 1;
     ServerEdit.Text := ServerName;
     DatabaseEdit.Text := Path;
-    //CB
     StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat);
     UseDelimitedIdentsCheckBox.Checked := ibxUseDelimitedIdents in Options;
     LoginPromptCheckBox.Checked := LoginPrompt;
     ParamsEditor.Lines.Text := ConnectionDef.Params;
+    IdDataTypeComboBox.ItemIndex := Ord(IdDataType);
+    IdSizeEdit.Text := IntToStr(IdSize);
   end;
   UpdateControls;
 end;
@@ -144,13 +153,14 @@ begin
       NetType := TIBXNetType(ProtocolEdit.ItemIndex + 1);
     ServerName := ServerEdit.Text;
     Path := DatabaseEdit.Text;
-    //CB
     BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
     Options := [];
     if UseDelimitedIdentsCheckBox.Checked then
       Options := Options + [ibxUseDelimitedIdents];
     LoginPrompt := LoginPromptCheckBox.Checked;
     ConnectionDef.Params := ParamsEditor.Lines.Text;
+    IdDataType := TInstantDataType(IdDataTypeComboBox.ItemIndex);
+    IdSize := StrToInt(IdSizeEdit.Text);
   end;
 end;
 
