@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -294,12 +294,24 @@ end;
 function TInstantClassEditorForm.EditAttribute(
   Attribute: TInstantCodeAttribute; Exists: Boolean;
   const Title: string): Boolean;
+
+  function GetClassStorageName: String;
+  begin
+    if Attribute.Metadata.ClassMetadata.StorageName <> '' then
+      Result := Attribute.Metadata.ClassMetadata.StorageName
+    else
+      Result := Attribute.Metadata.ClassMetadata.Name;
+
+    Result := Remove_T_FromClassName(Result);
+  end;
+
 begin
   with TInstantAttributeEditorForm.Create(nil) do
   try
     if Title <> '' then
       Caption := Title;
     Model := Self.Model;
+    BaseClassStorageName := GetClassStorageName;
     Subject := Attribute;
     Limited := Exists;
     Result := ShowModal = mrOk;
@@ -641,3 +653,5 @@ begin
 end;
 
 end.
+
+
