@@ -459,12 +459,15 @@ procedure TInstantAttributeEditorForm.UpdateControls;
 
 var
   HasName, HasClass, HasExternalStoredName, HasExternalLinkedName: Boolean;
-  IsComplex, IsContainer, IsExternal, IsMaskable, IsString, IsValid: Boolean;
+  IsComplex, IsContainer, CanBeExternal, IsExternal, IsMaskable, IsString, IsValid: Boolean;
 begin
-  if (Subject.AttributeType<>atParts) and (Subject.AttributeType<>atReferences) then
+  CanBeExternal := Subject.AttributeType in [atPart, atParts, atReferences];
+  if not CanBeExternal then
     Subject.IsExternal := ceNo;
-  if Subject.IsExternal = ceLinked then Subject.ExternalStoredName := '';
-  if Subject.IsExternal = ceStored then Subject.ExternalLinkedName := '';
+  if Subject.IsExternal = ceLinked then
+    Subject.ExternalStoredName := '';
+  if Subject.IsExternal = ceStored then
+    Subject.ExternalLinkedName := '';
 
   HasName := NameEdit.Text <> '';
   HasClass := ObjectClassEdit.Text <> '';
@@ -477,7 +480,7 @@ begin
   IsExternal := Subject.IsExternal <> ceNo;
   IsString := Subject.AttributeType in [atString, atMemo];
   IsValid := HasName and (not IsComplex or HasClass) and
-    (not IsExternal or (HasExternalStoredName or HasExternalLinkedName) );
+    (not IsExternal or (HasExternalStoredName or HasExternalLinkedName));
 
   DisableSubControls(DefinitionSheet, Limited);
   DisableSubControls(AccessSheet, Limited);
@@ -495,17 +498,16 @@ begin
     EnableCtrl(MethodIndexOfCheckBox, IsContainer);
     EnableCtrl(MethodInsertCheckBox, IsContainer);
     EnableCtrl(MethodRemoveCheckBox, IsContainer);
-
-    EnableCtrl(IsExternalEdit, IsContainer);
-    EnableCtrl(IsExternalLabel, IsContainer);
+    EnableCtrl(IsExternalEdit, CanBeExternal);
+    EnableCtrl(IsExternalLabel, CanBeExternal);
   end;
-  EnableCtrl(StorageNameLabel, not (IsContainer and IsExternal) );
-  EnableCtrl(StorageNameEdit, not (IsContainer and IsExternal) );
+  EnableCtrl(StorageNameLabel, not IsExternal);
+  EnableCtrl(StorageNameEdit, not IsExternal);
 
-  EnableCtrl(ExternalLinkedNameLabel, IsContainer and (Subject.IsExternal=ceLinked) );
-  EnableCtrl(ExternalLinkedNameEdit, IsContainer and (Subject.IsExternal=ceLinked) );
-  EnableCtrl(ExternalStoredNameLabel, IsContainer and (Subject.IsExternal=ceStored) );
-  EnableCtrl(ExternalStoredNameEdit, IsContainer and (Subject.IsExternal=ceStored) );
+  EnableCtrl(ExternalLinkedNameLabel, IsExternal and (Subject.IsExternal = ceLinked));
+  EnableCtrl(ExternalLinkedNameEdit, IsExternal and (Subject.IsExternal = ceLinked));
+  EnableCtrl(ExternalStoredNameLabel, IsExternal and (Subject.IsExternal = ceStored));
+  EnableCtrl(ExternalStoredNameEdit, IsExternal and (Subject.IsExternal = ceStored));
 
   EnableCtrl(SizeLabel, IsString);
   EnableCtrl(SizeEdit, IsString);
