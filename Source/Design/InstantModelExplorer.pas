@@ -24,15 +24,15 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantModelExplorer;
 
-interface
+{$I ..\Core\InstantDefines.inc}
 
-{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+interface
 
 uses
   SysUtils, Classes, IniFiles,
