@@ -1579,7 +1579,7 @@ type
       ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
   public
     constructor Create(AConnector: TInstantConnector); virtual;
-    destructor destroy; override; 
+    destructor Destroy; override; 
     procedure BuildDatabase(Scheme: TInstantScheme);
     function CreateQuery: TInstantQuery;
     function DisposeObject(AObject: TInstantObject;
@@ -1766,6 +1766,35 @@ type
     Conflict: Boolean;
   end;
 
+  TInstantStatement = class
+  private
+    FStatementImplementation: TComponent;
+  public
+    constructor Create(const AStatementImplementation: TComponent);
+    destructor Destroy; override;
+    property StatementImplementation: TComponent read FStatementImplementation;
+  end;
+
+  TInstantStatementCache = class(TComponent)
+  private
+    FStatements: TStringList;
+    FCapacity: Integer;
+    procedure DeleteStatement(const Index: Integer);
+    procedure DeleteAllStatements;
+    procedure Shrink;
+    procedure SetCapacity(const Value: Integer);
+  protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    property Capacity: Integer read FCapacity write SetCapacity;
+    destructor Destroy; override;
+    function GetStatement(const StatementText: string): TInstantStatement;
+    function AddStatement(const StatementText: string;
+      const StatementImplementation: TComponent): Integer;
+    function RemoveStatement(const StatementText: string): Boolean;
+  end;
+
   TInstantCustomResolver = class;
 
   TInstantBrokerOperation = procedure(AObject: TInstantObject; const AObjectId: string;
@@ -1773,6 +1802,8 @@ type
 
   TInstantCustomRelationalBroker = class(TInstantBroker)
   private
+    FStatementCache: TInstantStatementCache;
+    FStatementCacheCapacity: Integer;
     procedure DisposeMap(AObject: TInstantObject; const AObjectId: string;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
     function GetConnector: TInstantRelationalConnector;
@@ -1783,7 +1814,10 @@ type
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
     procedure StoreMap(AObject: TInstantObject; const AObjectId: string;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
+    function GetStatementCache: TInstantStatementCache;
+    procedure SetStatementCacheCapacity(const Value: Integer);
   protected
+    property StatementCache: TInstantStatementCache read GetStatementCache;
     function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver; virtual; abstract;
     function GetDBMSName: string; virtual;
     function GetSQLDelimiters: string; virtual;
@@ -1796,12 +1830,16 @@ type
     function InternalStoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean; override;
   public
+    constructor Create(AConnector: TInstantConnector); override;
+    destructor Destroy; override;
     function Execute(const AStatement: string; AParams: TParams = nil): Integer; virtual;
     property Connector: TInstantRelationalConnector read GetConnector;
     property DBMSName: string read GetDBMSName;
     property SQLDelimiters: string read GetSQLDelimiters;
     property SQLQuote: Char read GetSQLQuote;
     property SQLWildcard: string read GetSQLWildCard;
+    property StatementCacheCapacity: Integer read FStatementCacheCapacity
+      write SetStatementCacheCapacity;
   end;
 
   EInstantConflict = class(EInstantError)
@@ -2143,9 +2181,11 @@ type
     function ExecuteQuery(DataSet : TDataSet) : integer; virtual;
     procedure UnprepareQuery(DataSet : TDataSet); virtual;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); virtual;
+    function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual; abstract;
   public
     destructor Destroy; override;
-    function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual; abstract;
+    function AcquireDataSet(const AStatement: string; AParams: TParams = nil): TDataSet;
+    procedure ReleaseDataSet(const ADataSet: TDataSet); virtual;
     function DataTypeToColumnType(DataType: TInstantDataType;
       Size: Integer): string; virtual; abstract;
     function FindResolver(AMap: TInstantAttributeMap): TInstantSQLResolver;
@@ -2265,7 +2305,8 @@ type
     procedure InitObjectReferences(DataSet: TDataSet);
   protected
     function GetActive: Boolean; override;
-    function CreateDataSet(const AStatement: string; AParams: TParams): TDataSet; virtual;
+    function AcquireDataSet(const AStatement: string; AParams: TParams): TDataSet; virtual;
+    procedure ReleaseDataSet(const DataSet: TDataSet);
     function GetParams: TParams; override;
     function GetStatement: string; override;
     function InternalAddObject(AObject: TObject): Integer; override;
@@ -2439,6 +2480,9 @@ const
   InstantClassPrefix: string = 'T';
   InstantAttributePrefix: string = '_';
 
+var
+  InstantLogProc: procedure (const AString: string) of object;
+  
 implementation
 
 uses
@@ -2468,6 +2512,24 @@ var
   DefaultConnector: TInstantConnector;
 
 { Local Routines }
+
+procedure InstantLogStatement(const Caption, AStatement: string; AParams: TParams = nil);
+var
+  S: string;
+  g: Integer;
+begin
+  S := Caption + AStatement;
+  if Assigned(AParams) then begin
+    for g := 0 to AParams.Count - 1 do begin
+      S := S + sLineBreak +
+      AParams[g].Name + ': ' + GetEnumName(TypeInfo(TFieldType), Ord(AParams[g].DataType)) +
+      ' = ' + AParams[g].AsString;
+    end;
+  end;
+  OutputDebugString(PChar(S));
+  if Assigned(InstantLogProc) then
+    InstantLogProc(S);
+end;
 
 function ValidateChars(Buffer: PChar; BufferLength: Integer;
   ValidChars: TChars; var InvalidChar: Char): Boolean;
@@ -5558,9 +5620,9 @@ begin
     if (AObject.Connector <> Connector) then
       raise EInstantValidationError.CreateResFmt(@SInvalidConnector,
         [AObject.ClassName, AObject.Id, ClassName, Name]);
-    if not AllowOwned and AObject.IsOwned then
+    {if not AllowOwned and AObject.IsOwned then
       raise EInstantError.CreateResFmt(@SObjectIsOwned,
-        [AObject.ClassName, AObject.Id]);
+        [AObject.ClassName, AObject.Id]);}
   end;
 end;
 
@@ -9782,7 +9844,7 @@ begin
   Result := InternalCreateQuery;
 end;
 
-destructor TInstantBroker.destroy;
+destructor TInstantBroker.Destroy;
 begin
   inherited;
 end;
@@ -10896,6 +10958,18 @@ end;
 
 { TInstantCustomRelationalBroker }
 
+constructor TInstantCustomRelationalBroker.Create(AConnector: TInstantConnector);
+begin
+  inherited;
+  FStatementCacheCapacity := 0;
+end;
+
+destructor TInstantCustomRelationalBroker.Destroy;
+begin
+  FreeAndNil(FStatementCache);
+  inherited;
+end;
+
 procedure TInstantCustomRelationalBroker.DisposeMap(AObject: TInstantObject;
   const AObjectId: string; Map: TInstantAttributeMap;
   ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
@@ -10932,6 +11006,15 @@ end;
 function TInstantCustomRelationalBroker.GetSQLWildcard: string;
 begin
   Result := '%';
+end;
+
+function TInstantCustomRelationalBroker.GetStatementCache: TInstantStatementCache;
+begin
+  if not Assigned(FStatementCache) then begin
+    FStatementCache := TInstantStatementCache.Create(nil);
+    FStatementCache.Capacity := FStatementCacheCapacity;
+  end;
+  Result := FStatementCache;
 end;
 
 function TInstantCustomRelationalBroker.InternalDisposeObject(
@@ -11016,6 +11099,15 @@ procedure TInstantCustomRelationalBroker.RetrieveMap(AObject: TInstantObject;
   ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
 begin
   EnsureResolver(Map).RetrieveMap(AObject, AObjectId, Map, ConflictAction, Info);
+end;
+
+procedure TInstantCustomRelationalBroker.SetStatementCacheCapacity(const Value: Integer);
+begin
+  FStatementCacheCapacity := Value;
+  if FStatementCacheCapacity = 0 then
+    FreeAndNil(FStatementCache)
+  else if Assigned(FStatementCache) then
+    FStatementCache.Capacity := FStatementCacheCapacity;
 end;
 
 procedure TInstantCustomRelationalBroker.StoreMap(AObject: TInstantObject;
@@ -11483,7 +11575,7 @@ end;
 
 procedure TInstantNavigationalResolver.Edit;
 begin
-  DataSet.Edit
+  DataSet.Edit;
 end;
 
 function TInstantNavigationalResolver.FieldByName(
@@ -12838,6 +12930,36 @@ end;
 
 { TInstantSQLBroker }
 
+function TInstantSQLBroker.AcquireDataSet(const AStatement: string;
+  AParams: TParams): TDataSet;
+var
+  CachedStatement: TInstantStatement;
+begin
+  Result := nil;
+  if FStatementCacheCapacity <> 0 then
+  begin
+    CachedStatement := StatementCache.GetStatement(AStatement);
+    if Assigned(CachedStatement) then
+    begin
+      Result := TDataSet(CachedStatement.StatementImplementation);
+      AssignDataSetParams(Result, AParams);
+    end;
+  end;
+  if not Assigned(Result) then
+  begin
+    Result := CreateDataSet(AStatement, AParams);
+    try
+      if Assigned(AParams) and (FStatementCacheCapacity <> 0) then
+        StatementCache.AddStatement(AStatement, Result);
+    except
+      if FStatementCacheCapacity <> 0 then
+        StatementCache.RemoveStatement(AStatement);
+      Result.Free;
+      raise;
+    end;
+  end;
+end;
+
 procedure TInstantSQLBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
 begin
   // must be implemented in derived broker
@@ -12966,6 +13088,14 @@ end;
 procedure TInstantSQLBroker.PrepareQuery(DataSet: TDataSet);
 begin
   //Prepare the query in derived Broker
+end;
+
+procedure TInstantSQLBroker.ReleaseDataSet(const ADataSet: TDataSet);
+begin
+  if FStatementCacheCapacity <> 0 then
+    ADataSet.Close
+  else
+    ADataSet.Free;
 end;
 
 procedure TInstantSQLBroker.UnprepareQuery(DataSet: TDataSet);
@@ -13276,6 +13406,9 @@ var
   TransError: Exception;
   DataSet : TDataSet;
 begin
+  {$IFDEF IO_STATEMENT_LOGGING}
+  InstantLogStatement('Before: ', AStatement, AParams);
+  {$ENDIF}
   try
     if not UsePreparedQuery then
       Result := Broker.Execute(AStatement, AParams)
@@ -13403,6 +13536,7 @@ var
     SelectParams, DeleteParams: TParams;
     SelectStatement, DeleteStatement: string;
     AttributeMetadata: TInstantAttributeMetadata;
+    DataSet: TDataSet;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
@@ -13420,14 +13554,14 @@ var
               AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
             AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
             try
-              Open;
+              DataSet.Open;
               try
-                if not IsEmpty then
+                if not DataSet.IsEmpty then
                 begin
                   PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
+                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
                   try
                     if Assigned(PartObject) then
                       PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
@@ -13436,10 +13570,10 @@ var
                   end;
                 end;
               finally
-                Close;
+                DataSet.Close;
               end;
             finally
-              Free;
+              Broker.ReleaseDataSet(DataSet);
             end;
           finally
             SelectParams.Free;
@@ -13456,14 +13590,14 @@ var
             AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-            with Broker.CreateDataSet(SelectStatement, SelectParams) do
+            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
             try
-              Open;
+              DataSet.Open;
               try
-                if not IsEmpty then
+                if not DataSet.IsEmpty then
                 begin
                   PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
+                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
                   try
                     if Assigned(PartObject) then
                       PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
@@ -13472,10 +13606,10 @@ var
                   end;
                 end;
               finally
-                Close;
+                DataSet.Close;
               end;
             finally
-              Free;
+              Broker.ReleaseDataSet(DataSet);
             end;
           finally
             SelectParams.Free;
@@ -13508,6 +13642,7 @@ var
     SelectParams, DeleteParams: TParams;
     SelectStatement, DeleteStatement: string;
     AttributeMetadata: TInstantAttributeMetadata;
+    DataSet: TDataSet;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
@@ -13525,27 +13660,27 @@ var
               AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
             AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
             try
-              Open;
+              DataSet.Open;
               try
-                while not Eof do
+                while not DataSet.Eof do
                 begin
                   PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
+                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
                   try
                     if Assigned(PartObject) then
                       PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                   finally
                     PartObject.Free;
                   end;
-                  Next;
+                  DataSet.Next;
                 end;
               finally
-                Close;
+                DataSet.Close;
               end;
             finally
-              Free;
+              Broker.ReleaseDataSet(DataSet);
             end;
           finally
             SelectParams.Free;
@@ -13562,27 +13697,27 @@ var
             AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-            with Broker.CreateDataSet(SelectStatement, SelectParams) do
+            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
             try
-              Open;
+              DataSet.Open;
               try
-                while not Eof do
+                while not DataSet.Eof do
                 begin
                   PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
+                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
                   try
                     if Assigned(PartObject) then
                       PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                   finally
                     PartObject.Free;
                   end;
-                  Next;
+                  DataSet.Next;
                 end;
               finally
-                Close;
+                DataSet.Close;
               end;
             finally
-              Free;
+              Broker.ReleaseDataSet(DataSet);
             end;
           finally
             SelectParams.Free;
@@ -13615,6 +13750,7 @@ var
     SelectParams, DeleteParams: TParams;
     SelectStatement, DeleteStatement: string;
     AttributeMetadata: TInstantAttributeMetadata;
+    DataSet: TDataSet;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
@@ -13632,14 +13768,14 @@ var
               AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
             AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
             try
-              Open;
+              DataSet.Open;
               try
-                while not Eof do
+                while not DataSet.Eof do
                 begin
                   ReferenceObject := AttributeMetadata.ObjectClass.Retrieve(
-                    Fields[1].AsString, False, False, AObject.Connector);
+                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
                   try
                     if Assigned(ReferenceObject) then
                     begin
@@ -13649,13 +13785,13 @@ var
                   finally
                     ReferenceObject.Free;
                   end;
-                  Next;
+                  DataSet.Next;
                 end;
               finally
-                Close;
+                DataSet.Close;
               end;
             finally
-              Free;
+              Broker.ReleaseDataSet(DataSet);
             end;
           finally
             SelectParams.Free;
@@ -13730,7 +13866,7 @@ begin
   try
     AddBaseParams(Params, AObject.ClassName, AObjectId);
     if not UsePreparedQuery then
-      DataSet := Broker.CreateDataSet(SelectSQL, Params)
+      DataSet := Broker.AcquireDataSet(SelectSQL, Params)
     else
       DataSet := CreatePreparedQuery(SelectSQL, Params);
 
@@ -13747,7 +13883,7 @@ begin
         ResetAttributes;
     finally
       if not UsePreparedQuery then
-        DataSet.Free;
+        Broker.ReleaseDataSet(DataSet);
     end;
   finally
     Params.Free;
@@ -13800,6 +13936,7 @@ var
     AttributeMetadata: TInstantAttributeMetadata;
     SelectParams, DeleteParams, InsertParams: TParams;
     SelectStatement, DeleteStatement, InsertStatement: string;
+    DataSet: TDataSet;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
@@ -13819,14 +13956,14 @@ var
                 AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
               AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
               AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-              with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
               try
-                Open;
+                DataSet.Open;
                 try
-                  if not IsEmpty then
+                  if not DataSet.IsEmpty then
                   begin
                     PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                      Fields[1].AsString, False, False, AObject.Connector);
+                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
                     try
                       if Assigned(PartObject) then
                         PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
@@ -13835,10 +13972,10 @@ var
                     end;
                   end;
                 finally
-                  Close;
+                  DataSet.Close;
                 end;
               finally
-                Free;
+                Broker.ReleaseDataSet(DataSet);
               end;
             finally
               SelectParams.Free;
@@ -13861,14 +13998,14 @@ var
               AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
               AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-              with Broker.CreateDataSet(SelectStatement, SelectParams) do
+              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
               try
-                Open;
+                DataSet.Open;
                 try
-                  if not IsEmpty then
+                  if not DataSet.IsEmpty then
                   begin
                     PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                      Fields[1].AsString, False, False, AObject.Connector);
+                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
                     try
                       if Assigned(PartObject) then
                         PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
@@ -13877,10 +14014,10 @@ var
                     end;
                   end;
                 finally
-                  Close;
+                  DataSet.Close;
                 end;
               finally
-                Free;
+                Broker.ReleaseDataSet(DataSet);
               end;
             finally
               SelectParams.Free;
@@ -13937,6 +14074,7 @@ var
     AttributeMetadata: TInstantAttributeMetadata;
     SelectParams, DeleteParams, InsertParams: TParams;
     SelectStatement, DeleteStatement, InsertStatement: string;
+    DataSet: TDataSet;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
@@ -13956,34 +14094,34 @@ var
                 AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
               AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
               AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-              with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
               try
-                Open;
+                DataSet.Open;
                 try
-                  while not Eof do
+                  while not DataSet.Eof do
                   begin
                     PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                      Fields[1].AsString, False, False, AObject.Connector);
+                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
                     try
                       if Assigned(PartObject) then
                         PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                     finally
                       PartObject.Free;
                     end;
-                    Next;
+                    DataSet.Next;
                   end;
                 finally
-                  Close;
+                  DataSet.Close;
                 end;
               finally
-                Free;
+                Broker.ReleaseDataSet(DataSet);
               end;
             finally
               SelectParams.Free;
             end;
 
             // Store all
-            for ii:=0 to Pred(PartsAttribute.Count) do
+            for ii := 0 to Pred(PartsAttribute.Count) do
             begin
               PartObject := PartsAttribute.Items[ii];
               PartObject.CheckId;
@@ -14002,27 +14140,27 @@ var
               AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
               AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-              with Broker.CreateDataSet(SelectStatement, SelectParams) do
+              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
               try
-                Open;
+                DataSet.Open;
                 try
-                  while not Eof do
+                  while not DataSet.Eof do
                   begin
                     PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                      Fields[1].AsString, False, False, AObject.Connector);
+                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
                     try
                       if Assigned(PartObject) then
                         PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                     finally
                       PartObject.Free;
                     end;
-                    Next;
+                    DataSet.Next;
                   end;
                 finally
-                  Close;
+                  DataSet.Close;
                 end;
               finally
-                Free;
+                Broker.ReleaseDataSet(DataSet);
               end;
             finally
               SelectParams.Free;
@@ -14084,6 +14222,7 @@ var
     ReferencesAttribute: TInstantReferences;
     SelectParams, DeleteParams, InsertParams: TParams;
     SelectStatement, DeleteStatement, InsertStatement: string;
+    DataSet: TDataSet;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
@@ -14103,14 +14242,14 @@ var
                 AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
               AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
               AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-              with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
+              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
               try
-                Open;
+                DataSet.Open;
                 try
-                  while not Eof do
+                  while not DataSet.Eof do
                   begin
                     ReferenceObject := AttributeMetadata.ObjectClass.Retrieve(
-                      Fields[1].AsString, False, False, AObject.Connector);
+                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
                     try
                       if Assigned(ReferenceObject) then
                       begin
@@ -14120,13 +14259,13 @@ var
                     finally
                       ReferenceObject.Free;
                     end;
-                    Next;
+                    DataSet.Next;
                   end;
                 finally
-                  Close;
+                  DataSet.Close;
                 end;
               finally
-                Free;
+                Broker.ReleaseDataSet(DataSet);
               end;
             finally
               SelectParams.Free;
@@ -14285,23 +14424,23 @@ var
             AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
           AddIdParam(Params, InstantIdFieldName, AObjectId);
           AddStringParam(Params, InstantClassFieldName, AObject.ClassName);
-          with Self.Broker.CreateDataSet(Statement, Params) do
+          DataSet := Broker.AcquireDataSet(Statement, Params);
           try
-            Open;
+            DataSet.Open;
             try
               Value := nil;
-              if not IsEmpty then
-                Value := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
+              if not DataSet.IsEmpty then
+                Value := AttributeMetadata.ObjectClass.Retrieve(
+                  DataSet.Fields[1].AsString, False, False, AObject.Connector);
             finally
-              Close;
+              DataSet.Close;
             end;
           finally
-            Free;
+            Broker.ReleaseDataSet(DataSet);
           end;
         finally
           Params.Free;
         end;
-        //Changed;
       end;
     end
     else if AttributeMetadata.IsExternal = ceStored then
@@ -14315,23 +14454,23 @@ var
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
           AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
           AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-          with Self.Broker.CreateDataSet(Statement, Params) do
+          DataSet := Broker.AcquireDataSet(Statement, Params);
           try
-            Open;
+            DataSet.Open;
             try
               Value := nil;
-              if not IsEmpty then
-                Value := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
+              if not DataSet.IsEmpty then
+                Value := AttributeMetadata.ObjectClass.Retrieve(
+                  DataSet.Fields[1].AsString, False, False, AObject.Connector);
             finally
-              Close;
+              DataSet.Close;
             end;
           finally
-            Free;
+            Broker.ReleaseDataSet(DataSet);
           end;
         finally
           Params.Free;
         end;
-        //Changed;
       end;
     end
     else
@@ -14369,32 +14508,31 @@ var
             AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
           AddIdParam(Params, InstantIdFieldName, AObjectId);
           AddStringParam(Params, InstantClassFieldName, AObject.ClassName);
-          with Self.Broker.CreateDataSet(Statement, Params) do
+          DataSet := Broker.AcquireDataSet(Statement, Params);
           try
-            Open;
+            DataSet.Open;
             try
-              while not Eof do
+              while not DataSet.Eof do
               begin
                 RefObject := TInstantObjectReference.Create(nil, True);
-                RefObject.ReferenceObject(Metadata.ObjectClass, Fields[1].AsString);
+                RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
                 (Attribute as TInstantParts).ObjectReferenceList.Add(RefObject);
                 {PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
                 if Assigned(PartObject) then
                   Add(PartObject)
                 else
                   PartObject.Free;}
-                Next;
+                DataSet.Next;
               end;
             finally
-              Close;
+              DataSet.Close;
             end;
           finally
-            Free;
+            Broker.ReleaseDataSet(DataSet);
           end;
         finally
           Params.Free;
         end;
-        //Changed;
       end;
     end
     else if AttributeMetadata.IsExternal = ceStored then
@@ -14409,27 +14547,27 @@ var
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
           AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
           AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-          with Self.Broker.CreateDataSet(Statement, Params) do
+          DataSet := Broker.AcquireDataSet(Statement, Params);
           try
-            Open;
+            DataSet.Open;
             try
-              while not Eof do
+              while not DataSet.Eof do
               begin
                 RefObject := TInstantObjectReference.Create(nil, True);
-                RefObject.ReferenceObject(Metadata.ObjectClass, Fields[1].AsString);
+                RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
                 (Attribute as TInstantParts).ObjectReferenceList.Add(RefObject);
                 {PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
                 if Assigned(PartObject) then
                   Add(PartObject)
                 else
                   PartObject.Free;}
-                Next;
+                DataSet.Next;
               end;
             finally
-              Close;
+              DataSet.Close;
             end;
           finally
-            Free;
+            Broker.ReleaseDataSet(DataSet);
           end;
         finally
           Params.Free;
@@ -14478,27 +14616,26 @@ var
             AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
           AddIdParam(Params, InstantIdFieldName, AObjectId);
           AddStringParam(Params, InstantClassFieldName, AObject.ClassName);
-          with Self.Broker.CreateDataSet(Statement, Params) do
+          DataSet := Broker.AcquireDataSet(Statement, Params);
           try
-            Open;
+            DataSet.Open;
             try
-              while not Eof do
+              while not DataSet.Eof do
               begin
                 RefObject := TInstantObjectReference.Create(nil, True);
-                RefObject.ReferenceObject(Metadata.ObjectClass, Fields[1].AsString);
-                (Attribute as TInstantReferences).ObjectReferenceList.Add(RefObject);
-                Next;
+                RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
+                  (Attribute as TInstantReferences).ObjectReferenceList.Add(RefObject);
+                DataSet.Next;
               end;
             finally
-              Close;
+              DataSet.Close;
             end;
           finally
-            Free;
+            Broker.ReleaseDataSet(DataSet);
           end;
         finally
           Params.Free;
         end;
-        //Changed;
       end;
     end
     else if AttributeMetadata.IsExternal = ceStored then
@@ -14513,27 +14650,26 @@ var
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
           AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
           AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-          with Self.Broker.CreateDataSet(Statement, Params) do
+          DataSet := Broker.AcquireDataSet(Statement, Params);
           try
-            Open;
+            DataSet.Open;
             try
-              while not Eof do
+              while not DataSet.Eof do
               begin
                 RefObject := TInstantObjectReference.Create(nil, True);
-                RefObject.ReferenceObject(Metadata.ObjectClass, Fields[1].AsString);
-                (Attribute as TInstantReferences).ObjectReferenceList.Add(RefObject);
-                Next;
+                RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
+                  (Attribute as TInstantReferences).ObjectReferenceList.Add(RefObject);
+                DataSet.Next;
               end;
             finally
-              Close;
+              DataSet.Close;
             end;
           finally
-            Free;
+            Broker.ReleaseDataSet(DataSet);
           end;
         finally
           Params.Free;
         end;
-        //Changed;
       end;
     end
     else
@@ -14681,11 +14817,16 @@ end;
 
 { TInstantSQLQuery }
 
-function TInstantSQLQuery.CreateDataSet(const AStatement: string;
+function TInstantSQLQuery.AcquireDataSet(const AStatement: string;
   AParams: TParams): TDataSet;
 begin
-  Result := (Connector.Broker as TInstantSQLBroker).CreateDataSet(AStatement,
+  Result := (Connector.Broker as TInstantSQLBroker).AcquireDataSet(AStatement,
     AParams);
+end;
+
+procedure TInstantSQLQuery.ReleaseDataSet(const DataSet: TDataSet);
+begin
+  (Connector.Broker as TInstantSQLBroker).ReleaseDataSet(DataSet);
 end;
 
 destructor TInstantSQLQuery.Destroy;
@@ -14830,14 +14971,14 @@ var
   DataSet: TDataSet;
 begin
   inherited;
-  DataSet := CreateDataSet(Statement, ParamsObject);
+  DataSet := AcquireDataSet(Statement, ParamsObject);
   if Assigned(DataSet) then
   try
     if not DataSet.Active then
       DataSet.Open;
     InitObjectReferences(DataSet);
   finally
-    DataSet.Free;
+    ReleaseDataSet(DataSet);
   end;
 end;
 
@@ -15246,6 +15387,118 @@ end;
 class function TInstantGraphic.AttributeType: TInstantAttributeType;
 begin
   Result := atGraphic;
+end;
+
+{ TInstantStatementCache }
+
+constructor TInstantStatementCache.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FStatements := TStringList.Create;
+  FStatements.Sorted := True;
+  FStatements.Duplicates := dupError;
+  FCapacity := 0;
+end;
+
+destructor TInstantStatementCache.Destroy;
+begin
+  DeleteAllStatements;
+  FStatements.Free;
+  inherited;
+end;
+
+function TInstantStatementCache.AddStatement(const StatementText: string;
+  const StatementImplementation: TComponent): Integer;
+var
+  StatementObject: TInstantStatement;
+begin
+  if Assigned(StatementImplementation) then begin
+    Shrink;
+    StatementObject := TInstantStatement.Create(StatementImplementation);
+    Result := FStatements.AddObject(StatementText, StatementObject);
+    StatementImplementation.FreeNotification(Self);
+  end
+  else
+    Result := -1;
+end;
+
+function TInstantStatementCache.RemoveStatement(const StatementText: string): Boolean;
+var
+  Index: Integer;
+begin
+  Index := FStatements.IndexOf(StatementText);
+  if Index >= 0 then begin
+    DeleteStatement(Index);
+    Result := True;
+  end
+  else
+    Result := False;
+end;
+
+function TInstantStatementCache.GetStatement(const StatementText: string): TInstantStatement;
+var
+  Index: Integer;
+begin
+  Index := FStatements.IndexOf(StatementText);
+  if Index >= 0 then
+    Result := TInstantStatement(FStatements.Objects[Index])
+  else
+    Result := nil;
+end;
+
+procedure TInstantStatementCache.Notification(AComponent: TComponent; Operation: TOperation);
+var
+  I: Integer;
+begin
+  inherited;
+  if Operation = opRemove then
+    for I := FStatements.Count - 1 downto 0 do
+      if TInstantStatement(FStatements.Objects[I]).StatementImplementation = AComponent then
+        DeleteStatement(I);
+end;
+
+procedure TInstantStatementCache.DeleteStatement(const Index: Integer);
+var
+  AObject: TObject;
+begin
+  // Avoid looping with Notification.
+  AObject := FStatements.Objects[Index];
+  FStatements.Delete(Index);
+  AObject.Free;
+end;
+
+procedure TInstantStatementCache.DeleteAllStatements;
+var
+  I: Integer;
+begin
+  for I := FStatements.Count - 1 downto 0 do
+    DeleteStatement(I);
+end;
+
+procedure TInstantStatementCache.SetCapacity(const Value: Integer);
+begin
+  FCapacity := Value;
+  Shrink;
+end;
+
+procedure TInstantStatementCache.Shrink;
+begin
+  // TODO : implement a shrink policy here when the cache can be limited in size.
+  // currently the cache is always unlimited if enabled (Capacity <> 0).
+end;
+
+{ TInstantStatement }
+
+constructor TInstantStatement.Create(const AStatementImplementation: TComponent);
+begin
+  inherited Create;
+  FStatementImplementation := AStatementImplementation;
+end;
+
+destructor TInstantStatement.Destroy;
+begin
+  FStatementImplementation.Free;
+  inherited;
 end;
 
 initialization
