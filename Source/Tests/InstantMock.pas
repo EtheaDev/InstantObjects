@@ -6,7 +6,6 @@ uses
   InstantPersistence, Classes, UbMockObject;
 
 type
-
   TInstantMockConnector = class(TInstantConnector, IUbMockObject)
   private
     FMock: TUbMockObject;
@@ -25,7 +24,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
   end;
-
+  
   TInstantMockConnectionDef = class(TInstantConnectionDef)
     class function ConnectionTypeName: String; override;
     class function ConnectorClass: TInstantConnectorClass; override;
@@ -40,7 +39,7 @@ type
     function InternalDisposeObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean; override;
     function InternalRetrieveObject(AObject: TInstantObject;
-      const AObjectId: String;
+      const AObjectId: string;
       ConflictAction: TInstantConflictAction): Boolean;  override;
     function InternalStoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean;  override;
@@ -71,7 +70,6 @@ begin
   Result := TInstantMockBroker.Create(Self);
 end;
 
-
 { TInstantMockConnectionDef }
 
 class function TInstantMockConnectionDef.ConnectionTypeName: String;
@@ -88,7 +86,6 @@ function TInstantMockConnectionDef.Edit: Boolean;
 begin
   result := True; //boh??
 end;
-
 
 { TInstantMockBroker }
 
@@ -122,20 +119,17 @@ begin
 end;
 
 procedure TInstantMockBroker.SetMock(const Value: TUbMockObject);
-
 begin
   FMock := Value;
 end;
 
 constructor TInstantMockBroker.Create(AConnector: TInstantConnector);
-
 begin
   inherited;
   FMock := TUbMockObject.Create;
 end;
 
 destructor TInstantMockBroker.Destroy;
-
 begin
   FMock.Free;
   inherited;
@@ -151,7 +145,7 @@ begin
 end;
 
 function TInstantMockBroker.InternalRetrieveObject(AObject: TInstantObject;
-  const AObjectId: String;
+  const AObjectId: string;
   ConflictAction: TInstantConflictAction): Boolean;
 begin
   Result := True;
@@ -190,3 +184,4 @@ finalization
   TInstantMockConnector.UnregisterClass;
 
 end.
+
