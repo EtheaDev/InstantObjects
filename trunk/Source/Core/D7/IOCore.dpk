@@ -46,6 +46,7 @@ contains
   InstantPresentation in '..\InstantPresentation.pas',
   InstantAccessors in '..\InstantAccessors.pas',
   InstantConnectionManager in '..\InstantConnectionManager.pas' {InstantConnectionManagerForm},
-  InstantImageUtils in '..\InstantImageUtils.pas';
+  InstantImageUtils in '..\InstantImageUtils.pas',
+  InstantPump in '..\InstantPump.pas';
 
 end.
