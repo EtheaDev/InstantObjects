@@ -1,0 +1,50 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<meta http-equiv="Content-Language" content="en-tt">
+<meta name="GENERATOR" content="Microsoft FrontPage 5.0">
+<meta name="ProgId" content="FrontPage.Editor.Document">
+<title>Selecting Objects</title>
+</head>
+
+<body>
+
+<p><font face="Verdana" size="2"><b>Selecting Objects</b></font></p>
+<p><font face="Verdana" size="2">In order to work with business objects they have to be retrieved into memory. Specific objects can be retrieved via the
+<i> Retrieve</i> constructor of their class if their object <i>Id</i> is known. If this is not the case or if multiple objects need to be accessed at once, either for presentation or manipulation, they can be
+<i> selected</i> from the database.<br>
+<br>
+Objects are selected from the database via the <i> TInstantSelector</i> component. This component is a special exposer
+<span lang="da">that</span> allows you to specify a command <span lang="da">that 
+defines </span>the objects to be retrieved and optionally exposed. The syntax of the command is somewhat similar to SQL<span lang="da">,</span> but instead of tables and columns, you specify classes and attributes. When opened, TInstantSelector queries the database for the corresponding objects and exposes those as rows in the dataset. In addition, the selected objects are available via the
+<i> Objects</i> array property of the selector. See the section <i> Exposing Objects</i> for details about exposing.<br>
+<br>
+In its simplest form, the selector command looks like this:&nbsp;<br>
+<br>
+</font><font size="2" face="Courier New">SELECT * FROM TPerson<br>
+</font><font face="Verdana" size="2"><br>
+The above command will select all objects of the TPerson class. By adding a
+WHERE clause and an ORDER BY clause, the selection is limited to objects meeting a certain criteria and sorted as
+well:<br>
+<br>
+</font><font size="2" face="Courier New">SELECT * FROM TPerson WHERE 
+<span lang="da">Company.Name</span> LIKE “<span lang="da">Bor</span>%” ORDER BY Name<br>
+</font><font face="Verdana" size="2"><br>
+Attributes are specified using regular dot-notation. This allows you to specify attributes of the selected object
+and objects related to this object. Please consult the
+<i> InstantObjects Reference Guide</i> for an in-depth explanation of the TInstantSelector
+<i> Command</i> property.<br>
+<br>
+TInstantSelector is being used in the contactbook in several areas. First of all, the main contact grid used for browsing contacts is connected via a
+TDataSource to a selector. The command of this selector is changed when clicking one of the index-tabs above the grid and when performing a search via the Find feature.<br>
+<br>
+In <i>TContactEditForm</i>, The country and category fields of a contact are edited via a standard TDBLookupComboBox in which the dropdown list is connected to a selector that is exposing the
+objects that can be associated with the field.<br>
+<br>
+All forms used for browsing and looking up objects descent from <i>TBasicBrowseForm</i>. These forms all use a selector to select and expose the desired objects.<br>
+</font></p>
+
+</body>
+
+</html>

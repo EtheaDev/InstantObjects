@@ -1,0 +1,28 @@
+unit PersonEdit;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  ContactEdit, Db, InstantPresentation, StdCtrls, Grids, DBGrids, Mask,
+  DBCtrls;
+
+type
+  TPersonEditForm = class(TContactEditForm)
+    ContactExposerDateOfBirth: TDateTimeField;
+    Label6: TLabel;
+    DBEdit5: TDBEdit;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  PersonEditForm: TPersonEditForm;
+
+implementation
+
+{$R *.DFM}
+
+end.
