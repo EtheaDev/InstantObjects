@@ -112,7 +112,6 @@ type
     property Connection: TIBDatabase read GetConnection write SetConnection;
     property Options: TInstantIBXOptions read FOptions write FOptions default DefaultInstantIBXOptions;
     property OnLogin: TIBDatabaseLoginEvent read FOnLogin write FOnLogin;
-    property LoginPrompt;
   end;
 
   TInstantIBXBroker= class(TInstantSQLBroker)
@@ -304,7 +303,6 @@ end;
 procedure TInstantIBXConnector.InternalBuildDatabase(
   Scheme: TInstantScheme);
 begin
-  Scheme.BlobStreamFormat := BlobStreamFormat;
   StartTransaction;
   try
     inherited;
@@ -344,16 +342,17 @@ begin
   inherited;
   // IBX's TIBDatabase.CreateDatabase is fatally flawed and so we have to
   // bypass it for the time being.
-  with Connection do
-  begin
-    CheckInactive;
-    db_handle := nil;
-    tr_handle := nil;
-    Call(
+  Connection.CheckInactive;
+  db_handle := nil;
+  tr_handle := nil;
+  try
+    Connection.Call(
       GetGDSLibrary().isc_dsql_execute_immediate(StatusVector, @db_handle, @tr_handle, 0,
-        PChar('create database ''' + DatabaseName + ''' user ''' + Params.Values['user_name'] + ''' password ''' +
-              Params.Values['password'] + ''''), SQLDialect, nil),
+        PChar('create database ''' + Connection.DatabaseName + ''' user ''' +
+              Connection.Params.Values['user_name'] + ''' password ''' +
+              Connection.Params.Values['password'] + ''''), Connection.SQLDialect, nil),
       True);
+  finally
     Disconnect;
   end;
 end;
@@ -414,7 +413,7 @@ begin
     Transaction := Connector.Transaction;
     SQL.Text := AStatement;
     if Assigned(AParams) then
-      AssignDataSetParams(Query,AParams);
+      AssignDataSetParams(Query, AParams);
   end;
   Result := Query;
 end;
