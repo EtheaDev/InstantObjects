@@ -103,7 +103,8 @@ end;
 
 procedure TInstantPump.SetDestConnector(const Value: TInstantConnector);
 begin
-  if Value <> FDestConnector then begin
+  if Value <> FDestConnector then
+  begin
     if Assigned(FDestConnector) then
       FDestConnector.RemoveFreeNotification(Self);
     FDestConnector := Value;
@@ -114,7 +115,8 @@ end;
 
 procedure TInstantPump.SetSourceConnector(const Value: TInstantConnector);
 begin
-  if Value <> FSourceConnector then begin
+  if Value <> FSourceConnector then
+  begin
     if Assigned(FSourceConnector) then
       FSourceConnector.RemoveFreeNotification(Self);
     FSourceConnector := Value;
@@ -194,9 +196,11 @@ var
 begin
   FDestConnector.StartTransaction;
   try
-    for I := 0 to Pred(Model.ClassMetadatas.Count) do begin
+    for I := 0 to Pred(Model.ClassMetadatas.Count) do
+    begin
       ClassMetadata := Model.ClassMetadatas[I];
-      if ClassMetadata.IsStored then begin
+      if ClassMetadata.IsStored then
+      begin
         if poEmptyDestBeforePump in FOptions then
           DeleteAllDestObjects(ClassMetadata);
         PumpAllObjects(ClassMetadata);
@@ -219,14 +223,17 @@ begin
   try
     Query.Command := 'select * from ' + ClassMetadata.Name + ' order by Id';
     Query.Open;
-    for i := 0 to Query.ObjectCount -1 do
-    begin
-      SourceObject :=  Query.Objects[i] as TInstantObject;
-      DestObject := TInstantObjectClass(Query.ObjectClass).Clone(SourceObject, FDestConnector);
-      DestObject.Store;
+    try
+      for i := 0 to Query.ObjectCount -1 do
+      begin
+        SourceObject :=  Query.Objects[i] as TInstantObject;
+        DestObject := TInstantObjectClass(Query.ObjectClass).Clone(SourceObject, FDestConnector);
+        DestObject.Store;
+      end;
+    finally
+      Query.Close;
     end;
   finally
-    Query.Close;
     Query.Free;
   end;
 end;
@@ -240,13 +247,16 @@ begin
   try
     Query.Command := 'select * from ' + ClassMetadata.Name + ' order by Id';
     Query.Open;
-    for i := 0 to Query.ObjectCount -1 do
-    begin
-      if (Query.Objects[i] is TInstantObject) then
-        TInstantObject(Query.Objects[i]).Dispose;
-    end;    
+    try
+      for i := 0 to Query.ObjectCount -1 do
+      begin
+        if (Query.Objects[i] is TInstantObject) then
+          TInstantObject(Query.Objects[i]).Dispose;
+      end;
+    finally
+      Query.Close;
+    end;
   finally
-    Query.Close;
     Query.Free;
   end;
 end;
@@ -254,7 +264,8 @@ end;
 procedure TInstantPump.Notification(AComponent: TComponent; Operation: TOperation);
 begin
   inherited;
-  if Operation = opRemove then begin
+  if Operation = opRemove then
+  begin
     if AComponent = FSourceConnector then
       FSourceConnector := nil;
     if AComponent = FDestConnector then
