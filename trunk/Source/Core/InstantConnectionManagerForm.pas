@@ -144,7 +144,7 @@ type
     property ConnectionDefs: TInstantConnectionDefs read GetConnectionDefs;
     property FileOpenDialog: TOpenDialog read GetOpenDialog;
   public
-    constructor Create(AOwner : TComponent); override;
+    function isManagerConnected : boolean;
     function DoBuild(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     property CurrentConnectionDef: TInstantConnectionDef read GetCurrentConnectionDef write SetCurrentConnectionDef;
     property FileName: string read GetFileName write SetFileName;
@@ -172,8 +172,9 @@ procedure DefaultConnectionManagerExecutor(ConnectionManager : TInstantConnectio
 var
   ConnManagerForm : TInstantConnectionManagerForm;
 begin
-  ConnManagerForm := TInstantConnectionManagerForm.Create(ConnectionManager);
+  ConnManagerForm := TInstantConnectionManagerForm.Create(nil);
   Try
+    ConnManagerForm.ConnectionManager := ConnectionManager;
     ConnManagerForm.ShowModal;
   Finally
     ConnManagerForm.Free;
@@ -196,7 +197,7 @@ var
 begin
   ConnectionDef := CurrentConnectionDef;
   HasItem := Assigned(ConnectionDef);
-  Connected := HasItem and IsConnected(ConnectionDef);
+  Connected := IsManagerConnected;
   EnableAction(EditAction, HasItem and not Connected);
   EnableAction(RenameAction, HasItem);
   EnableAction(DeleteAction, HasItem and not Connected);
@@ -466,7 +467,9 @@ function TInstantConnectionManagerForm.IsConnected(
 begin
   Result := False;
   if Assigned(FOnIsConnected) then
-    FOnIsConnected(Self, ConnectionDef, Result);
+    FOnIsConnected(Self, ConnectionDef, Result)
+  else if Assigned(ConnectionManager.OnIsConnected) then
+    ConnectionManager.OnIsConnected(ConnectionManager,ConnectionDef,Result);
 end;
 
 procedure TInstantConnectionManagerForm.NewMenuItemClick(Sender: TObject);
@@ -654,15 +657,6 @@ begin
   FileOpenDialog.FileName := FileName;
 end;
 
-constructor TInstantConnectionManagerForm.Create(AOwner: TComponent);
-begin
-  inherited;
-  if AOwner is TInstantConnectionManager then
-    ConnectionManager := TInstantConnectionManager(AOwner)
-  else
-    ConnectionManager := TInstantConnectionManager.Create(self);
-end;
-
 procedure TInstantConnectionManagerForm.SetConnectionManager(
   const Value: TInstantConnectionManager);
 begin
@@ -703,6 +697,11 @@ begin
   FileOpenDialog.InitialDir := ExtractFilePath(FileName);
   if FileOpenDialog.Execute then
     FileName := FileOpenDialog.FileName;
+end;
+
+function TInstantConnectionManagerForm.IsManagerConnected: boolean;
+begin
+  Result := ConnectionManager.isConnected;
 end;
 
 initialization

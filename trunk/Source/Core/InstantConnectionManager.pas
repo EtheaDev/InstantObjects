@@ -103,6 +103,7 @@ type
     procedure SaveConnectionDefs;    
     procedure ConnectByName(const ConnectionDefName : string);
     procedure Execute;
+    function isConnected : boolean;
     property Model: TInstantModel read GetModel write SetModel;
     property ConnectionDefs: TInstantConnectionDefs read GetConnectionDefs;
   published
@@ -125,7 +126,7 @@ procedure RegisterConnectionManagerExecutor(ConnectionManagerExecutor : TInstant
 implementation
 
 uses
-  InstantImageUtils, InstantConsts;
+  InstantConsts;
 
 var
   ConnManagerExecutor : TInstantConnectionManagerExecutor;
@@ -373,6 +374,23 @@ begin
   if FCaption <> Value then
   begin
     FCaption := Value;
+  end;
+end;
+
+function TInstantConnectionManager.isConnected: boolean;
+var
+  i : integer;
+  ConnectionDef : TInstantConnectionDef;
+begin
+  Result := False;
+  if not Assigned(OnIsConnected) then
+    Exit;
+  for i := 0 to ConnectionDefs.Count -1 do
+  begin
+    ConnectionDef := ConnectionDefs.items[i];
+    OnIsConnected(self, ConnectionDef, Result);
+    if Result then
+      break;
   end;
 end;
 
