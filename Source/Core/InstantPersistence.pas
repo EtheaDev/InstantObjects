@@ -12845,7 +12845,7 @@ function TInstantSQLGenerator.InternalGenerateSelectExternalPartStoredSQL(
 var
   FieldStr, WhereStr: string;
 begin
-  FieldStr := '%s, %s';
+  FieldStr := Format('%s, %s', [EmbraceField('%s'), EmbraceField('%s')]);
   WhereStr := Format('%s = :%s AND %s = :%s',
     [EmbraceField(InstantClassFieldName), InstantClassFieldName,
      EmbraceField(InstantIdFieldName), InstantIdFieldName]);
@@ -13572,7 +13572,7 @@ var
             SelectStatement := Format(SelectExternalPartStoredSQL,
               [AttributeMetadata.FieldName + InstantClassFieldName,
                AttributeMetadata.FieldName + InstantIdFieldName,
-               AObject.Metadata.TableName]);
+               AttributeMetadata.ClassMetadata.TableName]);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
             AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
             DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
@@ -13966,7 +13966,7 @@ var
               SelectStatement := Format(SelectExternalPartStoredSQL,
                 [AttributeMetadata.FieldName + InstantClassFieldName,
                  AttributeMetadata.FieldName + InstantIdFieldName,
-                 AObject.Metadata.TableName]);
+                 AttributeMetadata.ClassMetadata.TableName]);
               AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
               AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
               DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
