@@ -18,12 +18,12 @@ package Dclionxsql;
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
-{$TYPEDADDRESS OFF}
+{$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST ON}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects NexusDbSQL Design-Time Support (Delphi 7)'}
+{$DESCRIPTION 'InstantObjects NexusDbSQL Designtime Support (Delphi 7)'}
 {$LIBSUFFIX '_D7'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
@@ -32,14 +32,7 @@ requires
   vcl,
   vcldb,
   IOCore,
-  NexusDB107db70,
-  NexusDB107sd70,
-  NexusDB107ll70,
-  NexusDB107tw70,
-  NexusDB107pt70,
-  NexusDB107st70,
-  NexusDB107re70,
-  ionxsql70;
+  ionxsql;
 
 contains
   InstantNexusDbSQLReg in '..\InstantNexusDbSQLReg.pas';

@@ -1,5 +1,4 @@
-package ionxsql70;
-
+package ionxsql;
 {$R *.res}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -17,35 +16,32 @@ package ionxsql70;
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
-{$TYPEDADDRESS OFF}
+{$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects NexusDbSQL support'}
+{$DESCRIPTION 'InstantObjects NexusDbSQL Runtime Support (Delphi 7)'}
+{$LIBSUFFIX '_D7'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
   vcl,
-  dbrtl,
   vclx,
   vcldb,
-  designide,
-  vclactnband,
-  IOCore,
-  NexusDB107ll70,
-  NexusDB107sd70,
-  NexusDB107re70,
-  NexusDB107st70,
-  NexusDB107pt70,
-  NexusDB107tw70,
-  NexusDB107db70,
-  CSP20I70;
+  NexusDB108ll70,
+  NexusDB108sd70,
+  NexusDB108re70,
+  NexusDB108st70,
+  NexusDB108pt70,
+  NexusDB108tw70,
+  NexusDB108db70,
+  IOCore;
 
 contains
   InstantNexusDbSQLConnectionDefEdit in '..\InstantNexusDbSQLConnectionDefEdit.pas' {InstantNexusDbSQLConnectionDefEditForm},
   InstantNexusDbSQL in '..\InstantNexusDbSQL.pas';
 
 end.
+
