@@ -84,13 +84,21 @@ inherited PerformanceViewForm: TPerformanceViewForm
           F8000003E0000003C00000018000000180000000000000000000000100000007
           8000001F8000001F8000001F0000001F38E0107FFDF079FFF8F9FFFF}
       end
-      object NumberLabel: TLabel
+      object ObjectsLabel: TLabel
         Left = 16
         Top = 72
         Width = 77
         Height = 13
         Caption = '&Objects to store:'
         FocusControl = ObjectsEdit
+      end
+      object CacheSizeLabel: TLabel
+        Left = 328
+        Top = 72
+        Width = 108
+        Height = 13
+        Caption = 'Statement &Cache Size:'
+        FocusControl = CacheSizeEdit
       end
       object RunButton: TButton
         Left = 480
@@ -122,18 +130,18 @@ inherited PerformanceViewForm: TPerformanceViewForm
         TabOrder = 0
       end
       object TransactionsCheckBox: TCheckBox
-        Left = 479
-        Top = 16
+        Left = 207
+        Top = 88
         Width = 112
         Height = 17
         Caption = 'Use &Transactions'
-        TabOrder = 6
+        TabOrder = 5
         OnClick = TransactionsCheckBoxClick
       end
       object ObjectsEdit: TMaskEdit
         Left = 16
         Top = 86
-        Width = 73
+        Width = 81
         Height = 21
         EditMask = '#########;1; '
         MaxLength = 9
@@ -141,8 +149,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
         Text = '500      '
       end
       object TestRetrieveCheckBox: TCheckBox
-        Left = 101
-        Top = 66
+        Left = 109
+        Top = 70
         Width = 95
         Height = 17
         Caption = 'Test Retrieve'
@@ -152,8 +160,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
         OnClick = TestRetrieveCheckBoxClick
       end
       object TestDisposeCheckBox: TCheckBox
-        Left = 101
-        Top = 96
+        Left = 109
+        Top = 100
         Width = 95
         Height = 17
         Caption = 'Test Dispose'
@@ -162,30 +170,25 @@ inherited PerformanceViewForm: TPerformanceViewForm
         TabOrder = 4
         OnClick = TestDisposeCheckBoxClick
       end
-      object PoolOptionsRadioGroup: TRadioGroup
-        Left = 200
-        Top = 68
-        Width = 385
-        Height = 47
-        Caption = 'SQL brokers features'
-        Columns = 3
-        ItemIndex = 0
-        Items.Strings = (
-          'No cache'
-          'Prepared queries'
-          'Statements cache')
-        TabOrder = 5
-        OnClick = PoolOptionsRadioGroupClick
-      end
       object TestQueryCheckBox: TCheckBox
-        Left = 101
-        Top = 81
+        Left = 109
+        Top = 85
         Width = 95
         Height = 17
         Caption = 'Test Query'
         Checked = True
         State = cbChecked
         TabOrder = 3
+      end
+      object CacheSizeEdit: TMaskEdit
+        Left = 328
+        Top = 86
+        Width = 113
+        Height = 21
+        EditMask = '#########;1; '
+        MaxLength = 9
+        TabOrder = 6
+        Text = '-1       '
       end
     end
     object ResultPanel: TPanel
