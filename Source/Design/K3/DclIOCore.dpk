@@ -1,7 +1,6 @@
 package DclIOCore;
 
 {$R *.res}
-{$R '../iodesimages.res'}
 {$R '../../Core/InstantPresentation.dcr'}
 {$R '../../Core/InstantPersistence.dcr'}
 {$R '../../Core/InstantConnectionManager.dcr'}
@@ -32,6 +31,7 @@ package DclIOCore;
 {$IMPLICITBUILD OFF}
 
 requires
+  IOCore,
   designide,
   dataclx,
   visualdbclx;
@@ -51,8 +51,7 @@ contains
   InstantReg in '../InstantReg.pas',
   InstantUnitSelect in '../InstantUnitSelect.pas' {InstantUnitSelectForm},
   InstantAttributeEditor in '../InstantAttributeEditor.pas' {InstantAttributeEditorForm},
-  InstantAbout in '../InstantAbout.pas' {InstantAboutForm},
-  InstantPump in '../../Core/InstantPump.pas';
+  InstantAbout in '../InstantAbout.pas' {InstantAboutForm};
 
 end.
 
