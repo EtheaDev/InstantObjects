@@ -45,7 +45,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
         Width = 80
       end
       item
-        Caption = 'Blob stream'
+        Caption = 'Blob format'
         Width = 80
       end>
     PopupMenu = ConnectionMenu
