@@ -20,8 +20,7 @@ uses
   QComCtrls, QGrids, QDBGrids, QExtCtrls, QButtons,
   QStdCtrls, QActnList, QImgList, QMenus,
 {$ENDIF}
-{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
-  BasicView, InstantPresentation, InstantExplorer;
+  BasicView, Model, InstantPresentation, InstantExplorer;
 
 type
   TContactViewForm = class(TBasicViewForm)          

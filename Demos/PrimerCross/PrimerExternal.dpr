@@ -1,7 +1,7 @@
 (*
  *   InstantObjects
  *   Primer Demo - with "external storage" of Part and Parts
- *
+ *   Model.pas unit is located in ModelExternal folder
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
@@ -37,7 +37,7 @@ program PrimerExternal;
 uses
   Forms,
   Main in 'Main.pas' {MainForm},
-  ModelExternal in 'ModelExternal.pas',
+  Model in 'ModelExternal\Model.pas',
   ContactView in 'ContactView.pas' {ContactViewForm: TFrame},
   BasicView in 'BasicView.pas' {BasicViewForm: TFrame},
   BasicEdit in 'BasicEdit.pas' {BasicEditForm},
@@ -64,11 +64,11 @@ uses
   Utility in 'Utility.pas';
 
 {$R *.res}
-{$R *.mdr} {ModelExternal}
+{$R *.mdr} {Model}
 
 begin
   Application.Initialize;
-  Application.Title := 'InstantObjects Primer (Delphi/Kylix cross platform version)';
+  Application.Title := 'InstantObjects Primer Demo with "external storage" of Part and Parts';
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TMainDataModule, MainDataModule);
   Application.Run;

@@ -49,6 +49,7 @@ end;
 
 procedure TWelcomeForm.FormCreate(Sender: TObject);
 begin
+  TitleLabel.Caption := Application.Title;
 {$IFDEF MSWINDOWS}
   BorderStyle := bsNone;
   InfoLabel2.Caption := Format(InfoLabel2.Caption,['VCL','Delphi']);

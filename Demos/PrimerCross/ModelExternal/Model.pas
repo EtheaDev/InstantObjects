@@ -1,4 +1,9 @@
-unit ModelExternal;
+(*
+ *   PrimerCross demo:
+ *   Model.pas with "external storage" of Part and Parts
+ *
+ *)
+unit Model;
 
 interface
 
@@ -17,7 +22,8 @@ type
   TPhone = class;
 
   TAddress = class(TInstantObject)
-  { IOMETADATA City: String(30) index;
+  { IOMETADATA stored;
+    City: String(30) index;
     Country: Reference(TCountry);
     State: String(4);
     Street: Memo;
@@ -62,7 +68,8 @@ type
   end;
 
   TPhone = class(TInstantObject)
-  { IOMETADATA Name: String(20);
+  { IOMETADATA stored;
+    Name: String(20);
     Number: String(20) mask '(000) 000-0000;0;_'; }
     _Name: TInstantString;
     _Number: TInstantString;
@@ -77,7 +84,8 @@ type
   end;
 
   TEmail = class(TInstantObject)
-  { IOMETADATA Address: String(100); }
+  { IOMETADATA stored;
+    Address: String(100); }
     _Address: TInstantString;
   private
     function GetAddress: string;
@@ -160,7 +168,7 @@ type
   TPerson = class(TContact)
   { IOMETADATA stored;
     BirthDate: DateTime;
-    Emails: Parts(TEmail);
+    Emails: Parts(TEmail) externalstored 'Person_Email';
     Employer: Reference(TCompany);
     Picture: Blob;
     Salary: Currency; }

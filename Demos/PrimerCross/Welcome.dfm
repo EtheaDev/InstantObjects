@@ -39,9 +39,7 @@ object WelcomeForm: TWelcomeForm
         Height = 49
         Alignment = taCenter
         AutoSize = False
-        Caption = 
-          'Welcome to InstantObjects Primer (Delphi/Kylix cross-platform ve' +
-          'rsion)'
+        Caption = 'Application title'
         Color = clBtnFace
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText

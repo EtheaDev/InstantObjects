@@ -33,7 +33,7 @@ var
 implementation
 
 uses
-{$IFDEF EXTERNALSTORAGE}ModelExternal;{$ELSE}Model;{$ENDIF}
+  Model;
 
 {$R *.dfm}
 

@@ -1,6 +1,7 @@
 (*
  *   InstantObjects
  *   Primer Demo - with "internal storage" of Part and Parts
+ *   Model.pas unit is located in Model folder
  *
  *)
 
@@ -37,7 +38,7 @@ program Primer;
 uses
   Forms,
   Main in 'Main.pas' {MainForm},
-  Model in 'Model.pas',
+  Model in 'Model\Model.pas',
   ContactView in 'ContactView.pas' {ContactViewForm: TFrame},
   BasicView in 'BasicView.pas' {BasicViewForm: TFrame},
   BasicEdit in 'BasicEdit.pas' {BasicEditForm},
@@ -68,7 +69,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'InstantObjects Primer (Delphi/Kylix cross platform version)';
+  Application.Title := 'InstantObjects Primer Demo (Delphi/Kylix cross platform version)';
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TMainDataModule, MainDataModule);
   Application.Run;

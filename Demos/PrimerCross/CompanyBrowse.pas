@@ -12,8 +12,7 @@ uses
   QGraphics, QControls, QForms, QDialogs, QStdCtrls,
   QMenus, QImgList, QActnList, QGrids, QDBGrids, QExtCtrls, QComCtrls,
 {$ENDIF}
-{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
-  ContactBrowse, DB, InstantPresentation;
+  ContactBrowse, DB, InstantPresentation, Model;
 
 type
   TCompanyBrowseForm = class(TContactBrowseForm)

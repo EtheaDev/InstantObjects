@@ -9,11 +9,10 @@ uses
   Menus, ImgList, ActnList, Grids, DBGrids, ExtCtrls, ComCtrls,
 {$ENDIF}
 {$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-  QMenus, QImgList, QActnList, QGrids, QDBGrids, QExtCtrls, QComCtrls, QTypes,
+  QGraphics, QControls, QForms, QDialogs, QStdCtrls, QTypes,
+  QMenus, QImgList, QActnList, QGrids, QDBGrids, QExtCtrls, QComCtrls,
 {$ENDIF}
-{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
-  BasicBrowse, DB, InstantPresentation;
+  BasicBrowse, DB, InstantPresentation, Model;
   
 type
   TContactBrowseForm = class(TBasicBrowseForm)

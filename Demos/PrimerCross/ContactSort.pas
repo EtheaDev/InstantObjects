@@ -40,8 +40,7 @@ type
 implementation
 
 uses
-{$IFDEF EXTERNALSTORAGE}ModelExternal,{$ELSE}Model,{$ENDIF}
-  TypInfo, InstantRtti, InstantPresentation;
+  Model, TypInfo, InstantRtti, InstantPresentation;
 
 {$R *.dfm}
 
