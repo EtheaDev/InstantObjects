@@ -2,7 +2,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
   Left = 295
   Top = 238
   BorderStyle = bsDialog
-  Caption = 'InterBase Connection'
+  Caption = 'IBX Connection'
   ClientHeight = 399
   ClientWidth = 362
   Color = clBtnFace

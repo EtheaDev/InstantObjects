@@ -20,6 +20,11 @@
  *
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
+ * Contributor(s):
+ * Carlo Barazzetta:
+ * - OnLogin event support
+ * - TInstantCurrency support
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantUIB;
@@ -78,6 +83,7 @@ type
   private
     FTransaction: TJvUIBTransaction;
     FOptions: TInstantUIBOptions;
+    FOnLogin: TLoginEvent;
     function GetConnection: TInstantUIBConnection;
     function GetTransaction: TJvUIBTransaction;
     procedure SetConnection(const Value: TInstantUIBConnection);
@@ -88,6 +94,7 @@ type
     procedure InternalRollbackTransaction; override;
     procedure InternalStartTransaction; override;
     procedure InternalCreateDatabase; override;
+    procedure AssignLoginOptions; override;
     function GetDatabaseExists: Boolean; override;
   public
     constructor Create(AOwner: TComponent); override;
@@ -97,6 +104,7 @@ type
   published
     property Connection: TInstantUIBConnection read GetConnection write SetConnection;
     property Options: TInstantUIBOptions read FOptions write FOptions default DefaultInstantUIBOptions;
+    property OnLogin: TLoginEvent read FOnLogin write FOnLogin;
   end;
 
   TInstantUIBBroker= class(TInstantSQLBroker)
@@ -232,6 +240,16 @@ end;
 
 { TInstantUIBConnector }
 
+procedure TInstantUIBConnector.AssignLoginOptions;
+begin
+  inherited;
+  if HasConnection then
+  begin
+    if Assigned(FOnLogin) and not Assigned(Connection.OnLogin) then
+      Connection.OnLogin := FOnLogin;
+  end;
+end;
+
 class function TInstantUIBConnector.ConnectionDefClass: TInstantConnectionDefClass;
 begin
   Result := TInstantUIBConnectionDef;
@@ -360,6 +378,8 @@ begin
         TargetParams.ByNameAsInteger[SourceParam.Name] := SourceParam.AsInteger;
       ftFloat:
         TargetParams.ByNameAsDouble[SourceParam.Name] := SourceParam.AsFloat;
+      ftCurrency:
+        TargetParams.ByNameAsCurrency[SourceParam.Name] := SourceParam.AsCurrency;
       ftDateTime:
         TargetParams.ByNameAsDateTime[SourceParam.Name] := SourceParam.AsDateTime;
       ftBoolean:

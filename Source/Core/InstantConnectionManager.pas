@@ -400,8 +400,12 @@ begin
     try
       Application.ProcessMessages;
       Connector.BuildDatabase(Model);
-      DoPrepare(Connector);
-      Connector.Disconnect;
+      Connector.Connect;
+      Try
+        DoPrepare(Connector);
+      Finally
+        Connector.Disconnect;
+      End;  
     finally
       Screen.Cursor := SaveCursor;
     end;
