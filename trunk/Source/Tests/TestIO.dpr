@@ -18,3 +18,4 @@ begin
   Application.CreateForm(TTestRunner, TestRunner);
   Application.Run;
 end.
+
