@@ -72,7 +72,7 @@ implementation
 {$R *.DFM}
 
 uses
-  SysUtils, FileCtrl, Dialogs, IniFiles;
+  SysUtils, FileCtrl, Dialogs, IniFiles, InstantPersistence, InstantClasses;
 
 const
   SDictionaryExt = '.add';
