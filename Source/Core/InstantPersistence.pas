@@ -34,6 +34,11 @@
  * - LoginPrompt support in Connections based on TCustomConnection
  * Nando Dessena, Andrea Petrelli:
  * - ExternalParts and ExternalReferences support
+ * Nando Dessena:
+ * - Added OnGenerateId event as a primitive form of ID Factory.
+ * - Support for changing the data type used for ID fields.
+ * - Fixed Range Check Error in TInstantAttribute.GetIsDefault.
+ * - Added explicit ordering to externalstored collections.
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantPersistence;
@@ -55,7 +60,7 @@ uses
 {$IFDEF LINUX}
   QGraphics,
 {$ENDIF}
-  Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand;
+  Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand, InstantConsts;
 
 type
   TInstantMetadatas = class;
@@ -373,6 +378,8 @@ type
     FModel: TInstantModel;
     FTableMetadataCollection: TInstantTableMetadatas;
     FBlobStreamFormat: TInstantStreamFormat;
+    FIdSize: Integer;
+    FIdDataType: TInstantDataType;
     function GetTableMetadataCollection: TInstantTableMetadatas;
     function GetTableMetadatas(Index: Integer): TInstantTableMetadata;
     function GetTableMetadataCount: Integer;
@@ -390,6 +397,8 @@ type
     property TableMetadataCount: Integer read GetTableMetadataCount;
     property TableMetadatas[Index: Integer]: TInstantTableMetadata read GetTableMetadatas;
     property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
+    property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
+    property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
   end;
 
   TInstantAttributeMap = class(TInstantNamedList)
@@ -1257,10 +1266,13 @@ type
   private
     FIsBuilt: Boolean;
     FBlobStreamFormat: TInstantStreamFormat;
+    FIdSize: Integer;
+    FIdDataType: TInstantDataType;
   protected
     function GetCaption: string; virtual;
     procedure InitConnector(Connector: TInstantConnector); virtual;
   public
+    constructor Create(Collection: TCollection); override;
     class function ConnectionTypeName: string; virtual; abstract;
     class function ConnectorClass: TInstantConnectorClass; virtual; abstract;
     function CreateConnector(AOwner: TComponent): TInstantConnector;
@@ -1269,6 +1281,8 @@ type
   published
     property IsBuilt: Boolean read FIsBuilt write FIsBuilt;
     property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
+    property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
+    property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
   end;
 
   TInstantConnectionDefs = class(TInstantCollection)
@@ -1303,6 +1317,8 @@ type
     FBeforeDisconnect: TNotifyEvent;
     FBlobStreamFormat: TInstantStreamFormat;
     FOnGenerateId: TInstantGenerateIdEvent;
+    FIdSize: Integer;
+    FIdDataType: TInstantDataType;
     procedure AbandonObjects;
     procedure ApplyTransactedObjectStates;
     procedure ClearTransactedObjects;
@@ -1389,6 +1405,8 @@ type
     property BeforeDisconnect: TNotifyEvent read FBeforeDisconnect write FBeforeDisconnect;
     property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
     property OnGenerateId: TInstantGenerateIdEvent read FOnGenerateId write FOnGenerateId;
+    property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
+    property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
   end;
 
   TInstantCacheNodeColor = (ncRed, ncBlack);
@@ -1818,7 +1836,7 @@ type
   TInstantConnectionBasedConnector = class(TInstantRelationalConnector)
   private
     FConnection: TCustomConnection;
-    FLoginPrompt: boolean;
+    FLoginPrompt: Boolean;
     procedure DoAfterConnectionChange;
     procedure DoBeforeConnectionChange;
     function GetConnection: TCustomConnection;
@@ -1836,20 +1854,21 @@ type
   public
     property Connection: TCustomConnection read GetConnection write SetConnection;
     function HasConnection: Boolean;
-    constructor Create(AOwner : TComponent); override;
-    property LoginPrompt: boolean read FLoginPrompt write SetLoginPrompt default True;
+    constructor Create(AOwner: TComponent); override;
+  published
+    property LoginPrompt: Boolean read FLoginPrompt write SetLoginPrompt default True;
   end;
 
   TInstantConnectionBasedConnectionDef = class(TInstantRelationalConnectionDef)
   private
-    FLoginPrompt: boolean;
+    FLoginPrompt: Boolean;
   protected
     function CreateConnection(AOwner: TComponent): TCustomConnection; virtual; abstract;
     procedure InitConnector(Connector: TInstantConnector); override;
   public
     constructor Create(Collection: TCollection); override;
   published
-    property LoginPrompt: boolean read FLoginPrompt write FLoginPrompt default True;
+    property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt default True;
   end;
 
   TInstantNavigationalResolver = class;
@@ -2086,7 +2105,7 @@ type
   private
     FGenerator: TInstantSQLGenerator;
     FResolverList: TObjectList;
-    FUsePreparedQuery : boolean;
+    FUsePreparedQuery: Boolean;
     function GetResolverList: TObjectList;
     function GetResolverCount: Integer;
     function GetResolvers(Index: Integer): TInstantSQLResolver;
@@ -2110,7 +2129,7 @@ type
     property Generator: TInstantSQLGenerator read GetGenerator;
     property ResolverCount: Integer read GetResolverCount;
     property Resolvers[Index: Integer]: TInstantSQLResolver read GetResolvers;
-    property UsePreparedQuery : boolean read FUsePreparedQuery write FUsePreparedQuery;
+    property UsePreparedQuery: Boolean read FUsePreparedQuery write FUsePreparedQuery;
   end;
 
   TInstantSQLResolver = class(TInstantCustomResolver)
@@ -2123,9 +2142,9 @@ type
     FUpdateSQL: string;
     FUpdateConcurrentSQL: string;
 
-    FPreparedDataSet : TDataSet;
-    LastStatement : string;
-    LastConnector : TObject;
+    FPreparedDataSet: TDataSet;
+    LastStatement: string;
+    LastConnector: TObject;
     FSelectExternalLinkedSQL: string;
     FSelectExternalStoredSQL: string;
     FDeleteExternalSQL: string;
@@ -2134,6 +2153,8 @@ type
 
     procedure AddIntegerParam(Params: TParams; const ParamName: string; Value: Integer);
     procedure AddStringParam(Params: TParams; const ParamName, Value: string);
+    // Adds an "Id" param, whose data type and size depends on connector settings.
+    procedure AddIdParam(Params: TParams; const ParamName, Value: string);
     procedure CheckConflict(Info: PInstantOperationInfo; AObject: TInstantObject);
     function ExecuteStatement(const AStatement: string; AParams: TParams;
       Info: PInstantOperationInfo; ConflictAction: TInstantConflictAction;
@@ -2145,7 +2166,7 @@ type
     function GetUpdateConcurrentSQL: string;
     function GetUpdateSQL: string;
     function GetBroker: TInstantSQLBroker;
-    function GetUsePreparedQuery: boolean;
+    function GetUsePreparedQuery: Boolean;
     function GetSelectExternalLinkedSQL: string;
     function GetSelectExternalStoredSQL: string;
     function GetDeleteExternalSQL: string;
@@ -2198,7 +2219,7 @@ type
     property SelectExternalStoredSQL: string read GetSelectExternalStoredSQL write FSelectExternalStoredSQL;
     property UpdateConcurrentSQL: string read GetUpdateConcurrentSQL write FUpdateConcurrentSQL;
     property UpdateSQL: string read GetUpdateSQL write FUpdateSQL;
-    property UsePreparedQuery : boolean read GetUsePreparedQuery;
+    property UsePreparedQuery: Boolean read GetUsePreparedQuery;
   end;
 
   TInstantSQLQuery = class(TInstantCustomRelationalQuery)
@@ -2341,7 +2362,7 @@ type
     property Step: Integer read FStep;
   end;
 
-procedure AssignInstantStreamFormat(StringList : TStrings);
+procedure AssignInstantStreamFormat(Strings: TStrings);
 function InstantAttributeTypeToDataType(AttributeType: TInstantAttributeType;
   BlobStreamFormat: TInstantStreamFormat = sfBinary): TInstantDataType;
 function InstantConnectorClasses: TList;
@@ -2373,6 +2394,17 @@ procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphic
   AGraphicClass: TGraphicClass);
 function InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat) : TGraphicClass;
 
+// Converts a TInstantDataType to a type that can be used to create TField and
+// TParam instances. Raises an exception for unsupported datatypes (at the time
+// of writing, all datatypes are supported).
+function InstantDataTypeToFieldType(const InstantDataType: TInstantDataType): TFieldType;
+
+const
+  InstantDataTypeStrings: array[TInstantDataType] of string =
+    ('Integer', 'Float', 'Currency', 'Boolean', 'String', 'Memo', 'DateTime', 'Blob');
+
+procedure AssignInstantDataTypeStrings(Strings: TStrings);
+
 const
   InstantClassPrefix: string = 'T';
   InstantAttributePrefix: string = '_';
@@ -2387,7 +2419,7 @@ uses
   QMask, Types,
 {$ENDIF}
   TypInfo, {$IFDEF D6+}MaskUtils, Variants,{$ENDIF}
-  InstantConsts, InstantUtils, InstantRtti, InstantDesignHook, InstantCode;
+  InstantUtils, InstantRtti, InstantDesignHook, InstantCode;
 
 const
   AttributeClasses: array[TInstantAttributeType] of TInstantAttributeClass = (
@@ -2443,14 +2475,31 @@ end;
 
 { Global routines }
 
-procedure AssignInstantStreamFormat(StringList : TStrings);
+procedure AssignInstantStreamFormat(Strings: TStrings);
 var
-  i : TInstantStreamFormat;
+  i: TInstantStreamFormat;
 begin
-  StringList.Clear;
-  for i := Low(TInstantStreamFormat) to High(TInstantStreamFormat) do
+  if Assigned(Strings) then
   begin
-    StringList.Add(AInstantStreamFormatStr[i]);
+    Strings.Clear;
+    for i := Low(TInstantStreamFormat) to High(TInstantStreamFormat) do
+    begin
+      Strings.Add(AInstantStreamFormatStr[i]);
+    end;
+  end;
+end;
+
+procedure AssignInstantDataTypeStrings(Strings: TStrings);
+var
+  i: TInstantDataType;
+begin
+  if Assigned(Strings) then
+  begin
+    Strings.Clear;
+    for i := Low(TInstantDataType) to High(TInstantDataType) do
+    begin
+      Strings.Add(InstantDataTypeStrings[i]);
+    end;
   end;
 end;
 
@@ -2493,6 +2542,23 @@ begin
     Result := DataTypesBinary[AttributeType]
   else
     Result := DataTypesXML[AttributeType];
+end;
+
+function InstantDataTypeToFieldType(const InstantDataType: TInstantDataType): TFieldType;
+begin
+  case InstantDataType of
+    dtInteger: Result := ftInteger;
+    dtFloat: Result := ftFloat;
+    dtCurrency: Result := ftCurrency;
+    dtBoolean: Result := ftBoolean;
+    dtString: Result := ftString;
+    dtMemo: Result := ftMemo;
+    dtDateTime: Result := ftDateTime;
+    dtBlob: Result := ftBlob;
+  else
+    raise EInstantError.CreateResFmt(@SUnsupportedDataType,
+      [GetEnumName(TypeInfo(TInstantDataType), Ord(InstantDataType))]);
+  end;
 end;
 
 function InstantConnectorClasses: TList;
@@ -3608,6 +3674,9 @@ constructor TInstantScheme.Create(AModel: TInstantModel);
 begin
   inherited Create;
   FModel := AModel;
+  FBlobStreamFormat := sfBinary;
+  FIdDataType := dtString;
+  FIdSize := InstantDefaultFieldSize; 
 end;
 
 destructor TInstantScheme.Destroy;
@@ -4189,7 +4258,9 @@ begin
     begin
       DefaultStr := Metadata.DefaultValue;
       ValueStr := AsString;
-      Result := CompareMem(@DefaultStr[1], @ValueStr[1], L);
+      // Fixed Range Check Error when one or both strings are ''.
+      //Result := CompareMem(@DefaultStr[1], @ValueStr[1], L);
+      Result := CompareStr(DefaultStr, ValueStr) = 0;
     end;
   end else
     Result := L = 0;
@@ -5696,9 +5767,17 @@ end;
 
 procedure TInstantReference.Assign(Source: TPersistent);
 begin
-  inherited;
   if Source is TInstantReference then
-    Value := TInstantReference(Source).Value
+  begin
+    with TInstantReference(Source) do
+    begin
+      // cross-connector object assignment must be supported for InstantPump.
+      if Connector <> Self.Connector then
+        Value := TInstantReference(Source).Value.Clone(Self.Connector)
+      else
+        Value := TInstantReference(Source).Value;
+    end;
+  end;
 end;
 
 class function TInstantReference.AttributeType: TInstantAttributeType;
@@ -6432,8 +6511,16 @@ begin
   begin
     Clear;
     with TInstantReferences(Source) do
+    begin
       for I := 0 to Pred(Count) do
-        Self.Add(Items[I]);
+      begin
+        // cross-connector object assignment must be supported for InstantPump.
+        if Connector <> Self.Connector then
+          Self.Add(Items[I].Clone(Self.Connector))
+        else
+          Self.Add(Items[I]);
+      end;
+    end;
   end;
 end;
 
@@ -6821,7 +6908,6 @@ var
   Map: TInstantAttributeMap;
   AttribName: string;
   Attrib, SourceAttrib: TInstantAttribute;
-  ObjectReference : TInstantObjectReference;
 begin
   BeforeAssign;
   inherited;
@@ -6838,32 +6924,7 @@ begin
           if Assigned(Attrib) then
           begin
             SourceAttrib := Obj.AttributeByName(AttribName);
-
-            if (SourceAttrib is TInstantReference) and
-              (TInstantReference(SourceAttrib).Connector <> self.Connector) and
-              (TInstantReference(SourceAttrib).Value <> nil) then
-            begin
-              ObjectReference := TInstantObjectReference.Create;
-              try
-                //Save Reference informations
-                ObjectReference.Clone(TInstantReference(SourceAttrib).ObjectReference, True);
-                //Change the destination connector so the reference to source connector is lost
-                TInstantReference(SourceAttrib).Connector := self.Connector;
-                //Reassign Reference informations to destination attribute
-                TInstantReference(Attrib).ObjectReference.Clone(ObjectReference, True);
-              finally
-                ObjectReference.Free;
-              end;
-            end
-            else if (SourceAttrib is TInstantReferences) and
-              (TInstantReferences(SourceAttrib).Connector <> self.Connector) then
-            begin
-              //Change the destination connector
-              TInstantReferences(SourceAttrib).Connector := self.Connector;
-              Attrib.Assign(SourceAttrib);
-            end
-            else
-              Attrib.Assign(SourceAttrib);
+            Attrib.Assign(SourceAttrib);
           end;
         end;
   end;
@@ -8210,6 +8271,14 @@ end;
 
 { TInstantConnectionDef }
 
+constructor TInstantConnectionDef.Create(Collection: TCollection);
+begin
+  inherited Create(Collection);
+  FBlobStreamFormat := sfBinary;
+  FIdDataType := dtString;
+  FIdSize := InstantDefaultFieldSize;
+end;
+
 function TInstantConnectionDef.CreateConnector(AOwner: TComponent): TInstantConnector;
 begin
   Result := ConnectorClass.Create(AOwner);
@@ -8239,6 +8308,8 @@ end;
 procedure TInstantConnectionDef.InitConnector(Connector: TInstantConnector);
 begin
   Connector.BlobStreamFormat := BlobStreamFormat;
+  Connector.IdDataType := IdDataType;
+  Connector.IdSize := IdSize;
 end;
 
 { TInstantConnectionDefs }
@@ -8297,14 +8368,18 @@ var
 begin
   CreateDatabase;
   Connect;
-  if Model = nil then
-    Model := InstantModel;
-  Scheme := CreateScheme(Model);
   try
-    DoBeforeBuildDatabase(Scheme);
-    InternalBuildDatabase(Scheme);
+    if Model = nil then
+      Model := InstantModel;
+    Scheme := CreateScheme(Model);
+    try
+      DoBeforeBuildDatabase(Scheme);
+      InternalBuildDatabase(Scheme);
+    finally
+      Scheme.Free;
+    end;
   finally
-    Scheme.Free;
+    Disconnect;
   end;
 end;
 
@@ -8355,6 +8430,8 @@ constructor TInstantConnector.Create(AOwner: TComponent);
 begin
   inherited;
   FUseTransactions := True;
+  FIdDataType := dtString;
+  FIdSize := InstantDefaultFieldSize;
 end;
 
 procedure TInstantConnector.CreateDatabase;
@@ -8556,6 +8633,11 @@ end;
 
 procedure TInstantConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
+  if Assigned(Scheme) then begin
+    Scheme.BlobStreamFormat := BlobStreamFormat;
+    Scheme.IdDataType := IdDataType;
+    Scheme.IdSize := IdSize;
+  end;
   Broker.BuildDatabase(Scheme);
 end;
 
@@ -9774,10 +9856,9 @@ procedure TInstantRelationalScheme.InitTableMetadatas(
       { Class + Id + UpdateCount}
       FieldMetadatas.AddFieldMetadata(InstantClassFieldName, dtString,
         InstantDefaultFieldSize, [foRequired, foIndexed]);
-      FieldMetadatas.AddFieldMetadata(InstantIdFieldName, dtString,
-        InstantDefaultFieldSize, [foRequired, foIndexed]);
-      FieldMetadatas.AddFieldMetadata(InstantUpdateCountFieldName, dtInteger,
-        0);
+      FieldMetadatas.AddFieldMetadata(InstantIdFieldName, FIdDataType,
+        FIdSize, [foRequired, foIndexed]);
+      FieldMetadatas.AddFieldMetadata(InstantUpdateCountFieldName, dtInteger, 0);
       IndexMetadatas.AddIndexMetadata('', InstantIndexFieldNames,
         [ixPrimary, ixUnique]);
 
@@ -9790,19 +9871,21 @@ procedure TInstantRelationalScheme.InitTableMetadatas(
             FieldMetadatas.AddFieldMetadata(FieldName + InstantClassFieldName,
               AttributeTypeToDataType(atString), InstantDefaultFieldSize);
             FieldMetadatas.AddFieldMetadata(FieldName + InstantIdFieldName,
-              AttributeTypeToDataType(atString), InstantDefaultFieldSize);
-          end else if ( (AttributeType = atParts) or (AttributeType = atReferences) ) then
+              FIdDataType, FIdSize);
+          end
+          else if (AttributeType = atParts) or (AttributeType = atReferences) then
           begin
-            if IsExternal=ceNo then
+            if IsExternal = ceNo then
               FieldMetadatas.AddFieldMetadata(FieldName,
                 AttributeTypeToDataType(AttributeType), Size, [], feNone, '')
-            else if IsExternal=ceLinked then
+            else if IsExternal = ceLinked then
               FieldMetadatas.AddFieldMetadata(FieldName,
                 AttributeTypeToDataType(AttributeType), Size, [], feLinked, ExternalLinkedName)
-            else if IsExternal=ceStored then
+            else if IsExternal = ceStored then
               FieldMetadatas.AddFieldMetadata(FieldName,
                 AttributeTypeToDataType(AttributeType), Size, [], feStored, ExternalStoredName)
-          end else
+          end
+          else
           begin
             if IsIndexed then
             begin
@@ -10952,15 +11035,14 @@ begin
   FLoginPrompt := True;
 end;
 
-procedure TInstantConnectionBasedConnectionDef.InitConnector(
-  Connector: TInstantConnector);
+procedure TInstantConnectionBasedConnectionDef.InitConnector(Connector: TInstantConnector);
 var
   Connection: TCustomConnection;
 begin
+  inherited;
   Connection := CreateConnection(Connector);
   try
     (Connector as TInstantConnectionBasedConnector).Connection := Connection;
-    (Connector as TInstantConnectionBasedConnector).BlobStreamFormat := BlobStreamFormat;
     (Connector as TInstantConnectionBasedConnector).LoginPrompt := LoginPrompt;
   except
     Connection.Free;
@@ -12157,7 +12239,7 @@ end;
 function TInstantSQLGenerator.GenerateCreateTableSQL(
   Metadata: TInstantTableMetadata): string;
 begin
-  Result := InternalGenerateCreateTableSQL(Metadata)
+  Result := InternalGenerateCreateTableSQL(Metadata);
 end;
 
 function TInstantSQLGenerator.GenerateDeleteConcurrentSQL
@@ -12242,18 +12324,20 @@ function TInstantSQLGenerator.InternalGenerateCreateExternalTableSQL(
 var
   Columns: string;
 begin
-  Columns:=EmbraceField(InstantIdFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, 32) + ' NOT NULL';
-  Columns:=Columns + ', ' + EmbraceField(InstantParentClassFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, 32);
-  Columns:=Columns + ', ' + EmbraceField(InstantParentIdFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, 32);
-  Columns:=Columns + ', ' + EmbraceField(InstantParentAttributeFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, 32);
-  Columns:=Columns + ', ' + EmbraceField(InstantChildClassFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, 32);
-  Columns:=Columns + ', ' + EmbraceField(InstantChildIdFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, 32);
+  Columns := EmbraceField(InstantIdFieldName) + ' ' +
+    Broker.DataTypeToColumnType(Broker.Connector.IdDataType, Broker.Connector.IdSize) + ' NOT NULL';
+  Columns := Columns + ', ' + EmbraceField(InstantParentClassFieldName) + ' ' +
+    Broker.DataTypeToColumnType(dtString, InstantDefaultFieldSize);
+  Columns := Columns + ', ' + EmbraceField(InstantParentIdFieldName) + ' ' +
+    Broker.DataTypeToColumnType(Broker.Connector.IdDataType, Broker.Connector.IdSize);
+  Columns := Columns + ', ' + EmbraceField(InstantParentAttributeFieldName) + ' ' +
+    Broker.DataTypeToColumnType(dtString, InstantDefaultFieldSize);
+  Columns := Columns + ', ' + EmbraceField(InstantChildClassFieldName) + ' ' +
+    Broker.DataTypeToColumnType(dtString, InstantDefaultFieldSize);
+  Columns := Columns + ', ' + EmbraceField(InstantChildIdFieldName) + ' ' +
+    Broker.DataTypeToColumnType(Broker.Connector.IdDataType, Broker.Connector.IdSize);
+  Columns := Columns + ', ' + EmbraceField(InstantSequenceNoFieldName) + ' ' +
+    Broker.DataTypeToColumnType(dtInteger, InstantDefaultFieldSize);
   Columns := Columns + ', PRIMARY KEY (' +  EmbraceField(InstantIdFieldName) + ')';
   Result := Format('CREATE TABLE %s (%s)', [EmbraceTable(TableName), Columns] );
 end;
@@ -12288,18 +12372,11 @@ begin
     begin
       FieldMetadata := FieldMetadatas[I];
       with FieldMetadata do
-        if ExternalOption=feNone then
+        if ExternalOption = feNone then
         begin
           if I > 0 then
             Columns := Columns + ', ';
-          {$IFDEF IO_INTEGER_IDS}
-          if Name = InstantIdFieldName then
-            Columns := Columns + EmbraceField(Name) + ' ' +
-              Broker.DataTypeToColumnType(dtInteger, Size)
-          else
-          {$ENDIF}
-            Columns := Columns + EmbraceField(Name) + ' ' +
-              Broker.DataTypeToColumnType(DataType, Size);
+          Columns := Columns + EmbraceField(Name) + ' ' + Broker.DataTypeToColumnType(DataType, Size);
           if foRequired in Options then
             Columns := Columns + ' NOT NULL';
         end;
@@ -12363,18 +12440,20 @@ function TInstantSQLGenerator.InternalGenerateInsertExternalSQL(
 var
   FieldStr, ParamStr: string;
 begin
-  FieldStr:=Format('%s, %s, %s, %s, %s, %s',
-    [ EmbraceField(InstantIdFieldName),
+  FieldStr := Format('%s, %s, %s, %s, %s, %s, %s',
+    [EmbraceField(InstantIdFieldName),
     EmbraceField(InstantParentClassFieldName),
     EmbraceField(InstantParentIdFieldName),
-    EmbraceField(InstantParentAttributeFieldName),    
+    EmbraceField(InstantParentAttributeFieldName),
     EmbraceField(InstantChildClassFieldName),
-    EmbraceField(InstantChildIdFieldName) ]);
-  ParamStr:=Format(':%s, :%s, :%s, :%s, :%s, :%s',
-    [ InstantIdFieldName,
+    EmbraceField(InstantChildIdFieldName),
+    EmbraceField(InstantSequenceNoFieldName)]);
+  ParamStr := Format(':%s, :%s, :%s, :%s, :%s, :%s, :%s',
+    [InstantIdFieldName,
     InstantParentClassFieldName, InstantParentIdFieldName,
     InstantParentAttributeFieldName,
-    InstantChildClassFieldName, InstantChildIdFieldName ]);
+    InstantChildClassFieldName, InstantChildIdFieldName,
+    InstantSequenceNoFieldName]);
   Result := Format('INSERT INTO %s (%s) VALUES (%s)',
     [EmbraceTable('%s'), FieldStr, ParamStr]);
 end;
@@ -12400,7 +12479,7 @@ var
 begin
   FieldStr := Format('%s, %s', [EmbraceField(InstantClassFieldName),
     EmbraceField(InstantIdFieldName)]);
-  WhereStr := Format('%s=:%s AND %s=:%s',
+  WhereStr := Format('%s = :%s AND %s = :%s',
     [EmbraceField('%s'), InstantClassFieldName, EmbraceField('%s'), InstantIdFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s',
     [FieldStr, EmbraceTable('%s'), WhereStr]);
@@ -12411,15 +12490,15 @@ function TInstantSQLGenerator.InternalGenerateSelectExternalStoredSQL(
 var
   FieldStr, WhereStr: string;
 begin
-  FieldStr := Format('%s, %s', [EmbraceField(InstantChildClassFieldName),
-    EmbraceField(InstantChildIdFieldName)]);
-  WhereStr := Format('%s=:%s AND %s=:%s AND %s=:%s AND %s=:%s',
-    [ EmbraceField(InstantParentClassFieldName), InstantParentClassFieldName,
+  FieldStr := Format('%s, %s, %s', [EmbraceField(InstantChildClassFieldName),
+    EmbraceField(InstantChildIdFieldName), EmbraceField(InstantSequenceNoFieldName)]);
+  WhereStr := Format('%s = :%s AND %s = :%s AND %s = :%s AND %s = :%s',
+    [EmbraceField(InstantParentClassFieldName), InstantParentClassFieldName,
     EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName,
     EmbraceField(InstantParentAttributeFieldName), InstantParentAttributeFieldName,
-    EmbraceField(InstantChildClassFieldName), InstantChildClassFieldName ]);
-  Result := Format('SELECT %s FROM %s WHERE %s',
-    [FieldStr, EmbraceTable('%s'), WhereStr]);
+    EmbraceField(InstantChildClassFieldName), InstantChildClassFieldName]);
+  Result := Format('SELECT %s FROM %s WHERE %s ORDER BY %s',
+    [FieldStr, EmbraceTable('%s'), WhereStr, EmbraceField(InstantSequenceNoFieldName)]);
 end;
 
 function TInstantSQLGenerator.InternalGenerateSelectSQL
@@ -12454,10 +12533,10 @@ end;
 
 { TInstantSQLBroker }
 
-procedure TInstantSQLBroker.AssignDataSetParams(DataSet : TDataSet; AParams: TParams);
+procedure TInstantSQLBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
 begin
-  //must be implemented in derived broker
-  raise EInstantError.CreateResFmt(@SUnsupportedUsePreparedQuery,[ClassName]);
+  // must be implemented in derived broker
+  raise EInstantError.CreateResFmt(@SUnsupportedUsePreparedQuery, [ClassName]);
 end;
 
 destructor TInstantSQLBroker.Destroy;
@@ -12478,10 +12557,10 @@ begin
   end;
 end;
 
-function TInstantSQLBroker.ExecuteQuery(DataSet: TDataSet): integer;
+function TInstantSQLBroker.ExecuteQuery(DataSet: TDataSet): Integer;
 begin
-  //Execution must be implemented in derived broker
-  raise EInstantError.CreateResFmt(@SUnsupportedUsePreparedQuery,[ClassName]);
+  // must be implemented in derived broker
+  raise EInstantError.CreateResFmt(@SUnsupportedUsePreparedQuery, [ClassName]);
 end;
 
 function TInstantSQLBroker.FindResolver(
@@ -12555,9 +12634,9 @@ begin
       Execute(Generator.GenerateCreateTableSQL(TableMetadata));
       for J:=0 to Pred(TableMetadata.FieldMetadatas.Count) do
       begin
-        FieldMetadata :=TableMetadata.FieldMetadatas[J];
-        if FieldMetadata.ExternalOption=feStored then
-          Execute( Generator.GenerateCreateExternalTableSQL(FieldMetadata.ExternalName) );
+        FieldMetadata := TableMetadata.FieldMetadatas[J];
+        if FieldMetadata.ExternalOption = feStored then
+          Execute(Generator.GenerateCreateExternalTableSQL(FieldMetadata.ExternalName));
       end;
       with TableMetadata do
         for J := 0 to Pred(IndexMetadatas.Count) do
@@ -12688,7 +12767,7 @@ var
     Reference := Attribute as TInstantReference;
     AddStringParam(Params, FieldName + InstantClassFieldName,
       Reference.ObjectClassName);
-    AddStringParam(Params, FieldName + InstantIdFieldName, Reference.ObjectId)
+    AddIdParam(Params, FieldName + InstantIdFieldName, Reference.ObjectId);
   end;
 
   procedure AddReferencesAttributeParam;
@@ -12758,7 +12837,7 @@ begin
   if Assigned(Params) then
   begin
     AddStringParam(Params, InstantClassFieldName, AClassName);
-    AddStringParam(Params, InstantIdFieldName, AObjectId);
+    AddIdParam(Params, InstantIdFieldName, AObjectId);
     if AUpdateCount <> -1 then
       AddIntegerParam(Params, InstantUpdateCountFieldName, AUpdateCount);
   end;
@@ -12787,7 +12866,7 @@ end;
 procedure TInstantSQLResolver.AddPersistentIdParam(Params: TParams;
   APersistentId: string);
 begin
-  AddStringParam(Params, PersistentIdParamName, APersistentId);
+  AddIdParam(Params, PersistentIdParamName, APersistentId);
 end;
 
 procedure TInstantSQLResolver.AddStringParam(Params: TParams;
@@ -12798,6 +12877,16 @@ begin
   Param := AddParam(Params, ParamName, ftString);
   if Value <> '' then
     Param.AsString := Value;
+end;
+
+procedure TInstantSQLResolver.AddIdParam(Params: TParams;
+  const ParamName, Value: string);
+var
+  Param: TParam;
+begin
+  Param := AddParam(Params, ParamName, InstantDataTypeToFieldType(Broker.Connector.IdDataType));
+  if Value <> '' then
+    Param.Value := Value;
 end;
 
 procedure TInstantSQLResolver.CheckConflict(Info: PInstantOperationInfo;
@@ -12967,7 +13056,7 @@ begin
   Result := FUpdateSQL;
 end;
 
-function TInstantSQLResolver.GetUsePreparedQuery: boolean;
+function TInstantSQLResolver.GetUsePreparedQuery: Boolean;
 begin
   Result := Broker.UsePreparedQuery;
 end;
@@ -13002,7 +13091,7 @@ var
               [ AttributeMetadata.ObjectClassMetadata.TableName,
               AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
               AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
-            AddStringParam(SelectParams, InstantIdFieldName, AObject.Id);
+            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
             with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
             try
@@ -13034,10 +13123,10 @@ var
         if Map[i].IsExternal = ceStored then
         begin
           // dispose all objects
-          SelectParams:=TParams.Create;
+          SelectParams := TParams.Create;
           try
-            SelectStatement:=Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
-            AddStringParam(SelectParams, InstantParentIdFieldName, AObject.Id);
+            SelectStatement := Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
+            AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
@@ -13067,16 +13156,16 @@ var
             SelectParams.Free;
           end;
 
-          //Delete all links
+          // Delete all links
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [ AttributeMetadata.ExternalStoredName,
+              [AttributeMetadata.ExternalStoredName,
               InstantParentClassFieldName,
               InstantParentIdFieldName,
-              InstantParentAttributeFieldName ]);
+              InstantParentAttributeFieldName]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(DeleteParams, InstantParentIdFieldName, AObject.id);
+            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
@@ -13103,13 +13192,13 @@ var
         if AttributeMetadata.IsExternal = ceLinked then
         begin
           //set all to nil
-          SelectParams:=TParams.Create;
+          SelectParams := TParams.Create;
           try
-            SelectStatement:=Format(SelectExternalLinkedSQL,
-              [ AttributeMetadata.ObjectClassMetadata.TableName,
+            SelectStatement := Format(SelectExternalLinkedSQL,
+              [AttributeMetadata.ObjectClassMetadata.TableName,
               AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
-              AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
-            AddStringParam(SelectParams, InstantIdFieldName, AObject.Id);
+              AttributeMetadata.ExternalLinkedName + InstantIdFieldName]);
+            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
             with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
             try
@@ -13140,15 +13229,15 @@ var
         end;
         if AttributeMetadata.IsExternal = ceStored then
         begin
-          //Delete all links
+          // Delete all links
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [ AttributeMetadata.ExternalStoredName,
+              [AttributeMetadata.ExternalStoredName,
               InstantParentClassFieldName,
-              InstantParentAttributeFieldName ]);
+              InstantParentAttributeFieldName]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(DeleteParams, InstantParentIdFieldName, AObject.id);
+            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
@@ -13270,7 +13359,7 @@ var
 
   procedure UpdateExternalPartsMap;
   var
-    i, ii: integer;
+    i, ii: Integer;
     PartObject: TInstantObject;
     PartsAttribute: TInstantParts;
     AttributeMetadata: TInstantAttributeMetadata;
@@ -13292,7 +13381,7 @@ var
               [ AttributeMetadata.ObjectClassMetadata.TableName,
               AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
               AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
-            AddStringParam(SelectParams, InstantIdFieldName, AObject.Id);
+            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
             with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
             try
@@ -13332,11 +13421,11 @@ var
 
         if Map[i].IsExternal = ceStored then
         begin
-          //Delete all objects
-          SelectParams:=TParams.Create;
+          // Delete all objects
+          SelectParams := TParams.Create;
           try
-            SelectStatement:=Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
-            AddStringParam(SelectParams, InstantParentIdFieldName, AObject.Id);
+            SelectStatement := Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
+            AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
             AddStringParam(SelectParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
@@ -13366,42 +13455,43 @@ var
             SelectParams.Free;
           end;
 
-          //Delete all links
+          // Delete all links
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [ AttributeMetadata.ExternalStoredName,
+              [AttributeMetadata.ExternalStoredName,
               InstantParentClassFieldName,
-              InstantParentAttributeFieldName ]);
+              InstantParentAttributeFieldName]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(DeleteParams, InstantParentIdFieldName, AObject.id);
+            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
             DeleteParams.Free;
           end;          
 
-          //Store all objects and links
-          for ii:=0 to Pred(PartsAttribute.Count) do
+          // Store all objects and links
+          for ii := 0 to Pred(PartsAttribute.Count) do
           begin
-            // store the object
+            // Store object
             PartObject := PartsAttribute.Items[ii];
             PartObject.CheckId;
             PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-            
-            // insert the link
-            InsertParams:=TParams.Create;
+
+            // Insert link
+            InsertParams := TParams.Create;
             try
-              InsertStatement := Format( InsertExternalSQL,
-                [ AttributeMetadata.ExternalStoredName ] );
-              AddStringParam(InsertParams, InstantIdFieldName, InstantGenerateId);
+              InsertStatement := Format(InsertExternalSQL,
+                [AttributeMetadata.ExternalStoredName]);
+              AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
               AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
-              AddStringParam(InsertParams, InstantParentIdFieldName, AObject.Id);
+              AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
               AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               AddStringParam(InsertParams, InstantChildClassFieldName,
                 PartsAttribute.Items[ii].ClassName);
-              AddStringParam(InsertParams, InstantChildIdFieldName,
+              AddIdParam(InsertParams, InstantChildIdFieldName,
                 PartsAttribute.Items[ii].Id);
+              AddIntegerParam(InsertParams, InstantSequenceNoFieldName, Succ(ii));
               Broker.Execute(InsertStatement, InsertParams);
             finally
               InsertParams.Free;
@@ -13437,7 +13527,7 @@ var
               [ AttributeMetadata.ObjectClassMetadata.TableName,
               AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
               AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
-            AddStringParam(SelectParams, InstantIdFieldName, AObject.Id);
+            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
             AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
             with Self.Broker.CreateDataSet(SelectStatement, SelectParams) do
             try
@@ -13477,40 +13567,41 @@ var
         
         if AttributeMetadata.IsExternal = ceStored then
         begin
-          //Delete all links
+          // Delete all links
           DeleteParams := TParams.Create;
           try
             DeleteStatement := Format(DeleteExternalSQL,
-              [ AttributeMetadata.ExternalStoredName,
+              [AttributeMetadata.ExternalStoredName,
               InstantParentClassFieldName,
               InstantParentIdFieldName,
-              InstantParentAttributeFieldName ]);
+              InstantParentAttributeFieldName]);
             AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(DeleteParams, InstantParentIdFieldName, AObject.id);
+            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
             AddStringParam(DeleteParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
             Broker.Execute(DeleteStatement, DeleteParams);
           finally
             DeleteParams.Free;
           end;
-          //Store all links
-          for ii:=0 to Pred(ReferencesAttribute.Count) do
+          // Store all links
+          for ii := 0 to Pred(ReferencesAttribute.Count) do
           begin
             ReferenceObject := ReferencesAttribute.Items[ii];
             ReferenceObject.CheckId;
             ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
 
-            InsertParams:=TParams.Create;
+            InsertParams := TParams.Create;
             try
-              InsertStatement := Format( InsertExternalSQL,
-                [ AttributeMetadata.ExternalStoredName ] );
-              AddStringParam(InsertParams, InstantIdFieldName, InstantGenerateId);
+              InsertStatement := Format(InsertExternalSQL,
+                [AttributeMetadata.ExternalStoredName]);
+              AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
               AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
-              AddStringParam(InsertParams, InstantParentIdFieldName, AObject.Id);
+              AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
               AddStringParam(InsertParams, InstantParentAttributeFieldName, AttributeMetadata.Name);
               AddStringParam(InsertParams, InstantChildClassFieldName,
                 ReferencesAttribute.Items[ii].ClassName);
-              AddStringParam(InsertParams, InstantChildIdFieldName,
+              AddIdParam(InsertParams, InstantChildIdFieldName,
                 ReferencesAttribute.Items[ii].Id);
+              AddIntegerParam(InsertParams, InstantSequenceNoFieldName, Succ(ii));
               Broker.Execute(InsertStatement, InsertParams);
             finally
               InsertParams.Free;
@@ -13631,7 +13722,7 @@ var
             [ Metadata.ObjectClassMetadata.TableName,
             AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
             AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
-          AddStringParam(Params, InstantIdFieldName, AObjectId);
+          AddIdParam(Params, InstantIdFieldName, AObjectId);
           AddStringParam(Params, InstantClassFieldName, AObject.ClassName);
           with Self.Broker.CreateDataSet(Statement, Params) do
           try
@@ -13657,15 +13748,16 @@ var
         end;
         Changed;
       end;
-    end else if AttributeMetadata.IsExternal=ceStored then
+    end
+    else if AttributeMetadata.IsExternal=ceStored then
     begin
       with (Attribute as TInstantParts) do
       begin
         Clear;
-        Params:=TParams.Create;
+        Params := TParams.Create;
         try
           Statement:=Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
-          AddStringParam(Params, InstantParentIdFieldName, AObjectId);
+          AddIdParam(Params, InstantParentIdFieldName, AObjectId);
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
           AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
           AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
@@ -13693,7 +13785,8 @@ var
         end;
         Changed;
       end;
-    end else
+    end
+    else
     begin
       Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
       try
@@ -13732,7 +13825,7 @@ var
             [ Metadata.ObjectClassMetadata.TableName,
             AttributeMetadata.ExternalLinkedName + InstantClassFieldName,
             AttributeMetadata.ExternalLinkedName + InstantIdFieldName ]);
-          AddStringParam(Params, InstantIdFieldName, AObjectId);
+          AddIdParam(Params, InstantIdFieldName, AObjectId);
           AddStringParam(Params, InstantClassFieldName, AObject.ClassName);
           with Self.Broker.CreateDataSet(Statement, Params) do
           try
@@ -13756,15 +13849,16 @@ var
         end;
         Changed;
       end;
-    end else if AttributeMetadata.IsExternal=ceStored then
+    end
+    else if AttributeMetadata.IsExternal = ceStored then
     begin
       with (Attribute as TInstantReferences) do
       begin
         Clear;
-        Params:=TParams.Create;
+        Params := TParams.Create;
         try
           Statement:=Format(SelectExternalStoredSQL, [AttributeMetadata.ExternalStoredName]);
-          AddStringParam(Params, InstantParentIdFieldName, AObjectId);
+          AddIdParam(Params, InstantParentIdFieldName, AObjectId);
           AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
           AddStringParam(Params, InstantParentAttributeFieldName, Attribute.Name);
           AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
@@ -13790,7 +13884,8 @@ var
         end;
         Changed;
       end;
-    end else
+    end
+    else
     begin
       Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
       try
