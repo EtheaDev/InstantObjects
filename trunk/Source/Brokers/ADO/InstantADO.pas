@@ -696,14 +696,15 @@ const
   OraclePrefix = 'ORA';
   MySQLPrefix = 'My';
   IBMDB2Prefix = 'IBMDADB2';
-begin 
+  MSOraclePrefix = 'MSDAORA';
+begin
   if HasConnection then
   begin
     if HasPrefix(MSJetPrefix) then
       Result := ptMSJet
     else if HasPrefix(MSSQLPrefix) then
       Result := ptMSSQLServer
-    else if HasPrefix(OraclePrefix) then
+    else if HasPrefix(OraclePrefix) or HasPrefix(MSOraclePrefix) then
       Result := ptOracle
     else if HasPrefix(MySQLPrefix) then
       Result := ptMySQL
