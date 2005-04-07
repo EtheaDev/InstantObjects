@@ -405,6 +405,7 @@ type
     procedure PostChanges;
     procedure RefreshCurrentObject;
     procedure RefreshData;
+    procedure RefreshDataView;
     procedure Remember;
     procedure ReleaseObject(AObject: TObject);
     function RemoveObject(AObject: TObject): Integer;
@@ -3157,6 +3158,11 @@ end;
 procedure TInstantCustomExposer.RefreshData;
 begin
   Accessor.Refresh;
+end;
+
+procedure TInstantCustomExposer.RefreshDataView;
+begin
+  Accessor.RefreshView;
 end;
 
 function TInstantCustomExposer.RefreshObjectBuffer(AObject: TObject): Boolean;
