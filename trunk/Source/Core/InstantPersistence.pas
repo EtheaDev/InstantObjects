@@ -12270,7 +12270,7 @@ var
 begin
   if not DataSet.Active then
     Exit;
-  BusyObjects := TObjectList.Create;
+  BusyObjects := TObjectList.Create(False);
   try
     for I := 0 to Pred(ObjectRowCount) do
       with ObjectRows[I]^ do
@@ -13701,7 +13701,9 @@ var
         PartsAttribute := TInstantParts(AObject.AttributeByName(AttributeMetadata.Name));
         if PartsAttribute.IsChanged then
         begin
-          for ii:=0 to Pred(PartsAttribute.Count) do
+          // Make sure that all the items are in memory because they will be
+          // accessed later, after the database records have been deleted.
+          for ii := 0 to Pred(PartsAttribute.Count) do
             PartsAttribute.Items[ii];
           if Map[i].StorageKind = skExternal then
           begin
@@ -14364,7 +14366,7 @@ var
   I: Integer;
   BusyObjects: TObjectList;
 begin
-  BusyObjects := TObjectList.Create;
+  BusyObjects := TObjectList.Create(False);
   try
     for I := 0 to Pred(ObjectReferenceCount) do
     begin
