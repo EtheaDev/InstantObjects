@@ -377,6 +377,7 @@ type
     property ObjectClass: TClass read GetObjectClass write SetObjectClass;
     property ObjectClassName: string read GetObjectClassName write SetObjectClassName stored HasObjectClassName;
     property Subject: TObject read GetSubject;
+    function GetFieldOffset(const Field: TField): Integer;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -1857,8 +1858,11 @@ begin
   Offset := 0;
   for I := 0 to Pred(FieldCount) do
   begin
-    SaveFieldValue(Fields[I], @Buffer[Offset], AObject);
-    Inc(Offset, Fields[I].DataSize);
+    if not IsCalcField(Fields[I]) then
+    begin
+      SaveFieldValue(Fields[I], @Buffer[Offset], AObject);
+      Inc(Offset, Fields[I].DataSize);
+    end;
   end;
 end;
 
@@ -1877,9 +1881,12 @@ begin
   Offset := 0;
   for I := 0 to Pred(FieldCount) do
   begin
-    LoadFieldParams(AObject, Fields[I]);
-    LoadFieldValue(Fields[I], @Buffer[Offset], AObject);
-    Inc(Offset, Fields[I].DataSize);
+    if not IsCalcField(Fields[I]) then
+    begin
+      LoadFieldParams(AObject, Fields[I]);
+      LoadFieldValue(Fields[I], @Buffer[Offset], AObject);
+      Inc(Offset, Fields[I].DataSize);
+    end;
   end;
   GetBookmarkData(Buffer, @BM);
   BM.Instance := AObject;
@@ -1965,7 +1972,7 @@ var
 begin
   Result := 0;
   for I := 0 to Pred(FieldCount) do
-    if not Fields[I].Calculated then
+    if not IsCalcField(Fields[I]) then
       Inc(Result, Fields[I].DataSize);
 end;
 
@@ -2174,21 +2181,32 @@ end;
 function TInstantCustomExposer.GetFieldData(Field: TField;
   Buffer: Pointer): Boolean;
 var
-  I, Ofs: Integer;
   D: TDateTimeRec;
 begin
-  Ofs := 0;
-  for I := 0 to Pred(Field.Index) do
-    Inc(Ofs, Fields[I].DataSize);
   if Assigned(Buffer) then
-    Move(CurrentBuffer[Ofs], Buffer^, Field.DataSize);
+    Move(CurrentBuffer[GetFieldOffset(Field)], Buffer^, Field.DataSize);
+  // Show null dates as blanks
   if (Field is TDateTimeField) and Assigned(Buffer) then
   begin
-    { Show null dates as blanks }
     D := TDateTimeRec(Buffer^);
     Result := (D.Date <> 0) and (D.Time <> 0);
   end else
     Result := (State in [dsEdit, dsInsert]) or (RecordCount > 0);
+end;
+
+function TInstantCustomExposer.GetFieldOffset(const Field: TField): Integer;
+var
+  I: Integer;
+begin
+  if Field.FieldNo < 0 then
+    Result := RecordSize + Field.Offset
+  else
+  begin
+    Result := 0;
+    for I := 0 to Pred(Field.Index) do
+      if not IsCalcField(Fields[I]) then
+        Inc(Result, Fields[I].DataSize);
+  end;
 end;
 
 function TInstantCustomExposer.GetFieldStrings(Field: TField;
@@ -2486,7 +2504,7 @@ begin
   end
   else if Field.DataType = ftBCD then
   begin
-    (Field as TBCDField).currency := True;
+    (Field as TBCDField).Currency := True;
   end;
   if Assigned(FOnInitField) then
     FOnInitField(Self, Field);
@@ -3238,13 +3256,8 @@ begin
 end;
 
 procedure TInstantCustomExposer.SaveField(Field: TField);
-var
-  I, Offset: Integer;
 begin
-  Offset := 0;
-  for I := 0 to Pred(Field.Index) do
-    Inc(Offset, Fields[I].DataSize);
-  SaveFieldValue(Field, @CurrentBuffer[Offset], CurrentObject);
+  SaveFieldValue(Field, @CurrentBuffer[GetFieldOffset(Field)], CurrentObject);
 end;
 
 procedure TInstantCustomExposer.SaveFieldValue(Field: TField;
@@ -3360,18 +3373,12 @@ begin
   end;
 end;
 
-procedure TInstantCustomExposer.SetFieldData(Field: TField;
-  Buffer: Pointer);
-var
-  I, Ofs: Integer;
+procedure TInstantCustomExposer.SetFieldData(Field: TField; Buffer: Pointer);
 begin
-  Ofs := 0;
-  for I := 0 to Pred(Field.Index) do
-    Inc(Ofs, Fields[I].DataSize);
   if Assigned(Buffer) then
-    Move(Buffer^, CurrentBuffer[Ofs], Field.DataSize)
+    Move(Buffer^, CurrentBuffer[GetFieldOffset(Field)], Field.DataSize)
   else
-    FillChar(CurrentBuffer[Ofs], Field.DataSize, 0);
+    FillChar(CurrentBuffer[GetFieldOffset(Field)], Field.DataSize, 0);
   if not (State in [dsCalcFields, dsInternalCalc, dsFilter, dsNewValue]) then
   begin
     PostField(Field);
