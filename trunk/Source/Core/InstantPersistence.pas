@@ -12712,7 +12712,8 @@ function TInstantSQLGenerator.InternalGenerateDeleteExternalSQL(
 var
   WhereStr: string;
 begin
-  WhereStr := BuildWhereStr([InstantParentIdFieldName]);
+  WhereStr := BuildWhereStr([InstantParentClassFieldName,
+    InstantParentIdFieldName]);
   Result := Format('DELETE FROM %s WHERE %s',
     [EmbraceTable('%s'), WhereStr]);
 end;
@@ -12722,7 +12723,7 @@ function TInstantSQLGenerator.InternalGenerateDeleteSQL
 var
   WhereStr: string;
 begin
-  WhereStr := BuildWhereStr([InstantIdFieldName]);
+  WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
   Result := Format('DELETE FROM %s WHERE %s',
     [EmbraceTable(Map.Name), WhereStr]);
 end;
@@ -12780,8 +12781,9 @@ var
   FieldStr, WhereStr: string;
 begin
   FieldStr := Format('%s, %s', [EmbraceField('%s'), EmbraceField('%s')]);
-  WhereStr := Format('%s = :%s',
-    [EmbraceField(InstantIdFieldName), InstantIdFieldName]);
+  WhereStr := Format('%s = :%s AND %s = :%s',
+    [EmbraceField(InstantClassFieldName), InstantClassFieldName,
+     EmbraceField(InstantIdFieldName), InstantIdFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s',
     [FieldStr, EmbraceTable('%s'), WhereStr]);
 end;
@@ -12793,9 +12795,10 @@ var
 begin
   FieldStr := Format('%s, %s, %s', [EmbraceField(InstantChildClassFieldName),
     EmbraceField(InstantChildIdFieldName), EmbraceField(InstantSequenceNoFieldName)]);
-  WhereStr := Format('%s = :%s AND %s = :%s',
+  WhereStr := Format('%s = :%s AND %s = :%s AND %s = :%s',
     [EmbraceField(InstantParentClassFieldName), InstantParentClassFieldName,
-     EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName]); 
+    EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName,
+    EmbraceField(InstantChildClassFieldName), InstantChildClassFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s ORDER BY %s',
     [FieldStr, EmbraceTable('%s'), WhereStr, EmbraceField(InstantSequenceNoFieldName)]);
 end;
@@ -12806,7 +12809,7 @@ var
   FieldStr, WhereStr: string;
 begin
   FieldStr := BuildFieldList(Map, [InstantUpdateCountFieldName]);
-  WhereStr := BuildWhereStr([InstantIdFieldName]);
+  WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s',
     [FieldStr, EmbraceTable(Map.Name), WhereStr]);
 end;
@@ -12824,7 +12827,8 @@ var
 begin
   AssignmentStr := BuildAssignmentList(Map,
     [InstantIdFieldName, InstantUpdateCountFieldName]);
-  WhereStr := ' (1=1) ' + BuildPersistentIdCriteria;
+  WhereStr := BuildWhereStr([InstantClassFieldName]) +
+    BuildPersistentIdCriteria;
   Result := Format('UPDATE %s SET %s WHERE %s',
     [EmbraceTable(Map.Name), AssignmentStr, WhereStr]);
 end;
