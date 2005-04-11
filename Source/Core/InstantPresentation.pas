@@ -305,6 +305,7 @@ type
     function GetBookmarkFlag(Buffer: PChar): TBookmarkFlag; override;
     function GetCanModify: Boolean; override;
     function GetCurrentObject: TObject; virtual;
+    function GetFieldOffset(const Field: TField): Integer;
     function GetRecNo: Integer; override;
     function GetRecord(Buffer: PChar; GetMode: TGetMode;
       DoCheck: Boolean): TGetResult; override;
@@ -377,7 +378,6 @@ type
     property ObjectClass: TClass read GetObjectClass write SetObjectClass;
     property ObjectClassName: string read GetObjectClassName write SetObjectClassName stored HasObjectClassName;
     property Subject: TObject read GetSubject;
-    function GetFieldOffset(const Field: TField): Integer;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -2879,14 +2879,9 @@ begin
 end;
 
 procedure TInstantCustomExposer.LoadField(Obj: TObject; Field: TField);
-var
-  I, Offset: Integer;
 begin
-  Offset := 0;
-  for I := 0 to Pred(Field.Index) do
-    Inc(Offset, Fields[I].DataSize);
   LoadFieldParams(Obj, Field);
-  LoadFieldValue(Field, @CurrentBuffer[Offset], Obj);
+  LoadFieldValue(Field, @CurrentBuffer[GetFieldOffset(Field)], Obj);
   DataEvent(deFieldChange, Longint(Field));
 end;
 
