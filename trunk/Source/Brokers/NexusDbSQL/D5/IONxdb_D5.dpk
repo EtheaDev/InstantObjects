@@ -1,0 +1,43 @@
+package IONxdb_D5;
+
+{$R *.RES}
+{$ALIGN ON}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS ON}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'InstantObjects NexusDb Runtime Support (Delphi 5)'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+{$DEFINE NX1}
+
+requires
+  vcl50,
+  vclx50,
+  IOCore;
+
+contains
+  InstantNexusDbConnectionDefEdit in '..\InstantNexusDbConnectionDefEdit.pas' {InstantNexusDBConnectionDefEditForm},
+  InstantNexusDb in '..\InstantNexusDb.pas',
+  InstantNexusDbConsts in '..\InstantNexusDbConsts.pas',
+  InstantNexusDbEmbeddedConnectionDefEdit in '..\InstantNexusDbEmbeddedConnectionDefEdit.pas' {InstantNexusDBEmbeddedConnectionDefEditForm},
+  InstantNexusDbEmbedded in '..\InstantNexusDbEmbedded.pas';
+
+end.
+
