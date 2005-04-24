@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <PersonalityInfo>
+    <Option>
+      <Option Name="Personality">Default.Personality</Option>
+      <Option Name="ProjectType"></Option>
+      <Option Name="Version">1.0</Option>
+      <Option Name="GUID">{F0FE6CA2-FDA4-4632-971F-15B7619FC4BE}</Option>
+    </Option>
+  </PersonalityInfo>
+  <Default.Personality>
+    
+    <Projects>
+      <Projects Name="IONxdb_D9.bpl">IONxdb.bdsproj</Projects>
+      <Projects Name="DclIONxdb_D9.bpl">DclIONxdb.bdsproj</Projects>
+      <Projects Name="Targets">IONxdb_D9.bpl DclIONxdb_D9.bpl</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>
