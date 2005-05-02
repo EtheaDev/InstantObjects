@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Uberto Barbini
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -94,6 +94,9 @@ implementation
 uses
 {$IFDEF MSWINDOWS}
   Windows, ActiveX, ComObj,
+{$ENDIF}
+{$IFDEF FPC}
+  InstantFpcUtils,
 {$ENDIF}
   {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti,
   SysUtils;
@@ -176,7 +179,7 @@ function InstantCompareValues(V1, V2: Variant;
     if IsBlankVar(S2) then
       S2 := '';
     if coPartial in Options then
-      S := Copy(S1, 1, Length(S2))
+      S := Copy(S1, 1,  Length(VarToStr(S2)))
     else
       S := S1;
     if coCaseInsensitive in Options then

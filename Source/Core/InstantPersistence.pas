@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
- * Joao Morais, Cesar Coll
+ * Joao Morais, Cesar Coll, Uberto Barbini
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -47,6 +47,9 @@ uses
 {$ENDIF}
 {$IFDEF LINUX}
   QGraphics,
+{$ENDIF}
+{$IFDEF FPC}
+  InstantFpcUtils,
 {$ENDIF}
   Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand, InstantConsts;
 
@@ -1202,7 +1205,11 @@ type
     procedure Changed; virtual;
     function ChangesDisabled: Boolean;
     procedure CheckId;
+{$IFDEF FPC}
+    class function ClassType: TInstantObjectClass;
+{$ELSE}
     function ClassType: TInstantObjectClass;
+{$ENDIF}
     procedure ClearObjects;
     function Clone(AConnector: TInstantConnector = nil): TInstantObject; overload;
     function ContainerByName(const ContainerName: string): TInstantContainer;
@@ -2442,12 +2449,18 @@ implementation
 
 uses
 {$IFDEF MSWINDOWS}
-  Windows, Mask,
+  Windows,
 {$ENDIF}
 {$IFDEF LINUX}
   Types,
 {$ENDIF}
-  TypInfo, {$IFDEF D6+}MaskUtils, Variants,{$ENDIF}
+  TypInfo,
+{$IFDEF D6+}
+  MaskUtils,
+  Variants,
+{$ELSE}
+  Mask,
+{$ENDIF}
   InstantUtils, InstantRtti, InstantDesignHook, InstantCode;
 
 const
@@ -7258,7 +7271,11 @@ begin
   end;
 end;
 
+{$IFDEF FPC}
+class function TInstantObject.ClassType: TInstantObjectClass;
+{$ELSE}
 function TInstantObject.ClassType: TInstantObjectClass;
+{$ENDIF}
 begin
   Result := TInstantObjectClass(inherited ClassType);
 end;
@@ -8374,11 +8391,13 @@ begin
     begin
       Destroy;
       Self := nil;
+      {$IFNDEF FPC} //UB it raise an error in FPC, surely there'd be better ways to accomplish this
       asm
         MOV     [EBP - $09], EAX // Avoid calling AfterConstruction
         POP     dword ptr fs:[$00000000]
         ADD     ESP, $0C
       end;
+      {$ENDIF}
     end;
   end;
 end;
@@ -11990,7 +12009,11 @@ end;
 procedure TInstantNavigationalResolver.WriteCurrency(Attribute: TInstantCurrency);
 begin
   with Attribute do
+{$IFDEF FPC}
+    FieldByName(Metadata.FieldName).AsFloat := Value;
+{$ELSE}
     FieldByName(Metadata.FieldName).AsCurrency := Value;
+{$ENDIF}
 end;
 
 procedure TInstantNavigationalResolver.WriteInteger(Attribute: TInstantInteger);
@@ -14743,13 +14766,16 @@ procedure LoadClassMetadatas;
 
 var
   Instance: Cardinal;
+{$IFNDEF FPC}
   LibModule: PLibModule;
+{$ENDIF}
 begin
   if HasModelResource(HInstance)then
     LoadModelFromResource(HInstance)
   else if HasModelResource(MainInstance) then
     LoadModelFromResource(MainInstance)
   else begin
+{$IFNDEF FPC}
     LibModule := LibModuleList;
     while LibModule <> nil do
     begin
@@ -14762,6 +14788,7 @@ begin
       end;
       LibModule := LibModule.Next;
     end;
+{$ENDIF}
   end;
 end;
 
@@ -14893,7 +14920,9 @@ initialization
   ClassList := TList.Create;
 {$IFDEF MSWINDOWS}
   GraphicClassList[gffBmp] := Graphics.TBitmap;
-  GraphicClassList[gffEmf] := Graphics.TMetaFile;
+  {$IFNDEF FPC}
+    GraphicClassList[gffEmf] := Graphics.TMetaFile;
+  {$ENDIF}
 {$ENDIF}
 {$IFDEF LINUX}
   GraphicClassList[gffBmp] := QGraphics.TBitmap;

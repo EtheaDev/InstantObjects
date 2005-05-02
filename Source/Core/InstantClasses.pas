@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Marco Cantù, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Marco Cantù, Nando Dessena, Uberto Barbini
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -41,7 +41,10 @@ unit InstantClasses;
 interface
 
 uses
-{$IFDEF VER130}Windows,{$ENDIF}
+{$IFDEF MSWINDOWS}Windows,{$ENDIF}
+{$IFDEF FPC}
+  InstantFpcUtils, streamex,
+{$ENDIF}
   Classes, InstantConsts, SysUtils;
 
 const
@@ -68,6 +71,17 @@ type
     destructor Destroy; override;
     property OriginalException: TObject read FOriginalException;
   end;
+
+{$IFDEF FPC}
+  TAbstractWriter = class(TDelphiWriter);
+{$ELSE}
+  TAbstractWriter = class(TWriter);
+{$ENDIF}
+{$IFDEF FPC}
+  TAbstractReader = class(TDelphiReader);
+{$ELSE}
+  TAbstractReader = class(TReader);
+{$ENDIF}
 
   TInstantReader = class;
   TInstantWriter = class;
@@ -152,7 +166,7 @@ type
     function Owner: TPersistent;
   end;
 
-  TInstantReader = class(TReader)
+  TInstantReader = class(TAbstractReader)
   private
     FStream: TStream;
   protected
@@ -169,7 +183,7 @@ type
     property Stream: TStream read FStream;
   end;
 
-  TInstantWriter = class(TWriter)
+  TInstantWriter = class(TAbstractWriter)
   private
     FStream: TStream;
   protected
@@ -239,17 +253,17 @@ type
   private
     FStream: TStream;
     FTagStack: TStringList;
-    FWriter: TWriter;
+    FWriter: TAbstractWriter;
     function GetCurrentTag: string;
     function GetEof: Boolean;
     function GetPosition: Integer;
     function GetTagStack: TStringList;
-    function GetWriter: TWriter;
+    function GetWriter: TAbstractWriter;
     procedure SetPosition(Value: Integer);
     procedure WriteString(const S: string);
   protected
     property TagStack: TStringList read GetTagStack;
-    property Writer: TWriter read GetWriter;
+    property Writer: TAbstractWriter read GetWriter;
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
@@ -267,11 +281,11 @@ type
 
   TInstantXMLProcessor = class(TObject)
   private
-    FReader: TReader;
+    FReader: TAbstractReader;
     FStream: TStream;
     function GetEof: Boolean;
     function GetPosition: Integer;
-    function GetReader: TReader;
+    function GetReader: TAbstractReader;
     function GetToken: TInstantXMLToken;
     function ReadEscapedChar: Char;
     procedure SetPosition(const Value: Integer);
@@ -280,7 +294,7 @@ type
     function PeekChar: Char;
     function ReadChar: Char;
     procedure SkipBlanks;
-    property Reader: TReader read GetReader;
+    property Reader: TAbstractReader read GetReader;
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
@@ -1300,10 +1314,10 @@ begin
   Result := FTagStack;
 end;
 
-function TInstantXMLProducer.GetWriter: TWriter;
+function TInstantXMLProducer.GetWriter: TAbstractWriter;
 begin
   if not Assigned(FWriter) then
-    FWriter := TWriter.Create(Stream, InstantBufferSize);
+    FWriter := TAbstractWriter.Create(Stream, InstantBufferSize);
   Result := FWriter;
 end;
 
@@ -1406,10 +1420,10 @@ begin
   Result := Reader.Position;
 end;
 
-function TInstantXMLProcessor.GetReader: TReader;
+function TInstantXMLProcessor.GetReader: TAbstractReader;
 begin
   if not Assigned(FReader) then
-    FReader := TReader.Create(Stream, InstantBufferSize);
+    FReader := TAbstractReader.Create(Stream, InstantBufferSize);
   Result := Freader;
 end;
 
@@ -1765,18 +1779,18 @@ end;
 procedure TInstantTextToBinaryConverter.DoConvertProperties(
   const StopTag: string);
 
-  procedure ConvertOrdValue(PropType: PPTypeInfo; Value: Integer);
+(*  procedure ConvertOrdValue(PropType: PTypeInfo; Value: Integer);
   begin
-    case PropType^^.Kind of
+    case PropType^.Kind of
       tkInteger:
         Writer.WriteInteger(Value);
       tkChar:
         Writer.WriteChar(Chr(Value));
       tkEnumeration:
-        Writer.WriteIdent(GetEnumName(PropType^, Value));
+        Writer.WriteIdent(GetEnumName(PropType, Value));
     end;
   end;
-
+*)
   procedure ConvertProperty(PropInfo: PPropInfo);
   var
     I: Integer;
@@ -1786,16 +1800,22 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
     PropName := Processor.ReadTagName;
     ValueStr := Processor.ReadData;
     Writer.WriteStr(PropName);
-    case PropInfo^.PropType^^.Kind of
+    case GetTypeInfo(PropInfo)^.Kind of //PropInfo^.PropType^^.Kind of
       tkInteger:
         Writer.WriteInteger(StrToInt(ValueStr));
       tkFloat:
       begin
-        if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
+        if GetTypeData(GetTypeInfo(PropInfo)(*PropInfo^.PropType^*)).FloatType = ftCurr then
           Writer.WriteCurrency(StrToCurr(ValueStr))
         else
           Writer.WriteFloat(StrToFloat(ValueStr));
       end;
+      {$IFDEF FPC}
+      tkAString:
+        Writer.WriteString(ValueStr);
+      tkBool:
+        Writer.WriteIdent(ValueStr);
+      {$ENDIF}
       tkString, tkLString, tkChar:
         Writer.WriteString(ValueStr);
       tkEnumeration:

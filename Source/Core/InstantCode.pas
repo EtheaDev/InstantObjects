@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell, , Uberto Barbini
  * Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
@@ -2844,8 +2844,8 @@ begin
     Result := CompareText(Member1.Name, Member2.Name);
 end;
 
-function CompareMembers(List: TStringList;
-  Index1, Index2: Integer): Integer; overload;
+function CompareMembersList(List: TStringList;
+  Index1, Index2: Integer): Integer;
 begin
   Result := CompareMembers(List.Objects[Index1], List.Objects[Index2]);
 end;
@@ -4911,8 +4911,8 @@ begin
     Result := 0;
 end;
 
-function CompareDivisions(List: TStringList;
-  Index1, Index2: Integer): Integer; overload;
+function CompareDivisionsList(List: TStringList;
+  Index1, Index2: Integer): Integer;
 begin
   Result := CompareDivisions(List.Objects[Index1], List.Objects[Index2]);
 end;
@@ -4921,7 +4921,7 @@ function TInstantCodeClass.FindNearestDivisions(
   Division: TInstantCodeDivision; out Prior, Next: TObject): Boolean;
 begin
   Result := FindNearest(FDivisions, Division, Prior, Next, nil, nil,
-    CompareDivisions);
+    CompareDivisionsList);
 end;
 
 function TInstantCodeClass.FindNearestFields(Field: TInstantCodeField;
@@ -4937,7 +4937,7 @@ begin
   if not Assigned(List) then
     List := FMembers;
   Result := FindNearest(List, Instance, Prior, Next, VisibilityFilter,
-    @Visibilities, CompareMembers);
+    @Visibilities, CompareMembersList);
 end;
 
 function TInstantCodeClass.FindNearestMethods(Method: TInstantCodeMethod;

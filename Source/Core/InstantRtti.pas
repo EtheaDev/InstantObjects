@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta, Adrea Petrelli, Uberto Barbini
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -70,6 +70,7 @@ type
     property Values[Index: Integer]: Variant read GetValues;
   end;
 
+function GetTypeInfo(PropInfo: PPropInfo) : PTypeInfo;
 procedure InstantGetEnumNames(TypeInfo: PTypeInfo; Names: TStrings;
   PrefixLen: Integer = 0);
 function InstantGetProperty(AObject: TObject; PropPath: string): Variant;
@@ -83,13 +84,22 @@ implementation
 
 uses
 {$IFDEF MSWINDOWS}
-  Controls,
+//  Controls,
 {$ENDIF}
 {$IFDEF LINUX}
   InstantClasses, //only for TDate and TTime declaration
   QControls,
 {$ENDIF}
   {$IFDEF D6+}Variants,{$ENDIF}SysUtils;
+
+function GetTypeInfo(PropInfo: PPropInfo) : PTypeInfo;
+begin
+{$IFDEF FPC}
+  Result := PropInfo^.PropType;
+{$ELSE}
+  Result := PropInfo^.PropType^;
+{$ENDIF}
+end;
 
 function AccessProperty(AObject: TObject; PropPath: string;
   Value: Variant): Variant;
@@ -108,9 +118,9 @@ begin
       VarClear(Result)
     else if Assigned(PropInfo) then
     begin
-      if (Value <> Null) and Assigned(PropInfo.SetProc) then
+      if not VarIsNull(Value) and Assigned(PropInfo.SetProc) then
       begin
-        case PropInfo^.PropType^^.Kind of
+        case GetTypeInfo(PropInfo)^.Kind of
           tkClass:
             SetObjectProp(AObject, PropInfo, TObject(Integer(Value)));
           tkEnumeration:
@@ -187,7 +197,7 @@ begin
       begin
         if Assigned(PInstance) and Assigned(TObject(PInstance^)) then
           TObject(PInstance^) := GetObjectProp(TObject(PInstance^), PropInfo);
-        TypeData := GetTypeData(PropInfo^.PropType^);
+        TypeData := GetTypeData(GetTypeInfo(PropInfo));
         if Assigned(TypeData) then
           Result := InstantGetPropInfo(TypeData.ClassType, PropPath, PInstance)
         else
@@ -302,6 +312,9 @@ procedure TInstantProperties.CreatePropList(TypeInfo: PTypeInfo);
 const
   TypeKinds = [tkInteger, tkChar, tkEnumeration, tkFloat,
     tkString, tkSet, tkClass, tkWChar, tkLString, tkWString,
+{$IFDEF FPC}
+    tkAString, tkBool,
+{$ENDIF}
     tkVariant, tkArray, tkRecord, tkInt64, tkDynArray];
 begin
   DestroyPropList;
@@ -400,18 +413,19 @@ begin
     Exit;
   end;
   PropInfo := PropInfos[Index];
-  if PropInfo^.PropType^^.Kind = tkFloat then
+  if GetTypeInfo(PropInfo)^.Kind = tkFloat then
   begin
-    if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
+    if GetTypeData(GetTypeInfo(PropInfo)).FloatType = ftCurr then
     begin
       CurrencyValue := GetFloatProp(FInstance, PropInfo);
       Result := CurrencyValue;
     end else
     begin
       Value := GetFloatProp(FInstance, PropInfo);
-      if (PropInfo.PropType^ = TypeInfo(TDateTime))
-        or (PropInfo.PropType^ = TypeInfo(TDate))
-        or (PropInfo.PropType^ = TypeInfo(TTime)) then
+      if (GetTypeInfo(PropInfo) = TypeInfo(TDateTime))
+//        or (PropInfo.PropType^ = TypeInfo(TDate))
+//        or (PropInfo.PropType^ = TypeInfo(TTime))
+        then
         Result := VarFromDateTime(Value)
       else
         Result := Value;

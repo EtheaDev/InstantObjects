@@ -1,21 +1,32 @@
 program TestIO;
 
+{$IFDEF FPC}
+{$mode objfpc}{$H+}
+{$ENDIF}
+
 uses
-  Forms,
-  TestMockConnector in 'TestMockConnector.pas',
-  guitestrunner {TestRunner},
+{$IFDEF FPC}  Interfaces,
+{$ENDIF}
+  Forms, GuiTestRunner,
   fpcunit,
   testregistry,
   testutils,
   testreport,
   InstantMock in 'InstantMock.pas',
-  TestMockBroker in 'TestMockBroker.pas';
+  TestMockConnector in 'TestMockConnector.pas',
+  TestMockBroker in 'TestMockBroker.pas',
+  TestInstantPersistence in 'TestInstantPersistence.pas',
+  TestInstantClasses in 'TestInstantClasses.pas',
+  TestInstantRtti in 'TestInstantRtti.pas',
+  TestMinimalModel in 'TestMinimalModel.pas',
+  TestMinimalModelDb  in 'TestMinimalModelDb.pas',
+  TestModelDb in 'TestModelDb.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TTestRunner, TestRunner);
+  Application.CreateForm(TGUITestRunner, TestRunner);
   Application.Run;
 end.
 
