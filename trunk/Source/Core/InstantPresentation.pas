@@ -637,10 +637,10 @@ implementation
 
 uses
 {$IFDEF MSWINDOWS}
-  Controls, Mask, Forms,
+  //Forms,
 {$ENDIF}
 {$IFDEF LINUX}
-  QControls, QMask, QForms,
+  QForms,
 {$ENDIF}
   {$IFDEF D6+}Variants, MaskUtils, FmtBcd,{$ENDIF} InstantClasses,
   InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors,
@@ -1639,10 +1639,12 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
     else
     if ATypeInfo = TypeInfo(TDateTime) then
       Result := DB.ftDateTime
+(*
     else if ATypeInfo = TypeInfo(TDate) then
       Result := DB.ftDate
     else if ATypeInfo = TypeInfo(TTime) then
       Result := DB.ftTime
+*)      
     else
       Result := DB.ftFloat;
   end;
@@ -4122,7 +4124,8 @@ begin
     Field.Modified := True;
     Exposer.DataEvent(deFieldChange, Integer(Field));
   except
-    Application.HandleException(Self);
+    if Assigned(Classes.ApplicationHandleException) then
+      Classes.ApplicationHandleException(Self);
   end;
   inherited Destroy;
 end;

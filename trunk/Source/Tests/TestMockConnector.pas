@@ -7,8 +7,7 @@ uses
   InstantPersistence,
   fpcunit,
   testregistry,
-  InstantMock,
-  UbMockObject;
+  InstantMock;
 
 type
   TTestMockConnector = class(TTestCase)

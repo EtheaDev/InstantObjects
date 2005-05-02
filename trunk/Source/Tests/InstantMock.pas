@@ -3,7 +3,7 @@ unit InstantMock;
 interface
 
 uses
-  InstantPersistence, Classes, UbMockObject;
+  SysUtils, InstantPersistence, Classes, UbMockObject;
 
 type
   TInstantBrokerClass = class of TInstantBroker;
@@ -100,6 +100,8 @@ end;
 
 function TInstantMockConnector.CreateBroker: TInstantBroker;
 begin
+  if not Assigned(FBrokerClass) then
+     raise  Exception.Create('Undefined BrokerClass');
   FMock.AddExpectation('CreateBroker ' + FBrokerClass.ClassName);
   Result := FBrokerClass.Create(Self);
 end;
@@ -234,6 +236,7 @@ function TInstantMockCRBroker.EnsureResolver(
   Map: TInstantAttributeMap): TInstantCustomResolver;
 begin
   MockManager.AddExpectation('EnsureResolver');
+  Result := nil;
 end;
 
 function TInstantMockCRBroker.InternalDisposeObject(

@@ -4,7 +4,7 @@ interface
 
 uses
   Classes, SysUtils, InstantPersistence, fpcunit, testregistry, InstantMock,
-  UbMockObject, Model;
+  Model;
 
 type
   TTestMockBroker = class(TTestCase)
@@ -29,6 +29,7 @@ type
   published
     procedure TestGetBroker;
     procedure TestStoreAndRetrieveContact;
+    procedure TestParts;
   end;
 
 implementation
@@ -97,7 +98,7 @@ begin
   try
     AssertEquals(old_id, a.Id);
   finally
-    a.Free;
+    FreeAndNil(a);
   end;
   brok.MockManager.EndSetUp;
   brok.MockManager.AddExpectation('InternalRetrieveObject ' + old_id);
@@ -145,6 +146,27 @@ begin
   brok.MockManager.Verify;
 end;
 
+procedure TTestMockRelationalBroker.TestParts;
+var
+  c: TContact;
+  t: TPhone;
+begin
+  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+  Fconn.IsDefault := True;
+  c := TContact.Create;
+  try
+    AssertNotNull(c._Phones);
+    AssertEquals(0, c.PhoneCount);
+    t := TPhone.Create;
+    t.Name := 'Home';
+    t.Number := '012 12345678';
+    c.AddPhone(t);
+    AssertEquals(1, c.PhoneCount);
+  finally
+    c.Free;
+  end;
+end;
+
 procedure TTestMockRelationalBroker.TestStoreAndRetrieveContact;
 var
   c: TContact;
@@ -153,9 +175,11 @@ var
   t: TPhone;
 begin
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+
   Fconn.IsDefault := True;
   brok := Fconn.Broker as TInstantMockCRBroker;
   brok.MockManager.StartSetUp;
+
   c := TContact.Create;
   try
     c.Name := 'Mike';
@@ -164,6 +188,8 @@ begin
     t.Name := 'Home';
     t.Number := '012 12345678';
     c.AddPhone(t);
+    AssertEquals(1, c.PhoneCount);
+
     t := TPhone.Create;
     t.Name := 'Office';
     t.Number := '012 23456781';
@@ -187,7 +213,7 @@ begin
     AssertNotNull(c.Address);
     AssertEquals(0, c.PhoneCount); //mock brocker cannot collect part and parts
   finally
-    c.Free;
+    FreeAndNil(c);
   end;
   brok.MockManager.Verify;
 end;
