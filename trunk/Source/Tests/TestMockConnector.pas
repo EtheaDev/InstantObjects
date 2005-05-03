@@ -26,7 +26,10 @@ procedure TTestMockConnector.TestBuildDatabase;
 var
   conn: TInstantMockConnector;
 begin
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0),'.mdr'));
   conn := TInstantMockConnector.Create(nil);
   try
     AssertNotNull(conn);
@@ -68,7 +71,10 @@ procedure TTestMockConnector.TestTransaction;
 var
   conn: TInstantMockConnector;
 begin
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0),'.mdr'));
   conn := TInstantMockConnector.Create(nil);
   try
     conn.BrokerClass := TInstantMockBroker;
@@ -103,6 +109,7 @@ begin
 end;
 
 initialization
+{$IFNDEF CURR_TESTS}
   RegisterTests([TTestMockConnector]);
-
+{$ENDIF}
 end.

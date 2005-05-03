@@ -202,6 +202,9 @@ begin
 end;
 
 initialization
+  // Register any test cases with the test runner
+{$IFNDEF CURR_TESTS}
   RegisterTests([TTestInstantRtti]);
+{$ENDIF}
 
 end.

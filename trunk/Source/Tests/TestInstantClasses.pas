@@ -316,14 +316,18 @@ begin
     AssertEquals('TInstantGuineaPig', ic.Reader.ReadStr); //la stringa con il classname
     c.ConvertToText(ic);
     ic.Producer.eof; //to flush the buffer
-    AssertEquals('ConvertToText', '<Age>2</Age><Weight>1,123</Weight><PigName>Miss piggy</PigName>', outs.DataString);
+    AssertEquals('ConvertToText', '<Age>2</Age><Weight>1' + DecimalSeparator +
+      '123</Weight><PigName>Miss piggy</PigName>', outs.DataString);
 
   //butta via l'output e riprova col sistema completo
     ins.Position := 0;
     outs.Position := 0;
     s2 := '';
     InstantObjectBinaryToText(ins, outs);
-    AssertEquals('InstantObjectBinaryToText', '<TInstantGuineaPig><Age>2</Age><Weight>1,123</Weight><PigName>Miss piggy</PigName></TInstantGuineaPig>', outs.DataString);
+    AssertEquals('InstantObjectBinaryToText',
+      '<TInstantGuineaPig><Age>2</Age><Weight>1' + DecimalSeparator +
+      '123</Weight><PigName>Miss piggy</PigName></TInstantGuineaPig>',
+      outs.DataString);
   finally
     ic.Free;
     c.Free;
@@ -345,7 +349,9 @@ begin
   try
     InstantWriteObject(ms, sfXML, c);
     AssertEquals(102, ms.Position);
-    AssertEquals('<TInstantGuineaPig><Age>2</Age><Weight>1,123</Weight><PigName>Miss piggy</PigName></TInstantGuineaPig>', ms.DataString);
+    AssertEquals('<TInstantGuineaPig><Age>2</Age><Weight>1' + DecimalSeparator +
+      '123</Weight><PigName>Miss piggy</PigName></TInstantGuineaPig>',
+      ms.DataString);
   finally
     c.Free;
     ms.Free;
@@ -379,7 +385,9 @@ begin
 end;
 
 initialization
+  // Register any test cases with the test runner
+{$IFNDEF CURR_TESTS}
   RegisterTests([TTestInstantClasses]);
   RegisterClass(TInstantGuineaPig);
-
+{$ENDIF}
 end.

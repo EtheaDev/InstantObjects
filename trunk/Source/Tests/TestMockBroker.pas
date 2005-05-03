@@ -4,24 +4,28 @@ interface
 
 uses
   Classes, SysUtils, InstantPersistence, fpcunit, testregistry, InstantMock,
-  Model;
+  TestModel;
 
 type
   TTestMockBroker = class(TTestCase)
   private
+    FClassCount: Integer;
   protected
     FConn: TInstantMockConnector;
     procedure SetUp; override;
     procedure TearDown; override;
+  public
   published
-    procedure TestModelMdx;
+    procedure TestModelFromToFile;
     procedure TestGetBroker;
     procedure TestBuildDatabase;
+    procedure TestModelFromToResFile;
     procedure TestStoreAndRetrieveAddress;
   end;
 
   TTestMockRelationalBroker = class(TTestCase)
   private
+    FClassCount: Integer;
   protected
     FConn: TInstantMockConnector;
     procedure SetUp; override;
@@ -34,12 +38,55 @@ type
 
 implementation
 
-{ TTestMockBroker }
-
-procedure TTestMockBroker.TestModelMdx;
+procedure TTestMockBroker.TestModelFromToFile;
+var
+  vReturnValue: TInstantClassMetadata;
 begin
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+  if FClassCount > 0 then
+  begin
+    // This ensures that the exported file is synchronised
+    // with the current model resource file.
+    InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdx'));
+    InstantModel.ClassMetadatas.Clear;
+  end;
+
+  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdx'));
+  vReturnValue := InstantModel.ClassMetadatas.Find('TCategory');
+  AssertNotNull(vReturnValue);
+  if FClassCount = 0 then
+    FClassCount := InstantModel.ClassMetadatas.Count;
+
+  InstantModel.ClassMetadatas.Remove(vReturnValue);
+  AssertNull('TCategory was found!',
+    InstantModel.ClassMetadatas.Find('TCategory'));
+  InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdxt'));
+
+  InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdxt'));
   AssertNotNull(InstantModel.ClassMetadatas.Find('TContact'));
+  AssertNull(InstantModel.ClassMetadatas.Find('TCategory'));
+end;
+
+procedure TTestMockBroker.TestModelFromToResFile;
+var
+  vReturnValue: TInstantClassMetadata;
+begin
+  if FClassCount > 0 then
+    InstantModel.ClassMetadatas.Clear;
+
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+  vReturnValue := InstantModel.ClassMetadatas.Find('TCategory');
+  AssertNotNull(vReturnValue);
+
+  InstantModel.ClassMetadatas.Remove(vReturnValue);
+  AssertNull(InstantModel.ClassMetadatas.Find('TCategory'));
+
+  InstantModel.SaveToResFile(ChangeFileExt(ParamStr(0), '.mdrt'));
+  InstantModel.ClassMetadatas.Clear;
+
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdrt'));
+  AssertNotNull(InstantModel.ClassMetadatas.Find('TContact'));
+  AssertNull(InstantModel.ClassMetadatas.Find('TCategory'));
 end;
 
 procedure TTestMockBroker.TestGetBroker;
@@ -59,8 +106,6 @@ procedure TTestMockBroker.TestBuildDatabase;
 var
   brok: TInstantMockBroker;
 begin
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
-
   brok := Fconn.Broker as TInstantMockBroker;
   brok.MockManager.StartSetUp;
   brok.MockManager.EndSetUp;
@@ -74,7 +119,7 @@ var
   old_id: string;
   brok: TInstantMockBroker;
 begin
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+  AssertTrue(FClassCount > 0);
 
   Fconn.IsDefault := True;
   Fconn.StartTransaction;
@@ -110,6 +155,11 @@ begin
   inherited;
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
+
+  if FClassCount > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+  FClassCount := InstantModel.ClassMetadatas.Count;
 end;
 
 procedure TTestMockBroker.TearDown;
@@ -125,6 +175,11 @@ begin
   inherited;
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockCRBroker;
+
+  if FClassCount > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+  FClassCount := InstantModel.ClassMetadatas.Count;
 end;
 
 procedure TTestMockRelationalBroker.TearDown;
@@ -151,7 +206,8 @@ var
   c: TContact;
   t: TPhone;
 begin
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+  AssertTrue(FClassCount > 0);
+
   Fconn.IsDefault := True;
   c := TContact.Create;
   try
@@ -174,12 +230,11 @@ var
   brok: TInstantMockCRBroker;
   t: TPhone;
 begin
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0),'.mdx'));
+  AssertTrue(FClassCount > 0);
 
   Fconn.IsDefault := True;
   brok := Fconn.Broker as TInstantMockCRBroker;
   brok.MockManager.StartSetUp;
-
   c := TContact.Create;
   try
     c.Name := 'Mike';
@@ -189,7 +244,6 @@ begin
     t.Number := '012 12345678';
     c.AddPhone(t);
     AssertEquals(1, c.PhoneCount);
-
     t := TPhone.Create;
     t.Name := 'Office';
     t.Number := '012 23456781';
@@ -219,6 +273,7 @@ begin
 end;
 
 initialization
+{$IFNDEF CURR_TESTS}
   RegisterTests([TTestMockBroker, TTestMockRelationalBroker]);
-
+{$ENDIF}
 end.
