@@ -1,0 +1,384 @@
+unit TestInstantAttributeMetadata;
+
+interface
+
+uses SysUtils, fpcunit, InstantMock, InstantPersistence;
+
+type
+  TRunMethodCategory = procedure(Category: TInstantAttributeCategory) of object;
+  TRunMethodIAClass = procedure(AClass: TInstantAttributeClass) of object;
+
+  // Extended test methods for class TTestCase
+  TTestCaseEx = class(TTestCase)
+  public
+    class procedure AssertException(const AMessage: string;
+                                    AExceptionClass: ExceptClass;
+                                    ACategory: TInstantAttributeCategory;
+                                    AMethod: TRunMethodCategory);
+                                    overload;
+    class procedure AssertException(AExceptionClass: ExceptClass;
+                                    ACategory: TInstantAttributeCategory;
+                                    AMethod: TRunMethodCategory);
+                                    overload;
+    class procedure AssertException(const AMessage: string;
+                                    AExceptionClass: ExceptClass;
+                                    AClass: TInstantAttributeClass;
+                                    AMethod: TRunMethodIAClass);
+                                    overload;
+    class procedure AssertException(AExceptionClass: ExceptClass;
+                                    AClass: TInstantAttributeClass;
+                                    AMethod: TRunMethodIAClass);
+                                    overload;
+    class procedure AssertNoException(const AMessage: string;
+                                    AExceptionClass: ExceptClass;
+                                    ACategory: TInstantAttributeCategory;
+                                    AMethod: TRunMethodCategory);
+                                    overload;
+    class procedure AssertNoException(AExceptionClass: ExceptClass;
+                                    ACategory: TInstantAttributeCategory;
+                                    AMethod: TRunMethodCategory);
+                                    overload;
+    class procedure AssertNoException(const AMessage: string;
+                                    AExceptionClass: ExceptClass;
+                                    AClass: TInstantAttributeClass;
+                                    AMethod: TRunMethodIAClass);
+                                    overload;
+    class procedure AssertNoException(AExceptionClass: ExceptClass;
+                                    AClass: TInstantAttributeClass;
+                                    AMethod: TRunMethodIAClass);
+                                    overload;
+  end;
+
+  // Test methods for class TInstantAttributeMetadata
+  TestTInstantAttributeMetadata = class(TTestCaseEx)
+  private
+    FConn: TInstantMockConnector;
+    FInstantAttributeMetadata: TInstantAttributeMetadata;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestCreateAttribute;
+    procedure TestAssign;
+    procedure TestCheckAttributeClass;
+    procedure TestCheckCategory;
+    procedure TestCheckIsIndexed;
+    procedure TestIsAttributeClass;
+  end;
+
+  // Test methods for class TInstantAttributeMetadatas
+  TestTInstantAttributeMetadatas = class(TTestCase)
+  private
+    FOwner: TInstantClassMetadata;
+    FInstantAttributeMetadatas: TInstantAttributeMetadatas;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestAddRemove;
+    procedure TestClear;
+    procedure TestFind;
+    procedure TestOwner;
+  end;
+
+implementation
+
+uses Classes, TypInfo, testregistry, InstantClasses;
+
+class procedure TTestCaseEx.AssertException(const AMessage: string;
+AExceptionClass: ExceptClass; ACategory: TInstantAttributeCategory;
+AMethod: TRunMethodCategory);
+var
+  Passed : Boolean;
+  ExceptionName: string;
+begin
+  Passed := False;
+  try
+    AMethod(ACategory);
+  except
+    on E: Exception do
+    begin
+      ExceptionName := E.ClassName;
+      if E.ClassType.InheritsFrom(AExceptionClass) then
+      begin
+        Passed := AExceptionClass.ClassName = E.ClassName;
+      end;
+    end;
+  end;
+  AssertTrue(Format(SExceptionCompare,
+    [AExceptionClass.ClassName, ExceptionName])+ ': ' + AMessage, Passed);
+end;
+
+class procedure TTestCaseEx.AssertException(const AMessage: string;
+AExceptionClass: ExceptClass; AClass: TInstantAttributeClass;
+AMethod: TRunMethodIAClass);
+var
+  Passed : Boolean;
+  ExceptionName: string;
+begin
+  Passed := False;
+  try
+    AMethod(AClass);
+  except
+    on E: Exception do
+    begin
+      ExceptionName := E.ClassName;
+      if E.ClassType.InheritsFrom(AExceptionClass) then
+      begin
+        Passed := AExceptionClass.ClassName = E.ClassName;
+      end;
+    end;
+  end;
+  AssertTrue(Format(SExceptionCompare,
+    [AExceptionClass.ClassName, ExceptionName])+ ': ' + AMessage, Passed);
+end;
+
+class procedure TTestCaseEx.AssertException(AExceptionClass: ExceptClass;
+  ACategory: TInstantAttributeCategory; AMethod: TRunMethodCategory);
+begin
+  AssertException('', AExceptionClass, ACategory, AMethod);
+end;
+
+class procedure TTestCaseEx.AssertException(AExceptionClass: ExceptClass;
+  AClass: TInstantAttributeClass; AMethod: TRunMethodIAClass);
+begin
+  AssertException('', AExceptionClass, AClass, AMethod);
+end;
+
+class procedure TTestCaseEx.AssertNoException(const AMessage: string;
+AExceptionClass: ExceptClass; ACategory: TInstantAttributeCategory;
+AMethod: TRunMethodCategory);
+var
+  Passed : Boolean;
+begin
+  Passed := True;
+  try
+    AMethod(ACategory);
+  except
+    Passed := False;
+  end;
+  AssertTrue(AMessage, Passed);
+end;
+
+class procedure TTestCaseEx.AssertNoException(const AMessage: string;
+AExceptionClass: ExceptClass; AClass: TInstantAttributeClass;
+AMethod: TRunMethodIAClass);
+var
+  Passed : Boolean;
+begin
+  Passed := True;
+  try
+    AMethod(AClass);
+  except
+    Passed := False;
+  end;
+  AssertTrue(AMessage, Passed);
+end;
+
+class procedure TTestCaseEx.AssertNoException(AExceptionClass: ExceptClass;
+  ACategory: TInstantAttributeCategory; AMethod: TRunMethodCategory);
+begin
+  AssertNoException('', AExceptionClass, ACategory, AMethod);
+end;
+
+class procedure TTestCaseEx.AssertNoException(AExceptionClass: ExceptClass;
+  AClass: TInstantAttributeClass; AMethod: TRunMethodIAClass);
+begin
+  AssertNoException('', AExceptionClass, AClass, AMethod);
+end;
+
+procedure TestTInstantAttributeMetadata.SetUp;
+begin
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+
+  FInstantAttributeMetadata := TInstantAttributeMetadata.Create(nil);
+  FInstantAttributeMetadata.AttributeType := atString;
+  FInstantAttributeMetadata.DefaultValue := 'Default';
+  FInstantAttributeMetadata.DisplayWidth := 10;
+  FInstantAttributeMetadata.EditMask := '';
+  FInstantAttributeMetadata.IsIndexed := False;
+  FInstantAttributeMetadata.IsRequired := True;
+  FInstantAttributeMetadata.ObjectClassName := 'ObjectClassName';
+  FInstantAttributeMetadata.Size := 40;
+  FInstantAttributeMetadata.StorageName := 'StorageName';
+  FInstantAttributeMetadata.StorageKind := skEmbedded;
+  FInstantAttributeMetadata.ExternalStorageName := 'ExternalStorageName';
+  FInstantAttributeMetadata.ValidChars := ['a'..'z'];
+end;
+
+procedure TestTInstantAttributeMetadata.TearDown;
+begin
+  FInstantAttributeMetadata.Free;
+  FInstantAttributeMetadata := nil;
+
+  FConn.Free;
+end;
+
+procedure TestTInstantAttributeMetadata.TestAssign;
+var
+  vDest, vSource: TInstantAttributeMetadata;
+  vStr: string;
+begin
+  // Don't use FInstantAttributeMetadata in this method,
+  // otherwise it will interfere with TestCase setup.
+  vSource := TInstantAttributeMetadata.Create(nil);
+  vDest := TInstantAttributeMetadata.Create(nil);
+  try
+    vSource.AttributeType := atString;
+    vSource.DefaultValue := 'Default';
+    vSource.DisplayWidth := 10;
+    vSource.EditMask := '';
+    vSource.IsIndexed := False;
+    vSource.IsRequired := True;
+    vSource.ObjectClassName := 'ObjectClassName';
+    vSource.Size := 40;
+    vSource.StorageName := 'StorageName';
+    vSource.StorageKind := skEmbedded;
+    vSource.ExternalStorageName := 'ExternalStorageName';
+    vSource.ValidChars := ['a'..'z'];
+    vDest.Assign(vSource);
+
+    vStr := GetEnumName(TypeInfo(TInstantAttributeType),
+      Ord(vDest.AttributeType));
+    AssertEquals('AttributeType incorrect', 'atString', vStr);
+    AssertEquals('DefaultValue incorrect', 'Default', vDest.DefaultValue);
+    AssertEquals('DisplayWidth incorrect', 10, vDest.DisplayWidth);
+    AssertEquals('EditMask incorrect', '', vDest.EditMask);
+    AssertEquals('IsIndexed incorrect', False, vDest.IsIndexed);
+    AssertEquals('IsRequired incorrect', True, vDest.IsRequired);
+    AssertEquals('ObjectClassName incorrect', 'ObjectClassName',
+      vDest.ObjectClassName);
+    AssertEquals('Size incorrect', 40, vDest.Size);
+    AssertEquals('StorageName incorrect', 'StorageName', vDest.StorageName);
+    vStr := GetEnumName(TypeInfo(TInstantStorageKind),
+      Ord(vDest.StorageKind));
+    AssertEquals('StorageKind incorrect', 'skEmbedded', vStr);
+    AssertEquals('ExternalStorageName incorrect', 'ExternalStorageName',
+      vDest.ExternalStorageName);
+    AssertTrue('ValidChars incorrect', 'i' in vDest.ValidChars);
+  finally
+    vSource.Free;
+    vDest.Free;
+  end;
+end;
+
+procedure TestTInstantAttributeMetadata.TestCheckAttributeClass;
+begin
+  AssertNoException(EInstantError, TInstantSimple,
+    FInstantAttributeMetadata.CheckAttributeClass);
+  AssertException(EInstantError, TInstantNumeric,
+    FInstantAttributeMetadata.CheckAttributeClass);
+end;
+
+procedure TestTInstantAttributeMetadata.TestCheckCategory;
+begin
+  AssertNoException(EInstantError, acSimple,
+    FInstantAttributeMetadata.CheckCategory);
+  AssertException(EInstantError, acContainer,
+    FInstantAttributeMetadata.CheckCategory);
+end;
+
+procedure TestTInstantAttributeMetadata.TestCheckIsIndexed;
+begin
+  AssertException(EInstantError, FInstantAttributeMetadata.CheckIsIndexed);
+end;
+
+procedure TestTInstantAttributeMetadata.TestCreateAttribute;
+var
+  vReturnValue: TInstantAttribute;
+  vObject: TInstantObject;
+begin
+  vObject := TInstantObject.Create(FConn);
+  vReturnValue := FInstantAttributeMetadata.CreateAttribute(vObject);
+  AssertNotNull('InstantAttribute is nil!', vReturnValue);
+  AssertEquals('InstantAttribute value incorrect!', 'Default',
+    vReturnValue.AsString);
+  AssertNotNull('InstantAttribute metadata is nil!', vReturnValue.Metadata);
+  AssertEquals('InstantAttribute classname incorrect!', 'TInstantString',
+    vReturnValue.ClassName);
+end;
+
+procedure TestTInstantAttributeMetadata.TestIsAttributeClass;
+var
+  vReturnValue: Boolean;
+begin
+  vReturnValue := FInstantAttributeMetadata.IsAttributeClass(TInstantAttribute);
+  AssertTrue('IsAttributeClass error for TInstantAttribute!', vReturnValue);
+  vReturnValue := FInstantAttributeMetadata.IsAttributeClass(TInstantSimple);
+  AssertTrue('IsAttributeClass error for TInstantMetadata!', vReturnValue);
+end;
+
+procedure TestTInstantAttributeMetadatas.SetUp;
+begin
+  FOwner := TInstantClassMetadata.Create(nil);
+
+  FInstantAttributeMetadatas := TInstantAttributeMetadatas.Create(FOwner);
+end;
+
+procedure TestTInstantAttributeMetadatas.TearDown;
+begin
+  FInstantAttributeMetadatas.Free;
+  FInstantAttributeMetadatas := nil;
+  FOwner.Free;
+end;
+
+procedure TestTInstantAttributeMetadatas.TestAddRemove;
+var
+  vReturnValue: TInstantAttributeMetadata;
+begin
+  vReturnValue := FInstantAttributeMetadatas.Add;
+  AssertNotNull('vReturnValue is nil!', vReturnValue);
+  AssertEquals('Count is incorrect!', 1, FInstantAttributeMetadatas.Count);
+  FInstantAttributeMetadatas.Remove(vReturnValue);
+  AssertEquals('Count is incorrect!', 0, FInstantAttributeMetadatas.Count);
+end;
+
+procedure TestTInstantAttributeMetadatas.TestClear;
+var
+  i: Integer;
+begin
+  for i := 0 to 9 do
+  begin
+    FInstantAttributeMetadatas.Add;
+  end;
+  AssertEquals('Count is incorrect!', 10, FInstantAttributeMetadatas.Count);
+  FInstantAttributeMetadatas.Clear;
+  AssertEquals('Count is incorrect!', 0, FInstantAttributeMetadatas.Count);
+end;
+
+procedure TestTInstantAttributeMetadatas.TestFind;
+var
+  vReturnValue: TInstantAttributeMetadata;
+  i: Integer;
+begin
+  for i := 0 to 2 do
+  begin
+    vReturnValue := FInstantAttributeMetadatas.Add;
+    vReturnValue.Name := 'Name' + IntToStr(i);
+  end;
+  AssertEquals('Count is incorrect!', 3, FInstantAttributeMetadatas.Count);
+
+  vReturnValue := FInstantAttributeMetadatas.Find('Name1');
+  AssertNotNull('vReturnValue is nil!', vReturnValue);
+  FInstantAttributeMetadatas.Clear;
+  AssertEquals('Count is incorrect!', 0, FInstantAttributeMetadatas.Count);
+end;
+
+procedure TestTInstantAttributeMetadatas.TestOwner;
+var
+  vReturnValue: TInstantClassMetadata;
+begin
+  vReturnValue := FInstantAttributeMetadatas.Owner;
+  AssertNotNull('vReturnValue is nil!', vReturnValue);
+  AssertSame('Owner is incorrect!', FOwner, vReturnValue);
+end;
+
+initialization
+  // Register any test cases with the test runner
+{$IFNDEF CURR_TESTS}
+  RegisterTests([TestTInstantAttributeMetadata,
+                 TestTInstantAttributeMetadatas]);
+{$ENDIF}
+
+end.

@@ -5,9 +5,11 @@ program TestIO;
 {$ENDIF}
 
 uses
-{$IFDEF FPC}  Interfaces,
+{$IFDEF FPC}
+  Interfaces,
 {$ENDIF}
-  Forms, GuiTestRunner,
+  Forms,
+  GuiTestRunner,
   fpcunit,
   testregistry,
   testutils,
@@ -15,18 +17,24 @@ uses
   InstantMock in 'InstantMock.pas',
   TestMockConnector in 'TestMockConnector.pas',
   TestMockBroker in 'TestMockBroker.pas',
-  TestInstantPersistence in 'TestInstantPersistence.pas',
+  TestInstantMetadata in 'TestInstantMetadata.pas',
+  TestModel in 'TestModel.pas',
+  TestInstantFieldMetadata in 'TestInstantFieldMetadata.pas',
+  TestInstantClassMetadata in 'TestInstantClassMetadata.pas',
+  TestInstantAttributeMetadata in 'TestInstantAttributeMetadata.pas',
+  TestInstantIndexMetadata in 'TestInstantIndexMetadata.pas',
+  TestInstantTableMetadata in 'TestInstantTableMetadata.pas',
+  TestInstantScheme in 'TestInstantScheme.pas',
   TestInstantClasses in 'TestInstantClasses.pas',
   TestInstantRtti in 'TestInstantRtti.pas',
-  TestMinimalModel in 'TestMinimalModel.pas',
-  TestMinimalModelDb  in 'TestMinimalModelDb.pas',
-  TestModelDb in 'TestModelDb.pas';
+  TestMinimalModel in 'TestMinimalModel.pas';
 
 {$R *.res}
+{$R *.mdr} {TestModel}
 
 begin
   Application.Initialize;
-  Application.CreateForm(TGUITestRunner, TestRunner);
+  Application.CreateForm(TTestRunner, TestRunner);
   Application.Run;
 end.
 

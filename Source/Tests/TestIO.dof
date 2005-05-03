@@ -20,7 +20,7 @@ P=1
 Q=0
 R=0
 S=0
-T=0
+T=1
 U=0
 V=1
 W=0
@@ -76,9 +76,9 @@ LocaleToUnicode=1
 ImagebaseMultiple=1
 SuspiciousTypecast=1
 PrivatePropAccessor=1
-UnsafeType=1
-UnsafeCode=1
-UnsafeCast=1
+UnsafeType=0
+UnsafeCode=0
+UnsafeCast=0
 [Linker]
 MapFile=0
 OutputObjs=0
@@ -91,12 +91,12 @@ ImageBase=4194304
 ExeDescription=
 [Directories]
 OutputDir=
-UnitOutputDir=
+UnitOutputDir=D:\D\DCU\D7\Tmp
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=D:\lazarus\components\fpcunit\ubmock\src
-Packages=
-Conditionals=
+SearchPath=D:\L\ubmock\src
+Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;adortl;vclactnband;vclshlctrls;CS30Logging70;Rz30Ctls70;Rz30DBCtls70;ip4000v7;Rave60VCL;Rave60CLX;madBasic_;madDisAsm_;CLXIB;ibxpress;VCLIB;IOCore;IOIBX
+Conditionals=CURR_TESTS
 DebugSourceDirs=
 UsePackages=0
 [Parameters]
@@ -108,7 +108,7 @@ DebugCWD=
 [Language]
 ActiveLang=
 ProjectLang=
-RootDir=
+RootDir=C:\Program Files\Borland\Delphi7\Bin\
 [Version Info]
 IncludeVerInfo=0
 AutoIncBuild=0
@@ -121,5 +121,22 @@ PreRelease=0
 Special=0
 Private=0
 DLL=0
-Locale=1040
+Locale=3081
 CodePage=1252
+[Version Info Keys]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0.0.0
+Comments=
+[HistoryLists\hlConditionals]
+Count=1
+Item0=CURR_TESTS
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

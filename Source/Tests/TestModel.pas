@@ -1,9 +1,9 @@
 (*
- *   PrimerCross demo:
- *   Model.pas with "external storage" of Part and Parts
+ *   TestIO Model:
+ *   TestModel.pas with "external storage" of Part and Parts
  *
  *)
-unit Model;
+unit TestModel;
 
 interface
 
@@ -95,7 +95,7 @@ type
   end;
 
   TCategory = class(TInstantObject)
-  {IOMETADATA stored;
+  {IOMETADATA stored 'Categories';
     Name: String(30); }
     _Name: TInstantString;
   private
@@ -109,11 +109,11 @@ type
 
   TContact = class(TInstantObject)
   {IOMETADATA stored;
-    Address: Part(TAddress) externalstored 'Contact_Address';
+    Address: Part(TAddress);
     Category: Reference(TCategory);
     City: String(30) index;
     Name: String(50) index;
-    Phones: Parts(TPhone) externalstored 'Contact_Phone'; }
+    Phones: Parts(TPhone); }
     _Address: TInstantPart;
     _Category: TInstantReference;
     _City: TInstantString;
