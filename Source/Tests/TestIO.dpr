@@ -27,7 +27,8 @@ uses
   TestInstantScheme in 'TestInstantScheme.pas',
   TestInstantClasses in 'TestInstantClasses.pas',
   TestInstantRtti in 'TestInstantRtti.pas',
-  TestMinimalModel in 'TestMinimalModel.pas';
+  TestMinimalModel in 'TestMinimalModel.pas',
+  TestInstantAttributeMap in 'TestInstantAttributeMap.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
