@@ -223,7 +223,6 @@ end;
 
 procedure TestTInstantInteger.TestIsRequired;
 begin
-  // TODO -cMM: TestTInstantInteger.TestIsRequired default body inserted
   AssertFalse('Attribute is required!', FInstantInteger.IsRequired);
 
   FInstantInteger.Metadata.IsRequired := True;
@@ -259,10 +258,10 @@ end;
 
 procedure TestTInstantInteger.TestReset;
 begin
+  AssertNotNull('Metadata is nil!', FInstantInteger.Metadata);
   // Metadata.DefaultValue is '';
   FInstantInteger.Reset;
   AssertEquals('Reset value is incorrect!', 0, FInstantInteger.Value);
-  AssertNotNull('Metadata is nil!', FInstantInteger.Metadata);
 
   FInstantInteger.Metadata.DefaultValue := '1000';
   FInstantInteger.Reset;
