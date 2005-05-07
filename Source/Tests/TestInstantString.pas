@@ -26,14 +26,6 @@ type
     procedure TestAssign;
     procedure TestAsString;
     procedure TestAsVariant;
-    procedure TestChange;
-    procedure TestCheckHasMetadata;
-    procedure TestDisplayText;
-    procedure TestIsDefault;
-    procedure TestIsIndexed;
-    procedure TestIsMandatory;
-    procedure TestIsRequired;
-    procedure TestMetadata;
     procedure TestName;
     procedure TestOwner;
     procedure TestReset;
@@ -160,98 +152,6 @@ begin
     FInstantString.Value);
   AssertEquals('Get AsVariant is incorrect!', 'DifferentString',
     FInstantString.AsVariant);
-end;
-
-procedure TestTInstantString.TestChange;
-begin
-  AssertTrue('IsChanged is false!', FInstantString.IsChanged);
-  FInstantString.UnChanged;
-  AssertFalse('IsChanged is true!', FInstantString.IsChanged);
-  FInstantString.Value := FInstantString.Value + 's';
-  AssertTrue('IsChanged is false!', FInstantString.IsChanged);
-  FInstantString.UnChanged;
-  AssertFalse('IsChanged is true!', FInstantString.IsChanged);
-  FInstantString.Changed;
-  AssertTrue('IsChanged is false!', FInstantString.IsChanged);
-end;
-
-procedure TestTInstantString.TestCheckHasMetadata;
-begin
-  try
-    FInstantString.CheckHasMetadata;
-  except
-    Fail('CheckHasMetadata failed!');
-  end;
-
-  FInstantString.Metadata := nil;
-  AssertException(EInstantError, FInstantString.CheckHasMetadata);
-end;
-
-procedure TestTInstantString.TestDisplayText;
-begin
-  AssertEquals('DisplayText is incorrect!', 'StringValue',
-    FInstantString.DisplayText);
-
-  FInstantString.Metadata.EditMask := '!CCCCCC';
-  AssertEquals('DisplayText is incorrect!', 'gValue',
-  FInstantString.DisplayText);
-
-  FInstantString.Value := 'NewString';
-  FInstantString.Metadata.EditMask := 'CCCCCC';
-  AssertEquals('DisplayText is incorrect!', 'NewStr',
-    FInstantString.DisplayText);
-end;
-
-procedure TestTInstantString.TestIsDefault;
-begin
-  AssertFalse('Value is default!', FInstantString.IsDefault);
-
-  FInstantString.Value := '';
-  AssertTrue('Value is not default!', FInstantString.IsDefault);
-end;
-
-procedure TestTInstantString.TestIsIndexed;
-begin
-  AssertFalse('Attribute is indexed!', FInstantString.IsIndexed);
-
-  FInstantString.Metadata.IsIndexed := True;
-  AssertTrue('Attribute is not indexed!', FInstantString.IsIndexed);
-end;
-
-procedure TestTInstantString.TestIsMandatory;
-begin
-  AssertFalse('Attribute is Mandatory!', FInstantString.IsMandatory);
-
-  FInstantString.Metadata.IsIndexed := True;
-  AssertTrue('Attribute is not Mandatory!', FInstantString.IsMandatory);
-  FInstantString.Metadata.IsRequired := True;
-  AssertTrue('Attribute is not Mandatory!', FInstantString.IsMandatory);
-  FInstantString.Metadata.IsIndexed := False;
-  AssertTrue('Attribute is not Mandatory!', FInstantString.IsMandatory);
-end;
-
-procedure TestTInstantString.TestIsRequired;
-begin
-  AssertFalse('Attribute is required!', FInstantString.IsRequired);
-
-  FInstantString.Metadata.IsRequired := True;
-  AssertTrue('Attribute is not required!', FInstantString.IsRequired);
-end;
-
-procedure TestTInstantString.TestMetadata;
-begin
-  AssertNotNull('Metadata is nil!', FInstantString.Metadata);
-  AssertEquals('Metdata name is incorrect!', 'AttrMetadataName',
-    FInstantString.Metadata.Name);
-
-  FInstantString.Metadata := nil;
-  AssertNull('Metadata is not nil!', FInstantString.Metadata);
-  FInstantString.Reset;
-
-  FInstantString.Metadata := FAttrMetadata;
-  AssertNotNull('Metadata is nil!', FInstantString.Metadata);
-  AssertEquals('Metdata name is incorrect!', 'AttrMetadataName',
-    FInstantString.Metadata.Name);
 end;
 
 procedure TestTInstantString.TestName;

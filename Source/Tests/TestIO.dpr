@@ -29,9 +29,14 @@ uses
   TestInstantRtti in 'TestInstantRtti.pas',
   TestMinimalModel in 'TestMinimalModel.pas',
   TestInstantAttributeMap in 'TestInstantAttributeMap.pas',
+  TestInstantAttribute in 'TestInstantAttribute.pas',
+  TestInstantNumeric in 'TestInstantNumeric.pas',
   TestInstantInteger in 'TestInstantInteger.pas',
   TestInstantString in 'TestInstantString.pas',
-  TestInstantDateTime in 'TestInstantDateTime.pas';
+  TestInstantDateTime in 'TestInstantDateTime.pas',
+  TestInstantBoolean in 'TestInstantBoolean.pas',
+  TestInstantFloat in 'TestInstantFloat.pas',
+  TestInstantCurrency in 'TestInstantCurrency.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
