@@ -26,16 +26,8 @@ type
     procedure TestAssign;
     procedure TestAsString;
     procedure TestAsVariant;
-    procedure TestChange;
-    procedure TestCheckHasMetadata;
     procedure TestDisplayText;
     procedure TestIsDefault;
-    procedure TestIsIndexed;
-    procedure TestIsMandatory;
-    procedure TestIsRequired;
-    procedure TestMetadata;
-    procedure TestName;
-    procedure TestOwner;
     procedure TestReset;
     procedure TestValue;
   end;
@@ -209,31 +201,6 @@ begin
     FInstantDateTime.AsVariant);
 end;
 
-procedure TestTInstantDateTime.TestChange;
-begin
-  AssertTrue('IsChanged is false!', FInstantDateTime.IsChanged);
-  FInstantDateTime.UnChanged;
-  AssertFalse('IsChanged is true!', FInstantDateTime.IsChanged);
-  FInstantDateTime.Value := FInstantDateTime.Value + 30;
-  AssertTrue('IsChanged is false!', FInstantDateTime.IsChanged);
-  FInstantDateTime.UnChanged;
-  AssertFalse('IsChanged is true!', FInstantDateTime.IsChanged);
-  FInstantDateTime.Changed;
-  AssertTrue('IsChanged is false!', FInstantDateTime.IsChanged);
-end;
-
-procedure TestTInstantDateTime.TestCheckHasMetadata;
-begin
-  try
-    FInstantDateTime.CheckHasMetadata;
-  except
-    Fail('CheckHasMetadata failed!');
-  end;
-
-  FInstantDateTime.Metadata := nil;
-  AssertException(EInstantError, FInstantDateTime.CheckHasMetadata);
-end;
-
 procedure TestTInstantDateTime.TestDisplayText;
 var
   vDateTimeStr: string;
@@ -260,61 +227,6 @@ begin
 
   FInstantDateTime.Value := 0;
   AssertTrue('Value is not default!', FInstantDateTime.IsDefault);
-end;
-
-procedure TestTInstantDateTime.TestIsIndexed;
-begin
-  AssertFalse('Attribute is indexed!', FInstantDateTime.IsIndexed);
-
-  FInstantDateTime.Metadata.IsIndexed := True;
-  AssertTrue('Attribute is not indexed!', FInstantDateTime.IsIndexed);
-end;
-
-procedure TestTInstantDateTime.TestIsMandatory;
-begin
-  AssertFalse('Attribute is Mandatory!', FInstantDateTime.IsMandatory);
-
-  FInstantDateTime.Metadata.IsIndexed := True;
-  AssertTrue('Attribute is not Mandatory!', FInstantDateTime.IsMandatory);
-  FInstantDateTime.Metadata.IsRequired := True;
-  AssertTrue('Attribute is not Mandatory!', FInstantDateTime.IsMandatory);
-  FInstantDateTime.Metadata.IsIndexed := False;
-  AssertTrue('Attribute is not Mandatory!', FInstantDateTime.IsMandatory);
-end;
-
-procedure TestTInstantDateTime.TestIsRequired;
-begin
-  AssertFalse('Attribute is required!', FInstantDateTime.IsRequired);
-
-  FInstantDateTime.Metadata.IsRequired := True;
-  AssertTrue('Attribute is not required!', FInstantDateTime.IsRequired);
-end;
-
-procedure TestTInstantDateTime.TestMetadata;
-begin
-  AssertNotNull('Metadata is nil!', FInstantDateTime.Metadata);
-  AssertEquals('Metdata name is incorrect!', 'AttrMetadataName',
-    FInstantDateTime.Metadata.Name);
-
-  FInstantDateTime.Metadata := nil;
-  AssertNull('Metadata is not nil!', FInstantDateTime.Metadata);
-  FInstantDateTime.Reset;
-
-  FInstantDateTime.Metadata := FAttrMetadata;
-  AssertNotNull('Metadata is nil!', FInstantDateTime.Metadata);
-  AssertEquals('Metdata name is incorrect!', 'AttrMetadataName',
-    FInstantDateTime.Metadata.Name);
-end;
-
-procedure TestTInstantDateTime.TestName;
-begin
-  AssertEquals('Attribute name is incorrect!', 'AttrMetadataName',
-    FInstantDateTime.Name);
-end;
-
-procedure TestTInstantDateTime.TestOwner;
-begin
-  AssertSame('Owner is incorrect!', FOwner, FInstantDateTime.Owner);
 end;
 
 procedure TestTInstantDateTime.TestReset;
