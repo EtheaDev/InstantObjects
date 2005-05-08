@@ -6,7 +6,8 @@ uses
   Classes, SysUtils,
   InstantRtti,
   fpcunit,
-  MaskUtils,
+  {$IFNDEF FPC}MaskUtils,{$ENDIF}
+  {$IFDEF FPC}InstantFpcUtils,{$ENDIF}
   testregistry;
 
 type
