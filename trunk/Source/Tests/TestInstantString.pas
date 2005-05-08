@@ -68,9 +68,12 @@ begin
 end;
 
 procedure TestTInstantString.TestAsCurrency;
+var
+  c: Currency;
 begin
-  FInstantString.AsCurrency := 23.45;
-  AssertEquals('Set AsCurrency is incorrect!', '23.45', FInstantString.Value);
+  c := 23.45;
+  FInstantString.AsCurrency := c;
+  AssertEquals('Set AsCurrency is incorrect!', '23' + DecimalSeparator + '45', FInstantString.Value);
   AssertEquals('Get AsCurrency is incorrect!', 23.45,
     FInstantString.AsCurrency);
 end;
@@ -87,7 +90,7 @@ end;
 procedure TestTInstantString.TestAsFloat;
 begin
   FInstantString.AsFloat := 89.45;
-  AssertEquals('Set AsFloat is incorrect!', '89.45', FInstantString.Value);
+  AssertEquals('Set AsFloat is incorrect!', '89' + DecimalSeparator + '45', FInstantString.Value);
   AssertEquals('Get AsFloat is incorrect!', 89.45, FInstantString.AsFloat);
 end;
 

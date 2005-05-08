@@ -69,9 +69,9 @@ end;
 
 procedure TestTInstantBoolean.TestAsCurrency;
 begin
-  FInstantBoolean.AsCurrency := 89.45;
+  FInstantBoolean.AsCurrency := 1;
   AssertTrue('Set AsCurrency is incorrect!', FInstantBoolean.Value);
-  AssertEquals('Get AsCurrency is incorrect!', 89.0, FInstantBoolean.AsCurrency);
+  AssertEquals('Get AsCurrency is incorrect!', 1, FInstantBoolean.AsCurrency);
 end;
 
 procedure TestTInstantBoolean.TestAsDateTime;
@@ -96,16 +96,16 @@ end;
 
 procedure TestTInstantBoolean.TestAsFloat;
 begin
-  FInstantBoolean.AsFloat := 89.45;
+  FInstantBoolean.AsFloat := 1;
   AssertTrue('Set AsFloat is incorrect!', FInstantBoolean.Value);
-  AssertEquals('Get AsFloat is incorrect!', 89.0, FInstantBoolean.AsFloat);
+  AssertEquals('Get AsFloat is incorrect!', 1, FInstantBoolean.AsFloat);
 end;
 
 procedure TestTInstantBoolean.TestAsInteger;
 begin
-  FInstantBoolean.AsInteger := 100;
+  FInstantBoolean.AsInteger := 1;
   AssertTrue('Set AsInteger is incorrect!', FInstantBoolean.Value);
-  AssertEquals('Get AsInteger is incorrect!', 100, FInstantBoolean.AsInteger);
+  AssertEquals('Get AsInteger is incorrect!', 1, FInstantBoolean.AsInteger);
 end;
 
 procedure TestTInstantBoolean.TestAsObject;

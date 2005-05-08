@@ -96,7 +96,7 @@ begin
   AssertEquals('DisplayText is incorrect!', '001', FInstantNumeric.DisplayText);
 
   FInstantNumeric.Value := 1000;
-  FInstantNumeric.Metadata.EditMask := '#' + ThousandSeparator + '000';
+  FInstantNumeric.Metadata.EditMask := '#,000'; //EditMask don't use ThousandSeparator var
   AssertEquals('DisplayText is incorrect!', '1' + ThousandSeparator + '000',
     FInstantNumeric.DisplayText);
 end;

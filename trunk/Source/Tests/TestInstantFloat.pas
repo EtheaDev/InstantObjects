@@ -90,9 +90,9 @@ end;
 
 procedure TestTInstantFloat.TestAsString;
 begin
-  FInstantFloat.AsString := '1.3';
+  FInstantFloat.AsString := '1' + DecimalSeparator + '3';
   AssertEquals('Set AsString is incorrect!', 1.3, FInstantFloat.Value);
-  AssertEquals('Get AsString is incorrect!', '1.3', FInstantFloat.AsString);
+  AssertEquals('Get AsString is incorrect!', '1' + DecimalSeparator + '3', FInstantFloat.AsString);
 end;
 
 procedure TestTInstantFloat.TestAsVariant;
@@ -109,7 +109,7 @@ begin
   FInstantFloat.Reset;
   AssertEquals('Reset value is incorrect!', 1.3, FInstantFloat.Value);
 
-  FInstantFloat.Metadata.DefaultValue := '15.7';
+  FInstantFloat.Metadata.DefaultValue := '15' + DecimalSeparator + '7';
   FInstantFloat.Reset;
   AssertEquals('Reset value is incorrect!', 15.7, FInstantFloat.Value);
 
