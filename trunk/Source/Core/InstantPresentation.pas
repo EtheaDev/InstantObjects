@@ -642,7 +642,11 @@ uses
 {$IFDEF LINUX}
   QForms,
 {$ENDIF}
-  {$IFDEF D6+}Variants, MaskUtils, FmtBcd,{$ENDIF} InstantClasses,
+  {$IFDEF D6+}
+    Variants,
+    {$IFNDEF FPC}MaskUtils,{$ENDIF}
+     FmtBcd,
+  {$ENDIF} InstantClasses,
   InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors,
   DbConsts;
 
