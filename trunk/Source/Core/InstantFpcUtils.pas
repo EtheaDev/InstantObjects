@@ -9,10 +9,12 @@ uses
 procedure OleError(ErrorCode: HResult);
 procedure OleCheck(Result: HResult);
 
+function FormatMaskText(const EditMask: string; const Value: string): string;
+
 implementation
 
 uses
-  typinfo, variants;
+  typinfo, variants, maskedit;
   
   
 
@@ -36,6 +38,11 @@ begin
   if not OleResult(Result) then OleError(Result);
 end;
 
+
+function FormatMaskText(const EditMask: string; const Value: string): string;
+begin
+  Result := maskedit.FormatMaskText(EditMask, Value);
+end;
 
 end.
 
