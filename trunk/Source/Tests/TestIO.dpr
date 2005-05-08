@@ -43,7 +43,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.CreateForm(TTestRunner, TestRunner);
+  Application.CreateForm(TGUITestRunner, TestRunner);
   Application.Run;
 end.
 
