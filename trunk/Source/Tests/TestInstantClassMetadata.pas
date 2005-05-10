@@ -76,13 +76,11 @@ begin
     vSource.StorageName := 'StorageName';
     vSource.Persistence := peStored;
     vDest.Assign(vSource);
-    AssertEquals('DefaultContainerName is incorrect!', 'DefaultContainerName',
-      vDest.DefaultContainerName);
-    AssertEquals('StorageName is incorrect!', 'StorageName',
-      vDest.StorageName);
+    AssertEquals('DefaultContainerName', vDest.DefaultContainerName);
+    AssertEquals('StorageName', vDest.StorageName);
     vStr := GetEnumName(TypeInfo(TInstantPersistence),
       Ord(vDest.Persistence));
-    AssertEquals('PersistenceType incorrect', 'peStored', vStr);
+    AssertEquals('peStored', vStr);
   finally
     vSource.Free;
     vDest.Free;
@@ -91,20 +89,17 @@ end;
 
 procedure TestTInstantClassMetadata.TestAttributeMetadatas;
 begin
-  AssertNotNull('AttributeMetadatas is nil!',
-    FInstantClassMetadata.AttributeMetadatas);
+  AssertNotNull(FInstantClassMetadata.AttributeMetadatas);
 end;
 
 procedure TestTInstantClassMetadata.TestCollection;
 begin
   // Collection property contains all of the class metadatas in the model
-  AssertNotNull('Collection is nil!', FInstantClassMetadata.Collection);
-  AssertEquals('The number of model classes is incorrect!', 9,
-    FInstantClassMetadata.Collection.Count);
+  AssertNotNull(FInstantClassMetadata.Collection);
+  AssertEquals(9, FInstantClassMetadata.Collection.Count);
 
   FInstantClassMetadata := InstantModel.ClassMetadatas.Find('TPhone');
-  AssertEquals('The number of model classes is incorrect!', 9,
-    FInstantClassMetadata.Collection.Count);
+  AssertEquals(9, FInstantClassMetadata.Collection.Count);
 end;
 
 procedure TestTInstantClassMetadata.TestFindInstantAttributeMetadata;
@@ -114,30 +109,28 @@ end;
 
 procedure TestTInstantClassMetadata.TestIsEmpty;
 begin
-  AssertFalse('FInstantClassMetadata is empty!', FInstantClassMetadata.IsEmpty);
+  AssertFalse(FInstantClassMetadata.IsEmpty);
 end;
 
 procedure TestTInstantClassMetadata.TestIsStored;
 begin
-  AssertTrue('Incorrect storage flag!', FInstantClassMetadata.IsStored);
+  AssertTrue(FInstantClassMetadata.IsStored);
 
   FInstantClassMetadata := InstantModel.ClassMetadatas.Find('TContactFilter');
-  AssertFalse('Incorrect storage flag!', FInstantClassMetadata.IsStored);
+  AssertFalse(FInstantClassMetadata.IsStored);
 end;
 
 procedure TestTInstantClassMetadata.TestMemberMap;
 begin
-  AssertNotNull('MemberMap is nil!', FInstantClassMetadata.MemberMap);
+  AssertNotNull(FInstantClassMetadata.MemberMap);
 end;
 
 procedure TestTInstantClassMetadata.TestParentName;
 begin
-  AssertEquals('ParentName incorrect!', '',
-    FInstantClassMetadata.ParentName);
+  AssertEquals('', FInstantClassMetadata.ParentName);
 
   FInstantClassMetadata := InstantModel.ClassMetadatas.Find('TPerson');
-  AssertEquals('ParentName incorrect!', 'TContact',
-    FInstantClassMetadata.ParentName);
+  AssertEquals('TContact', FInstantClassMetadata.ParentName);
 end;
 
 procedure TestTInstantClassMetadata.TestPersistence;
@@ -146,44 +139,40 @@ var
 begin
   vStr := GetEnumName(TypeInfo(TInstantPersistence),
     Ord(FInstantClassMetadata.Persistence));
-  AssertEquals('PersistenceType incorrect', 'peStored', vStr);
+  AssertEquals('peStored', vStr);
 
   FInstantClassMetadata := InstantModel.ClassMetadatas.Find('TContactFilter');
   vStr := GetEnumName(TypeInfo(TInstantPersistence),
     Ord(FInstantClassMetadata.Persistence));
-  AssertEquals('PersistenceType incorrect', 'peEmbedded', vStr);
+  AssertEquals('peEmbedded', vStr);
 end;
 
 procedure TestTInstantClassMetadata.TestStorageMaps;
 begin
-  AssertNotNull('StorageMaps is nil!', FInstantClassMetadata.StorageMaps);
+  AssertNotNull(FInstantClassMetadata.StorageMaps);
 
   FInstantClassMetadata := InstantModel.ClassMetadatas.Find('TContactFilter');
-  AssertNull('StorageMaps should be nil!', FInstantClassMetadata.StorageMaps);
+  AssertNull(FInstantClassMetadata.StorageMaps);
 end;
 
 procedure TestTInstantClassMetadata.TestStorageName;
 begin
   // Test with default class StorageName returns ''.
-  AssertEquals('StorageName incorrect!', '',
-    FInstantClassMetadata.StorageName);
+  AssertEquals('', FInstantClassMetadata.StorageName);
 
   // Test for User entered non-default class StorageName.
   FInstantClassMetadata := InstantModel.ClassMetadatas.Find('TCategory');
-  AssertEquals('StorageName incorrect!', 'Categories',
-    FInstantClassMetadata.StorageName);
+  AssertEquals('Categories', FInstantClassMetadata.StorageName);
 end;
 
 procedure TestTInstantClassMetadata.TestTableName;
 begin
   // Test with default class StorageName (TableName).
-  AssertEquals('TableName incorrect!', 'Contact',
-    FInstantClassMetadata.TableName);
+  AssertEquals('Contact', FInstantClassMetadata.TableName);
 
   // Test for User entered non-default class StorageName (TableName).
   FInstantClassMetadata := InstantModel.ClassMetadatas.Find('TCategory');
-  AssertEquals('TableName incorrect!', 'Categories',
-    FInstantClassMetadata.TableName);
+  AssertEquals('Categories', FInstantClassMetadata.TableName);
 end;
 
 procedure TestTInstantClassMetadatas.SetUp;
@@ -210,10 +199,10 @@ var
   vReturnValue: TInstantClassMetadata;
 begin
   vReturnValue := FInstantClassMetadatas.Add;
-  AssertNotNull('vReturnValue is nil!', vReturnValue);
-  AssertEquals('Count is incorrect!', 4, FInstantClassMetadatas.Count);
+  AssertNotNull(vReturnValue);
+  AssertEquals(4, FInstantClassMetadatas.Count);
   FInstantClassMetadatas.Remove(vReturnValue);
-  AssertEquals('Count is incorrect!', 3, FInstantClassMetadatas.Count);
+  AssertEquals(3, FInstantClassMetadatas.Count);
 end;
 
 procedure TestTInstantClassMetadatas.TestFind;
@@ -223,13 +212,12 @@ var
 begin
   vName := 'TAddress';
   vReturnValue := FInstantClassMetadatas.Find(vName);
-  AssertEquals('TestFind failed!', vName, vReturnValue.Name);
+  AssertEquals(vName, vReturnValue.Name);
 end;
 
 procedure TestTInstantClassMetadatas.TestItems;
 begin
-  AssertEquals('The second item''s name is incorrect!', 'TAddress',
-    FInstantClassMetadatas.Items[1].Name);
+  AssertEquals('TAddress', FInstantClassMetadatas.Items[1].Name);
 end;
 
 initialization

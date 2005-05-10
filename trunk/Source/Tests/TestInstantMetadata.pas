@@ -47,8 +47,7 @@ end;
 
 procedure TestTInstantMetadata.TestCollectionExists;
 begin
-  AssertTrue('TInstantMetadata.Collection is not assigned!',
-    FInstantMetadata.Collection <> nil);
+  AssertTrue(FInstantMetadata.Collection <> nil);
 end;
 
 procedure TestTInstantMetadatas.SetUp;
@@ -77,7 +76,7 @@ var
 begin
   vName := 'Address';
   vReturnValue := FInstantMetadatas.Find(vName);
-  AssertEquals('TestFind failed!', vName, vReturnValue.Name);
+  AssertEquals(vName, vReturnValue.Name);
 end;
 
 initialization

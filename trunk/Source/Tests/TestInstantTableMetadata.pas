@@ -53,19 +53,18 @@ end;
 
 procedure TestTInstantTableMetadata.TestFieldMetadatas;
 begin
-  AssertNotNull('FieldMetadatas is nil!', FInstantTableMetadata.FieldMetadatas);
+  AssertNotNull(FInstantTableMetadata.FieldMetadatas);
 end;
 
 procedure TestTInstantTableMetadata.TestIndexMetadatas;
 begin
-  AssertNotNull('IndexMetadatas is nil!', FInstantTableMetadata.IndexMetadatas);
+  AssertNotNull(FInstantTableMetadata.IndexMetadatas);
 end;
 
 procedure TestTInstantTableMetadata.TestScheme;
 begin
-  AssertNotNull('Scheme is nil!', FInstantTableMetadata.Scheme);
-  AssertSame('Scheme value is incorrect!', FOwner,
-    FInstantTableMetadata.Scheme);
+  AssertNotNull(FInstantTableMetadata.Scheme);
+  AssertSame(FOwner, FInstantTableMetadata.Scheme);
 end;
 
 procedure TestTInstantTableMetadatas.SetUp;
@@ -84,11 +83,11 @@ var
   vReturnValue: TInstantTableMetadata;
 begin
   vReturnValue := FInstantTableMetadatas.Add;
-  AssertNotNull('vReturnValue is nil!', vReturnValue);
-  AssertEquals('Count is incorrect!', 1, FInstantTableMetadatas.Count);
-  AssertNotNull('Items[0] is nil!', FInstantTableMetadatas.Items[0]);
+  AssertNotNull(vReturnValue);
+  AssertEquals(1, FInstantTableMetadatas.Count);
+  AssertNotNull('Items[0]', FInstantTableMetadatas.Items[0]);
   FInstantTableMetadatas.Remove(vReturnValue);
-  AssertEquals('Count is incorrect!', 0, FInstantTableMetadatas.Count);
+  AssertEquals(0, FInstantTableMetadatas.Count);
 end;
 
 

@@ -36,7 +36,8 @@ uses
   TestInstantDateTime in 'TestInstantDateTime.pas',
   TestInstantBoolean in 'TestInstantBoolean.pas',
   TestInstantFloat in 'TestInstantFloat.pas',
-  TestInstantCurrency in 'TestInstantCurrency.pas';
+  TestInstantCurrency in 'TestInstantCurrency.pas',
+  TestInstantBlob in 'TestInstantBlob.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}

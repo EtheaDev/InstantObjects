@@ -2,7 +2,7 @@ unit TestInstantAttribute;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock;
+uses fpcunit, InstantPersistence;
 
 type
 
@@ -10,9 +10,7 @@ type
   TestTInstantAttribute = class(TTestCase)
   private
     FAttrMetadata: TInstantAttributeMetadata;
-    FConn: TInstantMockConnector;
     FInstantAttribute: TInstantAttribute;
-    FOwner: TInstantObject;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -33,33 +31,28 @@ uses SysUtils, testregistry, InstantClasses;
 
 procedure TestTInstantAttribute.SetUp;
 begin
-  FConn := TInstantMockConnector.Create(nil);
-  FConn.BrokerClass := TInstantMockBroker;
-  FOwner := TInstantObject.Create(FConn);
   FAttrMetadata := TInstantAttributeMetadata.Create(nil);
   FAttrMetadata.AttributeClass := TInstantString;
   FAttrMetadata.Name := 'AttrMetadataName';
   // TInstantAttribute is abstract so use TInstantString
-  FInstantAttribute := TInstantString.Create(FOwner, FAttrMetadata);
+  FInstantAttribute := TInstantString.Create(nil, FAttrMetadata);
 end;
 
 procedure TestTInstantAttribute.TearDown;
 begin
   FreeAndNil(FInstantAttribute);
   FreeAndNil(FAttrMetadata);
-  FreeAndNil(FOwner);
-  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantAttribute.TestChange;
 begin
-  AssertFalse('IsChanged is true!', FInstantAttribute.IsChanged);
+  AssertFalse(FInstantAttribute.IsChanged);
   FInstantAttribute.Value := 'NewString';
-  AssertTrue('IsChanged is false!', FInstantAttribute.IsChanged);
+  AssertTrue(FInstantAttribute.IsChanged);
   FInstantAttribute.UnChanged;
-  AssertFalse('IsChanged is true!', FInstantAttribute.IsChanged);
+  AssertFalse(FInstantAttribute.IsChanged);
   FInstantAttribute.Changed;
-  AssertTrue('IsChanged is false!', FInstantAttribute.IsChanged);
+  AssertTrue(FInstantAttribute.IsChanged);
 end;
 
 procedure TestTInstantAttribute.TestCheckHasMetadata;
@@ -77,69 +70,64 @@ end;
 procedure TestTInstantAttribute.TestDisplayText;
 begin
   FInstantAttribute.Value := 'StringValue';
-  AssertEquals('DisplayText is incorrect!', 'StringValue',
-    FInstantAttribute.DisplayText);
+  AssertEquals('StringValue', FInstantAttribute.DisplayText);
 
   FInstantAttribute.Metadata.EditMask := '!CCCCCC';
-  AssertEquals('DisplayText is incorrect!', 'gValue',
-  FInstantAttribute.DisplayText);
+  AssertEquals('gValue', FInstantAttribute.DisplayText);
 
   FInstantAttribute.Value := 'NewString';
   FInstantAttribute.Metadata.EditMask := 'CCCCCC';
-  AssertEquals('DisplayText is incorrect!', 'NewStr',
-    FInstantAttribute.DisplayText);
+  AssertEquals('NewStr', FInstantAttribute.DisplayText);
 end;
 
 procedure TestTInstantAttribute.TestIsDefault;
 begin
-  AssertTrue('Value is not default!', FInstantAttribute.IsDefault);
+  AssertTrue(FInstantAttribute.IsDefault);
 
   FInstantAttribute.Value := 'NewString';
-  AssertFalse('Value is default!', FInstantAttribute.IsDefault);
+  AssertFalse(FInstantAttribute.IsDefault);
 end;
 
 procedure TestTInstantAttribute.TestIsIndexed;
 begin
-  AssertFalse('Attribute is indexed!', FInstantAttribute.IsIndexed);
+  AssertFalse(FInstantAttribute.IsIndexed);
 
   FInstantAttribute.Metadata.IsIndexed := True;
-  AssertTrue('Attribute is not indexed!', FInstantAttribute.IsIndexed);
+  AssertTrue(FInstantAttribute.IsIndexed);
 end;
 
 procedure TestTInstantAttribute.TestIsMandatory;
 begin
-  AssertFalse('Attribute is Mandatory!', FInstantAttribute.IsMandatory);
+  AssertFalse(FInstantAttribute.IsMandatory);
 
   FInstantAttribute.Metadata.IsIndexed := True;
-  AssertTrue('Attribute is not Mandatory!', FInstantAttribute.IsMandatory);
+  AssertTrue(FInstantAttribute.IsMandatory);
   FInstantAttribute.Metadata.IsRequired := True;
-  AssertTrue('Attribute is not Mandatory!', FInstantAttribute.IsMandatory);
+  AssertTrue(FInstantAttribute.IsMandatory);
   FInstantAttribute.Metadata.IsIndexed := False;
-  AssertTrue('Attribute is not Mandatory!', FInstantAttribute.IsMandatory);
+  AssertTrue(FInstantAttribute.IsMandatory);
 end;
 
 procedure TestTInstantAttribute.TestIsRequired;
 begin
-  AssertFalse('Attribute is required!', FInstantAttribute.IsRequired);
+  AssertFalse(FInstantAttribute.IsRequired);
 
   FInstantAttribute.Metadata.IsRequired := True;
-  AssertTrue('Attribute is not required!', FInstantAttribute.IsRequired);
+  AssertTrue(FInstantAttribute.IsRequired);
 end;
 
 procedure TestTInstantAttribute.TestMetadata;
 begin
-  AssertNotNull('Metadata is nil!', FInstantAttribute.Metadata);
-  AssertEquals('Metdata name is incorrect!', 'AttrMetadataName',
-    FInstantAttribute.Metadata.Name);
+  AssertNotNull(FInstantAttribute.Metadata);
+  AssertEquals('AttrMetadataName', FInstantAttribute.Metadata.Name);
 
   FInstantAttribute.Metadata := nil;
-  AssertNull('Metadata is not nil!', FInstantAttribute.Metadata);
+  AssertNull(FInstantAttribute.Metadata);
   FInstantAttribute.Reset;
 
   FInstantAttribute.Metadata := FAttrMetadata;
-  AssertNotNull('Metadata is nil!', FInstantAttribute.Metadata);
-  AssertEquals('Metdata name is incorrect!', 'AttrMetadataName',
-    FInstantAttribute.Metadata.Name);
+  AssertNotNull(FInstantAttribute.Metadata);
+  AssertEquals('AttrMetadataName', FInstantAttribute.Metadata.Name);
 end;
 
 initialization

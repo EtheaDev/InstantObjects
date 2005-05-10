@@ -59,46 +59,43 @@ end;
 procedure TestTInstantString.TestAsBoolean;
 begin
   FInstantString.AsBoolean := True;
-  AssertEquals('Set AsBoolean is incorrect!', 'True', FInstantString.Value);
-  AssertTrue('Get AsBoolean is false!', FInstantString.AsBoolean);
+  AssertEquals('True', FInstantString.Value);
+  AssertTrue(FInstantString.AsBoolean);
 
   FInstantString.AsBoolean := False;
-  AssertEquals('Set AsBoolean is incorrect!', 'False', FInstantString.Value);
-  AssertFalse('Get AsBoolean is true!', FInstantString.AsBoolean);
+  AssertEquals('False', FInstantString.Value);
+  AssertFalse(FInstantString.AsBoolean);
 end;
 
 procedure TestTInstantString.TestAsCurrency;
 var
-  c: Currency;
+  vCurr: Currency;
 begin
-  c := 23.45;
-  FInstantString.AsCurrency := c;
-  AssertEquals('Set AsCurrency is incorrect!', '23' + DecimalSeparator + '45', FInstantString.Value);
-  AssertEquals('Get AsCurrency is incorrect!', 23.45,
-    FInstantString.AsCurrency);
+  vCurr := 23.45;
+  FInstantString.AsCurrency := vCurr;
+  AssertEquals('23' + DecimalSeparator + '45', FInstantString.Value);
+  AssertEquals(vCurr, FInstantString.AsCurrency);
 end;
 
 procedure TestTInstantString.TestAsDateTime;
 begin
   FInstantString.AsDateTime := 12.45;
-  AssertEquals('Set AsDateTime is incorrect!', DateTimeToStr(12.45),
-    FInstantString.Value);
-  AssertEquals('Get AsDateTime is incorrect!', 12.45,
-    FInstantString.AsDateTime);
+  AssertEquals(DateTimeToStr(12.45), FInstantString.Value);
+  AssertEquals(12.45, FInstantString.AsDateTime);
 end;
 
 procedure TestTInstantString.TestAsFloat;
 begin
   FInstantString.AsFloat := 89.45;
-  AssertEquals('Set AsFloat is incorrect!', '89' + DecimalSeparator + '45', FInstantString.Value);
-  AssertEquals('Get AsFloat is incorrect!', 89.45, FInstantString.AsFloat);
+  AssertEquals('89' + DecimalSeparator + '45', FInstantString.Value);
+  AssertEquals(89.45, FInstantString.AsFloat);
 end;
 
 procedure TestTInstantString.TestAsInteger;
 begin
   FInstantString.AsInteger := 100;
-  AssertEquals('Set AsInteger is incorrect!', '100', FInstantString.Value);
-  AssertEquals('Get AsInteger is incorrect!', 100, FInstantString.AsInteger);
+  AssertEquals('100', FInstantString.Value);
+  AssertEquals(100, FInstantString.AsInteger);
 end;
 
 procedure TestTInstantString.TestAsObject;
@@ -125,15 +122,13 @@ procedure TestTInstantString.TestAssign;
 var
   vSource: TInstantString;
 begin
-  AssertEquals('String value is incorrect!', 'StringValue',
-    FInstantString.Value);
+  AssertEquals('StringValue', FInstantString.Value);
 
   vSource := TInstantString.Create;
   try
     VSource.Value := 'DifferentString';
     FInstantString.Assign(vSource);
-    AssertEquals('String value is incorrect!', 'DifferentString',
-      FInstantString.Value);
+    AssertEquals('DifferentString', FInstantString.Value);
   finally
     vSource.Free;
   end;
@@ -142,54 +137,49 @@ end;
 procedure TestTInstantString.TestAsString;
 begin
   FInstantString.AsString := 'DifferentString';
-  AssertEquals('Set AsString is incorrect!', 'DifferentString',
-    FInstantString.Value);
-  AssertEquals('Get AsString is incorrect!', 'DifferentString',
-    FInstantString.AsString);
+  AssertEquals('DifferentString', FInstantString.Value);
+  AssertEquals('DifferentString', FInstantString.AsString);
 end;
 
 procedure TestTInstantString.TestAsVariant;
 begin                                           
   FInstantString.AsVariant := 'DifferentString';
-  AssertEquals('Set AsVariant is incorrect!', 'DifferentString',
-    FInstantString.Value);
-  AssertEquals('Get AsVariant is incorrect!', 'DifferentString',
-    FInstantString.AsVariant);
+  AssertEquals('DifferentString', FInstantString.Value);
+  AssertEquals('DifferentString', FInstantString.AsVariant);
 end;
 
 procedure TestTInstantString.TestName;
 begin
-  AssertEquals('Attribute name is incorrect!', 'AttrMetadataName',
-    FInstantString.Name);
+  AssertEquals('AttrMetadataName', FInstantString.Name);
 end;
 
 procedure TestTInstantString.TestOwner;
 begin
-  AssertSame('Owner is incorrect!', FOwner, FInstantString.Owner);
+  AssertSame(FOwner, FInstantString.Owner);
 end;
 
 procedure TestTInstantString.TestReset;
 begin
-  AssertNotNull('Metadata is nil!', FInstantString.Metadata);
+  AssertNotNull(FInstantString.Metadata);
   // Metadata.DefaultValue is '';
   FInstantString.Reset;
-  AssertEquals('Reset value is incorrect!', '', FInstantString.Value);
+  AssertEquals('', FInstantString.Value);
 
   FInstantString.Metadata.DefaultValue := '1000';
   FInstantString.Reset;
-  AssertEquals('Reset value is incorrect!', '1000', FInstantString.Value);
+  AssertEquals('1000', FInstantString.Value);
 
   FInstantString.Metadata := nil;
-  AssertNull('Metadata is not nil!', FInstantString.Metadata);
+  AssertNull(FInstantString.Metadata);
   FInstantString.Reset;
-  AssertEquals('Reset value is incorrect!', '', FInstantString.Value);
+  AssertEquals('', FInstantString.Value);
 end;
 
 procedure TestTInstantString.TestValue;
 begin
-  AssertEquals('Value is incorrect!', 'StringValue', FInstantString.Value);
+  AssertEquals('StringValue', FInstantString.Value);
   FInstantString.Value := 'NewValue';
-  AssertEquals('Value is incorrect!', 'NewValue', FInstantString.Value);
+  AssertEquals('NewValue', FInstantString.Value);
 end;
 
 initialization

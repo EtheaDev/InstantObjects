@@ -51,20 +51,19 @@ end;
 procedure TestTInstantNumeric.TestAsBoolean;
 begin
   FInstantNumeric.AsBoolean := True;
-  AssertEquals('Set AsBoolean is incorrect!', 1, FInstantNumeric.Value);
-  AssertTrue('Get AsBoolean is false!', FInstantNumeric.AsBoolean);
+  AssertEquals(1, FInstantNumeric.Value);
+  AssertTrue(FInstantNumeric.AsBoolean);
 
   FInstantNumeric.AsBoolean := False;
-  AssertEquals('Set AsBoolean is incorrect!', 0, FInstantNumeric.Value);
-  AssertFalse('Get AsBoolean is true!', FInstantNumeric.AsBoolean);
+  AssertEquals(0, FInstantNumeric.Value);
+  AssertFalse(FInstantNumeric.AsBoolean);
 end;
 
 procedure TestTInstantNumeric.TestAsDateTime;
 begin
   FInstantNumeric.AsDateTime := 12.45;
-  AssertEquals('Set AsDateTime is incorrect!', 12, FInstantNumeric.Value);
-  AssertEquals('Get AsDateTime is incorrect!', 12.0,
-    FInstantNumeric.AsDateTime);
+  AssertEquals(12, FInstantNumeric.Value);
+  AssertEquals(12.0, FInstantNumeric.AsDateTime);
 end;
 
 procedure TestTInstantNumeric.TestAsObject;
@@ -90,23 +89,22 @@ end;
 procedure TestTInstantNumeric.TestDisplayText;
 begin
   FInstantNumeric.Value := 1;
-  AssertEquals('DisplayText is incorrect!', '1', FInstantNumeric.DisplayText);
+  AssertEquals('1', FInstantNumeric.DisplayText);
 
   FInstantNumeric.Metadata.EditMask := '000';
-  AssertEquals('DisplayText is incorrect!', '001', FInstantNumeric.DisplayText);
+  AssertEquals('001', FInstantNumeric.DisplayText);
 
   FInstantNumeric.Value := 1000;
   FInstantNumeric.Metadata.EditMask := '#,000'; //EditMask don't use ThousandSeparator var
-  AssertEquals('DisplayText is incorrect!', '1' + ThousandSeparator + '000',
-    FInstantNumeric.DisplayText);
+  AssertEquals('1' + ThousandSeparator + '000', FInstantNumeric.DisplayText);
 end;
 
 procedure TestTInstantNumeric.TestIsDefault;
 begin
-  AssertTrue('Value is not default!', FInstantNumeric.IsDefault);
+  AssertTrue(FInstantNumeric.IsDefault);
 
   FInstantNumeric.Value := 100;
-  AssertFalse('Value is default!', FInstantNumeric.IsDefault);
+  AssertFalse(FInstantNumeric.IsDefault);
 end;
 
 initialization
