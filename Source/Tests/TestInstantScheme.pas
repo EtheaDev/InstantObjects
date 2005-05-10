@@ -43,10 +43,10 @@ end;
 
 procedure TestTInstantRelationalScheme.TestBlobStreamFormat;
 begin
-  AssertTrue('Incorrect BlobStreamFormat!',
+  AssertTrue('BlobStreamFormat',
     sfBinary = FInstantRelationalScheme.BlobStreamFormat);
   FInstantRelationalScheme.BlobStreamFormat := sfXML;
-  AssertTrue('Incorrect BlobStreamFormat!',
+  AssertTrue('BlobStreamFormat',
     sfXML = FInstantRelationalScheme.BlobStreamFormat);
 end;
 
@@ -63,25 +63,22 @@ end;
 
 procedure TestTInstantRelationalScheme.TestIdDataType;
 begin
-  AssertTrue('Incorrect IdDataType!',
-    dtString = FInstantRelationalScheme.IdDataType);
+  AssertTrue('IdDataType', dtString = FInstantRelationalScheme.IdDataType);
   FInstantRelationalScheme.IdDataType := dtInteger;
-  AssertTrue('Incorrect IdDataType!',
-    dtInteger = FInstantRelationalScheme.IdDataType);
+  AssertTrue('IdDataType', dtInteger = FInstantRelationalScheme.IdDataType);
 end;
 
 procedure TestTInstantRelationalScheme.TestIdSize;
 begin
-  AssertEquals('Incorrect IDSize!', InstantDefaultFieldSize,
+  AssertEquals(InstantDefaultFieldSize,
     FInstantRelationalScheme.IdSize);
   FInstantRelationalScheme.IdSize := 10;
-  AssertEquals('Incorrect IDSize!', 10, FInstantRelationalScheme.IdSize);
+  AssertEquals(10, FInstantRelationalScheme.IdSize);
 end;
 
 procedure TestTInstantRelationalScheme.TestTableMetadataCount;
 begin
-  AssertEquals('Incorrect TableMetadataCount!', 8,
-    FInstantRelationalScheme.TableMetadataCount);
+  AssertEquals(8, FInstantRelationalScheme.TableMetadataCount);
 end;
 
 procedure TestTInstantRelationalScheme.TestTableMetadatas;
@@ -89,8 +86,8 @@ var
   vReturnValue: TInstantTableMetadata;
 begin
   vReturnValue := FInstantRelationalScheme.TableMetadatas[0];
-  AssertNotNull('TableMetadata is nil!', vReturnValue);
-  AssertEquals('', 'Address', vReturnValue.Name);
+  AssertNotNull(vReturnValue);
+  AssertEquals('Address', vReturnValue.Name);
 end;
 
 initialization

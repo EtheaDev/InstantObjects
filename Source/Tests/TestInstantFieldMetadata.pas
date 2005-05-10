@@ -63,9 +63,8 @@ end;
 
 procedure TestTInstantFieldMetadata.TestCollection;
 begin
-  AssertNotNull('Collection is nil!', FInstantFieldMetadata.Collection);
-  AssertSame('Collection is incorrect!', FCollection,
-    FInstantFieldMetadata.Collection);
+  AssertNotNull(FInstantFieldMetadata.Collection);
+  AssertSame(FCollection, FInstantFieldMetadata.Collection);
 end;
 
 procedure TestTInstantFieldMetadata.TestDataType;
@@ -74,18 +73,17 @@ var
 begin
   vStr := GetEnumName(TypeInfo(TInstantDataType),
     Ord(FInstantFieldMetadata.DataType));
-  AssertEquals('DataType incorrect!', 'dtInteger', vStr);
+  AssertEquals('dtInteger', vStr);
 end;
 
 procedure TestTInstantFieldMetadata.TestExternalTableName;
 begin
-  AssertEquals('ExternalTableName incorrect!', 'ExternalTableName',
-    FInstantFieldMetadata.ExternalTableName);
+  AssertEquals('ExternalTableName', FInstantFieldMetadata.ExternalTableName);
 end;
 
 procedure TestTInstantFieldMetadata.TestOptions;
 begin
-  AssertTrue('Options incorrect!', foRequired in FInstantFieldMetadata.Options);
+  AssertTrue(foRequired in FInstantFieldMetadata.Options);
 end;
 
 procedure TestTInstantFieldMetadata.TestOriginalAttributeType;
@@ -94,12 +92,12 @@ var
 begin
   vStr := GetEnumName(TypeInfo(TInstantAttributeType),
     Ord(FInstantFieldMetadata.OriginalAttributeType));
-  AssertEquals('OriginalAttributeType incorrect!', 'atInteger', vStr);
+  AssertEquals('atInteger', vStr);
 end;
 
 procedure TestTInstantFieldMetadata.TestSize;
 begin
-  AssertEquals('Size incorrect!', 10, FInstantFieldMetadata.Size);
+  AssertEquals(10, FInstantFieldMetadata.Size);
 end;
 
 procedure TestTInstantFieldMetadatas.SetUp;
@@ -120,11 +118,11 @@ var
   vReturnValue: TInstantFieldMetadata;
 begin
   vReturnValue := FInstantFieldMetadatas.Add;
-  AssertNotNull('vReturnValue is nil!', vReturnValue);
-  AssertEquals('Count is incorrect!', 1, FInstantFieldMetadatas.Count);
-  AssertNotNull('Items[0] is nil!', FInstantFieldMetadatas.Items[0]);
+  AssertNotNull(vReturnValue);
+  AssertEquals(1, FInstantFieldMetadatas.Count);
+  AssertNotNull('Items[0]', FInstantFieldMetadatas.Items[0]);
   FInstantFieldMetadatas.Remove(vReturnValue);
-  AssertEquals('Count is incorrect!', 0, FInstantFieldMetadatas.Count);
+  AssertEquals(0, FInstantFieldMetadatas.Count);
 end;
 
 procedure TestTInstantFieldMetadatas.TestAddFieldMetadata;
@@ -147,27 +145,25 @@ begin
   FInstantFieldMetadatas.AddFieldMetadata(vName, vDataType, vSize,
     vOriginalAttributeType, vOptions, vExternalTableName);
 
-  AssertEquals('Count is incorrect!', 1, FInstantFieldMetadatas.Count);
+  AssertEquals(1, FInstantFieldMetadatas.Count);
   vInstantFieldMetadata := FInstantFieldMetadatas.Items[0];
   AssertNotNull(vInstantFieldMetadata);
-  AssertEquals('Name is incorrect!', vName, vInstantFieldMetadata.Name);
-  AssertEquals('Size is incorrect!', 10, vInstantFieldMetadata.Size);
+  AssertEquals(vName, vInstantFieldMetadata.Name);
+  AssertEquals(10, vInstantFieldMetadata.Size);
   vStr := GetEnumName(TypeInfo(TInstantAttributeType),
     Ord(vInstantFieldMetadata.OriginalAttributeType));
-  AssertEquals('OriginalAttributeType incorrect!', 'atInteger', vStr);
-  AssertTrue('Count is incorrect!',
-    foRequired in vInstantFieldMetadata.Options);
+  AssertEquals('atInteger', vStr);
+  AssertTrue(foRequired in vInstantFieldMetadata.Options);
   vStr := GetEnumName(TypeInfo(TInstantDataType),
     Ord(vInstantFieldMetadata.DataType));
-  AssertEquals('DataType incorrect!', 'dtInteger', vStr);
-  AssertEquals('ExternalTableName is incorrect!', 'ExternalTableName',
-    vInstantFieldMetadata.ExternalTableName);
+  AssertEquals('dtInteger', vStr);
+  AssertEquals('ExternalTableName', vInstantFieldMetadata.ExternalTableName);
 end;
 
 procedure TestTInstantFieldMetadatas.TestOwner;
 begin
-  AssertNotNull('Owner is nil!', FInstantFieldMetadatas.Owner);
-  AssertSame('Owner value is incorrect!', FOwner, FInstantFieldMetadatas.Owner);
+  AssertNotNull(FInstantFieldMetadatas.Owner);
+  AssertSame(FOwner, FInstantFieldMetadatas.Owner);
 end;
 
 

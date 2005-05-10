@@ -59,28 +59,24 @@ end;
 
 procedure TestTInstantIndexMetadata.TestCollection;
 begin
-  AssertNotNull('Collection is nil!', FInstantIndexMetadata.Collection);
-  AssertSame('Collection is incorrect!', FCollection,
-    FInstantIndexMetadata.Collection);
+  AssertNotNull(FInstantIndexMetadata.Collection);
+  AssertSame(FCollection, FInstantIndexMetadata.Collection);
 end;
 
 procedure TestTInstantIndexMetadata.TestFields;
 begin
-  AssertEquals('Fields value is incorrect!', 'IndexFields',
-    FInstantIndexMetadata.Fields);
+  AssertEquals('IndexFields', FInstantIndexMetadata.Fields);
 end;
 
 procedure TestTInstantIndexMetadata.TestOptions;
 begin
-  AssertTrue('Options value is incorrect!',
-    [ixPrimary, ixUnique] = FInstantIndexMetadata.Options);
+  AssertTrue([ixPrimary, ixUnique] = FInstantIndexMetadata.Options);
 end;
 
 procedure TestTInstantIndexMetadata.TestTableMetadata;
 begin
-  AssertNotNull('TableMetadata is nil!', FInstantIndexMetadata.TableMetadata);
-  AssertSame('TableMetadata is incorrect!', FOwner,
-    FInstantIndexMetadata.TableMetadata);
+  AssertNotNull(FInstantIndexMetadata.TableMetadata);
+  AssertSame(FOwner, FInstantIndexMetadata.TableMetadata);
 end;
 
 procedure TestTInstantIndexMetadatas.SetUp;
@@ -101,11 +97,11 @@ var
   vReturnValue: TInstantIndexMetadata;
 begin
   vReturnValue := FInstantIndexMetadatas.Add;
-  AssertNotNull('vReturnValue is nil!', vReturnValue);
-  AssertEquals('Count is incorrect!', 1, FInstantIndexMetadatas.Count);
-  AssertNotNull('Items[0] is nil!', FInstantIndexMetadatas.Items[0]);
+  AssertNotNull(vReturnValue);
+  AssertEquals(1, FInstantIndexMetadatas.Count);
+  AssertNotNull('Items[0]', FInstantIndexMetadatas.Items[0]);
   FInstantIndexMetadatas.Remove(vReturnValue);
-  AssertEquals('Count is incorrect!', 0, FInstantIndexMetadatas.Count);
+  AssertEquals(0, FInstantIndexMetadatas.Count);
 end;
 
 procedure TestTInstantIndexMetadatas.TestAddIndexMetadata;
@@ -121,8 +117,8 @@ begin
   FInstantIndexMetadatas.AddIndexMetadata(vName, vFields, vOptions);
   vReturnValue := TInstantIndexMetadata(FInstantIndexMetadatas.Find(vName));
   AssertNotNull('IndexMetadata not found!', vReturnValue);
-  AssertEquals('Fields value is incorrect!', vFields, vReturnValue.Fields);
-  AssertTrue('Options value is incorrect!', vOptions = vReturnValue.Options);
+  AssertEquals(vFields, vReturnValue.Fields);
+  AssertTrue('Options value', vOptions = vReturnValue.Options);
 end;
 
 procedure TestTInstantIndexMetadatas.TestOwner;
@@ -130,8 +126,8 @@ var
   vReturnValue: TInstantTableMetadata;
 begin
   vReturnValue := FInstantIndexMetadatas.Owner;
-  AssertNotNull('Owner is nil!', vReturnValue);
-  AssertSame('Owner value is incorrect!', FOwner, vReturnValue);
+  AssertNotNull(vReturnValue);
+  AssertSame(FOwner, vReturnValue);
 end;
 
 initialization
