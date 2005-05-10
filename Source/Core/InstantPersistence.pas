@@ -5358,13 +5358,18 @@ end;
 
 procedure TInstantBlob.Initialize;
 begin
-  if Assigned(Metadata) and (Metadata.Defaultvalue <> '') then
-    try
-      Write(Metadata.DefaultValue[1], 0, Length(Metadata.DefaultValue));
-    except
-      on E: Exception do
-        raise ConversionError(E);
-    end;
+  if Assigned(Metadata) then
+    if (Metadata.Defaultvalue <> '') then
+    begin
+      try
+        Write(Metadata.DefaultValue[1], 0, Length(Metadata.DefaultValue));
+      except
+        on E: Exception do
+          raise ConversionError(E);
+      end;
+    end
+    else
+      Stream.Clear;
 end;
 
 procedure TInstantBlob.LoadDataFromStream(AStream: TStream);
