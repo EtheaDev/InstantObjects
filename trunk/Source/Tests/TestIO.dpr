@@ -37,7 +37,10 @@ uses
   TestInstantBoolean in 'TestInstantBoolean.pas',
   TestInstantFloat in 'TestInstantFloat.pas',
   TestInstantCurrency in 'TestInstantCurrency.pas',
-  TestInstantBlob in 'TestInstantBlob.pas';
+  TestInstantBlob in 'TestInstantBlob.pas',
+  TestInstantComplex in 'TestInstantComplex.pas',
+  TestInstantElement in 'TestInstantElement.pas',
+  TestInstantPart in 'TestInstantPart.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
