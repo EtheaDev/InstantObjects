@@ -32,9 +32,6 @@ uses SysUtils, Classes, Graphics, testregistry, InstantClasses;
 
 procedure TestTInstantBlob.SetUp;
 begin
-//  FConn := TInstantMockConnector.Create(nil);
-//  FConn.BrokerClass := TInstantMockBroker;
-//  FOwner := TInstantObject.Create(FConn);
   FAttrMetadata := TInstantAttributeMetadata.Create(nil);
   FAttrMetadata.AttributeClass := TInstantBlob;
   FAttrMetadata.Name := 'AttrMetadataName';
@@ -45,8 +42,6 @@ procedure TestTInstantBlob.TearDown;
 begin
   FreeAndNil(FInstantBlob);
   FreeAndNil(FAttrMetadata);
-//  FreeAndNil(FOwner);
-//  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantBlob.TestAssign;
@@ -231,7 +226,6 @@ begin
   FInstantBlob.Value := 'NewString';
   AssertEquals('NewString', FInstantBlob.Value);
 end;
-
 
 initialization
   // Register any test cases with the test runner
