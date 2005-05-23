@@ -66,7 +66,7 @@ begin
     AssertFalse(FInstantPart.HasValue);
     FInstantPart.Assign(vSource);
     AssertTrue(FInstantPart.HasValue);
-    AssertNotSame(vSource, FInstantPart.Value);
+    AssertNotSame(vPart, FInstantPart.Value);
   finally
     vSource.Free;
   end;

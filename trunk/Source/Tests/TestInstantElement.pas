@@ -51,15 +51,18 @@ var
 begin
   vObject := TInstantObject.Create(FConn);
   vObject.Id := 'Object.Id';
-  AssertNotNull('vObject', vObject);
+  AssertEquals('Object RefCount 1', 1, vObject.RefCount);
+
   vReturnValue := FInstantElement.AttachObject(vObject);
   AssertTrue('AttachObject', vReturnValue);
   AssertSame(vObject, FInstantElement.Value);
-  AssertTrue(FInstantElement.HasValue);
+  AssertTrue('FInstantElement HasValue', FInstantElement.HasValue);
+  AssertEquals('Value RefCount 1', 1, FInstantElement.Value.RefCount);
+  AssertEquals('Object RefCount 2', 1, vObject.RefCount);
 
-  // ToDo: Why does this return false?
   vReturnValue := FInstantElement.DetachObject(vObject);
-  AssertTrue('DetachObject', vReturnValue);  // Fails??
+  AssertTrue('DetachObject', vReturnValue);
+  AssertEquals('Object RefCount 3', 0, vObject.RefCount);
 end;
 
 procedure TestTInstantElement.TestHasValue;
@@ -75,9 +78,12 @@ var
 begin
   vObject := TInstantObject.Create(FConn);
   AssertNotNull('Create object', vObject);
+  AssertEquals('Object RefCount 1', 1, vObject.RefCount);
   vReturnValue := FInstantElement.AttachObject(vObject);
   AssertTrue('AttachObject', vReturnValue);
   AssertTrue(FInstantElement.HasValue);
+  AssertEquals('Value RefCount 1', 1, FInstantElement.Value.RefCount);
+  AssertEquals('Object RefCount 2', 1, vObject.RefCount);
 
   vStream := TInstantStream.Create;
   try
@@ -85,9 +91,13 @@ begin
     AssertTrue('vStream.Size check', vStream.Size > 0);
     FInstantElement.Value := nil;
     AssertFalse(FInstantElement.HasValue);
+    AssertEquals('Object RefCount 3', 0, vObject.RefCount);
     vStream.Position := 0;
     FInstantElement.LoadObjectFromStream(vStream);
     AssertTrue(FInstantElement.HasValue);
+    AssertEquals('Value RefCount 2', 1, FInstantElement.Value.RefCount);
+    AssertEquals('Object RefCount 4', 0, vObject.RefCount);
+    AssertNotSame(vObject, FInstantElement.Value);
   finally
     vStream.Free;
   end;
@@ -96,6 +106,8 @@ end;
 initialization
   // Register any test cases with the test runner
 {$IFNDEF CURR_TESTS}
+  RegisterTests([TestTInstantElement]);
+{$ELSE}
   RegisterTests([TestTInstantElement]);
 {$ENDIF}
 
