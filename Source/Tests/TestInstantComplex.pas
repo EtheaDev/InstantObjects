@@ -2,7 +2,7 @@ unit TestInstantComplex;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantPersistence, InstantMock;
 
 type
 
@@ -10,7 +10,9 @@ type
   TestTInstantComplex = class(TTestCase)
   private
     FAttrMetadata: TInstantAttributeMetadata;
+    FConn: TInstantMockConnector;
     FInstantComplex: TInstantComplex;
+    FOwner: TInstantObject;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -29,16 +31,21 @@ uses SysUtils, testregistry;
 
 procedure TestTInstantComplex.SetUp;
 begin
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+  FOwner := TInstantObject.Create(FConn);
   FAttrMetadata := TInstantAttributeMetadata.Create(nil);
   FAttrMetadata.AttributeClass := TInstantComplex;
   FAttrMetadata.Name := 'AttrMetadataName';
-  FInstantComplex := TInstantComplex.Create(nil, FAttrMetadata);
+  FInstantComplex := TInstantComplex.Create(FOwner, FAttrMetadata);
 end;
 
 procedure TestTInstantComplex.TearDown;
 begin
   FreeAndNil(FInstantComplex);
   FreeAndNil(FAttrMetadata);
+  FreeAndNil(FOwner);
+  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantComplex.TestAllowOwned;
@@ -76,6 +83,8 @@ end;
 initialization
   // Register any test cases with the test runner
 {$IFNDEF CURR_TESTS}
+  RegisterTests([TestTInstantComplex]);
+{$ELSE}
   RegisterTests([TestTInstantComplex]);
 {$ENDIF}
 
