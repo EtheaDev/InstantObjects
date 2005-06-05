@@ -28,18 +28,16 @@
 
 unit InstantXML;
 
-{$I InstantDefines.inc}
+{$I ../../Core/InstantDefines.inc}
 
 interface
 
 uses
-{$IFDEF MSWINDOWS}
-  FileCtrl,
-{$ENDIF}
   Classes, DB, InstantPersistence, InstantCommand, Contnrs;
 
 const
-  XMLHEADER = '<?xml version="1.0" encoding="UTF-8"?>';
+  XML_UTF8_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
+  XML_ISO_HEADER = '<?xml version="1.0" encoding="ISO-8859-1"?>';
   XML_EXT = 'xml';
   DOT_XML_EXT = '.'+XML_EXT;
   XML_WILDCARD = '*'+DOT_XML_EXT;
@@ -217,8 +215,8 @@ procedure Register;
 implementation
 
 uses
-  InstantXMLConnectionDefEdit, InstantPresentation,
   SysUtils, InstantConsts, InstantClasses, TypInfo,
+  InstantXMLConnectionDefEdit,
 {$IFDEF MSWINDOWS}
   Controls;
 {$ENDIF}
@@ -578,7 +576,6 @@ var
   i : integer;
   StorageName : string;
 begin
-  { TODO: Build database from Scheme }
   CheckConnection;
   //build RootFolder if not exists
   if not DirectoryExists(Connection.RootFolder) and
@@ -917,25 +914,25 @@ function TXMLFilesAccessor.SaveToFileXML_UTF8(AObject: TInstantObject;
 var
   strstream: TStringStream;
   fileStream: TFileStream;
-  strUtf8: string;
+  DataStr : string;
 begin
   strstream := TStringStream.Create('');
   try
-    strStream.Write(XMLHEADER, Length(XMLHEADER));
     InstantWriteObject(strStream, sfXML, AObject);
 {$IFNDEF VER130}
     if FXMLFileFormat in [xffUtf8, xffUtf8Bot] then
-      strUtf8 := AnsiToUtf8 (strStream.DataString);
+      DataStr := AnsiToUtf8(XML_UTF8_HEADER+strStream.DataString)
+    else
+      DataStr := XML_ISO_HEADER+strStream.DataString;
 {$ELSE}
-    strUtf8 := strStream.DataString;
+    DataStr := strStream.DataString;
 {$ENDIF}
   finally
     strStream.Free;
   end;
-
   fileStream := TFileStream.Create(FileName, fmCreate);
   try
-    Result := fileStream.Write (strUtf8[1], Length (strUtf8)) <> 0;
+    Result := fileStream.Write (DataStr[1], Length (DataStr)) <> 0;
   finally
     fileStream.Free;
   end;

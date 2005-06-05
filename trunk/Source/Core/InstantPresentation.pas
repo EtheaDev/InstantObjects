@@ -636,8 +636,8 @@ procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
 implementation
 
 uses
-{$IFDEF MSWINDOWS}
-  //Forms,
+{$IFDEF VER130}
+  Forms,
 {$ENDIF}
 {$IFDEF LINUX}
   QForms,
@@ -4128,8 +4128,12 @@ begin
     Field.Modified := True;
     Exposer.DataEvent(deFieldChange, Integer(Field));
   except
+{$IFDEF VER130}
+    Application.HandleException(Self);
+{$ELSE}
     if Assigned(Classes.ApplicationHandleException) then
       Classes.ApplicationHandleException(Self);
+{$ENDIF}
   end;
   inherited Destroy;
 end;

@@ -27,8 +27,11 @@
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantXMLConnectionDefEdit;
+{$IFNDEF VER130}
+{$WARN UNIT_PLATFORM OFF}
+{$ENDIF}
 
-{$I InstantDefines.inc}
+{$I ../../Core/InstantDefines.inc}
 
 interface
 
@@ -38,7 +41,7 @@ uses
   Forms, StdCtrls, Controls, ExtCtrls;
 {$ENDIF}
 {$IFDEF LINUX}
-  QForms, QStdCtrls, QControls, QExtCtrls, QDialogs;
+  QForms, QStdCtrls, QControls, QExtCtrls;
 {$ENDIF}
 
 const
@@ -72,9 +75,11 @@ implementation
 
 {$R *.dfm}
 
-{$IFDEF MSWINDOWS}
 uses
+{$IFDEF MSWINDOWS}
   FileCtrl;
+{$ELSE}
+  QDialogs;
 {$ENDIF}
 
 { TInstantXMLConnectionDefEditForm }
