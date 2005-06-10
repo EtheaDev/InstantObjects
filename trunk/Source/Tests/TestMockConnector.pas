@@ -11,6 +11,11 @@ uses
 
 type
   TTestMockConnector = class(TTestCase)
+  private
+    FConn: TInstantMockConnector;
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
   published
     procedure TestBuildDatabase;
     procedure TestConnectDisconnect;
@@ -20,92 +25,71 @@ type
 
 implementation
 
+procedure TTestMockConnector.SetUp;
+begin
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+end;
+
+procedure TTestMockConnector.TearDown;
+begin
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
+end;
+
 { TTestMockConnector }
 
 procedure TTestMockConnector.TestBuildDatabase;
-var
-  conn: TInstantMockConnector;
 begin
-  if InstantModel.ClassMetadatas.Count > 0 then
-    InstantModel.ClassMetadatas.Clear;
-
-  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0),'.mdr'));
-  conn := TInstantMockConnector.Create(nil);
-  try
-    AssertNotNull(conn);
-    conn.MockManager.AddExpectation('InternalConnect');
-    conn.MockManager.AddExpectation('InternalCreateScheme');
-    conn.MockManager.AddExpectation('CreateBroker TInstantMockBroker');
-    conn.MockManager.AddExpectation('InternalDisconnect');
-    conn.MockManager.EndSetUp;
-    AssertEquals(4, conn.MockManager.UncoveredExpectations);
-    conn.BrokerClass := TInstantMockBroker;
-    conn.BuildDatabase(InstantModel);
-    conn.MockManager.Verify;
-  finally
-    conn.Free;
-  end;
+  AssertNotNull(FConn);
+  FConn.MockManager.AddExpectation('InternalConnect');
+  FConn.MockManager.AddExpectation('InternalCreateScheme');
+  FConn.MockManager.AddExpectation('CreateBroker TInstantMockBroker');
+  FConn.MockManager.AddExpectation('InternalDisconnect');
+  FConn.MockManager.EndSetUp;
+  AssertEquals(4, FConn.MockManager.UncoveredExpectations);
+  FConn.BrokerClass := TInstantMockBroker;
+  FConn.BuildDatabase(InstantModel);
+  FConn.MockManager.Verify;
 end;
 
 procedure TTestMockConnector.TestConnectDisconnect;
-var
-  conn: TInstantMockConnector;
 begin
-  conn := TInstantMockConnector.Create(nil);
-  try
-    conn.BrokerClass := TInstantMockBroker;
-    conn.BuildDatabase(InstantModel);
-    conn.MockManager.StartSetUp;
-    conn.MockManager.AddExpectation('InternalConnect');
-    conn.MockManager.AddExpectation('InternalDisconnect');
-    conn.MockManager.EndSetUp;
-    conn.Connect;
-    conn.Disconnect;
-    conn.MockManager.Verify;
-  finally
-    conn.Free;
-  end;
+  FConn.BuildDatabase(InstantModel);
+  FConn.MockManager.StartSetUp;
+  FConn.MockManager.AddExpectation('InternalConnect');
+  FConn.MockManager.AddExpectation('InternalDisconnect');
+  FConn.MockManager.EndSetUp;
+  FConn.Connect;
+  FConn.Disconnect;
+  FConn.MockManager.Verify;
 end;
 
 procedure TTestMockConnector.TestTransaction;
-var
-  conn: TInstantMockConnector;
 begin
-  if InstantModel.ClassMetadatas.Count > 0 then
-    InstantModel.ClassMetadatas.Clear;
-
-  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0),'.mdr'));
-  conn := TInstantMockConnector.Create(nil);
-  try
-    conn.BrokerClass := TInstantMockBroker;
-    conn.BuildDatabase(InstantModel);
-    conn.Connect;
-    conn.MockManager.StartSetUp; //reset expectations
-    conn.MockManager.AddExpectation('InternalStartTransaction');
-    conn.MockManager.AddExpectation('InternalCommitTransaction');
-    conn.MockManager.EndSetUp;
-    conn.StartTransaction;
-    AssertTrue(conn.InTransaction);
-    conn.CommitTransaction;
-    AssertFalse(conn.InTransaction);
-    conn.MockManager.Verify;
-    conn.Disconnect;
-  finally
-    conn.Free;
-  end;
+  FConn.BrokerClass := TInstantMockBroker;
+  FConn.BuildDatabase(InstantModel);
+  FConn.Connect;
+  FConn.MockManager.StartSetUp; //reset expectations
+  FConn.MockManager.AddExpectation('InternalStartTransaction');
+  FConn.MockManager.AddExpectation('InternalCommitTransaction');
+  FConn.MockManager.EndSetUp;
+  FConn.StartTransaction;
+  AssertTrue(FConn.InTransaction);
+  FConn.CommitTransaction;
+  AssertFalse(FConn.InTransaction);
+  FConn.MockManager.Verify;
+  FConn.Disconnect;
 end;
 
 procedure TTestMockConnector.TestDefault;
-var
-  conn: TInstantMockConnector;
 begin
-  conn := TInstantMockConnector.Create(nil);
-  try
-    conn.IsDefault := True;
-    AssertSame(InstantDefaultConnector, conn);
-  finally
-    conn.Free;
-  end;
+  FConn.IsDefault := True;
+  AssertSame(InstantDefaultConnector, FConn);
 end;
 
 initialization

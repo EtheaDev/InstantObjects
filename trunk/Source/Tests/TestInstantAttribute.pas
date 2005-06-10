@@ -2,15 +2,16 @@ unit TestInstantAttribute;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantPersistence, TestModel, InstantMock;
 
 type
 
   // Test methods for class TInstantAttribute
   TestTInstantAttribute = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
-    FInstantAttribute: TInstantAttribute;
+    FConn: TInstantMockConnector;
+    FInstantAttribute: TInstantString;
+    FOwner: TContact;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -31,17 +32,23 @@ uses SysUtils, testregistry, InstantClasses;
 
 procedure TestTInstantAttribute.SetUp;
 begin
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantString;
-  FAttrMetadata.Name := 'AttrMetadataName';
-  // TInstantAttribute is abstract so use TInstantString
-  FInstantAttribute := TInstantString.Create(nil, FAttrMetadata);
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TContact.Create(FConn);
+  FInstantAttribute := FOwner._Name;
 end;
 
 procedure TestTInstantAttribute.TearDown;
 begin
-  FreeAndNil(FInstantAttribute);
-  FreeAndNil(FAttrMetadata);
+  FInstantAttribute := nil;
+  FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantAttribute.TestChange;
@@ -90,22 +97,22 @@ end;
 
 procedure TestTInstantAttribute.TestIsIndexed;
 begin
-  AssertFalse(FInstantAttribute.IsIndexed);
-
-  FInstantAttribute.Metadata.IsIndexed := True;
   AssertTrue(FInstantAttribute.IsIndexed);
+
+  FInstantAttribute.Metadata.IsIndexed := False;
+  AssertFalse(FInstantAttribute.IsIndexed);
 end;
 
 procedure TestTInstantAttribute.TestIsMandatory;
 begin
-  AssertFalse(FInstantAttribute.IsMandatory);
-
-  FInstantAttribute.Metadata.IsIndexed := True;
-  AssertTrue(FInstantAttribute.IsMandatory);
-  FInstantAttribute.Metadata.IsRequired := True;
-  AssertTrue(FInstantAttribute.IsMandatory);
+  AssertTrue('1', FInstantAttribute.IsMandatory);
   FInstantAttribute.Metadata.IsIndexed := False;
-  AssertTrue(FInstantAttribute.IsMandatory);
+  AssertFalse('2', FInstantAttribute.IsMandatory);
+
+  FInstantAttribute.Metadata.IsRequired := True;
+  AssertTrue('3', FInstantAttribute.IsMandatory);
+  FInstantAttribute.Metadata.IsRequired := False;
+  AssertFalse('4', FInstantAttribute.IsMandatory);
 end;
 
 procedure TestTInstantAttribute.TestIsRequired;
@@ -117,17 +124,20 @@ begin
 end;
 
 procedure TestTInstantAttribute.TestMetadata;
+var
+  vAttrMetadata: TInstantAttributeMetadata;
 begin
   AssertNotNull(FInstantAttribute.Metadata);
-  AssertEquals('AttrMetadataName', FInstantAttribute.Metadata.Name);
+  AssertEquals('Name', FInstantAttribute.Metadata.Name);
 
+  vAttrMetadata := FInstantAttribute.Metadata;
   FInstantAttribute.Metadata := nil;
   AssertNull(FInstantAttribute.Metadata);
   FInstantAttribute.Reset;
 
-  FInstantAttribute.Metadata := FAttrMetadata;
+  FInstantAttribute.Metadata := vAttrMetadata;
   AssertNotNull(FInstantAttribute.Metadata);
-  AssertEquals('AttrMetadataName', FInstantAttribute.Metadata.Name);
+  AssertEquals('Name', FInstantAttribute.Metadata.Name);
 end;
 
 initialization

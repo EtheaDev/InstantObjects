@@ -14,6 +14,7 @@ uses
   testregistry,
   testutils,
   testreport,
+  InstantPersistence,
   InstantMock in 'InstantMock.pas',
   TestMockConnector in 'TestMockConnector.pas',
   TestMockBroker in 'TestMockBroker.pas',
@@ -30,6 +31,7 @@ uses
   TestMinimalModel in 'TestMinimalModel.pas',
   TestInstantAttributeMap in 'TestInstantAttributeMap.pas',
   TestInstantAttribute in 'TestInstantAttribute.pas',
+  TestInstantElement in 'TestInstantElement.pas',
   TestInstantNumeric in 'TestInstantNumeric.pas',
   TestInstantInteger in 'TestInstantInteger.pas',
   TestInstantString in 'TestInstantString.pas',
@@ -39,14 +41,16 @@ uses
   TestInstantCurrency in 'TestInstantCurrency.pas',
   TestInstantBlob in 'TestInstantBlob.pas',
   TestInstantComplex in 'TestInstantComplex.pas',
-  TestInstantElement in 'TestInstantElement.pas',
-  TestInstantPart in 'TestInstantPart.pas';
+  TestInstantPart in 'TestInstantPart.pas',
+  TestInstantReference in 'TestInstantReference.pas',
+  TestInstantObject in 'TestInstantObject.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
 
 begin
   Application.Initialize;
+  InstantModel.ClassMetadatas.Clear;
   Application.CreateForm(TGUITestRunner, TestRunner);
   Application.Run;
 end.

@@ -37,8 +37,8 @@ end;
 
 procedure TestTInstantRelationalScheme.TearDown;
 begin
-  FInstantRelationalScheme.Free;
-  FInstantRelationalScheme := nil;
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FInstantRelationalScheme);
 end;
 
 procedure TestTInstantRelationalScheme.TestBlobStreamFormat;

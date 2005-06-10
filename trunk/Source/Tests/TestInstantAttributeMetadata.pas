@@ -209,10 +209,9 @@ end;
 
 procedure TestTInstantAttributeMetadata.TearDown;
 begin
-  FInstantAttributeMetadata.Free;
-  FInstantAttributeMetadata := nil;
-
-  FConn.Free;
+  FreeAndNil(FInstantAttributeMetadata);
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantAttributeMetadata.TestAssign;
@@ -290,13 +289,16 @@ var
   vObject: TInstantObject;
 begin
   vObject := TInstantObject.Create(FConn);
-  vReturnValue := FInstantAttributeMetadata.CreateAttribute(vObject);
-  AssertNotNull('InstantAttribute is nil!', vReturnValue);
-  AssertEquals('InstantAttribute value incorrect!', 'Default',
-    vReturnValue.AsString);
-  AssertNotNull('InstantAttribute metadata is nil!', vReturnValue.Metadata);
-  AssertEquals('InstantAttribute classname incorrect!', 'TInstantString',
-    vReturnValue.ClassName);
+  try
+    vReturnValue := FInstantAttributeMetadata.CreateAttribute(vObject);
+    AssertNotNull('vReturnValue', vReturnValue);
+    AssertEquals('AsString', 'Default', vReturnValue.AsString);
+    AssertNotNull('Metadata ', vReturnValue.Metadata);
+    AssertEquals('Classname', 'TInstantString', vReturnValue.ClassName);
+    vReturnValue.Free;
+  finally
+    vObject.Free;
+  end;
 end;
 
 procedure TestTInstantAttributeMetadata.TestIsAttributeClass;
@@ -309,6 +311,8 @@ begin
   AssertTrue('IsAttributeClass error for TInstantMetadata!', vReturnValue);
 end;
 
+{ TestTInstantAttributeMetadatas }
+
 procedure TestTInstantAttributeMetadatas.SetUp;
 begin
   FOwner := TInstantClassMetadata.Create(nil);
@@ -318,9 +322,8 @@ end;
 
 procedure TestTInstantAttributeMetadatas.TearDown;
 begin
-  FInstantAttributeMetadatas.Free;
-  FInstantAttributeMetadatas := nil;
-  FOwner.Free;
+  FreeAndNil(FInstantAttributeMetadatas);
+  FreeAndNil(FOwner);
 end;
 
 procedure TestTInstantAttributeMetadatas.TestAddRemove;

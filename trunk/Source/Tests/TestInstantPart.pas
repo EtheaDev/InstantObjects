@@ -2,17 +2,16 @@ unit TestInstantPart;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantPart
   TestTInstantPart = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
     FConn: TInstantMockConnector;
     FInstantPart: TInstantPart;
-    FOwner: TInstantObject;
+    FOwner: TContact;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -34,18 +33,20 @@ procedure TestTInstantPart.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
-  FOwner := TInstantObject.Create(FConn);
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantPart;
-  FAttrMetadata.StorageKind := skExternal;
-  FInstantPart := TInstantPart.Create(FOwner, FAttrMetadata);
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TContact.Create(FConn);
+  FInstantPart := FOwner._Address;
 end;
 
 procedure TestTInstantPart.TearDown;
 begin
-  FreeAndNil(FInstantPart);
-  FreeAndNil(FAttrMetadata);
+  FInstantPart := nil;
   FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
 end;
 
@@ -53,37 +54,38 @@ procedure TestTInstantPart.TestAssign;
 var
   vSource: TInstantPart;
   vAttrMetadata: TInstantAttributeMetadata;
-  vPart: TInstantObject;
+  vPart: TAddress;
 begin
   vAttrMetadata := TInstantAttributeMetadata.Create(nil);
   vAttrMetadata.AttributeClass := TInstantPart;
   vSource := TInstantPart.Create(FOwner, vAttrMetadata);
   try
-    vPart := TInstantObject.Create(FConn);
-    vSource.Value := vPart;
-    AssertTrue(vSource.HasValue);
-
-    AssertFalse(FInstantPart.HasValue);
-    FInstantPart.Assign(vSource);
+    vPart := TAddress.Create(FConn);
+    FInstantPart.Value := vPart;
     AssertTrue(FInstantPart.HasValue);
-    AssertNotSame(vPart, FInstantPart.Value);
+
+    AssertFalse(vSource.HasValue);
+    vSource.Assign(FInstantPart);
+    AssertTrue(vSource.HasValue);
+    AssertNotSame(vPart, vSource.Value);
   finally
     vSource.Free;
+    vAttrMetadata.Free;
   end;
 end;
 
 procedure TestTInstantPart.TestAllowOwned;
 begin
-  AssertTrue(FInstantPart.AllowOwned);
+  AssertFalse(FInstantPart.AllowOwned);
 end;
 
 procedure TestTInstantPart.TestIsChanged;
 var
-  vPart: TInstantObject;
+  vPart: TAddress;
 begin
   AssertFalse(FInstantPart.IsChanged);
 
-  vPart := TInstantObject.Create(FConn);
+  vPart := TAddress.Create(FConn);
   vPart.Changed;
   FInstantPart.Value := vPart;
   AssertTrue(FInstantPart.IsChanged);
@@ -91,11 +93,11 @@ end;
 
 procedure TestTInstantPart.TestIsDefault;
 var
-  vPart: TInstantObject;
+  vPart: TAddress;
 begin
   AssertTrue(FInstantPart.IsDefault);
 
-  vPart := TInstantObject.Create(FConn);
+  vPart := TAddress.Create(FConn);
   vPart.Id := 'PartId';
   FInstantPart.Value := vPart;
   AssertFalse(FInstantPart.IsDefault);
@@ -105,7 +107,7 @@ procedure TestTInstantPart.TestHasValue;
 begin
   AssertFalse(FInstantPart.HasValue);
 
-  FInstantPart.Value := TInstantObject.Create(FConn);
+  FInstantPart.Value := TAddress.Create(FConn);
   AssertTrue(FInstantPart.HasValue);
 end;
 
@@ -122,19 +124,19 @@ var
   vFirstObj: TInstantObject;
   vSecondObj: TInstantObject;
 begin
-  AssertFalse(FInstantPart.HasValue);
-  AssertNotNull(FInstantPart.Value);
-  AssertTrue(FInstantPart.HasValue);
+  AssertFalse('HasValue 1', FInstantPart.HasValue);
+  AssertNotNull('AssertNotNull', FInstantPart.Value);
+  AssertTrue('HasValue 2', FInstantPart.HasValue);
   vFirstObj := FInstantPart.Value;
 
-  vSecondObj := TInstantObject.Create(FConn);
+  vSecondObj := TAddress.Create(FConn);
   vSecondObj.Id := 'PartId';
   FInstantPart.Value := vSecondObj;
-  AssertEquals('PartId', FInstantPart.Value.Id);
-  AssertNotSame(vFirstObj, FInstantPart.Value);
+  AssertEquals('Value.Id', 'PartId', FInstantPart.Value.Id);
+  AssertNotSame('AssertNotSame', vFirstObj, FInstantPart.Value);
 
   FInstantPart.Reset;
-  AssertFalse(FInstantPart.HasValue);
+  AssertFalse('HasValue 3', FInstantPart.HasValue);
 end;
 
 initialization
@@ -144,4 +146,3 @@ initialization
 {$ENDIF}
 
 end.
- 

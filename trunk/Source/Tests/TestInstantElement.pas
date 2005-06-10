@@ -2,17 +2,16 @@ unit TestInstantElement;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantElement
   TestTInstantElement = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
     FConn: TInstantMockConnector;
     FInstantElement: TInstantElement;
-    FOwner: TInstantObject;
+    FOwner: TContact;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -30,26 +29,28 @@ procedure TestTInstantElement.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
-  FOwner := TInstantObject.Create(FConn);
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantPart;
-  FInstantElement := TInstantPart.Create(FOwner, FAttrMetadata);
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TContact.Create(FConn);
+  FInstantElement := FOwner._Address;
 end;
 
 procedure TestTInstantElement.TearDown;
 begin
-  FreeAndNil(FInstantElement);
-  FreeAndNil(FAttrMetadata);
   FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
 end;
 
 procedure TestTInstantElement.TestAttach_DetachObject;
 var
   vReturnValue: Boolean;
-  vObject: TInstantObject;
+  vObject: TAddress;
 begin
-  vObject := TInstantObject.Create(FConn);
+  vObject := TAddress.Create(FConn);
   vObject.Id := 'Object.Id';
   AssertEquals('Object RefCount 1', 1, vObject.RefCount);
 
@@ -59,10 +60,12 @@ begin
   AssertTrue('FInstantElement HasValue', FInstantElement.HasValue);
   AssertEquals('Value RefCount 1', 1, FInstantElement.Value.RefCount);
   AssertEquals('Object RefCount 2', 1, vObject.RefCount);
+  AssertEquals('Value.Id 1', 'Object.Id', FInstantElement.Value.Id);
 
   vReturnValue := FInstantElement.DetachObject(vObject);
-  AssertTrue('DetachObject', vReturnValue);
-  AssertEquals('Object RefCount 3', 0, vObject.RefCount);
+  AssertFalse('DetachObject', vReturnValue);
+  AssertEquals('Object RefCount 3', 1, vObject.RefCount);
+  AssertEquals('Value.Id 2', '', FInstantElement.Value.Id);
 end;
 
 procedure TestTInstantElement.TestHasValue;
@@ -72,11 +75,11 @@ end;
 
 procedure TestTInstantElement.TestSaveObjectTo_FromStream;
 var
-  vObject: TInstantObject;
+  vObject: TAddress;
   vReturnValue: Boolean;
   vStream: TStream;
 begin
-  vObject := TInstantObject.Create(FConn);
+  vObject := TAddress.Create(FConn);
   AssertNotNull('Create object', vObject);
   AssertEquals('Object RefCount 1', 1, vObject.RefCount);
   vReturnValue := FInstantElement.AttachObject(vObject);
@@ -91,13 +94,10 @@ begin
     AssertTrue('vStream.Size check', vStream.Size > 0);
     FInstantElement.Value := nil;
     AssertFalse(FInstantElement.HasValue);
-    AssertEquals('Object RefCount 3', 0, vObject.RefCount);
     vStream.Position := 0;
     FInstantElement.LoadObjectFromStream(vStream);
     AssertTrue(FInstantElement.HasValue);
     AssertEquals('Value RefCount 2', 1, FInstantElement.Value.RefCount);
-    AssertEquals('Object RefCount 4', 0, vObject.RefCount);
-    AssertNotSame(vObject, FInstantElement.Value);
   finally
     vStream.Free;
   end;

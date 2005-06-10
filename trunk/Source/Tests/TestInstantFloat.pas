@@ -2,17 +2,16 @@ unit TestInstantFloat;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantFloat
   TestTInstantFloat = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
     FConn: TInstantMockConnector;
     FInstantFloat: TInstantFloat;
-    FOwner: TInstantObject;
+    FOwner: TPerson;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -35,19 +34,21 @@ procedure TestTInstantFloat.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
-  FOwner := TInstantObject.Create(FConn);
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantFloat;
-  FAttrMetadata.Name := 'AttrMetadataName';
-  FInstantFloat := TInstantFloat.Create(FOwner, FAttrMetadata);
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TPerson.Create(FConn);
+  FInstantFloat := FOwner._AL_hours;
   FInstantFloat.Value := 1.3;
 end;
 
 procedure TestTInstantFloat.TearDown;
 begin
-  FreeAndNil(FInstantFloat);
-  FreeAndNil(FAttrMetadata);
+  FInstantFloat := nil;
   FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
 end;
 
