@@ -407,8 +407,12 @@ var
   vReturnValue: TObject;
 begin
   vReturnValue := FInstantObject.NewInstance;
-  AssertNotNull(vReturnValue);
-  AssertEquals('InstanceSize', TPerson.InstanceSize, vReturnValue.InstanceSize);
+  try
+    AssertNotNull(vReturnValue);
+    AssertEquals('InstanceSize', TPerson.InstanceSize, vReturnValue.InstanceSize);
+  finally
+    vReturnValue.Free;
+  end;
 end;
 
 procedure TestTInstantObject.TestObjectChangeCount;
