@@ -33,16 +33,19 @@ uses testregistry;
 
 procedure TestTInstantMetadata.SetUp;
 var
-  ACollection: TInstantMetadatas;
+  vCollection: TInstantMetadatas;
 begin
-  ACollection := TInstantMetadatas.Create(nil, TInstantMetadata);
-  FInstantMetadata := TInstantMetadata.Create(ACollection);
+  vCollection := TInstantMetadatas.Create(nil, TInstantMetadata);
+  FInstantMetadata := TInstantMetadata.Create(vCollection);
 end;
 
 procedure TestTInstantMetadata.TearDown;
+var
+  vCollection: TInstantMetadatas;
 begin
-  FInstantMetadata.Free;
-  FInstantMetadata := nil;
+  vCollection := FInstantMetadata.Collection;
+  FreeAndNil(FInstantMetadata);
+  FreeAndNil(vCollection);
 end;
 
 procedure TestTInstantMetadata.TestCollectionExists;

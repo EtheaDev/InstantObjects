@@ -9,7 +9,6 @@ uses
 type
   TTestMockBroker = class(TTestCase)
   private
-    FClassCount: Integer;
   protected
     FConn: TInstantMockConnector;
     procedure SetUp; override;
@@ -25,7 +24,6 @@ type
 
   TTestMockRelationalBroker = class(TTestCase)
   private
-    FClassCount: Integer;
   protected
     FConn: TInstantMockConnector;
     procedure SetUp; override;
@@ -42,19 +40,16 @@ procedure TTestMockBroker.TestModelFromToFile;
 var
   vReturnValue: TInstantClassMetadata;
 begin
-  if FClassCount > 0 then
-  begin
-    // This ensures that the exported file is synchronised
-    // with the current model resource file.
-    InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdx'));
-    InstantModel.ClassMetadatas.Clear;
-  end;
+  AssertTrue('ClassMetadatas.Count', InstantModel.ClassMetadatas.Count > 0);
+
+  // This ensures that the exported file is synchronised
+  // with the current model resource file.
+  InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdx'));
+  InstantModel.ClassMetadatas.Clear;
 
   InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdx'));
   vReturnValue := InstantModel.ClassMetadatas.Find('TCategory');
   AssertNotNull(vReturnValue);
-  if FClassCount = 0 then
-    FClassCount := InstantModel.ClassMetadatas.Count;
 
   InstantModel.ClassMetadatas.Remove(vReturnValue);
   AssertNull('TCategory was found!',
@@ -71,10 +66,6 @@ procedure TTestMockBroker.TestModelFromToResFile;
 var
   vReturnValue: TInstantClassMetadata;
 begin
-  if FClassCount > 0 then
-    InstantModel.ClassMetadatas.Clear;
-
-  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
   vReturnValue := InstantModel.ClassMetadatas.Find('TCategory');
   AssertNotNull(vReturnValue);
 
@@ -93,12 +84,12 @@ procedure TTestMockBroker.TestGetBroker;
 var
   brok: TInstantMockBroker;
 begin
-  brok := (Fconn.Broker as TInstantMockBroker);
+  brok := (FConn.Broker as TInstantMockBroker);
   AssertNotNull(brok);
   AssertEquals(brok.ClassType, TInstantMockBroker);
   brok.MockManager.StartSetUp;
   brok.MockManager.EndSetUp;
-  Fconn.BuildDatabase(InstantModel);
+  FConn.BuildDatabase(InstantModel);
   brok.MockManager.Verify;
 end;
 
@@ -106,10 +97,10 @@ procedure TTestMockBroker.TestBuildDatabase;
 var
   brok: TInstantMockBroker;
 begin
-  brok := Fconn.Broker as TInstantMockBroker;
+  brok := FConn.Broker as TInstantMockBroker;
   brok.MockManager.StartSetUp;
   brok.MockManager.EndSetUp;
-  Fconn.BuildDatabase(InstantModel);
+  FConn.BuildDatabase(InstantModel);
   brok.MockManager.Verify;
 end;
 
@@ -119,11 +110,9 @@ var
   old_id: string;
   brok: TInstantMockBroker;
 begin
-  AssertTrue(FClassCount > 0);
-
-  Fconn.IsDefault := True;
-  Fconn.StartTransaction;
-  brok := Fconn.Broker as TInstantMockBroker;
+  FConn.IsDefault := True;
+  FConn.StartTransaction;
+  brok := FConn.Broker as TInstantMockBroker;
   brok.MockManager.StartSetUp;
   a := TAddress.Create;
   try
@@ -137,7 +126,7 @@ begin
   brok.MockManager.EndSetUp;
   brok.MockManager.AddExpectation('InternalStoreObject ' + old_id);
   brok.MockManager.Verify;
-  Fconn.CommitTransaction;
+  FConn.CommitTransaction;
   brok.MockManager.StartSetUp;
   a := TAddress.Retrieve(old_id);
   try
@@ -152,47 +141,43 @@ end;
 
 procedure TTestMockBroker.SetUp;
 begin
-  inherited;
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
 
-  if FClassCount > 0 then
+  if InstantModel.ClassMetadatas.Count > 0 then
     InstantModel.ClassMetadatas.Clear;
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
-  FClassCount := InstantModel.ClassMetadatas.Count;
 end;
 
 procedure TTestMockBroker.TearDown;
 begin
-  FConn.Free;
-  inherited;
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
 end;
 
 { TTestMockRelationalBroker }
 
 procedure TTestMockRelationalBroker.SetUp;
 begin
-  inherited;
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockCRBroker;
 
-  if FClassCount > 0 then
+  if InstantModel.ClassMetadatas.Count > 0 then
     InstantModel.ClassMetadatas.Clear;
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
-  FClassCount := InstantModel.ClassMetadatas.Count;
 end;
 
 procedure TTestMockRelationalBroker.TearDown;
 begin
-  inherited;
-  FConn.Free;
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
 end;
 
 procedure TTestMockRelationalBroker.TestGetBroker;
 var
   brok: TInstantMockCRBroker;
 begin
-  brok := (Fconn.Broker as TInstantMockCRBroker);
+  brok := (FConn.Broker as TInstantMockCRBroker);
   AssertNotNull(brok);
   AssertEquals(brok.ClassType, TInstantMockCRBroker);
   brok.MockManager.StartSetUp;
@@ -206,9 +191,7 @@ var
   c: TContact;
   t: TPhone;
 begin
-  AssertTrue(FClassCount > 0);
-
-  Fconn.IsDefault := True;
+  FConn.IsDefault := True;
   c := TContact.Create;
   try
     AssertNotNull(c._Phones);
@@ -230,10 +213,8 @@ var
   brok: TInstantMockCRBroker;
   t: TPhone;
 begin
-  AssertTrue(FClassCount > 0);
-
-  Fconn.IsDefault := True;
-  brok := Fconn.Broker as TInstantMockCRBroker;
+  FConn.IsDefault := True;
+  brok := FConn.Broker as TInstantMockCRBroker;
   brok.MockManager.StartSetUp;
   c := TContact.Create;
   try

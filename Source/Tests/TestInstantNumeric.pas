@@ -2,17 +2,16 @@ unit TestInstantNumeric;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantNumeric
   TestTInstantNumeric = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
     FConn: TInstantMockConnector;
-    FInstantNumeric: TInstantNumeric;
-    FOwner: TInstantObject;
+    FInstantNumeric: TInstantInteger;
+    FOwner: TCompany;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -32,19 +31,20 @@ procedure TestTInstantNumeric.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
-  FOwner := TInstantObject.Create(FConn);
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantInteger;
-  FAttrMetadata.Name := 'AttrMetadataName';
-  // TInstantNumeric is abstract so use TInstantInteger
-  FInstantNumeric := TInstantInteger.Create(FOwner, FAttrMetadata);
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TCompany.Create(FConn);
+  FInstantNumeric := FOwner._NoOfBranches;
 end;
 
 procedure TestTInstantNumeric.TearDown;
 begin
-  FreeAndNil(FInstantNumeric);
-  FreeAndNil(FAttrMetadata);
+  FInstantNumeric := nil;
   FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
 end;
 
@@ -67,15 +67,23 @@ begin
 end;
 
 procedure TestTInstantNumeric.TestAsObject;
+var
+  vObj: TInstantObject;
 begin
+  vObj := TInstantObject.Create(FConn);
   try
-    FInstantNumeric.AsObject := TInstantObject.Create(FConn);
-    Fail('Exception was not thrown for Set AsObject!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
+    try
+      FInstantNumeric.AsObject := vObj;
+      Fail('Exception was not thrown for Set AsObject!'); // should never get here
+    except
+      on E: EInstantAccessError do ; // do nothing as this is expected
+      else
+        raise;
+    end;
+  finally
+    vObj.Free;
   end;
+
   try
     FInstantNumeric.AsObject;
     Fail('Exception was not thrown for Get AsObject!'); // should never get here

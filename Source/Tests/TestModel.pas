@@ -113,14 +113,17 @@ type
     Category: Reference(TCategory);
     City: String(30) index;
     Name: String(50) index;
-    Phones: Parts(TPhone); }
+    Phones: Parts(TPhone);
+    AddressExt: Part(TAddress) stored 'Address' external; }
     _Address: TInstantPart;
+    _AddressExt: TInstantPart;
     _Category: TInstantReference;
     _City: TInstantString;
     _Name: TInstantString;
     _Phones: TInstantParts;
   private
     function GetAddress: TAddress;
+    function GetAddressExt: TAddress;
     function GetCategory: TCategory;
     function GetCity: string;
     function GetMainPhoneNumber: string;
@@ -128,6 +131,7 @@ type
     function GetPhoneCount: Integer;
     function GetPhones(Index: Integer): TPhone;
     procedure SetAddress(Value: TAddress);
+    procedure SetAddressExt(Value: TAddress);
     procedure SetCategory(Value: TCategory);
     procedure SetCity(const Value: string);
     procedure SetMainPhoneNumber(const Value: string);
@@ -148,6 +152,7 @@ type
     property Phones[Index: Integer]: TPhone read GetPhones write SetPhones;
   published
     property Address: TAddress read GetAddress write SetAddress;
+    property AddressExt: TAddress read GetAddressExt write SetAddressExt;
     property Category: TCategory read GetCategory write SetCategory;
     property City: string read GetCity write SetCity;
     property MainPhoneNumber: string read GetMainPhoneNumber write SetMainPhoneNumber;
@@ -168,25 +173,33 @@ type
   TPerson = class(TContact)
   {IOMETADATA stored;
     BirthDate: DateTime;
-    Emails: Parts(TEmail) externalstored 'Person_Email';
+    Emails: Parts(TEmail);
     Employer: Reference(TCompany);
     Picture: Blob;
-    Salary: Currency; }
+    Salary: Currency;
+    Employed: Boolean;
+    AL_hours: Float; }
+    _AL_hours: TInstantFloat;
     _BirthDate: TInstantDateTime;
     _Emails: TInstantParts;
+    _Employed: TInstantBoolean;
     _Employer: TInstantReference;
     _Picture: TInstantGraphic;
     _Salary: TInstantCurrency;
   private
+    function GetAL_hours: Double;
     function GetBirthDate: TDateTime;
     function GetEmailCount: Integer;
     function GetEmails(Index: Integer): TEmail;
+    function GetEmployed: Boolean;
     function GetEmployer: TCompany;
     function GetMainEmailAddress: string;
     function GetPicture: string;
     function GetSalary: Currency;
+    procedure SetAL_hours(Value: Double);
     procedure SetBirthDate(Value: TDateTime);
     procedure SetEmails(Index: Integer; Value: TEmail);
+    procedure SetEmployed(Value: Boolean);
     procedure SetMainEmailAddress(const Value: string);
     procedure SetPicture(const Value: string);
     procedure SetSalary(Value: Currency);
@@ -203,7 +216,9 @@ type
     property EmailCount: Integer read GetEmailCount;
     property Emails[Index: Integer]: TEmail read GetEmails write SetEmails;
   published
+    property AL_hours: Double read GetAL_hours write SetAL_hours;
     property BirthDate: TDateTime read GetBirthDate write SetBirthDate;
+    property Employed: Boolean read GetEmployed write SetEmployed;
     property Employer: TCompany read GetEmployer;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
     property Picture: string read GetPicture write SetPicture;
@@ -212,11 +227,15 @@ type
 
   TCompany = class(TContact)
   {IOMETADATA stored;
-    Employees: References(TPerson) externalstored 'Company_Employee'; }
+    Employees: References(TPerson);
+    NoOfBranches: Integer; }
     _Employees: TInstantReferences;
+    _NoOfBranches: TInstantInteger;
   private
     function GetEmployeeCount: Integer;
     function GetEmployees(Index: Integer): TPerson;
+    function GetNoOfBranches: Integer;
+    procedure SetNoOfBranches(Value: Integer);
   public
     function AddEmployee(Employee: TPerson): Integer;
     procedure ClearEmployees;
@@ -226,6 +245,8 @@ type
     function RemoveEmployee(Employee: TPerson): Integer;
     property EmployeeCount: Integer read GetEmployeeCount;
     property Employees[Index: Integer]: TPerson read GetEmployees;
+  published
+    property NoOfBranches: Integer read GetNoOfBranches write SetNoOfBranches;
   end;
 
 implementation
@@ -391,6 +412,11 @@ begin
   end;
 end;
 
+function TPerson.GetAL_hours: Double;
+begin
+  Result := _AL_hours.Value;
+end;
+
 function TPerson.GetBirthDate: TDateTime;
 begin
   Result := _BirthDate.Value;
@@ -404,6 +430,11 @@ end;
 function TPerson.GetEmails(Index: Integer): TEmail;
 begin
   Result := _Emails[Index] as TEmail;
+end;
+
+function TPerson.GetEmployed: Boolean;
+begin
+  Result := _Employed.Value;
 end;
 
 function TPerson.GetEmployer: TCompany;
@@ -444,6 +475,11 @@ begin
   Result := _Emails.Remove(Email);
 end;
 
+procedure TPerson.SetAL_hours(Value: Double);
+begin
+  _AL_hours.Value := Value;
+end;
+
 procedure TPerson.SetBirthDate(Value: TDateTime);
 begin
   _BirthDate.Value := Value;
@@ -452,6 +488,11 @@ end;
 procedure TPerson.SetEmails(Index: Integer; Value: TEmail);
 begin
   _Emails[Index] := Value;
+end;
+
+procedure TPerson.SetEmployed(Value: Boolean);
+begin
+  _Employed.Value := Value;
 end;
 
 procedure TPerson.SetMainEmailAddress(const Value: string);
@@ -533,6 +574,11 @@ end;
 
 { TContact }
 
+procedure TCompany.SetNoOfBranches(Value: Integer);
+begin
+  _NoOfBranches.Value := Value;
+end;
+
 function TContact.AddPhone(Phone: TPhone): Integer;
 begin
   Result := _Phones.Add(Phone);
@@ -566,6 +612,11 @@ end;
 function TContact.GetAddress: TAddress;
 begin
   Result := _Address.Value as TAddress;
+end;
+
+function TContact.GetAddressExt: TAddress;
+begin
+  Result := _AddressExt.Value as TAddress;
 end;
 
 function TContact.GetCaption: string;
@@ -624,6 +675,11 @@ end;
 procedure TContact.SetAddress(Value: TAddress);
 begin
   _Address.Value := Value;
+end;
+
+procedure TContact.SetAddressExt(Value: TAddress);
+begin
+  _AddressExt.Value := Value;
 end;
 
 procedure TContact.SetCategory(Value: TCategory);
@@ -725,6 +781,11 @@ end;
 function TCompany.GetEmployees(Index: Integer): TPerson;
 begin
   Result := _Employees[Index] as TPerson;
+end;
+
+function TCompany.GetNoOfBranches: Integer;
+begin
+  Result := _NoOfBranches.Value;
 end;
 
 function TCompany.IndexOfEmployee(Employee: TPerson): Integer;

@@ -9,7 +9,6 @@ type
   // Test methods for class TInstantTableMetadata
   TestTInstantTableMetadata = class(TTestCase)
   private
-    FCollection: TInstantTableMetadatas;
     FInstantTableMetadata: TInstantTableMetadata;
     FOwner: TInstantScheme;
   public
@@ -36,18 +35,21 @@ implementation
 
 uses SysUtils, testregistry;
 
+{ TestTInstantTableMetadata }
+
 procedure TestTInstantTableMetadata.SetUp;
 begin
-  FOwner := TInstantScheme.Create(nil);
-  FCollection := TInstantTableMetadatas.Create(FOwner);
-  FInstantTableMetadata := TInstantTableMetadata.Create(FCollection);
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TInstantRelationalScheme.Create(InstantModel);
+  FInstantTableMetadata := FOwner.FindTableMetadata('Address');
 end;
 
 procedure TestTInstantTableMetadata.TearDown;
 begin
-  FInstantTableMetadata.Free;
-  FInstantTableMetadata := nil;
-  FreeAndNil(FCollection);
+  InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FOwner);
 end;
 
@@ -67,6 +69,8 @@ begin
   AssertSame(FOwner, FInstantTableMetadata.Scheme);
 end;
 
+{ TestTInstantTableMetadatas }
+
 procedure TestTInstantTableMetadatas.SetUp;
 begin
   FInstantTableMetadatas := TInstantTableMetadatas.Create(nil);
@@ -74,14 +78,14 @@ end;
 
 procedure TestTInstantTableMetadatas.TearDown;
 begin
-  FInstantTableMetadatas.Free;
-  FInstantTableMetadatas := nil;
+  FreeAndNil(FInstantTableMetadatas);
 end;
 
 procedure TestTInstantTableMetadatas.TestAdd_ReadItems;
 var
   vReturnValue: TInstantTableMetadata;
 begin
+  AssertEquals(0, FInstantTableMetadatas.Count);
   vReturnValue := FInstantTableMetadatas.Add;
   AssertNotNull(vReturnValue);
   AssertEquals(1, FInstantTableMetadatas.Count);

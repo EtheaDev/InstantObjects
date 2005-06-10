@@ -2,15 +2,16 @@ unit TestInstantCurrency;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantCurrency
   TestTInstantCurrency = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
+    FConn: TInstantMockConnector;
     FInstantCurrency: TInstantCurrency;
+    FOwner: TPerson;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -33,18 +34,25 @@ procedure TestTInstantCurrency.SetUp;
 var
   vCurr: Currency;
 begin
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantCurrency;
-  FAttrMetadata.Name := 'AttrMetadataName';
-  FInstantCurrency := TInstantCurrency.Create(nil, FAttrMetadata);
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TPerson.Create(FConn);
+  FInstantCurrency := FOwner._Salary;
   vCurr := 1.3;
   FInstantCurrency.Value := vCurr;
 end;
 
 procedure TestTInstantCurrency.TearDown;
 begin
-  FreeAndNil(FInstantCurrency);
-  FreeAndNil(FAttrMetadata);
+  FInstantCurrency := nil;
+  FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantCurrency.TestAsCurrency;

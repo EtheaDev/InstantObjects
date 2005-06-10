@@ -2,15 +2,16 @@ unit TestInstantBlob;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantBlob
   TestTInstantBlob = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
+    FConn: TInstantMockConnector;
     FInstantBlob: TInstantBlob;
+    FOwner: TPerson;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -32,16 +33,23 @@ uses SysUtils, Classes, Graphics, testregistry, InstantClasses;
 
 procedure TestTInstantBlob.SetUp;
 begin
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantBlob;
-  FAttrMetadata.Name := 'AttrMetadataName';
-  FInstantBlob := TInstantBlob.Create(nil, FAttrMetadata);
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TPerson.Create(FConn);
+  FInstantBlob := FOwner._Picture;
 end;
 
 procedure TestTInstantBlob.TearDown;
 begin
-  FreeAndNil(FInstantBlob);
-  FreeAndNil(FAttrMetadata);
+  FInstantBlob := nil;
+  FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantBlob.TestAssign;

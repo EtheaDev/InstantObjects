@@ -83,6 +83,7 @@ begin
     FInstantAttributeMap[i].Free;
   FreeAndNil(FInstantAttributeMap);
   FreeAndNil(FClassMetadata);
+  InstantModel.ClassMetadatas.Clear;
 end;
 
 procedure TestTInstantAttributeMap.TestAdd;
@@ -104,19 +105,21 @@ var
 begin
   // Add non-unique named item
   vItem := TInstantAttributeMetadata.Create(nil);
-  vItem.Name := 'Item1';      // Existing name
-  vReturnValue := FInstantAttributeMap.AddUnique(vItem);
-  AssertEquals('AddUnique return value is incorrect!', -1, vReturnValue);
-  AssertEquals('AttributeMap count is incorrect!', 3,
-    FInstantAttributeMap.Count);
+  try
+    vItem.Name := 'Item1';      // Existing name
+    vReturnValue := FInstantAttributeMap.AddUnique(vItem);
+    AssertEquals('AddUnique', -1, vReturnValue);
+    AssertEquals('AttributeMap count', 3, FInstantAttributeMap.Count);
+  finally
+    vItem.Free;
+  end;
 
   // Add unique named item
   vItem := TInstantAttributeMetadata.Create(nil);
   vItem.Name := 'NewItem';    // New name
   vReturnValue := FInstantAttributeMap.AddUnique(vItem);
-  AssertEquals('AddUnique return value is incorrect!', 3, vReturnValue);
-  AssertEquals('AttributeMap count is incorrect!', 4,
-    FInstantAttributeMap.Count);
+  AssertEquals('AddUnique', 3, vReturnValue);
+  AssertEquals('AttributeMap count', 4, FInstantAttributeMap.Count);
 end;
 
 procedure TestTInstantAttributeMap.TestClassMetadata;
@@ -241,7 +244,13 @@ begin
 end;
 
 procedure TestTInstantAttributeMaps.TearDown;
+var
+  i: Integer;
+  j: Integer;
 begin
+  for i := 0 to Pred(FInstantAttributeMaps.Count) do
+    for j := 0 to Pred(FInstantAttributeMaps[i].Count) do
+      FInstantAttributeMaps[i][j].Free;
   FreeAndNil(FInstantAttributeMaps);
   FreeAndNil(FClassMetadata);
 end;
@@ -329,14 +338,14 @@ begin
       vItem.Name := 'AttrItem' + IntToStr(j) + IntToStr(i);
       FInstantAttributeMaps[j].Add(vItem);
     end;
-    AssertEquals(Format('AttributeMap[%d] count is incorrect!', [j]), 3,
+    AssertEquals(Format('AttributeMap[%d] count', [j]), 3,
       FInstantAttributeMaps[j].Count);
   end;
 
   // Now find the attribute map that has the desired attribute name
   vReturnValue := FInstantAttributeMaps.FindMap(vAttributeName);
   AssertNotNull('Map not found!', vReturnValue);
-  AssertEquals('Returned name is incorrect!', 'Item2', vReturnValue.Name);
+  AssertEquals('Returned name', 'Item2', vReturnValue.Name);
 end;
 
 procedure TestTInstantAttributeMaps.TestIndexOf;

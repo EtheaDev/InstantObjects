@@ -2,17 +2,16 @@ unit TestInstantComplex;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantComplex
   TestTInstantComplex = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
     FConn: TInstantMockConnector;
-    FInstantComplex: TInstantComplex;
-    FOwner: TInstantObject;
+    FInstantComplex: TInstantPart;
+    FOwner: TContact;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -33,18 +32,20 @@ procedure TestTInstantComplex.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
-  FOwner := TInstantObject.Create(FConn);
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantComplex;
-  FAttrMetadata.Name := 'AttrMetadataName';
-  FInstantComplex := TInstantComplex.Create(FOwner, FAttrMetadata);
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TContact.Create(FConn);
+  FInstantComplex := FOwner._Address;
 end;
 
 procedure TestTInstantComplex.TearDown;
 begin
-  FreeAndNil(FInstantComplex);
-  FreeAndNil(FAttrMetadata);
+  FInstantComplex := nil;
   FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
 end;
 
@@ -70,21 +71,17 @@ end;
 
 procedure TestTInstantComplex.TestRequiredClass;
 begin
-  AssertEquals(TInstantObject, FInstantComplex.RequiredClass);
+  AssertEquals(TAddress, FInstantComplex.RequiredClass);
 end;
 
 procedure TestTInstantComplex.TestRequiredClassName;
 begin
-  AssertEquals('', FInstantComplex.RequiredClassName);
-  FAttrMetadata.ObjectClassName := 'TInstantObject';
-  AssertEquals('TInstantObject', FInstantComplex.RequiredClassName);
+  AssertEquals('TAddress', FInstantComplex.RequiredClassName);
 end;
 
 initialization
   // Register any test cases with the test runner
 {$IFNDEF CURR_TESTS}
-  RegisterTests([TestTInstantComplex]);
-{$ELSE}
   RegisterTests([TestTInstantComplex]);
 {$ENDIF}
 

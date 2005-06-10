@@ -8,7 +8,6 @@ type
   // Test methods for class TInstantClassMetadata
   TestTInstantClassMetadata = class(TTestCase)
   private
-    FClassCount: Integer;
     FConn: TInstantMockConnector;
     FInstantClassMetadata: TInstantClassMetadata;
   public
@@ -32,6 +31,7 @@ type
   // Test methods for class TInstantClassMetadatas
   TestTInstantClassMetadatas = class(TTestCase)
   private
+    FConn: TInstantMockConnector;
     FInstantClassMetadatas: TInstantClassMetadatas;
   public
     procedure SetUp; override;
@@ -51,7 +51,7 @@ begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
 
-  if FClassCount > 0 then
+  if InstantModel.ClassMetadatas.Count > 0 then
     InstantModel.ClassMetadatas.Clear;
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
   // Load a default ClassMetadata
@@ -60,8 +60,8 @@ end;
 
 procedure TestTInstantClassMetadata.TearDown;
 begin
-  FInstantClassMetadata := nil;
-  FConn.Free;
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantClassMetadata.TestAssign;
@@ -176,22 +176,21 @@ begin
 end;
 
 procedure TestTInstantClassMetadatas.SetUp;
-var
-  TestItem: TInstantClassMetadata;
 begin
-  FInstantClassMetadatas := TInstantClassMetadatas.Create(nil);
-  TestItem := TInstantClassMetadata(FInstantClassMetadatas.Add);
-  TestItem.Name := 'TPerson';
-  TestItem := TInstantClassMetadata(FInstantClassMetadatas.Add);
-  TestItem.Name := 'TAddress';
-  TestItem := TInstantClassMetadata(FInstantClassMetadatas.Add);
-  TestItem.Name := 'TCountry';
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+  
+  FInstantClassMetadatas := InstantModel.ClassMetadatas;
 end;
 
 procedure TestTInstantClassMetadatas.TearDown;
 begin
-  FInstantClassMetadatas.Free;
-  FInstantClassMetadatas := nil;
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
 end;
 
 procedure TestTInstantClassMetadatas.TestAdd;
@@ -200,9 +199,9 @@ var
 begin
   vReturnValue := FInstantClassMetadatas.Add;
   AssertNotNull(vReturnValue);
-  AssertEquals(4, FInstantClassMetadatas.Count);
+  AssertEquals(10, FInstantClassMetadatas.Count);
   FInstantClassMetadatas.Remove(vReturnValue);
-  AssertEquals(3, FInstantClassMetadatas.Count);
+  AssertEquals(9, FInstantClassMetadatas.Count);
 end;
 
 procedure TestTInstantClassMetadatas.TestFind;
@@ -217,7 +216,7 @@ end;
 
 procedure TestTInstantClassMetadatas.TestItems;
 begin
-  AssertEquals('TAddress', FInstantClassMetadatas.Items[1].Name);
+  AssertEquals('TCountry', FInstantClassMetadatas.Items[1].Name);
 end;
 
 initialization

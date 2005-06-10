@@ -36,14 +36,17 @@ uses
 
 procedure TTestMinimalModel.SetUp;
 begin
-  inherited;
   FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockBroker;
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
 end;
 
 procedure TTestMinimalModel.TearDown;
 begin
+  InstantModel.ClassMetadatas.Clear;
   FConn.Free;
-  inherited;
 end;
 
 procedure TTestMinimalModel.TestCreateModelMdx;
@@ -134,15 +137,12 @@ end;
 
 procedure TTestMinimalModel.TestStoreSimpleClass;
 var
-  conn: TInstantMockConnector;
   i: integer;
   SimpleClass : TSimpleClass;
 begin
   CreateMinimalModel;
-  conn := TInstantMockConnector.Create(nil);
-  conn.IsDefault := True;
-  conn.BrokerClass := TInstantMockBroker;
-  conn.Connect;
+  FConn.IsDefault := True;
+  FConn.Connect;
   for i := 0 to 100 do
   begin
     SimpleClass := TSimpleClass.Create;
@@ -158,16 +158,13 @@ end;
 
 procedure TTestMinimalModel.TestRetrieveSimpleClass;
 var
-  conn: TInstantMockConnector;
   i: integer;
   SimpleClass : TSimpleClass;
   Id : string;
 begin
   CreateMinimalModel;
-  conn := TInstantMockConnector.Create(nil);
-  conn.IsDefault := True;
-  conn.BrokerClass := TInstantMockBroker;
-  conn.Connect;
+  FConn.IsDefault := True;
+  FConn.Connect;
   Id := '';
   for i := 0 to 100 do
   begin

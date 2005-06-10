@@ -2,17 +2,16 @@ unit TestInstantInteger;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantInteger
   TestTInstantInteger = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
     FConn: TInstantMockConnector;
     FInstantInteger: TInstantInteger;
-    FOwner: TInstantObject;
+    FOwner: TCompany;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -35,19 +34,21 @@ procedure TestTInstantInteger.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
-  FOwner := TInstantObject.Create(FConn);
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantInteger;
-  FAttrMetadata.Name := 'AttrMetadataName';
-  FInstantInteger := TInstantInteger.Create(FOwner, FAttrMetadata);
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TCompany.Create(FConn);
+  FInstantInteger := FOwner._NoOfBranches;
   FInstantInteger.Value := 1;
 end;
 
 procedure TestTInstantInteger.TearDown;
 begin
-  FreeAndNil(FInstantInteger);
-  FreeAndNil(FAttrMetadata);
+  FInstantInteger := nil;
   FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
 end;
 

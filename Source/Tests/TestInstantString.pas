@@ -2,17 +2,16 @@ unit TestInstantString;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock;
+uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantString
   TestTInstantString = class(TTestCase)
   private
-    FAttrMetadata: TInstantAttributeMetadata;
     FConn: TInstantMockConnector;
     FInstantString: TInstantString;
-    FOwner: TInstantObject;
+    FOwner: TContact;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -40,19 +39,21 @@ procedure TestTInstantString.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
-  FOwner := TInstantObject.Create(FConn);
-  FAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  FAttrMetadata.AttributeClass := TInstantString;
-  FAttrMetadata.Name := 'AttrMetadataName';
-  FInstantString := TInstantString.Create(FOwner, FAttrMetadata);
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  FOwner := TContact.Create(FConn);
+  FInstantString := FOwner._Name;
   FInstantString.Value := 'StringValue';
 end;
 
 procedure TestTInstantString.TearDown;
 begin
-  FreeAndNil(FInstantString);
-  FreeAndNil(FAttrMetadata);
+  FInstantString := nil;
   FreeAndNil(FOwner);
+  InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
 end;
 
@@ -99,15 +100,23 @@ begin
 end;
 
 procedure TestTInstantString.TestAsObject;
+var
+  vObj: TInstantObject;
 begin
+  vObj := TInstantObject.Create(FConn);
   try
-    FInstantString.AsObject := TInstantObject.Create(FConn);
-    Fail('Exception was not thrown for Set AsObject!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
+    try
+      FInstantString.AsObject := vObj;
+      Fail('Exception was not thrown for Set AsObject!'); // should never get here
+    except
+      on E: EInstantAccessError do ; // do nothing as this is expected
+      else
+        raise;
+    end;
+  finally
+    vObj.Free;
   end;
+  
   try
     FInstantString.AsObject;
     Fail('Exception was not thrown for Get AsObject!'); // should never get here
@@ -150,7 +159,7 @@ end;
 
 procedure TestTInstantString.TestName;
 begin
-  AssertEquals('AttrMetadataName', FInstantString.Name);
+  AssertEquals('Name', FInstantString.Name);
 end;
 
 procedure TestTInstantString.TestOwner;

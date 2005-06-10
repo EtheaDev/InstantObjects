@@ -53,12 +53,16 @@ var
   c: TInstantCollection;
 begin
   c := TInstantCollection.Create(TInstantCollectionItem);
-  AssertNotNull(c);
-  AssertEquals(0, c.Count);
-  i := c.add as TInstantCollectionItem;
-  AssertEquals(1, c.Count);
-  i.Name := 'pippo';
-  AssertTrue(i = c.Find('pippo'));
+  try
+    AssertNotNull(c);
+    AssertEquals(0, c.Count);
+    i := c.add as TInstantCollectionItem;
+    AssertEquals(1, c.Count);
+    i.Name := 'pippo';
+    AssertTrue(i = c.Find('pippo'));
+  finally
+    c.Free;
+  end;
 end;
 
 procedure TTestInstantClasses.TestInstantWriter;
@@ -247,6 +251,7 @@ begin
     AssertEquals(-1.2345789, c.Weight);
 
   finally
+    c.Free;
     iw.Free;
     ir.Free;
     ms.Free;
@@ -286,6 +291,7 @@ begin
     AssertEquals(-1.2345789, c.Weight);
 
   finally
+    c.Free;
     iw.Free;
     ir.Free;
     ms.Free;
