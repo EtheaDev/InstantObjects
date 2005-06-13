@@ -13092,12 +13092,9 @@ var
     if Attribute.Metadata.StorageKind = skExternal then
     begin
       Part := Attribute as TInstantPart;
-      if Part.HasValue then
-      begin
-        AddStringParam(Params, FieldName + InstantClassFieldName, Part.Value.ClassName);
-        Part.Value.CheckId;
-        AddIdParam(Params, FieldName + InstantIdFieldName, Part.Value.Id);
-      end;
+      AddStringParam(Params, FieldName + InstantClassFieldName, Part.Value.ClassName);
+      Part.Value.CheckId;
+      AddIdParam(Params, FieldName + InstantIdFieldName, Part.Value.Id);
     end
     else
     begin
