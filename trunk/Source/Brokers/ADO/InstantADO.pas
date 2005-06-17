@@ -423,9 +423,8 @@ begin
     Exit;
   Catalog := CoCatalog.Create;
   Catalog.Set_ActiveConnection(Connection.ConnectionObject);
-  with Scheme do
-    for I := 0 to Pred(TableMetadataCount) do
-      AddTable(Catalog, TableMetadatas[I]);
+  for I := 0 to Pred(Scheme.TableMetadataCount) do
+    AddTable(Catalog, Scheme.TableMetadatas[I]);
 end;
 
 procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
