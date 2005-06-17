@@ -24,11 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
- * Carlo Barazzetta:
- * - blob streaming in XML format (Part, Parts, References)
- * - Prepared queries support
- * Carlo Barazzetta: Currency and LoginPrompt support
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantDBX;
@@ -104,6 +101,8 @@ type
     function InternalCreateQuery: TInstantQuery; override;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
   public
+    function CreateDBBuildCommand(
+      const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
     function Execute(const AStatement: string; AParams: TParams = nil): Integer; override;
@@ -125,18 +124,31 @@ type
     class function TranslatorClass: TInstantRelationalTranslatorClass; override;
   end;
 
-  { InterBase }
+  { InterBase / Firebird (abstract) }
 
-  TInstantDBXInterBaseBroker = class(TInstantDBXBroker)
+  TInstantDBXInterBaseFirebirdBroker = class(TInstantDBXBroker)
   private
     function GetDialect: Integer;
   protected
     function ColumnTypeByDataType(DataType: TInstantDataType): string; override;
-    function GetDBMSName: string; override;
-    function GetSQLDelimiters: string; override;
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     function GetSQLQuote: Char; override;
   public
     property Dialect: Integer read GetDialect;
+  end;
+
+  { InterBase }
+
+  TInstantDBXInterBaseBroker = class(TInstantDBXInterBaseFirebirdBroker)
+  protected
+    function GetDBMSName: string; override;
+  end;
+
+  { Firebird through the UIB dbX driver }
+
+  TInstantDBXFirebirdUIBBroker = class(TInstantDBXInterBaseFirebirdBroker)
+  protected
+    function GetDBMSName: string; override;
   end;
 
   { MS SQL Server }
@@ -186,17 +198,11 @@ type
     function GetSQLQuote: Char; override;
   end;
 
-procedure Register;
-
 implementation
 
 uses
-  SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math;
-
-procedure Register;
-begin
-  RegisterComponents('InstantObjects', [TInstantDBXConnector]);
-end;
+  SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math,
+  InstantDBBuild, InstantIBFbCatalog;
 
 { TInstantDBXConnector }
 
@@ -229,6 +235,8 @@ begin
     Result := TInstantDBXDB2Broker.Create(Self)
   else if SameText(Connection.DriverName, 'MySQL') then
     Result := TInstantDBXMySQLBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'FirebirdUIB') then
+    Result := TInstantDBXFirebirdUIBBroker.Create(Self)
   else
     raise Exception.CreateFmt('dbExpress driver "%s" not supported',
       [Connection.DriverName]);
@@ -392,6 +400,27 @@ begin
   Result := Query;
 end;
 
+function TInstantDBXBroker.CreateDBBuildCommand(
+  const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  if CommandType = ctAddTable then
+    Result := TInstantDBBuildAddTableSQLCommand.Create(CommandType)
+  else if CommandType = ctDropTable then
+    Result := TInstantDBBuildDropTableSQLCommand.Create(CommandType)
+  else if CommandType = ctAddField then
+    Result := TInstantDBBuildAddFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctAlterField then
+    Result := TInstantDBBuildAlterFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctDropField then
+    Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctAddIndex then
+    Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType)
+  else if CommandType = ctDropIndex then
+    Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType)
+  else
+    Result := inherited CreateDBBuildCommand(CommandType);
+end;
+
 function TInstantDBXBroker.CreateResolver(
   Map: TInstantAttributeMap): TInstantSQLResolver;
 begin
@@ -464,9 +493,9 @@ begin
   Result := TInstantDBXTranslator;
 end;
 
-{ TInstantDBXInterBaseBroker }
+{ TInstantDBXInterBaseFirebirdBroker }
 
-function TInstantDBXInterBaseBroker.ColumnTypeByDataType(
+function TInstantDBXInterBaseFirebirdBroker.ColumnTypeByDataType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
@@ -482,27 +511,20 @@ begin
   Result := Types[DataType];
 end;
 
-function TInstantDBXInterBaseBroker.GetDBMSName: string;
+function TInstantDBXInterBaseFirebirdBroker.CreateCatalog(
+  const AScheme: TInstantScheme): TInstantCatalog;
 begin
-  Result := 'InterBase';
+  Result := TInstantIBFbCatalog.Create(AScheme, Self);
 end;
 
-function TInstantDBXInterBaseBroker.GetDialect: Integer;
+function TInstantDBXInterBaseFirebirdBroker.GetDialect: Integer;
 begin
   Result := StrToIntDef(Connector.ParamByName('SQLDialect'), 3);
 end;
 
-function TInstantDBXInterBaseBroker.GetSQLDelimiters: string;
+function TInstantDBXInterBaseFirebirdBroker.GetSQLQuote: Char;
 begin
-//  if Dialect >= 3 then
-//    Result := '""'
-//  else
-    Result := inherited GetSQLDelimiters;
-end;
-
-function TInstantDBXInterBaseBroker.GetSQLQuote: Char;
-begin
-  Result := ''''
+  Result := '''';
 end;
 
 { TInstantDBXMSSQLBroker }
@@ -661,6 +683,20 @@ end;
 function TInstantDBXMySQLBroker.GetSQLQuote: Char;
 begin
   Result := '''';
+end;
+
+{ TInstantDBXInterBaseBroker }
+
+function TInstantDBXInterBaseBroker.GetDBMSName: string;
+begin
+  Result := 'InterBase';
+end;
+
+{ TInstantDBXFirebirdUIBBroker }
+
+function TInstantDBXFirebirdUIBBroker.GetDBMSName: string;
+begin
+  Result := 'Firebird';
 end;
 
 initialization
