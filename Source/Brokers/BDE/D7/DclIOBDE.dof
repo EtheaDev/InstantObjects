@@ -10,7 +10,7 @@ F=0
 G=1
 H=1
 I=1
-J=1
+J=0
 K=0
 L=1
 M=0
@@ -133,3 +133,6 @@ LegalTrademarks=
 OriginalFilename=
 ProductName=InstantObjects
 ProductVersion=1.7
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

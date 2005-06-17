@@ -17,10 +17,10 @@ M=0
 N=1
 O=1
 P=1
-Q=1
-R=1
+Q=0
+R=0
 S=0
-T=0
+T=1
 U=0
 V=1
 W=0
@@ -94,7 +94,7 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=$(DELPHI)\Lib\Debug
+SearchPath=
 Packages=vcl;rtl;dbrtl
 Conditionals=
 DebugSourceDirs=
@@ -137,6 +137,3 @@ Comments=
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
-[HistoryLists\hlSearchPath]
-Count=1
-Item0=$(DELPHI)\Lib\Debug
