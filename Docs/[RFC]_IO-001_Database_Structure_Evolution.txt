@@ -1,0 +1,52 @@
+RFC: IO-001
+Title: Database Structure Evolution
+Author: Nando Dessena
+First Draft: 01/03/2005
+Current Revision: 2, 01/03/2005
+
+= Goal =
+
+Currently when the Build database command is issued (or the BuildDatabase method of TInstantConnector is called) on an existing database IO completely destroys the data. The current database builder is dumb in the sense that it drops and recreates all the existing tables. A more intelligent database builder, that is able to preserve the data, would be very welcome, especially by new users.
+
+= Proposal =
+
+To upgrade an existing database to a new schema definition, a sequence of well defined steps is applied. Each step represent a single database operation. Example:
+
+type
+  TInstantDBBuildCmdType = (ctAddTable, ctAddColumn, ctAlterColumn,
+    ctAddIndex, ctDropTable, ctDropColumn, ctDropIndex ...);
+
+TInstantDBBuildCmd is an abstract class whose purpose is to apply a single step of the aforementioned sequence. For each TInstantDBBuildCmdType there is one or more derived class to apply the command type in a given context (some brokers support SQL scripts, while the BDE broker may require the use of the DbiDoRestructure API call, while ADO might require the use of ADOX). Instances of the appropriate concrete classes are created by a factory method in the connector or broker. Example:
+
+function TInstantConnector.CreateDBBuildCmd(
+  const Type: TInstantDBBuildCmdType): TInstantDBBuildCmd; virtual;
+
+So that each broker can instantiate the appropriate classes to apply the upgrade sequence to its database. If a broker does not support a particular command type, it will create and return an instance of a "cantdoit" command class (much like the Null Object design pattern) that will raise an exception when run. These "cantdoit" objects can then be disabled to make the upgrade sequence work to the supported extent, at the user's choice (see below).
+
+The build class has references to the connector, metadata, and an Enabled: Boolean property so that the user can decide how much the upgrade process should be aggressive (for example, ctDropTable and ctDropIndex commands are likely to be disabled by those who have added non-IO tables and indices to the database).
+
+The command sequence is encapsulated in a TInstantDBBuildCmdSequence that manages the command instances and can be streamed out and reloaded if needed (for quick on-site database upgrades).
+
+= Class and Responsibilities =
+
+TInstantConnector/Broker
+- builds a straight TInstantDBBuildCmdSequence that drops and recreates all tables and indices (equivalent to the current BuildDatabase command).
+- executes a given command sequence, optionally interactively (see below).
+- creates instances of TInstantDBBuildCmd as requested; creates an instance of the special "cantdoit" class for unsupported commands.
+
+TInstantDBBuildCmd
+- is able to execute the command it represents.
+- can be streamed.
+- doesn't fail if already applied, so that a failed sequence can be resumed by simply re-applying it. If this requirement proves difficult to achieve, then as an alternative a failed sequence can be resumed by having the TInstantDBEvolver re-create it.
+
+TInstantDBBuildCmdSequence
+- controls the overall execution of the commands.
+- can be streamed.
+
+TInstantDBBuildCmdSequenceEditForm is an editor for the command sequence, in which the user can rearrange the order of steps and enable/disable them individually. The user can also stream out the sequence, and may decide to disable all "unsupported" commands that will make the sequence fail if enabled. Other options may be added here.
+
+TInstantDBEvolver inspects a database and builds a TInstantDBBuildCmdSequence that upgrades the database to the current schema. Works closely with the connector and the broker. The command sequence, once built, is passed to the connector for execution.
+
+= Use =
+
+The current BuildDatabase call will stay untouched, except that it will be layered on top of the new mechanism (see above). The Connection Manager will offer an additional "Evolve" command that will be implemented creating and executing an instance of TInstantDBEvolver.
