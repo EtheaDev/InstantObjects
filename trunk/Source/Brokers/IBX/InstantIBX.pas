@@ -114,6 +114,7 @@ type
     function GetConnector: TInstantIBXConnector;
     function DelimitedIdentsEnabled: Boolean;
   protected
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetDatabaseName: string; override;
     function GetDBMSName: string; override;
@@ -122,6 +123,8 @@ type
     function InternalCreateQuery: TInstantQuery; override;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
   public
+    function CreateDBBuildCommand(
+      const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
     function Execute(const AStatement: string; AParams: TParams = nil): Integer; override;
@@ -144,18 +147,11 @@ type
     class function TranslatorClass: TInstantRelationalTranslatorClass; override;
   end;
 
-procedure Register;
-
 implementation
 
 uses
   Controls, InstantConsts, InstantIBXConnectionDefEdit, InstantUtils,
-  IB, IBHeader, IBIntf;
-
-procedure Register;
-begin
-  RegisterComponents('InstantObjects', [TInstantIBXConnector]);
-end;
+  IB, IBHeader, IBIntf, InstantIBFbCatalog, InstantDBBuild;
 
 { TInstantIBXConnectionDef }
 
@@ -396,6 +392,12 @@ begin
   end;
 end;
 
+function TInstantIBXBroker.CreateCatalog(
+  const AScheme: TInstantScheme): TInstantCatalog;
+begin
+  Result := TInstantIBFbCatalog.Create(AScheme, Self);
+end;
+
 function TInstantIBXBroker.CreateDataSet(const AStatement: string;
   AParams: TParams): TDataSet;
 var
@@ -411,6 +413,27 @@ begin
       AssignDataSetParams(Query, AParams);
   end;
   Result := Query;
+end;
+
+function TInstantIBXBroker.CreateDBBuildCommand(
+  const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  if CommandType = ctAddTable then
+    Result := TInstantDBBuildAddTableSQLCommand.Create(CommandType)
+  else if CommandType = ctDropTable then
+    Result := TInstantDBBuildDropTableSQLCommand.Create(CommandType)
+  else if CommandType = ctAddField then
+    Result := TInstantDBBuildAddFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctAlterField then
+    Result := TInstantDBBuildAlterFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctDropField then
+    Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctAddIndex then
+    Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType)
+  else if CommandType = ctDropIndex then
+    Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType)
+  else
+    Result := inherited CreateDBBuildCommand(CommandType);
 end;
 
 function TInstantIBXBroker.CreateResolver(
