@@ -31,7 +31,8 @@ requires
   vcl,
   vcldb,
   ibxpress,
-  IOCore;
+  IOCore,
+  IOIBFbCatalog;
 
 contains
   InstantIBXConnectionDefEdit in '..\InstantIBXConnectionDefEdit.pas' {InstantIBXConnectionDefEditForm},

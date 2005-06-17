@@ -32,7 +32,8 @@ requires
   vcl,
   dbrtl,
   dbexpress,
-  IOCore;
+  IOCore,
+  IOIBFbCatalog;
 
 contains
   InstantDBXConnectionDefEdit in '..\InstantDBXConnectionDefEdit.pas' {InstantDBXConnectionDefEditForm},
