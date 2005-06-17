@@ -20,10 +20,7 @@
  *
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
- * Contributor(s):
- * Carlo Barazzetta:
- * - OnLogin event support
- * - TInstantCurrency support
+ * Contributor(s): Carlo Barazzetta, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -113,6 +110,7 @@ type
     function GetConnector: TInstantUIBConnector;
     function DelimitedIdentsEnabled: Boolean;
   protected
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetDatabaseName: string; override;
     function GetDBMSName: string; override;
@@ -121,6 +119,8 @@ type
     function InternalCreateQuery: TInstantQuery; override;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
   public
+    function CreateDBBuildCommand(
+      const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
     function Execute(const AStatement: string; AParams: TParams = nil): Integer; override;
@@ -144,18 +144,11 @@ type
     procedure InternalOpen; override;
   end;
 
-procedure Register;
-
 implementation
 
 uses
   Controls, InstantConsts, InstantUIBConnectionDefEdit, InstantUtils,
-  TypInfo;
-
-procedure Register;
-begin
-  RegisterComponents('InstantObjects', [TInstantUIBConnector]);
-end;
+  TypInfo, InstantDBBuild, InstantIBFbCatalog;
 
 { TInstantUIBConnectionDef }
 
@@ -400,6 +393,25 @@ begin
   end;
 end;
 
+const
+  Types: array[TInstantDataType] of string = (
+    'INTEGER',
+    'DOUBLE PRECISION',
+    'DECIMAL(14,4)',
+    'SMALLINT',
+    'VARCHAR',
+    'BLOB SUB_TYPE 1',
+    'TIMESTAMP',
+    'BLOB');
+
+function TInstantUIBBroker.DataTypeToColumnType(
+  DataType: TInstantDataType; Size: Integer): string;
+begin
+  Result := Types[DataType];
+  if (DataType = dtString) and (Size > 0) then
+    Result := Result + InstantEmbrace(IntToStr(Size), '()');
+end;
+
 function TInstantUIBBroker.CreateDataSet(const AStatement: string;
   AParams: TParams): TDataSet;
 var
@@ -427,24 +439,6 @@ function TInstantUIBBroker.CreateResolver(
   Map: TInstantAttributeMap): TInstantSQLResolver;
 begin
   Result := TInstantUIBResolver.Create(Self, Map);
-end;
-
-function TInstantUIBBroker.DataTypeToColumnType(
-  DataType: TInstantDataType; Size: Integer): string;
-const
-  Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'DOUBLE PRECISION',
-    'DECIMAL(14,4)',
-    'SMALLINT',
-    'VARCHAR',
-    'BLOB SUB_TYPE 1',
-    'TIMESTAMP',
-    'BLOB');
-begin
-  Result := Types[DataType];
-  if (DataType = dtString) and (Size > 0) then
-    Result := Result + InstantEmbrace(IntToStr(Size), '()');
 end;
 
 function TInstantUIBBroker.DelimitedIdentsEnabled: Boolean;
@@ -502,6 +496,33 @@ end;
 function TInstantUIBBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantUIBQuery.Create(Connector);
+end;
+
+function TInstantUIBBroker.CreateDBBuildCommand(
+  const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  if CommandType = ctAddTable then
+    Result := TInstantDBBuildAddTableSQLCommand.Create(CommandType)
+  else if CommandType = ctDropTable then
+    Result := TInstantDBBuildDropTableSQLCommand.Create(CommandType)
+  else if CommandType = ctAddField then
+    Result := TInstantDBBuildAddFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctAlterField then
+    Result := TInstantDBBuildAlterFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctDropField then
+    Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType)
+  else if CommandType = ctAddIndex then
+    Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType)
+  else if CommandType = ctDropIndex then
+    Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType)
+  else
+    Result := inherited CreateDBBuildCommand(CommandType);
+end;
+
+function TInstantUIBBroker.CreateCatalog(
+  const AScheme: TInstantScheme): TInstantCatalog;
+begin
+  Result := TInstantIBFbCatalog.Create(AScheme, Self);
 end;
 
 { TInstantUIBTranslator }
