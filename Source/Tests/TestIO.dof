@@ -91,10 +91,10 @@ ImageBase=4194304
 ExeDescription=
 [Directories]
 OutputDir=
-UnitOutputDir=D:\D\DCU\D7\Tmp
+UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=D:\L\ubmock\src
+SearchPath=
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;adortl;vclactnband;vclshlctrls;CS30Logging70;Rz30Ctls70;Rz30DBCtls70;ip4000v7;Rave60VCL;Rave60CLX;madBasic_;madDisAsm_;CLXIB;ibxpress;VCLIB;IOCore;IOIBX
 Conditionals=
 DebugSourceDirs=
@@ -134,9 +134,3 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
-[HistoryLists\hlConditionals]
-Count=1
-Item0=CURR_TESTS
-[HistoryLists\hlUnitAliases]
-Count=1
-Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
