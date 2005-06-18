@@ -32,7 +32,8 @@ requires
   vcldb,
   ibxpress,
   IOCore,
-  JvUIBD6R;
+  JvUIBD6R,
+  IOIBFbCatalog;
 
 contains
   InstantUIBConnectionDefEdit in '..\InstantUIBConnectionDefEdit.pas' {InstantUIBConnectionDefEditForm},
