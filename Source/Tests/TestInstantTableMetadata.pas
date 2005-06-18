@@ -43,7 +43,8 @@ begin
     InstantModel.ClassMetadatas.Clear;
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
 
-  FOwner := TInstantRelationalScheme.Create(InstantModel);
+  FOwner := TInstantScheme.Create;
+  FOwner.Catalog := TInstantModelCatalog.Create(FOwner, InstantModel);
   FInstantTableMetadata := FOwner.FindTableMetadata('Address');
 end;
 

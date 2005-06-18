@@ -146,7 +146,8 @@ function TInstantMockConnector.InternalCreateScheme(
   Model: TInstantModel): TInstantScheme;
 begin
   FMock.AddExpectation('InternalCreateScheme');
-  result := TInstantScheme.Create(Model);
+  Result := TInstantScheme.Create;
+  Result.Catalog := TInstantModelCatalog.Create(Result, Model);
 end;
 
 procedure TInstantMockConnector.InternalDisconnect;
