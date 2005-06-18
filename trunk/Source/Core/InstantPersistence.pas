@@ -13165,7 +13165,7 @@ function TInstantSQLBroker.FindResolver(
 var
   I: Integer;
 begin
-  for I := 0 to PRed(ResolverCount) do
+  for I := 0 to Pred(ResolverCount) do
   begin
     Result := Resolvers[I];
     if Result.Map = AMap then
@@ -13907,7 +13907,7 @@ var
       if AttributeMetadata.AttributeType = atPart then
       begin
         PartAttribute := TInstantPart(AObject.AttributeByName(AttributeMetadata.Name));
-        if PartAttribute.IsChanged then
+        if PartAttribute.IsChanged or not PartAttribute.Value.IsPersistent then
         begin
           if Map[i].StorageKind = skExternal then
           begin
