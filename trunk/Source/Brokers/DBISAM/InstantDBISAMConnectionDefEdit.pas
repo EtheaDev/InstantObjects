@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
+ * Carlo Barazzetta, Juan J. V. Garcia
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -78,7 +78,7 @@ implementation
 {$R *.DFM}
 
 uses
-  DBISAMTb, Graphics, SysUtils, FileCtrl;
+  DBISAMTb, Graphics, SysUtils, FileCtrl, InstantClasses, InstantPersistence;
 
 { TInstantDBISAMConnectionDefEditForm }
 
