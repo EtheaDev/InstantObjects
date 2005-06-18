@@ -60,7 +60,10 @@ type
   private
     function GetCollection: TInstantMetadatas;
     procedure SetCollection(Value: TInstantMetadatas); {$IFDEF D6+}reintroduce;{$ENDIF}
+  protected
+    function InternalEquals(const Other: TInstantMetadata): Boolean; virtual;
   public
+    function Equals(const Other: TInstantMetadata): Boolean;
     property Collection: TInstantMetadatas read GetCollection write SetCollection;
   end;
 
@@ -301,6 +304,7 @@ type
       ASize: Integer; AOriginalAttributeType: TInstantAttributeType;
       AOptions: TInstantFieldOptions = []; AExternalTableName: string = '');
     function Add: TInstantFieldMetadata;
+    function Find(const AName: string): TInstantFieldMetadata;
     property Items[Index: Integer]: TInstantFieldMetadata read GetItems write SetItems; default;
     function Owner: TInstantTableMetadata;
   end;
@@ -313,9 +317,14 @@ type
     FOptions: TIndexOptions;
     function GetCollection: TInstantIndexMetadatas;
     function GetTableMetadata: TInstantTableMetadata;
+  protected
+    function InternalEquals(const Other: TInstantMetadata): Boolean; override;
   public
     constructor Create(ACollection: TInstantMetadatas); reintroduce;
     property Collection: TInstantIndexMetadatas read GetCollection;
+    // Returns True if the field identified by AFieldMetadata is part of this
+    // index.
+    function IsFieldIndexed(const AFieldMetadata: TInstantFieldMetadata): Boolean;
     property TableMetadata: TInstantTableMetadata read GetTableMetadata;
   published
     property Fields: string read FFields write FFields;
@@ -331,6 +340,10 @@ type
     procedure AddIndexMetadata(const AName, AFields: string;
       AOptions: TIndexOptions);
     function Add: TInstantIndexMetadata;
+    function Find(const AName: string): TInstantIndexMetadata;
+    // Returns True if the field identified by AFieldMetadata is part of a
+    // defined index.
+    function IsFieldIndexed(const AFieldMetadata: TInstantFieldMetadata): Boolean;
     property Items[Index: Integer]: TInstantIndexMetadata read GetItems write SetItems; default;
     function Owner: TInstantTableMetadata;
   end;
@@ -344,11 +357,17 @@ type
     function GetFieldMetadatas: TInstantFieldMetadatas;
     function GetIndexMetadatas: TInstantIndexMetadatas;
     function GetScheme: TInstantScheme;
+    function GetFieldMetadataCount: Integer;
+    function GetIndexMetadataCount: Integer;
   public
     destructor Destroy; override;
     property Scheme: TInstantScheme read GetScheme;
   published
+    property FieldMetadataCount: Integer read GetFieldMetadataCount;
     property FieldMetadatas: TInstantFieldMetadatas read GetFieldMetadatas;
+    function FindFieldMetadata(const AName: string): TInstantFieldMetadata;
+    function FindIndexMetadata(const AName: string): TInstantIndexMetadata;
+    property IndexMetadataCount: Integer read GetIndexMetadataCount;
     property IndexMetadatas: TInstantIndexMetadatas read GetIndexMetadatas;
   end;
 
@@ -358,12 +377,53 @@ type
   public
     constructor Create(AOwner: TPersistent);
     function Add: TInstantTableMetadata;
+    function Find(const AName: string): TInstantTableMetadata;
     property Items[Index: Integer]: TInstantTableMetadata read GetItems; default;
+  end;
+
+  // An object that provides the metadata info used by a TInstantScheme object
+  // to build itself. It abstracts the way the information is fetched and its
+  // source. It always works with a TInstantScheme. It is usually created
+  // together with a TInstantScheme object:
+  //   Scheme := TInstantScheme.Create;
+  //   Scheme.Catalog := Broker.CreateCatalog(Scheme);
+  // and the object ownership is transferred to Scheme, which is then
+  // responsible for destroying the catalog object. 
+  TInstantCatalog = class
+  private
+    FScheme: TInstantScheme;
+  public
+    // Creates an instance and binds it to the specified TInstantScheme object.
+    constructor Create(const AScheme: TInstantScheme);
+    // A reference to the TInstantScheme object to which the current object is
+    // bound, assigned on creation. The TInstantScheme object is responsible for
+    // the current object's lifetime.
+    property Scheme: TInstantScheme read FScheme;
+    // Initializes ATableMetadatas from the catalog.
+    procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas);
+      virtual; abstract;
+  end;
+
+  // A TInstantCatalog that gathers its info from a TInstantModel.
+  TInstantModelCatalog = class(TInstantCatalog)
+  private
+    FModel: TInstantModel;
+  public
+    // Creates an instance and binds it to the specified TInstantScheme object.
+    // AModel is written to the Model property.
+    constructor Create(const AScheme: TInstantScheme;
+      const AModel: TInstantModel);
+    // Initializes ATableMetadatas reading maps from the model.
+    procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas);
+      override;
+    // A reference to the TInstantModel from which the catalog reads metadata
+    // info.
+    property Model: TInstantModel read FModel;
   end;
 
   TInstantScheme = class(TInstantStreamable)
   private
-    FModel: TInstantModel;
+    FCatalog: TInstantCatalog;
     FTableMetadataCollection: TInstantTableMetadatas;
     FBlobStreamFormat: TInstantStreamFormat;
     FIdSize: Integer;
@@ -371,17 +431,16 @@ type
     function GetTableMetadataCollection: TInstantTableMetadatas;
     function GetTableMetadatas(Index: Integer): TInstantTableMetadata;
     function GetTableMetadataCount: Integer;
+    procedure SetCatalog(const Value: TInstantCatalog);
   protected
     function AttributeTypeToDataType(
       AttributeType: TInstantAttributeType): TInstantDataType; virtual;
-    procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas;
-      Maps: TInstantAttributeMaps); virtual; abstract;
-    property Model: TInstantModel read FModel;
     property TableMetadataCollection: TInstantTableMetadatas read GetTableMetadataCollection;
   public
-    constructor Create(AModel: TInstantModel);
+    constructor Create;
     destructor Destroy; override;
-    function FindTableMetadata(const Name: string): TInstantTableMetadata;
+    property Catalog: TInstantCatalog read FCatalog write SetCatalog;
+    function FindTableMetadata(const AName: string): TInstantTableMetadata;
     property TableMetadataCount: Integer read GetTableMetadataCount;
     property TableMetadatas[Index: Integer]: TInstantTableMetadata read GetTableMetadatas;
     property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
@@ -1301,6 +1360,24 @@ type
   end;
 
   TInstantBroker = class;
+
+  // A TInstantCatalog that gathers its info from an existing database (through
+  // a TInstantBroker). The broker knows how to read the metadata information
+  // depending on which particular database is used as back-end. This is an
+  // abstract class. A concrete derived class for each supported back-end
+  // must be developed.
+  TInstantBrokerCatalog = class(TInstantCatalog)
+  private
+    FBroker: TInstantBroker;
+  public
+    // Creates an instance and binds it to the specified TInstantScheme object.
+    // ABroker is written to the Broker property.
+    constructor Create(const AScheme: TInstantScheme;
+      const ABroker: TInstantBroker); virtual;
+    // A reference to the broker through which the metadata info is read.
+    property Broker: TInstantBroker read FBroker;
+  end;
+
   TInstantObjectStores = class;
   TInstantQuery = class;
 
@@ -1551,11 +1628,59 @@ type
     property Query: TInstantQuery read GetQuery;
   end;
 
+  TInstantDBBuildCommandType = (ctAddTable, ctDropTable, ctAddField, ctAlterField,
+    ctDropField, ctAddIndex, ctDropIndex);
+
+  EInstantDBBuildError = class(EInstantError);
+
+  // Abstract; represents a step of the database build sequence.
+  TInstantDBBuildCommand = class(TObject)
+  private
+    FEnabled: Boolean;
+    FCommandType: TInstantDBBuildCommandType;
+    FOldMetadata: TInstantMetadata;
+    FNewMetadata: TInstantMetadata;
+    FConnector: TInstantConnector;
+    function GetConnector: TInstantConnector;
+  protected
+    // Executes the database build step.
+    procedure InternalExecute; virtual; abstract;
+    // Computes and returns the step's description.
+    function GetDescription: string; virtual;
+  public
+    constructor Create(const ACommandType: TInstantDBBuildCommandType;
+      const AConnector: TInstantConnector = nil);
+    // Type of the step, usually set on creation.
+    property CommandType: TInstantDBBuildCommandType read FCommandType;
+    // A description of what the step will consist of.
+    property Description: string read GetDescription;
+    destructor Destroy; override;
+    property OldMetadata: TInstantMetadata read FOldMetadata write FOldMetadata;
+    property NewMetadata: TInstantMetadata read FNewMetadata write FNewMetadata;
+    property Connector: TInstantConnector read GetConnector;
+    // Executes the database build step.
+    procedure Execute;
+  published
+    property Enabled: Boolean read FEnabled write FEnabled;
+  end;
+  TInstantDBBuildCommandClass = class of TInstantDBBuildCommand;
+
+  // An unsupported step. Raises an exception when executed.
+  TInstantUnsupportedDBBuildCommand = class(TInstantDBBuildCommand)
+  protected
+    procedure InternalExecute; override;
+  end;
+
   TInstantBroker = class(TInstantStreamable)
   private
     FConnector: TInstantConnector;
     function GetConnector: TInstantConnector;
   protected
+    // Creates an instance of TInstantCatalog suited for the broker and
+    // back-end database engine. Must be overridden in derived classes that
+    // intend to support catalog-based functionality, like database structure
+    // evolution. The predefined implementation just raises an exception.
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; virtual;
     function GetDatabaseName: string; virtual;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
     function InternalCreateQuery: TInstantQuery; virtual;
@@ -1567,11 +1692,22 @@ type
       ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
   public
     constructor Create(AConnector: TInstantConnector); virtual;
-    destructor Destroy; override; 
+    destructor Destroy; override;
     procedure BuildDatabase(Scheme: TInstantScheme);
+    // Creates a database build command object that can perform the build
+    // operation represented by CommandType. The predefined implementation
+    // creates an instance of TInstantUnsupportedDBBuildCommand, which just raises
+    // an exception when executed. Derived classes should create and return
+    // instances of specific TInstantDBBuildCommand and fall back to inherited
+    // for unsupported values of CommandType.
+    function CreateDBBuildCommand(
+      const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; virtual;
     function CreateQuery: TInstantQuery;
     function DisposeObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean;
+    // Creates and returns a TInstantScheme object that represents the current
+    // database scheme (which may differ from the model-derived scheme).
+    function ReadDatabaseScheme: TInstantScheme; virtual;
     function RetrieveObject(AObject: TInstantObject; const AObjectId: string;
       ConflictAction: TInstantConflictAction): Boolean;
     procedure SetObjectUpdateCount(AObject: TInstantObject; Value: Integer);
@@ -1632,12 +1768,6 @@ type
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property Params: TParams read GetParams write SetParams;
-  end;
-
-  TInstantRelationalScheme = class(TInstantScheme)
-  protected
-    procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas;
-      Maps: TInstantAttributeMaps); override;
   end;
 
   TInstantCustomRelationalBroker = class;
@@ -2082,6 +2212,14 @@ type
 
   TInstantSQLBroker = class;
 
+  // A TInstantBrokerCatalog that works with a SQL broker only.
+  TInstantSQLBrokerCatalog = class(TInstantBrokerCatalog)
+  private
+    function GetBroker: TInstantSQLBroker;
+  public
+    property Broker: TInstantSQLBroker read GetBroker;
+  end;
+
   TInstantStringFunc = function(const S: string): string of object;
 
   TInstantSQLGeneratorClass = class of TInstantSQLGenerator;
@@ -2107,12 +2245,16 @@ type
     function EmbraceField(const FieldName: string): string; virtual;
     function EmbraceTable(const TableName: string): string; virtual;
     function GetDelimiters: string; virtual;
+    function InternalGenerateAddFieldSQL(Metadata: TInstantFieldMetadata): string; virtual;
+    function InternalGenerateAlterFieldSQL(OldMetadata, NewMetadata: TInstantFieldMetadata): string; virtual;
     function InternalGenerateCreateIndexSQL(Metadata: TInstantIndexMetadata): string; virtual;
     function InternalGenerateCreateTableSQL(Metadata: TInstantTableMetadata): string; virtual;
     function InternalGenerateCreateExternalTableSQL(TableName: string): string; virtual;
     function InternalGenerateDeleteConcurrentSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateDeleteSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateDeleteExternalSQL(Map: TInstantAttributeMap): string; virtual;
+    function InternalGenerateDropFieldSQL(Metadata: TInstantFieldMetadata): string; virtual;
+    function InternalGenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string; virtual;
     function InternalGenerateDropTableSQL(Metadata: TInstantTableMetadata): string; virtual;
     function InternalGenerateDropExternalTableSQL(TableName: string): string; virtual;
     function InternalGenerateInsertSQL(Map: TInstantAttributeMap): string; virtual;
@@ -2120,18 +2262,23 @@ type
     function InternalGenerateSelectSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectExternalSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string; virtual;
+    function InternalGenerateSelectTablesSQL: string; virtual;
     function InternalGenerateUpdateConcurrentSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateUpdateSQL(Map: TInstantAttributeMap): string; virtual;
     property Delimiters: string read GetDelimiters;
     property Broker: TInstantSQLBroker read FBroker;
   public
     constructor Create(ABroker: TInstantSQLBroker);
+    function GenerateAddFieldSQL(Metadata: TInstantFieldMetadata): string;
+    function GenerateAlterFieldSQL(OldMetadata, NewMetadata: TInstantFieldMetadata): string;
     function GenerateCreateIndexSQL(Metadata: TInstantIndexMetadata): string;
     function GenerateCreateTableSQL(Metadata: TInstantTableMetadata): string;
     function GenerateCreateExternalTableSQL(TableName: string): string;
     function GenerateDeleteConcurrentSQL(Map: TInstantAttributeMap): string;
     function GenerateDeleteSQL(Map: TInstantAttributeMap): string;
     function GenerateDeleteExternalSQL(Map: TInstantAttributeMap): string;
+    function GenerateDropFieldSQL(Metadata: TInstantFieldMetadata): string;
+    function GenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string;
     function GenerateDropTableSQL(Metadata: TInstantTableMetadata): string;
     function GenerateDropExternalTableSQL(TableName: string): string;
     function GenerateInsertSQL(Map: TInstantAttributeMap): string;
@@ -2139,6 +2286,7 @@ type
     function GenerateSelectSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectExternalSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string;
+    function GenerateSelectTablesSQL: string;
     function GenerateUpdateConcurrentSQL(Map: TInstantAttributeMap): string;
     function GenerateUpdateSQL(Map: TInstantAttributeMap): string;
   end;
@@ -2898,9 +3046,21 @@ end;
 
 { TInstantMetadata }
 
+function TInstantMetadata.Equals(const Other: TInstantMetadata): Boolean;
+begin
+  Result := InternalEquals(Other);
+end;
+
 function TInstantMetadata.GetCollection: TInstantMetadatas;
 begin
   Result := inherited Collection as TInstantMetadatas;
+end;
+
+function TInstantMetadata.InternalEquals(
+  const Other: TInstantMetadata): Boolean;
+begin
+  { TODO : This only works for case-insensitive object names! }
+  Result := SameText(Other.Name, Name);
 end;
 
 procedure TInstantMetadata.SetCollection(Value: TInstantMetadatas);
@@ -3606,6 +3766,12 @@ begin
   inherited Create(AOwner, TInstantFieldMetadata);
 end;
 
+function TInstantFieldMetadatas.Find(
+  const AName: string): TInstantFieldMetadata;
+begin
+  Result := inherited Find(AName) as TInstantFieldMetadata;
+end;
+
 function TInstantFieldMetadatas.GetItems(Index: Integer): TInstantFieldMetadata;
 begin
   Result := TInstantFieldMetadata(inherited Items[Index]);
@@ -3639,6 +3805,39 @@ begin
   Result := Collection.Owner;
 end;
 
+function TInstantIndexMetadata.InternalEquals(
+  const Other: TInstantMetadata): Boolean;
+begin
+  Result := inherited InternalEquals(Other);
+  if Result then
+    Result := (Other is TInstantIndexMetadata) and
+      (TInstantIndexMetadata(Other).Options = Options) and
+      { TODO : This only works for case-insensitive field names! }
+      SameText(TInstantIndexMetadata(Other).Fields, Fields);
+end;
+
+function TInstantIndexMetadata.IsFieldIndexed(
+  const AFieldMetadata: TInstantFieldMetadata): Boolean;
+var
+  I: Integer;
+  List: TStringList;
+begin
+  List := TStringList.Create;
+  try
+    InstantStrToList(Fields, List, [';']);
+    Result := False;
+    for I := 0 to Pred(List.Count) do
+    begin
+      { TODO : This only works for case-insensitive field names! }
+      Result := SameText(List[I], AFieldMetadata.Name);
+      if Result then
+        Break;
+    end;
+  finally
+    List.Free;
+  end;
+end;
+
 { TInstantIndexMetadatas }
 
 function TInstantIndexMetadatas.Add: TInstantIndexMetadata;
@@ -3662,9 +3861,29 @@ begin
   inherited Create(AOwner, TInstantIndexMetadata);
 end;
 
+function TInstantIndexMetadatas.Find(
+  const AName: string): TInstantIndexMetadata;
+begin
+  Result := inherited Find(AName) as TInstantIndexMetadata;
+end;
+
 function TInstantIndexMetadatas.GetItems(Index: Integer): TInstantIndexMetadata;
 begin
   Result := TInstantIndexMetadata(inherited Items[Index]);
+end;
+
+function TInstantIndexMetadatas.IsFieldIndexed(
+  const AFieldMetadata: TInstantFieldMetadata): Boolean;
+var
+  I: Integer;
+begin
+  Result := False;
+  for I := 0 to Pred(Count) do
+  begin
+    Result := Items[I].IsFieldIndexed(AFieldMetadata);
+    if Result then
+      Break;
+  end;
 end;
 
 function TInstantIndexMetadatas.Owner: TInstantTableMetadata;
@@ -3687,11 +3906,33 @@ begin
   inherited;
 end;
 
+function TInstantTableMetadata.FindFieldMetadata(
+  const AName: string): TInstantFieldMetadata;
+begin
+  Result := FieldMetadatas.Find(AName);
+end;
+
+function TInstantTableMetadata.FindIndexMetadata(
+  const AName: string): TInstantIndexMetadata;
+begin
+  Result := IndexMetadatas.Find(AName);
+end;
+
+function TInstantTableMetadata.GetFieldMetadataCount: Integer;
+begin
+  Result := FieldMetadatas.Count;
+end;
+
 function TInstantTableMetadata.GetFieldMetadatas: TInstantFieldMetadatas;
 begin
   if not Assigned(FFieldMetadatas) then
     FFieldMetadatas := TInstantFieldMetadatas.Create(Self);
   Result := FFieldMetadatas;
+end;
+
+function TInstantTableMetadata.GetIndexMetadataCount: Integer;
+begin
+  Result := IndexMetadatas.Count;
 end;
 
 function TInstantTableMetadata.GetIndexMetadatas: TInstantIndexMetadatas;
@@ -3721,6 +3962,12 @@ begin
   inherited Create(AOwner, TInstantTableMetadata);
 end;
 
+function TInstantTableMetadatas.Find(
+  const AName: string): TInstantTableMetadata;
+begin
+  Result := inherited Find(AName) as TInstantTableMetadata;
+end;
+
 function TInstantTableMetadatas.GetItems(Index: Integer): TInstantTableMetadata;
 begin
   Result := inherited Items[Index] as TInstantTableMetadata;
@@ -3734,10 +3981,9 @@ begin
   Result := InstantAttributeTypeToDataType(AttributeType, BlobStreamFormat);
 end;
 
-constructor TInstantScheme.Create(AModel: TInstantModel);
+constructor TInstantScheme.Create;
 begin
   inherited Create;
-  FModel := AModel;
   FBlobStreamFormat := sfBinary;
   FIdDataType := dtString;
   FIdSize := InstantDefaultFieldSize; 
@@ -3750,34 +3996,15 @@ begin
 end;
 
 function TInstantScheme.FindTableMetadata(
-  const Name: string): TInstantTableMetadata;
-var
-  I: Integer;
+  const AName: string): TInstantTableMetadata;
 begin
-  for I := 0 to Pred(TableMetadataCount) do
-  begin
-    Result := TableMetadatas[I];
-    if SameText(Result.Name, Name) then
-      Exit;
-  end;
-  Result := nil;
+  Result := TableMetadataCollection.Find(AName);
 end;
 
 function TInstantScheme.GetTableMetadataCollection: TInstantTableMetadatas;
-var
-  Maps: TInstantAttributeMaps;
 begin
   if not Assigned(FTableMetadataCollection) then
-  begin
     FTableMetadataCollection := TInstantTableMetadatas.Create(Self);
-    Maps := InstantCreateStorageMaps(Model.ClassMetadatas);
-    try
-      if Assigned(Maps) then
-        InitTableMetadatas(FTableMetadataCollection, Maps);
-    finally
-      Maps.Free;
-    end;
-  end;
   Result := FTableMetadataCollection;
 end;
 
@@ -3790,6 +4017,14 @@ function TInstantScheme.GetTableMetadatas(
   Index: Integer): TInstantTableMetadata;
 begin
   Result := TableMetadataCollection[Index];
+end;
+
+procedure TInstantScheme.SetCatalog(const Value: TInstantCatalog);
+begin
+  FreeAndNil(FCatalog);
+  FCatalog := Value;
+  if Assigned(FCatalog) then
+    FCatalog.InitTableMetadatas(TableMetadataCollection);
 end;
 
 { TInstantAttributeMap }
@@ -9814,6 +10049,13 @@ begin
   FConnector := AConnector;
 end;
 
+function TInstantBroker.CreateDBBuildCommand(
+  const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  Result := TInstantUnsupportedDBBuildCommand.Create(CommandType,
+    Connector);
+end;
+
 function TInstantBroker.CreateQuery: TInstantQuery;
 begin
   Result := InternalCreateQuery;
@@ -9842,6 +10084,11 @@ begin
   Result := '';
 end;
 
+function TInstantBroker.CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
+begin
+  raise Exception.CreateFmt(SUndefinedCatalog, [ClassName]);
+end;
+
 procedure TInstantBroker.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
 end;
@@ -9849,6 +10096,12 @@ end;
 function TInstantBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantQuery.Create(Connector);
+end;
+
+function TInstantBroker.ReadDatabaseScheme: TInstantScheme;
+begin
+  Result := TInstantScheme.Create;
+  Result.Catalog := CreateCatalog(Result);
 end;
 
 function TInstantBroker.RetrieveObject(AObject: TInstantObject;
@@ -10108,88 +10361,6 @@ procedure TInstantQuery.TranslateCommand;
 begin
 end;
 
-{ TInstantRelationalScheme }
-
-procedure TInstantRelationalScheme.InitTableMetadatas(
-  ATableMetadatas: TInstantTableMetadatas; Maps: TInstantAttributeMaps);
-
-  procedure AddMap(Map: TInstantAttributeMap);
-  var
-    I: Integer;
-    TableMetadata: TInstantTableMetadata;
-    Options: TInstantFieldOptions;
-  begin
-    TableMetadata := ATableMetadatas.Add;
-    with TableMetadata do
-    begin
-      Name := Map.Name;
-
-      { Class + Id + UpdateCount}
-      FieldMetadatas.AddFieldMetadata(InstantClassFieldName, dtString,
-        InstantDefaultFieldSize, atUnknown, [foRequired, foIndexed]);
-      FieldMetadatas.AddFieldMetadata(InstantIdFieldName, FIdDataType,
-        FIdSize, atUnknown, [foRequired, foIndexed]);
-      FieldMetadatas.AddFieldMetadata(InstantUpdateCountFieldName, dtInteger, 0,
-        atUnknown);
-      IndexMetadatas.AddIndexMetadata('', InstantIndexFieldNames,
-        [ixPrimary, ixUnique]);
-
-      { Other }
-      for I := 0 to Pred(Map.Count) do
-        with Map[I] do
-        begin
-          if AttributeType = atReference then
-          begin
-            FieldMetadatas.AddFieldMetadata(FieldName + InstantClassFieldName,
-              AttributeTypeToDataType(atString), InstantDefaultFieldSize, AttributeType);
-            FieldMetadatas.AddFieldMetadata(FieldName + InstantIdFieldName,
-              FIdDataType, FIdSize, AttributeType);
-          end
-          else if AttributeType = atPart then
-          begin
-            if StorageKind = skEmbedded then
-              FieldMetadatas.AddFieldMetadata(FieldName, AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [])
-            else if StorageKind = skExternal then
-            begin
-              FieldMetadatas.AddFieldMetadata(FieldName + InstantClassFieldName,
-                AttributeTypeToDataType(atString), InstantDefaultFieldSize, AttributeType);
-              FieldMetadatas.AddFieldMetadata(FieldName + InstantIdFieldName,
-                FIdDataType, FIdSize, AttributeType);
-            end;
-          end
-          else if AttributeType in [atParts, atReferences] then
-          begin
-            if StorageKind = skEmbedded then
-              FieldMetadatas.AddFieldMetadata(FieldName, AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [])
-            else if StorageKind = skExternal then
-              FieldMetadatas.AddFieldMetadata(FieldName, AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [], ExternalStorageName)
-          end
-          else
-          begin
-            if IsIndexed then
-            begin
-              IndexMetadatas.AddIndexMetadata(FieldName, FieldName, []);
-              Options := [foIndexed];
-            end
-            else
-              Options := [];
-            FieldMetadatas.AddFieldMetadata(FieldName,
-              AttributeTypeToDataType(AttributeType), Size, AttributeType, Options);
-          end;
-        end;
-    end;
-  end;
-
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(Maps.Count) do
-    AddMap(Maps[I]);
-end;
-
 { TInstantRelationalConnector }
 
 procedure TInstantRelationalConnector.DoGetDataSet(const CommandText: string;
@@ -10233,7 +10404,8 @@ end;
 function TInstantRelationalConnector.InternalCreateScheme(
   Model: TInstantModel): TInstantScheme;
 begin
-  Result := TInstantRelationalScheme.Create(Model);
+  Result := TInstantScheme.Create;
+  Result.Catalog := TInstantModelCatalog.Create(Result, Model);
 end;
 
 { TInstantRelationalTranslator }
@@ -11255,14 +11427,17 @@ procedure TInstantConnectionBasedConnector.DoAfterConnectionChange;
 begin
   if Assigned(FConnection) then
     FConnection.FreeNotification(Self);
-  BeforeConnectionChange;
+  AfterConnectionChange;
 end;
 
 procedure TInstantConnectionBasedConnector.DoBeforeConnectionChange;
 begin
-  if Assigned(FConnection) then
-    FConnection.RemoveFreeNotification(Self);
-  AfterConnectionChange;
+  try
+    BeforeConnectionChange;
+  finally
+    if Assigned(FConnection) then
+      FConnection.RemoveFreeNotification(Self);
+  end;
 end;
 
 function TInstantConnectionBasedConnector.GetConnected: Boolean;
@@ -12558,6 +12733,18 @@ begin
   Result := InstantEmbrace(TableName, Delimiters);
 end;
 
+function TInstantSQLGenerator.GenerateAddFieldSQL(
+  Metadata: TInstantFieldMetadata): string;
+begin
+  Result := InternalGenerateAddFieldSQL(Metadata);
+end;
+
+function TInstantSQLGenerator.GenerateAlterFieldSQL(OldMetadata,
+  NewMetadata: TInstantFieldMetadata): string;
+begin
+  Result := InternalGenerateAlterFieldSQL(OldMetadata, NewMetadata);
+end;
+
 function TInstantSQLGenerator.GenerateCreateExternalTableSQL(
   TableName: string): string;
 begin
@@ -12600,6 +12787,18 @@ begin
   Result := InternalGenerateDropExternalTableSQL(TableName);
 end;
 
+function TInstantSQLGenerator.GenerateDropFieldSQL(
+  Metadata: TInstantFieldMetadata): string;
+begin
+  Result := InternalGenerateDropFieldSQL(Metadata);
+end;
+
+function TInstantSQLGenerator.GenerateDropIndexSQL(
+  Metadata: TInstantIndexMetadata): string;
+begin
+  Result := InternalGenerateDropIndexSQL(Metadata);
+end;
+
 function TInstantSQLGenerator.GenerateDropTableSQL(
   Metadata: TInstantTableMetadata): string;
 begin
@@ -12636,6 +12835,11 @@ begin
   Result := InternalGenerateSelectSQL(Map);
 end;
 
+function TInstantSQLGenerator.GenerateSelectTablesSQL: string;
+begin
+  Result := InternalGenerateSelectTablesSQL;
+end;
+
 function TInstantSQLGenerator.GenerateUpdateConcurrentSQL
   (Map: TInstantAttributeMap): string;
 begin
@@ -12651,6 +12855,25 @@ end;
 function TInstantSQLGenerator.GetDelimiters: string;
 begin
   Result := Broker.SQLDelimiters;
+end;
+
+function TInstantSQLGenerator.InternalGenerateAddFieldSQL(
+  Metadata: TInstantFieldMetadata): string;
+begin
+  with Metadata do
+    Result := Format('ALTER TABLE %s ADD %s %s',
+      [EmbraceTable(TableMetadata.Name),
+       EmbraceField(Name),
+       Broker.DataTypeToColumnType(DataType, Size)]);
+end;
+
+function TInstantSQLGenerator.InternalGenerateAlterFieldSQL(OldMetadata,
+  NewMetadata: TInstantFieldMetadata): string;
+begin
+  Result := Format('ALTER TABLE %s ALTER COLUMN %s TYPE %s',
+    [EmbraceTable(OldMetadata.TableMetadata.Name),
+     EmbraceField(OldMetadata.Name),
+     Broker.DataTypeToColumnType(NewMetadata.DataType, NewMetadata.Size)]);
 end;
 
 function TInstantSQLGenerator.InternalGenerateCreateExternalTableSQL(
@@ -12688,7 +12911,7 @@ begin
   Columns := BuildFieldList(Metadata.Fields);
   TableName := Metadata.TableMetadata.Name;
   Result := Format('CREATE %sINDEX %s ON %s (%s)',
-    [Modifier, TableName + Metadata.Name, EmbraceTable(TableName), Columns]);
+    [Modifier, Metadata.Name, EmbraceTable(TableName), Columns]);
 end;
 
 function TInstantSQLGenerator.InternalGenerateCreateTableSQL(
@@ -12760,6 +12983,21 @@ function TInstantSQLGenerator.InternalGenerateDropExternalTableSQL(
   TableName: string): string;
 begin
   Result := Format('DROP TABLE %s', [EmbraceTable(TableName)]);
+end;
+
+function TInstantSQLGenerator.InternalGenerateDropFieldSQL(
+  Metadata: TInstantFieldMetadata): string;
+begin
+  with Metadata do
+    Result := Format('ALTER TABLE %s DROP %s',
+      [EmbraceTable(TableMetadata.Name),
+       EmbraceField(Name)]);
+end;
+
+function TInstantSQLGenerator.InternalGenerateDropIndexSQL(
+  Metadata: TInstantIndexMetadata): string;
+begin
+  Result := Format('DROP INDEX %s', [Metadata.Name]);
 end;
 
 function TInstantSQLGenerator.InternalGenerateDropTableSQL(
@@ -12840,6 +13078,12 @@ begin
   WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s',
     [FieldStr, EmbraceTable(Map.Name), WhereStr]);
+end;
+
+function TInstantSQLGenerator.InternalGenerateSelectTablesSQL: string;
+begin
+  raise EInstantError.CreateFmt(SUnsupportedOperation,
+    ['InternalGenerateSelectTablesSQL']);
 end;
 
 function TInstantSQLGenerator.InternalGenerateUpdateConcurrentSQL
@@ -14913,6 +15157,187 @@ destructor TInstantStatement.Destroy;
 begin
   FStatementImplementation.Free;
   inherited;
+end;
+
+{ TInstantDBBuildCommand }
+
+constructor TInstantDBBuildCommand.Create(
+  const ACommandType: TInstantDBBuildCommandType;
+  const AConnector: TInstantConnector = nil);
+const
+  // Default values for the Enabled property
+  // depending on the CommandType.
+  InstantDBBuildCommandEnabledDefaults: array[TInstantDBBuildCommandType] of Boolean =
+    (True, False, True, True, True, True, False);
+begin
+  inherited Create;
+  FCommandType := ACommandType;
+  FConnector := AConnector;
+  FEnabled := InstantDBBuildCommandEnabledDefaults[FCommandType];
+end;
+
+destructor TInstantDBBuildCommand.Destroy;
+begin
+  inherited;
+end;
+
+procedure TInstantDBBuildCommand.Execute;
+begin
+  InternalExecute;
+end;
+
+function TInstantDBBuildCommand.GetConnector: TInstantConnector;
+begin
+  if Assigned(FConnector) then
+    Result := FConnector
+  else
+    Result := InstantDefaultConnector;
+end;
+
+function TInstantDBBuildCommand.GetDescription: string;
+begin
+  Result := ClassName + ' [' + GetEnumName(TypeInfo(TInstantDBBuildCommandType), Ord(FCommandType));
+  if Assigned(OldMetadata) then
+    Result := Result + ', ' + OldMetadata.Name;
+  if Assigned(NewMetadata) then
+    Result := Result + ', ' + NewMetadata.Name;
+  Result := Result + ']';
+end;
+
+{ TInstantBrokerCatalog }
+
+constructor TInstantBrokerCatalog.Create(const AScheme: TInstantScheme;
+  const ABroker: TInstantBroker);
+begin
+  inherited Create(AScheme);
+  FBroker := ABroker;
+end;
+
+{ TInstantModelCatalog }
+
+constructor TInstantModelCatalog.Create(const AScheme: TInstantScheme;
+  const AModel: TInstantModel);
+begin
+  inherited Create(AScheme);
+  FModel := AModel;
+end;
+
+procedure TInstantModelCatalog.InitTableMetadatas(ATableMetadatas:
+  TInstantTableMetadatas);
+var
+  Maps: TInstantAttributeMaps;
+  I: Integer;
+
+  procedure AddMap(Map: TInstantAttributeMap);
+  var
+    I: Integer;
+    TableMetadata: TInstantTableMetadata;
+    Options: TInstantFieldOptions;
+  begin
+    TableMetadata := ATableMetadatas.Add;
+    with TableMetadata do
+    begin
+      Name := Map.Name;
+
+      { Class + Id + UpdateCount}
+      FieldMetadatas.AddFieldMetadata(InstantClassFieldName, dtString,
+        InstantDefaultFieldSize, atUnknown, [foRequired, foIndexed]);
+      FieldMetadatas.AddFieldMetadata(InstantIdFieldName, Scheme.IdDataType,
+        Scheme.IdSize, atUnknown, [foRequired, foIndexed]);
+      FieldMetadatas.AddFieldMetadata(InstantUpdateCountFieldName, dtInteger, 0,
+        atUnknown);
+      IndexMetadatas.AddIndexMetadata('', InstantIndexFieldNames,
+        [ixPrimary, ixUnique]);
+
+      { Other }
+      for I := 0 to Pred(Map.Count) do
+        with Map[I] do
+        begin
+          if AttributeType = atReference then
+          begin
+            FieldMetadatas.AddFieldMetadata(FieldName + InstantClassFieldName,
+              Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize,
+              AttributeType);
+            FieldMetadatas.AddFieldMetadata(FieldName + InstantIdFieldName,
+              Scheme.IdDataType, Scheme.IdSize, AttributeType);
+          end
+          else if AttributeType = atPart then
+          begin
+            if StorageKind = skEmbedded then
+              FieldMetadatas.AddFieldMetadata(FieldName,
+                Scheme.AttributeTypeToDataType(AttributeType),
+                Size, AttributeType, [])
+            else if StorageKind = skExternal then
+            begin
+              FieldMetadatas.AddFieldMetadata(FieldName + InstantClassFieldName,
+                Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize,
+                AttributeType);
+              FieldMetadatas.AddFieldMetadata(FieldName + InstantIdFieldName,
+                Scheme.IdDataType, Scheme.IdSize, AttributeType);
+            end;
+          end
+          else if AttributeType in [atParts, atReferences] then
+          begin
+            if StorageKind = skEmbedded then
+              FieldMetadatas.AddFieldMetadata(FieldName,
+                Scheme.AttributeTypeToDataType(AttributeType), Size,
+                AttributeType, [])
+            else if StorageKind = skExternal then
+              FieldMetadatas.AddFieldMetadata(FieldName,
+                Scheme.AttributeTypeToDataType(AttributeType),
+                Size, AttributeType, [], ExternalStorageName)
+          end
+          else
+          begin
+            if IsIndexed then
+            begin
+              IndexMetadatas.AddIndexMetadata(Map.Name + FieldName, FieldName, []);
+              Options := [foIndexed];
+            end
+            else
+              Options := [];
+            FieldMetadatas.AddFieldMetadata(FieldName,
+              Scheme.AttributeTypeToDataType(AttributeType),
+              Size, AttributeType, Options);
+          end;
+        end;
+    end;
+  end;
+
+begin
+  Maps := InstantCreateStorageMaps(Model.ClassMetadatas);
+  try
+    if Assigned(Maps) then
+    begin
+      for I := 0 to Pred(Maps.Count) do
+        AddMap(Maps[I]);
+    end;
+  finally
+    Maps.Free;
+  end;
+end;
+
+{ TInstantUnsupportedDBBuildCommand }
+
+procedure TInstantUnsupportedDBBuildCommand.InternalExecute;
+begin
+  raise EInstantDBBuildError.CreateFmt(SCannotBuildDB,
+    [Description]);
+end;
+
+{ TInstantCatalog }
+
+constructor TInstantCatalog.Create(const AScheme: TInstantScheme);
+begin
+  inherited Create;
+  FScheme := AScheme;
+end;
+
+{ TInstantSQLBrokerCatalog }
+
+function TInstantSQLBrokerCatalog.GetBroker: TInstantSQLBroker;
+begin
+  Result := inherited Broker as TInstantSQLBroker;
 end;
 
 initialization
