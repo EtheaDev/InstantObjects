@@ -745,13 +745,15 @@ end;
 
 function TInstantNexusDbSQLBroker.Execute(
   const aStatement: string; aParams: TParams = nil): Integer;
+var
+  DataSet: TNexusDbQuery;
 begin
-  with CreateDataSet(aStatement, aParams) as TNexusDbQuery do
+  DataSet := AcquireDataSet(aStatement, aParams) as TNexusDbQuery;
   try
-    ExecSQL;
-    Result := RowsAffected;
+    DataSet.ExecSQL;
+    Result := DataSet.RowsAffected;
   finally
-    Free;
+    ReleaseDataSet(DataSet);
   end;
 end;
 
