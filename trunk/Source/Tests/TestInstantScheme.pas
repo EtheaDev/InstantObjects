@@ -6,10 +6,10 @@ uses fpcunit, InstantPersistence;
 
 type
 
-  // Test methods for class TInstantRelationalScheme
-  TestTInstantRelationalScheme = class(TTestCase)
+  // Test methods for class TInstantScheme
+  TestTInstantScheme = class(TTestCase)
   private
-    FInstantRelationalScheme: TInstantRelationalScheme;
+    FInstantScheme: TInstantScheme;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -26,66 +26,67 @@ implementation
 
 uses SysUtils, testregistry, InstantClasses, InstantConsts;
 
-procedure TestTInstantRelationalScheme.SetUp;
+procedure TestTInstantScheme.SetUp;
 begin
   if InstantModel.ClassMetadatas.Count > 0 then
     InstantModel.ClassMetadatas.Clear;
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
 
-  FInstantRelationalScheme := TInstantRelationalScheme.Create(InstantModel);
+  FInstantScheme := TInstantScheme.Create;
+  FInstantScheme.Catalog := TInstantModelCatalog.Create(FInstantScheme, InstantModel);
 end;
 
-procedure TestTInstantRelationalScheme.TearDown;
+procedure TestTInstantScheme.TearDown;
 begin
   InstantModel.ClassMetadatas.Clear;
-  FreeAndNil(FInstantRelationalScheme);
+  FreeAndNil(FInstantScheme);
 end;
 
-procedure TestTInstantRelationalScheme.TestBlobStreamFormat;
+procedure TestTInstantScheme.TestBlobStreamFormat;
 begin
   AssertTrue('BlobStreamFormat',
-    sfBinary = FInstantRelationalScheme.BlobStreamFormat);
-  FInstantRelationalScheme.BlobStreamFormat := sfXML;
+    sfBinary = FInstantScheme.BlobStreamFormat);
+  FInstantScheme.BlobStreamFormat := sfXML;
   AssertTrue('BlobStreamFormat',
-    sfXML = FInstantRelationalScheme.BlobStreamFormat);
+    sfXML = FInstantScheme.BlobStreamFormat);
 end;
 
-procedure TestTInstantRelationalScheme.TestFindTableMetadata;
+procedure TestTInstantScheme.TestFindTableMetadata;
 var
   vReturnValue: TInstantTableMetadata;
   vName: string;
 begin
   vName := 'Contact';
-  vReturnValue := FInstantRelationalScheme.FindTableMetadata(vName);
+  vReturnValue := FInstantScheme.FindTableMetadata(vName);
   AssertNotNull('Could not find TableMetadata!', vReturnValue);
   AssertEquals('', vName, vReturnValue.Name);
 end;
 
-procedure TestTInstantRelationalScheme.TestIdDataType;
+procedure TestTInstantScheme.TestIdDataType;
 begin
-  AssertTrue('IdDataType', dtString = FInstantRelationalScheme.IdDataType);
-  FInstantRelationalScheme.IdDataType := dtInteger;
-  AssertTrue('IdDataType', dtInteger = FInstantRelationalScheme.IdDataType);
+  AssertTrue('IdDataType', dtString = FInstantScheme.IdDataType);
+  FInstantScheme.IdDataType := dtInteger;
+  AssertTrue('IdDataType', dtInteger = FInstantScheme.IdDataType);
 end;
 
-procedure TestTInstantRelationalScheme.TestIdSize;
+procedure TestTInstantScheme.TestIdSize;
 begin
   AssertEquals(InstantDefaultFieldSize,
-    FInstantRelationalScheme.IdSize);
-  FInstantRelationalScheme.IdSize := 10;
-  AssertEquals(10, FInstantRelationalScheme.IdSize);
+    FInstantScheme.IdSize);
+  FInstantScheme.IdSize := 10;
+  AssertEquals(10, FInstantScheme.IdSize);
 end;
 
-procedure TestTInstantRelationalScheme.TestTableMetadataCount;
+procedure TestTInstantScheme.TestTableMetadataCount;
 begin
-  AssertEquals(8, FInstantRelationalScheme.TableMetadataCount);
+  AssertEquals(8, FInstantScheme.TableMetadataCount);
 end;
 
-procedure TestTInstantRelationalScheme.TestTableMetadatas;
+procedure TestTInstantScheme.TestTableMetadatas;
 var
   vReturnValue: TInstantTableMetadata;
 begin
-  vReturnValue := FInstantRelationalScheme.TableMetadatas[0];
+  vReturnValue := FInstantScheme.TableMetadatas[0];
   AssertNotNull(vReturnValue);
   AssertEquals('Address', vReturnValue.Name);
 end;
@@ -93,7 +94,7 @@ end;
 initialization
   // Register any test cases with the test runner
 {$IFNDEF CURR_TESTS}
-  RegisterTests([TestTInstantRelationalScheme]);
+  RegisterTests([TestTInstantScheme]);
 {$ENDIF}
 
 end.
