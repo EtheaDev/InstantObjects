@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
+ * Carlo Barazzetta, Juan J. V. Garcia
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -309,8 +309,9 @@ procedure TInstantDBISAMConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 
   procedure CreateTable(TableMetadata: TInstantTableMetadata);
   const
-    FieldTypes: array[TInstantDataType] of TFieldType =
-      (ftInteger, ftFloat, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
+    FieldTypes: array[TInstantDataType] of TFieldType = (
+      ftInteger, ftFloat, ftCurrency, ftBoolean, ftString, ftMemo, ftDateTime,
+      ftBlob);
   var
     I: Integer;
     Table: TDBISAMTable;
