@@ -1,0 +1,698 @@
+(*
+ *   InstantObjects
+ *   Database build classes
+ *)
+
+(* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is: InstantObjects Database builder
+ *
+ * The Initial Developer of the Original Code is: Nando Dessena
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ *
+ * ***** END LICENSE BLOCK ***** *)
+unit InstantDBBuild;
+
+interface
+
+uses
+  SysUtils, Classes, Contnrs, InstantClasses, InstantPersistence, InstantConsts;
+  
+type
+  TInstantDBBuildCommandSequence = class;
+
+  TInstantDBBuildCommandNotifyEvent = procedure (const Sender: TObject;
+    const ACommand: TInstantDBBuildCommand) of object;
+
+  TInstantDBBuildCommandErrorEvent = procedure (const Sender: TObject;
+    const ACommand: TInstantDBBuildCommand; const Error: Exception;
+    var RaiseError: Boolean) of object;
+
+  // Builds a TInstantDBBuildCommandSequence. Abstract.
+  // Works closely with the connector and the broker. The command
+  // sequence, once built, can be executed through the connector.
+  TInstantCustomDBBuilder = class(TComponent)
+  private
+    FConnector: TInstantConnector;
+    FCommandSequence: TInstantDBBuildCommandSequence;
+    function GetAfterCommandExecute: TInstantDBBuildCommandNotifyEvent;
+    function GetAfterCommandSequenceExecute: TNotifyEvent;
+    function GetBeforeCommandExecute: TInstantDBBuildCommandNotifyEvent;
+    function GetBeforeCommandSequenceExecute: TNotifyEvent;
+    procedure SetAfterCommandExecute(
+      const Value: TInstantDBBuildCommandNotifyEvent);
+    procedure SetAfterCommandSequenceExecute(const Value: TNotifyEvent);
+    procedure SetBeforeCommandExecute(
+      const Value: TInstantDBBuildCommandNotifyEvent);
+    procedure SetBeforeCommandSequenceExecute(const Value: TNotifyEvent);
+    function GetCommandExecuteError: TInstantDBBuildCommandErrorEvent;
+    procedure SetCommandExecuteError(
+      const Value: TInstantDBBuildCommandErrorEvent);
+  protected
+    function GetConnector: TInstantConnector; virtual;
+    procedure InternalBuildCommandSequence; virtual; abstract;
+    procedure SetConnector(const Value: TInstantConnector); virtual;
+    // Fired after a successful execution of the entire command sequence.
+    property AfterCommandSequenceExecute: TNotifyEvent
+      read GetAfterCommandSequenceExecute write SetAfterCommandSequenceExecute;
+    // Fired after a successful execution of a command of the sequence.
+    property AfterCommandExecute: TInstantDBBuildCommandNotifyEvent
+      read GetAfterCommandExecute write SetAfterCommandExecute;
+    // Fired when the Execute method of the command sequence is called.
+    property BeforeCommandSequenceExecute: TNotifyEvent
+      read GetBeforeCommandSequenceExecute write SetBeforeCommandSequenceExecute;
+    // Fired before executing a command of the sequence. Can be used to
+    // programmatically enable/disable the execution of the step.
+    property BeforeCommandExecute: TInstantDBBuildCommandNotifyEvent
+      read GetBeforeCommandExecute write SetBeforeCommandExecute;
+    // Fired in case of an error during execution of a command. Can be used to
+    // customize the error handling behaviour, which by default is to stop
+    // the sequence execution, raise an exception and rollback the changes
+    // (rollbacking only works if the database back-end supports transactional
+    // data definition, not a very commonly available feature).
+    property OnCommandExecuteError: TInstantDBBuildCommandErrorEvent
+      read GetCommandExecuteError write SetCommandExecuteError;
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    // A reference to the command sequence.
+    // You should call BuildCommandSequence before accessing this property.
+    property CommandSequence: TInstantDBBuildCommandSequence
+      read FCommandSequence;
+    // (Re)builds the command sequence. After calling this method,
+    // the CommandSequence property contains the sequence of commands.
+    procedure BuildCommandSequence;
+    // Used for component reference notifications.
+    procedure Notification(AComponent: TComponent; Operation: TOperation);
+      override;
+  published
+    // Reference to a Connector that points to the target database for
+    // evolution. Default is InstantDefaultConnector.
+    property Connector: TInstantConnector read GetConnector write SetConnector;
+  end;
+
+  // Base class for database builders and evolvers. Abstract.
+  TInstantCustomDBEvolver = class(TInstantCustomDBBuilder)
+  private
+    FTargetModel: TInstantModel;
+    function GetTargetModel: TInstantModel;
+    procedure SetTargetModel(const Value: TInstantModel);
+  public
+    // The reference Model. Default is InstantModel.
+    property TargetModel: TInstantModel read GetTargetModel write SetTargetModel;
+  end;
+
+  // Builds a TInstantDBBuildCommandSequence that destroys a database structure
+  // and recreates it according to a specified Model. It represents the
+  // "classic" InstantObjects database building strategy.
+  TInstantDBBuilder = class(TInstantCustomDBEvolver)
+  protected
+    procedure InternalBuildCommandSequence; override;
+  published
+    property AfterCommandSequenceExecute;
+    property AfterCommandExecute;
+    property BeforeCommandSequenceExecute;
+    property BeforeCommandExecute;
+    property OnCommandExecuteError;
+  end;
+
+  // A sequence of commands used to build a database.
+  TInstantDBBuildCommandSequence = class(TComponent)
+  private
+    FCommands: TObjectList;
+    FConnector: TInstantConnector;
+    FAfterExecute: TNotifyEvent;
+    FBeforeExecute: TNotifyEvent;
+    FAfterCommandExecute: TInstantDBBuildCommandNotifyEvent;
+    FBeforeCommandExecute: TInstantDBBuildCommandNotifyEvent;
+    FTargetScheme: TInstantScheme;
+    FSourceScheme: TInstantScheme;
+    FCommandExecuteError: TInstantDBBuildCommandErrorEvent;
+    function GetConnector: TInstantConnector;
+    procedure SetConnector(const Value: TInstantConnector);
+    procedure DoAfterCommandExecute(const ACommand: TInstantDBBuildCommand);
+    procedure DoBeforeCommandExecute(const ACommand: TInstantDBBuildCommand);
+    procedure DoAfterExecute;
+    procedure DoBeforeExecute;
+    procedure DoCommandExecuteError(const ACommand: TInstantDBBuildCommand;
+      const Error: Exception; var RaiseError: Boolean);
+    function GetCount: Integer;
+    function GetItem(const Index: Integer): TInstantDBBuildCommand;
+    procedure SetSourceScheme(const Value: TInstantScheme);
+    procedure SetTargetScheme(const Value: TInstantScheme);
+  public
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    // Fired after a successful execution of the entire sequence.
+    property AfterExecute: TNotifyEvent
+      read FAfterExecute write FAfterExecute;
+    // Fired after a successful execution of a command of the sequence.
+    property AfterCommandExecute: TInstantDBBuildCommandNotifyEvent
+      read FAfterCommandExecute write FAfterCommandExecute;
+    // Fired when the Execute method is called.
+    property BeforeExecute: TNotifyEvent
+      read FBeforeExecute write FBeforeExecute;
+    // Fired before executing a command of the sequence. Can be used to
+    // programmatically enable/disable the execution of the step.
+    property BeforeCommandExecute: TInstantDBBuildCommandNotifyEvent
+      read FBeforeCommandExecute write FBeforeCommandExecute;
+    // Connector against which to execute the sequence of commands. Default is
+    // InstantDefaultConnector.
+    property Connector: TInstantConnector read GetConnector write SetConnector;
+    // Number of commands in the sequence.
+    property Count: Integer read GetCount;
+    // Random access to the commands.
+    property Items[const Index: Integer]: TInstantDBBuildCommand read GetItem; default;
+    // Fired in case of an error during execution of a command. Can be used to
+    // customize the error handling behaviour, which by default is to stop
+    // the sequence execution, raise an exception and rollback the changes
+    // (rollbacking only works if the database back-end supports transactional
+    // data definition, not a very commonly available feature).
+    property OnCommandExecuteError: TInstantDBBuildCommandErrorEvent
+      read FCommandExecuteError write FCommandExecuteError;
+    // The TInstantMetadata objects referenced by the commands reside in
+    // SourceScheme (OldMetadata) and TargetScheme (NewMetadata). See
+    // TInstantDBEvolver for a usage example of these properties.
+    property SourceScheme: TInstantScheme read FSourceScheme write SetSourceScheme;
+    property TargetScheme: TInstantScheme read FTargetScheme write SetTargetScheme;
+    // Deletes all the commands in the sequence.
+    procedure Clear;
+    // Adds a command to the tail of the sequence.
+    procedure Append(const ACommand: TInstantDBBuildCommand);
+    // Executes all the commands in the sequence.
+    procedure Execute;
+    // Moves a command up or down in the sequence. Pass a positive value to
+    // move the chosen item Extent positions down the sequence, and a negative
+    // value to move it up.
+    procedure MoveItem(const AItem: TInstantDBBuildCommand; const Extent: Integer);
+    // Used for component reference notifications.
+    procedure Notification(AComponent: TComponent;
+      Operation: TOperation); override;
+  end;
+
+  // Base class for all steps that work by executing a SQL statement or script.
+  TInstantDBBuildSQLCommand = class(TInstantDBBuildCommand)
+  private
+    function GetConnector: TInstantRelationalConnector;
+    function GetBroker: TInstantSQLBroker;
+  protected
+    function GetDescription: string; override;
+    function GetSQLStatement: string; virtual; abstract;
+    procedure InternalExecute; override;
+  public
+    property Connector: TInstantRelationalConnector read GetConnector;
+    property Broker: TInstantSQLBroker read GetBroker;
+  end;
+
+  // Adds a table using a SQL CREATE TABLE statement.
+  TInstantDBBuildAddTableSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    function GetTableMetadata: TInstantTableMetadata;
+  protected
+    function GetSQLStatement: string; override;
+  public
+    property TableMetadata: TInstantTableMetadata read GetTableMetadata;
+  end;
+
+  // Drops a table using a SQL DROP TABLE statement.
+  TInstantDBBuildDropTableSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    function GetTableMetadata: TInstantTableMetadata;
+  protected
+    function GetSQLStatement: string; override;
+  public
+    property TableMetadata: TInstantTableMetadata read GetTableMetadata;
+  end;
+
+  // Adds a field using a SQL ALTER TABLE ADD statement.
+  TInstantDBBuildAddFieldSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    function GetFieldMetadata: TInstantFieldMetadata;
+  protected
+    function GetSQLStatement: string; override;
+  public
+    property FieldMetadata: TInstantFieldMetadata read GetFieldMetadata;
+  end;
+
+  // Drops a field using a SQL ALTER TABLE DROP statement.
+  TInstantDBBuildDropFieldSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    function GetFieldMetadata: TInstantFieldMetadata;
+  protected
+    function GetSQLStatement: string; override;
+  public
+    property FieldMetadata: TInstantFieldMetadata read GetFieldMetadata;
+  end;
+
+  // Alters a field using a SQL ALTER TABLE ALTER COLUMN statement.
+  TInstantDBBuildAlterFieldSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    function GetNewFieldMetadata: TInstantFieldMetadata;
+    function GetOldFieldMetadata: TInstantFieldMetadata;
+  protected
+    function GetSQLStatement: string; override;
+  public
+    property OldFieldMetadata: TInstantFieldMetadata read GetOldFieldMetadata;
+    property NewFieldMetadata: TInstantFieldMetadata read GetNewFieldMetadata;
+  end;
+
+  // Adds an index using a SQL CREATE INDEX statement.
+  TInstantDBBuildAddIndexSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    function GetIndexMetadata: TInstantIndexMetadata;
+  protected
+    function GetSQLStatement: string; override;
+  public
+    property IndexMetadata: TInstantIndexMetadata read GetIndexMetadata;
+  end;
+
+  // Drops an index using a SQL DROP INDEX statement.
+  TInstantDBBuildDropIndexSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    function GetIndexMetadata: TInstantIndexMetadata;
+  protected
+    function GetSQLStatement: string; override;
+  public
+    property IndexMetadata: TInstantIndexMetadata read GetIndexMetadata;
+  end;
+
+implementation
+
+{ TInstantCustomDBBuilder }
+
+procedure TInstantCustomDBBuilder.BuildCommandSequence;
+begin
+  InternalBuildCommandSequence;
+end;
+
+constructor TInstantCustomDBBuilder.Create(AOwner: TComponent);
+begin
+  inherited;
+  FCommandSequence := TInstantDBBuildCommandSequence.Create(Self);
+end;
+
+destructor TInstantCustomDBBuilder.Destroy;
+begin
+  Connector := nil;
+  FreeAndNil(FCommandSequence);
+  inherited;
+end;
+
+function TInstantCustomDBBuilder.GetAfterCommandExecute: TInstantDBBuildCommandNotifyEvent;
+begin
+  Result := FCommandSequence.AfterCommandExecute;
+end;
+
+function TInstantCustomDBBuilder.GetAfterCommandSequenceExecute: TNotifyEvent;
+begin
+  Result := FCommandSequence.AfterExecute;
+end;
+
+function TInstantCustomDBBuilder.GetBeforeCommandExecute: TInstantDBBuildCommandNotifyEvent;
+begin
+  Result := FCommandSequence.BeforeCommandExecute;
+end;
+
+function TInstantCustomDBBuilder.GetBeforeCommandSequenceExecute: TNotifyEvent;
+begin
+  Result := FCommandSequence.BeforeExecute;
+end;
+
+function TInstantCustomDBBuilder.GetCommandExecuteError: TInstantDBBuildCommandErrorEvent;
+begin
+  Result := FCommandSequence.OnCommandExecuteError;
+end;
+
+function TInstantCustomDBBuilder.GetConnector: TInstantConnector;
+begin
+  if not Assigned(FConnector) then
+    Result := InstantDefaultConnector
+  else
+    Result := FConnector;
+end;
+
+procedure TInstantCustomDBBuilder.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited;
+  if Operation = opRemove then
+    if AComponent = FConnector then
+      FConnector := nil;
+end;
+
+procedure TInstantCustomDBBuilder.SetAfterCommandExecute(
+  const Value: TInstantDBBuildCommandNotifyEvent);
+begin
+  FCommandSequence.AfterCommandExecute := Value;
+end;
+
+procedure TInstantCustomDBBuilder.SetAfterCommandSequenceExecute(
+  const Value: TNotifyEvent);
+begin
+  FCommandSequence.AfterExecute := Value;
+end;
+
+procedure TInstantCustomDBBuilder.SetBeforeCommandExecute(
+  const Value: TInstantDBBuildCommandNotifyEvent);
+begin
+  FCommandSequence.BeforeCommandExecute := Value;
+end;
+
+procedure TInstantCustomDBBuilder.SetBeforeCommandSequenceExecute(
+  const Value: TNotifyEvent);
+begin
+  FCommandSequence.BeforeExecute := Value;
+end;
+
+procedure TInstantCustomDBBuilder.SetCommandExecuteError(
+  const Value: TInstantDBBuildCommandErrorEvent);
+begin
+  FCommandSequence.OnCommandExecuteError := Value;
+end;
+
+procedure TInstantCustomDBBuilder.SetConnector(const Value: TInstantConnector);
+begin
+  if Value <> FConnector then
+  begin
+    if Assigned(FConnector) then
+      FConnector.RemoveFreeNotification(Self);
+    FConnector := Value;
+    if Assigned(FConnector) then
+      FConnector.FreeNotification(Self);
+  end;
+end;
+
+{ TInstantCustomDBEvolver }
+
+function TInstantCustomDBEvolver.GetTargetModel: TInstantModel;
+begin
+  if Assigned(FTargetModel) then
+    Result := FTargetModel
+  else
+    Result := InstantModel;
+end;
+
+procedure TInstantCustomDBEvolver.SetTargetModel(
+  const Value: TInstantModel);
+begin
+  FTargetModel := Value;
+end;
+
+{ TInstantDBBuilder }
+
+procedure TInstantDBBuilder.InternalBuildCommandSequence;
+begin
+  { TODO : Build a series of drop & create tables and indices. }
+end;
+
+{ TInstantDBBuildCommandSequence }
+
+procedure TInstantDBBuildCommandSequence.Append(
+  const ACommand: TInstantDBBuildCommand);
+begin
+  FCommands.Add(ACommand);
+end;
+
+procedure TInstantDBBuildCommandSequence.Clear;
+begin
+  FCommands.Clear;
+end;
+
+constructor TInstantDBBuildCommandSequence.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  FCommands := TObjectList.Create(True);
+end;
+
+destructor TInstantDBBuildCommandSequence.Destroy;
+begin
+  FreeAndNil(FCommands);
+  FreeAndNil(FSourceScheme);
+  FreeAndNil(FTargetScheme);
+  inherited;
+end;
+
+procedure TInstantDBBuildCommandSequence.DoAfterCommandExecute(
+  const ACommand: TInstantDBBuildCommand);
+begin
+  if Assigned(FAfterCommandExecute) then
+    FAfterCommandExecute(Self, ACommand);
+end;
+
+procedure TInstantDBBuildCommandSequence.DoAfterExecute;
+begin
+  if Assigned(FAfterExecute) then
+    FAfterExecute(Self);
+end;
+
+procedure TInstantDBBuildCommandSequence.DoBeforeCommandExecute(
+  const ACommand: TInstantDBBuildCommand);
+begin
+  if Assigned(FBeforeCommandExecute) then
+    FBeforeCommandExecute(Self, ACommand);
+end;
+
+procedure TInstantDBBuildCommandSequence.DoBeforeExecute;
+begin
+  if Assigned(FBeforeExecute) then
+    FBeforeExecute(Self);
+end;
+
+procedure TInstantDBBuildCommandSequence.DoCommandExecuteError(
+  const ACommand: TInstantDBBuildCommand; const Error: Exception;
+  var RaiseError: Boolean);
+begin
+
+end;
+
+procedure TInstantDBBuildCommandSequence.Execute;
+var
+  i: Integer;
+  CurrentCommand: TInstantDBBuildCommand;
+  RaiseError: Boolean;
+begin
+  DoBeforeExecute;
+  Connector.StartTransaction;
+  try
+    for i := 0 to FCommands.Count - 1 do
+    begin
+      CurrentCommand := FCommands[i] as TInstantDBBuildCommand;
+      DoBeforeCommandExecute(CurrentCommand);
+      try
+        if CurrentCommand.Enabled then
+          CurrentCommand.Execute;
+      except
+        on E: Exception do
+        begin
+          RaiseError := True;
+          DoCommandExecuteError(CurrentCommand, E, RaiseError);
+          if RaiseError then
+            raise;
+        end;
+      end;
+      DoAfterCommandExecute(CurrentCommand);
+    end;
+    Connector.CommitTransaction;
+    DoAfterExecute;
+  except
+    Connector.RollbackTransaction;
+    raise;
+  end;
+end;
+
+function TInstantDBBuildCommandSequence.GetConnector: TInstantConnector;
+begin
+  if Assigned(FConnector) then
+    Result := FConnector
+  else
+    Result := InstantDefaultConnector;
+end;
+
+function TInstantDBBuildCommandSequence.GetCount: Integer;
+begin
+  Result := FCommands.Count;
+end;
+
+function TInstantDBBuildCommandSequence.GetItem(
+  const Index: Integer): TInstantDBBuildCommand;
+begin
+  Result := FCommands[Index] as TInstantDBBuildCommand;
+end;
+
+procedure TInstantDBBuildCommandSequence.MoveItem(
+  const AItem: TInstantDBBuildCommand; const Extent: Integer);
+var
+  i: Integer;
+begin
+  for i := 0 to FCommands.Count - 1 do
+  begin
+    if FCommands[i] = AItem then
+    begin
+      FCommands.Move(i, i + Extent);
+      Break;
+    end;
+  end;
+end;
+
+procedure TInstantDBBuildCommandSequence.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  if Operation = opRemove then
+    if AComponent = FConnector then
+      FConnector := nil;
+end;
+
+procedure TInstantDBBuildCommandSequence.SetConnector(
+  const Value: TInstantConnector);
+begin
+  if Value <> FConnector then
+  begin
+    if Assigned(FConnector) then
+      FConnector.RemoveFreeNotification(Self);
+    FConnector := Value;
+    if Assigned(FConnector) then
+      FConnector.FreeNotification(Self);
+  end;
+end;
+
+procedure TInstantDBBuildCommandSequence.SetSourceScheme(
+  const Value: TInstantScheme);
+begin
+  FreeAndNil(FSourceScheme);
+  FSourceScheme := Value;
+end;
+
+procedure TInstantDBBuildCommandSequence.SetTargetScheme(
+  const Value: TInstantScheme);
+begin
+  FreeAndNil(FTargetScheme);
+  FTargetScheme := Value;
+end;
+
+{ TInstantDBBuildSQLCommand }
+
+function TInstantDBBuildSQLCommand.GetBroker: TInstantSQLBroker;
+begin
+  Result := Connector.Broker as TInstantSQLBroker;
+end;
+
+function TInstantDBBuildSQLCommand.GetConnector: TInstantRelationalConnector;
+begin
+  Result := inherited Connector as TInstantRelationalConnector;
+end;
+
+function TInstantDBBuildSQLCommand.GetDescription: string;
+begin
+  Result := GetSQLStatement;
+end;
+
+procedure TInstantDBBuildSQLCommand.InternalExecute;
+begin
+  Broker.Execute(GetSQLStatement());
+end;
+
+{ TInstantDBBuildAddTableSQLCommand }
+
+function TInstantDBBuildAddTableSQLCommand.GetSQLStatement: string;
+begin
+  Result := Broker.Generator.GenerateCreateTableSQL(TableMetadata);
+end;
+
+function TInstantDBBuildAddTableSQLCommand.GetTableMetadata: TInstantTableMetadata;
+begin
+  Result := NewMetadata as TInstantTableMetadata;
+end;
+
+{ TInstantDBBuildAddFieldSQLCommand }
+
+function TInstantDBBuildAddFieldSQLCommand.GetFieldMetadata: TInstantFieldMetadata;
+begin
+  Result := NewMetadata as TInstantFieldMetadata;
+end;
+
+function TInstantDBBuildAddFieldSQLCommand.GetSQLStatement: string;
+begin
+  Result := Broker.Generator.GenerateAddFieldSQL(FieldMetadata);
+end;
+
+{ TInstantDBBuildDropFieldSQLCommand }
+
+function TInstantDBBuildDropFieldSQLCommand.GetFieldMetadata: TInstantFieldMetadata;
+begin
+  Result := OldMetadata as TInstantFieldMetadata;
+end;
+
+function TInstantDBBuildDropFieldSQLCommand.GetSQLStatement: string;
+begin
+  Result := Broker.Generator.GenerateDropFieldSQL(FieldMetadata);
+end;
+
+{ TInstantDBBuildDropTableSQLCommand }
+
+function TInstantDBBuildDropTableSQLCommand.GetSQLStatement: string;
+begin
+  Result := Broker.Generator.GenerateDropTableSQL(TableMetadata);
+end;
+
+function TInstantDBBuildDropTableSQLCommand.GetTableMetadata: TInstantTableMetadata;
+begin
+  Result := OldMetadata as TInstantTableMetadata;
+end;
+
+{ TInstantDBBuildAlterFieldSQLCommand }
+
+function TInstantDBBuildAlterFieldSQLCommand.GetNewFieldMetadata: TInstantFieldMetadata;
+begin
+  Result := NewMetadata as TInstantFieldMetadata;
+end;
+
+function TInstantDBBuildAlterFieldSQLCommand.GetOldFieldMetadata: TInstantFieldMetadata;
+begin
+  Result := OldMetadata as TInstantFieldMetadata;
+end;
+
+function TInstantDBBuildAlterFieldSQLCommand.GetSQLStatement: string;
+begin
+  Result := Broker.Generator.GenerateAlterFieldSQL(OldFieldMetadata, NewFieldMetadata);
+end;
+
+{ TInstantDBBuildAddIndexSQLCommand }
+
+function TInstantDBBuildAddIndexSQLCommand.GetIndexMetadata: TInstantIndexMetadata;
+begin
+  Result := NewMetadata as TInstantIndexMetadata;
+end;
+
+function TInstantDBBuildAddIndexSQLCommand.GetSQLStatement: string;
+begin
+  Result := Broker.Generator.GenerateCreateIndexSQL(IndexMetadata);
+end;
+
+{ TInstantDBBuildDropIndexSQLCommand }
+
+function TInstantDBBuildDropIndexSQLCommand.GetIndexMetadata: TInstantIndexMetadata;
+begin
+  Result := OldMetadata as TInstantIndexMetadata;
+end;
+
+function TInstantDBBuildDropIndexSQLCommand.GetSQLStatement: string;
+begin
+  Result := Broker.Generator.GenerateDropIndexSQL(IndexMetadata);
+end;
+
+end.

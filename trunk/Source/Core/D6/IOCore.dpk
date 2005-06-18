@@ -2,6 +2,7 @@ package IOCore;
 
 {$R *.res}
 {$R '..\InstantPump.dcr'}
+{$R '..\InstantDBEvolution.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -49,6 +50,8 @@ contains
   InstantConnectionManagerForm in '..\InstantConnectionManagerForm.pas' {InstantConnectionManagerForm},
   InstantConnectionManager in '..\InstantConnectionManager.pas',
   InstantImageUtils in '..\InstantImageUtils.pas',
-  InstantPump in '..\InstantPump.pas';
+  InstantPump in '..\InstantPump.pas',
+  InstantDBEvolution in '..\InstantDBEvolution.pas',
+  InstantDBBuild in '..\InstantDBBuild.pas';
 
 end.
