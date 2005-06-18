@@ -17,9 +17,9 @@ package IOUIB;
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
-{$TYPEDADDRESS OFF}
+{$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
-{$WRITEABLECONST ON}
+{$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects UIB Run-Time Support (Delphi 7)'}
@@ -32,7 +32,8 @@ requires
   vcldb,
   ibxpress,
   IOCore,
-  JvUIBD7R;
+  JvUIBD7R,
+  IOIBFbCatalog;
 
 contains
   InstantUIBConnectionDefEdit in '..\InstantUIBConnectionDefEdit.pas' {InstantUIBConnectionDefEditForm},
