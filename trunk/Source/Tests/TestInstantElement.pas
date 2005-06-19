@@ -93,8 +93,7 @@ begin
   AssertEquals('Value.Id 1', 'Object.Id', FInstantElement.Value.Id);
 
   vReturnValue := FInstantElement.DetachObject(vObject);
-  AssertFalse('DetachObject', vReturnValue);
-  AssertEquals('Object RefCount 3', 1, vObject.RefCount);
+  AssertTrue('DetachObject', vReturnValue);
   AssertEquals('Value.Id 2', '', FInstantElement.Value.Id);
 end;
 
