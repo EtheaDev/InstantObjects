@@ -5856,7 +5856,7 @@ begin
   if Value = AObject then
   begin
     Value := nil;
-    Result := Value <> AObject;
+    Result := True; 
   end else
     Result := False;
 end;
