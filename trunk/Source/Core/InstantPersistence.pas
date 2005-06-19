@@ -3991,6 +3991,7 @@ end;
 
 destructor TInstantScheme.Destroy;
 begin
+  FCatalog.Free;
   FTableMetadataCollection.Free;
   inherited;
 end;
