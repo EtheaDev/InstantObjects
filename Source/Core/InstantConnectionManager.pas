@@ -99,8 +99,8 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure LoadConnectionDefs;
-    procedure SaveConnectionDefs;    
+    procedure LoadConnectionDefs; virtual;
+    procedure SaveConnectionDefs; virtual;   
     procedure ConnectByName(const ConnectionDefName: string);
     procedure Execute;
     function IsConnected: Boolean;
