@@ -60,8 +60,8 @@ var
       finally
         Broker.ReleaseDataSet(IndexFields);
       end;
-      IndexFieldList.Delimiter := ';';
-      Result := IndexFieldList.DelimitedText;
+      Result := StringReplace(IndexFieldList.CommaText, ',', ';',
+        [rfReplaceAll]);
     finally
       IndexFieldList.Free;
     end;
