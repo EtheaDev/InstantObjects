@@ -94,13 +94,31 @@ type
     procedure SetVisibleActions(Value: TInstantConnectionManagerActionTypes);
     procedure SetCaption(const Value: string);
     function GetDefsFileName: string;
-    property DefsFileName: string read GetDefsFileName;
   protected
+    property DefsFileName: string read GetDefsFileName;
+    // Creates and returns a stream to read the connectiondefs data from.
+    // If there is nothing to read, it should return nil.
+    // The caller is responsible for freeing the stream after using it.
+    // The default implementation just creates a TFileStream that opens
+    // DefsFileName for reading. If DefsFileName does not exist, then it returns
+    // nil.
+    // An overridden implementation might get the data from an encrypted file or
+    // a completely different source.
+    function CreateConnectionDefsInputStream(): TStream; virtual;
+    // Creates and returns a stream to write the connectiondefs data to.
+    // If there is nothing to write to, it should return nil.
+    // The caller is responsible for freeing the stream after using it.
+    // The default implementation just creates a TFileStream that opens
+    // DefsFileName for writing. If DefsFileName is not specified, then it
+    // returns nil.
+    // An overridden implementation might write the data to an encrypted file
+    // or a completely different destination.
+    function CreateConnectionDefsOutputStream(): TStream; virtual;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure LoadConnectionDefs; virtual;
-    procedure SaveConnectionDefs; virtual;   
+    procedure LoadConnectionDefs;
+    procedure SaveConnectionDefs;
     procedure ConnectByName(const ConnectionDefName: string);
     procedure Execute;
     function IsConnected: Boolean;
@@ -258,64 +276,33 @@ end;
 
 procedure TInstantConnectionManager.LoadConnectionDefs;
 var
-  FileStream: TFileStream;
-  MemoryStream: TMemoryStream;
+  InputStream: TStream;
 begin
-  if FileExists(DefsFileName) then
-  begin
+  try
+    InputStream := CreateConnectionDefsInputStream();
     try
-      if FileFormat = sfBinary then
-      begin
-        FileStream := TFileStream.Create(DefsFileName, fmOpenRead);
-        try
-          InstantReadObjectFromStream(FileStream, ConnectionDefs);
-        finally
-          FileStream.Free;
-        end;
-      end
-      else
-      begin
-        MemoryStream := TMemoryStream.Create;
-        try
-          MemoryStream.LoadFromFile(DefsFileName);
-          InstantReadObject(MemoryStream, sfXML, ConnectionDefs);
-        finally
-          MemoryStream.Free;
-        end;
-      end;
-    except
-      on E: Exception do
-        raise EInstantError.CreateFmt(
-          'Error loading connection definitions from %s: %s',
-          [DefsFileName, E.Message]);
+      if Assigned(InputStream) then
+        InstantReadObject(InputStream, FileFormat, ConnectionDefs);
+    finally
+      InputStream.Free;
     end;
+  except
+    on E: Exception do
+      raise EInstantError.CreateFmt(SErrorLoadingConnectionDefs,
+        [DefsFileName, E.Message]);
   end;
 end;
 
 procedure TInstantConnectionManager.SaveConnectionDefs;
 var
-  FileStream: TFileStream;
-  MemoryStream: TMemoryStream;
+  OutputStream: TStream;
 begin
-  if DefsFileName = '' then
-    Exit;
-  FileStream := TFileStream.Create(DefsFileName, fmCreate);
+  OutputStream := CreateConnectionDefsOutputStream();
   try
-    if FileFormat = sfBinary then
-      InstantWriteObjectToStream(FileStream, ConnectionDefs)
-    else
-    begin
-      MemoryStream := TMemoryStream.Create;
-      try
-        InstantWriteObjectToStream(MemoryStream, ConnectionDefs);
-        MemoryStream.Position := 0;
-        InstantObjectBinaryToText(MemoryStream, FileStream);
-      finally
-        MemoryStream.Free;
-      end;
-    end;
+    if Assigned(OutputStream) then
+      InstantWriteObject(OutputStream, FileFormat, ConnectionDefs);
   finally
-    FileStream.Free;
+    OutputStream.Free;
   end;
 end;
 
@@ -351,7 +338,7 @@ begin
   FCaption := Value;
 end;
 
-function TInstantConnectionManager.isConnected: boolean;
+function TInstantConnectionManager.IsConnected: Boolean;
 var
   i: Integer;
   ConnectionDef: TInstantConnectionDef;
@@ -359,13 +346,29 @@ begin
   Result := False;
   if not Assigned(OnIsConnected) then
     Exit;
-  for i := 0 to ConnectionDefs.Count - 1 do
+  for i := 0 to Pred(ConnectionDefs.Count) do
   begin
     ConnectionDef := ConnectionDefs.Items[i];
     OnIsConnected(Self, ConnectionDef, Result);
     if Result then
       Break;
   end;
+end;
+
+function TInstantConnectionManager.CreateConnectionDefsInputStream: TStream;
+begin
+  if FileExists(DefsFileName) then
+    Result := TFileStream.Create(DefsFileName, fmOpenRead)
+  else
+    Result := nil;
+end;
+
+function TInstantConnectionManager.CreateConnectionDefsOutputStream: TStream;
+begin
+  if DefsFileName <> '' then
+    Result := TFileStream.Create(DefsFileName, fmCreate)
+  else
+    Result := nil;
 end;
 
 end.
