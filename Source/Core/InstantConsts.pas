@@ -90,6 +90,7 @@ resourcestring
   SDeniedStore = 'Denied store of object %s(''%s'')';
   SDisposeConflict = 'Object %s(''%s'') was disposed by another session';
   SErrorDisposingObject = 'Error disposing object %s(''%s''): "%s"';
+  SErrorLoadingConnectionDefs = 'Error loading connection definitions from %s: %s';
   SErrorRefreshingObject = 'Error refreshing object %s(''%s''): "%s"';
   SErrorRetrievingObject = 'Error retrieving object %s(''%s''): "%s"';
   SErrorStoringObject = 'Error storing object %s(''%s''): "%s"';
