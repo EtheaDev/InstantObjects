@@ -419,19 +419,19 @@ function TInstantIBXBroker.CreateDBBuildCommand(
   const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
 begin
   if CommandType = ctAddTable then
-    Result := TInstantDBBuildAddTableSQLCommand.Create(CommandType)
+    Result := TInstantDBBuildAddTableSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctDropTable then
-    Result := TInstantDBBuildDropTableSQLCommand.Create(CommandType)
+    Result := TInstantDBBuildDropTableSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctAddField then
-    Result := TInstantDBBuildAddFieldSQLCommand.Create(CommandType)
+    Result := TInstantDBBuildAddFieldSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctAlterField then
-    Result := TInstantDBBuildAlterFieldSQLCommand.Create(CommandType)
+    Result := TInstantDBBuildAlterFieldSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctDropField then
-    Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType)
+    Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctAddIndex then
-    Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType)
+    Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctDropIndex then
-    Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType)
+    Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType, Connector)
   else
     Result := inherited CreateDBBuildCommand(CommandType);
 end;
