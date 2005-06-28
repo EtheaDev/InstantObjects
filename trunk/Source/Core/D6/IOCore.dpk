@@ -52,6 +52,7 @@ contains
   InstantImageUtils in '..\InstantImageUtils.pas',
   InstantPump in '..\InstantPump.pas',
   InstantDBEvolution in '..\InstantDBEvolution.pas',
-  InstantDBBuild in '..\InstantDBBuild.pas';
+  InstantDBBuild in '..\InstantDBBuild.pas',
+  InstantDBEvolverForm in '..\InstantDBEvolverForm.pas' {InstantDBEvolverForm};
 
 end.

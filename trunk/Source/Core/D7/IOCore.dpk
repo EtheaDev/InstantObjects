@@ -30,7 +30,8 @@ package IOCore;
 requires
   vcl,
   vcldb,
-  rtl;
+  rtl,
+  dbrtl;
 
 contains
   InstantUtils in '..\InstantUtils.pas',
@@ -50,6 +51,7 @@ contains
   InstantImageUtils in '..\InstantImageUtils.pas',
   InstantPump in '..\InstantPump.pas',
   InstantDBBuild in '..\InstantDBBuild.pas',
-  InstantDBEvolution in '..\InstantDBEvolution.pas';
+  InstantDBEvolution in '..\InstantDBEvolution.pas',
+  InstantDBEvolverForm in '..\InstantDBEvolverForm.pas' {InstantDBEvolverForm};
 
 end.

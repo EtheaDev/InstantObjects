@@ -26,6 +26,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** *)
+
 unit InstantDBBuild;
 
 interface
@@ -394,6 +395,7 @@ begin
     FConnector := Value;
     if Assigned(FConnector) then
       FConnector.FreeNotification(Self);
+    FCommandSequence.Connector := FConnector;
   end;
 end;
 
