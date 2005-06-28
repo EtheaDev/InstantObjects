@@ -1,6 +1,6 @@
 object InstantConnectionManagerForm: TInstantConnectionManagerForm
-  Left = 327
-  Top = 305
+  Left = 396
+  Top = 280
   Width = 350
   Height = 281
   BorderIcons = [biSystemMenu]
@@ -33,7 +33,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
     Left = 0
     Top = 0
     Width = 342
-    Height = 215
+    Height = 222
     Align = alClient
     Columns = <
       item
@@ -51,7 +51,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 215
+    Top = 222
     Width = 342
     Height = 32
     Align = alBottom
@@ -91,6 +91,14 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
         TabOrder = 1
       end
     end
+    object EvolveButton: TButton
+      Left = 82
+      Top = 4
+      Width = 75
+      Height = 25
+      Action = EvolveAction
+      TabOrder = 2
+    end
   end
   object ConnectionImages: TImageList
     Left = 16
@@ -116,6 +124,9 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
     end
     object BuildItem: TMenuItem
       Action = BuildAction
+    end
+    object EvolveItem: TMenuItem
+      Action = EvolveAction
     end
     object ConnectItem: TMenuItem
       Action = ConnectAction
@@ -151,6 +162,11 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       Hint = 'Delete'
       ShortCut = 16452
       OnExecute = DeleteActionExecute
+    end
+    object EvolveAction: TAction
+      Caption = 'E&volve'
+      Hint = 'Evolve'
+      OnExecute = EvolveActionExecute
     end
     object BuildAction: TAction
       Caption = '&Build'

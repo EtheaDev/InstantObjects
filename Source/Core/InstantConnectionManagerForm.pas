@@ -23,7 +23,7 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s): Carlo Barazzetta
+ * Contributor(s): Carlo Barazzetta, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -79,6 +79,9 @@ type
     FileOpenAction: TAction;
     N2: TMenuItem;
     Open1: TMenuItem;
+    EvolveAction: TAction;
+    EvolveButton: TButton;
+    EvolveItem: TMenuItem;
     procedure ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
     procedure BuildActionExecute(Sender: TObject);
     procedure ConnectActionExecute(Sender: TObject);
@@ -102,6 +105,7 @@ type
     procedure FileOpenActionExecute(Sender: TObject);
     procedure ConnectActionUpdate(Sender: TObject);
     procedure DisconnectActionUpdate(Sender: TObject);
+    procedure EvolveActionExecute(Sender: TObject);
   private
     FModel: TInstantModel;
     FOnBuild: TInstantConnectionDefEvent;
@@ -136,6 +140,7 @@ type
     procedure Connect(ConnectionDef: TInstantConnectionDef);
     procedure Disconnect(ConnectionDef: TInstantConnectionDef);
     function Edit(ConnectionDef: TInstantConnectionDef): Boolean;
+    procedure Evolve(ConnectionDef: TInstantConnectionDef);
     function DoConnect(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     function DoDisconnect(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     function DoEdit(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
@@ -145,9 +150,10 @@ type
     function SupportConnector(ConnectorClass: TInstantConnectorClass): Boolean;
     property ConnectionDefs: TInstantConnectionDefs read GetConnectionDefs;
     property FileOpenDialog: TOpenDialog read GetOpenDialog;
+    function DoBuild(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
+    function DoEvolve(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
   public
     function IsManagerConnected: Boolean;
-    function DoBuild(ConnectionDef: TInstantConnectionDef): Boolean; virtual;
     property CurrentConnectionDef: TInstantConnectionDef read GetCurrentConnectionDef write SetCurrentConnectionDef;
     property FileName: string read GetFileName write SetFileName;
     property Model: TInstantModel read FModel write FModel;
@@ -159,7 +165,7 @@ type
     property OnIsConnected: TInstantConnectionDefEvent read FOnIsConnected write FOnIsConnected;
     property OnPrepare: TInstantConnectorEvent read FOnPrepare write FOnPrepare;
     property OnSupportConnector: TInstantConnectorClassEvent read FOnSupportConnector write SetOnSupportConnector;
-    property ConnectionManager : TInstantConnectionManager read FConnectionManager write SetConnectionManager;
+    property ConnectionManager: TInstantConnectionManager read FConnectionManager write SetConnectionManager;
   end;
 
 implementation
@@ -168,19 +174,19 @@ implementation
 {$R connectionmanagerimages.res}
 
 uses
-  InstantImageUtils, InstantConsts;
+  InstantImageUtils, InstantConsts, InstantDBEvolverForm;
 
-procedure DefaultConnectionManagerExecutor(ConnectionManager : TInstantConnectionManager);
+procedure DefaultConnectionManagerExecutor(ConnectionManager: TInstantConnectionManager);
 var
-  ConnManagerForm : TInstantConnectionManagerForm;
+  ConnectionManagerForm: TInstantConnectionManagerForm;
 begin
-  ConnManagerForm := TInstantConnectionManagerForm.Create(nil);
-  Try
-    ConnManagerForm.ConnectionManager := ConnectionManager;
-    ConnManagerForm.ShowModal;
-  Finally
-    ConnManagerForm.Free;
-  End;
+  ConnectionManagerForm := TInstantConnectionManagerForm.Create(nil);
+  try
+    ConnectionManagerForm.ConnectionManager := ConnectionManager;
+    ConnectionManagerForm.ShowModal;
+  finally
+    ConnectionManagerForm.Free;
+  end;
 end;
 
 { TInstantConnectionManagerForm }
@@ -204,6 +210,7 @@ begin
   EnableAction(RenameAction, HasItem);
   EnableAction(DeleteAction, HasItem and not Connected);
   EnableAction(BuildAction, HasItem and not Connected);
+  EnableAction(EvolveAction, HasItem and not Connected);
   EnableAction(ConnectAction, HasItem and not Connected);
   EnableAction(DisconnectAction, HasItem and Connected);
   EnableAction(FileOpenAction, atOpen in VisibleActions);
@@ -214,7 +221,8 @@ begin
   CloseButton.Cancel := not ConnectionView.IsEditing;
 end;
 
-procedure TInstantConnectionManagerForm.Build(ConnectionDef: TInstantConnectionDef);
+procedure TInstantConnectionManagerForm.Build(
+  ConnectionDef: TInstantConnectionDef);
 begin
   try
     if DoBuild(ConnectionDef) then
@@ -226,13 +234,24 @@ begin
   PopulateConnectionDefs;
 end;
 
+procedure TInstantConnectionManagerForm.Evolve(
+  ConnectionDef: TInstantConnectionDef);
+begin
+  DoEvolve(ConnectionDef);
+  PopulateConnectionDefs;
+end;
+
 procedure TInstantConnectionManagerForm.BuildActionExecute(Sender: TObject);
 begin
   Build(CurrentConnectionDef);
 end;
 
-function TInstantConnectionManagerForm.ConfirmDlg(
-  const Text: string): Boolean;
+procedure TInstantConnectionManagerForm.EvolveActionExecute(Sender: TObject);
+begin
+  Evolve(CurrentConnectionDef);
+end;
+
+function TInstantConnectionManagerForm.ConfirmDlg(const Text: string): Boolean;
 begin
   Result := MessageDlg(Text, mtConfirmation, [mbYes, mbNo], 0) = mrYes;
 end;
@@ -344,11 +363,11 @@ begin
         Connector.CreateDatabase;
       Connector.BuildDatabase(Model);
       Connector.Connect;
-      Try
+      try
         DoPrepare(Connector);
-      Finally
+      finally
         Connector.Disconnect;
-      End;  
+      end;
     finally
       Screen.Cursor := SaveCursor;
     end;
@@ -357,6 +376,34 @@ begin
   end;
   ShowMessage('Database was built successfully');
   Result := True;
+end;
+
+
+function TInstantConnectionManagerForm.DoEvolve(
+  ConnectionDef: TInstantConnectionDef): Boolean;
+var
+  Connector: TInstantConnector;
+  DBEvolverForm: TInstantDBEvolverForm;
+begin
+  if not Assigned(ConnectionDef) then
+  begin
+    Result := False;
+    Exit;
+  end;
+  Connector := ConnectionDef.CreateConnector(nil);
+  try
+    DBEvolverForm := TInstantDBEvolverForm.Create(nil);
+    try
+      DBEvolverForm.Connector := Connector;
+      DBEvolverForm.TargetModel := Model;
+      DBEvolverForm.Execute;
+      Result := True;
+    finally
+      DBEvolverForm.Free;
+    end;
+  finally
+    Connector.Free;
+  end;
 end;
 
 function TInstantConnectionManagerForm.DoConnect(
@@ -667,7 +714,7 @@ begin
     if Value.Caption <> '' then
       FTitle := Value.Caption
     else
-      FTitle := self.Caption;
+      FTitle := Caption;
     FConnectionManager := Value;
     Model := Value.Model;
     OnSupportConnector := Value.OnSupportConnector;
@@ -712,8 +759,7 @@ begin
   ConnectAction.Enabled := Assigned(CurrentConnectionDef) and not IsManagerConnected;
 end;
 
-procedure TInstantConnectionManagerForm.DisconnectActionUpdate(
-  Sender: TObject);
+procedure TInstantConnectionManagerForm.DisconnectActionUpdate(Sender: TObject);
 begin
   DisconnectAction.Enabled := IsManagerConnected;
 end;
