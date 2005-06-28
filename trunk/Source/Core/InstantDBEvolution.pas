@@ -16,7 +16,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is: InstantObjects Database builder
+ * The Original Code is: InstantObjects Database evolver
  *
  * The Initial Developer of the Original Code is: Nando Dessena
  *
@@ -26,6 +26,7 @@
  * Contributor(s):
  *
  * ***** END LICENSE BLOCK ***** *)
+
 unit InstantDBEvolution;
 
 interface
