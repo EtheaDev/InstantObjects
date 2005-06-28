@@ -1,5 +1,5 @@
 (*
- *   InstantObjects
+ *   InstantObjects Test Suite
  *   TestInstantObject
  *)
 
@@ -16,15 +16,15 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is: Seleqt InstantObjects
+ * The Original Code is: InstantObjects Test Suite/TestInstantObject
  *
- * The Initial Developer of the Original Code is: Seleqt
+ * The Initial Developer of the Original Code is: Steven Mitchell
  *
- * Portions created by the Initial Developer are Copyright (C) 2001-2003
+ * Portions created by the Initial Developer are Copyright (C) 2005
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Steven Mitchell
+ * 
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -489,23 +489,23 @@ var
 begin
   FConn.StartTransaction;
   brok := FConn.Broker as TInstantMockBroker;
-  brok.MockManager.StartSetUp;
+  brok.MockManager.EndSetUp;
   FInstantObject.Store;
   vID := FInstantObject.Id;
-  brok.MockManager.EndSetUp;
+  brok.MockManager.StartSetUp;
   brok.MockManager.AddExpectation('InternalStoreObject ' + vID);
   brok.MockManager.Verify;
   FConn.CommitTransaction;
 
-  brok.MockManager.StartSetUp;
-  FInstantObject.Refresh;
   brok.MockManager.EndSetUp;
+  FInstantObject.Refresh;
+  brok.MockManager.StartSetUp;
   brok.MockManager.AddExpectation('InternalRetrieveObject ' + vID);
   brok.MockManager.Verify;
 
-  brok.MockManager.StartSetUp;
-  FInstantObject.RefreshAll(FConn, nil);
   brok.MockManager.EndSetUp;
+  FInstantObject.RefreshAll(FConn, nil);
+  brok.MockManager.StartSetUp;
   brok.MockManager.AddExpectation('InternalRetrieveObject ' + vID);
   brok.MockManager.Verify;
 end;
@@ -531,7 +531,7 @@ begin
   try
     FConn.StartTransaction;
     brok := FConn.Broker as TInstantMockBroker;
-    brok.MockManager.StartSetUp;
+    brok.MockManager.EndSetUp;
     vContact.Name := 'MyContact';
     vAddress.City := 'New York';
     AssertTrue(vAddress.IsChanged);
@@ -560,19 +560,19 @@ begin
     AssertTrue(vContact.IsChanged);
     vID := vContact.Id;
     vContact.Store;
-    brok.MockManager.EndSetUp;
+    brok.MockManager.StartSetUp;
     brok.MockManager.AddExpectation('InternalStoreObject ' + vID1);
     brok.MockManager.AddExpectation('InternalStoreObject ' + vID);
     brok.MockManager.AddExpectation('InternalStoreObject ' + vID);
     brok.MockManager.Verify;
     FConn.CommitTransaction;
 
-    brok.MockManager.StartSetUp;
+    brok.MockManager.EndSetUp;
     vContact.Phones[0].Number := '1234567';
     AssertTrue(vContact.IsChanged);
     vContact.Store;
     vContact.Dispose;
-    brok.MockManager.EndSetUp;
+    brok.MockManager.StartSetUp;
     brok.MockManager.AddExpectation('InternalStoreObject ' + vID);
     brok.MockManager.AddExpectation('InternalDisposeObject ' + vID);
     brok.MockManager.Verify;

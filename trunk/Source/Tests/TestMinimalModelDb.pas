@@ -1,5 +1,5 @@
 (*
- *   InstantObjects
+ *   InstantObjects Test Suite
  *   TestMinimalModelDb
  *)
 
@@ -16,15 +16,15 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is: Seleqt InstantObjects
+ * The Original Code is: InstantObjects Test Suite/TestMinimalModelDb
  *
- * The Initial Developer of the Original Code is: Seleqt
+ * The Initial Developer of the Original Code is: Uberto Barbini
  *
- * Portions created by the Initial Developer are Copyright (C) 2001-2003
+ * Portions created by the Initial Developer are Copyright (C) 2005
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Uberto Barbini
+ * 
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -38,8 +38,11 @@ interface
 
 uses
   Classes, SysUtils, fpcunit, testregistry,
-  InstantPersistence, InstantUIBConnection, MinimalModel,
-  InstantUIB, InstantXML;
+  InstantPersistence, MinimalModel
+//  , InstantUIBConnection
+//  , InstantUIB
+//  , InstantXML
+  ;
 
 type
 

@@ -1,5 +1,5 @@
 (*
- *   InstantObjects
+ *   InstantObjects Test Suite
  *   TestMockConnector
  *)
 
@@ -16,15 +16,15 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is: Seleqt InstantObjects
+ * The Original Code is: InstantObjects Test Suite/TestMockConnector
  *
- * The Initial Developer of the Original Code is: Seleqt
+ * The Initial Developer of the Original Code is: Uberto Barbini
  *
- * Portions created by the Initial Developer are Copyright (C) 2001-2003
+ * Portions created by the Initial Developer are Copyright (C) 2005
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Uberto Barbini, Steven Mitchell
+ * Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -76,6 +76,7 @@ end;
 procedure TTestMockConnector.TestBuildDatabase;
 begin
   AssertNotNull(FConn);
+  FConn.MockManager.StartSetUp;
   FConn.MockManager.AddExpectation('InternalConnect');
   FConn.MockManager.AddExpectation('InternalCreateScheme');
   FConn.MockManager.AddExpectation('CreateBroker TInstantMockBroker');
