@@ -479,6 +479,7 @@ var
   I: Integer;
   AClass: TInstantCodeClass;
   AClassName: string;
+  ClassList: TClassList;
 begin
   with BaseClassEdit.Items do
   begin
@@ -486,6 +487,14 @@ begin
     try
       Clear;
       Add(TInstantObject.ClassName);
+      ClassList := TClassList.Create;
+      try
+        InstantGetClasses(ClassList, nil);
+        for i := 0 to Pred(ClassList.Count) do
+          Add(ClassList[i].ClassName);
+      finally
+        ClassList.Free;
+      end;
       if Assigned(FModel) then
         for I := 0 to Pred(FModel.ClassCount) do
         begin
