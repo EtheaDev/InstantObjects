@@ -81,8 +81,8 @@ type
     FConnectionDefs: TInstantConnectionDefs;
     function GetConnectionDefs: TInstantConnectionDefs;
     function GetModel: TInstantModel;
-    procedure SetFileName(const Value: string);
     procedure SetFileFormat(const Value: TInstantStreamFormat);
+    procedure SetFileName(const Value: string);
     procedure SetModel(Value: TInstantModel);
     procedure SetOnBuild(Value: TInstantConnectionDefEvent);
     procedure SetOnConnect(Value: TInstantConnectionDefEvent);
@@ -95,6 +95,16 @@ type
     procedure SetCaption(const Value: string);
     function GetDefsFileName: string;
   protected
+    // Sets FileFormat based on FileName.
+    procedure SetFileFormatFromFileName;
+    // Called when FileName changes. The default implementation calls
+    // SetFileFormatFromFileName and LoadConnectionDefs to auto-load the
+    // connection definitions.
+    // This method may be overridden to skip auto-loading in cases where
+    // more than just the file name is needed in order to call
+    // LoadConnectionDefs.
+    procedure AfterFileNameChange; virtual;
+    // Fully qualified FileName.
     property DefsFileName: string read GetDefsFileName;
     // Creates and returns a stream to read the connectiondefs data from.
     // If there is nothing to read, it should return nil.
@@ -180,13 +190,23 @@ procedure TInstantConnectionManager.SetFileName(const Value: string);
 begin
   if Value <> FFileName then
   begin
-    if SameText(ExtractFileExt(Value), '.xml') then
-      FFileFormat := sfXML
-    else
-      FFileFormat := sfBinary;
     FFileName := Value;
-    LoadConnectionDefs;
+    AfterFileNameChange;
   end;
+end;
+
+procedure TInstantConnectionManager.SetFileFormatFromFileName;
+begin
+  if SameText(ExtractFileExt(FFileName), '.xml') then
+    FFileFormat := sfXML
+  else
+    FFileFormat := sfBinary;
+end;
+
+procedure TInstantConnectionManager.AfterFileNameChange;
+begin
+  SetFileFormatFromFileName;
+  LoadConnectionDefs;
 end;
 
 procedure TInstantConnectionManager.SetFileFormat(
