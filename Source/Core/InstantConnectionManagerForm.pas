@@ -394,6 +394,7 @@ begin
   try
     DBEvolverForm := TInstantDBEvolverForm.Create(nil);
     try
+      DBEvolverForm.Caption := DBEvolverForm.Caption + ' - ' + ConnectionDef.Name;
       DBEvolverForm.Connector := Connector;
       DBEvolverForm.TargetModel := Model;
       DBEvolverForm.Execute;

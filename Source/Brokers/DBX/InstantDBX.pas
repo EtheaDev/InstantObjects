@@ -155,6 +155,7 @@ type
 
   TInstantDBXMSSQLBroker = class(TInstantDBXBroker)
   protected
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     procedure AssignParam(SourceParam, TargetParam: TParam); override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function ColumnTypeByDataType(DataType: TInstantDataType): string; override;
@@ -202,7 +203,7 @@ implementation
 
 uses
   SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math,
-  InstantDBBuild, InstantIBFbCatalog;
+  InstantDBBuild, InstantIBFbCatalog, InstantMSSqlCatalog;
 
 { TInstantDBXConnector }
 
@@ -551,6 +552,12 @@ const
     'IMAGE');
 begin
   Result := Types[DataType];
+end;
+
+function TInstantDBXMSSQLBroker.CreateCatalog(
+  const AScheme: TInstantScheme): TInstantCatalog;
+begin
+  Result := TInstantMSSqlCatalog.Create(AScheme, Self);
 end;
 
 function TInstantDBXMSSQLBroker.CreateResolver(
