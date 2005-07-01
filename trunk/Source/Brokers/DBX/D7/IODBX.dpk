@@ -33,7 +33,8 @@ requires
   dbrtl,
   dbexpress,
   IOCore,
-  IOIBFbCatalog;
+  IOIBFbCatalog,
+  IOMSSqlCatalog;
 
 contains
   InstantDBXConnectionDefEdit in '..\InstantDBXConnectionDefEdit.pas' {InstantDBXConnectionDefEditForm},

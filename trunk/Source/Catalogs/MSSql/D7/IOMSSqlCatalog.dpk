@@ -1,4 +1,4 @@
-package IOADO;
+package IOMSSqlCatalog;
 
 {$R *.res}
 {$ALIGN 8}
@@ -22,23 +22,16 @@ package IOADO;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects ADO Run-Time Support (Delphi 7)'}
+{$DESCRIPTION 'InstantObjects Catalog for MS-Sql'}
 {$LIBSUFFIX '_D7'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  vcl,
-  vcldb,
-  adortl,
-  IOCore,
-  IOMSSqlCatalog;
+  rtl,
+  IOCore;
 
 contains
-  InstantADOX in '..\InstantADOX.pas',
-  InstantADOJRO in '..\InstantADOJRO.pas',
-  InstantADOTools in '..\InstantADOTools.pas',
-  InstantADOConnectionDefEdit in '..\InstantADOConnectionDefEdit.pas' {InstantADOConnectionDefEditForm},
-  InstantADO in '..\InstantADO.pas';
+  InstantMsSQLCatalog in '..\InstantMSSqlCatalog.pas';
 
 end.

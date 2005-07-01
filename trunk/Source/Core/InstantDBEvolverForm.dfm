@@ -22,11 +22,12 @@ object InstantDBEvolverForm: TInstantDBEvolverForm
     0000F8230000E0010000C0000000C0000000C0000000C0010000C0030000C007
     0000C0070000C0070000C0070000C0070000E00F0000F83F0000FFFF0000}
   OldCreateOrder = False
+  Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   DesignSize = (
     593
-    305)
+    298)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -126,30 +127,36 @@ object InstantDBEvolverForm: TInstantDBEvolverForm
     Top = 96
     object ShowSequenceAction: TAction
       Caption = 'Show Evolution Sequence'
+      Hint = 'Show Evolution Sequence'
       OnExecute = ShowSequenceActionExecute
     end
     object EvolveAction: TAction
       Caption = 'Evolve Database'
+      Hint = 'Evolve Database'
       OnExecute = EvolveActionExecute
       OnUpdate = EvolveActionUpdate
     end
     object MoveCommandUpAction: TAction
       Caption = 'Move Command Up'
+      Hint = 'Move Command Up'
       OnExecute = MoveCommandUpActionExecute
       OnUpdate = MoveCommandUpActionUpdate
     end
     object MoveCommandDownAction: TAction
       Caption = 'Move Command Down'
+      Hint = 'Move Command Down'
       OnExecute = MoveCommandDownActionExecute
       OnUpdate = MoveCommandDownActionUpdate
     end
     object EnableAllCommandsAction: TAction
       Caption = 'Enable All Commands'
+      Hint = 'Enable All Commands'
       OnExecute = EnableAllCommandsActionExecute
       OnUpdate = EnableAllCommandsActionUpdate
     end
     object DisableAllCommandsAction: TAction
       Caption = 'Disable All Commands'
+      Hint = 'Disable All Commands'
       OnExecute = DisableAllCommandsActionExecute
       OnUpdate = DisableAllCommandsActionUpdate
     end

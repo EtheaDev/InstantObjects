@@ -168,11 +168,14 @@ type
 
   TInstantADOMSSQLBroker = class(TInstantSQLBroker)
   protected
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
     procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; 
   public
+    function CreateDBBuildCommand(
+      const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
     function CreateDataSet(const Statement: string; Params: TParams): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
     function Execute(const AStatement: string; AParams: TParams): Integer; override;
@@ -190,7 +193,7 @@ implementation
 
 uses
   ADOInt, ComObj, InstantConsts, InstantUtils, InstantADOX,
-  InstantADOConnectionDefEdit, InstantADOTools, Controls;
+  InstantADOConnectionDefEdit, InstantADOTools, Controls, InstantDBBuild, InstantMSSqlCatalog;
 
 const
   ADOLinkPrefix = 'FILE NAME=';
@@ -1036,6 +1039,12 @@ begin
   AssignParameters(AParams,TADOQuery(DataSet).Parameters);
 end;
 
+function TInstantADOMSSQLBroker.CreateCatalog(
+  const AScheme: TInstantScheme): TInstantCatalog;
+begin
+  Result := TInstantMSSqlCatalog.Create(AScheme, Self);
+end;
+
 function TInstantADOMSSQLBroker.CreateDataSet(const Statement: string;
   Params: TParams): TDataSet;
 var
@@ -1054,6 +1063,27 @@ begin
     Query.Free;
     raise;
   End;    
+end;
+
+function TInstantADOMSSQLBroker.CreateDBBuildCommand(
+  const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  if CommandType = ctAddTable then
+    Result := TInstantDBBuildAddTableSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropTable then
+    Result := TInstantDBBuildDropTableSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAddField then
+    Result := TInstantDBBuildAddFieldSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAlterField then
+    Result := TInstantDBBuildAlterFieldSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropField then
+    Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAddIndex then
+    Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropIndex then
+    Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType, Connector)
+  else
+    Result := inherited CreateDBBuildCommand(CommandType);
 end;
 
 function TInstantADOMSSQLBroker.CreateResolver(

@@ -162,6 +162,7 @@ resourcestring
   SUnsupportedOperation = 'Unsupported operation: %s';
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
+  SUnsupportedColumnType = 'ColumnType %s not supported';
 
 implementation
 
