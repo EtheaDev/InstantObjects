@@ -27,7 +27,7 @@
  *
  * ***** END LICENSE BLOCK ***** *)
 
-unit InstantConnectionManagerForm;
+unit InstantConnectionManagerFormUnit;
 
 {$I InstantDefines.inc}
 
@@ -174,7 +174,8 @@ implementation
 {$R connectionmanagerimages.res}
 
 uses
-  InstantImageUtils, InstantConsts, InstantDBEvolverForm;
+  InstantImageUtils, InstantConsts, InstantDBEvolverFormUnit,
+  InstantDBBuilderFormUnit;
 
 procedure DefaultConnectionManagerExecutor(ConnectionManager: TInstantConnectionManager);
 var
@@ -339,7 +340,7 @@ function TInstantConnectionManagerForm.DoBuild(
   ConnectionDef: TInstantConnectionDef): Boolean;
 var
   Connector: TInstantConnector;
-  SaveCursor: TCursor;
+  DBBuilderForm: TInstantDBBuilderForm;
 begin
   if Assigned(FOnBuild) then
   begin
@@ -347,37 +348,26 @@ begin
     FOnBuild(Self, ConnectionDef, Result);
     Exit;
   end;
-  if not Assigned(ConnectionDef) or not ConfirmDlg(
-    Format('Build database via connection "%s"?', [ConnectionDef.Name])) then
+  if not Assigned(ConnectionDef) then
   begin
     Result := False;
     Exit;
   end;
   Connector := ConnectionDef.CreateConnector(nil);
   try
-    SaveCursor := Screen.Cursor;
-    Screen.Cursor := crHourglass;
+    DBBuilderForm := TInstantDBBuilderForm.Create(nil);
     try
-      Application.ProcessMessages;
-      if not Connector.DatabaseExists then
-        Connector.CreateDatabase;
-      Connector.BuildDatabase(Model);
-      Connector.Connect;
-      try
-        DoPrepare(Connector);
-      finally
-        Connector.Disconnect;
-      end;
+      DBBuilderForm.Connector := Connector;
+      DBBuilderForm.TargetModel := Model;
+      DBBuilderForm.Execute;
+      Result := True;
     finally
-      Screen.Cursor := SaveCursor;
+      DBBuilderForm.Free;
     end;
   finally
     Connector.Free;
   end;
-  ShowMessage('Database was built successfully');
-  Result := True;
 end;
-
 
 function TInstantConnectionManagerForm.DoEvolve(
   ConnectionDef: TInstantConnectionDef): Boolean;
@@ -394,7 +384,6 @@ begin
   try
     DBEvolverForm := TInstantDBEvolverForm.Create(nil);
     try
-      DBEvolverForm.Caption := DBEvolverForm.Caption + ' - ' + ConnectionDef.Name;
       DBEvolverForm.Connector := Connector;
       DBEvolverForm.TargetModel := Model;
       DBEvolverForm.Execute;

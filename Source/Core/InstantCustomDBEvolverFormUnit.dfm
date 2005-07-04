@@ -1,9 +1,9 @@
-object InstantDBEvolverForm: TInstantDBEvolverForm
+object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   Left = 439
   Top = 273
   Width = 601
   Height = 332
-  Caption = 'Database Evolution'
+  Caption = 'InstantCustomDBEvolverForm'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -22,12 +22,11 @@ object InstantDBEvolverForm: TInstantDBEvolverForm
     0000F8230000E0010000C0000000C0000000C0000000C0010000C0030000C007
     0000C0070000C0070000C0070000C0070000E00F0000F83F0000FFFF0000}
   OldCreateOrder = False
-  Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   DesignSize = (
     593
-    298)
+    305)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -66,7 +65,7 @@ object InstantDBEvolverForm: TInstantDBEvolverForm
     Top = 8
     Width = 145
     Height = 25
-    Action = EvolveAction
+    Action = BuildAction
     TabOrder = 2
   end
   object MoveCommandUpButton: TButton
@@ -116,47 +115,35 @@ object InstantDBEvolverForm: TInstantDBEvolverForm
     Anchors = [akTop, akRight]
     TabOrder = 7
   end
-  object DBEvolver: TInstantDBEvolver
-    BeforeCommandExecute = DBEvolverBeforeCommandExecute
-    OnCommandExecuteError = DBEvolverCommandExecuteError
-    Left = 264
-    Top = 96
-  end
   object ActionList: TActionList
     Left = 320
     Top = 96
     object ShowSequenceAction: TAction
       Caption = 'Show Evolution Sequence'
-      Hint = 'Show Evolution Sequence'
       OnExecute = ShowSequenceActionExecute
     end
-    object EvolveAction: TAction
+    object BuildAction: TAction
       Caption = 'Evolve Database'
-      Hint = 'Evolve Database'
-      OnExecute = EvolveActionExecute
-      OnUpdate = EvolveActionUpdate
+      OnExecute = BuildActionExecute
+      OnUpdate = BuildActionUpdate
     end
     object MoveCommandUpAction: TAction
       Caption = 'Move Command Up'
-      Hint = 'Move Command Up'
       OnExecute = MoveCommandUpActionExecute
       OnUpdate = MoveCommandUpActionUpdate
     end
     object MoveCommandDownAction: TAction
       Caption = 'Move Command Down'
-      Hint = 'Move Command Down'
       OnExecute = MoveCommandDownActionExecute
       OnUpdate = MoveCommandDownActionUpdate
     end
     object EnableAllCommandsAction: TAction
       Caption = 'Enable All Commands'
-      Hint = 'Enable All Commands'
       OnExecute = EnableAllCommandsActionExecute
       OnUpdate = EnableAllCommandsActionUpdate
     end
     object DisableAllCommandsAction: TAction
       Caption = 'Disable All Commands'
-      Hint = 'Disable All Commands'
       OnExecute = DisableAllCommandsActionExecute
       OnUpdate = DisableAllCommandsActionUpdate
     end

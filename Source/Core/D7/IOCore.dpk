@@ -46,12 +46,14 @@ contains
   InstantTextFiler in '..\InstantTextFiler.pas',
   InstantPresentation in '..\InstantPresentation.pas',
   InstantAccessors in '..\InstantAccessors.pas',
-  InstantConnectionManagerForm in '..\InstantConnectionManagerForm.pas' {InstantConnectionManagerForm},
+  InstantConnectionManagerFormUnit in '..\InstantConnectionManagerFormUnit.pas' {InstantConnectionManagerForm},
   InstantConnectionManager in '..\InstantConnectionManager.pas',
   InstantImageUtils in '..\InstantImageUtils.pas',
   InstantPump in '..\InstantPump.pas',
   InstantDBBuild in '..\InstantDBBuild.pas',
   InstantDBEvolution in '..\InstantDBEvolution.pas',
-  InstantDBEvolverForm in '..\InstantDBEvolverForm.pas' {InstantDBEvolverForm};
+  InstantCustomDBEvolverFormUnit in '..\InstantCustomDBEvolverFormUnit.pas',
+  InstantDBEvolverFormUnit in '..\InstantDBEvolverFormUnit.pas' {InstantDBEvolverForm},
+  InstantDBBuilderFormUnit in '..\InstantDBBuilderFormUnit.pas' {InstantDBBuilderForm};
 
 end.
