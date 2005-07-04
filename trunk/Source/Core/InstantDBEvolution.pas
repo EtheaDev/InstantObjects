@@ -46,12 +46,6 @@ type
     // the EvolutionSequence property contains the sequence of steps needed to
     // evolve the database.
     procedure InternalBuildCommandSequence; override;
-  published
-    property AfterCommandSequenceExecute;
-    property AfterCommandExecute;
-    property BeforeCommandSequenceExecute;
-    property BeforeCommandExecute;
-    property OnCommandExecuteError;
   end;
 
 implementation
@@ -96,89 +90,6 @@ var
   SourceTableMetadata, TargetTableMetadata: TInstantTableMetadata;
   SourceFieldMetadata, TargetFieldMetadata: TInstantFieldMetadata;
   SourceIndexMetadata, TargetIndexMetadata: TInstantIndexMetadata;
-
-  procedure AppendAddFieldCommand(const FieldMetadata: TInstantFieldMetadata);
-  var
-    Command: TInstantDBBuildCommand;
-  begin
-    Command := Connector.Broker.CreateDBBuildCommand(ctAddField);
-    Command.NewMetadata := FieldMetadata;
-    CommandSequence.Append(Command);
-  end;
-
-  procedure AppendAlterFieldCommand(const SourceFieldMetadata,
-    TargetFieldMetadata: TInstantFieldMetadata);
-  var
-    Command: TInstantDBBuildCommand;
-  begin
-    Command := Connector.Broker.CreateDBBuildCommand(ctAlterField);
-    Command.OldMetadata := SourceFieldMetadata;
-    Command.NewMetadata := TargetFieldMetadata;
-    CommandSequence.Append(Command);
-  end;
-
-  procedure AppendDropFieldCommand(const FieldMetadata: TInstantFieldMetadata);
-  var
-    Command: TInstantDBBuildCommand;
-  begin
-    Command := Connector.Broker.CreateDBBuildCommand(ctDropField);
-    Command.OldMetadata := FieldMetadata;
-    CommandSequence.Append(Command);
-  end;
-
-  procedure AppendAddIndexCommand(const IndexMetadata: TInstantIndexMetadata);
-  var
-    Command: TInstantDBBuildCommand;
-  begin
-    Command := Connector.Broker.CreateDBBuildCommand(ctAddIndex);
-    Command.NewMetadata := IndexMetadata;
-    CommandSequence.Append(Command);
-  end;
-
-  procedure AppendAlterIndexCommand(const SourceIndexMetadata,
-    TargetIndexMetadata: TInstantIndexMetadata);
-  var
-    Command: TInstantDBBuildCommand;
-  begin
-    Command := Connector.Broker.CreateDBBuildCommand(ctDropIndex);
-    Command.OldMetadata := SourceIndexMetadata;
-    // Enabled normally defaults to False for drop operations, but in this
-    // particular case it is more convenient to have it set to True, since the
-    // index is not really being dropped - it is being altered by recreating it.
-    Command.Enabled := True;
-    CommandSequence.Append(Command);
-    Command := Connector.Broker.CreateDBBuildCommand(ctAddIndex);
-    Command.NewMetadata := TargetIndexMetadata;
-    CommandSequence.Append(Command);
-  end;
-
-  procedure AppendDropIndexCommand(const IndexMetadata: TInstantIndexMetadata);
-  var
-    Command: TInstantDBBuildCommand;
-  begin
-    Command := Connector.Broker.CreateDBBuildCommand(ctDropIndex);
-    Command.OldMetadata := IndexMetadata;
-    CommandSequence.Append(Command);
-  end;
-
-  procedure AppendAddTableCommand(const TableMetadata: TInstantTableMetadata);
-  var
-    Command: TInstantDBBuildCommand;
-  begin
-    Command := Connector.Broker.CreateDBBuildCommand(ctAddTable);
-    Command.NewMetadata := TableMetadata;
-    CommandSequence.Append(Command);
-  end;
-
-  procedure AppendDropTableCommand(const TableMetadata: TInstantTableMetadata);
-  var
-    Command: TInstantDBBuildCommand;
-  begin
-    Command := Connector.Broker.CreateDBBuildCommand(ctDropTable);
-    Command.OldMetadata := TableMetadata;
-    CommandSequence.Append(Command);
-  end;
-
 begin
   // Upgrade tables.
   for iTable := 0 to CommandSequence.TargetScheme.TableMetadataCount - 1 do
@@ -199,10 +110,11 @@ begin
         begin
           if (TargetFieldMetadata.DataType <> SourceFieldMetadata.DataType) or
              (TargetFieldMetadata.Size > SourceFieldMetadata.Size) then
-            AppendAlterFieldCommand(SourceFieldMetadata, TargetFieldMetadata);
+            AppendAlterFieldCommand(CommandSequence, SourceFieldMetadata,
+              TargetFieldMetadata);
         end
         else
-          AppendAddFieldCommand(TargetFieldMetadata);
+          AppendAddFieldCommand(CommandSequence, TargetFieldMetadata);
       end;
       // Add missing indexes and recreate modified indexes
       for iIndex := 0 to TargetTableMetadata.IndexMetadataCount - 1 do
@@ -215,10 +127,11 @@ begin
           if Assigned(SourceIndexMetadata) then
           begin
             if not SourceIndexMetadata.Equals(TargetIndexMetadata) then
-              AppendAlterIndexCommand(SourceIndexMetadata, TargetIndexMetadata);
+              AppendAlterIndexCommand(CommandSequence, SourceIndexMetadata,
+                TargetIndexMetadata);
           end
           else
-            AppendAddIndexCommand(TargetIndexMetadata);
+            AppendAddIndexCommand(CommandSequence, TargetIndexMetadata);
         end;
       end;
       // Drop deleted indexes
@@ -230,7 +143,7 @@ begin
           { TODO : This only works for case-insensitive object names! }
           TargetIndexMetadata := TargetTableMetadata.FindIndexMetadata(AnsiUpperCase(SourceIndexMetadata.Name));
           if not Assigned(TargetIndexMetadata) then
-            AppendDropIndexCommand(SourceIndexMetadata);
+            AppendDropIndexCommand(CommandSequence, SourceIndexMetadata);
         end;
       end;
       // Drop deleted fields
@@ -240,11 +153,11 @@ begin
         { TODO : This only works for case-insensitive object names! }
         TargetFieldMetadata := TargetTableMetadata.FindFieldMetadata(AnsiUpperCase(SourceFieldMetadata.Name));
         if not Assigned(TargetFieldMetadata) then
-          AppendDropFieldCommand(SourceFieldMetadata);
+          AppendDropFieldCommand(CommandSequence, SourceFieldMetadata);
       end;
     end
     else
-      AppendAddTableCommand(TargetTableMetadata);
+      AppendAddTableCommand(CommandSequence, TargetTableMetadata);
   end;
   // Drop deleted tables.
   for iTable := 0 to CommandSequence.SourceScheme.TableMetadataCount - 1 do
@@ -253,7 +166,7 @@ begin
     TargetTableMetadata :=
       CommandSequence.TargetScheme.FindTableMetadata(SourceTableMetadata.Name);
     if not Assigned(TargetTableMetadata) then
-      AppendDropTableCommand(SourceTableMetadata);
+      AppendDropTableCommand(CommandSequence, SourceTableMetadata);
   end;
 end;
 
