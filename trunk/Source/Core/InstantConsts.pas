@@ -130,6 +130,7 @@ resourcestring
   SOwnershipRecursion = 'Ownership Recursion for object %s(''%s'')';
   SPersistentObjectNotAllowed = 'Persistent object %s(''%s'') not allowed.';
   SSpecifierMissing = 'Specifier missing';
+  SSQLStatementIndexOutOfBounds = 'SQL statement index out of bounds.';
   STransactionInProgress = 'Transaction in progress';
   STrueString = 'True';
   SUnableToQueryAttribute = 'Unable to query on attribute %s.%s';
