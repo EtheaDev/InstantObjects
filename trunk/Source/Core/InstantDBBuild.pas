@@ -111,25 +111,58 @@ type
   TInstantCustomDBEvolver = class(TInstantCustomDBBuilder)
   private
     FTargetModel: TInstantModel;
-    function GetTargetModel: TInstantModel;
-    procedure SetTargetModel(const Value: TInstantModel);
+  protected
+    function GetTargetModel: TInstantModel; virtual;
+    procedure SetTargetModel(const Value: TInstantModel); virtual;
+    procedure AppendAddFieldCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const FieldMetadata: TInstantFieldMetadata); virtual;
+    procedure AppendAddIndexCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const IndexMetadata: TInstantIndexMetadata); virtual;
+    procedure AppendAddTableCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const TableMetadata: TInstantTableMetadata); virtual;
+    procedure AppendAlterFieldCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const SourceFieldMetadata,
+      TargetFieldMetadata: TInstantFieldMetadata); virtual;
+    procedure AppendAlterIndexCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const SourceIndexMetadata,
+      TargetIndexMetadata: TInstantIndexMetadata); virtual;
+    procedure AppendDropFieldCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const FieldMetadata: TInstantFieldMetadata); virtual;
+    procedure AppendDropIndexCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const IndexMetadata: TInstantIndexMetadata); virtual;
+    function AppendDropTableCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const TableMetadata: TInstantTableMetadata): TInstantDBBuildCommand; virtual;
   public
     // The reference Model. Default is InstantModel.
     property TargetModel: TInstantModel read GetTargetModel write SetTargetModel;
-  end;
-
-  // Builds a TInstantDBBuildCommandSequence that destroys a database structure
-  // and recreates it according to a specified Model. It represents the
-  // "classic" InstantObjects database building strategy.
-  TInstantDBBuilder = class(TInstantCustomDBEvolver)
-  protected
-    procedure InternalBuildCommandSequence; override;
   published
     property AfterCommandSequenceExecute;
     property AfterCommandExecute;
     property BeforeCommandSequenceExecute;
     property BeforeCommandExecute;
     property OnCommandExecuteError;
+  end;
+
+  // Builds a TInstantDBBuildCommandSequence that destroys a database structure
+  // and recreates it according to a specified Model. It represents the
+  // "classic" InstantObjects database building strategy.
+  TInstantDBBuilder = class(TInstantCustomDBEvolver)
+  private
+    // Adds to CommandSequence the steps needed to rebuild the database.
+    procedure GenerateCommandSequence(const CommandSequence: TInstantDBBuildCommandSequence);
+  protected
+    procedure InternalBuildCommandSequence; override;
+    function AppendDropTableCommand(
+      const CommandSequence: TInstantDBBuildCommandSequence;
+      const TableMetadata: TInstantTableMetadata): TInstantDBBuildCommand; override;
   end;
 
   // A sequence of commands used to build a database.
@@ -206,14 +239,23 @@ type
       Operation: TOperation); override;
   end;
 
-  // Base class for all steps that work by executing a SQL statement or script.
+  // Base class for all steps that work by executing one or more SQL statements
+  // (that is, a script) each.
   TInstantDBBuildSQLCommand = class(TInstantDBBuildCommand)
   private
     function GetConnector: TInstantRelationalConnector;
     function GetBroker: TInstantSQLBroker;
   protected
     function GetDescription: string; override;
-    function GetSQLStatement: string; virtual; abstract;
+    // Returns The number of statements that compound this script. The
+    // predefined implementation returns 1.
+    function GetSQLStatementCount: Integer; virtual;
+    // Returns the nth SQL statement that is part of this script. Valid values
+    // are in the range 0 to Pred(GetSQLStatementCount). The default
+    // implementation, which should always be called through inherited at the
+    // beginning of the overridden version, just returns '', or raises an
+    // exception if Index is not in the allowed range.
+    function GetSQLStatement(const Index: Integer): string; virtual;
     procedure InternalExecute; override;
   public
     property Connector: TInstantRelationalConnector read GetConnector;
@@ -225,7 +267,7 @@ type
   private
     function GetTableMetadata: TInstantTableMetadata;
   protected
-    function GetSQLStatement: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
   public
     property TableMetadata: TInstantTableMetadata read GetTableMetadata;
   end;
@@ -235,7 +277,7 @@ type
   private
     function GetTableMetadata: TInstantTableMetadata;
   protected
-    function GetSQLStatement: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
   public
     property TableMetadata: TInstantTableMetadata read GetTableMetadata;
   end;
@@ -245,7 +287,7 @@ type
   private
     function GetFieldMetadata: TInstantFieldMetadata;
   protected
-    function GetSQLStatement: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
   public
     property FieldMetadata: TInstantFieldMetadata read GetFieldMetadata;
   end;
@@ -255,7 +297,7 @@ type
   private
     function GetFieldMetadata: TInstantFieldMetadata;
   protected
-    function GetSQLStatement: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
   public
     property FieldMetadata: TInstantFieldMetadata read GetFieldMetadata;
   end;
@@ -266,7 +308,7 @@ type
     function GetNewFieldMetadata: TInstantFieldMetadata;
     function GetOldFieldMetadata: TInstantFieldMetadata;
   protected
-    function GetSQLStatement: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
   public
     property OldFieldMetadata: TInstantFieldMetadata read GetOldFieldMetadata;
     property NewFieldMetadata: TInstantFieldMetadata read GetNewFieldMetadata;
@@ -277,7 +319,7 @@ type
   private
     function GetIndexMetadata: TInstantIndexMetadata;
   protected
-    function GetSQLStatement: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
   public
     property IndexMetadata: TInstantIndexMetadata read GetIndexMetadata;
   end;
@@ -287,13 +329,30 @@ type
   private
     function GetIndexMetadata: TInstantIndexMetadata;
   protected
-    function GetSQLStatement: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
   public
     property IndexMetadata: TInstantIndexMetadata read GetIndexMetadata;
   end;
 
+  // Alters an index using a couple of SQL DROP INDEX and CREATE INDEX
+  // statements.
+  TInstantDBBuildAlterIndexSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    function GetOldIndexMetadata: TInstantIndexMetadata;
+    function GetNewIndexMetadata: TInstantIndexMetadata;
+  protected
+    function GetSQLStatement(const Index: Integer): string; override;
+    function GetSQLStatementCount: Integer; override;
+  public
+    property OldIndexMetadata: TInstantIndexMetadata read GetOldIndexMetadata;
+    property NewIndexMetadata: TInstantIndexMetadata read GetNewIndexMetadata;
+  end;
+
 implementation
 
+uses
+  DB;
+  
 { TInstantCustomDBBuilder }
 
 procedure TInstantCustomDBBuilder.BuildCommandSequence;
@@ -409,17 +468,146 @@ begin
     Result := InstantModel;
 end;
 
-procedure TInstantCustomDBEvolver.SetTargetModel(
-  const Value: TInstantModel);
+procedure TInstantCustomDBEvolver.SetTargetModel(const Value: TInstantModel);
 begin
   FTargetModel := Value;
 end;
 
+procedure TInstantCustomDBEvolver.AppendAddFieldCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const FieldMetadata: TInstantFieldMetadata);
+var
+  Command: TInstantDBBuildCommand;
+begin
+  Command := Connector.Broker.CreateDBBuildCommand(ctAddField);
+  Command.NewMetadata := FieldMetadata;
+  CommandSequence.Append(Command);
+end;
+
+procedure TInstantCustomDBEvolver.AppendAlterFieldCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const SourceFieldMetadata, TargetFieldMetadata: TInstantFieldMetadata);
+var
+  Command: TInstantDBBuildCommand;
+begin
+  Command := Connector.Broker.CreateDBBuildCommand(ctAlterField);
+  Command.OldMetadata := SourceFieldMetadata;
+  Command.NewMetadata := TargetFieldMetadata;
+  CommandSequence.Append(Command);
+end;
+
+procedure TInstantCustomDBEvolver.AppendDropFieldCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const FieldMetadata: TInstantFieldMetadata);
+var
+  Command: TInstantDBBuildCommand;
+begin
+  Command := Connector.Broker.CreateDBBuildCommand(ctDropField);
+  Command.OldMetadata := FieldMetadata;
+  CommandSequence.Append(Command);
+end;
+
+procedure TInstantCustomDBEvolver.AppendAddIndexCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const IndexMetadata: TInstantIndexMetadata);
+var
+  Command: TInstantDBBuildCommand;
+begin
+  Command := Connector.Broker.CreateDBBuildCommand(ctAddIndex);
+  Command.NewMetadata := IndexMetadata;
+  CommandSequence.Append(Command);
+end;
+
+procedure TInstantCustomDBEvolver.AppendAlterIndexCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const SourceIndexMetadata, TargetIndexMetadata: TInstantIndexMetadata);
+var
+  Command: TInstantDBBuildCommand;
+begin
+  Command := Connector.Broker.CreateDBBuildCommand(ctAlterIndex);
+  Command.OldMetadata := SourceIndexMetadata;
+  Command.NewMetadata := TargetIndexMetadata;
+  CommandSequence.Append(Command);
+end;
+
+procedure TInstantCustomDBEvolver.AppendDropIndexCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const IndexMetadata: TInstantIndexMetadata);
+var
+  Command: TInstantDBBuildCommand;
+begin
+  Command := Connector.Broker.CreateDBBuildCommand(ctDropIndex);
+  Command.OldMetadata := IndexMetadata;
+  CommandSequence.Append(Command);
+end;
+
+procedure TInstantCustomDBEvolver.AppendAddTableCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const TableMetadata: TInstantTableMetadata);
+var
+  Command: TInstantDBBuildCommand;
+begin
+  Command := Connector.Broker.CreateDBBuildCommand(ctAddTable);
+  Command.NewMetadata := TableMetadata;
+  CommandSequence.Append(Command);
+end;
+
+function TInstantCustomDBEvolver.AppendDropTableCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const TableMetadata: TInstantTableMetadata): TInstantDBBuildCommand;
+begin
+  Result := Connector.Broker.CreateDBBuildCommand(ctDropTable);
+  Result.OldMetadata := TableMetadata;
+  CommandSequence.Append(Result);
+end;
+
 { TInstantDBBuilder }
+
+function TInstantDBBuilder.AppendDropTableCommand(
+  const CommandSequence: TInstantDBBuildCommandSequence;
+  const TableMetadata: TInstantTableMetadata): TInstantDBBuildCommand;
+begin
+  Result := inherited AppendDropTableCommand(CommandSequence, TableMetadata);
+  // This DB builder always drops tables by design, so we should better override
+  // the default setting of False for Enabled.
+  Result.Enabled := True;
+end;
+
+procedure TInstantDBBuilder.GenerateCommandSequence(
+  const CommandSequence: TInstantDBBuildCommandSequence);
+var
+  iTable, iIndex: Integer;
+  SourceTableMetadata, TargetTableMetadata: TInstantTableMetadata;
+  TargetIndexMetadata: TInstantIndexMetadata;
+begin
+  // Recreate tables.
+  for iTable := 0 to CommandSequence.TargetScheme.TableMetadataCount - 1 do
+  begin
+    TargetTableMetadata := CommandSequence.TargetScheme.TableMetadatas[iTable];
+    { TODO : This only works for case-insensitive object names! }
+    SourceTableMetadata :=
+      CommandSequence.SourceScheme.FindTableMetadata(AnsiUpperCase(TargetTableMetadata.Name));
+    if Assigned(SourceTableMetadata) then
+    begin
+      AppendDropTableCommand(CommandSequence, TargetTableMetadata);
+      AppendAddTableCommand(CommandSequence, TargetTableMetadata);
+    end;
+    // Add missing indexes and recreate modified indexes
+    for iIndex := 0 to TargetTableMetadata.IndexMetadataCount - 1 do
+    begin
+      TargetIndexMetadata := TargetTableMetadata.IndexMetadatas[iIndex];
+      if not (ixPrimary in TargetIndexMetadata.Options) then
+        AppendAddIndexCommand(CommandSequence, TargetIndexMetadata);
+    end;
+  end;
+end;
 
 procedure TInstantDBBuilder.InternalBuildCommandSequence;
 begin
-  { TODO : Build a series of drop & create tables and indices. }
+  CommandSequence.Clear;
+  CommandSequence.SourceScheme := Connector.CreateScheme(TargetModel);
+  CommandSequence.TargetScheme := Connector.CreateScheme(TargetModel);
+  GenerateCommandSequence(CommandSequence);
 end;
 
 { TInstantDBBuildCommandSequence }
@@ -575,15 +763,21 @@ end;
 procedure TInstantDBBuildCommandSequence.SetSourceScheme(
   const Value: TInstantScheme);
 begin
-  FreeAndNil(FSourceScheme);
-  FSourceScheme := Value;
+  if FSourceScheme <> Value then
+  begin
+    FreeAndNil(FSourceScheme);
+    FSourceScheme := Value;
+  end;
 end;
 
 procedure TInstantDBBuildCommandSequence.SetTargetScheme(
   const Value: TInstantScheme);
 begin
-  FreeAndNil(FTargetScheme);
-  FTargetScheme := Value;
+  if FTargetScheme <> Value then
+  begin
+    FreeAndNil(FTargetScheme);
+    FTargetScheme := Value;
+  end;
 end;
 
 { TInstantDBBuildSQLCommand }
@@ -599,19 +793,46 @@ begin
 end;
 
 function TInstantDBBuildSQLCommand.GetDescription: string;
+var
+  iStatement: Integer;
 begin
-  Result := GetSQLStatement;
+  Result := '';
+  for iStatement := 0 to Pred(GetSQLStatementCount) do
+  begin
+    if Result <> '' then
+      Result := Result + sLineBreak;
+    Result := Result + GetSQLStatement(iStatement);
+  end;
+end;
+
+function TInstantDBBuildSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
+begin
+  if (Index < 0) or (Index >= GetSQLStatementCount) then
+    raise EInstantDBBuildError.CreateFmt(SSQLStatementIndexOutOfBounds,
+      [Index]);
+  Result := '';
+end;
+
+function TInstantDBBuildSQLCommand.GetSQLStatementCount: Integer;
+begin
+  Result := 1;
 end;
 
 procedure TInstantDBBuildSQLCommand.InternalExecute;
+var
+  iStatement: Integer;
 begin
-  Broker.Execute(GetSQLStatement());
+  for iStatement := 0 to Pred(GetSQLStatementCount) do
+    Broker.Execute(GetSQLStatement(iStatement));
 end;
 
 { TInstantDBBuildAddTableSQLCommand }
 
-function TInstantDBBuildAddTableSQLCommand.GetSQLStatement: string;
+function TInstantDBBuildAddTableSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
 begin
+  Result := inherited GetSQLStatement(Index);
   Result := Broker.Generator.GenerateCreateTableSQL(TableMetadata);
 end;
 
@@ -627,8 +848,10 @@ begin
   Result := NewMetadata as TInstantFieldMetadata;
 end;
 
-function TInstantDBBuildAddFieldSQLCommand.GetSQLStatement: string;
+function TInstantDBBuildAddFieldSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
 begin
+  Result := inherited GetSQLStatement(Index);
   Result := Broker.Generator.GenerateAddFieldSQL(FieldMetadata);
 end;
 
@@ -639,15 +862,19 @@ begin
   Result := OldMetadata as TInstantFieldMetadata;
 end;
 
-function TInstantDBBuildDropFieldSQLCommand.GetSQLStatement: string;
+function TInstantDBBuildDropFieldSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
 begin
+  Result := inherited GetSQLStatement(Index);
   Result := Broker.Generator.GenerateDropFieldSQL(FieldMetadata);
 end;
 
 { TInstantDBBuildDropTableSQLCommand }
 
-function TInstantDBBuildDropTableSQLCommand.GetSQLStatement: string;
+function TInstantDBBuildDropTableSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
 begin
+  Result := inherited GetSQLStatement(Index);
   Result := Broker.Generator.GenerateDropTableSQL(TableMetadata);
 end;
 
@@ -668,8 +895,10 @@ begin
   Result := OldMetadata as TInstantFieldMetadata;
 end;
 
-function TInstantDBBuildAlterFieldSQLCommand.GetSQLStatement: string;
+function TInstantDBBuildAlterFieldSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
 begin
+  Result := inherited GetSQLStatement(Index);
   Result := Broker.Generator.GenerateAlterFieldSQL(OldFieldMetadata, NewFieldMetadata);
 end;
 
@@ -680,8 +909,10 @@ begin
   Result := NewMetadata as TInstantIndexMetadata;
 end;
 
-function TInstantDBBuildAddIndexSQLCommand.GetSQLStatement: string;
+function TInstantDBBuildAddIndexSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
 begin
+  Result := inherited GetSQLStatement(Index);
   Result := Broker.Generator.GenerateCreateIndexSQL(IndexMetadata);
 end;
 
@@ -692,9 +923,38 @@ begin
   Result := OldMetadata as TInstantIndexMetadata;
 end;
 
-function TInstantDBBuildDropIndexSQLCommand.GetSQLStatement: string;
+function TInstantDBBuildDropIndexSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
 begin
+  Result := inherited GetSQLStatement(Index);
   Result := Broker.Generator.GenerateDropIndexSQL(IndexMetadata);
+end;
+
+{ TInstantDBBuildAlterIndexSQLCommand }
+
+function TInstantDBBuildAlterIndexSQLCommand.GetOldIndexMetadata: TInstantIndexMetadata;
+begin
+  Result := OldMetadata as TInstantIndexMetadata;
+end;
+
+function TInstantDBBuildAlterIndexSQLCommand.GetNewIndexMetadata: TInstantIndexMetadata;
+begin
+  Result := NewMetadata as TInstantIndexMetadata;
+end;
+
+function TInstantDBBuildAlterIndexSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
+begin
+  Result := inherited GetSQLStatement(Index);
+  if Index = 0 then
+    Result := Broker.Generator.GenerateDropIndexSQL(OldIndexMetadata)
+  else
+    Result := Broker.Generator.GenerateCreateIndexSQL(NewIndexMetadata);
+end;
+
+function TInstantDBBuildAlterIndexSQLCommand.GetSQLStatementCount: Integer;
+begin
+  Result := 2;
 end;
 
 end.
