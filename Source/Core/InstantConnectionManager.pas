@@ -56,8 +56,6 @@ type
 
   TInstantConnectionDefEvent = procedure(Sender: TObject;
     var ConnectionDef: TInstantConnectionDef; var Result: Boolean) of object;
-  TInstantConnectorEvent = procedure(Sender: TObject;
-    Connector: TInstantConnector) of object;
   TInstantConnectorClassEvent = procedure(Sender: TObject;
     ConnectorClass: TInstantConnectorClass; var Result: Boolean) of object;
 
