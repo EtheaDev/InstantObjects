@@ -27,7 +27,7 @@
  *
  * ***** END LICENSE BLOCK ***** *)
 
-unit InstantDBEvolverForm;
+unit InstantCustomDBEvolverFormUnit;
 
 interface
 
@@ -37,7 +37,7 @@ uses
   InstantDBEvolution, InstantPresentation, ActnList;
 
 type
-  TInstantDBEvolverForm = class(TForm)
+  TInstantCustomDBEvolverForm = class(TForm)
     ShowSequenceButton: TButton;
     SequenceListView: TListView;
     EvolveButton: TButton;
@@ -45,25 +45,19 @@ type
     MoveCommandDownButton: TButton;
     EvolutionLogMemo: TMemo;
     Label1: TLabel;
-    DBEvolver: TInstantDBEvolver;
     EnableAllButton: TButton;
     DisableAllButton: TButton;
     ActionList: TActionList;
     ShowSequenceAction: TAction;
-    EvolveAction: TAction;
+    BuildAction: TAction;
     MoveCommandUpAction: TAction;
     MoveCommandDownAction: TAction;
     EnableAllCommandsAction: TAction;
     DisableAllCommandsAction: TAction;
     procedure ShowSequenceButtonClick(Sender: TObject);
-    procedure DBEvolverBeforeCommandExecute(const Sender: TObject;
-      const ACommand: TInstantDBBuildCommand);
-    procedure DBEvolverCommandExecuteError(const Sender: TObject;
-      const ACommand: TInstantDBBuildCommand; const Error: Exception;
-      var RaiseError: Boolean);
     procedure ShowSequenceActionExecute(Sender: TObject);
-    procedure EvolveActionExecute(Sender: TObject);
-    procedure EvolveActionUpdate(Sender: TObject);
+    procedure BuildActionExecute(Sender: TObject);
+    procedure BuildActionUpdate(Sender: TObject);
     procedure MoveCommandUpActionExecute(Sender: TObject);
     procedure MoveCommandDownActionExecute(Sender: TObject);
     procedure EnableAllCommandsActionExecute(Sender: TObject);
@@ -74,14 +68,26 @@ type
     procedure DisableAllCommandsActionUpdate(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
+    FAfterBuild: TInstantConnectorEvent;
     procedure SequenceToScreen;
     procedure ScreenToSequence;
     procedure Log(const ALogStr: string);
     function GetConnector: TInstantConnector;
     procedure SetConnector(const Value: TInstantConnector);
-    function ConfirmDlg(const Text: string): Boolean;
     function GetTargetModel: TInstantModel;
     procedure SetTargetModel(const Value: TInstantModel);
+  protected
+    function GetCustomDBEvolver: TInstantCustomDBEvolver; virtual; abstract;
+    function ConfirmDlg(const Text: string): Boolean;
+    procedure CustomDBEvolverBeforeCommandExecute(const Sender: TObject;
+      const ACommand: TInstantDBBuildCommand); virtual;
+    procedure CustomDBEvolverAfterCommandExecute(const Sender: TObject;
+      const ACommand: TInstantDBBuildCommand); virtual;
+    procedure CustomDBEvolverCommandExecuteError(const Sender: TObject;
+      const ACommand: TInstantDBBuildCommand; const Error: Exception;
+      var RaiseError: Boolean); virtual;
+    procedure CustomDBEvolverBeforeCommandSequenceExecute(Sender: TObject); virtual;
+    procedure CustomDBEvolverAfterCommandSequenceExecute(Sender: TObject); virtual;
   public
     // Assign a connector before calling the Execute method, otherwise the
     // default connector is used.
@@ -91,34 +97,36 @@ type
     property TargetModel: TInstantModel read GetTargetModel write SetTargetModel;
     // Shows the form modally.
     procedure Execute;
+    // Fired right after executing the command sequence.
+    property AfterBuild: TInstantConnectorEvent read FAfterBuild write FAfterBuild;
   end;
 
 implementation
 
 {$R *.dfm}
 
-procedure TInstantDBEvolverForm.ShowSequenceButtonClick(Sender: TObject);
+procedure TInstantCustomDBEvolverForm.ShowSequenceButtonClick(Sender: TObject);
 begin
-  DBEvolver.BuildCommandSequence;
+  GetCustomDBEvolver.BuildCommandSequence;
   SequenceToScreen;
 end;
 
-procedure TInstantDBEvolverForm.SequenceToScreen;
+procedure TInstantCustomDBEvolverForm.SequenceToScreen;
 var
   i: Integer;
 begin
   SequenceListView.Clear;
-  for i := 0 to DBEvolver.CommandSequence.Count - 1 do
+  for i := 0 to GetCustomDBEvolver.CommandSequence.Count - 1 do
   begin
     with SequenceListView.Items.Add do begin
-      Caption := DBEvolver.CommandSequence[i].Description;
-      Checked := DBEvolver.CommandSequence[i].Enabled;
-      Data := DBEvolver.CommandSequence[i];
+      Caption := GetCustomDBEvolver.CommandSequence[i].Description;
+      Checked := GetCustomDBEvolver.CommandSequence[i].Enabled;
+      Data := GetCustomDBEvolver.CommandSequence[i];
     end;
   end;
 end;
 
-procedure TInstantDBEvolverForm.ScreenToSequence;
+procedure TInstantCustomDBEvolverForm.ScreenToSequence;
 var
   i: Integer;
 begin
@@ -127,12 +135,12 @@ begin
       SequenceListView.Items[i].Checked;
 end;
 
-procedure TInstantDBEvolverForm.Log(const ALogStr: string);
+procedure TInstantCustomDBEvolverForm.Log(const ALogStr: string);
 begin
   EvolutionLogMemo.Lines.Add(ALogStr);
 end;
 
-procedure TInstantDBEvolverForm.DBEvolverBeforeCommandExecute(
+procedure TInstantCustomDBEvolverForm.CustomDBEvolverBeforeCommandExecute(
   const Sender: TObject; const ACommand: TInstantDBBuildCommand);
 begin
   if ACommand.Enabled then
@@ -141,100 +149,118 @@ begin
     Log('Skipping: ' + ACommand.Description);
 end;
 
-procedure TInstantDBEvolverForm.DBEvolverCommandExecuteError(
+procedure TInstantCustomDBEvolverForm.CustomDBEvolverAfterCommandExecute(
+  const Sender: TObject; const ACommand: TInstantDBBuildCommand);
+begin
+end;
+
+procedure TInstantCustomDBEvolverForm.CustomDBEvolverCommandExecuteError(
   const Sender: TObject; const ACommand: TInstantDBBuildCommand;
   const Error: Exception; var RaiseError: Boolean);
 begin
   Log('Error: ' + Error.Message);
 end;
 
-procedure TInstantDBEvolverForm.Execute;
+procedure TInstantCustomDBEvolverForm.CustomDBEvolverBeforeCommandSequenceExecute(
+  Sender: TObject);
+begin
+end;
+
+procedure TInstantCustomDBEvolverForm.CustomDBEvolverAfterCommandSequenceExecute(
+  Sender: TObject);
+begin
+  Connector.Connect;
+  try
+    if Assigned(FAfterBuild) then
+      FAfterBuild(Self, Connector);
+  finally
+    Connector.Disconnect;
+  end;
+end;
+
+procedure TInstantCustomDBEvolverForm.Execute;
 begin
   ShowModal;
 end;
 
-function TInstantDBEvolverForm.GetConnector: TInstantConnector;
+function TInstantCustomDBEvolverForm.GetConnector: TInstantConnector;
 begin
-  Result := DBEvolver.Connector;
+  Result := GetCustomDBEvolver.Connector;
 end;
 
-procedure TInstantDBEvolverForm.SetConnector(const Value: TInstantConnector);
+procedure TInstantCustomDBEvolverForm.SetConnector(const Value: TInstantConnector);
 begin
-  DBEvolver.Connector := Value;
+  GetCustomDBEvolver.Connector := Value;
 end;
 
-function TInstantDBEvolverForm.ConfirmDlg(const Text: string): Boolean;
+function TInstantCustomDBEvolverForm.ConfirmDlg(const Text: string): Boolean;
 begin
   Result := MessageDlg(Text, mtConfirmation, [mbYes, mbNo], 0) = mrYes;
 end;
 
-procedure TInstantDBEvolverForm.ShowSequenceActionExecute(Sender: TObject);
+procedure TInstantCustomDBEvolverForm.ShowSequenceActionExecute(Sender: TObject);
 var
   OldScreenCursor: TCursor;
 begin
   OldScreenCursor := Screen.Cursor;
   Screen.Cursor := crHourglass;
   try
-    DBEvolver.BuildCommandSequence;
+    GetCustomDBEvolver.BuildCommandSequence;
     SequenceToScreen;
   finally
     Screen.Cursor := OldScreenCursor;
   end;
 end;
 
-procedure TInstantDBEvolverForm.EvolveActionUpdate(Sender: TObject);
+procedure TInstantCustomDBEvolverForm.BuildActionUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := DBEvolver.CommandSequence.Count > 0;
+  (Sender as TAction).Enabled := GetCustomDBEvolver.CommandSequence.Count > 0;
 end;
 
-procedure TInstantDBEvolverForm.EvolveActionExecute(Sender: TObject);
+procedure TInstantCustomDBEvolverForm.BuildActionExecute(Sender: TObject);
 begin
-  if ConfirmDlg('Evolve database?') then
-  begin
-    ScreenToSequence;
-    EvolutionLogMemo.Lines.Clear;
-    DBEvolver.CommandSequence.Execute;
-    ShowMessage('Database evolved without errors.');
-    ShowSequenceAction.Execute;
-  end;
+  ScreenToSequence;
+  EvolutionLogMemo.Lines.Clear;
+  GetCustomDBEvolver.CommandSequence.Execute;
+  ShowSequenceAction.Execute;
 end;
 
-procedure TInstantDBEvolverForm.MoveCommandUpActionUpdate(Sender: TObject);
+procedure TInstantCustomDBEvolverForm.MoveCommandUpActionUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := Assigned(SequenceListView.Selected) and
     (SequenceListView.Selected.Index > 0);
 end;
 
-procedure TInstantDBEvolverForm.MoveCommandUpActionExecute(Sender: TObject);
+procedure TInstantCustomDBEvolverForm.MoveCommandUpActionExecute(Sender: TObject);
 begin
   ScreenToSequence;
-  DBEvolver.CommandSequence.MoveItem(
+  GetCustomDBEvolver.CommandSequence.MoveItem(
     TInstantDBBuildCommand(SequenceListView.Selected.Data), -1);
   SequenceToScreen;
 end;
 
-procedure TInstantDBEvolverForm.MoveCommandDownActionUpdate(Sender: TObject);
+procedure TInstantCustomDBEvolverForm.MoveCommandDownActionUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := Assigned(SequenceListView.Selected) and
     (SequenceListView.Selected.Index < Pred(SequenceListView.Items.Count));
 end;
 
-procedure TInstantDBEvolverForm.MoveCommandDownActionExecute(
+procedure TInstantCustomDBEvolverForm.MoveCommandDownActionExecute(
   Sender: TObject);
 begin
   ScreenToSequence;
-  DBEvolver.CommandSequence.MoveItem(
+  GetCustomDBEvolver.CommandSequence.MoveItem(
     TInstantDBBuildCommand(SequenceListView.Selected.Data), 1);
   SequenceToScreen;
 end;
 
-procedure TInstantDBEvolverForm.EnableAllCommandsActionUpdate(
+procedure TInstantCustomDBEvolverForm.EnableAllCommandsActionUpdate(
   Sender: TObject);
 begin
   (Sender as TAction).Enabled := SequenceListView.Items.Count > 0;
 end;
 
-procedure TInstantDBEvolverForm.EnableAllCommandsActionExecute(
+procedure TInstantCustomDBEvolverForm.EnableAllCommandsActionExecute(
   Sender: TObject);
 var
   i: Integer;
@@ -244,13 +270,13 @@ begin
   ScreenToSequence;
 end;
 
-procedure TInstantDBEvolverForm.DisableAllCommandsActionUpdate(
+procedure TInstantCustomDBEvolverForm.DisableAllCommandsActionUpdate(
   Sender: TObject);
 begin
   (Sender as TAction).Enabled := SequenceListView.Items.Count > 0;
 end;
 
-procedure TInstantDBEvolverForm.DisableAllCommandsActionExecute(
+procedure TInstantCustomDBEvolverForm.DisableAllCommandsActionExecute(
   Sender: TObject);
 var
   i: Integer;
@@ -260,20 +286,25 @@ begin
   ScreenToSequence;
 end;
 
-function TInstantDBEvolverForm.GetTargetModel: TInstantModel;
+function TInstantCustomDBEvolverForm.GetTargetModel: TInstantModel;
 begin
-  Result := DBEvolver.TargetModel;
+  Result := GetCustomDBEvolver.TargetModel;
 end;
 
-procedure TInstantDBEvolverForm.SetTargetModel(const Value: TInstantModel);
+procedure TInstantCustomDBEvolverForm.SetTargetModel(const Value: TInstantModel);
 begin
-  DBEvolver.TargetModel := Value;
+  GetCustomDBEvolver.TargetModel := Value;
 end;
 
-procedure TInstantDBEvolverForm.FormCreate(Sender: TObject);
+procedure TInstantCustomDBEvolverForm.FormCreate(Sender: TObject);
 begin
   Constraints.MinWidth := Width;
   Constraints.MinHeight := Height;
+  GetCustomDBEvolver.BeforeCommandExecute := CustomDBEvolverBeforeCommandExecute;
+  GetCustomDBEvolver.AfterCommandExecute := CustomDBEvolverAfterCommandExecute;
+  GetCustomDBEvolver.BeforeCommandSequenceExecute := CustomDBEvolverBeforeCommandSequenceExecute;
+  GetCustomDBEvolver.AfterCommandSequenceExecute := CustomDBEvolverAfterCommandSequenceExecute;
+  GetCustomDBEvolver.OnCommandExecuteError := CustomDBEvolverCommandExecuteError;
 end;
 
 end.
