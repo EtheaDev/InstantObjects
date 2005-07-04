@@ -1492,6 +1492,9 @@ type
     property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
   end;
 
+  TInstantConnectorEvent = procedure(Sender: TObject;
+    Connector: TInstantConnector) of object;
+
   TInstantCacheNodeColor = (ncRed, ncBlack);
 
   TInstantCacheNode = class(TObject)
@@ -1629,7 +1632,7 @@ type
   end;
 
   TInstantDBBuildCommandType = (ctAddTable, ctDropTable, ctAddField, ctAlterField,
-    ctDropField, ctAddIndex, ctDropIndex);
+    ctDropField, ctAddIndex, ctAlterIndex, ctDropIndex);
 
   EInstantDBBuildError = class(EInstantError);
 
@@ -15169,7 +15172,7 @@ const
   // Default values for the Enabled property
   // depending on the CommandType.
   InstantDBBuildCommandEnabledDefaults: array[TInstantDBBuildCommandType] of Boolean =
-    (True, False, True, True, True, True, False);
+    (True, False, True, True, True, True, True, False);
 begin
   inherited Create;
   FCommandType := ACommandType;
