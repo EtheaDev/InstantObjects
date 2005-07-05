@@ -40,8 +40,8 @@ implementation
 
 uses
   Classes, InstantConsts, InstantPersistence, InstantPresentation,
-  InstantExplorer, InstantConnectionManager, InstantConnectionManagerForm,
-  InstantPump, InstantDBEvolution;
+  InstantExplorer, InstantConnectionManager, InstantConnectionManagerFormUnit,
+  InstantPump, InstantDBEvolution, InstantDBBuild;
 
 procedure Register;
 begin
@@ -51,7 +51,8 @@ begin
     TInstantExplorer,
     TInstantConnectionManager,
     TInstantPump,
-    TInstantDBEvolver
+    TInstantDBEvolver,
+    TInstantDBBuilder
   ]);
 end;
 
