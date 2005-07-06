@@ -1,4 +1,4 @@
-package IOMSSqlCatalog;
+package IOMSSqlCatalog_D5;
 
 {$R *.RES}
 {$ALIGN ON}
