@@ -164,6 +164,7 @@ resourcestring
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
   SUnsupportedColumnType = 'ColumnType %s not supported';
+  sLineBreak = #13#10;
 
 implementation
 

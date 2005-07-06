@@ -26,7 +26,7 @@
 
 unit InstantUIB;
 
-{$I ../../Core/InstantDefines.inc}
+{$I ../../../Core/InstantDefines.inc}
 
 {$IFDEF D7+}
 {$WARN UNSAFE_TYPE OFF}
