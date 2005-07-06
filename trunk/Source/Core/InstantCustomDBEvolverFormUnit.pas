@@ -32,7 +32,8 @@ unit InstantCustomDBEvolverFormUnit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, {$IFDEF D6+} Variants,{$ENDIF}
+ Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls, DB, InstantPersistence, ComCtrls, InstantDBBuild,
   InstantDBEvolution, InstantPresentation, ActnList;
 
@@ -115,7 +116,7 @@ procedure TInstantCustomDBEvolverForm.SequenceToScreen;
 var
   i: Integer;
 begin
-  SequenceListView.Clear;
+  SequenceListView.Items.Clear;
   for i := 0 to GetCustomDBEvolver.CommandSequence.Count - 1 do
   begin
     with SequenceListView.Items.Add do begin

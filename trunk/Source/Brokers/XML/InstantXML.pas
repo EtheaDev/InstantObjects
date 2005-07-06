@@ -218,6 +218,9 @@ uses
   SysUtils, InstantConsts, InstantClasses, TypInfo,
   InstantXMLConnectionDefEdit,
 {$IFDEF MSWINDOWS}
+  {$IFDEF VER130}
+    FileCtrl,
+  {$ENDIF}
   Controls;
 {$ENDIF}
 {$IFDEF LINUX}

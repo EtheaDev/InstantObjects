@@ -24,9 +24,6 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   OldCreateOrder = False
   ShowHint = True
   OnCreate = FormCreate
-  DesignSize = (
-    593
-    305)
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel

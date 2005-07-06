@@ -32,7 +32,8 @@ unit InstantDBEvolverFormUnit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Windows, Messages, SysUtils, {$IFDEF D6+} Variants, {$ENDIF}
+ Classes, Graphics, Controls, Forms,
   Dialogs, InstantCustomDBEvolverFormUnit, ActnList, InstantDBBuild,
   InstantDBEvolution, StdCtrls, ComCtrls;
 

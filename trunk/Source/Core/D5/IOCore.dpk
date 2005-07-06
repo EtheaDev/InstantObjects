@@ -44,9 +44,9 @@ contains
   InstantTextFiler in '..\InstantTextFiler.pas',
   InstantPresentation in '..\InstantPresentation.pas',
   InstantAccessors in '..\InstantAccessors.pas',
-  InstantConnectionManagerForm in '..\InstantConnectionManagerForm.pas' {InstantConnectionManagerForm},
   InstantConnectionManager in '..\InstantConnectionManager.pas',
   InstantImageUtils in '..\InstantImageUtils.pas',
-  InstantPump in '..\InstantPump.pas';
+  InstantPump in '..\InstantPump.pas',
+  InstantConnectionManagerFormUnit in '..\InstantConnectionManagerFormUnit.pas' {InstantConnectionManagerForm};
 
 end.
