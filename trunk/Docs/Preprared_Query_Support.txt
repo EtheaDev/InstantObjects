@@ -1,6 +1,8 @@
 Preprared_Query_Support - by Carlo Barazzetta
 ---------------------------------------------
 
+2005-07-09: This feature has been superseded and is no longer available in IO 2. Please read Statement_Cache.txt for more details.
+
 Updated: 2004-05-28
 
 To speed-up SQL-based broker a minimal support for prepared queries was added.
