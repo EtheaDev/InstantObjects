@@ -1,12 +1,13 @@
 ------------------------------------------------------------------
 
-  InstantObjects 1.6.7 for Delphi & Kylix
+  InstantObjects 2.0 Alpha 1 (1.9.01) for Delphi, Kylix, FPC
 
   Mozilla Public License 1.1 Edition
-  May 2004 release
+  July 2005 release
 
   Based on Seleqt InstantObjects.
   Portions created by Seleqt are Copyright (c) 2001-2003 Seleqt.
+  Other portions and changes are Copyright (c) the authors.
   All rights reserved.
 
 ------------------------------------------------------------------
@@ -21,15 +22,14 @@ o GETTING STARTED
 o VERSION HISTORY
 
 
-
 INTRODUCTION
 ------------
 
 InstantObjects is an integrated framework for developing object-oriented business
-solutions in Borland Delphi(tm) & Borland Kylix(tm). The framework provides the
-foundation for the development process as well as the engine that powers the final
-application.
-
+solutions in Borland Delphi(tm), Borland Kylix(tm) and the open source FreePascal
+compiler (non yet released in this alpha version).
+The framework provides the foundation for the development process as
+well as the engine that powers the final application.
 
 
 FEATURES
@@ -38,8 +38,9 @@ FEATURES
 MODEL REALIZATION
 
 InstantObjects simplifies the process of realizing an object-oriented business model
-into Delphi/Kylix classes. The Model Explorer is a two-way tool that is integrated with the
-Delphi or Kylix IDE. With the Model Explorer you can manage the business model of your
+into Delphi/Kylix/FPC classes. The Model Explorer is a two-way tool that is
+integrated with the Delphi or Kylix IDE (not yet available for Delphi 2005 and
+Lazarus). With the Model Explorer you can manage the business model of your
 application by defining classes and relations. Changes made via the Model Explorer
 are automatically reflected in code and vice versa. When a class is created in the
 Model Explorer, the definition of the class and its attributes are written to the
@@ -47,20 +48,18 @@ model unit along with the implementation of access methods for the defined attri
 
 A database for storing the business objects can be automatically generated from the
 defined model via the Database Builder. InstantObjects supports databases available
-via BDE, ADO, InterBase Express, dbExpress, DBISAM, FlashFiler and Advantage Database
-Server.
-
+via BDE, ADO, InterBase Express, dbExpress, DBISAM, FlashFiler, NexusDb, UIB and 
+Advantage Database Server, plus a native, file-based XML storage.
 
 OBJECT PERSISTENCE
 
 One of the major issues when developing object-oriented applications is object
-persistence. InstantObjects adresses this issue by providing a powerfull persistence
+persistence. InstantObjects adresses this issue by providing a powerful persistence
 mechanism that allows using the most common databases as storage. Storing and
 retrieving objects is a simple matter of invoking methods of the common ancestor
 class, TInstantObject. Mapping of objects to and from tables is done automatically
 by the persistence engine of InstantObjects. Relations between objects defined in
 the business model are handled seamlessly.
-
 
 OBJECT PRESENTATION
 
@@ -73,40 +72,46 @@ relationships allowing you to expose related objects. In addition, containers wi
 exposed objects are represented as nested datasets.
 
 
-
 INSTALLATION
 ------------
 
 1. Unpack zip file to <installdir>
 
 
-2. Add the following folders to the Delphi/Kylix environment library path:
+2. Add the following folders to you development environment's library path:
 
-   <installdir>\Source\Core
-   <installdir>\Source\Brokers
+   <installdir>/Source/Core
+   <installdir>/Source/Brokers/<brokername>
+
+   Add a line for each broker you plan to use.
 
 
-3. Build and install the InstantObjects design package:
+3. Build and install the InstantObjects core packages:
 
-   <installdir>\Source\Design\iodes?0.bpk (for Delphi 5,6,7)
-   <installdir>/Source/Design/iodesK3.bpk (for Kylix 3)
+   <installdir>/Source/Core/<version>/IOCore.dpk (build)
+   <installdir>/Source/Design/<version>/DclIOCore.dpk (install)
+   
+   Where <version> identifies your version of Delphi, Kylix or
+   FPC. Examples: D5, D6, D7, K3, D9 (Delphi 2005), etc.
 
 
 4. Build and install the desired broker package(s):
 
-   (Brokers for Delphi)
-   <installdir>\Brokers\ioado?0.dpk (ADO)
-   <installdir>\Brokers\iobde?0.dpk (BDE)
-   <installdir>\Brokers\ioibx?0.dpk (IBX)
-   <installdir>\Brokers\iodbx?0.dpk (dbExpress)
-   <installdir>\Brokers\iodbi?0.dpk (DBISAM)
-   <installdir>\Brokers\ioads?0.dpk (Advantage)
-   <installdir>\Brokers\ioff?0.dpk  (FlashFiler)
+   <installdir>/Source/Brokers/ADO/<version>/IOADO.dpk (build)
+   <installdir>/Source/Brokers/ADO/<version>/DclIOADO.dpk (install)
 
-   (Broker for Kylix)
-   <installdir>/Brokers/iodbxK3.dpk (dbExpress)
+   Please note that not all brokers are available in all versions
+   of Delphi/Kylix/FPC. If you think you can make a supplied broker
+   work in an unsupported version, or create a new broker from scratch
+   then please contact us.
+   
+   Some broker packages depend on one or more catalogs. In that case,
+   you'll have to build the catalog package(s) first. For example, the
+   following catalog is required by the IBX, dbX and UIB brokers:
+   
+   <installdir>/Source/Catalogs/IBFb/<version>/IOIBFbCatalog.dpk (build)
 
-
+   
 GETTING STARTED
 ---------------
 
@@ -114,17 +119,35 @@ EXAMPLES
 
 Before you start creating your own solutions with InstantObjects, we recommend
 that you study the example projects that have been installed into
-<installdir>\Demos.
+<installdir>/Demos.
 
-The Demos folder contains two example projects; "Intro" and "Primer".
+The Demos folder contains several example projects; you should look at
+Intro and Primer/PrimerExternal first.
 
-"Intro" is a basic introduction to InstantObjects (no Kylix compatibility)
+Intro is a basic introduction to InstantObjects. It only works in Delphi.
 
-"Primer" is a thorough demonstration and explanation of nearly all the features
+Primer (in the PrimerCross folder - "cross" meaning "cross-platform") is a
+thorough demonstration and explanation of nearly all the features
 of InstantObjects. The application implements a small business model and a user
 interface that shows how persistent business objects can be used in a real
-application. (compatible with Delphi and Kylix)
+application. It is compatible with Delphi and Kylix. The PrimerExternal variation
+uses external storage for collections (see documentation).
 
+The Demos folder also features a few other programs that help demonstrate or test
+specific features:
+
+IntroIW is an IntraWeb version of the Intro application. It shows how to use IO on
+the server side of a web application (which, thanks to IntraWeb's paradigm, is
+exactly the same as in a standard application).
+
+EvolveTest is a testbed application for the database structure evolution feature.
+Please see the documentation to know more about database evolution and the
+TInstantDBEvolver component.
+
+Pump is a testbed application for the object pump feature.
+Please see the documentation to know more about the TInstantPump component.
+
+The Test folder contains test applications of various sorts.
 
 DOCUMENTATION
 
@@ -135,43 +158,86 @@ The section "User Guide" explains how to build applications with InstantObjects.
 The section "Reference Guide" contains a detailed explanation of every class
 and function in the InstantObjects framework.
 
+Please note that this giude was not updated yet for IO2. Most of the new features,
+though, are documented in text files you'll find in the Docs folder.
 
 
 VERSION HISTORY
 ---------------
-Version 1.6.7 (2004-11-17)
+
+
+
+Version 2.0 Alpha 1 (1.9.01) (2005-07)
+
+- Added UIB (Unified InterBase, see http://www.progdigy.com/modules.php?name=UIB)
+  broker.
+
+- Added support for Delphi 2005 (D9), Win32 personality only.
+  Brokers supported: ADO, BDE, DBX, IBX, NexusDbSQL, XML.
+
+- Removed UsePreparedQuery support; switch to the new StatementCache.
+
+- New TInstantConnector.OnGenerateId event, used to supply a custom
+  Id generation strategy. Use it together with IdDataType/IdSize.
+
+- IdDataType and IdSize: see IdDataType_and_IdDataSize.txt.
+
+- Many fixes and improvenet to the new external storage mapping strategy.
+
+- StatementCache: see Statement_Cache.txt.
+
+- New performance tests (Retrieve and Statement Cache) in Primer.
+
+- A growing suite of unit tests (see the Tests folder).
+
+- TInstantPump: see InstantPump.txt.
+
+- Database structure evolution:
+  see [RFC]_IO-001_Database_Structure_Evolution.txt
+  until more complete docs are available.
+
+- Many bug fixes and small improvements. Please see our trackers:
+
+  http://sourceforge.net/tracker/?group_id=94747&atid=608935
+  http://sourceforge.net/tracker/?group_id=94747&atid=608938
+
+
+
+Version 1.6.7 (2004-11-17) UNOFFICIAL
 
 - Added support for IOMETADATA Keyword in metadata class definition and
-upgrade of ObjectFoundry for ModelMaker 7 & 8 support.
-Please refer to IOMETADATA_Keyword.txt for details.
+  upgrade of ObjectFoundry for ModelMaker 7 & 8 support.
+  Please refer to IOMETADATA_Keyword.txt for details.
 
-- ExternalPart, ExternalParts and ExternalReferences support (under test):
-(UNDOCUMENTED)
+- ExternalPart, ExternalParts and ExternalReferences support.
 
 - Added InstantNexusSQL Broker
 
 - Changes to IBX Broker:
-- option to disable the use of delimited identifiers in dialect 3 databases
-- implemented InternalCreateDatabase and GetDatabaseExists
+  - option to disable the use of delimited identifiers in dialect 3 databases
+  - implemented InternalCreateDatabase and GetDatabaseExists
 
 - LoginPrompt support and OnLogin event in Connections based on TCustomConnection
 
-Version 1.6.6 (2004-07-29)
+
+
+Version 1.6.6 (2004-07-29) UNOFFICIAL
+
 - Currency Support:
-Look into Primer Demo for a little explanation.
+  Look into Primer Demo for a little explanation.
 
 - Graphic Support:
-Look into Primer Demo for a little explanation.
+  Look into Primer Demo for a little explanation.
 
 - PrimerCross chaged for Currency and Graphic support
 
-ConnectionManager changes:
-- ConnectionDefs moved from Form to ConnectionManager
-- ConnectByName method added in ConnectionManager to connect without showing form
-- atOpen option added in ConnectionManager to Open connections file (.con or .xml)
+- ConnectionManager changes:
+  - ConnectionDefs moved from Form to ConnectionManager
+  - ConnectByName method added in ConnectionManager to connect without showing form
+  - atOpen option added in ConnectionManager to Open connections file (.con or .xml)
 
-UserPrepareQuery support:
-- Added UsePreparedQuery support for TInstantSQLBroker
+- UsePreparedQuery support:
+  Added UsePreparedQuery support for TInstantSQLBroker
   (more details in Preprared_Query_Support.txt).
 
 - Primer demo: PerformanceView form changed to make tests with UsePreparedQuery
@@ -185,16 +251,17 @@ UserPrepareQuery support:
 - Exposer's Undo method now is Virtual and UndoBuffer is available.
 
 
-Version 1.6.5 (2004-05-23) (more details in Kylix3_porting_release_notes.txt)
+
+Version 1.6.5 (2004-05-23) UNOFFICIAL
 
 - Kylix Porting (design, core and DbExpress broker).
+  More details in Kylix3_porting_release_notes.txt.
 
 - Kylix porting of Primer Demo.
 
 - XML format for connection file managed by connectionmanager.
 
-
-Version 1.6 (2003-12-19)
+Version 1.6 (2003-12-19) LAST COMMERCIAL VERSION
 
 - SQL based broker architecture introduced.
 
