@@ -195,7 +195,6 @@ type
     FContainerName: string;
     FFieldOptions: TInstantFieldOptions;
     FFilterBuffer: PChar;
-    FIsChanged: Boolean;
     FIsOpen: Boolean;
     FLimited: Boolean;
     FMode: TInstantAccessMode;
@@ -306,6 +305,7 @@ type
     function GetCanModify: Boolean; override;
     function GetCurrentObject: TObject; virtual;
     function GetFieldOffset(const Field: TField): Integer;
+    function GetIsChanged: Boolean; virtual;
     function GetRecNo: Integer; override;
     function GetRecord(Buffer: PChar; GetMode: TGetMode;
       DoCheck: Boolean): TGetResult; override;
@@ -415,7 +415,7 @@ type
     procedure UpdateBookmark(var BM: TInstantBookmark);
     property CurrentObject: TObject read GetCurrentObject;
     property HasSubject: Boolean read GetHasSubject;
-    property IsChanged: Boolean read FIsChanged;
+    property IsChanged: Boolean read GetIsChanged;
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property TotalCount: Integer read GetTotalCount;
@@ -494,6 +494,7 @@ type
     procedure SyncWithParent(Field: TDataSetField);
   protected
     procedure DataEvent(Event: TDataEvent; Info: Longint); override;
+    function GetIsChanged: Boolean; override;           
     function GetSubject: TObject; override;
     procedure MasterChanged(Sender: TObject);
     procedure SetDataSetField(const Value: TDataSetField); override;
@@ -566,6 +567,7 @@ type
   protected
     function CanAutoOpen: Boolean;
     procedure DefineProperties(Filer: TFiler); override;
+    function GetIsChanged: Boolean; override;
     function GetSubject: TObject; override;
     function HasCommand: Boolean;
     function HasConnector: Boolean;
@@ -2257,6 +2259,11 @@ begin
   Result := Accessor.InContent;
 end;
 
+function TInstantCustomExposer.GetIsChanged: Boolean;
+begin
+  Result := False;
+end;
+
 function TInstantCustomExposer.GetLimited: Boolean;
 begin
   Result := Accessor.Limited;
@@ -2623,6 +2630,8 @@ begin
     GotoActiveRecord;
     InternalRemoveObject(FNewObject);
   end;
+  if (State = dsEdit) and (CurrentObject is TInstantObject) then
+    TInstantObject(CurrentObject).IsChanged := False;
   if ObjectCount = 0 then
     ClearRecord(ActiveBuffer);
 end;
@@ -3653,6 +3662,14 @@ begin
   Result := MasterLink.DataSource;
 end;
 
+function TInstantExposer.GetIsChanged: Boolean;
+begin
+  if HasSubject and (Subject is TInstantObject) then
+    Result := TInstantObject(Subject).IsChanged
+  else
+    Result := False;
+end;
+
 function TInstantExposer.GetSubject: TObject;
 begin
   Result := FSubject;
@@ -3927,6 +3944,21 @@ begin
     FQuery.Command := Command.Text;
   end;
   Result := FQuery;
+end;
+
+function TInstantSelector.GetIsChanged: Boolean;
+var
+  I: Integer;
+begin
+  Result := False;
+  for I := 0 to Pred(Query.ObjectCount) do
+    if Query.Objects[I] is TInstantObject then
+    begin
+      Result := TInstantObject(Query.Objects[I]).IsChanged;
+      if Result then
+        Break;
+    end;
+  { TODO : Implement check of deleted records after patch bug #1232576 }
 end;
 
 function TInstantSelector.GetSubject: TObject;
