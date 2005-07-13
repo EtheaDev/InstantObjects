@@ -14,8 +14,13 @@ type
     procedure AddFieldMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
+    // Returns the TInstantDataType value that matches the supplied
+    // combination of ColumnType, BlobSubType and FieldScale. If more than
+    // on datatypes apply, alternate data types are returned in
+    // AlternateDataTypes, otherwise AlternateDataTypes is [] on exit.
     function ColumnTypeToDataType(const ColumnType: string;
-      const BlobSubType, FieldScale: Integer): TInstantDataType;
+      const BlobSubType, FieldScale: Integer;
+      out AlternateDataTypes: TInstantDataTypes): TInstantDataType;
     function GetSelectFieldsSQL(const ATableName: string): string;
     function GetSelectIndexesSQL(const ATableName: string): string;
     function GetSelectIndexFieldsSQL(const AIndexName: string): string;
@@ -98,6 +103,7 @@ procedure TInstantIBFbCatalog.AddFieldMetadatas(
 var
   Fields: TDataSet;
   FieldMetadata: TInstantFieldMetadata;
+  AlternateDataTypes: TInstantDataTypes;
 begin
   Fields := Broker.AcquireDataSet(GetSelectFieldsSQL(TableMetadata.Name));
   try
@@ -110,7 +116,9 @@ begin
         FieldMetadata.DataType := ColumnTypeToDataType(
           Trim(Fields.FieldByName('RDB$TYPE_NAME').AsString),
           Fields.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
-          Fields.FieldByName('RDB$FIELD_SCALE').AsInteger);
+          Fields.FieldByName('RDB$FIELD_SCALE').AsInteger,
+          AlternateDataTypes);
+        FieldMetadata.AlternateDataTypes := AlternateDataTypes;
         FieldMetadata.Options := [];
         if Fields.FieldByName('RDB$NULL_FLAG').AsInteger <> 0 then
           FieldMetadata.Options := FieldMetadata.Options + [foRequired];
@@ -160,12 +168,18 @@ begin
 end;
 
 function TInstantIBFbCatalog.ColumnTypeToDataType(const ColumnType: string;
-  const BlobSubType, FieldScale: Integer): TInstantDataType;
+  const BlobSubType, FieldScale: Integer;
+  out AlternateDataTypes: TInstantDataTypes): TInstantDataType;
 begin
+  AlternateDataTypes := [];
   { TODO : How to use FieldScale? }
   if SameText(ColumnType, 'TEXT') or SameText(ColumnType, 'VARYING') then
     Result := dtString
-  else if SameText(ColumnType, 'SHORT') or SameText(ColumnType, 'LONG') then
+  else if SameText(ColumnType, 'SHORT') then begin
+    Result := dtBoolean;
+    Include(AlternateDataTypes, dtInteger);
+  end
+  else if SameText(ColumnType, 'LONG') then
     Result := dtInteger
   else if SameText(ColumnType, 'FLOAT') or SameText(ColumnType, 'DOUBLE') then
     Result := dtFloat
@@ -179,6 +193,8 @@ begin
     else
       Result := dtBlob;
   end
+  else if SameText(ColumnType, 'INT64') then
+    Result := dtCurrency
   else
     raise Exception.CreateFmt('ColumnType %s not supported.', [ColumnType]);
 end;
