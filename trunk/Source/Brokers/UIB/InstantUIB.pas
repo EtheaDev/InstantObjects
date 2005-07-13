@@ -26,7 +26,7 @@
 
 unit InstantUIB;
 
-{$I ../../../Core/InstantDefines.inc}
+{$I ../../Core/InstantDefines.inc}
 
 {$IFDEF D7+}
 {$WARN UNSAFE_TYPE OFF}
@@ -513,6 +513,8 @@ begin
     Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctAddIndex then
     Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAlterIndex then
+    Result := TInstantDBBuildAlterIndexSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctDropIndex then
     Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType, Connector)
   else
