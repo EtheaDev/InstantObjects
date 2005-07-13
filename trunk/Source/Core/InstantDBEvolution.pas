@@ -108,8 +108,7 @@ begin
         SourceFieldMetadata := SourceTableMetadata.FindFieldMetadata(AnsiUpperCase(TargetFieldMetadata.Name));
         if Assigned(SourceFieldMetadata) then
         begin
-          if (TargetFieldMetadata.DataType <> SourceFieldMetadata.DataType) or
-             (TargetFieldMetadata.Size > SourceFieldMetadata.Size) then
+          if not SourceFieldMetadata.Equals(TargetFieldMetadata) then
             AppendAlterFieldCommand(CommandSequence, SourceFieldMetadata,
               TargetFieldMetadata);
         end

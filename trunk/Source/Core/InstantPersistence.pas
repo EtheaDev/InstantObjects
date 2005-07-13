@@ -270,6 +270,7 @@ type
   TInstantFieldMetadatas = class;
 
   TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob);
+  TInstantDataTypes = set of TInstantDataType;
   TInstantFieldOption = (foRequired, foIndexed);
   TInstantFieldOptions = set of TInstantFieldOption;
 
@@ -280,12 +281,27 @@ type
     FSize: Integer;
     FExternalTableName: string;
     FOriginalAttributeType: TInstantAttributeType;
+    FAlternateDataTypes: TInstantDataTypes;
     function GetCollection: TInstantFieldMetadatas;
     function GetTableMetadata: TInstantTableMetadata;
+  protected
+    function InternalEquals(const Other: TInstantMetadata): Boolean; override;
   public
     constructor Create(ACollection: TInstantFieldMetadatas); reintroduce;
+    // Returns True if one of the data types of Other (Other.DataType and
+    // Other.AlternateDataTypes) equals one of the data types of Self.
+    function DataTypesEqual(const Other: TInstantFieldMetadata): Boolean;
     property Collection: TInstantFieldMetadatas read GetCollection;
     property DataType: TInstantDataType read FDataType write FDataType;
+    // When field metadata is gathered from a database, there might be more
+    // TInstantDataType values that apply (for example when the database
+    // represents dtBoolean and dtInteger attributes with the same column type).
+    // In that case, a datatype is chosen as the value of the DataType
+    // property, and the others are put in AlternateDataTypes. The
+    // DataTypesEqual method considers both DataType and AlternateDataTypes when
+    // deciding upon data type "equality".
+    property AlternateDataTypes: TInstantDataTypes
+      read FAlternateDataTypes write FAlternateDataTypes;
     property Options: TInstantFieldOptions read FOptions write FOptions;
     property ExternalTableName: string read FExternalTableName write FExternalTableName;
     property Size: Integer read FSize write FSize;
@@ -3733,6 +3749,14 @@ begin
   FOriginalAttributeType := atUnknown;
 end;
 
+function TInstantFieldMetadata.DataTypesEqual(
+  const Other: TInstantFieldMetadata): Boolean;
+begin
+  Result := (DataType = Other.DataType) or
+    (DataType in Other.AlternateDataTypes) or
+    (Other.DataType in AlternateDataTypes);
+end;
+
 function TInstantFieldMetadata.GetCollection: TInstantFieldMetadatas;
 begin
   Result := inherited Collection as TInstantFieldMetadatas;
@@ -3741,6 +3765,17 @@ end;
 function TInstantFieldMetadata.GetTableMetadata: TInstantTableMetadata;
 begin
   Result := Collection.Owner;
+end;
+
+function TInstantFieldMetadata.InternalEquals(
+  const Other: TInstantMetadata): Boolean;
+begin
+  Result := inherited InternalEquals(Other);
+  if Result then
+    Result := (Other is TInstantFieldMetadata) and
+      (DataTypesEqual(TInstantFieldMetadata(Other)));
+  if DataType = dtString then
+    Result := Result and (Size = TInstantFieldMetadata(Other).Size);
 end;
 
 { TInstantFieldMetadatas }
