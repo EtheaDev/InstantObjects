@@ -1389,7 +1389,6 @@ type
     FBroker: TInstantBroker;
     FClientList: TList;
     FObjectStores: TInstantObjectStores;
-    FIsDefault: Boolean;
     FTransactionLevel: Integer;
     FTransactedObjectList: TList;
     FUseTransactions: Boolean;
@@ -2632,6 +2631,7 @@ var
 
 { Local Routines }
 
+{$IFDEF IO_STATEMENT_LOGGING}
 procedure InstantLogStatement(const Caption, AStatement: string; AParams: TParams = nil);
 var
   S: string;
@@ -2648,10 +2648,11 @@ begin
   end;
 {$IFDEF MSWINDOWS}
   OutputDebugString(PChar(S));
-{$ENDIF}  
+{$ENDIF}
   if Assigned(InstantLogProc) then
     InstantLogProc(S);
 end;
+{$ENDIF}
 
 function ValidateChars(Buffer: PChar; BufferLength: Integer;
   ValidChars: TChars; var InvalidChar: Char): Boolean;
@@ -9080,10 +9081,7 @@ end;
 
 function TInstantConnector.GetIsDefault: Boolean;
 begin
-  if csDesigning in ComponentState then
-    Result := FIsDefault
-  else
-    Result := Self = DefaultConnector;
+  Result := Self = DefaultConnector;
 end;
 
 function TInstantConnector.GetObjectCount: Integer;
@@ -9235,9 +9233,7 @@ end;
 
 procedure TInstantConnector.SetIsDefault(const Value: Boolean);
 begin
-  if csDesigning in ComponentState then
-    FIsDefault := Value
-  else if Value <> IsDefault then
+  if Value <> IsDefault then
     if Value then
       DefaultConnector := Self
     else
@@ -13978,12 +13974,12 @@ var
         PartsAttribute := TInstantParts(AObject.AttributeByName(AttributeMetadata.Name));
         if PartsAttribute.IsChanged then
         begin
-          // Make sure that all the items are in memory because they will be
-          // accessed later, after the database records have been deleted.
-          for ii := 0 to Pred(PartsAttribute.Count) do
-            PartsAttribute.Items[ii];
           if Map[i].StorageKind = skExternal then
           begin
+            // Make sure that all the items are in memory because they will be
+            // accessed later, after the database records have been deleted.
+            for ii := 0 to Pred(PartsAttribute.Count) do
+              PartsAttribute.Items[ii];
             // Delete all objects
             SelectParams := TParams.Create;
             try
