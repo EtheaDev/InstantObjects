@@ -5893,12 +5893,9 @@ end;
 
 function TInstantElement.DetachObject(AObject: TInstantObject): Boolean;
 begin
-  if Value = AObject then
-  begin
+  Result := Value = AObject;
+  if Result then
     Value := nil;
-    Result := True; 
-  end else
-    Result := False;
 end;
 
 function TInstantElement.GetAsObject: TInstantObject;
