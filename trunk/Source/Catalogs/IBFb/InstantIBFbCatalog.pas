@@ -124,7 +124,6 @@ begin
           FieldMetadata.Options := FieldMetadata.Options + [foRequired];
         if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
           FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-        { TODO : support ExternalTableName? }
         if FieldMetadata.DataType = dtString then
           FieldMetadata.Size := Fields.FieldByName('RDB$CHARACTER_LENGTH').AsInteger
         else
