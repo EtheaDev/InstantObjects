@@ -279,8 +279,6 @@ type
     FDataType: TInstantDataType;
     FOptions: TInstantFieldOptions;
     FSize: Integer;
-    FExternalTableName: string;
-    FOriginalAttributeType: TInstantAttributeType;
     FAlternateDataTypes: TInstantDataTypes;
     function GetCollection: TInstantFieldMetadatas;
     function GetTableMetadata: TInstantTableMetadata;
@@ -303,11 +301,8 @@ type
     property AlternateDataTypes: TInstantDataTypes
       read FAlternateDataTypes write FAlternateDataTypes;
     property Options: TInstantFieldOptions read FOptions write FOptions;
-    property ExternalTableName: string read FExternalTableName write FExternalTableName;
     property Size: Integer read FSize write FSize;
     property TableMetadata: TInstantTableMetadata read GetTableMetadata;
-    property OriginalAttributeType: TInstantAttributeType
-      read FOriginalAttributeType write FOriginalAttributeType default atUnknown;
   end;
 
   TInstantFieldMetadatas = class(TInstantMetadatas)
@@ -317,8 +312,7 @@ type
   public
     constructor Create(AOwner: TInstantTableMetadata);
     procedure AddFieldMetadata(const AName: string; ADataType: TInstantDataType;
-      ASize: Integer; AOriginalAttributeType: TInstantAttributeType;
-      AOptions: TInstantFieldOptions = []; AExternalTableName: string = '');
+      ASize: Integer; AOptions: TInstantFieldOptions = []);
     function Add: TInstantFieldMetadata;
     function Find(const AName: string): TInstantFieldMetadata;
     property Items[Index: Integer]: TInstantFieldMetadata read GetItems write SetItems; default;
@@ -2267,14 +2261,12 @@ type
     function InternalGenerateAlterFieldSQL(OldMetadata, NewMetadata: TInstantFieldMetadata): string; virtual;
     function InternalGenerateCreateIndexSQL(Metadata: TInstantIndexMetadata): string; virtual;
     function InternalGenerateCreateTableSQL(Metadata: TInstantTableMetadata): string; virtual;
-    function InternalGenerateCreateExternalTableSQL(TableName: string): string; virtual;
     function InternalGenerateDeleteConcurrentSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateDeleteSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateDeleteExternalSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateDropFieldSQL(Metadata: TInstantFieldMetadata): string; virtual;
     function InternalGenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string; virtual;
     function InternalGenerateDropTableSQL(Metadata: TInstantTableMetadata): string; virtual;
-    function InternalGenerateDropExternalTableSQL(TableName: string): string; virtual;
     function InternalGenerateInsertSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateInsertExternalSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectSQL(Map: TInstantAttributeMap): string; virtual;
@@ -2291,14 +2283,12 @@ type
     function GenerateAlterFieldSQL(OldMetadata, NewMetadata: TInstantFieldMetadata): string;
     function GenerateCreateIndexSQL(Metadata: TInstantIndexMetadata): string;
     function GenerateCreateTableSQL(Metadata: TInstantTableMetadata): string;
-    function GenerateCreateExternalTableSQL(TableName: string): string;
     function GenerateDeleteConcurrentSQL(Map: TInstantAttributeMap): string;
     function GenerateDeleteSQL(Map: TInstantAttributeMap): string;
     function GenerateDeleteExternalSQL(Map: TInstantAttributeMap): string;
     function GenerateDropFieldSQL(Metadata: TInstantFieldMetadata): string;
     function GenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string;
     function GenerateDropTableSQL(Metadata: TInstantTableMetadata): string;
-    function GenerateDropExternalTableSQL(TableName: string): string;
     function GenerateInsertSQL(Map: TInstantAttributeMap): string;
     function GenerateInsertExternalSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectSQL(Map: TInstantAttributeMap): string;
@@ -3746,7 +3736,6 @@ end;
 constructor TInstantFieldMetadata.Create(ACollection: TInstantFieldMetadatas);
 begin
   inherited Create(ACollection);
-  FOriginalAttributeType := atUnknown;
 end;
 
 function TInstantFieldMetadata.DataTypesEqual(
@@ -3786,17 +3775,15 @@ begin
 end;
 
 procedure TInstantFieldMetadatas.AddFieldMetadata(const AName: string;
-  ADataType: TInstantDataType; ASize: Integer; AOriginalAttributeType: TInstantAttributeType;
-  AOptions: TInstantFieldOptions = []; AExternalTableName: string = '');
+  ADataType: TInstantDataType; ASize: Integer;
+  AOptions: TInstantFieldOptions = []);
 begin
   with Add do
   begin
     Name := AName;
     DataType := ADataType;
     Size := ASize;
-    OriginalAttributeType := AOriginalAttributeType;
     Options := AOptions;
-    ExternalTableName := AExternalTableName;
   end;
 end;
 
@@ -12777,12 +12764,6 @@ begin
   Result := InternalGenerateAlterFieldSQL(OldMetadata, NewMetadata);
 end;
 
-function TInstantSQLGenerator.GenerateCreateExternalTableSQL(
-  TableName: string): string;
-begin
-  Result := InternalGenerateCreateExternalTableSQL(TableName);
-end;
-
 function TInstantSQLGenerator.GenerateCreateIndexSQL(
   Metadata: TInstantIndexMetadata): string;
 begin
@@ -12811,12 +12792,6 @@ function TInstantSQLGenerator.GenerateDeleteSQL
   (Map: TInstantAttributeMap): string;
 begin
   Result := InternalGenerateDeleteSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateDropExternalTableSQL(
-  TableName: string): string;
-begin
-  Result := InternalGenerateDropExternalTableSQL(TableName);
 end;
 
 function TInstantSQLGenerator.GenerateDropFieldSQL(
@@ -12908,27 +12883,6 @@ begin
      Broker.DataTypeToColumnType(NewMetadata.DataType, NewMetadata.Size)]);
 end;
 
-function TInstantSQLGenerator.InternalGenerateCreateExternalTableSQL(
-  TableName: string): string;
-var
-  Columns: string;
-begin
-  Columns := EmbraceField(InstantIdFieldName) + ' ' +
-    Broker.DataTypeToColumnType(Broker.Connector.IdDataType, Broker.Connector.IdSize) + ' NOT NULL';
-  Columns := Columns + ', ' + EmbraceField(InstantParentClassFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, InstantDefaultFieldSize);
-  Columns := Columns + ', ' + EmbraceField(InstantParentIdFieldName) + ' ' +
-    Broker.DataTypeToColumnType(Broker.Connector.IdDataType, Broker.Connector.IdSize);
-  Columns := Columns + ', ' + EmbraceField(InstantChildClassFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtString, InstantDefaultFieldSize);
-  Columns := Columns + ', ' + EmbraceField(InstantChildIdFieldName) + ' ' +
-    Broker.DataTypeToColumnType(Broker.Connector.IdDataType, Broker.Connector.IdSize);
-  Columns := Columns + ', ' + EmbraceField(InstantSequenceNoFieldName) + ' ' +
-    Broker.DataTypeToColumnType(dtInteger, InstantDefaultFieldSize);
-  Columns := Columns + ', PRIMARY KEY (' +  EmbraceField(InstantIdFieldName) + ')';
-  Result := Format('CREATE TABLE %s (%s)', [EmbraceTable(TableName), Columns] );
-end;
-
 function TInstantSQLGenerator.InternalGenerateCreateIndexSQL(
   Metadata: TInstantIndexMetadata): string;
 var
@@ -12959,15 +12913,13 @@ begin
     begin
       FieldMetadata := FieldMetadatas[I];
       with FieldMetadata do
-        // Not an "external" field
-        if ExternalTableName = '' then
-        begin
-          if I > 0 then
-            Columns := Columns + ', ';
-          Columns := Columns + EmbraceField(Name) + ' ' + Broker.DataTypeToColumnType(DataType, Size);
-          if foRequired in Options then
-            Columns := Columns + ' NOT NULL';
-        end;
+      begin
+        if I > 0 then
+          Columns := Columns + ', ';
+        Columns := Columns + EmbraceField(Name) + ' ' + Broker.DataTypeToColumnType(DataType, Size);
+        if foRequired in Options then
+          Columns := Columns + ' NOT NULL';
+      end;
     end;
   PrimaryKey := '';
   with Metadata do
@@ -13009,12 +12961,6 @@ begin
   WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
   Result := Format('DELETE FROM %s WHERE %s',
     [EmbraceTable(Map.Name), WhereStr]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateDropExternalTableSQL(
-  TableName: string): string;
-begin
-  Result := Format('DROP TABLE %s', [EmbraceTable(TableName)]);
 end;
 
 function TInstantSQLGenerator.InternalGenerateDropFieldSQL(
@@ -13241,11 +13187,11 @@ var
   I, J: Integer;
   TableMetadata: TInstantTableMetadata;
   IndexMetadata: TInstantIndexMetadata;
-  FieldMetadata: TInstantFieldMetadata;
 begin
   if not Assigned(Scheme) then
     Exit;
   with Scheme do
+  begin
     for I := 0 to Pred(TableMetadataCount) do
     begin
       TableMetadata := TableMetadatas[I];
@@ -13253,33 +13199,18 @@ begin
         Execute(Generator.GenerateDropTableSQL(TableMetadata));
       except
       end;
-      for J := 0 to Pred(TableMetadata.FieldMetadatas.Count) do
-      begin
-        FieldMetadata := TableMetadata.FieldMetadatas[J];
-        if FieldMetadata.ExternalTableName <> '' then
-        begin
-          try
-            Execute(Generator.GenerateDropExternalTableSQL(FieldMetadata.ExternalTableName));
-          except
-          end;
-        end;
-      end;
-
       Execute(Generator.GenerateCreateTableSQL(TableMetadata));
-      for J := 0 to Pred(TableMetadata.FieldMetadatas.Count) do
-      begin
-        FieldMetadata := TableMetadata.FieldMetadatas[J];
-        if FieldMetadata.ExternalTableName <> '' then
-          Execute(Generator.GenerateCreateExternalTableSQL(FieldMetadata.ExternalTableName));
-      end;
       with TableMetadata do
+      begin
         for J := 0 to Pred(IndexMetadatas.Count) do
         begin
           IndexMetadata := IndexMetadatas[J];
           if not (ixPrimary in IndexMetadata.Options) then
             Execute(Generator.GenerateCreateIndexSQL(IndexMetadata));
         end;
+      end;
     end;
+  end;
 end;
 
 procedure TInstantSQLBroker.ReleaseDataSet(const ADataSet: TDataSet);
@@ -15264,75 +15195,101 @@ var
   var
     I: Integer;
     TableMetadata: TInstantTableMetadata;
+    AttributeMetadata: TInstantAttributeMetadata;
     Options: TInstantFieldOptions;
+
+    // Adds a table metadata definition matching AttributeMetadata, which
+    // must have StorageKind = skEmbedded.
+    procedure AddExternalTableMetadata;
+    var
+      TableMetadata: TInstantTableMetadata;
+    begin
+      TableMetadata := ATableMetadatas.Add;
+      with TableMetadata do
+      begin
+        Name := AttributeMetadata.ExternalStorageName;
+        // The structure of an external table is fixed.
+        FieldMetadatas.AddFieldMetadata(InstantIdFieldName, Scheme.IdDataType,
+          Scheme.IdSize, [foRequired, foIndexed]);
+        FieldMetadatas.AddFieldMetadata(InstantParentClassFieldName, dtString,
+          InstantDefaultFieldSize);
+        FieldMetadatas.AddFieldMetadata(InstantParentIdFieldName, Scheme.IdDataType,
+          Scheme.IdSize);
+        FieldMetadatas.AddFieldMetadata(InstantChildClassFieldName, dtString,
+          InstantDefaultFieldSize);
+        FieldMetadatas.AddFieldMetadata(InstantChildIdFieldName, Scheme.IdDataType,
+          Scheme.IdSize);
+        FieldMetadatas.AddFieldMetadata(InstantSequenceNoFieldName, dtInteger,
+          InstantDefaultFieldSize);
+        IndexMetadatas.AddIndexMetadata('', InstantIdFieldName,
+          [ixPrimary, ixUnique]);
+      end;
+    end;
+
   begin
     TableMetadata := ATableMetadatas.Add;
     with TableMetadata do
     begin
       Name := Map.Name;
 
-      { Class + Id + UpdateCount}
+      // Class + Id + UpdateCount.
       FieldMetadatas.AddFieldMetadata(InstantClassFieldName, dtString,
-        InstantDefaultFieldSize, atUnknown, [foRequired, foIndexed]);
+        InstantDefaultFieldSize, [foRequired, foIndexed]);
       FieldMetadatas.AddFieldMetadata(InstantIdFieldName, Scheme.IdDataType,
-        Scheme.IdSize, atUnknown, [foRequired, foIndexed]);
-      FieldMetadatas.AddFieldMetadata(InstantUpdateCountFieldName, dtInteger, 0,
-        atUnknown);
+        Scheme.IdSize, [foRequired, foIndexed]);
+      FieldMetadatas.AddFieldMetadata(InstantUpdateCountFieldName, dtInteger, 0);
       IndexMetadatas.AddIndexMetadata('', InstantIndexFieldNames,
         [ixPrimary, ixUnique]);
 
-      { Other }
+      // Other.
       for I := 0 to Pred(Map.Count) do
-        with Map[I] do
+      begin
+        AttributeMetadata := Map[I];
+        if AttributeMetadata.AttributeType = atReference then
         begin
-          if AttributeType = atReference then
+          FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName + InstantClassFieldName,
+            Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize);
+          FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName + InstantIdFieldName,
+            Scheme.IdDataType, Scheme.IdSize);
+        end
+        else if AttributeMetadata.AttributeType = atPart then
+        begin
+          if AttributeMetadata.StorageKind = skEmbedded then
+            FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName,
+              Scheme.AttributeTypeToDataType(AttributeMetadata.AttributeType),
+              AttributeMetadata.Size)
+          else if AttributeMetadata.StorageKind = skExternal then
           begin
-            FieldMetadatas.AddFieldMetadata(FieldName + InstantClassFieldName,
-              Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize,
-              AttributeType);
-            FieldMetadatas.AddFieldMetadata(FieldName + InstantIdFieldName,
-              Scheme.IdDataType, Scheme.IdSize, AttributeType);
-          end
-          else if AttributeType = atPart then
+            FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName + InstantClassFieldName,
+              Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize);
+            FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName + InstantIdFieldName,
+              Scheme.IdDataType, Scheme.IdSize);
+          end;
+        end
+        else if AttributeMetadata.AttributeType in [atParts, atReferences] then
+        begin
+          if AttributeMetadata.StorageKind = skEmbedded then
+            FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName,
+              Scheme.AttributeTypeToDataType(AttributeMetadata.AttributeType),
+              AttributeMetadata.Size)
+          else if AttributeMetadata.StorageKind = skExternal then
+            AddExternalTableMetadata;
+        end
+        else
+        begin
+          if AttributeMetadata.IsIndexed then
           begin
-            if StorageKind = skEmbedded then
-              FieldMetadatas.AddFieldMetadata(FieldName,
-                Scheme.AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [])
-            else if StorageKind = skExternal then
-            begin
-              FieldMetadatas.AddFieldMetadata(FieldName + InstantClassFieldName,
-                Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize,
-                AttributeType);
-              FieldMetadatas.AddFieldMetadata(FieldName + InstantIdFieldName,
-                Scheme.IdDataType, Scheme.IdSize, AttributeType);
-            end;
-          end
-          else if AttributeType in [atParts, atReferences] then
-          begin
-            if StorageKind = skEmbedded then
-              FieldMetadatas.AddFieldMetadata(FieldName,
-                Scheme.AttributeTypeToDataType(AttributeType), Size,
-                AttributeType, [])
-            else if StorageKind = skExternal then
-              FieldMetadatas.AddFieldMetadata(FieldName,
-                Scheme.AttributeTypeToDataType(AttributeType),
-                Size, AttributeType, [], ExternalStorageName)
+            IndexMetadatas.AddIndexMetadata(Map.Name +
+              AttributeMetadata.FieldName, AttributeMetadata.FieldName, []);
+            Options := [foIndexed];
           end
           else
-          begin
-            if IsIndexed then
-            begin
-              IndexMetadatas.AddIndexMetadata(Map.Name + FieldName, FieldName, []);
-              Options := [foIndexed];
-            end
-            else
-              Options := [];
-            FieldMetadatas.AddFieldMetadata(FieldName,
-              Scheme.AttributeTypeToDataType(AttributeType),
-              Size, AttributeType, Options);
-          end;
+            Options := [];
+          FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName,
+            Scheme.AttributeTypeToDataType(AttributeMetadata.AttributeType),
+            AttributeMetadata.Size, Options);
         end;
+      end;
     end;
   end;
 
