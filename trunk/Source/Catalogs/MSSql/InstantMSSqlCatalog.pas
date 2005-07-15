@@ -23,7 +23,7 @@
  * Portions created by the Initial Developer are Copyright (C) 2005
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s):
+ * Contributor(s): Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -153,11 +153,7 @@ begin
           FieldMetadata.Options := FieldMetadata.Options + [foRequired];
         if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
           FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-        { TODO : support ExternalTableName? }
-        if FieldMetadata.DataType = dtString then
-          FieldMetadata.Size := Fields.FieldByName('COLUMN_LENGTH').AsInteger
-        else
-          FieldMetadata.Size := Fields.FieldByName('COLUMN_LENGTH').AsInteger;
+        FieldMetadata.Size := Fields.FieldByName('COLUMN_LENGTH').AsInteger;
         Fields.Next;
       end;
     finally
