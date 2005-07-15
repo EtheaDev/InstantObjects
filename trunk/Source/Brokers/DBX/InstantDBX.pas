@@ -416,6 +416,8 @@ begin
     Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctAddIndex then
     Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAlterIndex then
+    Result := TInstantDBBuildAlterIndexSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctDropIndex then
     Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType, Connector)
   else
