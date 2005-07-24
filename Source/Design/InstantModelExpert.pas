@@ -23,13 +23,14 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s): Nando Dessena
+ * Contributor(s):
+ * Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantModelExpert;
 
-{$I ../Core/InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 {$IFDEF D7+}
 {$WARN UNIT_DEPRECATED OFF}
@@ -39,12 +40,8 @@ interface
 
 uses
   Classes, ToolsAPI, ToolIntf, EditIntf, InstantOTA, Menus, ImgList,
-  InstantDesignResources, InstantModelExplorer, InstantCode, ExtCtrls, Forms;
-
-{$IFNDEF D6+}
-const
-  sLineBreak = #13#10;
-{$ENDIF}
+  InstantDesignResources, InstantModelExplorer, InstantCode, ExtCtrls, Forms,
+  InstantConsts;
 
 type
   TIOMetaDataCheckState = (mcNeverChecked, mcCheckError, mcCheckCorrect);

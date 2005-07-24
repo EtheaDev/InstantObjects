@@ -21,14 +21,13 @@
  * The Initial Developer of the Original Code is: Carlo Barazzetta
  *
  * Contributor(s):
- *   Carlo Barazzetta, Adrea Petrelli: porting Kylix
- *   Marco Cantù (XML documents versioning code, other minor fixes)
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Marco Cantù
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantXML;
 
-{$I ../../Core/InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 interface
 

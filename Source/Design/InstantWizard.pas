@@ -30,7 +30,7 @@
 
 unit InstantWizard;
 
-{$I ../../Core/InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 interface
 

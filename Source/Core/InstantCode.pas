@@ -24,20 +24,14 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell, , Uberto Barbini
- * Joao Morais
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
+ * Uberto Barbini, Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantCode;
 
-{$I InstantDefines.inc}
-
-{$IFDEF D7+}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
-{$ENDIF}
+{$I ../../InstantDefines.inc}
 
 interface
 

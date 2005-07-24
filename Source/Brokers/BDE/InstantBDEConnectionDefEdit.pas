@@ -24,11 +24,13 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
+ * Carlo Barazzetta, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantBDEConnectionDefEdit;
+
+{$I ../../InstantDefines.inc}
 
 interface
 

@@ -29,7 +29,7 @@
 
 unit InstantDBBuilderFormUnit;
 
-
+{$I ../../InstantDefines.inc}
 
 interface
 

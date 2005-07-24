@@ -20,19 +20,14 @@
  *
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
- * Contributor(s): Carlo Barazzetta, Nando Dessena
+ * Contributor(s):
+ * Carlo Barazzetta, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantUIB;
 
-{$I ../../Core/InstantDefines.inc}
-
-{$IFDEF D7+}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
-{$ENDIF}
+{$I '../../InstantDefines.inc'}
 
 interface
 

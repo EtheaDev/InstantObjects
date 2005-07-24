@@ -29,6 +29,8 @@
 
 unit InstantDBEvolverFormUnit;
 
+{$I ../../InstantDefines.inc}
+
 interface
 
 uses

@@ -24,12 +24,13 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
- * Nando Dessena:
- * - Support for changing the data type used for ID fields.
+ * Carlo Barazzetta, Nando Dessena
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantIBXConnectionDefEdit;
+
+{$I '../../InstantDefines.inc'}
 
 interface
 

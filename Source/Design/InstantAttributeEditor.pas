@@ -32,7 +32,7 @@ unit InstantAttributeEditor;
 
 interface
 
-{$I ../Core/InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 uses
   SysUtils, Classes,

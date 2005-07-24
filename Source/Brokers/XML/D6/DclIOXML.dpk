@@ -1,7 +1,8 @@
 package DclIOXML;
 
-{$R *.res}
-{$R '..\InstantXML.dcr'}
+{$I '../../InstantVersion.inc'}
+
+{$R '../InstantXML.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}

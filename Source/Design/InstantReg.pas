@@ -24,11 +24,14 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s): Nando Dessena
+ * Contributor(s):
+ * Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantReg;
+
+{$I ../../InstantDefines.inc}
 
 interface
 

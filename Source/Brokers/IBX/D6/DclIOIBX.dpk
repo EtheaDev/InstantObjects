@@ -1,7 +1,8 @@
 package DclIOIBX;
 
-{$R *.res}
-{$R '..\InstantIBX.dcr'}
+{$I '../../../InstantVersion.inc'}
+
+{$R '../InstantIBX.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}

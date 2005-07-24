@@ -23,19 +23,14 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s): Carlo Barazzetta
+ * Contributor(s):
+ * Carlo Barazzetta, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantConnectionManager;
 
-{$I InstantDefines.inc}
-
-{$IFDEF D7+}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
-{$ENDIF}
+{$I ../../InstantDefines.inc}
 
 interface
 

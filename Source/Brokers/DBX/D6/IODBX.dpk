@@ -1,6 +1,7 @@
 package IODBX;
 
-{$R *.res}
+{$I '../../../InstantVersion.inc'}
+
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -33,7 +34,8 @@ requires
   dbrtl,
   dbexpress,
   IOCore,
-  IOIBFbCatalog;
+  IOIBFbCatalog,
+  IOMSSqlCatalog;
 
 contains
   InstantDBXConnectionDefEdit in '..\InstantDBXConnectionDefEdit.pas' {InstantDBXConnectionDefEditForm},

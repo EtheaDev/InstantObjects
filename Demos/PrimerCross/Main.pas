@@ -19,7 +19,7 @@ uses
   QMenus, QExtCtrls, QComCtrls, QGrids, QDBGrids, QImgList, QActnList,
 {$ENDIF}
   InstantPersistence, BasicView, Stopwatch,
-  InstantConnectionManagerForm, InstantConnectionManager;
+  InstantConnectionManagerFormUnit, InstantConnectionManager;
 
 type
   TMainForm = class(TForm)

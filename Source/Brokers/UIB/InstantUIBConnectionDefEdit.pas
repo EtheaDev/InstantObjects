@@ -20,9 +20,14 @@
  *
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
+ * Contributor(s):
+ * Nando Dessena
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantUIBConnectionDefEdit;
+
+{$I '../../InstantDefines.inc'}
 
 interface
 

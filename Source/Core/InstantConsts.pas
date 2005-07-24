@@ -23,11 +23,14 @@
  * Portions created by the Initial Developer are Copyright (C) 2001-2003
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s): Nando Dessena
+ * Contributor(s):
+ * Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantConsts;
+
+{$I ../../InstantDefines.inc}
 
 interface
 
@@ -61,6 +64,11 @@ const
   InstantChildIdFieldName = 'ChildId';
   InstantSequenceNoFieldName = 'SequenceNo';
   InstantChildClassFieldName = 'ChildClass';
+
+{$IFNDEF D6+}
+const
+  sLineBreak = #13#10;
+{$ENDIF}
 
 resourcestring
   SAccessError = 'Cannot access attribute %s(''%s'') as type: %s';
@@ -164,7 +172,6 @@ resourcestring
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
   SUnsupportedColumnType = 'ColumnType %s not supported';
-  sLineBreak = #13#10;
 
 implementation
 

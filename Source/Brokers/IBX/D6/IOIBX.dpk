@@ -1,6 +1,7 @@
 package IOIBX;
 
-{$R *.res}
+{$I '../../../InstantVersion.inc'}
+
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}

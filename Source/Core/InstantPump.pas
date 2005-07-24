@@ -29,6 +29,8 @@
 
 unit InstantPump;
 
+{$I ../../InstantDefines.inc}
+
 interface
 
 uses

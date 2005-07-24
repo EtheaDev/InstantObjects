@@ -21,18 +21,18 @@
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
  * Contributor(s):
- * Carlo Barazzetta:
- * - OnLogin event support
+ * Carlo Barazzetta, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantUIBConnection;
 
-{$I ..\..\Core\InstantDefines.inc}
+{$I '../../InstantDefines.inc'}
 
 interface
 
-uses Classes, DB, dbLogDlg, jvuib;
+uses
+  Classes, DB, dbLogDlg, jvuib;
 
 const
   UIBLoginDialog : function (const ADatabaseName: string; var AUserName, APassword: string; NameReadOnly: Boolean): Boolean = nil;
