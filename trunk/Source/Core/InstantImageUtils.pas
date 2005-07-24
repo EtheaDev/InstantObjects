@@ -21,7 +21,7 @@
  * The Initial Developer of the Original Code is: Carlo Barazzetta
  *
  * Contributor(s):
- *   Nando Dessena (fix to HInstance handling)
+ * Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -29,7 +29,7 @@ unit InstantImageUtils;
 
 interface
 
-{$I InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 uses
   SysUtils,

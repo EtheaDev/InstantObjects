@@ -30,7 +30,7 @@
 
 unit InstantDialog;
 
-{$I ../Core/InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 interface
 

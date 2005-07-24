@@ -1,12 +1,13 @@
 package DclIOCore;
 
-{$R *.res}
-{$R '..\..\Core\InstantPresentation.dcr'}
-{$R '..\..\Core\InstantExplorer.dcr'}
-{$R '..\..\Core\InstantPersistence.dcr'}
-{$R '..\..\Core\InstantConnectionManager.dcr'}
-{$R '..\..\Core\InstantPump.dcr'}
-{$R '..\..\Core\InstantDBEvolution.dcr'}
+{$I '../../InstantVersion.inc'}
+
+{$R '../../Core/InstantPresentation.dcr'}
+{$R '../../Core/InstantExplorer.dcr'}
+{$R '../../Core/InstantPersistence.dcr'}
+{$R '../../Core/InstantConnectionManager.dcr'}
+{$R '../../Core/InstantPump.dcr'}
+{$R '../../Core/InstantDBEvolution.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}

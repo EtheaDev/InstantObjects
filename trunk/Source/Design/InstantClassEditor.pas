@@ -24,13 +24,13 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Steven Mitchell
+ * Carlo Barazzetta, Adrea Petrelli, Steven Mitchell, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantClassEditor;
 
-{$I ../Core/InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 interface
 

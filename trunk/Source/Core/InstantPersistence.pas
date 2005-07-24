@@ -31,13 +31,7 @@
 
 unit InstantPersistence;
 
-{$I InstantDefines.inc}
-
-{$IFDEF D7+}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
-{$ENDIF}
+{$I ../../InstantDefines.inc}
 
 interface
 

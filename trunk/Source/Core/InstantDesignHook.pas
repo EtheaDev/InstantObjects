@@ -24,10 +24,13 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantDesignHook;
+
+{$I ../../InstantDefines.inc}
 
 interface
 

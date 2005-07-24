@@ -21,17 +21,17 @@
  * The Initial Developer of the Original Code is: Carlo Barazzetta
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
+ * Adrea Petrelli, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantXMLConnectionDefEdit;
-{$IFNDEF VER130}
+
+{$I '../../InstantDefines.inc'}
+
+{$IFDEF D6+}
 {$WARN UNIT_PLATFORM OFF}
 {$ENDIF}
-
-{$I ../../Core/InstantDefines.inc}
 
 interface
 

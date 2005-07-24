@@ -134,3 +134,9 @@ OriginalFilename=
 ProductName=
 ProductVersion=1.0.0.0
 Comments=
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=D:\Professional\Produzione\Progetti\Delphi 7\InstantObjects\Source\Core\;D:\Professional\Produzione\Progetti\Delphi 7\EhLib\Common
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;

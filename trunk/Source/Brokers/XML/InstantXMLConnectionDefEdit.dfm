@@ -17,7 +17,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 126
+    Top = 133
     Width = 294
     Height = 2
     Align = alBottom
@@ -27,7 +27,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 294
-    Height = 126
+    Height = 133
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -83,7 +83,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 128
+    Top = 135
     Width = 294
     Height = 28
     Align = alBottom

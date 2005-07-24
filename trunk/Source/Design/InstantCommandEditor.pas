@@ -30,7 +30,7 @@
 
 unit InstantCommandEditor;
 
-{$I ../Core/InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 interface
 

@@ -1,0 +1,1 @@
+{$R '../../InstantVersion.res'}

@@ -24,17 +24,18 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantDesignTools;
 
+{$I ../../InstantDefines.inc}
+
 interface
 
 uses
   Classes,
-{$I ../Core/InstantDefines.inc}
 {$IFDEF MSWINDOWS}
   {$IFDEF D6+}
     DesignIntf, DesignEditors,

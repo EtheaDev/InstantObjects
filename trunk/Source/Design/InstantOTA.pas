@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -31,7 +32,7 @@ unit InstantOTA;
 
 interface
 
-{$I ../core/InstantDefines.inc}
+{$I ../../InstantDefines.inc}
 
 {$IFDEF D7+}
 {$WARN UNIT_DEPRECATED OFF}

@@ -29,6 +29,8 @@
 
 unit InstantDBBuild;
 
+{$I ../../InstantDefines.inc}
+
 interface
 
 uses

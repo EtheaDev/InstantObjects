@@ -20,9 +20,14 @@
  *
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
+ * Contributor(s):
+ * Nando Dessena
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantUIBReg;
+
+{$I '../../InstantDefines.inc'}
 
 interface
 

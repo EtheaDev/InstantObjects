@@ -24,12 +24,15 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantBDEReg;
 
-{$IFNDEF VER130}
+{$I ../../InstantDefines.inc}
+
+{$IFDEF D6+}
 {$WARN SYMBOL_PLATFORM OFF}
 {$ENDIF}
 

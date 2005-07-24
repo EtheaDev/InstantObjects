@@ -29,6 +29,8 @@
 
 unit InstantMSSqlCatalog;
 
+{$I '../../InstantDefines.inc'}
+
 interface
 
 uses

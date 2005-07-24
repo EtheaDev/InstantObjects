@@ -24,19 +24,13 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli: porting Kylix
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantExplorer;
 
-{$I InstantDefines.inc}
-
-{$IFDEF D7+}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
-{$ENDIF}
+{$I ../../InstantDefines.inc}
 
 interface
 

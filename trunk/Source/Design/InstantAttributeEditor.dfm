@@ -11,12 +11,12 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 241
-    Height = 293
+    Height = 300
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 233
-      Height = 285
+      Height = 292
       ActivePage = DefinitionSheet
       Align = alClient
       TabOrder = 0
@@ -378,7 +378,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 293
+    Top = 300
     Width = 241
     inherited ButtonPanel: TPanel
       Left = 81

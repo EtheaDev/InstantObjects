@@ -29,6 +29,8 @@
 
 unit InstantDBEvolution;
 
+{$I ../../InstantDefines.inc}
+
 interface
 
 uses

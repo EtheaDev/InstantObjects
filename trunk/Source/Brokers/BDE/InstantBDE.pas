@@ -24,13 +24,15 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
- * Carlo Barazzetta: Currency support
+ * Carlo Barazzetta, Nando Dessena
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantBDE;
 
-{$IFNDEF VER130}
+{$I ../../InstantDefines.inc}
+
+{$IFDEF D6+}
 {$WARN SYMBOL_PLATFORM OFF}
 {$ENDIF}
 

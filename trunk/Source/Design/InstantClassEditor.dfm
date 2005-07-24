@@ -10,12 +10,12 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 389
-    Height = 260
+    Height = 267
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 381
-      Height = 252
+      Height = 259
       ActivePage = ClassSheet
       Align = alClient
       TabOrder = 0
@@ -170,7 +170,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Left = 0
           Top = 0
           Width = 365
-          Height = 104
+          Height = 111
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
@@ -210,7 +210,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 260
+    Top = 267
     Width = 389
     inherited ButtonPanel: TPanel
       Left = 229
