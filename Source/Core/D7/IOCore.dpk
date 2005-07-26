@@ -53,7 +53,7 @@ contains
   InstantPump in '..\InstantPump.pas',
   InstantDBBuild in '..\InstantDBBuild.pas',
   InstantDBEvolution in '..\InstantDBEvolution.pas',
-  InstantCustomDBEvolverFormUnit in '..\InstantCustomDBEvolverFormUnit.pas',
+  InstantCustomDBEvolverFormUnit in '..\InstantCustomDBEvolverFormUnit.pas' {InstantCustomDBEvolverForm},
   InstantDBEvolverFormUnit in '..\InstantDBEvolverFormUnit.pas' {InstantDBEvolverForm},
   InstantDBBuilderFormUnit in '..\InstantDBBuilderFormUnit.pas' {InstantDBBuilderForm};
 
