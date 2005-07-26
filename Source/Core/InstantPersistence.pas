@@ -15238,6 +15238,7 @@ var
       // Other.
       for I := 0 to Pred(Map.Count) do
       begin
+        Options := [];
         AttributeMetadata := Map[I];
         if AttributeMetadata.AttributeType = atReference then
         begin
@@ -15275,10 +15276,12 @@ var
           begin
             IndexMetadatas.AddIndexMetadata(Map.Name +
               AttributeMetadata.FieldName, AttributeMetadata.FieldName, []);
-            Options := [foIndexed];
+            Options := Options + [foIndexed];
           end
-          else
-            Options := [];
+          else if AttributeMetadata.IsRequired then
+          begin
+            Options := Options + [foRequired];
+          end;
           FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName,
             Scheme.AttributeTypeToDataType(AttributeMetadata.AttributeType),
             AttributeMetadata.Size, Options);
