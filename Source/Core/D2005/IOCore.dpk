@@ -1,6 +1,7 @@
 package IOCore;
 
-{$R *.res}
+{$I '../../InstantVersion.inc'}
+
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -19,7 +20,7 @@ package IOCore;
 {$STACKFRAMES OFF}
 {$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
-{$WRITEABLECONST ON}
+{$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects Run-Time Package (Delphi 2005)'}
@@ -45,9 +46,14 @@ contains
   InstantTextFiler in '..\InstantTextFiler.pas',
   InstantPresentation in '..\InstantPresentation.pas',
   InstantAccessors in '..\InstantAccessors.pas',
-  InstantConnectionManagerForm in '..\InstantConnectionManagerForm.pas' {InstantConnectionManagerForm},
+  InstantConnectionManagerFormUnit in '..\InstantConnectionManagerFormUnit.pas' {InstantConnectionManagerForm},
   InstantConnectionManager in '..\InstantConnectionManager.pas',
   InstantImageUtils in '..\InstantImageUtils.pas',
-  InstantPump in '..\InstantPump.pas';
+  InstantPump in '..\InstantPump.pas',
+  InstantDBBuild in '..\InstantDBBuild.pas',
+  InstantDBEvolution in '..\InstantDBEvolution.pas',
+  InstantCustomDBEvolverFormUnit in '..\InstantCustomDBEvolverFormUnit.pas' {InstantCustomDBEvolverForm},
+  InstantDBEvolverFormUnit in '..\InstantDBEvolverFormUnit.pas' {InstantDBEvolverForm},
+  InstantDBBuilderFormUnit in '..\InstantDBBuilderFormUnit.pas' {InstantDBBuilderForm};
 
 end.
