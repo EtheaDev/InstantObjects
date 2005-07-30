@@ -1436,6 +1436,7 @@ type
     function GetConnected: Boolean; virtual;
     function GetDatabaseExists: Boolean; virtual;
     function GetDatabaseName: string; virtual;
+    function GetDDLTransactionSupp: Boolean; virtual;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
     procedure InternalConnect; virtual; abstract;
     procedure InternalCommitTransaction; virtual;
@@ -1475,6 +1476,7 @@ type
     property Clients[Index: Integer]: TObject read GetClient;
     property DatabaseExists: Boolean read GetDatabaseExists;
     property DatabaseName: string read GetDatabaseName;
+    property DDLTransactionSupp: Boolean read GetDDLTransactionSupp;
     property InTransaction: Boolean read GetInTransaction;
     property InUse: Boolean read GetInUse;
     property ObjectCount: Integer read GetObjectCount;
@@ -9080,6 +9082,11 @@ end;
 function TInstantConnector.GetDatabaseName: string;
 begin
   Result := Broker.DatabaseName;
+end;
+
+function TInstantConnector.GetDDLTransactionSupp: Boolean;
+begin
+  Result := True;
 end;
 
 function TInstantConnector.GetInTransaction: Boolean;
