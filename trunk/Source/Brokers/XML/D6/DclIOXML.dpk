@@ -1,6 +1,6 @@
 package DclIOXML;
 
-{$I '../../InstantVersion.inc'}
+{$I ../../../InstantVersion.inc}
 
 {$R '../InstantXML.dcr'}
 {$ALIGN 8}
