@@ -24,7 +24,7 @@ package IOIBFbCatalog;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects Catalog for InterBase and Firebird'}
-{$LIBSUFFIX '_D7'}
+{$LIBSUFFIX '_D9'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 

@@ -29,7 +29,7 @@
 
 unit InstantIBFbCatalog;
 
-{$I '../../InstantDefines.inc'}
+{$I ../../InstantDefines.inc}
 
 interface
 
