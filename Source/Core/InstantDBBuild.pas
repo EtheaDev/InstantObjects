@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -187,6 +188,8 @@ type
     procedure DoBeforeExecute;
     procedure DoCommandExecuteError(const ACommand: TInstantDBBuildCommand;
       const Error: Exception; var RaiseError: Boolean);
+    procedure DoExecute;
+    procedure DoExecuteInTransaction;
     function GetCount: Integer;
     function GetItem(const Index: Integer): TInstantDBBuildCommand;
     procedure SetSourceScheme(const Value: TInstantScheme);
@@ -672,38 +675,64 @@ begin
 
 end;
 
-procedure TInstantDBBuildCommandSequence.Execute;
+procedure TInstantDBBuildCommandSequence.DoExecute;
 var
   i: Integer;
   CurrentCommand: TInstantDBBuildCommand;
   RaiseError: Boolean;
 begin
-  DoBeforeExecute;
+  for i := 0 to FCommands.Count - 1 do
+  begin
+    CurrentCommand := FCommands[i] as TInstantDBBuildCommand;
+    DoBeforeCommandExecute(CurrentCommand);
+    try
+      if CurrentCommand.Enabled then
+        CurrentCommand.Execute;
+    except
+      on E: Exception do
+      begin
+        RaiseError := True;
+        DoCommandExecuteError(CurrentCommand, E, RaiseError);
+        if RaiseError then
+          raise;
+      end;
+    end;
+    DoAfterCommandExecute(CurrentCommand);
+  end;
+end;
+
+procedure TInstantDBBuildCommandSequence.DoExecuteInTransaction;
+begin
   Connector.StartTransaction;
   try
-    for i := 0 to FCommands.Count - 1 do
-    begin
-      CurrentCommand := FCommands[i] as TInstantDBBuildCommand;
-      DoBeforeCommandExecute(CurrentCommand);
-      try
-        if CurrentCommand.Enabled then
-          CurrentCommand.Execute;
-      except
-        on E: Exception do
-        begin
-          RaiseError := True;
-          DoCommandExecuteError(CurrentCommand, E, RaiseError);
-          if RaiseError then
-            raise;
-        end;
-      end;
-      DoAfterCommandExecute(CurrentCommand);
-    end;
+    DoExecute;
     Connector.CommitTransaction;
-    DoAfterExecute;
   except
     Connector.RollbackTransaction;
     raise;
+  end;
+end;
+
+procedure TInstantDBBuildCommandSequence.Execute;
+var
+  ConnState: Boolean;
+begin
+  ConnState := Connector.Connected;
+  if not ConnState then
+    Connector.Connect;
+
+  DoBeforeExecute;
+
+  try
+    if Connector.DDLTransactionSupp then
+      DoExecuteInTransaction
+    else
+      DoExecute;
+      
+    DoAfterExecute;
+  finally
+    if not ConnState then
+      Connector.Disconnect;
   end;
 end;
 
