@@ -1,7 +1,8 @@
-package IOIBX;
+package DclIOIBX;
 
 {$I '../../../InstantVersion.inc'}
 
+{$R '../InstantIBX.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -18,14 +19,14 @@ package IOIBX;
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
-{$TYPEDADDRESS ON}
+{$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects IBX Run-Time Support (Delphi 7)'}
-{$LIBSUFFIX '_D7'}
-{$RUNONLY}
+{$DESCRIPTION 'InstantObjects IBX Design-Time Support (Delphi 2005)'}
+{$LIBSUFFIX '_D9'}
+{$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
@@ -33,10 +34,9 @@ requires
   vcldb,
   ibxpress,
   IOCore,
-  IOIBFbCatalog;
+  IOIBX;
 
 contains
-  InstantIBXConnectionDefEdit in '..\InstantIBXConnectionDefEdit.pas' {InstantIBXConnectionDefEditForm},
-  InstantIBX in '..\InstantIBX.pas';
+  InstantIBXReg in '..\InstantIBXReg.pas';
 
 end.
