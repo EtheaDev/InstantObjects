@@ -1,6 +1,6 @@
 package DclIOIBX;
 
-{$I '../../InstantVersion.inc'}
+{$I '../../../InstantVersion.inc'}
 
 {$R '../InstantIBX.dcr'}
 {$ALIGN 8}
