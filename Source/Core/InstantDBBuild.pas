@@ -593,10 +593,8 @@ begin
     SourceTableMetadata :=
       CommandSequence.SourceScheme.FindTableMetadata(AnsiUpperCase(TargetTableMetadata.Name));
     if Assigned(SourceTableMetadata) then
-    begin
       AppendDropTableCommand(CommandSequence, TargetTableMetadata);
-      AppendAddTableCommand(CommandSequence, TargetTableMetadata);
-    end;
+    AppendAddTableCommand(CommandSequence, TargetTableMetadata);
     // Add missing indexes and recreate modified indexes
     for iIndex := 0 to TargetTableMetadata.IndexMetadataCount - 1 do
     begin
@@ -610,7 +608,7 @@ end;
 procedure TInstantDBBuilder.InternalBuildCommandSequence;
 begin
   CommandSequence.Clear;
-  CommandSequence.SourceScheme := Connector.CreateScheme(TargetModel);
+  CommandSequence.SourceScheme := Connector.Broker.ReadDatabaseScheme;
   CommandSequence.TargetScheme := Connector.CreateScheme(TargetModel);
   GenerateCommandSequence(CommandSequence);
 end;
