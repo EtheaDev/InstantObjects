@@ -1,6 +1,6 @@
 ------------------------------------------------------------------
 
-  InstantObjects 2.0 Alpha 1 (1.9.01) for Delphi, Kylix, FPC
+  InstantObjects 2.0 Alpha 1 (1.9.0.1) for Delphi, Kylix, FPC
 
   Mozilla Public License 1.1 Edition
   July 2005 release
@@ -110,6 +110,21 @@ INSTALLATION
    following catalog is required by the IBX, dbX and UIB brokers:
    
    <installdir>/Source/Catalogs/IBFb/<version>/IOIBFbCatalog.dpk (build)
+
+Note: all InstantObjects packages use non-standard code in the package
+source file. In particular, they all miss the standard line:
+
+{$R *.RES}
+
+and have this line:
+
+{$I '../../InstantVersion.inc'}
+
+instead. If you open the Project Options for a package and click the
+OK button, some versions of the Delphi IDE will restore the line with
+the $R directive, automatically create a <packagename>.res file that
+IO doesn't need and delete the $I directive. If you ever do that, please
+restore the original situation by editing the Project Source by hand.
 
    
 GETTING STARTED
