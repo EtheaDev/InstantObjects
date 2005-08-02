@@ -30,6 +30,9 @@
 
 unit InstantNexusDbConsts;
 
+{$I ../../InstantDefines.inc}
+{$I InstantNxDbDefines.inc}
+
 interface
 
 resourcestring

@@ -1,7 +1,8 @@
 package DclIONxdb;
 
-{$R *.res}
-{$R '..\InstantNexusDb.dcr'}
+{$I '../../../InstantVersion.inc'}
+
+{$R '../InstantNexusDb.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -23,7 +24,7 @@ package DclIONxdb;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects NexusDb Designtime Support (Delphi 7)'}
+{$DESCRIPTION 'InstantObjects NexusDb Design-Time Support (Delphi 7)'}
 {$LIBSUFFIX '_D7'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}

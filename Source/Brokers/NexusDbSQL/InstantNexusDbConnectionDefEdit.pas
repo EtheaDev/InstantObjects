@@ -30,6 +30,9 @@
 
 unit InstantNexusDbConnectionDefEdit;
 
+{$I ../../InstantDefines.inc}
+{$I InstantNxDbDefines.inc}
+
 interface
 
 uses
@@ -282,11 +285,14 @@ begin
 
       Self.LoadServers(ServersCbx.Items);
 
-      Self.ServerName := ServerName;
-      Self.LoadAliases(AliasesCbx.Items);
+      if ServerName <> '' then
+      begin
+        Self.ServerName := ServerName;
+        Self.LoadAliases(AliasesCbx.Items);
 
-      Self.AliasIsPath := AliasIsPath;
-      Self.Alias := Alias;
+        Self.AliasIsPath := AliasIsPath;
+        Self.Alias := Alias;
+      end;
 
       // Begin SRM - 14 Mar 2005
       StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat);

@@ -30,6 +30,9 @@
 
 unit InstantNexusDbReg;
 
+{$I ../../InstantDefines.inc}
+{$I InstantNxDbDefines.inc}
+
 interface
 
   procedure Register;

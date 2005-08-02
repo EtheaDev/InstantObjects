@@ -1,6 +1,7 @@
 package IONxdb_D5;
 
-{$R *.RES}
+{$I '../../../InstantVersion.inc'}
+
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -22,15 +23,15 @@ package IONxdb_D5;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects NexusDb Runtime Support (Delphi 5)'}
+{$DESCRIPTION 'InstantObjects NexusDb Run-Time Support (Delphi 5)'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
-{$DEFINE NX1}
 
 requires
   vcl50,
   vclx50,
-  IOCore;
+  IOCore,
+  IONxCatalog_D5;
 
 contains
   InstantNexusDbConnectionDefEdit in '..\InstantNexusDbConnectionDefEdit.pas' {InstantNexusDBConnectionDefEditForm},
