@@ -247,8 +247,8 @@ end;
 
 procedure TInstantADSConnector.CheckConnection;
 begin
-  if not HasConnection then
-    raise EInstantError.CreateRes(@SUnassignedConnection);
+ {oif if not HasConnection then
+    raise EInstantError.CreateRes(@SUnassignedConnection);}
 end;
 
 class function TInstantADSConnector.ConnectionDefClass: TInstantConnectionDefClass;
