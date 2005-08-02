@@ -1,6 +1,8 @@
 package DclIOBDE_D5;
 
-{$R *.RES}
+
+{$I '../../../InstantVersion.inc'}
+
 {$R '..\InstantBDE.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}

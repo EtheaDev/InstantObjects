@@ -1,6 +1,7 @@
 package ioff_D5;
 
-{$R *.RES}
+{$I '../../../InstantVersion.inc'}
+
 {$R '..\InstantFlashFiler.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
