@@ -1,6 +1,7 @@
 package DclIOIBX_D5;
 
-{$R *.RES}
+{$I '../../../InstantVersion.inc'}
+
 {$R '..\InstantIBX.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}

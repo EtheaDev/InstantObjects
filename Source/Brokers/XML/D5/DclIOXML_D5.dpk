@@ -1,6 +1,7 @@
 package DclIOXML_D5;
 
-{$R *.RES}
+{$I '../../../InstantVersion.inc'}
+
 {$R '..\InstantXML.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
