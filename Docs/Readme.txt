@@ -111,22 +111,25 @@ INSTALLATION
    
    <installdir>/Source/Catalogs/IBFb/<version>/IOIBFbCatalog.dpk (build)
 
-Note: all InstantObjects packages use non-standard code in the package
-source file. In particular, they all miss the standard line:
+Note: All InstantObjects packages use non-standard code in the package
+source file. In particular, they don't have the standard line:
 
 {$R *.RES}
 
-and have this line:
+and have instead something similar to this line:
 
 {$I '../../InstantVersion.inc'}
 
-instead. If you open the Project Options for a package and click the
-OK button, some versions of the Delphi IDE will restore the line with
-the $R directive, automatically create a <packagename>.res file that
-IO doesn't need and delete the $I directive. If you ever do that, please
-restore the original situation by editing the Project Source by hand.
+that includes the InstantVersion.inc file in the $(InstantObjects)\Source
+folder (Substitute the correct relative path in this statement depending on
+where in the installed folder tree the package file resides). However if you
+open the Project Options for a package and click the OK button, some versions
+of the Delphi IDE will restore the line with the $R directive, automatically
+create a <packagename>.res file that IO doesn't need and delete the $I
+directive. If you ever do that, please restore the original code by editing
+the Project Source by hand.
 
-   
+
 GETTING STARTED
 ---------------
 
