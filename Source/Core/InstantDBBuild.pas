@@ -722,7 +722,7 @@ begin
   DoBeforeExecute;
 
   try
-    if Connector.DDLTransactionSupp then
+    if Connector.DDLTransactionSupported then
       DoExecuteInTransaction
     else
       DoExecute;
