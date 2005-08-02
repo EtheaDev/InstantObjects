@@ -1,6 +1,8 @@
 package ioads_D5;
 
-{$R *.RES}
+
+{$I '../../../InstantVersion.inc'}
+
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
