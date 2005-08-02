@@ -73,7 +73,7 @@ begin
   FDatabase := TJvUIBDataBase.Create(Self);
   FDatabase.Name := 'Database';
 {$IFDEF D5+}
-  FDatabase.SetSubComponent(True);
+  //oif FDatabase.SetSubComponent(True);
 {$ENDIF}
 end;
 
