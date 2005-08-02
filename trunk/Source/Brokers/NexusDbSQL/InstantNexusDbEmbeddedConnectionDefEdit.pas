@@ -30,6 +30,9 @@
 
 unit InstantNexusDbEmbeddedConnectionDefEdit;
 
+{$I ../../InstantDefines.inc}
+{$I InstantNxDbDefines.inc}
+
 interface
 
 uses

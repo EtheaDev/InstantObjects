@@ -1,6 +1,7 @@
 package IONxdb;
 
-{$R *.res}
+{$I '../../../InstantVersion.inc'}
+
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -22,17 +23,17 @@ package IONxdb;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects NexusDb Runtime Support (Delphi 6)'}
+{$DESCRIPTION 'InstantObjects NexusDb Run-Time Support (Delphi 6)'}
 {$LIBSUFFIX '_D6'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
-{$DEFINE Nx1}
 
 requires
   rtl,
   vcl,
   vcldb,
-  IOCore;
+  IOCore,
+  IONxCatalog;
 
 contains
   InstantNexusDbConnectionDefEdit in '..\InstantNexusDbConnectionDefEdit.pas' {InstantNexusDBConnectionDefEditForm},

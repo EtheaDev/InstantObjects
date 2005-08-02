@@ -30,13 +30,8 @@
 
 unit InstantNexusDb;
 
-{$I InstantDefines.inc}
-
-{$IFDEF D7+}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
-{$ENDIF}
+{$I ../../InstantDefines.inc}
+{$I InstantNxDbDefines.inc}
 
 interface
 
@@ -125,8 +120,10 @@ type
       override;
     function CreateBroker: TInstantBroker; override;
     function GetConnected: Boolean; override;
+    function GetDatabaseExists: Boolean; override;
     function GetDatabaseName: string; override;
     function GetDBMSName: string; override;
+    function GetDDLTransactionSupported: Boolean; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     procedure InternalCommitTransaction; override;
     procedure InternalConnect; override;
@@ -154,13 +151,18 @@ type
     function InternalCreateQuery: TInstantQuery; override;
     procedure AssignDataSetParams(DataSet: TDataSet; aParams: TParams);
       override;
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
+        override;
   public
     function CreateDataSet(const aStatement: string;
       aParams: TParams = nil): TDataSet; override;
+    function CreateDBBuildCommand(const CommandType: TInstantDBBuildCommandType):
+        TInstantDBBuildCommand; override;
     function DataTypeToColumnType(DataType: TInstantDataType;
       Size: Integer): string; override;
     function Execute(const aStatement: string;
       aParams: TParams = nil): Integer; override;
+    class function GeneratorClass: TInstantSQLGeneratorClass; override;
     property Connector: TInstantNexusDbSQLConnector
       read GetConnector;
   end;
@@ -193,7 +195,9 @@ uses
   nxdbBase,
   nxtwWinsockTransport,
   nxtnNamedPipeTransport,
-  nxreRemoteServerEngine;
+  nxreRemoteServerEngine,
+  InstantNxCatalog, 
+  InstantDBBuild;
 
 const
   SUndefined = 'Undefined';
@@ -559,7 +563,7 @@ begin
     FillFieldMap(aTbl, lFieldMap);
     aTbl.UpdateIndexDefs;
     if aTbl.IndexDefs.Count = 0 then
-      Exit;
+      Abort;
     aTbl.dsUpdateDataDictionary;
     lDict := TnxDataDictionary.Create;
     lDict.Assign(aTbl.Dictionary);
@@ -587,8 +591,8 @@ begin
   end; { try/finally }
 end;
 
-procedure TInstantNexusDbSQLConnector.FillFieldMap(aTbl: TNexusDbTable; aList:
-  TStrings);
+procedure TInstantNexusDbSQLConnector.FillFieldMap(aTbl: TNexusDbTable;
+  aList: TStrings);
 var
   j: Integer;
 begin
@@ -605,6 +609,18 @@ begin
   Result := Assigned(Database) and Database.Connected;
 end;
 
+function TInstantNexusDbSQLConnector.GetDatabaseExists: Boolean;
+begin
+  Result := False;
+  try
+    Connect;
+    Result := True;
+  except
+    // eat exceptions
+  end;
+  Disconnect;
+end;
+
 function TInstantNexusDbSQLConnector.GetDatabaseName: string;
 begin
   if Assigned(Database) then
@@ -616,6 +632,11 @@ end;
 function TInstantNexusDbSQLConnector.GetDBMSName: string;
 begin
   Result := 'NexusDB (Remote/SQL)';
+end;
+
+function TInstantNexusDbSQLConnector.GetDDLTransactionSupported: Boolean;
+begin
+  Result := False;
 end;
 
 procedure TInstantNexusDbSQLConnector.InternalBuildDatabase(Scheme:
@@ -709,6 +730,12 @@ begin
   end;
 end;
 
+function TInstantNexusDbSQLBroker.CreateCatalog(const AScheme: TInstantScheme):
+    TInstantCatalog;
+begin
+  Result := TInstantNxCatalog.Create(AScheme, Self);
+end;
+
 function TInstantNexusDbSQLBroker.CreateDataSet(
   const aStatement: string; aParams: TParams = nil): TDataSet;
 var
@@ -723,6 +750,29 @@ begin
       AssignDataSetParams(Query, aParams);
   end;
   Result := Query;
+end;
+
+function TInstantNexusDbSQLBroker.CreateDBBuildCommand(const CommandType:
+    TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  if CommandType = ctAddTable then
+    Result := TInstantDBBuildAddTableSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropTable then
+    Result := TInstantDBBuildDropTableSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAddField then
+    Result := TInstantDBBuildAddFieldSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAlterField then
+    Result := TInstantDBBuildAlterFieldSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropField then
+    Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAddIndex then
+    Result := TInstantDBBuildAddIndexSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctAlterIndex then
+    Result := TInstantDBBuildAlterIndexSQLCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropIndex then
+    Result := TInstantDBBuildDropIndexSQLCommand.Create(CommandType, Connector)
+  else
+    Result := inherited CreateDBBuildCommand(CommandType);
 end;
 
 function TInstantNexusDbSQLBroker.DataTypeToColumnType(
@@ -748,6 +798,10 @@ function TInstantNexusDbSQLBroker.Execute(
 var
   DataSet: TNexusDbQuery;
 begin
+  Result := 0; 
+  if aStatement = '' then
+    Exit;
+
   DataSet := AcquireDataSet(aStatement, aParams) as TNexusDbQuery;
   try
     DataSet.ExecSQL;
@@ -755,6 +809,12 @@ begin
   finally
     ReleaseDataSet(DataSet);
   end;
+end;
+
+class function TInstantNexusDbSQLBroker.GeneratorClass:
+    TInstantSQLGeneratorClass;
+begin
+  Result := TInstantSQLGenerator;
 end;
 
 { TInstantNexusDbSQLTranslator }
