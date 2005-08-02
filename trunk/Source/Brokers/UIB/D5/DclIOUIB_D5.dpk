@@ -1,6 +1,7 @@
 package DclIOUIB_D5;
 
-{$R *.RES}
+{$I '../../../InstantVersion.inc'}
+
 {$R '..\InstantUIB.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
