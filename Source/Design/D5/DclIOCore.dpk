@@ -1,6 +1,7 @@
 package DclIOCore;
 
-{$R *.RES}
+{$I '../../../InstantVersion.inc'}
+
 {$R '..\..\Core\InstantPresentation.dcr'}
 {$R '..\..\Core\InstantExplorer.dcr'}
 {$R '..\..\Core\InstantPersistence.dcr'}
