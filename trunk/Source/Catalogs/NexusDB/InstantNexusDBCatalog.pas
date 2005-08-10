@@ -1,7 +1,7 @@
-unit InstantNxCatalog;
+unit InstantNexusDBCatalog;
 
 {$I ../../InstantDefines.inc}
-{$I ../../Brokers/NexusDbSQL/InstantNxDbDefines.inc}
+{$I ../../Brokers/NexusDB/InstantNexusDBDefines.inc}
 
 interface
 
@@ -10,8 +10,8 @@ uses
 
 type
   // A TInstantCatalog that reads catalog information from a NexusDb
-  // database. Can be used with a NexusDbSQL broker.
-  TInstantNxCatalog = class(TInstantSQLBrokerCatalog)
+  // database. Can be used with a NexusDb broker.
+  TInstantNexusDBCatalog = class(TInstantSQLBrokerCatalog)
   private
     procedure AddFieldMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
@@ -32,9 +32,9 @@ implementation
 uses
   SysUtils, Classes, DB;
   
-{ TInstantNxCatalog }
+{ TInstantNexusDBCatalog }
 
-procedure TInstantNxCatalog.AddIndexMetadatas(
+procedure TInstantNexusDBCatalog.AddIndexMetadatas(
   TableMetadata: TInstantTableMetadata);
 var
   Indexes: TDataSet;
@@ -78,6 +78,15 @@ begin
       begin
         IndexMetadata := TableMetadata.IndexMetadatas.Add;
         IndexMetadata.Name := Trim(Indexes.FieldByName('INDEX_NAME').AsString);
+
+        // Ignore automatically generated 'Sequential Access Index'
+        if SameText('Sequential Access Index', IndexMetadata.Name) then
+        begin
+          TableMetadata.IndexMetadatas.Remove(IndexMetadata);
+          Indexes.Next;
+          Continue;
+        end;
+
         IndexMetadata.Fields := GetIndexFields(IndexMetadata.Name);
         IndexMetadata.Options := [];
         if
@@ -101,7 +110,7 @@ begin
   end;
 end;
 
-procedure TInstantNxCatalog.AddFieldMetadatas(
+procedure TInstantNexusDBCatalog.AddFieldMetadatas(
   TableMetadata: TInstantTableMetadata);
 var
   Fields: TDataSet;
@@ -143,7 +152,7 @@ begin
   end;
 end;
 
-procedure TInstantNxCatalog.AddTableMetadatas(
+procedure TInstantNexusDBCatalog.AddTableMetadatas(
   TableMetadatas: TInstantTableMetadatas);
 var
   Tables: TDataSet;
@@ -171,7 +180,7 @@ begin
   end;
 end;
 
-function TInstantNxCatalog.ColumnTypeToDataType(const ColumnType: string; const
+function TInstantNexusDBCatalog.ColumnTypeToDataType(const ColumnType: string; const
     NexusType, FieldScale: Integer): TInstantDataType;
 begin
   { TODO : How to use FieldScale? }
@@ -230,7 +239,7 @@ begin
     raise Exception.CreateFmt('ColumnType %s not supported.', [ColumnType]);
 end;
 
-function TInstantNxCatalog.GetSelectFieldsSQL(
+function TInstantNexusDBCatalog.GetSelectFieldsSQL(
   const ATableName: string): string;
 begin
   Result :=
@@ -251,7 +260,7 @@ begin
     '  FIELD_INDEX';
 end;
 
-function TInstantNxCatalog.GetSelectIndexesSQL(
+function TInstantNexusDBCatalog.GetSelectIndexesSQL(
   const ATableName: string): string;
 begin
   Result :=
@@ -265,7 +274,7 @@ begin
     '  INDEX_INDEX';
 end;
 
-function TInstantNxCatalog.GetSelectIndexFieldsSQL(
+function TInstantNexusDBCatalog.GetSelectIndexFieldsSQL(
   const AIndexName: string): string;
 begin
   Result :=
@@ -279,7 +288,7 @@ begin
     '  SEGMENT_INDEX';
 end;
 
-function TInstantNxCatalog.GetSelectTablesSQL: string;
+function TInstantNexusDBCatalog.GetSelectTablesSQL: string;
 begin
   Result :=
     'select ' +
@@ -290,7 +299,7 @@ begin
     '  TABLE_NAME';
 end;
 
-procedure TInstantNxCatalog.InitTableMetadatas(
+procedure TInstantNexusDBCatalog.InitTableMetadatas(
   ATableMetadatas: TInstantTableMetadatas);
 begin
   ATableMetadatas.Clear;

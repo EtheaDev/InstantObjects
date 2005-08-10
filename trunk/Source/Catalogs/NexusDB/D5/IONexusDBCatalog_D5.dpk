@@ -1,8 +1,8 @@
-package IONxCatalog;
+package IONexusDBCatalog_D5;
 
 {$I ../../../InstantVersion.inc}
 
-{$ALIGN 8}
+{$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
 {$DEBUGINFO ON}
@@ -23,16 +23,14 @@ package IONxCatalog;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects Catalog for NexusDb SQL (Delphi 7)'}
-{$LIBSUFFIX '_D7'}
+{$DESCRIPTION 'InstantObjects Catalog for NexusDB SQL (Delphi 5)'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl,
   IOCore;
 
 contains
-  InstantNxCatalog in '..\InstantNxCatalog.pas';
+  InstantNexusDBCatalog in '..\InstantNexusDBCatalog.pas';
 
 end.
