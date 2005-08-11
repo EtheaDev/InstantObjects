@@ -1,0 +1,59 @@
+package IONexusDB;
+
+{$I '../../../InstantVersion.inc'}
+
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS ON}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'InstantObjects NexusDB Run-Time Support (Delphi 2005)'}
+{$LIBSUFFIX '_D9'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  vcl,
+  vclx,
+  dbrtl,
+  rtl,
+  vcldb,
+  IOCore,
+  IONexusDBCatalog,
+  NexusDB201se90,
+  NexusDB201sr90,
+  NexusDB201sq90,
+  NexusDB201re90,
+  NexusDB201tn90,
+  NexusDB201tw90,
+  NexusDB201db90,
+  NexusDB201ch90,
+  NexusDB201ll90,
+  NexusDB201sd90,
+  NexusDB201st90,
+  NexusDB201pt90;
+
+contains
+  InstantNexusDBConnectionDefEdit in '..\InstantNexusDBConnectionDefEdit.pas' {InstantNexusDBConnectionDefEditForm},
+  InstantNexusDB in '..\InstantNexusDB.pas',
+  InstantNexusDBConsts in '..\InstantNexusDBConsts.pas',
+  InstantNexusDBEmbeddedConnectionDefEdit in '..\InstantNexusDBEmbeddedConnectionDefEdit.pas' {InstantNexusDBEmbeddedConnectionDefEditForm},
+  InstantNexusDBEmbedded in '..\InstantNexusDBEmbedded.pas';
+
+end.
