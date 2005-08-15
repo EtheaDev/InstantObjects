@@ -87,6 +87,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           DataSource = SubjectSource
           TabOrder = 0
           OnChange = NameEditChange
+          OnKeyPress = NameEditKeyPress
         end
         object TypeEdit: TDBComboBox
           Left = 7

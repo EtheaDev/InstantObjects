@@ -94,6 +94,7 @@ type
     StorageKindEdit: TDBComboBox;
     StorageKindLabel: TLabel;
     AutoExternalStorageNameCheckBox: TCheckBox;
+    procedure NameEditKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure NameEditChange(Sender: TObject);
     procedure NumericFieldGetText(Sender: TField; var Text: string;
@@ -287,6 +288,14 @@ begin
   ComputeExternalStorageName;
 end;
 
+procedure TInstantAttributeEditorForm.NameEditKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  inherited;
+  if Key = ' ' then
+    Key := '_';
+end;
+
 procedure TInstantAttributeEditorForm.NumericFieldGetText(Sender: TField;
   var Text: string; Display: Boolean);
 begin
@@ -320,9 +329,17 @@ begin
       if (Attribute <> Subject) and SameText(Attribute.Name, Subject.Name) then
       begin
         ModalResult := mrNone;
+        NameEdit.SetFocus;
         raise Exception.Create('Name already used');
       end;
     end;
+
+  if SizeEdit.Enabled and (SizeEdit.Text = '') then
+  begin
+    ModalResult := mrNone;
+    SizeEdit.SetFocus;
+    raise Exception.Create('Attribute size not set');
+  end;
 
   if not Assigned(FModel) then
     // Do not do SubjectExposer.PostChanges when called from 
