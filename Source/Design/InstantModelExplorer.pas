@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -362,7 +362,7 @@ end;
 procedure TInstantModelExplorerForm.EditClassActionExecute(Sender: TObject);
 begin
   if EditClass(FocusedClass, False) then
-    UpdateModel;
+    Refresh;
 end;
 
 procedure TInstantModelExplorerForm.ExpandAllActionExecute(
