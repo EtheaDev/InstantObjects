@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena
+ * Nando Dessena, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -165,13 +165,13 @@ resourcestring
   SUnexpectedToken = 'Unexpected token ''%s''. Expected token ''%s''';
   SUnknownAttributeClass = 'Unknown attribute class for attribute %s(''%s'')';
   SUnspecifiedCommand = 'Command is not specified';
+  SUnsupportedColumnType = 'ColumnType %s not supported';
   SUnsupportedDataType = 'Unsupported datatype: %s';
   SUnsupportedGraphicClass = 'Unsupported graphic class';
   SUnsupportedGraphicStream = 'Unsupported graphic stream format';
   SUnsupportedOperation = 'Unsupported operation: %s';
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
-  SUnsupportedColumnType = 'ColumnType %s not supported';
 
 implementation
 
