@@ -15,7 +15,7 @@ property IdSize: Integer default InstantDefaultFieldSize;
 
 Just set a data type (I have only tested dtString and dtInteger, and some datatypes like dtBlob and dtBoolean just don't make sense), a DataSize where applicable and build the database. Don't forget to have the same settings when you connect to the database. 
 
-If you use a datatype different than string[32], you might also need to override the default key generation mechanism (otherwise IO will generate 32-character GUIDS that might not fit into your key fields), which you do by handling the connector's OnGenerateId event. Here is the even declaration:
+If you use a datatype different than string[32], you might also need to override the default key generation mechanism (otherwise IO will generate 32-character GUIDS that might not fit into your key fields), which you do by handling the connector's OnGenerateId event. Here is the event declaration:
 
 type
   TInstantGenerateIdEvent = procedure(Sender: TObject;
