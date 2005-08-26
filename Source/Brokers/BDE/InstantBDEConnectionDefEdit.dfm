@@ -1,9 +1,9 @@
 object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
-  Left = 207
-  Top = 248
+  Left = 89
+  Top = 439
   BorderStyle = bsDialog
   Caption = 'BDE Connection'
-  ClientHeight = 351
+  ClientHeight = 369
   ClientWidth = 392
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 314
+    Top = 332
     Width = 392
     Height = 2
     Align = alBottom
@@ -28,7 +28,7 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 392
-    Height = 314
+    Height = 332
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -41,7 +41,7 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
       FocusControl = AliasComboBox
     end
     object DriverLabel: TLabel
-      Left = 163
+      Left = 164
       Top = 12
       Width = 28
       Height = 13
@@ -50,19 +50,35 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
     end
     object ParametersLabel: TLabel
       Left = 12
-      Top = 56
+      Top = 60
       Width = 53
       Height = 13
       Caption = '&Parameters'
       FocusControl = ParametersEdit
     end
     object StreamFormatLabel: TLabel
-      Left = 172
-      Top = 288
+      Left = 12
+      Top = 285
       Width = 53
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
+    end
+    object Label1: TLabel
+      Left = 148
+      Top = 285
+      Width = 62
+      Height = 13
+      Caption = 'Id Data Type'
+      FocusControl = IdDataTypeComboBox
+    end
+    object Label2: TLabel
+      Left = 287
+      Top = 285
+      Width = 32
+      Height = 13
+      Caption = 'Id Size'
+      FocusControl = IdDataTypeComboBox
     end
     object AliasComboBox: TComboBox
       Left = 12
@@ -77,9 +93,9 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
       OnDropDown = AliasComboBoxDropDown
     end
     object DriverComboBox: TComboBox
-      Left = 163
+      Left = 164
       Top = 28
-      Width = 222
+      Width = 213
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
@@ -90,7 +106,7 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
     end
     object ParametersEdit: TMemo
       Left = 12
-      Top = 72
+      Top = 76
       Width = 365
       Height = 201
       ScrollBars = ssVertical
@@ -99,9 +115,9 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
       OnChange = ParametersEditChange
     end
     object StreamFormatComboBox: TComboBox
-      Left = 232
-      Top = 284
-      Width = 145
+      Left = 12
+      Top = 301
+      Width = 120
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
@@ -111,17 +127,33 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
       OnDropDown = AliasComboBoxDropDown
     end
     object LoginPromptCheckBox: TCheckBox
-      Left = 16
-      Top = 286
-      Width = 142
+      Left = 272
+      Top = 54
+      Width = 105
       Height = 17
       Caption = '&Login Prompt'
       TabOrder = 3
     end
+    object IdDataTypeComboBox: TComboBox
+      Left = 148
+      Top = 301
+      Width = 120
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      TabOrder = 5
+    end
+    object IdSizeEdit: TEdit
+      Left = 287
+      Top = 301
+      Width = 90
+      Height = 21
+      TabOrder = 6
+    end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 316
+    Top = 334
     Width = 392
     Height = 35
     Align = alBottom

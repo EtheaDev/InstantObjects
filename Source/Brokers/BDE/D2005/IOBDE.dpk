@@ -32,7 +32,8 @@ requires
   vcl,
   vcldb,
   bdertl,
-  IOCore;
+  IOCore,
+  IOBDECatalog;
 
 contains
   InstantBDEConnectionDefEdit in '..\InstantBDEConnectionDefEdit.pas' {InstantBDEConnectionDefEditForm},

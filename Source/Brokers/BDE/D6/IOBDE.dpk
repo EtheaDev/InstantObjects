@@ -32,6 +32,7 @@ requires
   vcl,
   vcldb,
   bdertl,
+  IOBDECatalog,
   IOCore;
 
 contains

@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Nando Dessena
+ * Carlo Barazzetta, Nando Dessena, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -54,6 +54,10 @@ type
     StreamFormatLabel: TLabel;
     StreamFormatComboBox: TComboBox;
     LoginPromptCheckBox: TCheckBox;
+    IdDataTypeComboBox: TComboBox;
+    IdSizeEdit: TEdit;
+    Label1: TLabel;
+    Label2: TLabel;
     procedure AliasComboBoxChange(Sender: TObject);
     procedure DriverComboBoxChange(Sender: TObject);
     procedure DriverComboBoxDropDown(Sender: TObject);
@@ -76,7 +80,7 @@ implementation
 {$R *.DFM}
 
 uses
-  DbTables, InstantPersistence, InstantClasses;
+  DbTables, InstantPersistence, InstantClasses, InstantConsts;
 
 const
   NoAlias = '(None)';
@@ -124,7 +128,11 @@ begin
     Items.Add(NoAlias);
     ItemIndex := 0;
   end;
-  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
+  AssignInstantStreamFormat(StreamFormatComboBox.Items); 
+  AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
+  IdDataTypeComboBox.ItemIndex := Ord(dtString);
+  IdSizeEdit.Text := IntToStr(InstantDefaultFieldSize);
+  UpdateControls;
 end;
 
 function TInstantBDEConnectionDefEditForm.GetIsValid: Boolean;
@@ -202,11 +210,12 @@ begin
       DriverName := DriverComboBox.Text
     else
       AliasName := Alias;
-    //CB  
+      
     BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
     LoginPrompt := LoginPromptCheckBox.Checked;
-
     Parameters := ParametersEdit.Text;
+    IdDataType := TInstantDataType(IdDataTypeComboBox.ItemIndex);
+    IdSize := StrToInt(IdSizeEdit.Text);
   end;
 end;
 

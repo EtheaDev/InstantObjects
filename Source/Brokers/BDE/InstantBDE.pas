@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Nando Dessena
+ * Carlo Barazzetta, Nando Dessena, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -33,13 +33,14 @@ unit InstantBDE;
 {$I ../../InstantDefines.inc}
 
 {$IFDEF D6+}
-{$WARN SYMBOL_PLATFORM OFF}
+  {$WARN SYMBOL_PLATFORM OFF}
 {$ENDIF}
 
 interface
 
 uses
-  Classes, Db, DBTables, SysUtils, InstantPersistence, InstantCommand;
+  Classes, Db, DBTables, SysUtils, InstantPersistence, InstantCommand,
+  InstantConsts;
 
 type
   TInstantBDEDriverType = (dtUnknown, dtStandard, dtInterBase, dtMSAccess,
@@ -74,6 +75,7 @@ type
     function GetDatabaseExists: Boolean; override;
     function GetDatabaseName: string; override;
     function GetDBMSName: string; override;
+    function GetDDLTransactionSupported: Boolean; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     procedure InternalCommitTransaction; override;
     procedure InternalRollbackTransaction; override;
@@ -86,13 +88,17 @@ type
     property OnLogin: TDatabaseLoginEvent read FOnLogin write FOnLogin; //CB
   end;
 
-  TInstantBDEBroker = class(TInstantRelationalBroker)
+  TInstantBDEBroker = class(TInstantNavigationalBroker)
   private
     function GetConnector: TInstantBDEConnector;
   protected
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
+        override;
     function CreateResolver(const TableName: string): TInstantResolver; override;
     function InternalCreateQuery: TInstantQuery; override;
   public
+    function CreateDBBuildCommand(const CommandType: TInstantDBBuildCommandType):
+        TInstantDBBuildCommand; override;
     property Connector: TInstantBDEConnector read GetConnector;
   end;
 
@@ -127,7 +133,7 @@ type
     property Query: TInstantBDEQuery read GetQuery;
   end;
 
-  TInstantBDEQuery = class(TInstantRelationalQuery)
+  TInstantBDEQuery = class(TInstantNavigationalQuery)
   private
     FQuery: TQuery;
     function GetQuery: TQuery;
@@ -146,11 +152,71 @@ type
     property Connector: TInstantBDEConnector read GetConnector;
   end;
 
+  // Base class for all steps that work by executing one or more commands
+  // (that is, a script) each.
+  TInstantDBBuildBDECommand = class(TInstantDBBuildCommand)
+  private
+    function GetConnector: TInstantBDEConnector;
+    function GetBroker: TInstantBDEBroker;
+  protected
+    // Returns The number of statements that compound this script. The
+    // predefined implementation returns 1.
+    function GetCommandCount: Integer; virtual;
+    // Returns the nth command that is part of this script. Valid values
+    // are in the range 0 to Pred(GetCommandCount). The default
+    // implementation, which should always be called through inherited at the
+    // beginning of the overridden version, just returns '', or raises an
+    // exception if Index is not in the allowed range.
+    function GetCommand(const Index: Integer): string; virtual;
+  public
+    property Connector: TInstantBDEConnector read GetConnector;
+    property Broker: TInstantBDEBroker read GetBroker;
+  end;
+
+  TInstantDBBuildBDEAddTableCommand = class(TInstantDBBuildBDECommand)
+  private
+    function GetTableMetadata: TInstantTableMetadata;
+  protected
+    procedure InternalExecute; override;
+  public
+    property TableMetadata: TInstantTableMetadata read GetTableMetadata;
+  end;
+
+  TInstantDBBuildBDEDropTableCommand = class(TInstantDBBuildBDECommand)
+  private
+    function GetTableMetadata: TInstantTableMetadata;
+  protected
+    procedure InternalExecute; override;
+  public
+    property TableMetadata: TInstantTableMetadata read GetTableMetadata;
+  end;
+
+  TInstantDBBuildBDEAddIndexCommand = class(TInstantDBBuildBDECommand)
+  private
+    function GetIndexMetadata: TInstantIndexMetadata;
+  protected
+    procedure InternalExecute; override;
+  public
+    property IndexMetadata: TInstantIndexMetadata read GetIndexMetadata;
+  end;
+
+  TInstantDBBuildBDEDropIndexCommand = class(TInstantDBBuildBDECommand)
+  private
+    function GetIndexMetadata: TInstantIndexMetadata;
+  protected
+    procedure InternalExecute; override;
+  public
+    property IndexMetadata: TInstantIndexMetadata read GetIndexMetadata;
+  end;
+
 procedure Register;
 implementation
 
 uses
-  Bde, InstantConsts, InstantBDEConnectionDefEdit, Controls;
+  Bde, Controls, InstantBDEConnectionDefEdit, InstantBDECatalog;
+
+resourcestring
+  SCommandIndexOutOfBounds = 'Command index out of bounds.';
 
 procedure Register;
 begin
@@ -281,6 +347,11 @@ begin
     Result := '';
 end;
 
+function TInstantBDEConnector.GetDDLTransactionSupported: Boolean;
+begin
+  Result := False;
+end;
+
 function TInstantBDEConnector.GetDriverType: TInstantBDEDriverType;
 begin
   if HasConnection then
@@ -370,6 +441,27 @@ end;
 procedure TInstantBDEConnector.SetConnection(const Value: TDatabase);
 begin
   inherited Connection := Value;
+end;
+
+function TInstantBDEBroker.CreateCatalog(const AScheme: TInstantScheme):
+    TInstantCatalog;
+begin
+  Result := TInstantBDECatalog.Create(AScheme, Self);
+end;
+
+function TInstantBDEBroker.CreateDBBuildCommand(const CommandType:
+    TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  if CommandType = ctAddTable then
+    Result := TInstantDBBuildBDEAddTableCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropTable then
+    Result := TInstantDBBuildBDEDropTableCommand.Create(CommandType, Connector)
+  else if CommandType = ctAddIndex then
+    Result := TInstantDBBuildBDEAddIndexCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropIndex then
+    Result := TInstantDBBuildBDEDropIndexCommand.Create(CommandType, Connector)
+  else
+    Result := inherited CreateDBBuildCommand(CommandType);
 end;
 
 { TInstantBDEBroker }
@@ -602,6 +694,171 @@ begin
     Result := False;
   end;
 end;
+
+{ TInstantDBBuildSQLCommand }
+
+function TInstantDBBuildBDECommand.GetBroker: TInstantBDEBroker;
+begin
+  Result := Connector.Broker as TInstantBDEBroker;
+end;
+
+function TInstantDBBuildBDECommand.GetConnector: TInstantBDEConnector;
+begin
+  Result := inherited Connector as TInstantBDEConnector;
+end;
+
+function TInstantDBBuildBDECommand.GetCommand(const Index: Integer): string;
+begin
+  if (Index < 0) or (Index >= GetCommandCount) then
+    raise EInstantDBBuildError.CreateFmt(SCommandIndexOutOfBounds,
+      [Index]);
+  Result := '';
+end;
+
+function TInstantDBBuildBDECommand.GetCommandCount: Integer;
+begin
+  Result := 1;
+end;
+
+function TInstantDBBuildBDEAddTableCommand.GetTableMetadata:
+    TInstantTableMetadata;
+begin
+  Result := NewMetadata as TInstantTableMetadata;
+end;
+
+procedure TInstantDBBuildBDEAddTableCommand.InternalExecute;
+const
+  FieldTypes: array[TInstantDataType] of TFieldType =
+    (ftInteger, ftFloat, ftCurrency, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
+var
+  I: Integer;
+  Table: TTable;
+  IndexName: string;
+begin
+  Table := TTable.Create(nil);
+  try
+    Table.TableName := TableMetadata.Name;
+    Table.DatabaseName := Connector.Connection.DatabaseName;
+    with TableMetadata do
+    begin
+      for I := 0 to Pred(FieldMetadatas.Count) do
+        with FieldMetadatas[I] do
+          if FieldTypes[DataType] in [ftString, ftMemo, ftBlob] then
+            Table.FieldDefs.Add(Name, FieldTypes[DataType], Size,
+                    foRequired in Options)
+          else
+            Table.FieldDefs.Add(Name, FieldTypes[DataType], 0,
+                    foRequired in Options);
+
+      Table.IndexDefs.Clear;
+      for I := 0 to Pred(IndexMetadatas.Count) do
+        // Only add the primary index here
+        if ixPrimary in IndexMetadatas[I].Options then
+        begin
+          IndexName := IndexMetadatas[I].Name;
+          if IndexName = '' then
+            IndexName := Table.TableName + '_' + 'ID';
+          with Table.IndexDefs.AddIndexDef do
+          begin
+            Name := IndexName;
+            Fields := IndexMetadatas[I].Fields;
+            Options := IndexMetadatas[I].Options;
+          end;
+      end;
+    end;
+    Table.CreateTable;
+  finally
+    Table.Free;
+  end;
+end;
+
+function TInstantDBBuildBDEDropTableCommand.GetTableMetadata:
+    TInstantTableMetadata;
+begin
+  Result := OldMetadata as TInstantTableMetadata;
+end;
+
+procedure TInstantDBBuildBDEDropTableCommand.InternalExecute;
+var
+  Table: TTable;
+begin
+  Table := TTable.Create(nil);
+  try
+    Table.TableName := TableMetadata.Name;
+    Table.DatabaseName := Connector.Connection.DatabaseName;
+    Table.Close;
+    Table.DeleteTable;
+  finally
+    Table.Free;
+  end;
+end;
+
+{ TInstantDBBuildAddIndexSQLCommand }
+
+function TInstantDBBuildBDEAddIndexCommand.GetIndexMetadata:
+    TInstantIndexMetadata;
+begin
+  Result := NewMetadata as TInstantIndexMetadata;
+end;
+
+procedure TInstantDBBuildBDEAddIndexCommand.InternalExecute;
+var
+  Table: TTable;
+begin
+  Table := TTable.Create(nil);
+  try
+    Table.TableName := IndexMetadata.TableMetadata.Name;
+    Table.DatabaseName := Connector.Connection.DatabaseName;
+    with IndexMetadata do
+    begin
+      if not (ixPrimary in Options) then
+      begin
+        if (Connector.DriverType = dtStandard) and (Pos(';', Fields) = 0) then
+          // Name of a non-composite index must the be field name for Paradox.
+          Name := Fields;  
+        Table.AddIndex(Name, Fields, Options);
+      end;
+    end;
+  finally
+    Table.Free;
+  end;
+end;
+
+{ TInstantDBBuildAddIndexSQLCommand }
+
+function TInstantDBBuildBDEDropIndexCommand.GetIndexMetadata:
+    TInstantIndexMetadata;
+begin
+  Result := OldMetadata as TInstantIndexMetadata;
+end;
+
+procedure TInstantDBBuildBDEDropIndexCommand.InternalExecute;
+var
+  Table: TTable;
+
+  function RemoveTableNamePrefix(const AName, ATableName: String): String;
+  begin
+    Result := AName;
+    if Pos(ATableName, Result) = 1 then
+      Result := Copy(Result, 1 + Length(ATableName), Length(Result));
+  end;
+begin
+  Table := TTable.Create(nil);
+  try
+    Table.TableName := IndexMetadata.TableMetadata.Name;
+    Table.DatabaseName := Connector.Connection.DatabaseName;
+    Table.Exclusive := True;
+    Table.Open;
+    with IndexMetadata do
+      if not (ixPrimary in Options) then
+        Table.DeleteIndex(
+                RemoveTableNamePrefix(Name, IndexMetadata.TableMetadata.Name));
+    Table.Close;
+  finally
+    Table.Free;
+  end;
+end;
+
 
 initialization
   RegisterClass(TInstantBDEConnectionDef);
