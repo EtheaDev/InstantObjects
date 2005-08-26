@@ -1,6 +1,6 @@
-package Iobde_D5;
+package IOBDECatalog_D5;
 
-{$I '../../../InstantVersion.inc'}
+{$I ../../../InstantVersion.inc}
 
 {$ALIGN ON}
 {$ASSERTIONS ON}
@@ -20,20 +20,17 @@ package Iobde_D5;
 {$STACKFRAMES OFF}
 {$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
-{$WRITEABLECONST ON}
+{$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects BDE Run-Time Support (Delphi 5)'}
+{$DESCRIPTION 'InstantObjects Catalog for BDE (Delphi 5)'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  IOBDECatalog,
-  IOCore,
-  VCLBDE50;
+  IOCore;
 
 contains
-  InstantBDEConnectionDefEdit in '..\InstantBDEConnectionDefEdit.pas' {InstantBDEConnectionDefEditForm},
-  InstantBDE in '..\InstantBDE.pas';
+  InstantBDECatalog in '..\InstantBDECatalog.pas';
 
 end.
