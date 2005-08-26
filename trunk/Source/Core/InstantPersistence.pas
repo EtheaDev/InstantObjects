@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
- * Joao Morais, Cesar Coll, Uberto Barbini
+ * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -10425,6 +10425,8 @@ function TInstantRelationalConnector.InternalCreateScheme(
   Model: TInstantModel): TInstantScheme;
 begin
   Result := TInstantScheme.Create;
+  Result.IdDataType := IdDataType;
+  Result.IdSize     := IdSize;      
   Result.Catalog := TInstantModelCatalog.Create(Result, Model);
 end;
 
