@@ -181,8 +181,6 @@ type
   TInstantADOMSSQLQuery = class(TInstantSQLQuery)
   end;
 
-procedure Register;
-
 implementation
 
 uses
@@ -192,11 +190,6 @@ uses
 
 const
   ADOLinkPrefix = 'FILE NAME=';
-
-procedure Register;
-begin
-  RegisterComponents('InstantObjects', [TInstantADOConnector]);
-end;
 
 procedure AssignParameters(Params: TParams; Parameters: TParameters);
 var
