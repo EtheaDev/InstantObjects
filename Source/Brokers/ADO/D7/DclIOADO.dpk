@@ -1,6 +1,6 @@
 package DclIOADO;
 
-{$I '../../InstantVersion.inc'}
+{$I '../../../InstantVersion.inc'}
 
 {$R '../InstantADO.dcr'}
 {$ALIGN 8}

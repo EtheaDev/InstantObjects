@@ -1,7 +1,8 @@
 package DclIOADO;
 
-{$R *.res}
-{$R '..\InstantADO.dcr'}
+{$I '../../../InstantVersion.inc'}
+
+{$R '../InstantADO.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
