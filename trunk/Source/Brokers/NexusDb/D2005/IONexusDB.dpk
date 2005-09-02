@@ -35,19 +35,7 @@ requires
   rtl,
   vcldb,
   IOCore,
-  IONexusDBCatalog,
-  NexusDB201se90,
-  NexusDB201sr90,
-  NexusDB201sq90,
-  NexusDB201re90,
-  NexusDB201tn90,
-  NexusDB201tw90,
-  NexusDB201db90,
-  NexusDB201ch90,
-  NexusDB201ll90,
-  NexusDB201sd90,
-  NexusDB201st90,
-  NexusDB201pt90;
+  IONexusDBCatalog;
 
 contains
   InstantNexusDBConnectionDefEdit in '..\InstantNexusDBConnectionDefEdit.pas' {InstantNexusDBConnectionDefEditForm},
