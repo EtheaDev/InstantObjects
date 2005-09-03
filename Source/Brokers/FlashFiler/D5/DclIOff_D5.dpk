@@ -1,6 +1,6 @@
 package DclIOff_D5;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$R 'InstantFlashFiler.dcr'}
 {$ALIGN ON}

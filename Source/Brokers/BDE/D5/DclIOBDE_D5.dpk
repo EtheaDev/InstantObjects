@@ -1,8 +1,8 @@
 package DclIOBDE_D5;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
-{$R '../InstantBDE.dcr'}
+{$R '..\InstantBDE.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}

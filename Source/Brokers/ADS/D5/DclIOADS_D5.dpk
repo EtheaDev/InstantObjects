@@ -1,6 +1,6 @@
 package DclIOADS_D5;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$R '..\InstantADS.dcr'}
 {$ALIGN ON}

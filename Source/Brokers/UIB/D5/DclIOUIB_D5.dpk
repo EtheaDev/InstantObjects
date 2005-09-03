@@ -1,6 +1,6 @@
 package DclIOUIB_D5;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$R '..\InstantUIB.dcr'}
 {$ALIGN ON}

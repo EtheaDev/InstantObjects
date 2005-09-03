@@ -1,6 +1,6 @@
 package DclIOCore;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$R '..\..\Core\InstantPresentation.dcr'}
 {$R '..\..\Core\InstantExplorer.dcr'}
