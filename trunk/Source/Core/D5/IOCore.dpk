@@ -1,6 +1,6 @@
 package IOCore;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$R '..\InstantPump.dcr'}
 {$R '..\InstantDBEvolution.dcr'}

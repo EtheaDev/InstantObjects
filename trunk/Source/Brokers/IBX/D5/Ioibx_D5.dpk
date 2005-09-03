@@ -1,6 +1,6 @@
 package Ioibx_D5;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$ALIGN ON}
 {$ASSERTIONS ON}

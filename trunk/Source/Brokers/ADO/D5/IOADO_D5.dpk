@@ -1,6 +1,6 @@
 package IOADO;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$ALIGN ON}
 {$ASSERTIONS ON}

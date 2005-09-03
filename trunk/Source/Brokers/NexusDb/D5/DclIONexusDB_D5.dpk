@@ -1,8 +1,8 @@
 package DclIONexusDB_D5;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
-{$R '../InstantNexusDB.dcr'}
+{$R '..\InstantNexusDB.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
