@@ -32,7 +32,11 @@ unit InstantPresentation;
 
 interface
 
-{$I ../../InstantDefines.inc}
+{$IFDEF LINUX}
+{$I '../InstantDefines.inc'}
+{$ELSE}
+{$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 uses
   Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantUtils;

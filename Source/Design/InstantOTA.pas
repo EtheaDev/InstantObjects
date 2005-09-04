@@ -32,7 +32,11 @@ unit InstantOTA;
 
 interface
 
-{$I ../../InstantDefines.inc}
+{$IFDEF LINUX}
+{$I '../InstantDefines.inc'}
+{$ELSE}
+{$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 {$IFDEF D7+}
 {$WARN UNIT_DEPRECATED OFF}

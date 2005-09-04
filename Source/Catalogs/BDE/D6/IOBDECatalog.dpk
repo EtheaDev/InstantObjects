@@ -1,6 +1,6 @@
 package IOBDECatalog;
 
-{$I ../../../InstantVersion.inc}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$ALIGN 8}
 {$ASSERTIONS ON}

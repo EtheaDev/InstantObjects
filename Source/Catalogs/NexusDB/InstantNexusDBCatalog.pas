@@ -29,8 +29,13 @@
 
 unit InstantNexusDBCatalog;
 
-{$I ../../InstantDefines.inc}
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
 {$I ../../Brokers/NexusDB/InstantNexusDBDefines.inc}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$I ..\..\Brokers/NexusDB/InstantNexusDBDefines.inc}
+{$ENDIF}
 
 interface
 
