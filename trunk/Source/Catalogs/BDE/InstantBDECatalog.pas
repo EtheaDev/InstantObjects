@@ -29,7 +29,11 @@
 
 unit InstantBDECatalog;
 
-{$I ../../InstantDefines.inc}
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
