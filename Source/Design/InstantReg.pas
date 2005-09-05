@@ -43,7 +43,11 @@ procedure Register;
 
 implementation
 
-{$R ../iodesimages.res}
+{$IFDEF LINUX}
+{$I '../iodesimages.res'}
+{$ELSE}
+{$I '..\iodesimages.res'}
+{$ENDIF}
 
 uses
   Classes, InstantConsts, InstantPersistence, InstantPresentation,
