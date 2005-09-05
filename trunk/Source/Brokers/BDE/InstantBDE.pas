@@ -699,7 +699,7 @@ begin
   end;
 end;
 
-{ TInstantDBBuildSQLCommand }
+{ TInstantDBBuildBDECommand }
 
 function TInstantDBBuildBDECommand.GetBroker: TInstantBDEBroker;
 begin
