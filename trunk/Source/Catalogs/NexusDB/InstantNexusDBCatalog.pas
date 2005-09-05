@@ -34,7 +34,7 @@ unit InstantNexusDBCatalog;
 {$I ../../Brokers/NexusDB/InstantNexusDBDefines.inc}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$I ..\..\Brokers/NexusDB/InstantNexusDBDefines.inc}
+{$I ..\..\Brokers\NexusDB\InstantNexusDBDefines.inc}
 {$ENDIF}
 
 interface
