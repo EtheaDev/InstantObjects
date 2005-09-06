@@ -44,9 +44,9 @@ procedure Register;
 implementation
 
 {$IFDEF LINUX}
-{$I '../iodesimages.res'}
+{$R '../iodesimages.res'}
 {$ELSE}
-{$I '..\iodesimages.res'}
+{$R '..\iodesimages.res'}
 {$ENDIF}
 
 uses
