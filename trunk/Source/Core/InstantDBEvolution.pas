@@ -96,82 +96,113 @@ var
   SourceTableMetadata, TargetTableMetadata: TInstantTableMetadata;
   SourceFieldMetadata, TargetFieldMetadata: TInstantFieldMetadata;
   SourceIndexMetadata, TargetIndexMetadata: TInstantIndexMetadata;
-begin
-  // Upgrade tables.
-  for iTable := 0 to CommandSequence.TargetScheme.TableMetadataCount - 1 do
+
+  function ReadTableInfoSupported: Boolean;
   begin
-    TargetTableMetadata := CommandSequence.TargetScheme.TableMetadatas[iTable];
-    { TODO : This only works for case-insensitive object names! }
-    SourceTableMetadata :=
-      CommandSequence.SourceScheme.FindTableMetadata(AnsiUpperCase(TargetTableMetadata.Name));
-    if Assigned(SourceTableMetadata) then
-    begin
-      // Add missing fields and alter modified fields
-      for iField := 0 to TargetTableMetadata.FieldMetadataCount - 1 do
-      begin
-        TargetFieldMetadata := TargetTableMetadata.FieldMetadatas[iField];
-        { TODO : This only works for case-insensitive object names! }
-        SourceFieldMetadata := SourceTableMetadata.FindFieldMetadata(AnsiUpperCase(TargetFieldMetadata.Name));
-        if Assigned(SourceFieldMetadata) then
-        begin
-          if not SourceFieldMetadata.Equals(TargetFieldMetadata) then
-            AppendAlterFieldCommand(CommandSequence, SourceFieldMetadata,
-              TargetFieldMetadata);
-        end
-        else
-          AppendAddFieldCommand(CommandSequence, TargetFieldMetadata);
-      end;
-      // Add missing indexes and recreate modified indexes
-      for iIndex := 0 to TargetTableMetadata.IndexMetadataCount - 1 do
-      begin
-        TargetIndexMetadata := TargetTableMetadata.IndexMetadatas[iIndex];
-        if not (ixPrimary in TargetIndexMetadata.Options) then
-        begin
-          { TODO : This only works for case-insensitive object names! }
-          SourceIndexMetadata := SourceTableMetadata.FindIndexMetadata(AnsiUpperCase(TargetIndexMetadata.Name));
-          if Assigned(SourceIndexMetadata) then
-          begin
-            if not SourceIndexMetadata.Equals(TargetIndexMetadata) then
-              AppendAlterIndexCommand(CommandSequence, SourceIndexMetadata,
-                TargetIndexMetadata);
-          end
-          else
-            AppendAddIndexCommand(CommandSequence, TargetIndexMetadata);
-        end;
-      end;
-      // Drop deleted indexes
-      for iIndex := 0 to SourceTableMetadata.IndexMetadataCount - 1 do
-      begin
-        SourceIndexMetadata := SourceTableMetadata.IndexMetadatas[iIndex];
-        if not (ixPrimary in SourceIndexMetadata.Options) then
-        begin
-          { TODO : This only works for case-insensitive object names! }
-          TargetIndexMetadata := TargetTableMetadata.FindIndexMetadata(AnsiUpperCase(SourceIndexMetadata.Name));
-          if not Assigned(TargetIndexMetadata) then
-            AppendDropIndexCommand(CommandSequence, SourceIndexMetadata);
-        end;
-      end;
-      // Drop deleted fields
-      for iField := 0 to SourceTableMetadata.FieldMetadataCount - 1 do
-      begin
-        SourceFieldMetadata := SourceTableMetadata.FieldMetadatas[iField];
-        { TODO : This only works for case-insensitive object names! }
-        TargetFieldMetadata := TargetTableMetadata.FindFieldMetadata(AnsiUpperCase(SourceFieldMetadata.Name));
-        if not Assigned(TargetFieldMetadata) then
-          AppendDropFieldCommand(CommandSequence, SourceFieldMetadata);
-      end;
-    end
-    else
-      AppendAddTableCommand(CommandSequence, TargetTableMetadata);
+    Result := (cfReadTableInfo in CommandSequence.SourceScheme.Catalog.Features) and
+      (cfReadTableInfo in CommandSequence.TargetScheme.Catalog.Features);
   end;
-  // Drop deleted tables.
-  for iTable := 0 to CommandSequence.SourceScheme.TableMetadataCount - 1 do
+
+  function ReadColumnInfoSupported: Boolean;
   begin
-    SourceTableMetadata := CommandSequence.SourceScheme.TableMetadatas[iTable];
-    TargetTableMetadata :=
-      CommandSequence.TargetScheme.FindTableMetadata(SourceTableMetadata.Name);
-    if not Assigned(TargetTableMetadata) then
-      AppendDropTableCommand(CommandSequence, SourceTableMetadata);
+    Result := (cfReadColumnInfo in CommandSequence.SourceScheme.Catalog.Features) and
+      (cfReadColumnInfo in CommandSequence.TargetScheme.Catalog.Features);
+  end;
+
+  function ReadIndexInfoSupported: Boolean;
+  begin
+    Result := (cfReadIndexInfo in CommandSequence.SourceScheme.Catalog.Features) and
+      (cfReadIndexInfo in CommandSequence.TargetScheme.Catalog.Features);
+  end;
+
+begin
+  if ReadTableInfoSupported then
+  begin
+    // Upgrade tables.
+    for iTable := 0 to CommandSequence.TargetScheme.TableMetadataCount - 1 do
+    begin
+      TargetTableMetadata := CommandSequence.TargetScheme.TableMetadatas[iTable];
+      { TODO : This only works for case-insensitive object names! }
+      SourceTableMetadata :=
+        CommandSequence.SourceScheme.FindTableMetadata(AnsiUpperCase(TargetTableMetadata.Name));
+      if Assigned(SourceTableMetadata) then
+      begin
+        if ReadColumnInfoSupported then
+        begin
+          // Add missing fields and alter modified fields
+          for iField := 0 to TargetTableMetadata.FieldMetadataCount - 1 do
+          begin
+            TargetFieldMetadata := TargetTableMetadata.FieldMetadatas[iField];
+            { TODO : This only works for case-insensitive object names! }
+            SourceFieldMetadata := SourceTableMetadata.FindFieldMetadata(AnsiUpperCase(TargetFieldMetadata.Name));
+            if Assigned(SourceFieldMetadata) then
+            begin
+              if not SourceFieldMetadata.Equals(TargetFieldMetadata) then
+                AppendAlterFieldCommand(CommandSequence, SourceFieldMetadata,
+                  TargetFieldMetadata);
+            end
+            else
+              AppendAddFieldCommand(CommandSequence, TargetFieldMetadata);
+          end;
+        end;
+        if ReadIndexInfoSupported then
+        begin
+          // Add missing indexes and recreate modified indexes
+          for iIndex := 0 to TargetTableMetadata.IndexMetadataCount - 1 do
+          begin
+            TargetIndexMetadata := TargetTableMetadata.IndexMetadatas[iIndex];
+            if not (ixPrimary in TargetIndexMetadata.Options) then
+            begin
+              { TODO : This only works for case-insensitive object names! }
+              SourceIndexMetadata := SourceTableMetadata.FindIndexMetadata(AnsiUpperCase(TargetIndexMetadata.Name));
+              if Assigned(SourceIndexMetadata) then
+              begin
+                if not SourceIndexMetadata.Equals(TargetIndexMetadata) then
+                  AppendAlterIndexCommand(CommandSequence, SourceIndexMetadata,
+                    TargetIndexMetadata);
+              end
+              else
+                AppendAddIndexCommand(CommandSequence, TargetIndexMetadata);
+            end;
+          end;
+          // Drop deleted indexes
+          for iIndex := 0 to SourceTableMetadata.IndexMetadataCount - 1 do
+          begin
+            SourceIndexMetadata := SourceTableMetadata.IndexMetadatas[iIndex];
+            if not (ixPrimary in SourceIndexMetadata.Options) then
+            begin
+              { TODO : This only works for case-insensitive object names! }
+              TargetIndexMetadata := TargetTableMetadata.FindIndexMetadata(AnsiUpperCase(SourceIndexMetadata.Name));
+              if not Assigned(TargetIndexMetadata) then
+                AppendDropIndexCommand(CommandSequence, SourceIndexMetadata);
+            end;
+          end;
+        end;
+        if ReadColumnInfoSupported then
+        begin
+          // Drop deleted fields
+          for iField := 0 to SourceTableMetadata.FieldMetadataCount - 1 do
+          begin
+            SourceFieldMetadata := SourceTableMetadata.FieldMetadatas[iField];
+            { TODO : This only works for case-insensitive object names! }
+            TargetFieldMetadata := TargetTableMetadata.FindFieldMetadata(AnsiUpperCase(SourceFieldMetadata.Name));
+            if not Assigned(TargetFieldMetadata) then
+              AppendDropFieldCommand(CommandSequence, SourceFieldMetadata);
+          end;
+        end;
+      end
+      else
+        AppendAddTableCommand(CommandSequence, TargetTableMetadata);
+    end;
+    // Drop deleted tables.
+    for iTable := 0 to CommandSequence.SourceScheme.TableMetadataCount - 1 do
+    begin
+      SourceTableMetadata := CommandSequence.SourceScheme.TableMetadatas[iTable];
+      TargetTableMetadata :=
+        CommandSequence.TargetScheme.FindTableMetadata(SourceTableMetadata.Name);
+      if not Assigned(TargetTableMetadata) then
+        AppendDropTableCommand(CommandSequence, SourceTableMetadata);
+    end;
   end;
 end;
 
