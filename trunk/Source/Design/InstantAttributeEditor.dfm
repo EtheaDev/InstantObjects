@@ -133,6 +133,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           DataField = 'Metadata.Size'
           DataSource = SubjectSource
           TabOrder = 3
+          OnChange = SizeEditChange
         end
         object ExternalStorageNameEdit: TDBEdit
           Left = 7
