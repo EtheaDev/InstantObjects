@@ -590,21 +590,29 @@ var
   TargetIndexMetadata: TInstantIndexMetadata;
 begin
   // Recreate tables.
-  for iTable := 0 to CommandSequence.TargetScheme.TableMetadataCount - 1 do
+  if (cfReadTableInfo in CommandSequence.SourceScheme.Catalog.Features) and
+    (cfReadTableInfo in CommandSequence.TargetScheme.Catalog.Features) then
   begin
-    TargetTableMetadata := CommandSequence.TargetScheme.TableMetadatas[iTable];
-    { TODO : This only works for case-insensitive object names! }
-    SourceTableMetadata :=
-      CommandSequence.SourceScheme.FindTableMetadata(AnsiUpperCase(TargetTableMetadata.Name));
-    if Assigned(SourceTableMetadata) then
-      AppendDropTableCommand(CommandSequence, TargetTableMetadata);
-    AppendAddTableCommand(CommandSequence, TargetTableMetadata);
-    // Add missing indexes and recreate modified indexes
-    for iIndex := 0 to TargetTableMetadata.IndexMetadataCount - 1 do
+    for iTable := 0 to CommandSequence.TargetScheme.TableMetadataCount - 1 do
     begin
-      TargetIndexMetadata := TargetTableMetadata.IndexMetadatas[iIndex];
-      if not (ixPrimary in TargetIndexMetadata.Options) then
-        AppendAddIndexCommand(CommandSequence, TargetIndexMetadata);
+      TargetTableMetadata := CommandSequence.TargetScheme.TableMetadatas[iTable];
+      { TODO : This only works for case-insensitive object names! }
+      SourceTableMetadata :=
+        CommandSequence.SourceScheme.FindTableMetadata(AnsiUpperCase(TargetTableMetadata.Name));
+      if Assigned(SourceTableMetadata) then
+        AppendDropTableCommand(CommandSequence, TargetTableMetadata);
+      AppendAddTableCommand(CommandSequence, TargetTableMetadata);
+    // Recreate indexes
+    if (cfReadIndexInfo in CommandSequence.SourceScheme.Catalog.Features) and
+      (cfReadIndexInfo in CommandSequence.TargetScheme.Catalog.Features) then
+    begin
+      for iIndex := 0 to TargetTableMetadata.IndexMetadataCount - 1 do
+      begin
+        TargetIndexMetadata := TargetTableMetadata.IndexMetadatas[iIndex];
+        if not (ixPrimary in TargetIndexMetadata.Options) then
+          AppendAddIndexCommand(CommandSequence, TargetIndexMetadata);
+        end;
+      end;
     end;
   end;
 end;

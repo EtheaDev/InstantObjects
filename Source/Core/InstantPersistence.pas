@@ -389,6 +389,8 @@ type
     property Items[Index: Integer]: TInstantTableMetadata read GetItems; default;
   end;
 
+  TInstantCatalogFeature = (cfReadTableInfo, cfReadColumnInfo, cfReadIndexInfo);
+  TInstantCatalogFeatures = set of TInstantCatalogFeature;
   // An object that provides the metadata info used by a TInstantScheme object
   // to build itself. It abstracts the way the information is fetched and its
   // source. It always works with a TInstantScheme. It is usually created
@@ -396,10 +398,12 @@ type
   //   Scheme := TInstantScheme.Create;
   //   Scheme.Catalog := Broker.CreateCatalog(Scheme);
   // and the object ownership is transferred to Scheme, which is then
-  // responsible for destroying the catalog object. 
+  // responsible for destroying the catalog object.
   TInstantCatalog = class
   private
     FScheme: TInstantScheme;
+  protected
+    function GetFeatures: TInstantCatalogFeatures; virtual;
   public
     // Creates an instance and binds it to the specified TInstantScheme object.
     constructor Create(const AScheme: TInstantScheme);
@@ -410,6 +414,10 @@ type
     // Initializes ATableMetadatas from the catalog.
     procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas);
       virtual; abstract;
+    // Returns a set of supported features. The predefined implementation
+    // says that the catalog support everything; derived classes might not
+    // support all features.
+    property Features: TInstantCatalogFeatures read GetFeatures;
   end;
 
   // A TInstantCatalog that gathers its info from a TInstantModel.
@@ -15330,6 +15338,11 @@ constructor TInstantCatalog.Create(const AScheme: TInstantScheme);
 begin
   inherited Create;
   FScheme := AScheme;
+end;
+
+function TInstantCatalog.GetFeatures: TInstantCatalogFeatures;
+begin
+  Result := [cfReadTableInfo, cfReadColumnInfo, cfReadIndexInfo];
 end;
 
 { TInstantSQLBrokerCatalog }
