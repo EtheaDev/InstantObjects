@@ -114,7 +114,6 @@ type
     procedure ExternalStorageNameEditChange(Sender: TObject);
     procedure StorageNameEditChange(Sender: TObject);
     procedure AutoExternalStorageNameCheckBoxClick(Sender: TObject);
-    procedure SizeEditChange(Sender: TObject);
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
@@ -497,12 +496,11 @@ procedure TInstantAttributeEditorForm.UpdateControls;
   end;
 
 var
-  HasName, HasSize, HasClass, IsComplex, IsContainer, CanBeExternal,
+  HasName, HasClass, IsComplex, IsContainer, CanBeExternal,
     CanHaveStorageName, IsMaskable, IsString, IsValid: Boolean;
 begin
   CanBeExternal := False;
   CanHaveStorageName := True;
-  HasSize := False;
   IsComplex := False;
   IsMaskable := False;
   IsContainer := False;
@@ -515,7 +513,6 @@ begin
       Subject.StorageKind := skEmbedded;
     if Subject.AttributeType = atPart then
       Subject.ExternalStorageName := '';
-    HasSize := Subject.Metadata.Size > 0;
     IsComplex := Subject.IsComplex;
     IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat,
       atCurrency, atInteger];
@@ -528,8 +525,7 @@ begin
   HasName := NameEdit.Text <> '';
   HasClass := ObjectClassEdit.Text <> '';
 
-  IsValid := HasName and (not IsComplex or HasClass) and
-    (not IsString or HasSize);
+  IsValid := HasName and (not IsComplex or HasClass);
 
   DisableSubControls(DefinitionSheet, Limited);
   DisableSubControls(AccessSheet, Limited);
@@ -624,12 +620,6 @@ begin
   else
     ExternalStorageNameEdit.Text := '';
 
-end;
-
-procedure TInstantAttributeEditorForm.SizeEditChange(Sender: TObject);
-begin
-  SubjectExposer.AssignFieldValue(SizeEdit.Field, SizeEdit.Text);
-  UpdateControls;
 end;
 
 end.
