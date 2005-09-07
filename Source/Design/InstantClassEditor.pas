@@ -315,8 +315,8 @@ begin
       Caption := Title;
     Model := Self.Model;
     BaseClassStorageName := GetClassStorageName;
-    Subject := Attribute;
     Limited := Exists;
+    Subject := Attribute;
     Result := ShowModal = mrOk;
     if Result then
       Attribute.Realize;

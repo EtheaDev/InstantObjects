@@ -114,6 +114,7 @@ type
     procedure ExternalStorageNameEditChange(Sender: TObject);
     procedure StorageNameEditChange(Sender: TObject);
     procedure AutoExternalStorageNameCheckBoxClick(Sender: TObject);
+    procedure SizeEditChange(Sender: TObject);
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
@@ -269,18 +270,28 @@ end;
 procedure TInstantAttributeEditorForm.LoadVisibilities;
 var
   I: Integer;
+  S: String;
 begin
   SubjectExposer.GetFieldStrings(VisibilityEdit.Field, VisibilityEdit.Items);
   I := VisibilityEdit.Items.IndexOf('Default');
   if I <> -1 then
     VisibilityEdit.Items.Delete(I);
+    
   if Assigned(Subject) and Subject.IsContainer then
   begin
     I := VisibilityEdit.Items.IndexOf('Published');
     if I <> -1 then
       VisibilityEdit.Items.Delete(I);
   end;
-  if Assigned(VisibilityEdit.Field) then
+
+  if Limited then
+  begin
+    S := GetEnumName(TypeInfo(TInstantCodeVisibility),
+      Ord(Subject.FindValueProp.Visibility));
+    VisibilityEdit.ItemIndex :=
+      VisibilityEdit.Items.IndexOf(Copy(S, 3, length(S)));
+  end
+  else if Assigned(VisibilityEdit.Field) then
     VisibilityEdit.ItemIndex :=
       VisibilityEdit.Items.IndexOf(VisibilityEdit.Field.AsString);
 end;
@@ -338,20 +349,7 @@ begin
       end;
     end;
 
-  if SizeEdit.Enabled and (SizeEdit.Text = '') then
-  begin
-    ModalResult := mrNone;
-    SizeEdit.SetFocus;
-    raise Exception.Create('Attribute size not set');
-  end;
-
-  if not Assigned(FModel) then
-    // Do not do SubjectExposer.PostChanges when called from 
-    // ModelMaker, otherwise Container Methods settings for a
-    // new attribute are cleared.
-    SaveData
-  else
-    inherited;
+  inherited;
 end;
 
 procedure TInstantAttributeEditorForm.PopulateClasses;
@@ -360,24 +358,36 @@ begin
     LoadClasses;
 end;
 
+// Must update SubjectExposer fields in SaveData so that
+// SubjectExposer.PostChanges does not overwrite our changes.
 procedure TInstantAttributeEditorForm.SaveData;
 
   procedure SaveOptions;
   begin
-    Subject.IsIndexed := OptionIndexedCheckBox.Checked;
-    Subject.IsRequired := OptionRequiredCheckBox.Checked;
-    Subject.ReadOnly := OptionReadOnlyCheckBox.Checked;
-    Subject.IsDefault := OptionDefaultCheckBox.Checked;
+    SubjectExposer.FieldByName('IsIndexed').AsBoolean :=
+      OptionIndexedCheckBox.Checked;
+    SubjectExposer.FieldByName('IsRequired').AsBoolean :=
+      OptionRequiredCheckBox.Checked;
+    SubjectExposer.FieldByName('ReadOnly').AsBoolean :=
+      OptionReadOnlyCheckBox.Checked;
+    SubjectExposer.FieldByName('IsDefault').AsBoolean :=
+      OptionDefaultCheckBox.Checked;
   end;
 
   procedure SaveMethods;
   begin
-    Subject.IncludeAddMethod := MethodAddCheckBox.Checked;
-    Subject.IncludeRemoveMethod := MethodRemoveCheckBox.Checked;
-    Subject.IncludeInsertMethod := MethodInsertCheckBox.Checked;
-    Subject.IncludeDeleteMethod := MethodDeleteCheckBox.Checked;
-    Subject.IncludeIndexOfMethod := MethodIndexOfCheckBox.Checked;
-    Subject.IncludeClearMethod := MethodClearCheckBox.Checked;
+    SubjectExposer.FieldByName('IncludeAddMethod').AsBoolean :=
+      MethodAddCheckBox.Checked;
+    SubjectExposer.FieldByName('IncludeRemoveMethod').AsBoolean :=
+      MethodRemoveCheckBox.Checked;
+    SubjectExposer.FieldByName('IncludeInsertMethod').AsBoolean :=
+      MethodInsertCheckBox.Checked;
+    SubjectExposer.FieldByName('IncludeDeleteMethod').AsBoolean :=
+      MethodDeleteCheckBox.Checked;
+    SubjectExposer.FieldByName('IncludeIndexOfMethod').AsBoolean :=
+      MethodIndexOfCheckBox.Checked;
+    SubjectExposer.FieldByName('IncludeClearMethod').AsBoolean :=
+      MethodClearCheckBox.Checked;
   end;
 
 begin
@@ -487,25 +497,39 @@ procedure TInstantAttributeEditorForm.UpdateControls;
   end;
 
 var
-  HasName, HasClass, IsComplex, IsContainer, CanBeExternal, IsExternal,
-    IsMaskable, IsString, IsValid: Boolean;
+  HasName, HasSize, HasClass, IsComplex, IsContainer, CanBeExternal,
+    CanHaveStorageName, IsMaskable, IsString, IsValid: Boolean;
 begin
-  CanBeExternal := Subject.AttributeType in [atPart, atParts, atReferences];
-  if not CanBeExternal then
-    Subject.StorageKind := skEmbedded;
-  if Subject.AttributeType = atPart then
-    Subject.ExternalStorageName := '';
+  CanBeExternal := False;
+  CanHaveStorageName := True;
+  HasSize := False;
+  IsComplex := False;
+  IsMaskable := False;
+  IsContainer := False;
+  IsString := False;
+
+  if Assigned(Subject) then
+  begin
+    CanBeExternal := Subject.AttributeType in [atPart, atParts, atReferences];
+    if not CanBeExternal then
+      Subject.StorageKind := skEmbedded;
+    if Subject.AttributeType = atPart then
+      Subject.ExternalStorageName := '';
+    HasSize := Subject.Metadata.Size > 0;
+    IsComplex := Subject.IsComplex;
+    IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat,
+      atCurrency, atInteger];
+    IsContainer := Subject.IsContainer;
+    CanHaveStorageName := (Subject.StorageKind <> skExternal) or
+      (Subject.AttributeType = atPart);
+    IsString := Subject.AttributeType in [atString, atMemo];
+  end;
 
   HasName := NameEdit.Text <> '';
   HasClass := ObjectClassEdit.Text <> '';
-  IsComplex := Subject.IsComplex;
-  IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat, atCurrency,
-    atInteger];
-  IsContainer := Subject.IsContainer;
 
-  IsExternal := Subject.StorageKind = skExternal;
-  IsString := Subject.AttributeType in [atString, atMemo];
-  IsValid := HasName and (not IsComplex or HasClass);
+  IsValid := HasName and (not IsComplex or HasClass) and
+    (not IsString or HasSize);
 
   DisableSubControls(DefinitionSheet, Limited);
   DisableSubControls(AccessSheet, Limited);
@@ -527,17 +551,12 @@ begin
     EnableCtrl(StorageKindEdit, CanBeExternal);
     EnableCtrl(StorageKindLabel, CanBeExternal);
   end;
-  EnableCtrl(StorageNameLabel, not IsExternal or (Subject.AttributeType =
-    atPart));
-  EnableCtrl(StorageNameEdit, not IsExternal or (Subject.AttributeType =
-    atPart));
+  EnableCtrl(StorageNameLabel, CanHaveStorageName);
+  EnableCtrl(StorageNameEdit, CanHaveStorageName);
 
-  EnableCtrl(ExternalStorageNameLabel, IsExternal
-    and not (Subject.AttributeType = atPart));
-  EnableCtrl(ExternalStorageNameEdit, IsExternal
-    and not (Subject.AttributeType = atPart));
-  EnableCtrl(AutoExternalStorageNameCheckBox,
-    ExternalStorageNameEdit.Enabled);
+  EnableCtrl(ExternalStorageNameLabel, not CanHaveStorageName);
+  EnableCtrl(ExternalStorageNameEdit, not CanHaveStorageName);
+  EnableCtrl(AutoExternalStorageNameCheckBox, not CanHaveStorageName);
 
   EnableCtrl(SizeLabel, IsString);
   EnableCtrl(SizeEdit, IsString);
@@ -605,6 +624,12 @@ begin
   else
     ExternalStorageNameEdit.Text := '';
 
+end;
+
+procedure TInstantAttributeEditorForm.SizeEditChange(Sender: TObject);
+begin
+  SubjectExposer.AssignFieldValue(SizeEdit.Field, SizeEdit.Text);
+  UpdateControls;
 end;
 
 end.
