@@ -1,8 +1,8 @@
-package IOXML;
+package IOXMLCatalog_D5;
 
-{$I '../../../InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
-{$ALIGN 8}
+{$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
 {$DEBUGINFO ON}
@@ -23,16 +23,14 @@ package IOXML;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects XML Run-Time Support (Kyix 3)'}
+{$DESCRIPTION 'InstantObjects Catalog for XML (Delphi 5)'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  IOXMLCatalog;
+  IOCore;
 
 contains
-  InstantXMLConnectionDefEdit in '../InstantXMLConnectionDefEdit.pas' {InstantXMLConnectionDefEditForm},
-  InstantXML in '../InstantXML.pas';
+  InstantXMLCatalog in '..\InstantXMLCatalog.pas';
 
 end.

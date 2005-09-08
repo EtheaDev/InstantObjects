@@ -77,7 +77,7 @@ begin
   </TInstantClassMetadata>
 </TInstantClassMetadatas>
 *)
-  InstantModel.ClassMetadatas.Create(InstantModel);
+  // An empty InstantModel.ClassMetadatas should already be available
   InstantClassMetadata := InstantModel.ClassMetadatas.Add;
   InstantClassMetadata.Name := 'TSimpleClass';
   InstantClassMetadata.Persistence := peStored;

@@ -33,7 +33,8 @@ requires
   rtl,
   dbrtl,
   IOCore,
-  vclx;
+  vclx,
+  IOXMLCatalog;
 
 contains
   InstantXMLConnectionDefEdit in '..\InstantXMLConnectionDefEdit.pas' {InstantXMLConnectionDefEditForm},

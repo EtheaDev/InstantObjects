@@ -85,7 +85,6 @@ var
   InstantAttributeMetadata : TInstantAttributeMetadata;
 begin
 //code from CreateMinimalModel;
-  InstantModel.ClassMetadatas.Create(InstantModel);
 
   AssertNotNull('InstantModel',InstantModel);
   AssertNotNull('ClassMetadatas',InstantModel.ClassMetadatas);
