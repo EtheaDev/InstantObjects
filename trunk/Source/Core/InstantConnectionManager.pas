@@ -346,7 +346,7 @@ begin
   else
     // WARNING:
     // If you want to use the default ConnectionManagerForm (as in previous versions of IO)
-    // simply add InstantConnectionManagerForm in an uses section of your application.
+    // simply add InstantConnectionManagerFormUnit in an uses section of your application.
     raise EInstantError.Create(SConnectionManagerExecutorNotAssigned);
 end;
 
