@@ -694,7 +694,7 @@ end;
 
 procedure TMainForm.StopwatchStop(Sender: TObject);
 var
-  ms : word;
+  ms : cardinal;
 {$IFDEF LINUX}
   h,m,s : word;
 {$ENDIF}
