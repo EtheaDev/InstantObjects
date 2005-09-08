@@ -1,7 +1,6 @@
-package IOXML;
+package IOXMLCatalog;
 
-{$I '../../../InstantVersion.inc'}
-
+{$R *.res}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -23,16 +22,20 @@ package IOXML;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects XML Run-Time Support (Kyix 3)'}
+{$DESCRIPTION 'InstantObjects Catalog for XML (Delphi 7)'}
+{$LIBSUFFIX '_D7'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
+  rtl,
+  vcl,
+  dbrtl,
+  bdertl,
   IOCore,
-  IOXMLCatalog;
+  vcldb;
 
 contains
-  InstantXMLConnectionDefEdit in '../InstantXMLConnectionDefEdit.pas' {InstantXMLConnectionDefEditForm},
-  InstantXML in '../InstantXML.pas';
+  InstantXMLCatalog in '..\InstantXMLCatalog.pas';
 
 end.

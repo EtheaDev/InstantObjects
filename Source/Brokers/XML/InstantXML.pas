@@ -21,7 +21,8 @@
  * The Initial Developer of the Original Code is: Carlo Barazzetta
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Marco Cantù
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Marco Cantù,
+ * Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -31,6 +32,11 @@ unit InstantXML;
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
+{$IFDEF D6+}
+  {$WARN SYMBOL_PLATFORM OFF}
+  {$WARN UNIT_PLATFORM OFF}
 {$ENDIF}
 
 interface
@@ -44,7 +50,7 @@ const
   XML_EXT = 'xml';
   DOT_XML_EXT = '.'+XML_EXT;
   XML_WILDCARD = '*'+DOT_XML_EXT;
-  {$IFDEF VER130}PathDelim = '\';{$ENDIF}
+  {$IFDEF D5}PathDelim = '\';{$ENDIF}
   
 type
   TXMLFileFormat = (xffUtf8, xffUtf8BOT, xffIso);
@@ -110,6 +116,7 @@ type
     procedure CheckConnection;
   protected
     function CreateBroker: TInstantBroker; override;
+    function GetDatabaseName: string; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     procedure InternalCommitTransaction; override;
     function InternalCreateQuery: TInstantQuery; override;
@@ -132,6 +139,8 @@ type
     property ResolverList: TObjectList read GetResolverList;
     function GetConnector: TInstantXMLConnector;
   protected
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
+        override;
     function CreateResolver(const StorageName: string): TInstantXMLResolver;
     function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver; override;
     function FindResolver(const StorageName: string): TInstantXMLResolver;
@@ -139,6 +148,8 @@ type
     property Resolvers[Index: Integer]: TInstantXMLResolver read GetResolvers;
   public
     destructor Destroy; override;
+    function CreateDBBuildCommand(const CommandType: TInstantDBBuildCommandType):
+        TInstantDBBuildCommand; override;
     property Connector: TInstantXMLConnector read GetConnector;
   end;
 
@@ -213,15 +224,52 @@ type
     property Connector: TInstantXMLConnector read GetConnector;
   end;
 
-procedure Register;
+  // Base class for all steps that work by executing one or more commands
+  // (that is, a script) each.
+  TInstantDBBuildXMLCommand = class(TInstantDBBuildCommand)
+  private
+    function GetConnector: TInstantXMLConnector;
+    function GetBroker: TInstantXMLBroker;
+  protected
+    // Returns The number of statements that compound this script. The
+    // predefined implementation returns 1.
+    function GetCommandCount: Integer; virtual;
+    // Returns the nth command that is part of this script. Valid values
+    // are in the range 0 to Pred(GetCommandCount). The default
+    // implementation, which should always be called through inherited at the
+    // beginning of the overridden version, just returns '', or raises an
+    // exception if Index is not in the allowed range.
+    function GetCommand(const Index: Integer): string; virtual;
+  public
+    property Connector: TInstantXMLConnector read GetConnector;
+    property Broker: TInstantXMLBroker read GetBroker;
+  end;
+
+  TInstantDBBuildXMLAddTableCommand = class(TInstantDBBuildXMLCommand)
+  private
+    function GetTableMetadata: TInstantTableMetadata;
+  protected
+    procedure InternalExecute; override;
+  public
+    property TableMetadata: TInstantTableMetadata read GetTableMetadata;
+  end;
+
+  TInstantDBBuildXMLDropTableCommand = class(TInstantDBBuildXMLCommand)
+  private
+    function GetTableMetadata: TInstantTableMetadata;
+  protected
+    procedure InternalExecute; override;
+  public
+    property TableMetadata: TInstantTableMetadata read GetTableMetadata;
+  end;
 
 implementation
 
 uses
-  SysUtils, InstantConsts, InstantClasses, TypInfo,
+  SysUtils, InstantConsts, InstantClasses, TypInfo, InstantXMLCatalog,
   InstantXMLConnectionDefEdit,
 {$IFDEF MSWINDOWS}
-  {$IFDEF VER130}
+  {$IFDEF D5}
     FileCtrl,
   {$ENDIF}
   Controls;
@@ -230,17 +278,15 @@ uses
   QControls;
 {$ENDIF}
 
+resourcestring
+  SCannotCreateDirectory = 'Cannot create directory %s';
+  SCommandIndexOutOfBounds = 'Command index out of bounds.';
+
 function GetFileClassName(const FileName : string) : string; forward;
 function GetFileId(const FileName : string) : string; forward;
 function GetFileVersion(const FileName : string) : Integer; forward;
 
-procedure Register;
-begin
-  RegisterComponents('InstantObjects', [TInstantXMLConnector]);
-  RegisterComponents('InstantObjects', [TXMLFilesAccessor]);
-end;
-
-{$IFDEF VER130}
+{$IFDEF D5}
 function IncludeTrailingPathDelimiter(const S : string) : string;
 begin
   Result := IncludeTrailingBackSlash(S);
@@ -559,7 +605,7 @@ end;
 procedure TInstantXMLConnector.CheckConnection;
 begin
   if not assigned(Connection) then
-    raise EPropertyError.Create('Connection property unassigned');
+    raise EPropertyError.Create(SUnassignedConnection);
 end;
 
 class function TInstantXMLConnector.ConnectionDefClass: TInstantConnectionDefClass;
@@ -577,6 +623,11 @@ begin
   Result := inherited Connection as TXMLFilesAccessor;
 end;
 
+function TInstantXMLConnector.GetDatabaseName: string;
+begin
+  Result := Connection.RootFolder;
+end;
+
 procedure TInstantXMLConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 var
   i : integer;
@@ -586,7 +637,7 @@ begin
   //build RootFolder if not exists
   if not DirectoryExists(Connection.RootFolder) and
     not ForceDirectories(Connection.RootFolder) then
-    raise EInOutError.CreateFmt('Cannot create directory %s', [Connection.RootFolder]);
+    raise EInOutError.CreateFmt(SCannotCreateDirectory, [Connection.RootFolder]);
 
   //build SubFolder for each "storage name"
   for i := 0 to Scheme.TableMetadataCount -1 do
@@ -635,6 +686,23 @@ destructor TInstantXMLBroker.Destroy;
 begin
   FResolverList.Free;
   inherited;
+end;
+
+function TInstantXMLBroker.CreateCatalog(const AScheme: TInstantScheme):
+    TInstantCatalog;
+begin
+  Result := TInstantXMLCatalog.Create(AScheme, Self);
+end;
+
+function TInstantXMLBroker.CreateDBBuildCommand(const CommandType:
+    TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  if CommandType = ctAddTable then
+    Result := TInstantDBBuildXMLAddTableCommand.Create(CommandType, Connector)
+  else if CommandType = ctDropTable then
+    Result := TInstantDBBuildXMLDropTableCommand.Create(CommandType, Connector)
+  else
+    Result := inherited CreateDBBuildCommand(CommandType);
 end;
 
 function TInstantXMLBroker.EnsureResolver(
@@ -1221,6 +1289,85 @@ begin
   else
     (Query as TInstantXMLQuery).StorageName := '';
 end;
+
+{ TInstantDBBuildXMLCommand }
+
+function TInstantDBBuildXMLCommand.GetBroker: TInstantXMLBroker;
+begin
+  Result := Connector.Broker as TInstantXMLBroker;
+end;
+
+function TInstantDBBuildXMLCommand.GetCommand(const Index: Integer): string;
+begin
+  if (Index < 0) or (Index >= GetCommandCount) then
+    raise EInstantDBBuildError.CreateFmt(SCommandIndexOutOfBounds,
+      [Index]);
+  Result := '';
+end;
+
+function TInstantDBBuildXMLCommand.GetCommandCount: Integer;
+begin
+  Result := 1;
+end;
+
+function TInstantDBBuildXMLCommand.GetConnector: TInstantXMLConnector;
+begin
+  Result := inherited Connector as TInstantXMLConnector;
+end;
+
+function TInstantDBBuildXMLAddTableCommand.GetTableMetadata:
+    TInstantTableMetadata;
+begin
+  Result := NewMetadata as TInstantTableMetadata;
+end;
+
+procedure TInstantDBBuildXMLAddTableCommand.InternalExecute;
+var
+  vDatabaseName: String;
+begin
+  Connector.CheckConnection;
+  vDatabaseName := Connector.DatabaseName;
+
+  //build RootFolder if not exists
+  if not DirectoryExists(vDatabaseName) and
+    not ForceDirectories(vDatabaseName) then
+    raise EInOutError.CreateFmt(SCannotCreateDirectory, [vDatabaseName]);
+
+  // Create a subFolder for the "storage name"
+  if not DirectoryExists(vDatabaseName + TableMetadata.Name) then
+    MkDir(vDatabaseName + TableMetadata.Name);
+end;
+
+function TInstantDBBuildXMLDropTableCommand.GetTableMetadata:
+    TInstantTableMetadata;
+begin
+  Result := OldMetadata as TInstantTableMetadata;
+end;
+
+procedure TInstantDBBuildXMLDropTableCommand.InternalExecute;
+var
+  vTableName: String;
+  sr: TSearchRec;
+  vDatabaseName: String;
+begin
+  Connector.CheckConnection;
+  vDatabaseName := Connector.DatabaseName;
+
+  // Delete subFolder for the "storage name"
+  vTableName := vDatabaseName + TableMetadata.Name;
+  if DirectoryExists(vTableName) then
+  begin
+    if FindFirst(vTableName + '\*.*', faAnyFile, sr) = 0 then
+    begin
+      repeat
+        DeleteFile(vTableName + '\' + sr.Name);
+      until FindNext(sr) <> 0;
+      FindClose(sr);
+    end;
+    RemoveDir(vTableName);
+  end;
+end;
+
 
 initialization
   RegisterClass(TInstantXMLConnectionDef);
