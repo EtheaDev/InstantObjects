@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
- * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor
+ * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor, Hanedi Salas
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -13974,7 +13974,8 @@ var
                     PartObject := AttributeMetadata.ObjectClass.Retrieve(
                       DataSet.Fields[1].AsString, False, False, AObject.Connector);
                     try
-                      if Assigned(PartObject) then
+                      if Assigned(PartObject) and
+                          (PartsAttribute.IndexOf(PartObject) = -1) then
                         PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                     finally
                       PartObject.Free;
