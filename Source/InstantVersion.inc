@@ -1,1 +1,1 @@
-{$R '../../InstantVersion.res'}
+{$R '..\..\..\InstantVersion.res'}
