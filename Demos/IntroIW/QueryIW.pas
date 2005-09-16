@@ -4,7 +4,7 @@ interface
 
 uses
   Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes,
-  IWCompEdit, IWTMSCtrls, IWCompMemo, IWCompListbox, IWCompButton,
+  IWCompEdit, IWCompMemo, IWCompListbox, IWCompButton,
   IWCompLabel, IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl,
   IWControl, IWGrids, IWDBGrids, Controls, Forms, IWVCLBaseContainer,
   IWContainer, IWHTMLContainer, IWRegion, DB, InstantPresentation,
@@ -25,7 +25,7 @@ type
     CommandEdit: TIWMemo;
     IWLabel3: TIWLabel;
     CommandLabel: TIWLabel;
-    MaxCountEdit: TTIWAdvEdit;
+    MaxCountEdit: TIWEdit;
     IWDBNavigator1: TIWDBNavigator;
     procedure IWAppFormCreate(Sender: TObject);
     procedure TestSelectorAfterScroll(DataSet: TDataSet);
