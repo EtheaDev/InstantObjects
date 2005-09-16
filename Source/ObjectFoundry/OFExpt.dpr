@@ -1,7 +1,6 @@
 library OFExpt;
 
 {$R *.RES}
-{$R ..\Design\iodesimages.res}   
 
 uses
   InstantAttributeEditor in '..\Design\InstantAttributeEditor.pas' {InstantAttributeEditorForm},

@@ -85,7 +85,6 @@ type
     StorageNameEdit: TDBEdit;
     StorageNameLabel: TLabel;
     TypeEdit: TDBComboBox;
-    TypeImages: TImageList;
     TypeLabel: TLabel;
     ValidCharsEdit: TDBEdit;
     ValidCharsLabel: TLabel;
@@ -158,7 +157,6 @@ uses
 
 procedure TInstantAttributeEditorForm.FormCreate(Sender: TObject);
 begin
-  LoadMultipleImages(TypeImages, 'IO_ATTRIBUTEEDITORIMAGES', HInstance);
   PageControl.ActivePage := DefinitionSheet;
   ActiveControl := NameEdit;
 end;
