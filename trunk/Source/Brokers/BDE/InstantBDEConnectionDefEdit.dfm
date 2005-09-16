@@ -159,9 +159,6 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    DesignSize = (
-      392
-      35)
     object OkButton: TButton
       Left = 234
       Top = 6
