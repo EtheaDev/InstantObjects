@@ -201,7 +201,7 @@ object QueryForm: TQueryForm
       Caption = 'Command'
       RawText = False
     end
-    object MaxCountEdit: TTIWAdvEdit
+    object MaxCountEdit: TIWEdit
       Left = 552
       Top = 136
       Width = 121
@@ -227,18 +227,7 @@ object QueryForm: TQueryForm
       Required = False
       ScriptEvents = <>
       TabOrder = 4
-      AdvanceOnReturn = False
-      AdvanceOnUpDown = False
-      BorderColor = clBlack
-      BorderWidth = 1
-      Color = clNone
-      DecimalPoint = ','
-      EditType = etNumeric
-      Flat = False
       PasswordPrompt = False
-      SelectAll = False
-      Signed = False
-      SubmitOnReturn = False
       Text = '0'
     end
   end

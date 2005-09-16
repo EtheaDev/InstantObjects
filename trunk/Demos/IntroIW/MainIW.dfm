@@ -351,7 +351,7 @@ object MainForm: TMainForm
     DataSource = ContactsSource
     FooterRowCount = 0
     FriendlyName = 'IWDBGrid1'
-    FromStart = False
+    FromStart = True
     HighlightColor = clNone
     HighlightRows = False
     Options = [dgIndicator, dgShowTitles]

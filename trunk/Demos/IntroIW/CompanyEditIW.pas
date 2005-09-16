@@ -6,8 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ContactEditIW, UserSessionUnit, DB, InstantPresentation, IWCompButton,
   IWCompLabel, IWCompEdit, IWDBStdCtrls, IWVCLBaseControl, IWBaseControl,
-  IWBaseHTMLControl, IWControl, IWWebGrid, IWDBAdvWebGrid, IWDBTMSCtrls,
-  IWCompListbox, IWGrids, IWDBGrids;
+  IWBaseHTMLControl, IWControl, IWCompListbox, IWGrids, IWDBGrids;
 
 type
   TCompanyEditForm = class(TContactEditForm)

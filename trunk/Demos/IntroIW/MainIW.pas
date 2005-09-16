@@ -6,7 +6,7 @@ uses
   Classes, SysUtils, IWAppForm, IWApplication, IWColor, IWTypes, UserSessionUnit,
   Controls, IWVCLBaseControl, IWBaseControl, IWBaseHTMLControl, IWControl,
   IWGrids, IWDBGrids, DB, InstantPresentation, InstantPersistence, Model,
-  IWDBStdCtrls, IWCompEdit, IWCompLabel, IWWebGrid, IWDBAdvWebGrid,
+  IWDBStdCtrls, IWCompEdit, IWCompLabel,
   IWCompButton, ContactEditIW, PersonEditIW, CompanyEditIW;
 
 type
@@ -35,7 +35,7 @@ type
     xContact: TContact;
     Person: TPerson;
     Company: TCompany;
-   procedure EditContact(Contact: TContact);
+   procedure EditContact(Contact: TContact; sCaption: String);
   end;
 
 implementation
@@ -44,7 +44,7 @@ uses ServerController, QueryIW;
 
 {$R *.dfm}
 
-procedure TMainForm.EditContact(Contact: TContact);
+procedure TMainForm.EditContact(Contact: TContact; sCaption: String);
 begin
   if Contact is TCompany then
     Form := TCompanyEditForm.Create(WebApplication)
@@ -56,30 +56,33 @@ begin
   xContact := Contact;
   Form.ContactExposer.Subject := Contact;
   UserSession.bOk := False;
-  Form.IWDBGrid1.Caption := ContactSelector.FieldByName('Name').AsString +
-    '''s Phone Numbers';
+  Form.IWDBGrid1.Caption := sCaption;
   Form.Show;
 end;
 
 
 procedure TMainForm.EditContactButtonClick(Sender: TObject);
+var
+  sCaption : string;
 begin
   bAdd := False;
-  EditContact(ContactSelector.CurrentObject as TContact);
+  sCaption := ContactSelector.FieldByName('Name').AsString +
+    '''s Phone Numbers';
+  EditContact(ContactSelector.CurrentObject as TContact, sCaption);
 end;
 
 procedure TMainForm.AddPersonButtonClick(Sender: TObject);
 begin
   Person := TPerson.Create(ContactSelector.Connector);
   bAdd := True;
-  EditContact(Person);
+  EditContact(Person, 'Phone Numbers');
 end;
 
 procedure TMainForm.AddCompanyButtonClick(Sender: TObject);
 begin
   Company := TCompany.Create(ContactSelector.Connector);
   bAdd := True;
-  EditContact(Company);
+  EditContact(Company, 'Phone Numbers');
 end;
 
 procedure TMainForm.IWAppFormRender(Sender: TObject);
