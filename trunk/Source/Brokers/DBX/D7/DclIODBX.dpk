@@ -1,6 +1,6 @@
 package DclIODBX;
 
-{$I '..\..\InstantVersion.inc'}
+{$I '..\..\..\InstantVersion.inc'}
 
 {$R '..\InstantDBX.dcr'}
 {$ALIGN 8}
