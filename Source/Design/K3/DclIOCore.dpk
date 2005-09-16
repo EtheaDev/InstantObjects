@@ -4,8 +4,9 @@ package DclIOCore;
 {$R '../../Core/InstantPresentation.dcr'}
 {$R '../../Core/InstantExplorer.dcr'}
 {$R '../../Core/InstantPersistence.dcr'}
-{$R '../../Core/InstantPump.dcr'}
 {$R '../../Core/InstantConnectionManager.dcr'}
+{$R '../../Core/InstantPump.dcr'}
+{$R '../../Core/InstantDBEvolution.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -22,12 +23,13 @@ package DclIOCore;
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
-{$TYPEDADDRESS OFF}
+{$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
-{$WRITEABLECONST ON}
+{$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects Design-Time Package (Kylix 3)'}
+{$LIBPREFIX ''}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
@@ -48,7 +50,7 @@ contains
   InstantDualList in '../InstantDualList.pas' {InstantDualListForm},
   InstantEdit in '../InstantEdit.pas' {InstantEditForm},
   InstantModelExpert in '../InstantModelExpert.pas',
-  InstantModelExplorer in '../InstantModelExplorer.pas',
+  InstantModelExplorer in '../InstantModelExplorer.pas' {InstantModelExplorerForm},
   InstantOTA in '../InstantOTA.pas',
   InstantReg in '../InstantReg.pas',
   InstantUnitSelect in '../InstantUnitSelect.pas' {InstantUnitSelectForm},

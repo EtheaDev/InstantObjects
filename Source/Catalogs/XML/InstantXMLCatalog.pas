@@ -56,7 +56,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes, TypInfo, Dialogs, InstantConsts;
+  SysUtils, Classes, TypInfo, InstantConsts;
   
 procedure TInstantXMLCatalog.AddTableMetadatas(
   TableMetadatas: TInstantTableMetadatas);

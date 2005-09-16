@@ -38,10 +38,16 @@ unit InstantCustomDBEvolverFormUnit;
 interface
 
 uses
-  Windows, Messages, SysUtils, {$IFDEF D6+} Variants,{$ENDIF}
- Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, DB, InstantPersistence, ComCtrls, InstantDBBuild,
-  InstantDBEvolution, InstantPresentation, ActnList;
+  SysUtils, Classes,
+{$IFDEF MSWINDOWS}
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
+  ImgList, Menus, ActnList, ExtCtrls, StdActns,
+{$ENDIF}
+{$IFDEF LINUX}
+  QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList,
+  QStdCtrls, QComCtrls, QExtCtrls,
+{$ENDIF}
+  InstantPersistence, InstantDBBuild, InstantDBEvolution, InstantPresentation;
 
 type
   TInstantCustomDBEvolverForm = class(TForm)

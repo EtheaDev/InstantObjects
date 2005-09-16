@@ -23,11 +23,14 @@ package IODBX;
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects DBX Run-Time Support (Kyix 3)'}
+{$LIBPREFIX ''}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore;
+  IOCore,
+  IOMSSqlCatalog,
+  IOIBFbCatalog;
 
 contains
   InstantDBXConnectionDefEdit in '../InstantDBXConnectionDefEdit.pas' {InstantDBXConnectionDefEditForm},
