@@ -1408,11 +1408,7 @@ type
     FTransactionLevel: Integer;
     FTransactedObjectList: TList;
     FUseTransactions: Boolean;
-    FAfterConnect: TNotifyEvent;
-    FAfterDisconnect: TNotifyEvent;
-    FBeforeConnect: TNotifyEvent;
     FBeforeBuildDatabase: TInstantSchemeEvent;
-    FBeforeDisconnect: TNotifyEvent;
     FBlobStreamFormat: TInstantStreamFormat;
     FOnGenerateId: TInstantGenerateIdEvent;
     FIdSize: Integer;
@@ -1420,11 +1416,7 @@ type
     procedure AbandonObjects;
     procedure ApplyTransactedObjectStates;
     procedure ClearTransactedObjects;
-    procedure DoAfterConnect;
-    procedure DoAfterDisconnect;
     procedure DoBeforeBuildDatabase(Scheme: TInstantScheme);
-    procedure DoBeforeConnect;
-    procedure DoBeforeDisconnect;
     function GetBroker: TInstantBroker;
     function GetClient(Index: Integer): TObject;
     function GetClientCount: Integer;
@@ -1498,11 +1490,7 @@ type
     property Connected: Boolean read GetConnected write SetConnected stored False;
     property IsDefault: Boolean read GetIsDefault write SetIsDefault default False;
     property UseTransactions: Boolean read FUseTransactions write FUseTransactions default True;
-    property AfterConnect: TNotifyEvent read FAfterConnect write FAfterConnect;
-    property AfterDisconnect: TNotifyEvent read FAfterDisconnect write FAfterDisconnect;
     property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase write FBeforeBuildDatabase;
-    property BeforeConnect: TNotifyEvent read FBeforeConnect write FBeforeConnect;
-    property BeforeDisconnect: TNotifyEvent read FBeforeDisconnect write FBeforeDisconnect;
     property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
     property OnGenerateId: TInstantGenerateIdEvent read FOnGenerateId write FOnGenerateId;
     property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
@@ -8957,9 +8945,7 @@ end;
 
 procedure TInstantConnector.Connect;
 begin
-  DoBeforeConnect;
   InternalConnect;
-  DoAfterConnect;
 end;
 
 constructor TInstantConnector.Create(AOwner: TComponent);
@@ -9002,39 +8988,13 @@ end;
 
 procedure TInstantConnector.Disconnect;
 begin
-  DoBeforeDisconnect;
   InternalDisconnect;
-  DoAfterDisconnect;
-end;
-
-procedure TInstantConnector.DoAfterConnect;
-begin
-  if Assigned(FAfterConnect) then
-    FAfterConnect(Self);
-end;
-
-procedure TInstantConnector.DoAfterDisconnect;
-begin
-  if Assigned(FAfterDisconnect) then
-    FAfterDisconnect(Self);
 end;
 
 procedure TInstantConnector.DoBeforeBuildDatabase(Scheme: TInstantScheme);
 begin
   if Assigned(FBeforeBuildDatabase) then
     FBeforeBuildDatabase(Self, Scheme);
-end;
-
-procedure TInstantConnector.DoBeforeConnect;
-begin
-  if Assigned(FBeforeConnect) then
-    FBeforeConnect(Self);
-end;
-
-procedure TInstantConnector.DoBeforeDisconnect;
-begin
-  if Assigned(FBeforeDisconnect) then
-    FBeforeDisconnect(Self);
 end;
 
 function TInstantConnector.EnsureObjectStore(
