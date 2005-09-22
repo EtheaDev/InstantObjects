@@ -1,9 +1,7 @@
 package IOCore;
 
-{$I '..\..\..\InstantVersion.inc'}
+{$I '..\..\InstantPackageVersion.inc'}
 
-{$R '..\InstantPump.dcr'}
-{$R '..\InstantDBEvolution.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
