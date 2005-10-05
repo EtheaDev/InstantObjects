@@ -1,7 +1,6 @@
 package IOZeosDBO_D5;
 
-{$I '..\..\..\InstantVersion.inc'}
-
+{$R *.RES}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -20,7 +19,7 @@ package IOZeosDBO_D5;
 {$STACKFRAMES OFF}
 {$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
-{$WRITEABLECONST ON}
+{$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects ZeosDBO Run-Time Support (Delphi 5)'}
@@ -29,16 +28,11 @@ package IOZeosDBO_D5;
 
 requires
   IOCore,
-  IOIbFbCatalog_D5,
-  IOMSSQLCatalog_D5,
-  ZCore,
-  ZComponent,
-  ZParseSql,
-  ZParse,
-  ZDbc,
-  ZPlain;
+  ZComponent;
 
 contains
+  InstantIBFbCatalog in '..\..\..\Catalogs\IBFb\InstantIBFbCatalog.pas',
+  InstantMSSqlCatalog in '..\..\..\Catalogs\MSSql\InstantMSSqlCatalog.pas',
   InstantZeosDBOConnectionDefEdit in '..\InstantZeosDBOConnectionDefEdit.pas' {InstantZeosDBOConnectionDefEditForm},
   InstantZeosDBO in '..\InstantZeosDBO.pas';
 

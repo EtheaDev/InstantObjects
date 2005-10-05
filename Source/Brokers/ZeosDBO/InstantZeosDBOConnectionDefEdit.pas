@@ -16,7 +16,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is: Joao Morais
+ * The Original Code is: InstantObjects ZeosDBO Support
  *
  * The Initial Developer of the Original Code is: Joao Morais
  *
@@ -28,6 +28,12 @@
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantZeosDBOConnectionDefEdit;
+
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 

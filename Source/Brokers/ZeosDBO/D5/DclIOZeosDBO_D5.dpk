@@ -21,7 +21,7 @@ package DclIOZeosDBO_D5;
 {$STACKFRAMES OFF}
 {$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
-{$WRITEABLECONST ON}
+{$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects ZeosDBO Design-Time Support (Delphi 5)'}
@@ -29,10 +29,10 @@ package DclIOZeosDBO_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
   IOZeosDBO_D5;
 
 contains
   InstantZeosDBOReg in '..\InstantZeosDBOReg.pas';
 
 end.
+
