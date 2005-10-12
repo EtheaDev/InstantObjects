@@ -124,8 +124,11 @@ type
     procedure InternalStartTransaction; override;
   public
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
+    constructor Create(AOwner: TComponent); override;
   published
     property Connection: TXMLFilesAccessor read GetConnection write SetConnection;
+    property UseTransactions default False;
+    property LoginPrompt default False;
   end;
 
   TInstantXMLResolver = class;
@@ -611,6 +614,13 @@ end;
 class function TInstantXMLConnector.ConnectionDefClass: TInstantConnectionDefClass;
 begin
   Result := TInstantXMLConnectionDef;
+end;
+
+constructor TInstantXMLConnector.Create(AOwner: TComponent);
+begin
+  inherited;
+  LoginPrompt := False;
+  UseTransactions := False;
 end;
 
 function TInstantXMLConnector.CreateBroker: TInstantBroker;
