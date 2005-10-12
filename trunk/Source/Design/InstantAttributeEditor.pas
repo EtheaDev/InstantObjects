@@ -111,8 +111,8 @@ type
     procedure TypeEditClick(Sender: TObject);
     procedure StorageKindEditChange(Sender: TObject);
     procedure ExternalStorageNameEditChange(Sender: TObject);
-    procedure StorageNameEditChange(Sender: TObject);
     procedure AutoExternalStorageNameCheckBoxClick(Sender: TObject);
+    procedure StorageNameEditExit(Sender: TObject);
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
@@ -587,12 +587,6 @@ begin
     ComputeExternalStorageName;
 end;
 
-procedure TInstantAttributeEditorForm.StorageNameEditChange(
-  Sender: TObject);
-begin
-  UpdateControls;
-end;
-
 procedure TInstantAttributeEditorForm.ComputeExternalStorageName;
 
   function GetStorageName: string;
@@ -618,6 +612,12 @@ begin
   else
     ExternalStorageNameEdit.Text := '';
 
+end;
+
+procedure TInstantAttributeEditorForm.StorageNameEditExit(Sender: TObject);
+begin
+  inherited;
+  UpdateControls;
 end;
 
 end.
