@@ -166,7 +166,10 @@ begin
         Caption := Name else
         Caption := HostClass.Name + '.' + Name;
     Data := Attribute;
+    //Add Attribute Type
     SubItems.Add(Attribute.AttributeTypeText);
+    //Add StorageName
+    SubItems.Add(Attribute.StorageName);
     case Attribute.AttributeType of
       atReference: ImageIndex := 1;
       atPart: ImageIndex := 2;
@@ -326,21 +329,19 @@ begin
 end;
 
 procedure TInstantClassEditorForm.FitColumns(View: TListView);
+var
+  i : integer;
 begin
-  with View do
-    if Columns.Count > 0 then
-    begin
-      with Columns[Pred(Columns.Count)] do
-      begin
+  //adjust Columns size to window width
+  for i := View.Columns.Count-1 downto 0 do
+  begin
 {$IFDEF MSWINDOWS}
-        Width := -1;
-        Width := -2;
+    View.Columns[i].AutoSize := True;
 {$ENDIF}
 {$IFDEF LINUX}
-        Width := View.Width div 2;
+    View.Columns[i].Width := View.Width div View.Columns.Count;
 {$ENDIF}
-      end;
-    end;
+  end;
 end;
 
 function TInstantClassEditorForm.GetFocusedAttribute: TInstantCodeAttribute;
@@ -440,16 +441,7 @@ begin
         LoadClass(AClass);
       finally
         EndUpdate;
-{$IFDEF MSWINDOWS}
-        with View.Column[1] do
-{$ENDIF}
-{$IFDEF LINUX}
-        with View.Columns.Items[1] do
-{$ENDIF}
-        begin
-          Width := -1;
-          Width := -2;
-        end;
+        FitColumns(View);
       end;
     end;
   end;

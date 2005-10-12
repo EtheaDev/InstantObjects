@@ -1773,6 +1773,8 @@ begin
       if NextChar = ';' then
         Break;
       Token := ReadToken;
+      if SameText(Token, MetaKeyStored) then
+        FMetadata.StorageName := ReadStringValue;
       if SameText(Token, MetaKeyDefault) then
         FMetadata.IsDefault := True;
       if SameText(Token, MetaKeyExternal) then
