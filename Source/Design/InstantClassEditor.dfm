@@ -1,21 +1,21 @@
 inherited InstantClassEditorForm: TInstantClassEditorForm
   Left = 319
   Top = 196
-  Width = 397
-  Height = 325
+  Width = 408
+  Height = 526
   Caption = 'Class Editor'
   OldCreateOrder = True
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   inherited EditPanel: TPanel
-    Width = 389
-    Height = 267
+    Width = 400
+    Height = 461
     object PageControl: TPageControl
       Left = 4
       Top = 4
-      Width = 381
-      Height = 259
+      Width = 392
+      Height = 453
       ActivePage = ClassSheet
       Align = alClient
       TabOrder = 0
@@ -47,7 +47,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           FocusControl = UnitEdit
         end
         object StorageLabel: TLabel
-          Left = 152
+          Left = 148
           Top = 160
           Width = 68
           Height = 13
@@ -95,7 +95,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           TabOrder = 2
         end
         object StorageEdit: TDBEdit
-          Left = 152
+          Left = 148
           Top = 176
           Width = 217
           Height = 21
@@ -122,24 +122,24 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         ImageIndex = 1
         object AttributesSplitter: TSplitter
           Left = 0
-          Top = 111
-          Width = 365
+          Top = 264
+          Width = 376
           Height = 3
           Cursor = crVSplit
           Align = alBottom
         end
         object InheritedAttributesPanel: TPanel
           Left = 0
-          Top = 114
-          Width = 365
-          Height = 109
+          Top = 267
+          Width = 376
+          Height = 150
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
           object InheritedAttributesLabel: TLabel
             Left = 0
             Top = 0
-            Width = 365
+            Width = 376
             Height = 16
             Align = alTop
             AutoSize = False
@@ -148,17 +148,21 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           object InheritedAttributesView: TListView
             Left = 0
             Top = 16
-            Width = 365
-            Height = 93
+            Width = 376
+            Height = 134
             Align = alClient
             Columns = <
               item
-                AutoSize = True
                 Caption = 'Name'
+                Width = 124
               end
               item
-                AutoSize = True
                 Caption = 'Type'
+                Width = 124
+              end
+              item
+                Caption = 'Storage Name'
+                Width = 124
               end>
             ReadOnly = True
             TabOrder = 0
@@ -169,15 +173,15 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object IntroducedAttributesPanel: TPanel
           Left = 0
           Top = 0
-          Width = 365
-          Height = 111
+          Width = 376
+          Height = 264
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
           object IntroducedAttributesLabel: TLabel
             Left = 0
             Top = 0
-            Width = 365
+            Width = 376
             Height = 16
             Align = alTop
             AutoSize = False
@@ -186,17 +190,21 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           object IntroducedAttributesView: TListView
             Left = 0
             Top = 16
-            Width = 365
-            Height = 95
+            Width = 376
+            Height = 248
             Align = alClient
             Columns = <
               item
-                AutoSize = True
                 Caption = 'Name'
+                Width = 124
               end
               item
-                AutoSize = True
                 Caption = 'Type'
+                Width = 124
+              end
+              item
+                Caption = 'Storage Name'
+                Width = 124
               end>
             ReadOnly = True
             PopupMenu = AttributesMenu
@@ -210,10 +218,10 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 267
-    Width = 389
+    Top = 461
+    Width = 400
     inherited ButtonPanel: TPanel
-      Left = 229
+      Left = 240
     end
   end
   inherited SubjectExposer: TInstantExposer
