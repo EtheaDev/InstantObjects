@@ -108,6 +108,7 @@ type
   private
     FModel: TInstantModel;
     FOnBuild: TInstantConnectionDefEvent;
+    FOnEvolve: TInstantConnectionDefEvent;
     FOnConnect: TInstantConnectionDefEvent;
     FOnDisconnect: TInstantConnectionDefEvent;
     FOnEdit: TInstantConnectionDefEvent;
@@ -158,6 +159,7 @@ type
     property Model: TInstantModel read FModel write FModel;
     property VisibleActions: TInstantConnectionManagerActionTypes read GetVisibleActions write SetVisibleActions;
     property OnBuild: TInstantConnectionDefEvent read FOnBuild write FOnBuild;
+    property OnEvolve: TInstantConnectionDefEvent read FOnEvolve write FOnEvolve;
     property OnConnect: TInstantConnectionDefEvent read FOnConnect write FOnConnect;
     property OnDisconnect: TInstantConnectionDefEvent read FOnDisconnect write FOnDisconnect;
     property OnEdit: TInstantConnectionDefEvent read FOnEdit write FOnEdit;
@@ -302,7 +304,7 @@ end;
 
 procedure TInstantConnectionManagerForm.EditItemCaption(Item : TListItem);
 begin
-  Item.Caption := InputBox('Connection Name','Name:',Item.Caption);
+  Item.Caption := InputBox(SConnectionName,SConnectionName+':',Item.Caption);
 end;
 {$ENDIF}
 
@@ -313,7 +315,7 @@ var
 begin
   ConnectionDef := CurrentConnectionDef;
   if Assigned(ConnectionDef) and
-    ConfirmDlg(Format('Delete connection "%s"?', [ConnectionDef.Name])) then
+    ConfirmDlg(Format(SDeleteConnectionConfirmation, [ConnectionDef.Name])) then
   begin
     ConnectionDefs.Remove(ConnectionDef);
     PopulateConnectionDefs;
@@ -335,6 +337,7 @@ begin
   Disconnect(CurrentConnectionDef);
 end;
 
+(* New version with DBBuilder
 function TInstantConnectionManagerForm.DoBuild(
   ConnectionDef: TInstantConnectionDef): Boolean;
 var
@@ -355,6 +358,7 @@ begin
   Connector := ConnectionDef.CreateConnector(nil);
   try
     DBBuilderForm := TInstantDBBuilderForm.Create(nil);
+
     try
       DBBuilderForm.Connector := Connector;
       DBBuilderForm.TargetModel := Model;
@@ -367,6 +371,50 @@ begin
     Connector.Free;
   end;
 end;
+*)
+
+//Old version: it works without catalog
+function TInstantConnectionManagerForm.DoBuild(
+  ConnectionDef: TInstantConnectionDef): Boolean;
+var
+  Connector: TInstantConnector;
+  SaveCursor: TCursor;
+begin
+  if Assigned(FOnBuild) then
+  begin
+    Result := False;
+    FOnBuild(Self, ConnectionDef, Result);
+    Exit;
+  end;
+  if not Assigned(ConnectionDef) then
+  begin
+    Result := False;
+    Exit;
+  end;
+  if not Assigned(ConnectionDef) or not ConfirmDlg(
+    Format(SDatabaseBuildConfirmation, [ConnectionDef.Name])) then
+  begin
+    Result := False;
+    Exit;
+  end;
+  Connector := ConnectionDef.CreateConnector(nil);
+  try
+    SaveCursor := Screen.Cursor;
+    Screen.Cursor := crHourglass;
+    try
+      Application.ProcessMessages;
+      Connector.BuildDatabase(Model);
+      DoPrepare(Connector);
+      Connector.Disconnect;
+    finally
+      Screen.Cursor := SaveCursor;
+    end;
+  finally
+    Connector.Free;
+  end;
+  ShowMessage(SDatabaseBuilt);
+  Result := True;
+end;
 
 function TInstantConnectionManagerForm.DoEvolve(
   ConnectionDef: TInstantConnectionDef): Boolean;
@@ -374,6 +422,12 @@ var
   Connector: TInstantConnector;
   DBEvolverForm: TInstantDBEvolverForm;
 begin
+  if Assigned(FOnEvolve) then
+  begin
+    Result := False;
+    FOnEvolve(Self, ConnectionDef, Result);
+    Exit;
+  end;
   if not Assigned(ConnectionDef) then
   begin
     Result := False;
@@ -497,6 +551,7 @@ begin
   if ConnectAction.Visible then Include(Result, atConnect);
   if DisconnectAction.Visible then Include(Result, atDisconnect);
   if BuildAction.Visible then Include(Result, atBuild);
+  if EvolveAction.Visible then Include(Result, atEvolve);
   if FileOpenAction.Visible then Include(Result, atOpen);
 end;
 
@@ -627,6 +682,7 @@ begin
   ConnectAction.Visible := atConnect in Value;
   DisconnectAction.Visible := atDisconnect in Value;
   BuildAction.Visible := atBuild in Value;
+  EvolveAction.Visible := atEvolve in Value;
   FileOpenAction.Visible := atOpen in Value;
 end;
 
@@ -709,6 +765,7 @@ begin
     OnSupportConnector := Value.OnSupportConnector;
     VisibleActions := Value.VisibleActions;
     OnBuild := Value.OnBuild;
+    OnEvolve := Value.OnEvolve;
     OnConnect := Value.OnConnect;
     OnDisconnect := Value.OnDisconnect;
     OnEdit := Value.OnEdit;

@@ -176,7 +176,11 @@ resourcestring
   SUnsupportedOperation = 'Unsupported operation: %s';
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
-
+  SDatabaseBuildConfirmation = 'Build database via connection "%s" and clear all data?';
+  SDatabaseBuilt = 'Database was built successfully';
+  SDeleteConnectionConfirmation = 'Delete connection "%s"?';
+  SConnectionName = 'Connection Name';
+  
 implementation
 
 end.
