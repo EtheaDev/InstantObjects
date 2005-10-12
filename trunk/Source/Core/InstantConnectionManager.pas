@@ -50,7 +50,7 @@ uses
 
 type
   TInstantConnectionManagerActionType = (atNew, atEdit, atDelete, atRename,
-    atConnect, atDisconnect, atBuild, atOpen);
+    atConnect, atDisconnect, atBuild, atEvolve, atOpen);
   TInstantConnectionManagerActionTypes = set of TInstantConnectionManagerActionType;
 
   TInstantConnectionDefEvent = procedure(Sender: TObject;
@@ -68,6 +68,7 @@ type
     FFileFormat: TInstantStreamFormat;
     FModel: TInstantModel;
     FOnBuild: TInstantConnectionDefEvent;
+    FOnEvolve: TInstantConnectionDefEvent;
     FOnConnect: TInstantConnectionDefEvent;
     FOnDisconnect: TInstantConnectionDefEvent;
     FOnEdit: TInstantConnectionDefEvent;
@@ -82,6 +83,7 @@ type
     procedure SetFileName(const Value: string);
     procedure SetModel(Value: TInstantModel);
     procedure SetOnBuild(Value: TInstantConnectionDefEvent);
+    procedure SetOnEvolve(Value: TInstantConnectionDefEvent);
     procedure SetOnConnect(Value: TInstantConnectionDefEvent);
     procedure SetOnDisconnect(Value: TInstantConnectionDefEvent);
     procedure SetOnEdit(Value: TInstantConnectionDefEvent);
@@ -138,8 +140,9 @@ type
       read FFileFormat write SetFileFormat default sfBinary;
     property VisibleActions: TInstantConnectionManagerActionTypes
       read FVisibleActions write SetVisibleActions
-      default [atNew, atEdit, atDelete, atRename, atConnect, atDisconnect, atBuild, atOpen];
+      default [atNew, atEdit, atDelete, atRename, atConnect, atDisconnect, atBuild, atEvolve, atOpen];
     property OnBuild: TInstantConnectionDefEvent read FOnBuild write SetOnBuild;
+    property OnEvolve: TInstantConnectionDefEvent read FOnEvolve write SetOnEvolve;
     property OnConnect: TInstantConnectionDefEvent read FOnConnect write SetOnConnect;
     property OnDisconnect: TInstantConnectionDefEvent
       read FOnDisconnect write SetOnDisconnect;
@@ -172,7 +175,7 @@ constructor TInstantConnectionManager.Create(AOwner: TComponent);
 begin
   inherited;
   FVisibleActions := [atNew, atEdit, atDelete, atRename, atConnect,
-    atDisconnect, atBuild, atOpen];
+    atDisconnect, atBuild, atEvolve, atOpen];
   FFileFormat := sfBinary;
 end;
 
@@ -221,6 +224,12 @@ procedure TInstantConnectionManager.SetOnBuild(
   Value: TInstantConnectionDefEvent);
 begin
   FOnBuild := Value;
+end;
+
+procedure TInstantConnectionManager.SetOnEvolve(
+  Value: TInstantConnectionDefEvent);
+begin
+  FOnEvolve := Value;
 end;
 
 procedure TInstantConnectionManager.SetOnConnect(
