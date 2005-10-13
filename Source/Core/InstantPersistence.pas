@@ -1687,7 +1687,9 @@ type
     // Creates an instance of TInstantCatalog suited for the broker and
     // back-end database engine. Must be overridden in derived classes that
     // intend to support catalog-based functionality, like database structure
-    // evolution. The predefined implementation just raises an exception.
+    // evolution. The predefined implementation just returns nil. Call
+    // IsCatalogSupported to know if CreateCatalog will return an instance of
+    // the catalog object or nil.
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; virtual;
     function GetDatabaseName: string; virtual;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
@@ -1701,6 +1703,8 @@ type
   public
     constructor Create(AConnector: TInstantConnector); virtual;
     destructor Destroy; override;
+    // Legacy database building code, to be removed when all brokers will have
+    // catalogs.
     procedure BuildDatabase(Scheme: TInstantScheme);
     // Creates a database build command object that can perform the build
     // operation represented by CommandType. The predefined implementation
@@ -1715,7 +1719,14 @@ type
       ConflictAction: TInstantConflictAction): Boolean;
     // Creates and returns a TInstantScheme object that represents the current
     // database scheme (which may differ from the model-derived scheme).
+    // If the broker doesn't have a catalog, calling this method will raise
+    // an exception. Call IsCatalogSupported if you need to know in advance
+    // whether you can safely call ReadDatabaseSchema or not.
     function ReadDatabaseScheme: TInstantScheme; virtual;
+    // Returns True if the broker supports creating a valid catalog. If this
+    // method returns False, it means that calling CreateCatalog will yield nil,
+    // and calling ReadDatabaseSchema will raise an exception.
+    function IsCatalogSupported: Boolean;
     function RetrieveObject(AObject: TInstantObject; const AObjectId: string;
       ConflictAction: TInstantConflictAction): Boolean;
     procedure SetObjectUpdateCount(AObject: TInstantObject; Value: Integer);
@@ -2023,7 +2034,7 @@ type
     procedure DoBeforeConnectionChange;
     function GetConnection: TCustomConnection;
     procedure SetConnection(Value: TCustomConnection);
-    procedure SetLoginPrompt(const Value: boolean);
+    procedure SetLoginPrompt(const Value: Boolean);
   protected
     procedure AssignLoginOptions; virtual;
     procedure AfterConnectionChange; virtual;
@@ -10078,7 +10089,7 @@ end;
 
 function TInstantBroker.CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
 begin
-  raise Exception.CreateFmt(SUndefinedCatalog, [ClassName]);
+  Result := nil;
 end;
 
 procedure TInstantBroker.InternalBuildDatabase(Scheme: TInstantScheme);
@@ -10094,6 +10105,8 @@ function TInstantBroker.ReadDatabaseScheme: TInstantScheme;
 begin
   Result := TInstantScheme.Create;
   Result.Catalog := CreateCatalog(Result);
+  if Result.Catalog = nil then
+    raise Exception.CreateFmt(SUndefinedCatalog, [ClassName]);
 end;
 
 function TInstantBroker.RetrieveObject(AObject: TInstantObject;
@@ -10113,6 +10126,11 @@ function TInstantBroker.StoreObject(AObject: TInstantObject;
   ConflictAction: TInstantConflictAction): Boolean;
 begin
   Result := InternalStoreObject(AObject, ConflictAction);
+end;
+
+function TInstantBroker.IsCatalogSupported: Boolean;
+begin
+  Result := CreateCatalog(nil) <> nil;
 end;
 
 { TInstantQuery }
@@ -11446,6 +11464,7 @@ function TInstantConnectionBasedConnector.GetConnection: TCustomConnection;
 begin
   if not (csDesigning in ComponentState) then
     CheckConnection;
+  AssignLoginOptions;
   Result := FConnection;
 end;
 
@@ -11457,7 +11476,6 @@ end;
 procedure TInstantConnectionBasedConnector.InternalConnect;
 begin
   CheckConnection;
-  AssignLoginOptions;
   Connection.Open;
 end;
 
@@ -11486,6 +11504,7 @@ begin
     Disconnect;
     DoBeforeConnectionChange;
     FConnection := Value;
+    AssignLoginOptions;
     DoAfterConnectionChange;
   end;
 end;
@@ -11494,14 +11513,15 @@ procedure TInstantConnectionBasedConnector.AssignLoginOptions;
 begin
   if HasConnection then
   begin
-    Connection.LoginPrompt := FLoginPrompt;
+    FConnection.LoginPrompt := FLoginPrompt;
   end;
 end;
 
 procedure TInstantConnectionBasedConnector.SetLoginPrompt(
-  const Value: boolean);
+  const Value: Boolean);
 begin
   FLoginPrompt := Value;
+  AssignLoginOptions;
 end;
 
 constructor TInstantConnectionBasedConnector.Create(AOwner: TComponent);

@@ -53,11 +53,11 @@ uses
 type
   TInstantDBBuilderForm = class(TInstantCustomDBEvolverForm)
     DBBuilder: TInstantDBBuilder;
-    procedure DBBuilderBeforeCommandSequenceExecute(Sender: TObject);
     procedure BuildActionExecute(Sender: TObject);
   private
   protected
     function GetCustomDBEvolver: TInstantCustomDBEvolver; override;
+    procedure BeforeBuildCommandSequence; override;
   public
   end;
 
@@ -65,19 +65,14 @@ implementation
 
 {$R *.dfm}
 
+uses
+  InstantPersistence;
+  
 { TInstantDBBuilderForm }
 
 function TInstantDBBuilderForm.GetCustomDBEvolver: TInstantCustomDBEvolver;
 begin
   Result := DBBuilder;
-end;
-
-procedure TInstantDBBuilderForm.DBBuilderBeforeCommandSequenceExecute(
-  Sender: TObject);
-begin
-  inherited;
-  if not Connector.DatabaseExists then
-    Connector.CreateDatabase;
 end;
 
 procedure TInstantDBBuilderForm.BuildActionExecute(Sender: TObject);
@@ -89,6 +84,16 @@ begin
     inherited;
     ShowMessage('Database built without errors.');
   end;
+end;
+
+procedure TInstantDBBuilderForm.BeforeBuildCommandSequence;
+var
+  LConnector: TInstantConnector;
+begin
+  inherited;
+  LConnector := Connector;
+  if Assigned(LConnector) then
+    LConnector.CreateDatabase;
 end;
 
 end.
