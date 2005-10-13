@@ -166,7 +166,7 @@ implementation
 
 uses
   SysUtils, TypInfo, InstantDesignUtils, InstantUtils, InstantUnitSelect,
-  Registry, InstantConnectionManager, Dialogs;
+  InstantConnectionManager, Dialogs;
 
 const
   SBuilderItemCaption = 'Database &Builder...';
