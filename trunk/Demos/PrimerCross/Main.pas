@@ -319,21 +319,30 @@ procedure TMainForm.ConnectionManagerPrepare(Sender: TObject;
   Connector: TInstantConnector);
 var
   DefaultConnector: TInstantConnector;
+  WasConnected: Boolean;
 begin
   DefaultConnector := InstantDefaultConnector;
   Connector.IsDefault := True;
   try
-    Connector.StartTransaction;
+    WasConnected := Connector.Connected;
+    if not WasConnected then
+      Connector.Connect;
     try
-      CreateCountries;
-      CreateCategories;
-      Connector.CommitTransaction;
-    except
-      Connector.RollbackTransaction;
-      raise;
+      Connector.StartTransaction;
+      try
+        CreateCountries;
+        CreateCategories;
+        Connector.CommitTransaction;
+      except
+        Connector.RollbackTransaction;
+        raise;
+      end;
+      if Confirm('Create random data?') then
+        RandomDataActionExecute(nil);
+    finally
+      if not WasConnected then
+        Connector.Disconnect;
     end;
-    if Confirm('Create random data?') then
-      RandomDataActionExecute(nil);
   finally
     if Assigned(DefaultConnector) then
       DefaultConnector.IsDefault := True;
