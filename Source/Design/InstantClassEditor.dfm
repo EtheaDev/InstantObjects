@@ -2,7 +2,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   Left = 319
   Top = 196
   Width = 408
-  Height = 526
+  Height = 399
   Caption = 'Class Editor'
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -10,12 +10,12 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 400
-    Height = 461
+    Height = 341
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 392
-      Height = 453
+      Height = 333
       ActivePage = ClassSheet
       Align = alClient
       TabOrder = 0
@@ -122,7 +122,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         ImageIndex = 1
         object AttributesSplitter: TSplitter
           Left = 0
-          Top = 264
+          Top = 165
           Width = 376
           Height = 3
           Cursor = crVSplit
@@ -130,9 +130,9 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         end
         object InheritedAttributesPanel: TPanel
           Left = 0
-          Top = 267
+          Top = 168
           Width = 376
-          Height = 150
+          Height = 129
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 1
@@ -149,7 +149,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
             Left = 0
             Top = 16
             Width = 376
-            Height = 134
+            Height = 113
             Align = alClient
             Columns = <
               item
@@ -174,7 +174,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Left = 0
           Top = 0
           Width = 376
-          Height = 264
+          Height = 165
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 0
@@ -191,7 +191,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
             Left = 0
             Top = 16
             Width = 376
-            Height = 248
+            Height = 149
             Align = alClient
             Columns = <
               item
@@ -218,7 +218,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 461
+    Top = 341
     Width = 400
     inherited ButtonPanel: TPanel
       Left = 240
