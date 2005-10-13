@@ -330,6 +330,13 @@ begin
 {$IFDEF D7+}
   // IBX's TIBDatabase.CreateDatabase is fatally flawed and so we have to
   // bypass it for the time being.
+
+  // **********
+  // Note: if you can't compile this code then you need to upgrade IBX.
+  // The version distributed with Delphi 7 won't do. Please go to Code Central
+  // and get yourself an upgrade.
+  // **********
+
   Connection.CheckInactive;
   db_handle := nil;
   tr_handle := nil;
