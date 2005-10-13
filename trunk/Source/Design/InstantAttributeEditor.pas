@@ -153,6 +153,11 @@ uses
 
 {$R *.dfm}
 
+resourcestring
+  SConfirmZeroSizeStringAttribute = 'Unspecified Size. Most brokers require ' +
+    'you to specify a Size for attributes of type String. Are you sure you ' +
+    'want to define a String attribute without a Size?';
+
 { TInstantAttributeEditorForm }
 
 procedure TInstantAttributeEditorForm.FormCreate(Sender: TObject);
@@ -346,6 +351,13 @@ begin
       end;
     end;
 
+  if (Subject.AttributeType = atString) and (Subject.Metadata.Size = 0) then
+    if not Confirm(SConfirmZeroSizeStringAttribute) then
+    begin
+      ModalResult := mrNone;
+      SizeEdit.SetFocus;
+      Abort;
+    end;
   inherited;
 end;
 
