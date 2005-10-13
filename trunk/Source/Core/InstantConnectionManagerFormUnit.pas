@@ -118,6 +118,9 @@ type
     FConnectionManager: TInstantConnectionManager;
     FOpenDialog: TOpenDialog;
     FTitle: string;
+    // Used to detect whether the database builder form has actually built
+    // the database.
+    FIsLastDatabaseBuilt: Boolean;
     function ConfirmDlg(const Text: string): Boolean;
     function GetCurrentConnectionDef: TInstantConnectionDef;
     function GetVisibleActions: TInstantConnectionManagerActionTypes;
@@ -135,6 +138,8 @@ type
     procedure NewMenuItemClick(Sender: TObject);
     procedure SetConnectionManager(const Value: TInstantConnectionManager);
     function GetOpenDialog: TOpenDialog;
+    procedure AfterDBBuilderBuild(Sender: TObject;
+      Connector: TInstantConnector);
   protected
     procedure Build(ConnectionDef: TInstantConnectionDef);
     procedure Connect(ConnectionDef: TInstantConnectionDef);
@@ -332,52 +337,24 @@ begin
     end;
 end;
 
+procedure TInstantConnectionManagerForm.AfterDBBuilderBuild(Sender: TObject;
+  Connector: TInstantConnector);
+begin
+  FIsLastDatabaseBuilt := True;
+  DoPrepare(Connector);
+end;
+
 procedure TInstantConnectionManagerForm.DisconnectActionExecute(Sender: TObject);
 begin
   Disconnect(CurrentConnectionDef);
 end;
 
-(* New version with DBBuilder
 function TInstantConnectionManagerForm.DoBuild(
   ConnectionDef: TInstantConnectionDef): Boolean;
 var
   Connector: TInstantConnector;
   DBBuilderForm: TInstantDBBuilderForm;
-begin
-  if Assigned(FOnBuild) then
-  begin
-    Result := False;
-    FOnBuild(Self, ConnectionDef, Result);
-    Exit;
-  end;
-  if not Assigned(ConnectionDef) then
-  begin
-    Result := False;
-    Exit;
-  end;
-  Connector := ConnectionDef.CreateConnector(nil);
-  try
-    DBBuilderForm := TInstantDBBuilderForm.Create(nil);
-
-    try
-      DBBuilderForm.Connector := Connector;
-      DBBuilderForm.TargetModel := Model;
-      DBBuilderForm.Execute;
-      Result := True;
-    finally
-      DBBuilderForm.Free;
-    end;
-  finally
-    Connector.Free;
-  end;
-end;
-*)
-
-//Old version: it works without catalog
-function TInstantConnectionManagerForm.DoBuild(
-  ConnectionDef: TInstantConnectionDef): Boolean;
-var
-  Connector: TInstantConnector;
+  DBBuilderSupported: Boolean;
   SaveCursor: TCursor;
 begin
   if Assigned(FOnBuild) then
@@ -391,29 +368,46 @@ begin
     Result := False;
     Exit;
   end;
-  if not Assigned(ConnectionDef) or not ConfirmDlg(
-    Format(SDatabaseBuildConfirmation, [ConnectionDef.Name])) then
-  begin
-    Result := False;
-    Exit;
-  end;
   Connector := ConnectionDef.CreateConnector(nil);
   try
-    SaveCursor := Screen.Cursor;
-    Screen.Cursor := crHourglass;
-    try
-      Application.ProcessMessages;
-      Connector.BuildDatabase(Model);
-      DoPrepare(Connector);
-      Connector.Disconnect;
-    finally
-      Screen.Cursor := SaveCursor;
+    DBBuilderSupported := Connector.Broker.IsCatalogSupported;
+    // For catalog-less brokers the build is immediate, so it needs
+    // confirmation now.
+    if not DBBuilderSupported then
+    begin
+      if not ConfirmDlg(Format(SDatabaseBuildConfirmation, [ConnectionDef.Name])) then
+      begin
+        Result := False;
+        Exit;
+      end;
+      SaveCursor := Screen.Cursor;
+      Screen.Cursor := crHourglass;
+      try
+        Application.ProcessMessages;
+        Connector.BuildDatabase(Model);
+        DoPrepare(Connector);
+        Result := True;
+      finally
+        Screen.Cursor := SaveCursor;
+      end;
+    end
+    else
+    begin
+      DBBuilderForm := TInstantDBBuilderForm.Create(nil);
+      try
+        DBBuilderForm.Connector := Connector;
+        DBBuilderForm.TargetModel := Model;
+        DBBuilderForm.AfterBuild := AfterDBBuilderBuild;
+        FIsLastDatabaseBuilt := False;
+        DBBuilderForm.Execute;
+        Result := FIsLastDatabaseBuilt;
+      finally
+        DBBuilderForm.Free;
+      end;
     end;
   finally
     Connector.Free;
   end;
-  ShowMessage(SDatabaseBuilt);
-  Result := True;
 end;
 
 function TInstantConnectionManagerForm.DoEvolve(
@@ -435,6 +429,8 @@ begin
   end;
   Connector := ConnectionDef.CreateConnector(nil);
   try
+    if not Connector.Broker.IsCatalogSupported then
+      raise EInstantError.Create(SDatabaseEvolutionNonSupported);
     DBEvolverForm := TInstantDBEvolverForm.Create(nil);
     try
       DBEvolverForm.Connector := Connector;

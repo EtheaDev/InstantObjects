@@ -94,6 +94,7 @@ resourcestring
   SConnectorInUse = 'Connector %s in use by %d object(s)';
   SConnectorMismatch = 'Connector mismatch';
   SContainerNotFound = 'Container: ''%s'' not found for class %s';
+  SDatabaseEvolutionNonSupported = 'This broker does not support database evolution';
   SDefaultContainerNotFound = 'Default container not found for class %s';
   SDefaultContainerNotSpecified = 'Default container not specified for class %s';
   SDeniedDispose = 'Denied dispose of object %s(''%s'')';

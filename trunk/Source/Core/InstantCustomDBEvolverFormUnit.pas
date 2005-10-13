@@ -101,6 +101,7 @@ type
       var RaiseError: Boolean); virtual;
     procedure CustomDBEvolverBeforeCommandSequenceExecute(Sender: TObject); virtual;
     procedure CustomDBEvolverAfterCommandSequenceExecute(Sender: TObject); virtual;
+    procedure BeforeBuildCommandSequence; virtual;
   public
     // Assign a connector before calling the Execute method, otherwise the
     // default connector is used.
@@ -218,6 +219,7 @@ begin
   OldScreenCursor := Screen.Cursor;
   Screen.Cursor := crHourglass;
   try
+    BeforeBuildCommandSequence;
     GetCustomDBEvolver.BuildCommandSequence;
     SequenceToScreen;
   finally
@@ -318,6 +320,10 @@ begin
   GetCustomDBEvolver.BeforeCommandSequenceExecute := CustomDBEvolverBeforeCommandSequenceExecute;
   GetCustomDBEvolver.AfterCommandSequenceExecute := CustomDBEvolverAfterCommandSequenceExecute;
   GetCustomDBEvolver.OnCommandExecuteError := CustomDBEvolverCommandExecuteError;
+end;
+
+procedure TInstantCustomDBEvolverForm.BeforeBuildCommandSequence;
+begin
 end;
 
 end.
