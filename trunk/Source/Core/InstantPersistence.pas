@@ -2216,7 +2216,6 @@ type
     function ObjectFetched(Index: Integer): Boolean; override;
     function RecNoOfObject(AObject: TInstantObject): Integer; virtual;
     procedure SetRowNumber(Value: Integer); virtual;
-    procedure TranslateCommand; override;
     property DataSet: TDataSet read GetDataSet;
     property ObjectRowCount: Integer read GetObjectRowCount;
     property ObjectRows[Index: Integer]: PObjectRow read GetObjectRows;
@@ -12587,18 +12586,6 @@ begin
       Dec(Value);
     end;
   end;
-end;
-
-procedure TInstantNavigationalQuery.TranslateCommand;
-begin
-  if TranslatorClass <> nil then
-    with TranslatorClass.Create(Self) do
-    try
-      CommandText := Self.Command;
-      Statement := StatementText;
-    finally
-      Free;
-    end;
 end;
 
 { TInstantSQLGenerator }
