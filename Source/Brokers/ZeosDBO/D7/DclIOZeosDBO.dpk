@@ -30,7 +30,7 @@ package DclIOZeosDBO;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOZeosDBO_D7;
+  IOZeosDBO;
 
 contains
   InstantZeosDBOReg in '..\InstantZeosDBOReg.pas';
