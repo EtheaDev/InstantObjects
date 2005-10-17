@@ -1,6 +1,6 @@
 program TestIO;
 
-{$I '../../InstantDefines.inc'}
+{$I '../InstantDefines.inc'}
 
 {$IFDEF FPC}
 {$mode objfpc}{$H+}
