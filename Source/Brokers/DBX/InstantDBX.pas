@@ -32,6 +32,12 @@ unit InstantDBX;
 
 interface
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 uses
 {$IFDEF MSWINDOWS}
   Controls,
@@ -396,7 +402,7 @@ begin
     SQL.Text := AStatement;
     if Assigned(AParams) then
       AssignParams(AParams, Params);
-{$IFNDEF VER170}
+{$IFNDEF D9+}
     NoMetadata := True;
 {$ENDIF}
   end;
