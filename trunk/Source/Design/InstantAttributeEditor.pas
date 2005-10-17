@@ -518,7 +518,7 @@ begin
 
   if Assigned(Subject) then
   begin
-    CanBeExternal := Subject.AttributeType in [atPart, atParts, atReferences];
+    CanBeExternal := Subject.CanBeExternal;
     if not CanBeExternal then
       Subject.StorageKind := skEmbedded;
     if Subject.AttributeType = atPart then
@@ -527,8 +527,7 @@ begin
     IsMaskable := Subject.AttributeType in [atString, atMemo, atFloat,
       atCurrency, atInteger];
     IsContainer := Subject.IsContainer;
-    CanHaveStorageName := (Subject.StorageKind <> skExternal) or
-      (Subject.AttributeType = atPart);
+    CanHaveStorageName := Subject.CanHaveStorageName;
     IsString := Subject.AttributeType in [atString, atMemo];
   end;
 

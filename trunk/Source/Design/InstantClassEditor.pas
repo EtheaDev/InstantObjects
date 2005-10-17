@@ -168,8 +168,11 @@ begin
     Data := Attribute;
     //Add Attribute Type
     SubItems.Add(Attribute.AttributeTypeText);
-    //Add StorageName
-    SubItems.Add(Attribute.StorageName);
+    //Add StorageName or ExternalStorageName
+    if Attribute.CanBeExternal and not Attribute.CanHaveStorageName then
+      SubItems.Add(Attribute.ExternalStorageName)
+    else
+      SubItems.Add(Attribute.StorageName);
     case Attribute.AttributeType of
       atReference: ImageIndex := 1;
       atPart: ImageIndex := 2;
