@@ -623,6 +623,8 @@ type
     function GetStorageKind: TInstantStorageKind;
     procedure SetExternalStorageName(const Value: string);
     procedure SetStorageKind(const Value: TInstantStorageKind);
+    function GetCanHaveStorageName: boolean;
+    function GetCanBeExternal: boolean;
   protected
     function GetIsDefault: Boolean; virtual;
     function GetMethodName(MethodType: TInstantCodeContainerMethodType): string;
@@ -652,6 +654,8 @@ type
     procedure Realize;
     property AttributeClass: TInstantAttributeClass read GetAttributeClass write SetAttributeClass;
     property AttributeClassName: string read GetAttributeClassName write SetAttributeClassName;
+    property CanHaveStorageName: boolean read GetCanHaveStorageName;
+    property CanBeExternal: boolean read GetCanBeExternal;
     property CountPropName: string read GetCountPropName;
     property FieldName: string read GetFieldName;
     property HostClass: TInstantCodeClass read GetHostClass;
@@ -4147,6 +4151,16 @@ end;
 procedure TInstantCodeAttribute.Update;
 begin
   Tailor.Update;
+end;
+
+function TInstantCodeAttribute.GetCanHaveStorageName: boolean;
+begin
+  Result := (StorageKind <> skExternal) or (AttributeType = atPart);
+end;
+
+function TInstantCodeAttribute.GetCanBeExternal: boolean;
+begin
+  Result := AttributeType in [atPart, atParts, atReferences];
 end;
 
 { TInstantCodeClassLink }
@@ -8555,13 +8569,4 @@ finalization
   DestroyTypeProcessors;
 
 end.
-
-
-
-
-
-
-
-
-
 
