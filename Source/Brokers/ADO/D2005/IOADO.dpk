@@ -32,7 +32,8 @@ requires
   vcl,
   vcldb,
   adortl,
-  IOCore;
+  IOCore,
+  IOMSSqlCatalog;
 
 contains
   InstantADOX in '..\InstantADOX.pas',

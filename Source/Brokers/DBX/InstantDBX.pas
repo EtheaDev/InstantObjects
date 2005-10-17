@@ -396,7 +396,9 @@ begin
     SQL.Text := AStatement;
     if Assigned(AParams) then
       AssignParams(AParams, Params);
+{$IFNDEF VER170}
     NoMetadata := True;
+{$ENDIF}
   end;
   Result := Query;
 end;
