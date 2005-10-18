@@ -30,13 +30,11 @@ package IOZeosDBO;
 
 requires
   IOCore,
-  ZComponent,
-  IOIbFbCatalog,
-  IOMSSqlCatalog;
+  ZComponent;
 
 contains
-  InstantZeosDBOConnectionDefEdit in '..\InstantZeosDBOConnectionDefEdit.pas' {InstantZeosDBOConnectionDefEditForm},
-  InstantZeosDBO in '..\InstantZeosDBO.pas';
+  InstantZeosDBO in '..\InstantZeosDBO.pas',
+  InstantZeosDBOCatalog in '..\InstantZeosDBOCatalog.pas',
+  InstantZeosDBOConnectionDefEdit in '..\InstantZeosDBOConnectionDefEdit.pas' {InstantZeosDBOConnectionDefEditForm};
 
 end.
-

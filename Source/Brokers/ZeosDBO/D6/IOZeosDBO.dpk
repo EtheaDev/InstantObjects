@@ -1,8 +1,8 @@
-package IOZeosDBO_D5;
+package IOZeosDBO;
 
 {$I '..\..\..\InstantVersion.inc'}
 
-{$ALIGN ON}
+{$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
 {$DEBUGINFO ON}
@@ -23,7 +23,8 @@ package IOZeosDBO_D5;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects ZeosDBO Run-Time Support (Delphi 5)'}
+{$DESCRIPTION 'InstantObjects ZeosDBO Run-Time Support (Delphi 6)'}
+{$LIBSUFFIX '_D6'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 

@@ -54,6 +54,7 @@ uses
 type
   TInstantZeosDBOConnectionDef = class(TInstantRelationalConnectionDef)
   private
+    FCatalog: string;
     FDatabase: string;
     FHostName: string;
     FLoginPrompt: Boolean;
@@ -70,6 +71,7 @@ type
     class function ConnectionTypeName: string; override;
     class function ConnectorClass: TInstantConnectorClass; override;
   published
+    property Catalog: string read FCatalog write FCatalog;
     property Database: string read FDatabase write FDatabase;
     property HostName: string read FHostName write FHostName;
     property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt;
@@ -89,6 +91,7 @@ type
     FUseDelimitedIdents: Boolean;
     procedure DoAfterConnectionChange;
     procedure DoBeforeConnectionChange;
+    function GetConnection: TZConnection;
     procedure SetConnection(Value: TZConnection);
     procedure SetLoginPrompt(const Value: Boolean);
     procedure SetUseDelimitedIdents(const Value: Boolean);
@@ -112,7 +115,7 @@ type
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
     function HasConnection: Boolean;
   published
-    property Connection: TZConnection read FConnection write SetConnection;
+    property Connection: TZConnection read GetConnection write SetConnection;
     property LoginPrompt: Boolean read FLoginPrompt write SetLoginPrompt default False;
     property OnLogin: TLoginEvent read FOnLogin write FOnLogin;
     property UseDelimitedIdents: Boolean read FUseDelimitedIdents write SetUseDelimitedIdents default False;
@@ -124,18 +127,19 @@ type
   protected
     procedure AssignDataSetParams(DataSet: TDataSet; AParams: TParams); override;
     procedure AssignParam(SourceParam, TargetParam: TParam); virtual;
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
+    function DatabaseSQLDelimiter: string;
     function GetDatabaseName: string; override;
+    function GetDBMSName: string; override;
     function GetSQLDelimiters: string; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; virtual; abstract;
-    function SupportsQuotedIdents: Boolean; virtual; abstract;
     function UseBooleanFields: Boolean; virtual; abstract;
   public
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
-    function CreateDBBuildCommand(
-      const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
+    function CreateDBBuildCommand(const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
     function Execute(const AStatement: string; AParams: TParams = nil): Integer; override;
     property Connector: TInstantZeosDBOConnector read GetConnector;
@@ -163,9 +167,7 @@ type
   {$IFDEF SYBASE_SUPPORT}
   TInstantZeosDBOSybaseBroker = class(TInstantZeosDBOBroker)
   protected
-    function GetDBMSName: string; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
-    function SupportsQuotedIdents: Boolean; override;
     function UseBooleanFields: Boolean; override;
   end;
   {$ENDIF}
@@ -175,10 +177,7 @@ type
   {$IFDEF MSSQL_SUPPORT}
   TInstantZeosDBOMSSQLBroker = class(TInstantZeosDBOBroker)
   protected
-    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
-    function GetDBMSName: string; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
-    function SupportsQuotedIdents: Boolean; override;
     function UseBooleanFields: Boolean; override;
   end;
   {$ENDIF}
@@ -188,20 +187,8 @@ type
   {$IFDEF IBFB_SUPPORT}
   TInstantZeosDBOIbFbBroker = class(TInstantZeosDBOBroker)
   protected
-    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
-    function SupportsQuotedIdents: Boolean; override;
     function UseBooleanFields: Boolean; override;
-  end;
-
-  TInstantZeosDBOInterbaseBroker = class(TInstantZeosDBOIbFbBroker)
-  protected
-    function GetDBMSName: string; override;
-  end;
-
-  TInstantZeosDBOFirebirdBroker = class(TInstantZeosDBOIbFbBroker)
-  protected
-    function GetDBMSName: string; override;
   end;
   {$ENDIF}
 
@@ -210,9 +197,7 @@ type
   {$IFDEF ORACLE_SUPPORT}
   TInstantZeosDBOOracleBroker = class(TInstantZeosDBOBroker)
   protected
-    function GetDBMSName: string; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
-    function SupportsQuotedIdents: Boolean; override;
     function UseBooleanFields: Boolean; override;
   end;
   {$ENDIF}
@@ -222,9 +207,7 @@ type
   {$IFDEF PGSQL_SUPPORT}
   TInstantZeosDBOPgSQLBroker = class(TInstantZeosDBOBroker)
   protected
-    function GetDBMSName: string; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
-    function SupportsQuotedIdents: Boolean; override;
     function UseBooleanFields: Boolean; override;
   end;
   {$ENDIF}
@@ -234,9 +217,7 @@ type
   {$IFDEF MYSQL_SUPPORT}
   TInstantZeosDBOMySQLBroker = class(TInstantZeosDBOBroker)
   protected
-    function GetDBMSName: string; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
-    function SupportsQuotedIdents: Boolean; override;
     function UseBooleanFields: Boolean; override;
   end;
   {$ENDIF}
@@ -246,32 +227,19 @@ type
   {$IFDEF SQLITE_SUPPORT}
   TInstantZeosDBOSQLiteBroker = class(TInstantZeosDBOBroker)
   protected
-    function GetDBMSName: string; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
-    function SupportsQuotedIdents: Boolean; override;
     function UseBooleanFields: Boolean; override;
   end;
   {$ENDIF}
 
-  procedure AssignZeosDBOProtocols(Strings: TStrings);
+procedure AssignZeosDBOProtocols(Strings: TStrings);
 
 implementation
 
 uses
-  SysUtils,
-  {$IFDEF D7+}Types,{$ENDIF}
-  Controls,
-  InstantConsts,
-  InstantClasses,
-  InstantDBBuild,
-  {$IFDEF IBFB_SUPPORT}InstantIbFbCatalog,{$ENDIF}
-  {$IFDEF MSSQL_SUPPORT}InstantMSSQLCatalog,{$ENDIF}
-  InstantZeosDBOConnectionDefEdit,
-  InstantUtils,
-  ZClasses,
-  ZCompatibility,
-  ZDbcIntfs,
-  ZDataset;
+  SysUtils, {$IFDEF D7+}Types,{$ENDIF} Controls, InstantConsts, InstantClasses,
+  InstantDBBuild, InstantZeosDBOConnectionDefEdit, InstantZeosDBOCatalog,
+  InstantUtils, ZClasses, ZCompatibility, ZDbcIntfs, ZDataset;
 
 { Global routines }
 
@@ -317,7 +285,8 @@ begin
   end;
 end;
 
-procedure TInstantZeosDBOConnectionDef.InitConnector(Connector: TInstantConnector);
+procedure TInstantZeosDBOConnectionDef.InitConnector(
+  Connector: TInstantConnector);
 var
   Connection: TZConnection;
 begin
@@ -333,6 +302,7 @@ begin
     Connection.Port := Port;
     Connection.Properties.Text := Properties;
     Connection.Protocol := Protocol;
+    Connection.Catalog := Catalog;
     Connection.TransactIsolationLevel := tiReadCommitted;
     Connection.User := UserName;
     Connection.Password := Password;
@@ -373,7 +343,7 @@ end;
 
 procedure TInstantZeosDBOConnector.CheckConnection;
 begin
-  if not HasConnection then
+  if not Assigned(FConnection) then
     raise EInstantError.Create(SUnassignedConnection);
 end;
 
@@ -392,61 +362,60 @@ end;
 function TInstantZeosDBOConnector.CreateBroker: TInstantBroker;
 begin
   CheckConnection;
+
   Result := nil;
 
   {$IFDEF SYBASE_SUPPORT}
-  if SameText(Connection.Protocol, 'sybase') then
+  if SameText(FConnection.Protocol, 'sybase') then
     Result := TInstantZeosDBOSybaseBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF MSSQL_SUPPORT}
-  if SameText(Connection.Protocol, 'mssql') then
+  if SameText(FConnection.Protocol, 'mssql') then
     Result := TInstantZeosDBOMSSQLBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF IBFB_SUPPORT}
-  if SameText(Connection.Protocol, 'interbase-5') or
-   SameText(Connection.Protocol, 'interbase-6') then
-    Result := TInstantZeosDBOInterbaseBroker.Create(Self);
-
-  if SameText(Connection.Protocol, 'firebird-1.0') or
-   SameText(Connection.Protocol, 'firebird-1.5') then
-    Result := TInstantZeosDBOFirebirdBroker.Create(Self);
+  if SameText(FConnection.Protocol, 'interbase-5') or
+   SameText(FConnection.Protocol, 'interbase-6') or
+   SameText(FConnection.Protocol, 'firebird-1.0') or
+   SameText(FConnection.Protocol, 'firebird-1.5') then
+    Result := TInstantZeosDBOIbFbBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF ORACLE_SUPPORT}
-  if SameText(Connection.Protocol, 'oracle') or
-   SameText(Connection.Protocol, 'oracle-9i') then
+  if SameText(FConnection.Protocol, 'oracle') or
+   SameText(FConnection.Protocol, 'oracle-9i') then
     Result := TInstantZeosDBOOracleBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF PGSQL_SUPPORT}
-  if SameText(Connection.Protocol, 'postgresql') or
-   SameText(Connection.Protocol, 'postgresql-6.5') or
-   SameText(Connection.Protocol, 'postgresql-7.2') or
-   SameText(Connection.Protocol, 'postgresql-7.3') or
-   SameText(Connection.Protocol, 'postgresql-7.4') then
+  if SameText(FConnection.Protocol, 'postgresql') or
+   SameText(FConnection.Protocol, 'postgresql-6.5') or
+   SameText(FConnection.Protocol, 'postgresql-7.2') or
+   SameText(FConnection.Protocol, 'postgresql-7.3') or
+   SameText(FConnection.Protocol, 'postgresql-7.4') then
     Result := TInstantZeosDBOPgSQLBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF MYSQL_SUPPORT}
-  if SameText(Connection.Protocol, 'mysql') or
-   SameText(Connection.Protocol, 'mysql-3.20') or
-   SameText(Connection.Protocol, 'mysql-3.23') or
-   SameText(Connection.Protocol, 'mysql-4.0') or
-   SameText(Connection.Protocol, 'mysql-4.1') then
+  if SameText(FConnection.Protocol, 'mysql') or
+   SameText(FConnection.Protocol, 'mysql-3.20') or
+   SameText(FConnection.Protocol, 'mysql-3.23') or
+   SameText(FConnection.Protocol, 'mysql-4.0') or
+   SameText(FConnection.Protocol, 'mysql-4.1') then
     Result := TInstantZeosDBOMySQLBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF SQLITE_SUPPORT}
-  if SameText(Connection.Protocol, 'sqlite') or
-   SameText(Connection.Protocol, 'sqlite-2.8') then
+  if SameText(FConnection.Protocol, 'sqlite') or
+   SameText(FConnection.Protocol, 'sqlite-2.8') then
     Result := TInstantZeosDBOSQLiteBroker.Create(Self);
   {$ENDIF}
 
   if Result = nil then
     raise EInstantError.CreateFmt('ZeosDBO protocol "%s" not supported',
-     [Connection.Protocol]);
+     [FConnection.Protocol]);
 end;
 
 procedure TInstantZeosDBOConnector.DoAfterConnectionChange;
@@ -474,13 +443,21 @@ begin
     Result := inherited GetConnected;
 end;
 
+function TInstantZeosDBOConnector.GetConnection: TZConnection;
+begin
+  CheckConnection;
+  Result := FConnection; 
+end;
+
 function TInstantZeosDBOConnector.HasConnection: Boolean;
 begin
   Result := Assigned(FConnection);
 end;
 
-procedure TInstantZeosDBOConnector.InternalBuildDatabase(Scheme: TInstantScheme);
+procedure TInstantZeosDBOConnector.InternalBuildDatabase(
+  Scheme: TInstantScheme);
 begin
+  StartTransaction;
   try
     inherited;
     CommitTransaction;
@@ -492,27 +469,29 @@ end;
 
 procedure TInstantZeosDBOConnector.InternalCommitTransaction;
 begin
-  if HasConnection and not Connection.AutoCommit then
-    Connection.Commit;
+  CheckConnection;
+  if not FConnection.AutoCommit then
+    FConnection.Commit;
 end;
 
 procedure TInstantZeosDBOConnector.InternalConnect;
 begin
   CheckConnection;
   AssignLoginOptions;
-  Connection.Connect;
+  FConnection.Connect;
 end;
 
 procedure TInstantZeosDBOConnector.InternalDisconnect;
 begin
   if HasConnection then
-    Connection.Disconnect;
+    FConnection.Disconnect;
 end;
 
 procedure TInstantZeosDBOConnector.InternalRollbackTransaction;
 begin
-  if HasConnection and not Connection.AutoCommit then
-    Connection.Rollback;
+  CheckConnection;
+  if not FConnection.AutoCommit then
+    FConnection.Rollback;
 end;
 
 procedure TInstantZeosDBOConnector.InternalStartTransaction;
@@ -560,10 +539,11 @@ end;
 
 { TInstantZeosDBOBroker }
 
-procedure TInstantZeosDBOBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
+procedure TInstantZeosDBOBroker.AssignDataSetParams(DataSet: TDataSet;
+  AParams: TParams);
 var
   i: Integer;
-  TargetParams : TParams;
+  TargetParams: TParams;
   SourceParam, TargetParam: TParam;
 begin
   //don't call inherited
@@ -602,17 +582,28 @@ begin
   end;
 end;
 
+function TInstantZeosDBOBroker.CreateCatalog(
+  const AScheme: TInstantScheme): TInstantCatalog;
+begin
+  Result := TInstantZeosDBOCatalog.Create(AScheme, Self);
+end;
+
 function TInstantZeosDBOBroker.CreateDataSet(const AStatement: string;
   AParams: TParams): TDataSet;
 var
   Query: TZReadOnlyQuery;
 begin
   Query := TZReadOnlyQuery.Create(nil);
-  Query.Connection := Connector.Connection;
-  Query.SQL.Text := AStatement;
-  if Assigned(AParams) then
-    AssignDatasetParams(Query, AParams);
-  Result := Query;
+  try
+    Query.Connection := Connector.Connection;
+    Query.SQL.Text := AStatement;
+    if Assigned(AParams) then
+      AssignDatasetParams(Query, AParams);
+    Result := Query;
+  except
+    Query.Free;
+    raise;
+  end;
 end;
 
 function TInstantZeosDBOBroker.CreateDBBuildCommand(
@@ -647,6 +638,13 @@ begin
     Result := TInstantZeosDBOResolver.Create(Self, Map);
 end;
 
+function TInstantZeosDBOBroker.DatabaseSQLDelimiter: string;
+begin
+  if Connector.Connected then
+    Result := Connector.Connection.DbcConnection.GetMetadata.GetIdentifierQuoteString;
+  { TODO : else? }
+end;
+
 function TInstantZeosDBOBroker.DataTypeToColumnType(DataType: TInstantDataType;
   Size: Integer): string;
 begin
@@ -679,21 +677,22 @@ begin
   Result := Connector.Connection.Database;
 end;
 
+function TInstantZeosDBOBroker.GetDBMSName: string;
+begin
+  if Connector.Connected then
+    Result := Connector.Connection.DbcConnection.GetMetadata.GetDatabaseProductName;
+  { TODO : else? }
+end;
+
 function TInstantZeosDBOBroker.GetSQLDelimiters: string;
 begin
-  // This method returns the delimiter that *will be* used and we are
-  // changing its behavior (choosing if will be used or not), thus,
-  // it'll only supports double quote for the time being
-  { TODO : TInstantSQLBroker needs to know if I want to use Delimiters or not }
-  if Connector.UseDelimitedIdents and SupportsQuotedIdents then
-    Result := '""'
-  else
-    Result := ''; //inherited GetSQLDelimiters;
+  Result := DatabaseSQLDelimiter;
+  if not Connector.UseDelimitedIdents or (Result = ' ') then
+    Result := '';
 end;
 
 function TInstantZeosDBOBroker.GetSQLQuote: Char;
 begin
-  { TODO : Check Oracle and SQLite compatibility. }
   Result := '''';
 end;
 
@@ -722,7 +721,8 @@ begin
   begin
     Writer.WriteChar('1');
     Result := True;
-  end else if SameText(Constant.Value, InstantFalseString) then
+  end else
+  if SameText(Constant.Value, InstantFalseString) then
   begin
     Writer.WriteChar('0');
     Result := True;
@@ -740,32 +740,20 @@ end;
 { TInstantZeosDBOSybaseBroker }
 
 {$IFDEF SYBASE_SUPPORT}
-function TInstantZeosDBOSybaseBroker.GetDBMSName: string;
-begin
-  Result := 'Sybase';
-end;
-
 function TInstantZeosDBOSybaseBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'DOUBLE PRECISION',
-    'MONEY',
-    'TINYINT',
-    'VARCHAR',
-    'TEXT',
-    'DATETIME',
-    'IMAGE');
+   'INTEGER',
+   'DOUBLE PRECISION',
+   'MONEY',
+   'TINYINT',
+   'VARCHAR',
+   'TEXT',
+   'DATETIME',
+   'IMAGE');
 begin
   Result := Types[DataType];
-end;
-
-function TInstantZeosDBOSybaseBroker.SupportsQuotedIdents: Boolean;
-begin
-  // Sybase needs a "SET quoted_identifier ON" before first statement using
-  // Quoted Identifier
-  Result := False;
 end;
 
 function TInstantZeosDBOSybaseBroker.UseBooleanFields: Boolean;
@@ -777,37 +765,20 @@ end;
 { TInstantZeosDBOMSSQLBroker }
 
 {$IFDEF MSSQL_SUPPORT}
-function TInstantZeosDBOMSSQLBroker.CreateCatalog(
-  const AScheme: TInstantScheme): TInstantCatalog;
-begin
-  Result := TInstantMSSQLCatalog.Create(AScheme, Self);
-end;
-
-function TInstantZeosDBOMSSQLBroker.GetDBMSName: string;
-begin
-  Result := 'MS SQL Server';
-end;
-
 function TInstantZeosDBOMSSQLBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT',
-    'MONEY',
-    'BIT',
-    'VARCHAR',
-    'TEXT',
-    'DATETIME',
-    'IMAGE');
+   'INTEGER',
+   'FLOAT',
+   'MONEY',
+   'BIT',
+   'VARCHAR',
+   'TEXT',
+   'DATETIME',
+   'IMAGE');
 begin
   Result := Types[DataType];
-end;
-
-function TInstantZeosDBOMSSQLBroker.SupportsQuotedIdents: Boolean;
-begin
-  { TODO : Check }
-  Result := False;
 end;
 
 function TInstantZeosDBOMSSQLBroker.UseBooleanFields: Boolean;
@@ -823,87 +794,45 @@ function TInstantZeosDBOIbFbBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'DOUBLE PRECISION',
-    'DECIMAL(14,4)',
-    'SMALLINT',
-    'VARCHAR',
-    'BLOB SUB_TYPE 1',
-    'TIMESTAMP',
-    'BLOB');
+   'INTEGER',
+   'DOUBLE PRECISION',
+   'DECIMAL(14,4)',
+   'SMALLINT',
+   'VARCHAR',
+   'BLOB SUB_TYPE 1',
+   'TIMESTAMP',
+   'BLOB');
 begin
   Result := Types[DataType];
-end;
-
-function TInstantZeosDBOIbFbBroker.CreateCatalog(
-  const AScheme: TInstantScheme): TInstantCatalog;
-begin
-  Result := TInstantIbFbCatalog.Create(AScheme, Self);
-end;
-
-function TInstantZeosDBOIbFbBroker.SupportsQuotedIdents: Boolean;
-begin
-  Result := True;
 end;
 
 function TInstantZeosDBOIbFbBroker.UseBooleanFields: Boolean;
 begin
   Result := False;
 end;
-
-{ TInstantZeosDBOInterbaseBroker }
-
-function TInstantZeosDBOInterbaseBroker.GetDBMSName: string;
-begin
-  Result := 'Interbase';
-end;
-
-{ TInstantZeosDBOFirebirdBroker }
-
-function TInstantZeosDBOFirebirdBroker.GetDBMSName: string;
-begin
-  Result := 'Firebird';
-end;
 {$ENDIF}
 
 { TInstantZeosDBOOracleBroker }
 
 {$IFDEF ORACLE_SUPPORT}
-function TInstantZeosDBOOracleBroker.GetDBMSName: string;
-begin
-  Result := 'Oracle';
-end;
-
 function TInstantZeosDBOOracleBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
-(*
 const
-  //dtInteger, dtFloat, dtCurrency, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob
   Types: array[TInstantDataType] of string = (
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '',
-    '');
-*)
+   'NUMBER(10)',
+   'FLOAT',
+   'NUMBER(14,4)',
+   'NUMBER(1)',
+   'VARCHAR2',
+   'CLOB',
+   'DATE',
+   'BLOB');
 begin
-  //Result := Types[DataType];
-  { TODO : Implement }
-  raise EInstantError.Create('Oracle protocol not implemented yet');
-end;
-
-function TInstantZeosDBOOracleBroker.SupportsQuotedIdents: Boolean;
-begin
-  { TODO : Chech }
-  Result := False;
+  Result := Types[DataType];
 end;
 
 function TInstantZeosDBOOracleBroker.UseBooleanFields: Boolean;
 begin
-  { TODO : Check }
   Result := False;
 end;
 {$ENDIF}
@@ -911,30 +840,20 @@ end;
 { TInstantZeosDBOPgSQLBroker }
 
 {$IFDEF PGSQL_SUPPORT}
-function TInstantZeosDBOPgSQLBroker.GetDBMSName: string;
-begin
-  Result := 'PostgreSQL';
-end;
-
 function TInstantZeosDBOPgSQLBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT8',
-    'DECIMAL(14,4)',
-    'BOOLEAN',
-    'VARCHAR',
-    'TEXT',
-    'TIMESTAMP',
-    'BYTEA');
+   'INTEGER',
+   'FLOAT8',
+   'DECIMAL(14,4)',
+   'BOOLEAN',
+   'VARCHAR',
+   'TEXT',
+   'TIMESTAMP',
+   'BYTEA');
 begin
   Result := Types[DataType];
-end;
-
-function TInstantZeosDBOPgSQLBroker.SupportsQuotedIdents: Boolean;
-begin
-  Result := True;
 end;
 
 function TInstantZeosDBOPgSQLBroker.UseBooleanFields: Boolean;
@@ -946,67 +865,45 @@ end;
 { TInstantZeosDBOMySQLBroker }
 
 {$IFDEF MYSQL_SUPPORT}
-function TInstantZeosDBOMySQLBroker.GetDBMSName: string;
-begin
-  Result := 'MySQL';
-end;
-
 function TInstantZeosDBOMySQLBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT',
-    'DECIMAL(14,4)',
-    'TINYINT(1)',
-    'VARCHAR',
-    'TEXT',
-    'DATETIME',
-    'BLOB');
+   'INTEGER',
+   'FLOAT',
+   'DECIMAL(14,4)',
+   'BOOL',
+   'VARCHAR',
+   'TEXT',
+   'DATETIME',
+   'BLOB');
 begin
   Result := Types[DataType];
 end;
 
-function TInstantZeosDBOMySQLBroker.SupportsQuotedIdents: Boolean;
-begin
-  { TODO : Check }
-  Result := False;
-end;
-
 function TInstantZeosDBOMySQLBroker.UseBooleanFields: Boolean;
 begin
-  Result := False;
+  Result := True;
 end;
 {$ENDIF}
 
 { TInstantZeosDBOSQLiteBroker }
 
 {$IFDEF SQLITE_SUPPORT}
-function TInstantZeosDBOSQLiteBroker.GetDBMSName: string;
-begin
-  Result := 'SQLite';
-end;
-
 function TInstantZeosDBOSQLiteBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT',
-    'NUMERIC(14,4)',
-    'BOOLEAN',
-    'VARCHAR',
-    'TEXT',
-    'TIMESTAMP',
-    'BLOB');
+   'INTEGER',
+   'FLOAT',
+   'NUMERIC(14,4)',
+   'BOOLEAN',
+   'VARCHAR',
+   'TEXT',
+   'TIMESTAMP',
+   'BLOB');
 begin
   Result := Types[DataType];
-end;
-
-function TInstantZeosDBOSQLiteBroker.SupportsQuotedIdents: Boolean;
-begin
-  { TODO : Check }
-  Result := False;
 end;
 
 function TInstantZeosDBOSQLiteBroker.UseBooleanFields: Boolean;

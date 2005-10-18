@@ -3,7 +3,7 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
   Top = 165
   BorderStyle = bsDialog
   Caption = 'ZeosDBO Connection'
-  ClientHeight = 343
+  ClientHeight = 345
   ClientWidth = 372
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 306
+    Top = 308
     Width = 372
     Height = 2
     Align = alBottom
@@ -28,7 +28,7 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 372
-    Height = 306
+    Height = 308
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -63,6 +63,14 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Height = 13
       Caption = '&Database'
       FocusControl = DatabaseEdit
+    end
+    object CatalogLabel: TLabel
+      Left = 240
+      Top = 56
+      Width = 36
+      Height = 13
+      Caption = '&Catalog'
+      FocusControl = CatalogEdit
     end
     object UserNameLabel: TLabel
       Left = 16
@@ -139,12 +147,19 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
     object DatabaseEdit: TEdit
       Left = 16
       Top = 72
-      Width = 305
+      Width = 193
       Height = 21
       TabOrder = 3
     end
+    object CatalogEdit: TEdit
+      Left = 240
+      Top = 72
+      Width = 113
+      Height = 21
+      TabOrder = 5
+    end
     object DatabaseButton: TButton
-      Left = 330
+      Left = 214
       Top = 72
       Width = 21
       Height = 21
@@ -156,7 +171,7 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Top = 112
       Width = 145
       Height = 21
-      TabOrder = 5
+      TabOrder = 6
     end
     object PasswordEdit: TEdit
       Left = 168
@@ -164,7 +179,7 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Width = 89
       Height = 21
       PasswordChar = '*'
-      TabOrder = 6
+      TabOrder = 7
     end
     object LoginPromptCheckBox: TCheckBox
       Left = 272
@@ -172,14 +187,14 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Width = 81
       Height = 17
       Caption = '&Login Prompt'
-      TabOrder = 7
+      TabOrder = 8
     end
     object PropertiesEditor: TMemo
       Left = 16
       Top = 160
       Width = 185
       Height = 129
-      TabOrder = 8
+      TabOrder = 9
     end
     object StreamFormatComboBox: TComboBox
       Left = 216
@@ -189,7 +204,7 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Style = csDropDownList
       ItemHeight = 13
       Sorted = True
-      TabOrder = 9
+      TabOrder = 10
     end
     object IdDataTypeComboBox: TComboBox
       Left = 216
@@ -198,14 +213,14 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
-      TabOrder = 10
+      TabOrder = 11
     end
     object IdSizeEdit: TEdit
       Left = 216
       Top = 240
       Width = 65
       Height = 21
-      TabOrder = 11
+      TabOrder = 12
     end
     object UseDelimitedIdentsCheckBox: TCheckBox
       Left = 216
@@ -213,12 +228,12 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Width = 137
       Height = 17
       Caption = '&Use delimited identifiers'
-      TabOrder = 12
+      TabOrder = 13
     end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 308
+    Top = 310
     Width = 372
     Height = 35
     Align = alBottom
