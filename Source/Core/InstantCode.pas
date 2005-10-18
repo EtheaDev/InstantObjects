@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
- * Uberto Barbini, Joao Morais
+ * Uberto Barbini, Joao Morais, Riceball Lee
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -3863,13 +3863,39 @@ begin
 end;
 
 function TInstantCodeAttribute.GetSingularName: string;
+const
+  Vowels = ['a', 'e', 'i', 'o', 'u'];
+  SpChars = ['s', 'x', 'h'];
+var
+  i: integer;
 begin
   if FSingularName <> '' then
     Result := FSingularName
   else begin
     Result := Name;
-    if Copy(Result, Length(Result), 1) = 's' then
-      Result := Copy(Result, 1, Length(Result) - 1);
+    //added the Vowels changes.
+    i := Length(Result);
+    if Copy(Result, i, 1) = 's' then
+    begin
+      If (i > 3) and (Copy(Result, i - 2, 3) = 'ies') and
+        not (Result[i - 3] in Vowels) then
+      begin
+        Result := Copy(Result, 1, i - 3) + 'y';
+      end
+      else If (i > 3) and (Copy(Result, i - 1, 2) = 'es') and
+        (Result[i - 2] in SpChars) then
+      begin
+       if (Result[i - 2] = 'h') and not (Result[i - 3] in ['c', 's']) then
+       begin
+         //not ch or sh
+         Result := Copy(Result, 1, i - 1);
+       end
+       else
+        Result := Copy(Result, 1, i - 2);
+      end
+      else
+        Result := Copy(Result, 1, i - 1);
+    end
   end;
 end;
 
