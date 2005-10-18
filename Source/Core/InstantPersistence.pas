@@ -10142,17 +10142,9 @@ function TInstantBroker.IsCatalogSupported: Boolean;
 var
   vCatalog: TInstantCatalog;
 begin
-//  Result := CreateCatalog(nil) <> nil;
-  vCatalog := nil;
-  
+  vCatalog := CreateCatalog(nil);
   try
-    try
-      vCatalog := CreateCatalog(nil);
-      Result := Assigned(vCatalog);
-    except
-      Result := False;
-      raise;
-    end;
+    Result := Assigned(vCatalog);
   finally
     vCatalog.Free;
   end;
