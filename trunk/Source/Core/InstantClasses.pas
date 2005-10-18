@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Marco Cantù, Nando Dessena, Uberto Barbini
+ * Carlo Barazzetta, Adrea Petrelli, Marco Cantù, Nando Dessena, Uberto Barbini,
+ * Riceball Lee
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -1668,16 +1669,19 @@ end;
 procedure TInstantBinaryToTextConverter.InternalConvert;
 begin
   PushObjectClass(FindClass(Reader.ReadStr));
-  Producer.WriteStartTag(ObjectClassName);
-  if ObjectClass.InheritsFrom(TInstantStreamable) then
-    TInstantStreamableClass(ObjectClass).ConvertToText(Self)
-  else if ObjectClass.InheritsFrom(TInstantCollection) then
-    TInstantCollectionClass(ObjectClass).ConvertToText(Self)
-  else if ObjectClass.InheritsFrom(TInstantCollectionItem) then
-    TInstantCollectionItemClass(ObjectClass).ConvertToText(Self);
-  Reader.ReadListEnd;
-  Producer.WriteEndTag;
-  PopObjectClass;
+  try
+    Producer.WriteStartTag(ObjectClassName);
+    if ObjectClass.InheritsFrom(TInstantStreamable) then
+      TInstantStreamableClass(ObjectClass).ConvertToText(Self)
+    else if ObjectClass.InheritsFrom(TInstantCollection) then
+      TInstantCollectionClass(ObjectClass).ConvertToText(Self)
+    else if ObjectClass.InheritsFrom(TInstantCollectionItem) then
+      TInstantCollectionItemClass(ObjectClass).ConvertToText(Self);
+    Reader.ReadListEnd;
+    Producer.WriteEndTag;
+  finally
+    PopObjectClass;
+  end;
 end;
 
 procedure TInstantBinaryToTextConverter.InternalConvertProperties;
@@ -1871,16 +1875,19 @@ end;
 procedure TInstantTextToBinaryConverter.InternalConvert;
 begin
   PushObjectClass(FindClass(Processor.ReadTagName));
-  Writer.WriteStr(ObjectClassName);
-  if ObjectClass.InheritsFrom(TInstantStreamable) then
-    TInstantStreamableClass(ObjectClass).ConvertToBinary(Self)
-  else if ObjectClass.InheritsFrom(TInstantCollection) then
-    TInstantCollectionClass(ObjectClass).ConvertToBinary(Self)
-  else if ObjectClass.InheritsFrom(TInstantCollectionItem) then
-    TInstantCollectionItemClass(ObjectClass).ConvertToBinary(Self);
-  Processor.ReadTag;
-  Writer.WriteListEnd;
-  PopObjectClass;
+  try
+    Writer.WriteStr(ObjectClassName);
+    if ObjectClass.InheritsFrom(TInstantStreamable) then
+      TInstantStreamableClass(ObjectClass).ConvertToBinary(Self)
+    else if ObjectClass.InheritsFrom(TInstantCollection) then
+      TInstantCollectionClass(ObjectClass).ConvertToBinary(Self)
+    else if ObjectClass.InheritsFrom(TInstantCollectionItem) then
+      TInstantCollectionItemClass(ObjectClass).ConvertToBinary(Self);
+    Processor.ReadTag;
+    Writer.WriteListEnd;
+  finally
+    PopObjectClass;
+  end;
 end;
 
 procedure TInstantTextToBinaryConverter.InternalConvertProperties;

@@ -25,7 +25,8 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
- * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor, Hanedi Salas
+ * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor, Hanedi Salas,
+ * Riceball Lee
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -6738,7 +6739,8 @@ end;
 
 procedure TInstantParts.DestroyObject(Index: Integer);
 begin
-  ObjectReferences[Index].DestroyInstance;
+  if Metadata.StorageKind <> skEmbedded then
+    ObjectReferences[Index].DestroyInstance;
 end;
 
 function TInstantParts.GetAllowOwned: Boolean;
@@ -6810,6 +6812,7 @@ begin
     Ref := CreateObjectReference(AObject);
     try
       Result := ObjectReferenceList.Add(Ref);
+      AObject.Free;
       SetOwnerContext(AObject);
     except
       Ref.Free;
@@ -6931,6 +6934,8 @@ begin
     Ref := CreateObjectReference(AObject);
     try
       ObjectReferenceList.Insert(Index, Ref);
+      AObject.Free;
+      SetOwnerContext(AObject);
     except
       Ref.Free;
       raise;
@@ -8603,12 +8608,18 @@ begin
 end;
 
 procedure TInstantObject.RestoreState;
+var
+  vInCache: Boolean;
 begin
   if (FSaveStateLevel = 1) and not IsAbandoned then
     try
-      ObjectStore.RemoveFromCache(Self);
+      vInCache := ObjectStore.Find(Self.PersistentId) = Self;
+      if vInCache then
+      begin
+        ObjectStore.RemoveFromCache(Self);
+      end;
       State.Assign(SavedState);
-      if IsPersistent then
+      if vInCache and IsPersistent then
         ObjectStore.AddToCache(Self);
     except
       on E: Exception do
@@ -10128,8 +10139,23 @@ begin
 end;
 
 function TInstantBroker.IsCatalogSupported: Boolean;
+var
+  vCatalog: TInstantCatalog;
 begin
-  Result := CreateCatalog(nil) <> nil;
+//  Result := CreateCatalog(nil) <> nil;
+  vCatalog := nil;
+  
+  try
+    try
+      vCatalog := CreateCatalog(nil);
+      Result := Assigned(vCatalog);
+    except
+      Result := False;
+      raise;
+    end;
+  finally
+    vCatalog.Free;
+  end;
 end;
 
 { TInstantQuery }
@@ -10173,8 +10199,7 @@ end;
 function TInstantQuery.GetConnector: TInstantConnector;
 begin
   Result := FConnector;
-  if not Assigned(Result) then
-    raise EInstantError.Create(SUnassignedConnector);
+  InstantCheckConnector(Result);
 end;
 
 function TInstantQuery.GetObjectClass: TClass;
@@ -12580,7 +12605,7 @@ begin
     DataSet.RecNo := Value
   else begin
     DataSet.First;
-    while Value > 1 do
+    while (not Dataset.Eof) and (Value > 1) do
     begin
       DataSet.Next;
       Dec(Value);
@@ -13479,7 +13504,7 @@ begin
   {$ENDIF}
   try
     Result := Broker.Execute(AStatement, AParams);
-    Info.Success := Result = 1;
+    Info.Success := Result >= 1;
     Info.Conflict := not Info.Success or (ConflictAction = caIgnore);
   except
     on EAbort do
@@ -13830,7 +13855,7 @@ var
     end else
     begin
       Statement := UpdateSQL;
-      ExecuteStatement(Statement, Params, Info, ConflictAction, AObject)
+      ExecuteStatement(Statement, Params, Info, ConflictAction, AObject);
     end;
     if not Info.Success then
       InsertMap;
@@ -13894,7 +13919,6 @@ var
             PartObject := PartAttribute.Value;
             PartObject.CheckId;
             PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-
           end;
         end;
       end;
