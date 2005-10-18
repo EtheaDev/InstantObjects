@@ -1,8 +1,9 @@
-package IOZeosDBO_D5;
+package DclIOZeosDBO;
 
 {$I '..\..\..\InstantVersion.inc'}
 
-{$ALIGN ON}
+{$R '..\InstantZeosDBO.dcr'}
+{$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
 {$DEBUGINFO ON}
@@ -23,17 +24,15 @@ package IOZeosDBO_D5;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects ZeosDBO Run-Time Support (Delphi 5)'}
-{$RUNONLY}
+{$DESCRIPTION 'InstantObjects ZeosDBO Design-Time Support (Delphi 6)'}
+{$LIBSUFFIX '_D6'}
+{$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  ZComponent;
+  IOZeosDBO;
 
 contains
-  InstantZeosDBO in '..\InstantZeosDBO.pas',
-  InstantZeosDBOCatalog in '..\InstantZeosDBOCatalog.pas',
-  InstantZeosDBOConnectionDefEdit in '..\InstantZeosDBOConnectionDefEdit.pas' {InstantZeosDBOConnectionDefEditForm};
+  InstantZeosDBOReg in '..\InstantZeosDBOReg.pas';
 
 end.

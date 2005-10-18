@@ -48,6 +48,7 @@ type
     PortLabel: TLabel;
     ProtocolLabel: TLabel;
     DatabaseLabel: TLabel;
+    CatalogLabel: TLabel;
     UserNameLabel: TLabel;
     PasswordLabel: TLabel;
     PropertiesLabel: TLabel;
@@ -58,6 +59,7 @@ type
     PortEdit: TEdit;
     ProtocolComboBox: TComboBox;
     DatabaseEdit: TEdit;
+    CatalogEdit: TEdit;
     DatabaseButton: TButton;
     UserNameEdit: TEdit;
     PasswordEdit: TEdit;
@@ -103,6 +105,7 @@ begin
   PortEdit.Text := InttoStr(ConnectionDef.Port);
   ProtocolComboBox.ItemIndex := ProtocolComboBox.Items.IndexOf(ConnectionDef.Protocol);
   DatabaseEdit.Text := ConnectionDef.Database;
+  CatalogEdit.Text := ConnectionDef.Catalog;
   UserNameEdit.Text := ConnectionDef.UserName;
   PasswordEdit.Text := ConnectionDef.Password;
   LoginPromptCheckBox.Checked := ConnectionDef.LoginPrompt;
@@ -121,6 +124,7 @@ begin
   ConnectionDef.Port := StrtoInt(PortEdit.Text);
   ConnectionDef.Protocol := ProtocolComboBox.Text;
   ConnectionDef.Database := DatabaseEdit.Text;
+  ConnectionDef.Catalog := CatalogEdit.Text;
   ConnectionDef.UserName := UserNameEdit.Text;
   ConnectionDef.Password := PasswordEdit.Text;
   ConnectionDef.LoginPrompt := LoginPromptCheckBox.Checked;

@@ -35,4 +35,3 @@ contains
   InstantZeosDBOReg in '..\InstantZeosDBOReg.pas';
 
 end.
-
