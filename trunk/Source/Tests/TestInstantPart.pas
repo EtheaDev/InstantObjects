@@ -86,18 +86,21 @@ var
   vAttrMetadata: TInstantAttributeMetadata;
   vPart: TAddress;
 begin
+  vSource := nil;
+
   vAttrMetadata := TInstantAttributeMetadata.Create(nil);
-  vAttrMetadata.AttributeClass := TInstantPart;
-  vSource := TInstantPart.Create(FOwner, vAttrMetadata);
   try
+    vAttrMetadata.AttributeClass := TInstantPart;
+    vSource := TInstantPart.Create(FOwner, vAttrMetadata);
     vPart := TAddress.Create(FConn);
     FInstantPart.Value := vPart;
-    AssertTrue(FInstantPart.HasValue);
+    AssertTrue('Value HasVal', FInstantPart.HasValue);
+    AssertEquals(1, FInstantPart.Value.RefCount);
+    AssertEquals(1, vPart.RefCount);
 
-    AssertFalse(vSource.HasValue);
+    AssertFalse('vSource HasVal', vSource.HasValue);
+    AssertNotSame(FInstantPart, vSource);
     vSource.Assign(FInstantPart);
-    AssertTrue(vSource.HasValue);
-    AssertNotSame(vPart, vSource.Value);
   finally
     vSource.Free;
     vAttrMetadata.Free;

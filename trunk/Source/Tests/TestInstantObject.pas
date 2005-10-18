@@ -179,6 +179,10 @@ begin
 
   vSource := TPerson.Create(FConn);
   try
+    { NOTE: vSource.Category is not assigned here so that
+      the leakage, etc. behaviour of an unassigned reference
+      attribute can be monitored during assign and clone
+      operations. }
     AssertNotNull(vSource);
     vSource.Name := 'NewPerson';
     vEmail := TEmail.Create(FConn);
@@ -190,12 +194,13 @@ begin
 
     AssertEquals('InitPerson', FInstantObject.Name);
     FInstantObject.Assign(vSource);
+    vSource._Employer.DestroyObject;
     AssertEquals('NewPerson', FInstantObject.Name);
     AssertEquals(1, FInstantObject.EmailCount);
     AssertEquals('NewPerson@domain.com', FInstantObject.Emails[0].Address);
     AssertEquals('Employer Co.', FInstantObject.Employer.Name);
 
-    vClone := TPerson(FInstantObject.Clone(FConn));
+    vClone := TPerson.Clone(FInstantObject, FConn);
     AssertNotNull(vClone);
     AssertNotSame(vClone, FInstantObject);
     AssertEquals('NewPerson', vClone.Name);
@@ -208,7 +213,6 @@ begin
     AssertEquals(0, FInstantObject.EmailCount);
     AssertNull(FInstantObject.Employer);
   finally
-    vCompany.ClearEmployees;
     vCompany.Free;
     vSource.Free;
     vClone.Free;
@@ -441,7 +445,7 @@ begin
     AssertNotNull(vReturnValue);
     AssertEquals('InstanceSize', TPerson.InstanceSize, vReturnValue.InstanceSize);
   finally
-    vReturnValue.Free;
+    vReturnValue.FreeInstance;
   end;
 end;
 
@@ -513,7 +517,7 @@ end;
 procedure TestTInstantObject.TestStore_Dispose;
 var
   vPhone: TPhone;
-  vAddress: TAddress;
+  vPartExternal: TPartExternal;
   vContact: TContact;
   vID, vID1: String;
   brok: TInstantMockBroker;
@@ -527,18 +531,18 @@ begin
   AssertFalse(FInstantObject.IsPersistent);
 
   vContact := TContact.Create(FConn);
-  vAddress := TAddress.Create(FConn);
+  vPartExternal := TPartExternal.Create(FConn);
   try
     FConn.StartTransaction;
     brok := FConn.Broker as TInstantMockBroker;
     brok.MockManager.EndSetUp;
     vContact.Name := 'MyContact';
-    vAddress.City := 'New York';
-    AssertTrue(vAddress.IsChanged);
-    vAddress.Store;
-    vID1 := vAddress.Id;
-    vContact.AddressExt := vAddress;
-    AssertEquals('vAddress', 1, vAddress.RefCount);
+    vPartExternal.Name := 'Part External';
+    AssertTrue(vPartExternal.IsChanged);
+    vPartExternal.Store;
+    vID1 := vPartExternal.Id;
+    vContact.PartExternal := vPartExternal;
+    AssertEquals('vPartExternal', 1, vPartExternal.RefCount);
     AssertEquals('vContact.Address', 1, vContact.Address.RefCount);
 
     vPhone := TPhone.Create(FConn);
@@ -554,9 +558,9 @@ begin
     vPhone.Store;
     AssertTrue('vContact.IsPersistent', vContact.IsPersistent);
     AssertFalse('vPhone.IsPersistent', vPhone.IsPersistent);
-    AssertTrue('vAddress.IsPersistent', vAddress.IsPersistent);
-    vAddress.City := 'London';
-    AssertTrue(vAddress.IsChanged);
+    AssertTrue('vPartExternal.IsPersistent', vPartExternal.IsPersistent);
+    vPartExternal.Name := 'Changed';
+    AssertTrue(vPartExternal.IsChanged);
     AssertTrue(vContact.IsChanged);
     vID := vContact.Id;
     vContact.Store;

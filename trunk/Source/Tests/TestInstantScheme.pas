@@ -108,8 +108,13 @@ begin
 end;
 
 procedure TestTInstantScheme.TestTableMetadataCount;
+var
+  vCnt: Integer;
 begin
-  AssertEquals(8, FInstantScheme.TableMetadataCount);
+  AssertTrue(FInstantScheme.TableMetadataCount > 0);
+  // Test number of ClassMetadatas against number of TableMetadatas
+  vCnt := FInstantScheme.TableMetadatas[0].Collection.Count;
+  AssertEquals(vCnt, FInstantScheme.TableMetadataCount);
 end;
 
 procedure TestTInstantScheme.TestTableMetadatas;
@@ -118,7 +123,7 @@ var
 begin
   vReturnValue := FInstantScheme.TableMetadatas[0];
   AssertNotNull(vReturnValue);
-  AssertEquals('Address', vReturnValue.Name);
+  AssertEquals('Country', vReturnValue.Name);
 end;
 
 initialization

@@ -136,7 +136,7 @@ end;
 
 procedure TTestMockBroker.TestStoreAndRetrieveAddress;
 var
-  a: TAddress;
+  a: TProject;
   old_id: string;
   brok: TInstantMockBroker;
 begin
@@ -144,10 +144,10 @@ begin
   FConn.StartTransaction;
   brok := FConn.Broker as TInstantMockBroker;
   brok.MockManager.StartSetUp;
-  a := TAddress.Create;
+  a := TProject.Create;
   try
-    a.City := 'Milan';
-    a.Store();
+    a.Name := 'Bongo';
+    a.Store;
     old_id := a.id;
   finally
     FreeAndNil(a);
@@ -158,7 +158,7 @@ begin
   brok.MockManager.Verify;
   FConn.CommitTransaction;
   brok.MockManager.StartSetUp;
-  a := TAddress.Retrieve(old_id);
+  a := TProject.Retrieve(old_id);
   try
     AssertEquals(old_id, a.Id);
   finally

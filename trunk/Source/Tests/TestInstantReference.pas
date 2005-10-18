@@ -84,24 +84,26 @@ procedure TestTInstantReference.TestAssign;
 var
   vSource: TInstantReference;
   vAttrMetadata: TInstantAttributeMetadata;
-  vPart: TCategory;
+  vCategory: TCategory;
 begin
-  vPart := nil; 
+  vCategory := nil;
 
   vAttrMetadata := TInstantAttributeMetadata.Create(nil);
   vAttrMetadata.AttributeClass := TInstantReference;
   vSource := TInstantReference.Create(FOwner, vAttrMetadata);
   try
-    vPart := TCategory.Create(FConn);
-    FInstantReference.Value := vPart;
+    vCategory := TCategory.Create(FConn);
+    FInstantReference.Value := vCategory;
     AssertTrue('Value HasVal', FInstantReference.HasValue);
+    AssertTrue('Value HasReference', FInstantReference.HasReference);
 
     AssertFalse('vSource HasVal', vSource.HasValue);
     vSource.Assign(FInstantReference);
     AssertTrue('Assign HasVal', vSource.HasValue);
+    AssertTrue('Assign HasReference', vSource.HasReference);
     AssertNotSame(vSource, FInstantReference.Value);
   finally
-    vPart.Free;
+    vCategory.Free;
     vSource.Free;
     vAttrMetadata.Free;
   end;
@@ -144,6 +146,7 @@ begin
     AssertTrue('AttachObject HasVal', FInstantReference.HasValue);
     AssertTrue('AttachObject HasRef', FInstantReference.HasReference);
     AssertEquals('Object RefCount 2', 2, vObject.RefCount);
+    vObject.Store;
 
     vStream := TInstantStream.Create;
     try
@@ -156,8 +159,11 @@ begin
 
       vStream.Position := 0;
       FInstantReference.LoadObjectFromStream(vStream);
-      AssertTrue('LoadObjectFromStream HasVal', FInstantReference.HasValue);
       AssertTrue('LoadObjectFromStream HasRef', FInstantReference.HasReference);
+      AssertTrue('LoadObjectFromStream HasVal', FInstantReference.HasValue);
+      AssertEquals('LoadObjectFromStream RefCount', 1,
+          FInstantReference.Value.RefCount);
+      AssertNotSame('Same Object??', vObject, FInstantReference.Value);
       AssertEquals('Object RefCount 4', 1, vObject.RefCount);
     finally
       vStream.Free;
