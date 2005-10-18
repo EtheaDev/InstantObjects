@@ -94,10 +94,10 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=D:\L\ubmock\src
+SearchPath=..\core
 Packages=vcl;rtl;vclx;indy;inet;xmlrtl;vclie;inetdbbde;inetdbxpress;dbrtl;dsnap;vcldb;soaprtl;VclSmp;dbexpress;dbxcds;inetdb;bdertl;vcldbx;webdsnap;adortl;vclactnband;vclshlctrls;CS30Logging70;Rz30Ctls70;Rz30DBCtls70;ip4000v7;Rave60VCL;Rave60CLX;madBasic_;madDisAsm_;CLXIB;ibxpress;VCLIB;IOCore;IOIBX
 Conditionals=
-DebugSourceDirs=D:\L\InstantObjects\Source\Core
+DebugSourceDirs=..\core
 UsePackages=0
 [Parameters]
 RunParams=
