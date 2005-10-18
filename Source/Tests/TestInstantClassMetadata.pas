@@ -123,13 +123,15 @@ begin
 end;
 
 procedure TestTInstantClassMetadata.TestCollection;
+var
+  vCnt: Integer;
 begin
   // Collection property contains all of the class metadatas in the model
   AssertNotNull(FInstantClassMetadata.Collection);
-  AssertEquals(9, FInstantClassMetadata.Collection.Count);
+  vCnt := FInstantClassMetadata.Collection.Count;
 
   FInstantClassMetadata := InstantModel.ClassMetadatas.Find('TPhone');
-  AssertEquals(9, FInstantClassMetadata.Collection.Count);
+  AssertEquals(vCnt, FInstantClassMetadata.Collection.Count);
 end;
 
 procedure TestTInstantClassMetadata.TestFindInstantAttributeMetadata;
@@ -226,12 +228,14 @@ end;
 procedure TestTInstantClassMetadatas.TestAdd;
 var
   vReturnValue: TInstantClassMetadata;
+  vCnt: Integer;
 begin
+  vCnt := FInstantClassMetadatas.Count;
   vReturnValue := FInstantClassMetadatas.Add;
   AssertNotNull(vReturnValue);
-  AssertEquals(10, FInstantClassMetadatas.Count);
+  AssertEquals(vCnt + 1, FInstantClassMetadatas.Count);
   FInstantClassMetadatas.Remove(vReturnValue);
-  AssertEquals(9, FInstantClassMetadatas.Count);
+  AssertEquals(vCnt, FInstantClassMetadatas.Count);
 end;
 
 procedure TestTInstantClassMetadatas.TestFind;

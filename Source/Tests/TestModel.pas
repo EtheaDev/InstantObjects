@@ -43,12 +43,14 @@ type
   TContactFilter = class;
   TCountry = class;
   TEmail = class;
+  TPartExternal = class;
+  TPartsExternal = class;
   TPerson = class;
   TPhone = class;
+  TProject = class;
 
   TAddress = class(TInstantObject)
-  {IOMETADATA stored;
-    City: String(30) index;
+  {IOMETADATA City: String(30) index;
     Country: Reference(TCountry);
     State: String(4);
     Street: Memo;
@@ -88,7 +90,6 @@ type
     procedure BeforeStore; override;
     function GetCaption: string; override;
   published
-    property Id;
     property Name: string read GetName write SetName;
   end;
 
@@ -139,49 +140,77 @@ type
     City: String(30) index;
     Name: String(50) index;
     Phones: Parts(TPhone);
-    AddressExt: Part(TAddress) stored 'Address' external; }
+    Projects: References(TProject) external 'Contact_Projects';
+    PartExternal: Part(TPartExternal) external;
+    ExternalParts: Parts(TPartsExternal) external 'Contact_ExternalParts'; }
     _Address: TInstantPart;
-    _AddressExt: TInstantPart;
     _Category: TInstantReference;
     _City: TInstantString;
+    _ExternalParts: TInstantParts;
     _Name: TInstantString;
+    _PartExternal: TInstantPart;
     _Phones: TInstantParts;
+    _Projects: TInstantReferences;
   private
     function GetAddress: TAddress;
-    function GetAddressExt: TAddress;
     function GetCategory: TCategory;
     function GetCity: string;
+    function GetExternalPartCount: Integer;
+    function GetExternalParts(Index: Integer): TPartsExternal;
     function GetMainPhoneNumber: string;
     function GetName: string;
+    function GetPartExternal: TPartExternal;
     function GetPhoneCount: Integer;
     function GetPhones(Index: Integer): TPhone;
+    function GetProjectCount: Integer;
+    function GetProjects(Index: Integer): TProject;
     procedure SetAddress(Value: TAddress);
-    procedure SetAddressExt(Value: TAddress);
     procedure SetCategory(Value: TCategory);
     procedure SetCity(const Value: string);
+    procedure SetExternalParts(Index: Integer; Value: TPartsExternal);
     procedure SetMainPhoneNumber(const Value: string);
     procedure SetName(const Value: string);
+    procedure SetPartExternal(Value: TPartExternal);
     procedure SetPhones(Index: Integer; Value: TPhone);
+    procedure SetProjects(Index: Integer; Value: TProject);
   protected
     procedure AfterCreate; override;
     procedure BeforeStore; override;
     function GetCaption: string; override;
   public
+    function AddExternalPart(ExternalPart: TPartsExternal): Integer;
     function AddPhone(Phone: TPhone): Integer;
+    function AddProject(Project: TProject): Integer;
+    procedure ClearExternalParts;
     procedure ClearPhones;
+    procedure ClearProjects;
+    procedure DeleteExternalPart(Index: Integer);
     procedure DeletePhone(Index: Integer);
+    procedure DeleteProject(Index: Integer);
+    function IndexOfExternalPart(ExternalPart: TPartsExternal): Integer;
     function IndexOfPhone(Phone: TPhone): Integer;
+    function IndexOfProject(Project: TProject): Integer;
+    procedure InsertExternalPart(Index: Integer; ExternalPart: TPartsExternal);
     procedure InsertPhone(Index: Integer; Phone: TPhone);
+    procedure InsertProject(Index: Integer; Project: TProject);
+    function RemoveExternalPart(ExternalPart: TPartsExternal): Integer;
     function RemovePhone(Phone: TPhone): Integer;
+    function RemoveProject(Project: TProject): Integer;
+    property ExternalPartCount: Integer read GetExternalPartCount;
+    property ExternalParts[Index: Integer]: TPartsExternal read GetExternalParts write SetExternalParts;
     property PhoneCount: Integer read GetPhoneCount;
     property Phones[Index: Integer]: TPhone read GetPhones write SetPhones;
+    property ProjectCount: Integer read GetProjectCount;
+    property Projects[Index: Integer]: TProject read GetProjects
+        write SetProjects;
   published
     property Address: TAddress read GetAddress write SetAddress;
-    property AddressExt: TAddress read GetAddressExt write SetAddressExt;
     property Category: TCategory read GetCategory write SetCategory;
     property City: string read GetCity write SetCity;
-    property MainPhoneNumber: string read GetMainPhoneNumber write SetMainPhoneNumber;
+    property MainPhoneNumber: string read GetMainPhoneNumber
+        write SetMainPhoneNumber;
     property Name: string read GetName write SetName;
+    property PartExternal: TPartExternal read GetPartExternal write SetPartExternal;
   end;
 
   TContactFilter = class(TContact)
@@ -272,6 +301,39 @@ type
     property Employees[Index: Integer]: TPerson read GetEmployees;
   published
     property NoOfBranches: Integer read GetNoOfBranches write SetNoOfBranches;
+  end;
+
+  TProject = class(TInstantObject)
+  {IOMETADATA stored;
+    Name: String(30); }
+    _Name: TInstantString;
+  private
+    function GetName: string;
+    procedure SetName(const Value: string);
+  published
+    property Name: string read GetName write SetName;
+  end;
+
+  TPartExternal = class(TInstantObject)
+  {IOMETADATA stored;
+    Name: String(30) default; }
+    _Name: TInstantString;
+  private
+    function GetName: string;
+    procedure SetName(const Value: string);
+  published
+    property Name: string read GetName write SetName;
+  end;
+
+  TPartsExternal = class(TInstantObject)
+  {IOMETADATA stored;
+    Name: String; }
+    _Name: TInstantString;
+  private
+    function GetName: string;
+    procedure SetName(const Value: string);
+  published
+    property Name: string read GetName write SetName;
   end;
 
 implementation
@@ -398,42 +460,44 @@ procedure TPerson.EmployBy(NewEmployer: TCompany);
       AEmployer.Store;
   end;
 
+  procedure ReferenceEmployer(AEmployer: TCompany);
+  begin
+    _Employer.Reset;
+    if Assigned(AEmployer) then
+      _Employer.ReferenceObject(AEmployer.ClassType, AEmployer.Id);
+  end;
+
 var
   OldEmployer: TCompany;
 begin
   OldEmployer := Employer;
-  AddRef;
+  Connector.StartTransaction;
   try
-    Connector.StartTransaction;
+    AddToEmployer(NewEmployer);
     try
-      AddToEmployer(NewEmployer);
+      StoreEmployer(NewEmployer);
+      RemoveFromEmployer(OldEmployer);
       try
-        StoreEmployer(NewEmployer);
-        RemoveFromEmployer(OldEmployer);
+        StoreEmployer(OldEmployer);
+        ReferenceEmployer(NewEmployer);
         try
-          StoreEmployer(OldEmployer);
-          _Employer.Value := NewEmployer;
-          try
-            Store;
-            Connector.CommitTransaction;
-          except
-            _Employer.Value := OldEmployer;
-            raise;
-          end;
+          Store;
+          Connector.CommitTransaction;
         except
-          AddToEmployer(OldEmployer);
+          ReferenceEmployer(OldEmployer);
           raise;
         end;
       except
-        RemoveFromEmployer(NewEmployer);
+        AddToEmployer(OldEmployer);
         raise;
       end;
     except
-      Connector.RollbackTransaction;
+      RemoveFromEmployer(NewEmployer);
       raise;
     end;
-  finally
-    Free;
+  except
+    Connector.RollbackTransaction;
+    raise;
   end;
 end;
 
@@ -568,6 +632,18 @@ begin
   _Number.Value := Value;
 end;
 
+{ TProject }
+
+function TProject.GetName: string;
+begin
+  Result := _Name.Value;
+end;
+
+procedure TProject.SetName(const Value: string);
+begin
+  _Name.Value := Value;
+end;
+
 { TEmail }
 
 function TEmail.GetAddress: string;
@@ -604,9 +680,19 @@ begin
   _NoOfBranches.Value := Value;
 end;
 
+function TContact.AddExternalPart(ExternalPart: TPartsExternal): Integer;
+begin
+  Result := _ExternalParts.Add(ExternalPart);
+end;
+
 function TContact.AddPhone(Phone: TPhone): Integer;
 begin
   Result := _Phones.Add(Phone);
+end;
+
+function TContact.AddProject(Project: TProject): Integer;
+begin
+  Result := _Projects.Add(Project);
 end;
 
 procedure TContact.AfterCreate;
@@ -624,9 +710,24 @@ begin
   City := Address.City;
 end;
 
+procedure TContact.ClearExternalParts;
+begin
+  _ExternalParts.Clear;
+end;
+
 procedure TContact.ClearPhones;
 begin
   _Phones.Clear;
+end;
+
+procedure TContact.ClearProjects;
+begin
+  _Projects.Clear;
+end;
+
+procedure TContact.DeleteExternalPart(Index: Integer);
+begin
+  _ExternalParts.Delete(Index);
 end;
 
 procedure TContact.DeletePhone(Index: Integer);
@@ -634,14 +735,14 @@ begin
   _Phones.Delete(Index);
 end;
 
+procedure TContact.DeleteProject(Index: Integer);
+begin
+  _Projects.Delete(Index);
+end;
+
 function TContact.GetAddress: TAddress;
 begin
   Result := _Address.Value as TAddress;
-end;
-
-function TContact.GetAddressExt: TAddress;
-begin
-  Result := _AddressExt.Value as TAddress;
 end;
 
 function TContact.GetCaption: string;
@@ -659,6 +760,16 @@ begin
   Result := _City.Value;
 end;
 
+function TContact.GetExternalPartCount: Integer;
+begin
+  Result := _ExternalParts.Count;
+end;
+
+function TContact.GetExternalParts(Index: Integer): TPartsExternal;
+begin
+  Result := _ExternalParts[Index] as TPartsExternal;
+end;
+
 function TContact.GetMainPhoneNumber: string;
 begin
   if PhoneCount > 0 then
@@ -672,6 +783,11 @@ begin
   Result := _Name.Value;
 end;
 
+function TContact.GetPartExternal: TPartExternal;
+begin
+  Result := _PartExternal.Value as TPartExternal;
+end;
+
 function TContact.GetPhoneCount: Integer;
 begin
   Result := _Phones.Count
@@ -682,9 +798,34 @@ begin
   Result := _Phones[Index] as TPhone;
 end;
 
+function TContact.GetProjectCount: Integer;
+begin
+  Result := _Projects.Count;
+end;
+
+function TContact.GetProjects(Index: Integer): TProject;
+begin
+  Result := _Projects[Index] as TProject;
+end;
+
+function TContact.IndexOfExternalPart(ExternalPart: TPartsExternal): Integer;
+begin
+  Result := _ExternalParts.IndexOf(ExternalPart);
+end;
+
 function TContact.IndexOfPhone(Phone: TPhone): Integer;
 begin
   Result := _Phones.IndexOf(Phone);
+end;
+
+function TContact.IndexOfProject(Project: TProject): Integer;
+begin
+  Result := _Projects.IndexOf(Project);
+end;
+
+procedure TContact.InsertExternalPart(Index: Integer; ExternalPart: TPartsExternal);
+begin
+  _ExternalParts.Insert(Index, ExternalPart);
 end;
 
 procedure TContact.InsertPhone(Index: Integer; Phone: TPhone);
@@ -692,19 +833,29 @@ begin
   _Phones.Insert(Index, Phone);
 end;
 
+procedure TContact.InsertProject(Index: Integer; Project: TProject);
+begin
+  _Projects.Insert(Index, Project);
+end;
+
+function TContact.RemoveExternalPart(ExternalPart: TPartsExternal): Integer;
+begin
+  Result := _ExternalParts.Remove(ExternalPart);
+end;
+
 function TContact.RemovePhone(Phone: TPhone): Integer;
 begin
   Result := _Phones.Remove(Phone);
 end;
 
+function TContact.RemoveProject(Project: TProject): Integer;
+begin
+  Result := _Projects.Remove(Project);
+end;
+
 procedure TContact.SetAddress(Value: TAddress);
 begin
   _Address.Value := Value;
-end;
-
-procedure TContact.SetAddressExt(Value: TAddress);
-begin
-  _AddressExt.Value := Value;
 end;
 
 procedure TContact.SetCategory(Value: TCategory);
@@ -715,6 +866,11 @@ end;
 procedure TContact.SetCity(const Value: string);
 begin
   _City.Value := Value;
+end;
+
+procedure TContact.SetExternalParts(Index: Integer; Value: TPartsExternal);
+begin
+  _ExternalParts[Index] := Value;
 end;
 
 procedure TContact.SetMainPhoneNumber(const Value: string);
@@ -739,12 +895,22 @@ begin
   _Name.Value := Value;
 end;
 
+procedure TContact.SetPartExternal(Value: TPartExternal);
+begin
+  _PartExternal.Value := Value;
+end;
+
 procedure TContact.SetPhones(Index: Integer; Value: TPhone);
 begin
   _Phones[Index] := Value;
 end;
 
 { TContactFilter }
+
+procedure TContact.SetProjects(Index: Integer; Value: TProject);
+begin
+  _Projects[Index] := Value;
+end;
 
 function TContactFilter.GetIsEmpty: Boolean;
 begin
@@ -828,6 +994,30 @@ begin
   Result := _Employees.Remove(Employee);
 end;
 
+{ TPartExternal }
+
+function TPartExternal.GetName: string;
+begin
+  Result := _Name.Value;
+end;
+
+procedure TPartExternal.SetName(const Value: string);
+begin
+  _Name.Value := Value;
+end;
+
+{ TPartsExternal }
+
+function TPartsExternal.GetName: string;
+begin
+  Result := _Name.Value;
+end;
+
+procedure TPartsExternal.SetName(const Value: string);
+begin
+  _Name.Value := Value;
+end;
+
 initialization
   InstantRegisterClasses([
     TAddress,
@@ -837,8 +1027,11 @@ initialization
     TContactFilter,
     TCountry,
     TEmail,
+    TPartExternal,
+    TPartsExternal,
     TPerson,
-    TPhone
+    TPhone,
+    TProject
   ]);
 
 end.

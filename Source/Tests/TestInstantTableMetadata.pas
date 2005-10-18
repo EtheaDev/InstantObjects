@@ -75,7 +75,7 @@ begin
 
   FOwner := TInstantScheme.Create;
   FOwner.Catalog := TInstantModelCatalog.Create(FOwner, InstantModel);
-  FInstantTableMetadata := FOwner.FindTableMetadata('Address');
+  FInstantTableMetadata := FOwner.FindTableMetadata('Country');
 end;
 
 procedure TestTInstantTableMetadata.TearDown;

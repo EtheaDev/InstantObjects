@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * 
+ * Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 

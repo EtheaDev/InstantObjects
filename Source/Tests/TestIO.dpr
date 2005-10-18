@@ -1,6 +1,6 @@
 program TestIO;
 
-{$I '../InstantDefines.inc'}
+{$I '..\InstantDefines.inc'}
 
 {$IFDEF FPC}
 {$mode objfpc}{$H+}
@@ -45,7 +45,12 @@ uses
   TestInstantComplex in 'TestInstantComplex.pas',
   TestInstantPart in 'TestInstantPart.pas',
   TestInstantReference in 'TestInstantReference.pas',
-  TestInstantObject in 'TestInstantObject.pas';
+  TestInstantObject in 'TestInstantObject.pas',
+  TestInstantObjectState in 'TestInstantObjectState.pas',
+  TestInstantCache in 'TestInstantCache.pas',
+  TestInstantObjectStore in 'TestInstantObjectStore.pas',
+  TestInstantParts in 'TestInstantParts.pas',
+  TestInstantReferences in 'TestInstantReferences.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
@@ -53,6 +58,7 @@ uses
 begin
   Application.Initialize;
   InstantModel.ClassMetadatas.Clear;
+//  Application.CreateForm(TGUITestRunner, TestRunner);
   Application.CreateForm(TGUITestRunner, TestRunner);
   Application.Run;
 end.

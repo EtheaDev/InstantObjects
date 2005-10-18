@@ -136,8 +136,6 @@ initialization
   // Register any test cases with the test runner
 {$IFNDEF CURR_TESTS}
   RegisterTests([TestTInstantElement]);
-{$ELSE}
-  RegisterTests([TestTInstantElement]);
 {$ENDIF}
 
 end.
