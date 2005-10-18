@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena
+ * Nando Dessena, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -115,7 +115,15 @@ begin
 end;
 
 destructor TInstantObjectAccessor.Destroy;
+var
+  i: Integer;
 begin
+  // Force release of referenced objects to help avoid
+  // ownership contention with circular references.
+  if InContent and (Container is TInstantReferences) then
+    for i := 0 to Pred(Container.Count) do
+      TInstantReferences(Container).DestroyObject(i);
+
   if Assigned(Subject) then
     Subject.Free;
   inherited;
