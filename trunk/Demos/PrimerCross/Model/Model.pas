@@ -349,42 +349,44 @@ procedure TPerson.EmployBy(NewEmployer: TCompany);
       AEmployer.Store;
   end;
 
+  procedure ReferenceEmployer(AEmployer: TCompany);
+  begin
+    _Employer.Reset;
+    if Assigned(AEmployer) then
+      _Employer.ReferenceObject(AEmployer.ClassType, AEmployer.Id);
+  end;
+
 var
   OldEmployer: TCompany;
 begin
   OldEmployer := Employer;
-  AddRef;
+  Connector.StartTransaction;
   try
-    Connector.StartTransaction;
+    AddToEmployer(NewEmployer);
     try
-      AddToEmployer(NewEmployer);
+      StoreEmployer(NewEmployer);
+      RemoveFromEmployer(OldEmployer);
       try
-        StoreEmployer(NewEmployer);
-        RemoveFromEmployer(OldEmployer);
+        StoreEmployer(OldEmployer);
+        ReferenceEmployer(NewEmployer);
         try
-          StoreEmployer(OldEmployer);
-          _Employer.Value := NewEmployer;
-          try
-            Store;
-            Connector.CommitTransaction;
-          except
-            _Employer.Value := OldEmployer;
-            raise;
-          end;
+          Store;
+          Connector.CommitTransaction;
         except
-          AddToEmployer(OldEmployer);
+          ReferenceEmployer(OldEmployer);
           raise;
         end;
       except
-        RemoveFromEmployer(NewEmployer);
+        AddToEmployer(OldEmployer);
         raise;
       end;
     except
-      Connector.RollbackTransaction;
+      RemoveFromEmployer(NewEmployer);
       raise;
     end;
-  finally
-    Free;
+  except
+    Connector.RollbackTransaction;
+    raise;
   end;
 end;
 
@@ -701,7 +703,7 @@ end;
 
 function TCompany.AddEmployee(Employee: TPerson): Integer;
 begin
-  Result := _Employees.Add(Employee)
+  Result := _Employees.Add(Employee);
 end;
 
 procedure TCompany.ClearEmployees;
@@ -716,7 +718,7 @@ end;
 
 function TCompany.GetEmployeeCount: Integer;
 begin
-  Result := _Employees.Count
+  Result := _Employees.Count;
 end;
 
 function TCompany.GetEmployees(Index: Integer): TPerson;
