@@ -12428,6 +12428,8 @@ begin
   try
     ObjectRow.Row := -1;
     ObjectRow.Instance := AObject;
+    if AObject is TInstantObject then
+      TInstantObject(AObject).AddRef;
     Result := ObjectRowList.Add(ObjectRow);
   except
     Dispose(ObjectRow);
@@ -12482,6 +12484,8 @@ begin
   try
     ObjectRow.Row := -1;
     ObjectRow.Instance := AObject;
+    if AObject is TInstantObject then
+      TInstantObject(AObject).AddRef;
     ObjectRowList.Insert(Index, ObjectRow);
   except
     Dispose(ObjectRow);
