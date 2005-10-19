@@ -3,6 +3,17 @@ inherited InstantDBBuilderForm: TInstantDBBuilderForm
   OldCreateOrder = True
   PixelsPerInch = 96
   TextHeight = 13
+  inherited EvolutionLogLabel: TLabel
+    Width = 40
+    Caption = 'Build log'
+  end
+  inherited SequenceListView: TListView
+    Columns = <
+      item
+        Caption = 'Build sequence'
+        Width = 400
+      end>
+  end
   inherited ActionList: TActionList
     inherited ShowSequenceAction: TAction
       Caption = 'Show Build Sequence'

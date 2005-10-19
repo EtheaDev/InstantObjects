@@ -57,7 +57,7 @@ type
     MoveCommandUpButton: TButton;
     MoveCommandDownButton: TButton;
     EvolutionLogMemo: TMemo;
-    Label1: TLabel;
+    EvolutionLogLabel: TLabel;
     EnableAllButton: TButton;
     DisableAllButton: TButton;
     ActionList: TActionList;

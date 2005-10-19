@@ -27,7 +27,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object Label1: TLabel
+  object EvolutionLogLabel: TLabel
     Left = 8
     Top = 176
     Width = 61
