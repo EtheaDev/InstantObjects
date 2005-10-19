@@ -48,6 +48,9 @@ type
     StatusBar: TStatusBar;
     ToolBar: TToolBar;
     ToolSep1: TToolButton;
+    ToolSep2: TToolButton;
+    SearchButton: TToolButton;
+    SearchAction: TAction;
     procedure ActionListUpdate(Action: TBasicAction; var Handled: Boolean);
     procedure NewActionExecute(Sender: TObject);
     procedure EditActionExecute(Sender: TObject);
@@ -57,6 +60,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure ToolBarResize(Sender: TObject);
+    procedure SearchActionExecute(Sender: TObject);
   private
     FLookupMode: Boolean;
     function GetExposer: TInstantCustomExposer;
@@ -96,6 +100,7 @@ begin
   EditAction.Enabled := HasItem;
   DeleteAction.Enabled := HasItem;
   SelectAction.Enabled := HasItem;
+  SearchAction.Enabled := SearchEdit.Text <> '';
 end;
 
 procedure TBasicBrowseForm.BrowseGridDblClick(Sender: TObject);
@@ -251,6 +256,7 @@ begin
   SearchEdit.Visible := LookupMode;
   ToolSep1.Visible := LookupMode;
   SelectAction.Visible := LookupMode;
+  SearchAction.Visible := LookupMode;
   with BrowseGrid do
     if LookupMode then
       Options := Options + [dgRowSelect]
@@ -261,7 +267,12 @@ end;
 
 procedure TBasicBrowseForm.ToolBarResize(Sender: TObject);
 begin
-  SearchEdit.Width := ToolBar.Width - 180;
+  SearchEdit.Width := ToolBar.Width - 140;
+end;
+
+procedure TBasicBrowseForm.SearchActionExecute(Sender: TObject);
+begin
+  Search;
 end;
 
 end.
