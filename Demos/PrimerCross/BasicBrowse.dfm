@@ -66,10 +66,22 @@ object BasicBrowseForm: TBasicBrowseForm
       ImageIndex = 3
       Style = tbsSeparator
     end
-    object SearchEdit: TEdit
+    object SearchButton: TToolButton
       Left = 100
       Top = 0
-      Width = 69
+      Action = SearchAction
+    end
+    object ToolSep2: TToolButton
+      Left = 123
+      Top = 0
+      Width = 8
+      ImageIndex = 4
+      Style = tbsSeparator
+    end
+    object SearchEdit: TEdit
+      Left = 131
+      Top = 0
+      Width = 111
       Height = 22
       TabOrder = 0
     end
@@ -132,6 +144,11 @@ object BasicBrowseForm: TBasicBrowseForm
       Hint = 'Select'
       ImageIndex = 3
       OnExecute = SelectActionExecute
+    end
+    object SearchAction: TAction
+      Caption = '&Search'
+      ImageIndex = 4
+      OnExecute = SearchActionExecute
     end
   end
   object GridMenu: TPopupMenu
