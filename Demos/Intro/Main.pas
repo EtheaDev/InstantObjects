@@ -63,10 +63,12 @@ var
   Person: TPerson;
 begin
   Person := TPerson.Create;
-  if EditContact(Person) then
-    ContactSelector.AddObject(Person)
-  else
+  try
+    if EditContact(Person) then
+      ContactSelector.AddObject(Person);
+  finally
     Person.Free;
+  end;
 end;
 
 procedure TMainForm.AddCompanyButtonClick(Sender: TObject);
@@ -74,10 +76,12 @@ var
   Company: TCompany;
 begin
   Company := TCompany.Create;
-  if EditContact(Company) then
-    ContactSelector.AddObject(Company)
-  else
+  try
+    if EditContact(Company) then
+      ContactSelector.AddObject(Company);
+  finally
     Company.Free;
+  end;
 end;
 
 procedure TMainForm.EditContactButtonClick(Sender: TObject);
