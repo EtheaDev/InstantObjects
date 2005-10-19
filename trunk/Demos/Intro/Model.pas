@@ -6,6 +6,12 @@ uses
   InstantPersistence;
 
 type
+  TAddress = class;
+  TCompany = class;
+  TContact = class;
+  TPerson = class;
+  TPhone = class;
+
   TAddress = class(TInstantObject)
   {IOMETADATA City: String(30);
     PostalCode: String(8);
