@@ -320,6 +320,7 @@ end;
 procedure TContactViewForm.EditActionExecute(Sender: TObject);
 begin
   EditObject(ContactSelector.CurrentObject);
+  ContactSelector.RefreshData;
 end;
 
 procedure TContactViewForm.ExplorerActionExecute(Sender: TObject);
@@ -468,10 +469,12 @@ var
   Company: TCompany;
 begin
   Company := TCompany.Create;
-  if EditObject(Company) then
-    ContactSelector.AddObject(Company)
-  else
+  try
+    if EditObject(Company) then
+      ContactSelector.AddObject(Company);
+  finally
     Company.Free;
+  end;
 end;
 
 procedure TContactViewForm.NewPersonActionExecute(Sender: TObject);
@@ -479,10 +482,12 @@ var
   Person: TPerson;
 begin
   Person := TPerson.Create;
-  if EditObject(Person) then
-    ContactSelector.AddObject(Person)
-  else
+  try
+    if EditObject(Person) then
+      ContactSelector.AddObject(Person);
+  finally
     Person.Free;
+  end;
 end;
 
 procedure TContactViewForm.PerformFindQuery;
