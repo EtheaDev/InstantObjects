@@ -29,10 +29,10 @@ package IOXML;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  IOXMLCatalog;
+  IOCore;
 
 contains
+  InstantXMLCatalog in '../InstantXMLCatalog.pas',
   InstantXMLConnectionDefEdit in '../InstantXMLConnectionDefEdit.pas' {InstantXMLConnectionDefEditForm},
   InstantXML in '../InstantXML.pas';
 

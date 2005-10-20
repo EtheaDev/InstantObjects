@@ -33,10 +33,10 @@ requires
   rtl,
   dbrtl,
   IOCore,
-  vclx,
-  IOXMLCatalog;
+  vclx;
 
 contains
+  InstantXMLCatalog in '..\InstantXMLCatalog.pas',
   InstantXMLConnectionDefEdit in '..\InstantXMLConnectionDefEdit.pas' {InstantXMLConnectionDefEditForm},
   InstantXML in '..\InstantXML.pas';
 

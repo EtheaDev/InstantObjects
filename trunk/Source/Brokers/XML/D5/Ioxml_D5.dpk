@@ -29,10 +29,10 @@ package Ioxml_D5;
 
 requires
   IOCore,
-  VCLX50,
-  IOXMLCatalog;
+  VCLX50;
 
 contains
+  InstantXMLCatalog in '..\InstantXMLCatalog.pas',
   InstantXMLConnectionDefEdit in '..\InstantXMLConnectionDefEdit.pas' {InstantXMLConnectionDefEditForm},
   InstantXML in '..\InstantXML.pas';
 
