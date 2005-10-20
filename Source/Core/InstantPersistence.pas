@@ -12513,7 +12513,10 @@ begin
       with ObjectRows[I]^ do
         if (Instance is TInstantObject)
           and (TInstantObject(Instance).RefCount > 1) then
+          begin
             BusyObjects.Add(Instance);
+            TInstantObject(Instance).AddRef;
+          end;
     Close;
     Open;
     for I := 0 to Pred(BusyObjects.Count) do
@@ -14611,7 +14614,10 @@ begin
     begin
       with ObjectReferences[I] do
         if HasInstance and (Instance.RefCount > 1) then
+        begin
           BusyObjects.Add(Instance);
+          TInstantObject(Instance).AddRef;
+        end;
     end;
     Close;
     Open;
