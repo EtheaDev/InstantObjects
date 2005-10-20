@@ -32,10 +32,10 @@ requires
   vcl,
   vcldb,
   bdertl,
-  IOBDECatalog,
   IOCore;
 
 contains
+  InstantBDECatalog in '..\InstantBDECatalog.pas',
   InstantBDEConnectionDefEdit in '..\InstantBDEConnectionDefEdit.pas' {InstantBDEConnectionDefEditForm},
   InstantBDE in '..\InstantBDE.pas';
 
