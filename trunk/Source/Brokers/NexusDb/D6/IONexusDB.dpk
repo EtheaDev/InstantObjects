@@ -32,10 +32,10 @@ requires
   rtl,
   vcl,
   vcldb,
-  IOCore,
-  IONexusDBCatalog;
+  IOCore;
 
 contains
+  InstantNexusDBCatalog in '..\InstantNexusDBCatalog.pas',
   InstantNexusDBConnectionDefEdit in '..\InstantNexusDBConnectionDefEdit.pas' {InstantNexusDBConnectionDefEditForm},
   InstantNexusDB in '..\InstantNexusDB.pas',
   InstantNexusDBConsts in '..\InstantNexusDBConsts.pas',

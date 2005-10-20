@@ -30,10 +30,10 @@ package IONexusDB_D5;
 requires
   vcl50,
   vclx50,
-  IOCore,
-  IONexusDBCatalog_D5;
+  IOCore;
 
 contains
+  InstantNexusDBCatalog in '..\InstantNexusDBCatalog.pas',
   InstantNexusDBConnectionDefEdit in '..\InstantNexusDBConnectionDefEdit.pas' {InstantNexusDBConnectionDefEditForm},
   InstantNexusDB in '..\InstantNexusDB.pas',
   InstantNexusDBConsts in '..\InstantNexusDBConsts.pas',
