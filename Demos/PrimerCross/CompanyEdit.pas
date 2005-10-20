@@ -76,6 +76,8 @@ begin
   EmployeeEditAction.Enabled := Assigned(Employee);
   EmployeeDeleteAction.Enabled := Assigned(Employee);
   EmployeeRemoveAction.Enabled := Assigned(Employee);
+
+  Handled := True;
 end;
 
 procedure TCompanyEditForm.EmployeeDeleteActionExecute(Sender: TObject);
@@ -124,12 +126,16 @@ var
   Employee: TPerson;
 begin
   Employee := TPerson.Create;
-  if EditObject(Employee) then
-  begin
-    if not Assigned(Employee.Employer) then
-      Employee.EmployBy(Subject);
-  end else
+  try
+    if EditObject(Employee) then
+    begin
+      if not Assigned(Employee.Employer) then
+        Employee.EmployBy(Subject);
+      SubjectExposer.RefreshCurrentObject;
+    end;
+  finally
     Employee.Free;
+  end;
 end;
 
 procedure TCompanyEditForm.EmployeeRemoveActionExecute(Sender: TObject);

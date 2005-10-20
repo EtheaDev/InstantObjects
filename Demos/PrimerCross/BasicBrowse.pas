@@ -206,10 +206,12 @@ begin
     Exposer.Insert
   else begin
     NewObject := CreateObject;
-    if EditObject(NewObject) and Exposer.Active then
-      Exposer.AddObject(NewObject)
-    else
+    try
+      if EditObject(NewObject) and Exposer.Active then
+        Exposer.AddObject(NewObject);
+    finally
       NewObject.Free;
+    end;
   end;
 end;
 
