@@ -28,11 +28,11 @@ package Iobde_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOBDECatalog,
   IOCore,
   VCLBDE50;
 
 contains
+  InstantBDECatalog in '..\InstantBDECatalog.pas',
   InstantBDEConnectionDefEdit in '..\InstantBDEConnectionDefEdit.pas' {InstantBDEConnectionDefEditForm},
   InstantBDE in '..\InstantBDE.pas';
 
