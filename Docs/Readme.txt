@@ -18,6 +18,7 @@ TABLE OF CONTENTS
 o INTRODUCTION
 o FEATURES
 o INSTALLATION
+o DOCUMENTATION AND SUPPORT
 o GETTING STARTED
 o VERSION HISTORY
 
@@ -158,6 +159,24 @@ archive.
 ********************************************************************************
 
 
+DOCUMENTATION AND SUPPORT
+-------------------------
+
+The InstantObjects Guide IOHelp.hlp in the <installdir>\Help folder contains more
+informations about InstantObjects.
+
+The section "User Guide" explains how to build applications with InstantObjects.
+The section "Reference Guide" contains a detailed explanation of every class
+and function in the InstantObjects framework.
+
+Please note that this guide is not entirely up-to-date for IO v2. Most of the
+new features, though, are documented in text files you can find in the Docs
+folder.
+
+You can also use our support newsgroups; more details at
+http://www.instantobjects.org/.
+
+
 GETTING STARTED
 ---------------
 
@@ -195,30 +214,14 @@ Please see the documentation to know more about the TInstantPump component.
 
 The Test folder contains test applications of various sorts.
 
-DOCUMENTATION
-
-When you are ready to create your own InstantObjects solutions, please consult
-the InstantObjects Guide IOHelp.hlp in the <installdir>\Help folder.
-
-The section "User Guide" explains how to build applications with InstantObjects.
-The section "Reference Guide" contains a detailed explanation of every class
-and function in the InstantObjects framework.
-
-Please note that this giude is not entirely up-to-date for IO v2. Most of the
-new features, though, are documented in text files you can find in the Docs
-folder.
-
-You can also use our support newsgroups; more details at
-http://www.instantobjects.org/.
-
 
 VERSION HISTORY
 ---------------
 
-
 Version 2.0 Beta 1 (1.9.1.1) (2005-10)
 
-{ TODO: changelog }
+- Added ZeosDBO (ZeosLib project, see http://zeosforum.net.ms/)
+  broker.
 
 
 Version 2.0 Alpha 1 (1.9.0.1) (2005-07)
