@@ -95,6 +95,7 @@ resourcestring
   SConnectorMismatch = 'Connector mismatch';
   SContainerNotFound = 'Container: ''%s'' not found for class %s';
   SDatabaseEvolutionNonSupported = 'This broker does not support database evolution';
+  SDatabaseOpen = 'Cannot perform this operation on an open database';
   SDefaultContainerNotFound = 'Default container not found for class %s';
   SDefaultContainerNotSpecified = 'Default container not specified for class %s';
   SDeniedDispose = 'Denied dispose of object %s(''%s'')';
@@ -132,6 +133,7 @@ resourcestring
   SInvalidToken = 'Invalid token ''%s''';
   SInvalidValueType = 'Invalid value type';
   SKeyViolation = 'Key violation for object %s(''%s'')';
+  SLoginPromptFailure = 'Couldn''t find login dialog. Please use unit DBLogDlg or set LoginPrompt to False';
   SMetadataMismatch = 'Metadata mismatch for attribute %s(''%s'')';
   SMetadataNotFound = 'Metadata not found for class %s';
   SMethodNotFound = 'Method ''%s'' not found for class %s';

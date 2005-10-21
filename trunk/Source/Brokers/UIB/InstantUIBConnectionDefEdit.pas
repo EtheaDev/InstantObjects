@@ -42,15 +42,9 @@ uses
 type
   TInstantUIBConnectionDefEditForm = class(TForm)
     ClientPanel: TPanel;
-    ServerLabel: TLabel;
-    ProtocolLabel: TLabel;
-    DatabaseLabel: TLabel;
-    LocalRadioButton: TRadioButton;
-    RemoteRadioButton: TRadioButton;
-    ServerEdit: TEdit;
-    ProtocolEdit: TComboBox;
-    DatabaseEdit: TEdit;
-    DatabaseButton: TButton;
+    ConnectionStringLabel: TLabel;
+    ConnectionStringEdit: TEdit;
+    ConnectionStringButton: TButton;
     BottomPanel: TPanel;
     OkButton: TButton;
     CancelButton: TButton;
@@ -58,15 +52,14 @@ type
     StreamFormatLabel: TLabel;
     StreamFormatComboBox: TComboBox;
     UseDelimitedIdentsCheckBox: TCheckBox;
-    LoginPromptCheckBox: TCheckBox;
     ParamsLabel: TLabel;
     ParamsEditor: TMemo;
     IdDataTypeComboBox: TComboBox;
     Label1: TLabel;
     IdSizeEdit: TEdit;
     Label2: TLabel;
-    procedure LocalRemoteChange(Sender: TObject);
-    procedure DatabaseButtonClick(Sender: TObject);
+    LoginPromptCheckBox: TCheckBox;
+    procedure ConnectionStringButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     function GetIsValid: Boolean;
@@ -86,17 +79,17 @@ uses
 
 { TInstantUIBConnectionDefEditForm }
 
-procedure TInstantUIBConnectionDefEditForm.DatabaseButtonClick(
+procedure TInstantUIBConnectionDefEditForm.ConnectionStringButtonClick(
   Sender: TObject);
 begin
   with TOpenDialog.Create(nil) do
   try
     Filter :=
-      'FireBird Database (*.fdb)|*.fdb|' +
+      'Firebird Database (*.fdb)|*.fdb|' +
       'InterBase Database (*.gdb)|*.gdb|' +
       'All Files (*.*)|*.*';
     if Execute then
-      DatabaseEdit.Text := FileName;
+      ConnectionStringEdit.Text := FileName;
   finally
     Free;
   end;
@@ -113,9 +106,7 @@ end;
 
 function TInstantUIBConnectionDefEditForm.GetIsValid: Boolean;
 begin
-  Result :=
-    (LocalRadioButton.Checked or (ServerEdit.Text <> '')) and
-    (DatabaseEdit.Text <> '');
+  Result := ConnectionStringEdit.Text <> '';
 end;
 
 procedure TInstantUIBConnectionDefEditForm.LoadData(
@@ -123,9 +114,7 @@ procedure TInstantUIBConnectionDefEditForm.LoadData(
 begin
   with ConnectionDef do
   begin
-    ProtocolEdit.ItemIndex := Ord(NetType) - 1;
-    ServerEdit.Text := ServerName;
-    DatabaseEdit.Text := Path;
+    ConnectionStringEdit.Text := ConnectionString;
     StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat);
     UseDelimitedIdentsCheckBox.Checked := UIBUseDelimitedIdents in Options;
     LoginPromptCheckBox.Checked := LoginPrompt;
@@ -136,23 +125,12 @@ begin
   UpdateControls;
 end;
 
-procedure TInstantUIBConnectionDefEditForm.LocalRemoteChange(
-  Sender: TObject);
-begin
-  UpdateControls;
-end;
-
 procedure TInstantUIBConnectionDefEditForm.SaveData(
   ConnectionDef: TInstantUIBConnectionDef);
 begin
   with ConnectionDef do
   begin
-    if LocalRadioButton.Checked then
-      NetType := ntLocal
-    else
-      NetType := TUIBNetType(ProtocolEdit.ItemIndex + 1);
-    ServerName := ServerEdit.Text;
-    Path := DatabaseEdit.Text;
+    ConnectionString := ConnectionStringEdit.Text;
     BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
     Options := [];
     if UseDelimitedIdentsCheckBox.Checked then
@@ -165,22 +143,7 @@ begin
 end;
 
 procedure TInstantUIBConnectionDefEditForm.UpdateControls;
-const
-  Colors: array[Boolean] of TColor = (clBtnFace, clWindow);
-var
-  UseRemote: Boolean;
 begin
-  UseRemote := RemoteRadioButton.Checked;
-  ServerLabel.Enabled := UseRemote;
-  ServerEdit.Enabled := UseRemote;
-  ServerEdit.Color := Colors[UseRemote];
-  ProtocolLabel.Enabled := UseRemote;
-  ProtocolEdit.Enabled := UseRemote;
-  ProtocolEdit.Color := Colors[UseRemote];
-  DatabaseButton.Enabled := not UseRemote;
-  with ProtocolEdit do
-    if ItemIndex = -1 then
-      ItemIndex := 0;
 end;
 
 end.
