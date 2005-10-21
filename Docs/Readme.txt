@@ -1,9 +1,9 @@
 ------------------------------------------------------------------
 
-  InstantObjects 2.0 Alpha 1 (1.9.0.1) for Delphi, Kylix, FPC
+  InstantObjects 2.0 Beta 1 (1.9.1.1) for Delphi, Kylix, FPC
 
   Mozilla Public License 1.1 Edition
-  July 2005 release
+  October 2005 release
 
   Based on Seleqt InstantObjects.
   Portions created by Seleqt are Copyright (c) 2001-2003 Seleqt.
@@ -26,8 +26,8 @@ INTRODUCTION
 ------------
 
 InstantObjects is an integrated framework for developing object-oriented business
-solutions in Borland Delphi(tm), Borland Kylix(tm) and the open source FreePascal
-compiler (non yet released in this alpha version).
+solutions in Borland Delphi(tm), Borland Kylix(tm) and soon also the open source
+FreePascal compiler.
 The framework provides the foundation for the development process as
 well as the engine that powers the final application.
 
@@ -84,6 +84,23 @@ INSTALLATION
    <installdir>/Source/Brokers/<brokername>
 
    Add a line for each broker you plan to use.
+   If you are going to use a broker that needs a separate catalog
+   (currently the IBX, UIB, DBX and ADO brokers), then
+   you'll also need to add a line for each required catalog:
+
+   <installdir>/Source/Catalogs/<catalogname>
+
+   Here is a table of current broker-catalog dependencies:
+   
+   Broker              Depends on Catalog
+   --------------------------------------
+   IBX                 IBFb
+   UIB                 IBFb
+   DBX                 IBFb
+   ADO                 MSSql
+   
+   Other brokers have their catalogs integrated into themselves,
+   so there are not dependency issues for them.
 
 
 3. Build and install the InstantObjects core packages:
@@ -92,27 +109,36 @@ INSTALLATION
    <installdir>/Source/Design/<version>/DclIOCore.dpk (install)
    
    Where <version> identifies your version of Delphi, Kylix or
-   FPC. Examples: D5, D6, D7, K3, D9 (Delphi 2005), etc.
+   FPC. Examples: D5, D6, D7, K3, D2005, etc.
 
 
-4. Build and install the desired broker package(s):
+4. Build and install the desired catalog and broker package(s):
 
+   For example, if you need the ADO broker:
+   
+   <installdir>/Source/Catalogs/MSSql/<version>/IOMSSqlCatalog.dpk (build)
    <installdir>/Source/Brokers/ADO/<version>/IOADO.dpk (build)
    <installdir>/Source/Brokers/ADO/<version>/DclIOADO.dpk (install)
 
+   If you need a broker that doesn't depend on a catalog, just build and
+   install the broker's packages. Here's an example for the XML broker:
+   
+   <installdir>/Source/Brokers/XML/<version>/IOXML.dpk (build)
+   <installdir>/Source/Brokers/XML/<version>/DclIOXML.dpk (install)
+   
    Please note that not all brokers are available in all versions
    of Delphi/Kylix/FPC. If you think you can make a supplied broker
    work in an unsupported version, or create a new broker from scratch
    then please contact us.
    
-   Some broker packages depend on one or more catalogs. In that case,
-   you'll have to build the catalog package(s) first. For example, the
-   following catalog is required by the IBX, dbX and UIB brokers:
-   
-   <installdir>/Source/Catalogs/IBFb/<version>/IOIBFbCatalog.dpk (build)
+   Note for Delphi 5 users: dpk files in Delphi 5 have an additional
+   suffix "_D5". This is because Delphi 5 does not support the LIBSUFFIX
+   compiler directive that InstantObjects uses in newer versions of
+   Delphi.
 
+********************************************************************************
 Note: All InstantObjects packages use non-standard code in the package
-source file. In particular, they don't have the standard line:
+source file. In particular, they miss the standard line:
 
 {$R *.RES}
 
@@ -123,11 +149,13 @@ and have instead something similar to this line:
 that includes the InstantVersion.inc file in the $(InstantObjects)\Source
 folder (Substitute the correct relative path in this statement depending on
 where in the installed folder tree the package file resides). However if you
-open the Project Options for a package and click the OK button, some versions
-of the Delphi IDE will restore the line with the $R directive, automatically
-create a <packagename>.res file that IO doesn't need and delete the $I
+open the Project Options for a package and click the OK button, the Delphi IDE
+will restore the line with the $R directive, automatically create a
+<packagename>.res file that IO doesn't need and delete the $I
 directive. If you ever do that, please restore the original code by editing
-the Project Source by hand.
+the Project Source by hand or restoring the original file from the distribution
+archive.
+********************************************************************************
 
 
 GETTING STARTED
@@ -149,7 +177,7 @@ thorough demonstration and explanation of nearly all the features
 of InstantObjects. The application implements a small business model and a user
 interface that shows how persistent business objects can be used in a real
 application. It is compatible with Delphi and Kylix. The PrimerExternal variation
-uses external storage for collections (see documentation).
+uses external storage for collection attributes (see documentation).
 
 The Demos folder also features a few other programs that help demonstrate or test
 specific features:
@@ -170,22 +198,30 @@ The Test folder contains test applications of various sorts.
 DOCUMENTATION
 
 When you are ready to create your own InstantObjects solutions, please consult
-the InstantObjects Guide io.hlp in the <installdir>\Help folder.
+the InstantObjects Guide IOHelp.hlp in the <installdir>\Help folder.
 
 The section "User Guide" explains how to build applications with InstantObjects.
 The section "Reference Guide" contains a detailed explanation of every class
 and function in the InstantObjects framework.
 
-Please note that this giude was not updated yet for IO2. Most of the new features,
-though, are documented in text files you'll find in the Docs folder.
+Please note that this giude is not entirely up-to-date for IO v2. Most of the
+new features, though, are documented in text files you can find in the Docs
+folder.
+
+You can also use our support newsgroups; more details at
+http://www.instantobjects.org/.
 
 
 VERSION HISTORY
 ---------------
 
 
+Version 2.0 Beta 1 (1.9.1.1) (2005-10)
 
-Version 2.0 Alpha 1 (1.9.01) (2005-07)
+{ TODO: changelog }
+
+
+Version 2.0 Alpha 1 (1.9.0.1) (2005-07)
 
 - Added UIB (Unified InterBase, see http://www.progdigy.com/modules.php?name=UIB)
   broker.
@@ -220,7 +256,6 @@ Version 2.0 Alpha 1 (1.9.01) (2005-07)
   http://sourceforge.net/tracker/?group_id=94747&atid=608938
 
 
-
 Version 1.6.7 (2004-11-17) UNOFFICIAL
 
 - Added support for IOMETADATA Keyword in metadata class definition and
@@ -236,7 +271,6 @@ Version 1.6.7 (2004-11-17) UNOFFICIAL
   - implemented InternalCreateDatabase and GetDatabaseExists
 
 - LoginPrompt support and OnLogin event in Connections based on TCustomConnection
-
 
 
 Version 1.6.6 (2004-07-29) UNOFFICIAL
@@ -269,7 +303,6 @@ Version 1.6.6 (2004-07-29) UNOFFICIAL
 - Exposer's Undo method now is Virtual and UndoBuffer is available.
 
 
-
 Version 1.6.5 (2004-05-23) UNOFFICIAL
 
 - Kylix Porting (design, core and DbExpress broker).
@@ -278,6 +311,7 @@ Version 1.6.5 (2004-05-23) UNOFFICIAL
 - Kylix porting of Primer Demo.
 
 - XML format for connection file managed by connectionmanager.
+
 
 Version 1.6 (2003-12-19) LAST COMMERCIAL VERSION
 
@@ -309,7 +343,6 @@ Version 1.6 (2003-12-19) LAST COMMERCIAL VERSION
 
 - TInstantCustomExposer: FieldDefs are now created from Fields to improve performance when using
   persistent fields.
-
 
 
 Version 1.5 (2003-02-25)
@@ -397,7 +430,6 @@ Version 1.5 (2003-02-25)
 - Added ADS, DBISAM and FF brokers to Delphi 7 version.
 
 
-
 Version 1.3 (2002-09-12)
 
 - FlashFiler broker added.
@@ -411,7 +443,6 @@ Version 1.3 (2002-09-12)
 - TInstantIBXBroker: Fixed duplicate index name error.
 
 - TInstantAttribute: GetValue/SetValue is now virtual.
-
 
 
 Version 1.22 (2002-07-30) - Delphi 7 Companion CD
@@ -440,7 +471,6 @@ Version 1.22 (2002-07-30) - Delphi 7 Companion CD
 - TInstantObject: Added IsOperationAllowed and VerifyOperation.
 
 - Primer demo: Import/export of multiple objects added.
-
 
 
 Version 1.21 (2002-06-28)
@@ -481,7 +511,6 @@ Version 1.21 (2002-06-28)
   long metadata sections.
 
 
-
 Version 1.2 (2002-05-16)
 
 - ObjectFoundry enabled.
@@ -514,7 +543,6 @@ Version 1.2 (2002-05-16)
 - BuildDatabase with IBX broker now fails on string fields without size.
 
 
-
 Version 1.11 (2002-04-22)
 
 - Fixed bug in exposer causing problems with lookup fields.
@@ -542,7 +570,6 @@ Version 1.11 (2002-04-22)
 
 - Added TInstantConnector.BuildDatabase that allows building tables for 
   specified classes only.
-
 
 
 Version 1.1.0.1707 (2002-03-15)
@@ -579,7 +606,6 @@ Version 1.1.0.1707 (2002-03-15)
   classes not descending from TInstantObject.
 
 
-
 Version 1.0.0.1706 (2002-02-14)
 
 - ADO, BDE and IBX brokers are now placed in individual packages.
@@ -600,7 +626,6 @@ Version 1.0.0.1706 (2002-02-14)
 
 - Fixed bug causing AV when loading form with TInstantSelector that is linked
   to a TInstantIBXConnector with no connection.
-
 
 
 Version 1.0.0.1705 (2002-02-07)
@@ -628,7 +653,6 @@ Version 1.0.0.1705 (2002-02-07)
 - About box added to Model Explorer.
 
 
-
 Version 1.0.0.1704 (2002-01-23)
 
 - Exposer now refreshes record buffer when exposed objects are refreshed.
@@ -640,7 +664,6 @@ Version 1.0.0.1704 (2002-01-23)
 - Fixed bug in TInstantObject.Retrieve causing stack problems when returning nil.
 
 
-
 Version 1.0.0.1703 (2002-01-03)
 
 - Fixed bug causing exposer/selector fields to be missing at design time.
@@ -648,7 +671,6 @@ Version 1.0.0.1703 (2002-01-03)
 - Removed brackets from SQL when using MS SQL Server via ADO.
 
 - Fixed bug in InstantObjectBinaryToText when converting boolean values.
-
 
 
 Version 1.0.0.1702 (2001-12-23)
@@ -660,12 +682,10 @@ Version 1.0.0.1702 (2001-12-23)
   exposers in Delphi 6.
 
 
-
 Version 1.0.0.1701 (2001-12-07)
 
 - Fixed bug in code generator causing delete of model unit source code
   when editing class via Model Explorer.
-
 
 
 Version 1.0.0.1659 (2001-12-03)
