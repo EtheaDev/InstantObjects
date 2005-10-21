@@ -40,12 +40,11 @@ procedure Register;
 implementation
 
 uses
-  Classes, InstantUIB, InstantUIBConnection;
+  Classes, InstantUIB;
 
 procedure Register;
 begin
   RegisterComponents('InstantObjects', [TInstantUIBConnector]);
-  RegisterComponents('InstantObjects', [TInstantUIBConnection]);
 end;
 
 end.

@@ -38,7 +38,6 @@ requires
 
 contains
   InstantUIBConnectionDefEdit in '..\InstantUIBConnectionDefEdit.pas' {InstantUIBConnectionDefEditForm},
-  InstantUIB in '..\InstantUIB.pas',
-  InstantUIBConnection in '..\InstantUIBConnection.pas';
+  InstantUIB in '..\InstantUIB.pas';
 
 end.

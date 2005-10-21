@@ -36,7 +36,7 @@ unit InstantUIB;
 interface
 
 uses
-  Classes, Db, jvuib, jvuibdataset, jvuiblib, SysUtils, InstantUIBConnection,
+  Classes, Db, jvuib, jvuibdataset, jvuiblib, SysUtils,
   InstantPersistence, InstantClasses, InstantCommand;
 
 type
@@ -47,65 +47,65 @@ const
   DefaultInstantUIBOptions = [uibUseDelimitedIdents];
 
 type
-  TUIBNetType = (ntLocal, ntTCP, ntNetBEUI, ntSPX);
-
-  TInstantUIBConnectionDef = class(TInstantConnectionBasedConnectionDef)
+  TInstantUIBConnectionDef = class(TInstantRelationalConnectionDef)
   private
-    FPath: string;
-    FServerName: string;
-    FNetType: TUIBNetType;
+    FLoginPrompt: Boolean;
+    FConnectionString: string;
     FOptions: TInstantUIBOptions;
     FParams: string;
-    function GetDatabaseName: string;
-    function GetServerName: string;
   protected
-    function CreateConnection(AOwner: TComponent): TCustomConnection; override;
+    function CreateDataBase(AOwner: TComponent): TJvUIBDataBase;
     procedure InitConnector(Connector: TInstantConnector); override;
   public
     class function ConnectionTypeName: string; override;
     class function ConnectorClass: TInstantConnectorClass; override;
     constructor Create(Collection: TCollection); override;
     function Edit: Boolean; override;
-    property DatabaseName: string read GetDatabaseName;
   published
-    property Path: string read FPath write FPath;
-    property NetType: TUIBNetType read FNetType write FNetType;    
-    property ServerName: string read GetServerName write FServerName;
+    property ConnectionString: string read FConnectionString write FConnectionString;
+    property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt default True;
     property Options: TInstantUIBOptions read FOptions write FOptions;
     property Params: string read FParams write FParams;
   end;
 
-  TInstantUIBConnector = class(TInstantConnectionBasedConnector)
+  TInstantUIBConnector = class(TInstantRelationalConnector)
   private
+    FDataBase: TJvUIBDataBase;
     FTransaction: TJvUIBTransaction;
     FOptions: TInstantUIBOptions;
-    FOnLogin: TLoginEvent;
-    function GetConnection: TInstantUIBConnection;
+    FLoginPrompt: Boolean;
+    function GetDataBase: TJvUIBDataBase;
     function GetTransaction: TJvUIBTransaction;
-    procedure SetConnection(const Value: TInstantUIBConnection);
+    procedure SetDataBase(const Value: TJvUIBDataBase);
+    procedure DataBaseLogin;
   protected
+    procedure CheckDataBase;
+    function GetConnected: Boolean; override;
+    procedure InternalConnect; override;
+    procedure InternalDisconnect; override;
     function CreateBroker: TInstantBroker; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     procedure InternalCommitTransaction; override;
     procedure InternalRollbackTransaction; override;
     procedure InternalStartTransaction; override;
     procedure InternalCreateDatabase; override;
-    procedure AssignLoginOptions; override;
     function GetDatabaseExists: Boolean; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     property Transaction: TJvUIBTransaction read GetTransaction;
+    function HasDataBase: Boolean;
   published
-    property Connection: TInstantUIBConnection read GetConnection write SetConnection;
+    property DataBase: TJvUIBDataBase read GetDataBase write SetDataBase;
+    property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt;
     property Options: TInstantUIBOptions read FOptions write FOptions default DefaultInstantUIBOptions;
-    property OnLogin: TLoginEvent read FOnLogin write FOnLogin;
   end;
 
   TInstantUIBBroker = class(TInstantSQLBroker)
   private
-    function GetDialect: Integer;
+    function GetSQLDialect: Integer;
     function GetConnector: TInstantUIBConnector;
     function DelimitedIdentsEnabled: Boolean;
   protected
@@ -124,7 +124,7 @@ type
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
     function Execute(const AStatement: string; AParams: TParams = nil): Integer; override;
     property Connector: TInstantUIBConnector read GetConnector;
-    property Dialect: Integer read GetDialect;
+    property SQLDialect: Integer read GetSQLDialect;
   end;
 
   TInstantUIBResolver = class(TInstantSQLResolver)
@@ -164,24 +164,22 @@ end;
 constructor TInstantUIBConnectionDef.Create(Collection: TCollection);
 begin
   inherited;
+  FLoginPrompt := True;
   FOptions := DefaultInstantUIBOptions;
 end;
 
-function TInstantUIBConnectionDef.CreateConnection(
-  AOwner: TComponent): TCustomConnection;
-var
-  Connection: TInstantUIBConnection;
+function TInstantUIBConnectionDef.CreateDataBase(
+  AOwner: TComponent): TJvUIBDataBase;
 begin
-  Connection := TInstantUIBConnection.Create(AOwner);
+  Result := TJvUIBDataBase.Create(AOwner);
   try
-    Connection.Database.DatabaseName := DatabaseName;
-    Connection.Database.SQLDialect := 3;
-    Connection.Database.Params.Text := Params;
+    Result.Params.Text := Params;
+    Result.DatabaseName := ConnectionString;
+    Result.SQLDialect := 3;
   except
-    Connection.Free;
+    Result.Free;
     raise;
   end;
-  Result := Connection;
 end;
 
 function TInstantUIBConnectionDef.Edit: Boolean;
@@ -197,47 +195,23 @@ begin
   end;
 end;
 
-function TInstantUIBConnectionDef.GetDatabaseName: string;
-var
-  Fmt: string;
-begin
-  if NetType = ntLocal then
-    Result := Path
-  else begin
-    case NetType of
-      ntTCP: Fmt := '%s:%s';
-      ntNetBEUI: Fmt := '\\%s\%s';
-      ntSPX: Fmt := '%s@%s';
-    end;
-    Result := Format(Fmt, [ServerName, Path]);
-  end;
-end;
-
-function TInstantUIBConnectionDef.GetServerName: string;
-begin
-  if NetType = ntLocal then
-    Result := ''
-  else
-    Result := FServerName;
-end;
-
 procedure TInstantUIBConnectionDef.InitConnector(Connector: TInstantConnector);
+var
+  DataBase: TJvUIBDataBase;
 begin
   inherited;
-  (Connector as TInstantUIBConnector).Options := FOptions;
+  DataBase := CreateDatabase(Connector);
+  try
+    (Connector as TInstantUIBConnector).DataBase := DataBase;
+    (Connector as TInstantUIBConnector).LoginPrompt := LoginPrompt;
+    (Connector as TInstantUIBConnector).Options := FOptions;
+  except
+    DataBase.Free;
+    raise;
+  end;
 end;
 
 { TInstantUIBConnector }
-
-procedure TInstantUIBConnector.AssignLoginOptions;
-begin
-  inherited;
-  if HasConnection then
-  begin
-    if Assigned(FOnLogin) and not Assigned(Connection.OnLogin) then
-      Connection.OnLogin := FOnLogin;
-  end;
-end;
 
 class function TInstantUIBConnector.ConnectionDefClass: TInstantConnectionDefClass;
 begin
@@ -247,6 +221,7 @@ end;
 constructor TInstantUIBConnector.Create(AOwner: TComponent);
 begin
   inherited;
+  FLoginPrompt := True;
   FOptions := DefaultInstantUIBOptions;
 end;
 
@@ -257,27 +232,29 @@ end;
 
 destructor TInstantUIBConnector.Destroy;
 begin
-  FTransaction.Free;
+  FreeAndNil(FTransaction);
   inherited;
 end;
 
-function TInstantUIBConnector.GetConnection: TInstantUIBConnection;
+function TInstantUIBConnector.GetDataBase: TJvUIBDataBase;
 begin
-  Result := inherited Connection as TInstantUIBConnection;
+  if not (csDesigning in ComponentState) then
+    CheckDataBase;
+  Result := FDataBase;
 end;
 
 function TInstantUIBConnector.GetTransaction: TJvUIBTransaction;
 begin
   if not Assigned(FTransaction) then
   begin
-    CheckConnection;
+    CheckDataBase;
     FTransaction := TJvUIBTransaction.Create(nil);
     try
-      FTransaction.Database := Connection.Database;
+      FTransaction.DataBase := FDatabase;
       FTransaction.AutoStart := True;
       FTransaction.AutoStop := True;
       FTransaction.DefaultAction := etmRollback;
-      FTransaction.Options := [tpReadCommitted];  
+      FTransaction.Options := [tpReadCommitted];
     except
       FTransaction.Free;
       raise;
@@ -315,35 +292,110 @@ begin
     Transaction.StartTransaction;
 end;
 
-procedure TInstantUIBConnector.SetConnection(const Value: TInstantUIBConnection);
+procedure TInstantUIBConnector.SetDataBase(const Value: TJvUIBDataBase);
 begin
-  inherited Connection := Value;
+  if Value <> FDataBase then
+  begin
+    Disconnect;
+    if Assigned(FDataBase) then
+      FDataBase.RemoveFreeNotification(Self);
+    FDataBase := Value;
+    if Assigned(FDataBase) then
+      FDataBase.FreeNotification(Self);
+  end;
 end;
 
 procedure TInstantUIBConnector.InternalCreateDatabase;
 begin
   inherited;
-  Connection.Close;
+  if DataBase.Connected then
+    raise EInstantError.Create(SDatabaseOpen);
   try
-    Connection.Database.CreateDatabase(4096);
+    DataBase.CreateDatabase(4096);
   finally
-    Connection.Close;
+    Disconnect;
   end;
 end;
 
 function TInstantUIBConnector.GetDatabaseExists: Boolean;
 begin
-  AssignLoginOptions;
   try
-    Connection.Open;
+    DataBase.Connected := True;
     try
       Result := True;
     finally
-      Connection.Close;
+      DataBase.Connected := False;
     end;
   except
-    Result := False
+    on E: EUIBError do begin
+      if (E.SQLCode = -902) and (E.ErrorCode = 335544344) then
+        Result := False
+      else
+        raise;
+    end;
   end;
+end;
+
+procedure TInstantUIBConnector.CheckDataBase;
+begin
+  if not Assigned(FDataBase) then
+    raise EInstantError.Create(SUnassignedConnection);
+end;
+
+function TInstantUIBConnector.GetConnected: Boolean;
+begin
+  if HasDataBase then
+    Result := DataBase.Connected
+  else
+    Result := inherited GetConnected;
+end;
+
+procedure TInstantUIBConnector.InternalConnect;
+begin
+  CheckDataBase;
+  if FLoginPrompt and not DataBase.Connected then
+    DataBaseLogin;
+  DataBase.Connected := True;
+end;
+
+procedure TInstantUIBConnector.InternalDisconnect;
+begin
+  if HasDataBase then
+    DataBase.Connected := False;
+end;
+
+procedure TInstantUIBConnector.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited;
+  if (AComponent = FDataBase) and (Operation = opRemove) then
+  begin
+    Disconnect;
+    FDataBase := nil;
+  end;
+end;
+
+function TInstantUIBConnector.HasDataBase: Boolean;
+begin
+  Result := Assigned(FDataBase);
+end;
+
+procedure TInstantUIBConnector.DataBaseLogin;
+var
+  LUserName, LPassWord: string;
+begin
+  LUserName := DataBase.UserName;
+  LPassWord := DataBase.PassWord;
+  if Assigned(LoginDialogProc) then
+  begin
+    if LoginDialogProc(FDataBase.DatabaseName, LUserName, LPassWord) then
+    begin
+      FDataBase.UserName := LUserName;
+      FDataBase.PassWord := LPassWord;
+    end;
+  end
+  else
+    raise EDatabaseError.Create(SLoginPromptFailure);
 end;
 
 { TInstantUIBBroker}
@@ -418,7 +470,7 @@ var
 begin
   Query := TJvUIBDataSet.Create(nil);
   try
-    Query.Database := Connector.Connection.Database;
+    Query.Database := Connector.DataBase;
     Query.FetchBlobs := True;
     Query.OnError := etmStayIn;
     Query.OnClose := etmStayIn;
@@ -466,7 +518,7 @@ end;
 
 function TInstantUIBBroker.GetDatabaseName: string;
 begin
-  Result := Connector.Connection.Database.DatabaseName;
+  Result := Connector.DataBase.DatabaseName;
 end;
 
 function TInstantUIBBroker.GetDBMSName: string;
@@ -474,14 +526,14 @@ begin
   Result := 'InterBase';
 end;
 
-function TInstantUIBBroker.GetDialect: Integer;
+function TInstantUIBBroker.GetSQLDialect: Integer;
 begin
-  Result := Connector.Connection.Database.SQLDialect;
+  Result := Connector.DataBase.SQLDialect;
 end;
 
 function TInstantUIBBroker.GetSQLDelimiters: string;
 begin
-  if (Dialect = 3) and DelimitedIdentsEnabled() then
+  if (SQLDialect = 3) and DelimitedIdentsEnabled() then
     Result := '""'
   else
     Result := inherited GetSQLDelimiters;
