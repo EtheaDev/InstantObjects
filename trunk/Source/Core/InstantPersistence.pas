@@ -12415,8 +12415,8 @@ begin
       New(ObjectRow);
       List[I] := ObjectRow;
     end;
-    ObjectRow.Row := Succ(I);
-    ObjectRow.Instance := nil;
+    ObjectRow^.Row := Succ(I);
+    ObjectRow^.Instance := nil;
   end;
 end;
 
@@ -12426,8 +12426,8 @@ var
 begin
   New(ObjectRow);
   try
-    ObjectRow.Row := -1;
-    ObjectRow.Instance := AObject;
+    ObjectRow^.Row := -1;
+    ObjectRow^.Instance := AObject;
     if AObject is TInstantObject then
       TInstantObject(AObject).AddRef;
     Result := ObjectRowList.Add(ObjectRow);
@@ -12459,7 +12459,7 @@ var
 begin
   ObjectRow := ObjectRows[Index];
   if not Assigned(ObjectRow.Instance) then
-    ObjectRow.Instance := CreateObject(ObjectRow.Row);
+    ObjectRow^.Instance := CreateObject(ObjectRow^.Row);
   Result := ObjectRow.Instance;
 end;
 
@@ -12467,7 +12467,7 @@ function TInstantNavigationalQuery.InternalIndexOfObject(
   AObject: TObject): Integer;
 begin
   for Result := 0 to Pred(ObjectRowCount) do
-    if ObjectRows[Result].Instance = AObject then
+    if ObjectRows[Result]^.Instance = AObject then
       Exit;
   if AObject is TInstantObject then
     Result := Pred(RecNoOfObject(TInstantObject(AObject)))
@@ -12482,8 +12482,8 @@ var
 begin
   New(ObjectRow);
   try
-    ObjectRow.Row := -1;
-    ObjectRow.Instance := AObject;
+    ObjectRow^.Row := -1;
+    ObjectRow^.Instance := AObject;
     if AObject is TInstantObject then
       TInstantObject(AObject).AddRef;
     ObjectRowList.Insert(Index, ObjectRow);
@@ -12534,10 +12534,10 @@ begin
   for I := 0 to Pred(ObjectRowCount) do
   begin
     ObjectRow := ObjectRows[I];
-    if ObjectRow.Instance = AObject then
+    if ObjectRow^.Instance = AObject then
     begin
       AObject.Free;
-      ObjectRow.Instance := nil;
+      ObjectRow^.Instance := nil;
       Exit;
     end;
   end;
@@ -12561,7 +12561,7 @@ end;
 
 function TInstantNavigationalQuery.ObjectFetched(Index: Integer): Boolean;
 begin
-  Result := Assigned(ObjectRows[Index].Instance);
+  Result := Assigned(ObjectRows[Index]^.Instance);
 end;
 
 function TInstantNavigationalQuery.RecNoOfObject(
