@@ -445,7 +445,8 @@ end;
 
 function TInstantZeosDBOConnector.GetConnection: TZConnection;
 begin
-  CheckConnection;
+  if not (csDesigning in ComponentState) then
+    CheckConnection;
   Result := FConnection; 
 end;
 
@@ -477,7 +478,6 @@ end;
 procedure TInstantZeosDBOConnector.InternalConnect;
 begin
   CheckConnection;
-  AssignLoginOptions;
   FConnection.Connect;
 end;
 
@@ -523,6 +523,7 @@ begin
     Disconnect;
     DoBeforeConnectionChange;
     FConnection := Value;
+    AssignLoginOptions;
     DoAfterConnectionChange;
   end;
 end;
@@ -530,6 +531,7 @@ end;
 procedure TInstantZeosDBOConnector.SetLoginPrompt(const Value: Boolean);
 begin
   FLoginPrompt := Value;
+  AssignLoginOptions;
 end;
 
 procedure TInstantZeosDBOConnector.SetUseDelimitedIdents(const Value: Boolean);
