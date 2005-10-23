@@ -510,12 +510,14 @@ type
   end;
 
   TInstantConnector = class;
+  TInstantComplex = class;
 
   TInstantObjectReference = class(TInstantStreamable)
   private
     FInstance: TInstantObject;
     FObjectClassName: string;
     FObjectId: string;
+    FOwner: TInstantComplex;
     FOwnsInstance: Boolean;
     procedure ClearReference;
     function GetInstance: TInstantObject;
@@ -530,7 +532,8 @@ type
     procedure ReadObject(Reader: TInstantReader); override;
     procedure WriteObject(Writer: TInstantWriter); override;
   public
-    constructor Create(AInstance: TInstantObject = nil; AOwnsInstance: Boolean = False);
+    constructor Create(AInstance: TInstantObject = nil; AOwnsInstance: Boolean = False;
+      AOwner: TInstantComplex = nil);
     constructor Clone(Source: TInstantObjectReference; AOwnsInstance: Boolean);
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
@@ -1147,6 +1150,7 @@ type
     FObjectStore: TInstantObjectStore;
     FOwner: TInstantObject;
     FOwnerAttribute: TInstantComplex;
+    FRefBy: TObjectList;
     FRefCount: Integer;
     FSavedState: TInstantObjectState;
     FSaveStateLevel: Integer;
@@ -1159,7 +1163,7 @@ type
     procedure ClearOwnerContext;
     procedure CreateAttributes;
     procedure DestroyAttributes;
-    procedure DestroyStates;
+    procedure DestroyInternalFields;
     procedure DoAfterContentChange(Container: TInstantContainer;
       ChangeType: TInstantContentChangeType; Index: Integer; AObject: TInstantObject);
     procedure DoAfterCreate;
@@ -1198,6 +1202,7 @@ type
     function GetObjects(Index: Integer): TInstantObject;
     function GetObjectStore: TInstantObjectStore;
     function GetPersistentId: string;
+    function GetReferencedBy: TObjectList;
     function GetSavedState: TInstantObjectState;
     function GetState: TInstantObjectState;
     function GetUpdateCount: Integer;
@@ -1332,6 +1337,7 @@ type
     property OwnerAttribute: TInstantComplex read FOwnerAttribute;
     property PersistentId: string read GetPersistentId;
     property RefCount: Integer read FRefCount;
+    property ReferencedBy: TObjectList read GetReferencedBy;
     property UpdateCount: Integer read GetUpdateCount;
     property OnAfterContentChange: TInstantContentChangeEvent read FOnAfterContentChange write FOnAfterContentChange;
     property OnAttributeChanged: TInstantAttributeChangeEvent read FOnAttributeChanged write FOnAttributeChanged;
@@ -4286,11 +4292,12 @@ begin
 end;
 
 constructor TInstantObjectReference.Create(AInstance: TInstantObject;
-  AOwnsInstance: Boolean);
+  AOwnsInstance: Boolean; AOwner: TInstantComplex);
 begin
   inherited Create;
-  Instance := AInstance;
   OwnsInstance := AOwnsInstance;
+  FOwner := AOwner;
+  Instance := AInstance;
 end;
 
 class function TInstantObjectReference.CreateInstance(
@@ -4330,6 +4337,8 @@ end;
 
 procedure TInstantObjectReference.DestroyInstance;
 begin
+  if HasInstance and Assigned(FOwner) then
+    Instance.ReferencedBy.Remove(FOwner);
   if FOwnsInstance then
     Instance.Free;
   FInstance := nil;
@@ -4453,8 +4462,10 @@ begin
   if Assigned(Value) then
   begin
     FInstance := Value;
+    if Assigned(FOwner) then
+      FInstance.ReferencedBy.Add(FOwner);
     if OwnsInstance then
-      Instance.AddRef;
+      FInstance.AddRef;
   end;
 end;
 
@@ -6206,7 +6217,7 @@ end;
 function TInstantReference.GetObjectReference: TInstantObjectReference;
 begin
   if not Assigned(FObjectReference) then
-    FObjectReference := TInstantObjectReference.Create(nil, True);
+    FObjectReference := TInstantObjectReference.Create(nil, True, Self);
   Result := FObjectReference;
 end;
 
@@ -7065,7 +7076,7 @@ end;
 function TInstantReferences.CreateObjectReference(
   AObject: TInstantObject): TInstantObjectReference;
 begin
-  Result := TInstantObjectReference.Create(AObject, True);
+  Result := TInstantObjectReference.Create(AObject, True, Self);
 end;
 
 destructor TInstantReferences.Destroy;
@@ -7855,8 +7866,9 @@ begin
     end;
 end;
 
-procedure TInstantObject.DestroyStates;
+procedure TInstantObject.DestroyInternalFields;
 begin
+  FreeAndNil(FRefBy);
   FreeAndNil(FState);
   FreeAndNil(FSavedState);
 end;
@@ -8048,7 +8060,19 @@ begin
 end;
 
 function TInstantObject.DoRelease: Integer;
+var
+  I: Integer;
 begin
+  // This object will be destroyed only when objects among circular
+  // references points each other
+  if Assigned(FRefBy) and (FRefBy.Count = FRefCount-1) then
+  for I := 0 to Pred(FRefBy.Count) do
+  if (FRefBy[I] is TInstantComplex) then
+  with TInstantComplex(FRefBy[I]) do
+  if AttributeType in [atReference, atReferences] then
+    // FRefCount will be decremented whenever this object is dereferenced
+    repeat until not DetachObject(Self);
+
   if FRefCount > 0 then
   begin
     BeforeRelease;
@@ -8188,7 +8212,7 @@ begin
       ObjectStore.ObjectDestroyed(Self);
   end;
   DestroyAttributes;
-  DestroyStates;
+  DestroyInternalFields;
 end;
 
 procedure TInstantObject.FreeInstance;
@@ -8319,6 +8343,13 @@ end;
 function TInstantObject.GetPersistentId: string;
 begin
   Result := State.PersistentId;
+end;
+
+function TInstantObject.GetReferencedBy: TObjectList;
+begin
+  if not Assigned(FRefBy) then
+    FRefBy := TObjectList.Create(False);
+  Result := FRefBy;
 end;
 
 function TInstantObject.GetSavedState: TInstantObjectState;
@@ -12415,8 +12446,8 @@ begin
       New(ObjectRow);
       List[I] := ObjectRow;
     end;
-    ObjectRow^.Row := Succ(I);
-    ObjectRow^.Instance := nil;
+    ObjectRow.Row := Succ(I);
+    ObjectRow.Instance := nil;
   end;
 end;
 
@@ -12426,8 +12457,8 @@ var
 begin
   New(ObjectRow);
   try
-    ObjectRow^.Row := -1;
-    ObjectRow^.Instance := AObject;
+    ObjectRow.Row := -1;
+    ObjectRow.Instance := AObject;
     if AObject is TInstantObject then
       TInstantObject(AObject).AddRef;
     Result := ObjectRowList.Add(ObjectRow);
@@ -12459,7 +12490,7 @@ var
 begin
   ObjectRow := ObjectRows[Index];
   if not Assigned(ObjectRow.Instance) then
-    ObjectRow^.Instance := CreateObject(ObjectRow^.Row);
+    ObjectRow.Instance := CreateObject(ObjectRow.Row);
   Result := ObjectRow.Instance;
 end;
 
@@ -12467,7 +12498,7 @@ function TInstantNavigationalQuery.InternalIndexOfObject(
   AObject: TObject): Integer;
 begin
   for Result := 0 to Pred(ObjectRowCount) do
-    if ObjectRows[Result]^.Instance = AObject then
+    if ObjectRows[Result].Instance = AObject then
       Exit;
   if AObject is TInstantObject then
     Result := Pred(RecNoOfObject(TInstantObject(AObject)))
@@ -12482,8 +12513,8 @@ var
 begin
   New(ObjectRow);
   try
-    ObjectRow^.Row := -1;
-    ObjectRow^.Instance := AObject;
+    ObjectRow.Row := -1;
+    ObjectRow.Instance := AObject;
     if AObject is TInstantObject then
       TInstantObject(AObject).AddRef;
     ObjectRowList.Insert(Index, ObjectRow);
@@ -12512,7 +12543,7 @@ begin
     for I := 0 to Pred(ObjectRowCount) do
       with ObjectRows[I]^ do
         if (Instance is TInstantObject)
-          and (TInstantObject(Instance).RefCount > 1) then
+          and (TInstantObject(Instance).RefCount > 0) then
           begin
             BusyObjects.Add(Instance);
             TInstantObject(Instance).AddRef;
@@ -12534,10 +12565,10 @@ begin
   for I := 0 to Pred(ObjectRowCount) do
   begin
     ObjectRow := ObjectRows[I];
-    if ObjectRow^.Instance = AObject then
+    if ObjectRow.Instance = AObject then
     begin
       AObject.Free;
-      ObjectRow^.Instance := nil;
+      ObjectRow.Instance := nil;
       Exit;
     end;
   end;
@@ -12561,7 +12592,7 @@ end;
 
 function TInstantNavigationalQuery.ObjectFetched(Index: Integer): Boolean;
 begin
-  Result := Assigned(ObjectRows[Index]^.Instance);
+  Result := Assigned(ObjectRows[Index].Instance);
 end;
 
 function TInstantNavigationalQuery.RecNoOfObject(
@@ -14611,14 +14642,12 @@ begin
   BusyObjects := TObjectList.Create;
   try
     for I := 0 to Pred(ObjectReferenceCount) do
-    begin
       with ObjectReferences[I] do
-        if HasInstance and (Instance.RefCount > 1) then
+        if HasInstance and (Instance.RefCount > 0) then
         begin
           BusyObjects.Add(Instance);
           TInstantObject(Instance).AddRef;
         end;
-    end;
     Close;
     Open;
     for I := 0 to Pred(BusyObjects.Count) do
