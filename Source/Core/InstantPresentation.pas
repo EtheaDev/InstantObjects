@@ -3415,19 +3415,20 @@ procedure TInstantCustomExposer.Remember;
     vInstantMemo: TInstantMemo;
     i: Integer;
   begin
-    with CurrentObject as TInstantObject do
-    begin
-      for i := 0 to Pred(Metadata.MemberMap.Count) do
+    if CurrentObject is TInstantObject then
+      with TInstantObject(CurrentObject) do
       begin
-        vAttributeMetadata := Metadata.MemberMap.Items[i];
-        if vAttributeMetadata.AttributeType = atMemo then
+        for i := 0 to Pred(Metadata.MemberMap.Count) do
         begin
-          vInstantMemo :=
-              TInstantMemo(AttributeByName(vAttributeMetadata.Name));
-          MemoList.Add(vInstantMemo.Value);
+          vAttributeMetadata := Metadata.MemberMap[i];
+          if vAttributeMetadata.AttributeType = atMemo then
+          begin
+            vInstantMemo :=
+                TInstantMemo(AttributeByName(vAttributeMetadata.Name));
+            MemoList.Add(vInstantMemo.Value)
+          end;
         end;
       end;
-    end;
   end;
 
 begin
