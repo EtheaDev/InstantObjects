@@ -534,10 +534,11 @@ type
   public
     constructor Create(AInstance: TInstantObject = nil; AOwnsInstance: Boolean = False;
       AOwner: TInstantComplex = nil);
-    constructor Clone(Source: TInstantObjectReference; AOwnsInstance: Boolean);
+    constructor Clone(Source: TInstantObjectReference; AOwnsInstance: Boolean;
+      AOwner: TInstantComplex = nil);
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
-    procedure AssignInstance(AInstance: TInstantObject);
+    procedure AssignInstance(AInstance: TInstantObject; AOwner: TInstantComplex = nil);
     function Dereference(Connector: TInstantConnector = nil;
       AOwnsInstance: Boolean = True; Retry: Boolean = False): TInstantObject;
     procedure DestroyInstance;
@@ -4265,7 +4266,8 @@ begin
     end;
 end;
 
-procedure TInstantObjectReference.AssignInstance(AInstance: TInstantObject);
+procedure TInstantObjectReference.AssignInstance(AInstance: TInstantObject;
+  AOwner: TInstantComplex);
 begin
   if not Equals(AInstance) then
     DestroyInstance;
@@ -4275,6 +4277,7 @@ begin
     if OwnsInstance then
       Instance.AddRef;
   end;
+  FOwner := AOwner;
 end;
 
 procedure TInstantObjectReference.ClearReference;
@@ -4284,20 +4287,21 @@ begin
 end;
 
 constructor TInstantObjectReference.Clone(Source: TInstantObjectReference;
-  AOwnsInstance: Boolean);
+  AOwnsInstance: Boolean; AOwner: TInstantComplex);
 begin
   Create;
   Assign(Source);
-  OwnsInstance := AOwnsInstance
+  OwnsInstance := AOwnsInstance;
+  FOwner := AOwner;
 end;
 
 constructor TInstantObjectReference.Create(AInstance: TInstantObject;
   AOwnsInstance: Boolean; AOwner: TInstantComplex);
 begin
   inherited Create;
+  Instance := AInstance;
   OwnsInstance := AOwnsInstance;
   FOwner := AOwner;
-  Instance := AInstance;
 end;
 
 class function TInstantObjectReference.CreateInstance(
@@ -8063,13 +8067,14 @@ function TInstantObject.DoRelease: Integer;
 var
   I: Integer;
 begin
-  // This object will be destroyed only when objects among circular
-  // references points each other
+  // This object will be destroyed only when it is referenced
+  // by other object(s) pointing each other
   if Assigned(FRefBy) and (FRefBy.Count = FRefCount-1) then
-  for I := 0 to Pred(FRefBy.Count) do
-  if (FRefBy[I] is TInstantComplex) then
+  for I := Pred(FRefBy.Count) downto 0 do
+  if FRefBy[I] is TInstantComplex then
   with TInstantComplex(FRefBy[I]) do
-  if AttributeType in [atReference, atReferences] then
+  if (AttributeType in [atReference, atReferences]) and
+   (Owner.RefCount = Owner.ReferencedBy.Count) then
     // FRefCount will be decremented whenever this object is dereferenced
     repeat until not DetachObject(Self);
 
