@@ -776,7 +776,7 @@ const
   ARandomExt : Array[0..2] of string = ('.bmp','.jpg','.emf');
 {$ENDIF}
 {$IFDEF LINUX}
-  ARandomExt : Array[0..3] of string = ('.bmp','.jpg','.emf','.png');
+  ARandomExt : Array[0..2] of string = ('.bmp','.jpg','.png');
 {$ENDIF}
 var
   Picture: TPicture;

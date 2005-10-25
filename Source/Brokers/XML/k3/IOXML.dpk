@@ -1,7 +1,6 @@
 package IOXML;
 
 {$I '../../../InstantVersion.inc'}
-
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -25,6 +24,7 @@ package IOXML;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects XML Run-Time Support (Kyix 3)'}
 {$LIBPREFIX ''}
+{$LIBSUFFIX '_K3'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 

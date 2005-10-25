@@ -15388,7 +15388,6 @@ initialization
 {$ENDIF}
 {$IFDEF LINUX}
   GraphicClassList[gffBmp] := QGraphics.TBitmap;
-  GraphicClassList[gffEmf] := QGraphics.TBitmap;
   GraphicClassList[gffPng] := QGraphics.TBitmap;
   GraphicClassList[gffJpeg]:= QGraphics.TBitmap;
 {$ENDIF}

@@ -1,6 +1,6 @@
 package IOCore;
 
-{$R *.res}
+{$I '../../InstantPackageVersion.inc'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -24,6 +24,7 @@ package IOCore;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects Run-Time Package (Kylix 3)'}
 {$LIBPREFIX ''}
+{$LIBSUFFIX '_K3'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
