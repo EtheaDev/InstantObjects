@@ -1,6 +1,6 @@
 package DclIOXML;
 
-{$R *.res}
+{$I '../../../InstantVersion.inc'}
 {$R '../InstantXML.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -25,6 +25,7 @@ package DclIOXML;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects XML Design-Time Support (Kylix 3)'}
 {$LIBPREFIX ''}
+{$LIBSUFFIX '_K3'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 

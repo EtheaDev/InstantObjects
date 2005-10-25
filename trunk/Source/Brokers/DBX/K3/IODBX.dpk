@@ -1,6 +1,6 @@
 package IODBX;
 
-{$R *.res}
+{$I '../../../InstantVersion.inc'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -24,6 +24,7 @@ package IODBX;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects DBX Run-Time Support (Kyix 3)'}
 {$LIBPREFIX ''}
+{$LIBSUFFIX '_K3'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 

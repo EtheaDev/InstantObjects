@@ -50,8 +50,10 @@ const
   XML_EXT = 'xml';
   DOT_XML_EXT = '.'+XML_EXT;
   XML_WILDCARD = '*'+DOT_XML_EXT;
+{$IFNDEF LINUX}
   {$IFDEF D5}PathDelim = '\';{$ENDIF}
-  
+{$ENDIF}
+
 type
   TXMLFileFormat = (xffUtf8, xffUtf8BOT, xffIso);
 

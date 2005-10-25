@@ -1,6 +1,6 @@
 package DclIOCore;
 
-{$R *.res}
+{$I '../../InstantPackageVersion.inc'}
 {$R '../../Core/InstantPresentation.dcr'}
 {$R '../../Core/InstantExplorer.dcr'}
 {$R '../../Core/InstantPersistence.dcr'}
@@ -30,6 +30,7 @@ package DclIOCore;
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects Design-Time Package (Kylix 3)'}
 {$LIBPREFIX ''}
+{$LIBSUFFIX '_K3'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 

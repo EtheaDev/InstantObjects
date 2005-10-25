@@ -1,7 +1,6 @@
-package DclIODBX;
+package IOMSSqlCatalog;
 
 {$I '../../../InstantVersion.inc'}
-{$R '../InstantDBX.dcr'}
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -18,21 +17,22 @@ package DclIODBX;
 {$REFERENCEINFO ON}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
-{$TYPEDADDRESS OFF}
+{$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects DBX Design-Time Support (Kylix 3)'}
+{$DESCRIPTION 'InstantObjects Catalog for MS-Sql (Kylix 3)'}
 {$LIBPREFIX ''}
 {$LIBSUFFIX '_K3'}
-{$DESIGNONLY}
+{$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  IODBX;
+  rtl,
+  IOCore;
 
 contains
-  InstantDBXReg in '../InstantDBXReg.pas';
+  InstantMSSqlCatalog in '../InstantMSSqlCatalog.pas';
 
 end.
