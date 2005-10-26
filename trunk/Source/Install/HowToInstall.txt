@@ -1,0 +1,36 @@
+INSTALLING INSTANTOBJECTS USING BORLAND PROGRAM GROUPS
+------------------------------------------------------
+This tutorial is for newbie developers that want install InstantObjects in a simple way.
+
+If you want a complete explanation of InstantObjects structure, please refer to the installation section of \Doc\Readme.txt file.
+
+If you want a rapid installation process to evaluate InstantObjects, you can use the two "standard" bpg projects contained into Specific Delphi Folder under this Install folder.
+
+For every Delphi version you can find:
+- RunTimePackages.bpg to Build all of the "standard" run-time packages.
+  - Open it and "BuildAll" projects.
+
+- DesignTimePackages.bpg to Build/Install all of the "standard" design-time packages.
+  - Open it and the first time "Install" every single packages included.
+
+"Standard" packages means that you can compile it with components included in a standard Delphi istallation. If you want to know how install other brokers to use third party data access components and technologies, please refer to the installation section of \Doc\Readme.txt file.
+
+RunTimePackages.bpg contains:
+--------------------------------
+1) IOCore.dpk: InstantObjects Core Package
+2) IOADO.dpk : ADO Broker
+3) IOBDE.dpk : BDE Broker
+4) IODBX.dpk : DBExpress Broker (not available for Delphi 5)
+5) IOIBX.dpk : IBX Broker
+6) IOXML.dpk : XML Broker
+
+DesignTimePackages.bpg contains:
+--------------------------------
+1) dclIOCore.dpk: InstantObjects Desing package
+2) dclIOADO.dpk : ADO Broker
+3) dclIOBDE.dpk : BDE Broker
+4) dclIODBX.dpk : DBExpress Broker (not available for Delphi 5)
+5) dclIOIBX.dpk : IBX Broker
+6) dclIOXML.dpk : XML Broker
+
+When you are familiar with the packages and source structure of InstantObjects you can maintain your personal bpg files to include only packages you want use.
