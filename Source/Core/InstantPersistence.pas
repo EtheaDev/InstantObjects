@@ -1017,7 +1017,7 @@ type
     function IndexOf(AObject: TInstantObject): Integer;
     function IndexOfInstance(Instance: Pointer): Integer;
     procedure Insert(Index: Integer; AObject: TInstantObject);
-    procedure LoadObjectsFromStream(AStream: TStream);
+    procedure LoadObjectsFromStream(AStream: TStream); virtual;
     procedure Move(CurIndex, NewIndex: Integer);
     function Remove(AObject: TInstantObject): Integer;
     procedure Reset; override;
@@ -1106,6 +1106,7 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure DestroyObject(Index: Integer);
+    procedure LoadObjectsFromStream(AStream: TStream); override;
     procedure LoadReferencesFromStream(AStream: TStream);
     procedure SaveReferencesToStream(AStream: TStream);
     property AllowOwned write SetAllowOwned;
@@ -7221,6 +7222,16 @@ procedure TInstantReferences.InternalSetItems(Index: Integer;
   AValue: TInstantObject);
 begin
   ObjectReferences[Index].Instance := AValue;
+end;
+
+procedure TInstantReferences.LoadObjectsFromStream(AStream: TStream);
+var
+  I: Integer;
+begin
+  inherited;
+  for I := 0 to Pred(Count) do
+    if HasItem(I) then
+      Items[I].Release;
 end;
 
 procedure TInstantReferences.LoadReferencesFromStream(AStream: TStream);
