@@ -11,7 +11,7 @@ uses
   Interfaces,
 {$ENDIF}
   Forms,
-  GuiTestRunner,
+  guitestrunner,
   fpcunit,
   testregistry,
   testutils,
@@ -33,7 +33,6 @@ uses
   TestMinimalModel in 'TestMinimalModel.pas',
   TestInstantAttributeMap in 'TestInstantAttributeMap.pas',
   TestInstantAttribute in 'TestInstantAttribute.pas',
-  TestInstantElement in 'TestInstantElement.pas',
   TestInstantNumeric in 'TestInstantNumeric.pas',
   TestInstantInteger in 'TestInstantInteger.pas',
   TestInstantString in 'TestInstantString.pas',

@@ -142,7 +142,6 @@ end;
 
 procedure TestTInstantExtParts.TearDown;
 begin
-  FInstantParts.Clear;
   FInstantParts := nil;
   FreeAndNil(FOwner);
   InstantModel.ClassMetadatas.Clear;
@@ -382,7 +381,6 @@ end;
 
 procedure TestTinstantEmbParts.TearDown;
 begin
-  FInstantParts.Clear;
   FInstantParts := nil;
   FreeAndNil(FOwner);
   InstantModel.ClassMetadatas.Clear;

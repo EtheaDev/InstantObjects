@@ -49,7 +49,7 @@ type
     procedure TestGetBroker;
     procedure TestBuildDatabase;
     procedure TestModelFromToResFile;
-    procedure TestStoreAndRetrieveAddress;
+    procedure TestStoreAndRetrieveProject;
   end;
 
   TTestMockRelationalBroker = class(TTestCase)
@@ -134,7 +134,7 @@ begin
   brok.MockManager.Verify;
 end;
 
-procedure TTestMockBroker.TestStoreAndRetrieveAddress;
+procedure TTestMockBroker.TestStoreAndRetrieveProject;
 var
   a: TProject;
   old_id: string;
