@@ -1,0 +1,42 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = IOCore_D7.bpl IOMSSqlCatalog_D7.bpl IOIBFbCatalog_D7.bpl IOADO_D7.bpl IOBDE_D7.bpl \
+  IODBX_D7.bpl IOIBX_D7.bpl IOXML_D7.bpl
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+IOCore_D7.bpl: ..\..\Core\D7\IOCore.dpk
+  $(DCC)
+
+IOADO_D7.bpl: ..\..\Brokers\ADO\D7\IOADO.dpk
+  $(DCC)
+
+IOBDE_D7.bpl: ..\..\Brokers\BDE\D7\IOBDE.dpk
+  $(DCC)
+
+IODBX_D7.bpl: ..\..\Brokers\DBX\D7\IODBX.dpk
+  $(DCC)
+
+IOIBX_D7.bpl: ..\..\Brokers\IBX\D7\IOIBX.dpk
+  $(DCC)
+
+IOXML_D7.bpl: ..\..\Brokers\XML\D7\IOXML.dpk
+  $(DCC)
+
+IOMSSqlCatalog_D7.bpl: ..\..\Catalogs\MSSql\D7\IOMSSqlCatalog.dpk
+  $(DCC)
+
+IOIBFbCatalog_D7.bpl: ..\..\Catalogs\IBFb\D7\IOIBFbCatalog.dpk
+  $(DCC)
+
+
