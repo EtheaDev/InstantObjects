@@ -47,12 +47,15 @@ type
     procedure TearDown; override;
   published
     procedure TestAssign;
+    procedure TestAttach_DetachObject;
     procedure TestDestroyObject_HasReference_HasValue;
+    procedure TestHasValue;
     procedure TestLoadObjectFromStream;
     procedure TestObjectClass_ObjectClassName_ObjectId;
-    procedure TestReferenceObject;
-    procedure TestReferenceObject1;
+    procedure TestReferenceObject_Class;
+    procedure TestReferenceObject_ClassName;
     procedure TestReset;
+    procedure TestSaveObjectTo_FromStream;
   end;
 
 implementation
@@ -93,12 +96,16 @@ begin
   vSource := TInstantReference.Create(FOwner, vAttrMetadata);
   try
     vCategory := TCategory.Create(FConn);
+    AssertEquals(0, vCategory.ReferencedBy.Count);
     FInstantReference.Value := vCategory;
+    AssertEquals(1, vCategory.ReferencedBy.Count);
     AssertTrue('Value HasVal', FInstantReference.HasValue);
     AssertTrue('Value HasReference', FInstantReference.HasReference);
 
     AssertFalse('vSource HasVal', vSource.HasValue);
     vSource.Assign(FInstantReference);
+    AssertEquals(2, vCategory.ReferencedBy.Count);
+    AssertEquals(3, vCategory.RefCount);
     AssertTrue('Assign HasVal', vSource.HasValue);
     AssertTrue('Assign HasReference', vSource.HasReference);
     AssertNotSame(vSource, FInstantReference.Value);
@@ -106,6 +113,34 @@ begin
     vCategory.Free;
     vSource.Free;
     vAttrMetadata.Free;
+  end;
+end;
+
+procedure TestTInstantReference.TestAttach_DetachObject;
+var
+  vReturnValue: Boolean;
+  vObject: TCategory;
+begin
+  vObject := TCategory.Create(FConn);
+  try
+    vObject.Id := 'Object.Id';
+    AssertEquals('Object RefCount 1', 1, vObject.RefCount);
+  
+    vReturnValue := FInstantReference.AttachObject(vObject);
+    AssertTrue('AttachObject', vReturnValue);
+    AssertSame(vObject, FInstantReference.Value);
+    AssertTrue('HasReference 1', FInstantReference.HasReference);
+    AssertTrue('HasValue 1', FInstantReference.HasValue);
+    AssertEquals('Value RefCount 1', 2, FInstantReference.Value.RefCount);
+    AssertEquals('Object RefCount 2', 2, vObject.RefCount);
+    AssertEquals('Value.Id 1', 'Object.Id', FInstantReference.Value.Id);
+
+    vReturnValue := FInstantReference.DetachObject(vObject);
+    AssertTrue('DetachObject', vReturnValue);
+    AssertFalse('HasReference 2', FInstantReference.HasReference);
+    AssertFalse('HasValue 2', FInstantReference.HasValue);
+  finally
+    vObject.Free;
   end;
 end;
 
@@ -129,6 +164,11 @@ begin
   finally
     vObj.Free;
   end;
+end;
+
+procedure TestTInstantReference.TestHasValue;
+begin
+  AssertFalse(FInstantReference.HasValue);
 end;
 
 procedure TestTInstantReference.TestLoadObjectFromStream;
@@ -164,6 +204,7 @@ begin
       AssertEquals('LoadObjectFromStream RefCount', 1,
           FInstantReference.Value.RefCount);
       AssertNotSame('Same Object??', vObject, FInstantReference.Value);
+      // Not the same object, so free it.
       AssertEquals('Object RefCount 4', 1, vObject.RefCount);
     finally
       vStream.Free;
@@ -193,7 +234,7 @@ begin
   end;
 end;
 
-procedure TestTInstantReference.TestReferenceObject;
+procedure TestTInstantReference.TestReferenceObject_Class;
 var
   vObjectId: string;
   vObjectClass: TInstantObjectClass;
@@ -208,7 +249,7 @@ begin
   AssertFalse('Final HasVal', FInstantReference.HasValue);
 end;
 
-procedure TestTInstantReference.TestReferenceObject1;
+procedure TestTInstantReference.TestReferenceObject_ClassName;
 var
   vObjectId: string;
   vObjectClassName: string;
@@ -242,6 +283,43 @@ begin
     AssertFalse('Final HasVal', FInstantReference.HasValue);
   finally
     vObj.Free;
+  end;
+end;
+
+procedure TestTInstantReference.TestSaveObjectTo_FromStream;
+var
+  vObject: TCategory;
+  vReturnValue: Boolean;
+  vStream: TStream;
+begin
+  vObject := TCategory.Create(FConn);
+  try
+    AssertNotNull('Create object', vObject);
+    AssertEquals('Object RefCount 1', 1, vObject.RefCount);
+    vReturnValue := FInstantReference.AttachObject(vObject);
+    AssertTrue('AttachObject', vReturnValue);
+    AssertTrue('HasValue 1', FInstantReference.HasValue);
+    AssertTrue('HasReference 1', FInstantReference.HasReference);
+    AssertEquals('Value RefCount 1', 2, FInstantReference.Value.RefCount);
+    AssertEquals('Object RefCount 2', 2, vObject.RefCount);
+
+    vStream := TInstantStream.Create;
+    try
+      FInstantReference.SaveObjectToStream(vStream);
+      AssertTrue('vStream.Size check', vStream.Size > 0);
+      FInstantReference.Value := nil;
+      AssertFalse('HasValue 2', FInstantReference.HasValue);
+      AssertFalse('HasReference 2', FInstantReference.HasReference);
+      vStream.Position := 0;
+      FInstantReference.LoadObjectFromStream(vStream);
+      AssertTrue('HasValue 3', FInstantReference.HasValue);
+      AssertTrue('HasReference 3', FInstantReference.HasReference);
+      AssertEquals('Value RefCount 2', 1, FInstantReference.Value.RefCount);
+    finally
+      vStream.Free;
+    end;
+  finally
+    vObject.Free;
   end;
 end;
 

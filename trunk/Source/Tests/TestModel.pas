@@ -316,12 +316,17 @@ type
 
   TPartExternal = class(TInstantObject)
   {IOMETADATA stored;
-    Name: String(30) default; }
+    Name: String(30);
+    Category: Reference(TCategory); }
+    _Category: TInstantReference;
     _Name: TInstantString;
   private
+    function GetCategory: TCategory;
     function GetName: string;
+    procedure SetCategory(Value: TCategory);
     procedure SetName(const Value: string);
   published
+    property Category: TCategory read GetCategory write SetCategory;
     property Name: string read GetName write SetName;
   end;
 
@@ -996,9 +1001,19 @@ end;
 
 { TPartExternal }
 
+function TPartExternal.GetCategory: TCategory;
+begin
+  Result := _Category.Value as TCategory;
+end;
+
 function TPartExternal.GetName: string;
 begin
   Result := _Name.Value;
+end;
+
+procedure TPartExternal.SetCategory(Value: TCategory);
+begin
+  _Category.Value := Value;
 end;
 
 procedure TPartExternal.SetName(const Value: string);
