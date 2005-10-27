@@ -6677,51 +6677,17 @@ begin
   if Source is TInstantParts then
   begin
     Clear;
-    // if not external then clone and add then object
-    if Metadata.StorageKind = skEmbedded then
+    with TInstantParts(Source) do
     begin
-      with TInstantParts(Source) do
-        for I := 0 to Pred(Count) do
-        begin
-          Obj := Items[I].Clone(Self.Connector);
-          try
-            Self.Add(Obj);
-          except
-            Obj.Free;
-            raise;
-          end;
+      for I := 0 to Pred(Count) do
+      begin
+        Obj := Items[I].Clone(Self.Connector);
+        try
+          Self.Add(Obj);
+        except
+          Obj.Free;
+          raise;
         end;
-    end
-    else
-    begin
-      if TInstantParts(Source).Metadata.StorageKind = skEmbedded then
-      begin
-        // if it's not external then clone and add the object
-        with TInstantParts(Source) do
-          for I := 0 to Pred(Count) do
-          begin
-            Obj := Items[I].Clone(Self.Connector);
-            try
-              Self.Add(Obj);
-            except
-              Obj.Free;
-              raise;
-            end;
-          end;
-      end
-      else
-      begin
-        // if source is external clone only if connector is different
-        with TInstantParts(Source) do
-        begin
-          for I := 0 to Pred(Count) do
-          begin
-            if Connector <> Self.Connector then
-              Self.Add(Items[I].Clone(Self.Connector))
-            else
-              Self.Add(Items[I]);
-          end;
-        end
       end;
     end;
   end;
