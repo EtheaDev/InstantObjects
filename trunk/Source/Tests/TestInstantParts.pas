@@ -123,19 +123,19 @@ begin
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
 
   FOwner := TContact.Create(FConn);
-  FInstantParts := FOwner._ExternalParts;
+  FInstantParts := FOwner._ExternalPhones;
   for i := 0 to 2 do
-    FOwner.AddExternalPart(TPartsExternal.Create(FConn));
+    FOwner.AddExternalPart(TExternalPhones.Create(FConn));
   AssertEquals('Setup FInstantParts.Count', 3, FInstantParts.Count);
 end;
 
 function TestTInstantExtParts.PartsExternalCompare(Holder, Obj1, Obj2:
     TInstantObject): Integer;
 var
-  vObj1, vObj2: TPartsExternal;
+  vObj1, vObj2: TExternalPhones;
 begin
-  vObj1 := Obj1 as TPartsExternal;
-  vObj2 := Obj2 as TPartsExternal;
+  vObj1 := Obj1 as TExternalPhones;
+  vObj2 := Obj2 as TExternalPhones;
 
   Result := AnsiCompareText(vObj1.Name, vObj2.Name);
 end;
@@ -151,9 +151,9 @@ end;
 procedure TestTInstantExtParts.TestAdd;
 var
   vReturnValue: Integer;
-  vExternalPart: TPartsExternal;
+  vExternalPart: TExternalPhones;
 begin
-  vExternalPart := TPartsExternal.Create(FConn);
+  vExternalPart := TExternalPhones.Create(FConn);
   vReturnValue := FInstantParts.Add(vExternalPart);
   AssertTrue(vReturnValue <> -1);
   AssertEquals(4, FInstantParts.Count);
@@ -169,6 +169,7 @@ begin
   vAttrMetadata := TInstantAttributeMetadata.Create(nil);
   try
     vAttrMetadata.AttributeClass := TInstantParts;
+    vAttrMetadata.StorageKind := skExternal;
     vSource := TInstantParts.Create(FOwner, vAttrMetadata);
 
     AssertTrue(vSource.Count = 0);
@@ -184,9 +185,9 @@ end;
 procedure TestTInstantExtParts.TestAttachObject;
 var
   vReturnValue: Boolean;
-  vExternalPart: TPartsExternal;
+  vExternalPart: TExternalPhones;
 begin
-  vExternalPart := TPartsExternal.Create(FConn);
+  vExternalPart := TExternalPhones.Create(FConn);
   vReturnValue := FInstantParts.AttachObject(vExternalPart);
   AssertTrue(vReturnValue);
   AssertEquals(4, FInstantParts.Count);
@@ -223,13 +224,13 @@ end;
 
 procedure TestTInstantExtParts.TestExchange;
 begin
-  TPartsExternal(FInstantParts.Items[0]).Name := 'Part0';
-  TPartsExternal(FInstantParts.Items[1]).Name := 'Part1';
-  TPartsExternal(FInstantParts.Items[2]).Name := 'Part2';
+  TExternalPhones(FInstantParts.Items[0]).Name := 'Part0';
+  TExternalPhones(FInstantParts.Items[1]).Name := 'Part1';
+  TExternalPhones(FInstantParts.Items[2]).Name := 'Part2';
   FInstantParts.Exchange(0, 2);
-  AssertEquals('Part2', TPartsExternal(FInstantParts.Items[0]).Name);
-  AssertEquals('Part1', TPartsExternal(FInstantParts.Items[1]).Name);
-  AssertEquals('Part0', TPartsExternal(FInstantParts.Items[2]).Name);
+  AssertEquals('Part2', TExternalPhones(FInstantParts.Items[0]).Name);
+  AssertEquals('Part1', TExternalPhones(FInstantParts.Items[1]).Name);
+  AssertEquals('Part0', TExternalPhones(FInstantParts.Items[2]).Name);
 end;
 
 procedure TestTInstantExtParts.TestHasItem;
@@ -249,7 +250,7 @@ var
   vReturnValue: Integer;
   vObject: TInstantObject;
 begin
-  vObject := TPartsExternal.Create(FConn);
+  vObject := TExternalPhones.Create(FConn);
   FInstantParts.Insert(1, vObject);
   vReturnValue := FInstantParts.IndexOf(vObject);
   AssertEquals(1, vReturnValue);
@@ -260,7 +261,7 @@ var
   vReturnValue: Integer;
   vInstance: Pointer;
 begin
-  vInstance := TPartsExternal.Create(FConn);
+  vInstance := TExternalPhones.Create(FConn);
   FInstantParts.Insert(1, vInstance);
   vReturnValue := FInstantParts.IndexOfInstance(vInstance);
   AssertEquals(1, vReturnValue);
@@ -268,19 +269,19 @@ end;
 
 procedure TestTInstantExtParts.TestMove;
 var
-  vExternalPart: TPartsExternal;
+  vExternalPart: TExternalPhones;
 begin
-  TPartsExternal(FInstantParts.Items[0]).Name := 'Part0';
-  TPartsExternal(FInstantParts.Items[1]).Name := 'Part1';
-  TPartsExternal(FInstantParts.Items[2]).Name := 'Part2';
-  vExternalPart := TPartsExternal.Create(FConn);
+  TExternalPhones(FInstantParts.Items[0]).Name := 'Part0';
+  TExternalPhones(FInstantParts.Items[1]).Name := 'Part1';
+  TExternalPhones(FInstantParts.Items[2]).Name := 'Part2';
+  vExternalPart := TExternalPhones.Create(FConn);
   FInstantParts.Add(vExternalPart);
-  TPartsExternal(FInstantParts.Items[3]).Name := 'Part3';
+  TExternalPhones(FInstantParts.Items[3]).Name := 'Part3';
   FInstantParts.Move(0, 2);
-  AssertEquals('Part1', TPartsExternal(FInstantParts.Items[0]).Name);
-  AssertEquals('Part2', TPartsExternal(FInstantParts.Items[1]).Name);
-  AssertEquals('Part0', TPartsExternal(FInstantParts.Items[2]).Name);
-  AssertEquals('Part3', TPartsExternal(FInstantParts.Items[3]).Name);
+  AssertEquals('Part1', TExternalPhones(FInstantParts.Items[0]).Name);
+  AssertEquals('Part2', TExternalPhones(FInstantParts.Items[1]).Name);
+  AssertEquals('Part0', TExternalPhones(FInstantParts.Items[2]).Name);
+  AssertEquals('Part3', TExternalPhones(FInstantParts.Items[3]).Name);
 end;
 
 procedure TestTInstantExtParts.TestRemove;
@@ -320,20 +321,20 @@ end;
 
 procedure TestTInstantExtParts.TestSort;
 var
-  vExternalPart: TPartsExternal;
+  vExternalPart: TExternalPhones;
 begin
-  TPartsExternal(FInstantParts.Items[0]).Name := '2 Part';
-  TPartsExternal(FInstantParts.Items[1]).Name := '0 Part';
-  TPartsExternal(FInstantParts.Items[2]).Name := '1 Part';
-  vExternalPart := TPartsExternal.Create(FConn);
+  TExternalPhones(FInstantParts.Items[0]).Name := '2 Part';
+  TExternalPhones(FInstantParts.Items[1]).Name := '0 Part';
+  TExternalPhones(FInstantParts.Items[2]).Name := '1 Part';
+  vExternalPart := TExternalPhones.Create(FConn);
   FOwner.AddExternalPart(vExternalPart);
-  TPartsExternal(FInstantParts.Items[3]).Name := '0 Part';
+  TExternalPhones(FInstantParts.Items[3]).Name := '0 Part';
 
   FInstantParts.Sort(PartsExternalCompare);
-  AssertEquals('0 Part', TPartsExternal(FInstantParts.Items[0]).Name);
-  AssertEquals('0 Part', TPartsExternal(FInstantParts.Items[1]).Name);
-  AssertEquals('1 Part', TPartsExternal(FInstantParts.Items[2]).Name);
-  AssertEquals('2 Part', TPartsExternal(FInstantParts.Items[3]).Name);
+  AssertEquals('0 Part', TExternalPhones(FInstantParts.Items[0]).Name);
+  AssertEquals('0 Part', TExternalPhones(FInstantParts.Items[1]).Name);
+  AssertEquals('1 Part', TExternalPhones(FInstantParts.Items[2]).Name);
+  AssertEquals('2 Part', TExternalPhones(FInstantParts.Items[3]).Name);
 end;
 
 procedure TestTInstantExtParts.TestUnchanged;
@@ -344,7 +345,7 @@ begin
   FInstantParts.Unchanged;
   AssertFalse(FInstantParts.IsChanged);
 
-  TPartsExternal(FInstantParts.Items[1]).Name := 'Part2';
+  TExternalPhones(FInstantParts.Items[1]).Name := 'Part2';
   AssertTrue(FInstantParts.IsChanged);
 end;
 
@@ -576,7 +577,7 @@ begin
   FInstantParts.Unchanged;
   AssertFalse(FInstantParts.IsChanged);
 
-  TPartsExternal(FInstantParts.Items[1]).Name := 'Part2';
+  TExternalPhones(FInstantParts.Items[1]).Name := 'Part2';
   AssertTrue(FInstantParts.IsChanged);
 end;
 
@@ -625,11 +626,11 @@ end;
 procedure TestTInstantParts_Leak.TestAddExternalObject;
 var
   vReturnValue: Integer;
-  vPart: TPartsExternal;
+  vPart: TExternalPhones;
 begin
-  FInstantParts := FOwner._ExternalParts;
+  FInstantParts := FOwner._ExternalPhones;
 
-  vPart := TPartsExternal.Create(FConn);
+  vPart := TExternalPhones.Create(FConn);
   AssertEquals(1, vPart.RefCount);
 
   vReturnValue := FInstantParts.Add(vPart);

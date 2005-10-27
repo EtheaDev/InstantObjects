@@ -517,7 +517,7 @@ end;
 procedure TestTInstantObject.TestStore_Dispose;
 var
   vPhone: TPhone;
-  vPartExternal: TPartExternal;
+  vExternalAddress: TExternalAddress;
   vContact: TContact;
   vID, vID1: String;
   brok: TInstantMockBroker;
@@ -531,18 +531,18 @@ begin
   AssertFalse(FInstantObject.IsPersistent);
 
   vContact := TContact.Create(FConn);
-  vPartExternal := TPartExternal.Create(FConn);
+  vExternalAddress := TExternalAddress.Create(FConn);
   try
     FConn.StartTransaction;
     brok := FConn.Broker as TInstantMockBroker;
     brok.MockManager.EndSetUp;
     vContact.Name := 'MyContact';
-    vPartExternal.Name := 'Part External';
-    AssertTrue(vPartExternal.IsChanged);
-    vPartExternal.Store;
-    vID1 := vPartExternal.Id;
-    vContact.PartExternal := vPartExternal;
-    AssertEquals('vPartExternal', 1, vPartExternal.RefCount);
+    vExternalAddress.Name := 'Part External';
+    AssertTrue(vExternalAddress.IsChanged);
+    vExternalAddress.Store;
+    vID1 := vExternalAddress.Id;
+    vContact.ExternalAddress := vExternalAddress;
+    AssertEquals('vExternalAddress', 1, vExternalAddress.RefCount);
     AssertEquals('vContact.Address', 1, vContact.Address.RefCount);
 
     vPhone := TPhone.Create(FConn);
@@ -558,9 +558,9 @@ begin
     vPhone.Store;
     AssertTrue('vContact.IsPersistent', vContact.IsPersistent);
     AssertFalse('vPhone.IsPersistent', vPhone.IsPersistent);
-    AssertTrue('vPartExternal.IsPersistent', vPartExternal.IsPersistent);
-    vPartExternal.Name := 'Changed';
-    AssertTrue(vPartExternal.IsChanged);
+    AssertTrue('vExternalAddress.IsPersistent', vExternalAddress.IsPersistent);
+    vExternalAddress.Name := 'Changed';
+    AssertTrue(vExternalAddress.IsChanged);
     AssertTrue(vContact.IsChanged);
     vID := vContact.Id;
     vContact.Store;
