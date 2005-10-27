@@ -220,8 +220,80 @@ VERSION HISTORY
 
 Version 2.0 Beta 1 (1.9.1.1) (2005-10)
 
+- Several other bug fixes and small improvements.
+
+- Fixed a bug, which would cause memory leakage if the
+  public method TInstantReferences.LoadObjectsFromStream
+  was used.
+
+- Primer demo applications updated to reduce object memory
+  leakage.
+
+- Added ReferencedBy counting and processing to resolve
+  memory leaks caused by the reference counting semantics
+  of InstantObjects in circular references.
+
+- Added enhanced Remember/Revert functionality for
+  TInstantCustomExposer. Also includes Remember/Revert
+  functionality for IO Memo attributes (assumes text only data).
+
 - Added ZeosDBO (ZeosLib project, see http://zeosforum.net.ms/)
   broker.
+
+- Changes for Kylix 3: Removed emf support under Linux and
+  added catalogs. Removed unecessary files for PrimerK3.
+
+- The storage name of a references attribute is now stored
+  into metadata, so when you reopen the class editor you
+  haven't lost this information.
+
+- InternalRefreshObjects for TInstantNavigationalQuery and
+  TInstantSQLQuery now uses a BusyObjects list with ownership
+  reference added to InstantObjects. This ensures that the
+  InstantObjects in the list are not destroyed prematurely
+  causing AVs.
+
+- Object ownership behaviour of TInstantNavigationalResolver
+  was made consistent with TInstantSQLResolver. Adding or
+  inserting objects to an InstantSelector now behaves
+  consistently for Navigational and SQL based brokers.
+
+- Fix bug in TInstantSQLResolver.ExecuteStatement that only
+  indicated Info.Success as true if executed query returned
+  one row.
+
+- Fix bug in TInstantNavigationalQuery.SetRowNumber so that
+  loop iteration does not try to go past Dataset.Eof.
+
+- TInstantQuery.GetConnector now uses the global function
+  InstantCheckConnector that will try to assign the
+  DefaultConnector if one has not already been assigned.
+
+- Embedded and External Parts now behave similarly with respect
+  to their contained InstantObjects (ie RefCounts and
+  ownership).
+
+- Enhanced TInstantCodeAttribute.GetSingularName function.
+
+- TInstantObject.RestoreState now checks that the object is 
+  in the ObjectStore cache before trying to remove it.
+
+- Removed TInstantNavigationalQuery.TranslateCommand method
+  (duplicated code).
+
+- Now using old DB builder for catalog-less brokers, and new one
+  for the others.
+
+- Connection events don't work when database is not connected
+  through TInstantConnector decendant. They have been removed.
+
+- Fix for bug # 1285523: Parts of Parts Are Lost when
+  UpdateExternalPartsMap. When Model include a parts of parts 
+  schema, sometimes when store first level part the second 
+  level parts are lost in DataBase.
+
+- Allow for catalogs that don't support reading all metadata 
+  (like an XML catalog).
 
 
 Version 2.0 Alpha 1 (1.9.0.1) (2005-07)
