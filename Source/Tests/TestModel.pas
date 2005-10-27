@@ -43,8 +43,8 @@ type
   TContactFilter = class;
   TCountry = class;
   TEmail = class;
-  TPartExternal = class;
-  TPartsExternal = class;
+  TExternalAddress = class;
+  TExternalPhones = class;
   TPerson = class;
   TPhone = class;
   TProject = class;
@@ -141,14 +141,14 @@ type
     Name: String(50) index;
     Phones: Parts(TPhone);
     Projects: References(TProject) external 'Contact_Projects';
-    PartExternal: Part(TPartExternal) external;
-    ExternalParts: Parts(TPartsExternal) external 'Contact_ExternalParts'; }
+    ExternalAddress: Part(TExternalAddress) external;
+    ExternalPhones: Parts(TExternalPhones) external 'Contact_ExternalPhones'; }
     _Address: TInstantPart;
     _Category: TInstantReference;
     _City: TInstantString;
-    _ExternalParts: TInstantParts;
+    _ExternalPhones: TInstantParts;
     _Name: TInstantString;
-    _PartExternal: TInstantPart;
+    _ExternalAddress: TInstantPart;
     _Phones: TInstantParts;
     _Projects: TInstantReferences;
   private
@@ -156,10 +156,10 @@ type
     function GetCategory: TCategory;
     function GetCity: string;
     function GetExternalPartCount: Integer;
-    function GetExternalParts(Index: Integer): TPartsExternal;
+    function GetExternalPhones(Index: Integer): TExternalPhones;
     function GetMainPhoneNumber: string;
     function GetName: string;
-    function GetPartExternal: TPartExternal;
+    function GeTExternalAddress: TExternalAddress;
     function GetPhoneCount: Integer;
     function GetPhones(Index: Integer): TPhone;
     function GetProjectCount: Integer;
@@ -167,10 +167,10 @@ type
     procedure SetAddress(Value: TAddress);
     procedure SetCategory(Value: TCategory);
     procedure SetCity(const Value: string);
-    procedure SetExternalParts(Index: Integer; Value: TPartsExternal);
+    procedure SetExternalPhones(Index: Integer; Value: TExternalPhones);
     procedure SetMainPhoneNumber(const Value: string);
     procedure SetName(const Value: string);
-    procedure SetPartExternal(Value: TPartExternal);
+    procedure SeTExternalAddress(Value: TExternalAddress);
     procedure SetPhones(Index: Integer; Value: TPhone);
     procedure SetProjects(Index: Integer; Value: TProject);
   protected
@@ -178,26 +178,26 @@ type
     procedure BeforeStore; override;
     function GetCaption: string; override;
   public
-    function AddExternalPart(ExternalPart: TPartsExternal): Integer;
+    function AddExternalPart(ExternalPart: TExternalPhones): Integer;
     function AddPhone(Phone: TPhone): Integer;
     function AddProject(Project: TProject): Integer;
-    procedure ClearExternalParts;
+    procedure ClearExternalPhones;
     procedure ClearPhones;
     procedure ClearProjects;
     procedure DeleteExternalPart(Index: Integer);
     procedure DeletePhone(Index: Integer);
     procedure DeleteProject(Index: Integer);
-    function IndexOfExternalPart(ExternalPart: TPartsExternal): Integer;
+    function IndexOfExternalPart(ExternalPart: TExternalPhones): Integer;
     function IndexOfPhone(Phone: TPhone): Integer;
     function IndexOfProject(Project: TProject): Integer;
-    procedure InsertExternalPart(Index: Integer; ExternalPart: TPartsExternal);
+    procedure InsertExternalPart(Index: Integer; ExternalPart: TExternalPhones);
     procedure InsertPhone(Index: Integer; Phone: TPhone);
     procedure InsertProject(Index: Integer; Project: TProject);
-    function RemoveExternalPart(ExternalPart: TPartsExternal): Integer;
+    function RemoveExternalPart(ExternalPart: TExternalPhones): Integer;
     function RemovePhone(Phone: TPhone): Integer;
     function RemoveProject(Project: TProject): Integer;
     property ExternalPartCount: Integer read GetExternalPartCount;
-    property ExternalParts[Index: Integer]: TPartsExternal read GetExternalParts write SetExternalParts;
+    property ExternalPhones[Index: Integer]: TExternalPhones read GetExternalPhones write SetExternalPhones;
     property PhoneCount: Integer read GetPhoneCount;
     property Phones[Index: Integer]: TPhone read GetPhones write SetPhones;
     property ProjectCount: Integer read GetProjectCount;
@@ -210,7 +210,7 @@ type
     property MainPhoneNumber: string read GetMainPhoneNumber
         write SetMainPhoneNumber;
     property Name: string read GetName write SetName;
-    property PartExternal: TPartExternal read GetPartExternal write SetPartExternal;
+    property ExternalAddress: TExternalAddress read GeTExternalAddress write SeTExternalAddress;
   end;
 
   TContactFilter = class(TContact)
@@ -314,7 +314,7 @@ type
     property Name: string read GetName write SetName;
   end;
 
-  TPartExternal = class(TInstantObject)
+  TExternalAddress = class(TInstantObject)
   {IOMETADATA stored;
     Name: String(30);
     Category: Reference(TCategory); }
@@ -330,7 +330,7 @@ type
     property Name: string read GetName write SetName;
   end;
 
-  TPartsExternal = class(TInstantObject)
+  TExternalPhones = class(TInstantObject)
   {IOMETADATA stored;
     Name: String; }
     _Name: TInstantString;
@@ -685,9 +685,9 @@ begin
   _NoOfBranches.Value := Value;
 end;
 
-function TContact.AddExternalPart(ExternalPart: TPartsExternal): Integer;
+function TContact.AddExternalPart(ExternalPart: TExternalPhones): Integer;
 begin
-  Result := _ExternalParts.Add(ExternalPart);
+  Result := _ExternalPhones.Add(ExternalPart);
 end;
 
 function TContact.AddPhone(Phone: TPhone): Integer;
@@ -715,9 +715,9 @@ begin
   City := Address.City;
 end;
 
-procedure TContact.ClearExternalParts;
+procedure TContact.ClearExternalPhones;
 begin
-  _ExternalParts.Clear;
+  _ExternalPhones.Clear;
 end;
 
 procedure TContact.ClearPhones;
@@ -732,7 +732,7 @@ end;
 
 procedure TContact.DeleteExternalPart(Index: Integer);
 begin
-  _ExternalParts.Delete(Index);
+  _ExternalPhones.Delete(Index);
 end;
 
 procedure TContact.DeletePhone(Index: Integer);
@@ -767,12 +767,12 @@ end;
 
 function TContact.GetExternalPartCount: Integer;
 begin
-  Result := _ExternalParts.Count;
+  Result := _ExternalPhones.Count;
 end;
 
-function TContact.GetExternalParts(Index: Integer): TPartsExternal;
+function TContact.GetExternalPhones(Index: Integer): TExternalPhones;
 begin
-  Result := _ExternalParts[Index] as TPartsExternal;
+  Result := _ExternalPhones[Index] as TExternalPhones;
 end;
 
 function TContact.GetMainPhoneNumber: string;
@@ -788,9 +788,9 @@ begin
   Result := _Name.Value;
 end;
 
-function TContact.GetPartExternal: TPartExternal;
+function TContact.GeTExternalAddress: TExternalAddress;
 begin
-  Result := _PartExternal.Value as TPartExternal;
+  Result := _ExternalAddress.Value as TExternalAddress;
 end;
 
 function TContact.GetPhoneCount: Integer;
@@ -813,9 +813,9 @@ begin
   Result := _Projects[Index] as TProject;
 end;
 
-function TContact.IndexOfExternalPart(ExternalPart: TPartsExternal): Integer;
+function TContact.IndexOfExternalPart(ExternalPart: TExternalPhones): Integer;
 begin
-  Result := _ExternalParts.IndexOf(ExternalPart);
+  Result := _ExternalPhones.IndexOf(ExternalPart);
 end;
 
 function TContact.IndexOfPhone(Phone: TPhone): Integer;
@@ -828,9 +828,9 @@ begin
   Result := _Projects.IndexOf(Project);
 end;
 
-procedure TContact.InsertExternalPart(Index: Integer; ExternalPart: TPartsExternal);
+procedure TContact.InsertExternalPart(Index: Integer; ExternalPart: TExternalPhones);
 begin
-  _ExternalParts.Insert(Index, ExternalPart);
+  _ExternalPhones.Insert(Index, ExternalPart);
 end;
 
 procedure TContact.InsertPhone(Index: Integer; Phone: TPhone);
@@ -843,9 +843,9 @@ begin
   _Projects.Insert(Index, Project);
 end;
 
-function TContact.RemoveExternalPart(ExternalPart: TPartsExternal): Integer;
+function TContact.RemoveExternalPart(ExternalPart: TExternalPhones): Integer;
 begin
-  Result := _ExternalParts.Remove(ExternalPart);
+  Result := _ExternalPhones.Remove(ExternalPart);
 end;
 
 function TContact.RemovePhone(Phone: TPhone): Integer;
@@ -873,9 +873,9 @@ begin
   _City.Value := Value;
 end;
 
-procedure TContact.SetExternalParts(Index: Integer; Value: TPartsExternal);
+procedure TContact.SetExternalPhones(Index: Integer; Value: TExternalPhones);
 begin
-  _ExternalParts[Index] := Value;
+  _ExternalPhones[Index] := Value;
 end;
 
 procedure TContact.SetMainPhoneNumber(const Value: string);
@@ -900,9 +900,9 @@ begin
   _Name.Value := Value;
 end;
 
-procedure TContact.SetPartExternal(Value: TPartExternal);
+procedure TContact.SeTExternalAddress(Value: TExternalAddress);
 begin
-  _PartExternal.Value := Value;
+  _ExternalAddress.Value := Value;
 end;
 
 procedure TContact.SetPhones(Index: Integer; Value: TPhone);
@@ -999,36 +999,36 @@ begin
   Result := _Employees.Remove(Employee);
 end;
 
-{ TPartExternal }
+{ TExternalAddress }
 
-function TPartExternal.GetCategory: TCategory;
+function TExternalAddress.GetCategory: TCategory;
 begin
   Result := _Category.Value as TCategory;
 end;
 
-function TPartExternal.GetName: string;
+function TExternalAddress.GetName: string;
 begin
   Result := _Name.Value;
 end;
 
-procedure TPartExternal.SetCategory(Value: TCategory);
+procedure TExternalAddress.SetCategory(Value: TCategory);
 begin
   _Category.Value := Value;
 end;
 
-procedure TPartExternal.SetName(const Value: string);
+procedure TExternalAddress.SetName(const Value: string);
 begin
   _Name.Value := Value;
 end;
 
-{ TPartsExternal }
+{ TExternalPhones }
 
-function TPartsExternal.GetName: string;
+function TExternalPhones.GetName: string;
 begin
   Result := _Name.Value;
 end;
 
-procedure TPartsExternal.SetName(const Value: string);
+procedure TExternalPhones.SetName(const Value: string);
 begin
   _Name.Value := Value;
 end;
@@ -1042,8 +1042,8 @@ initialization
     TContactFilter,
     TCountry,
     TEmail,
-    TPartExternal,
-    TPartsExternal,
+    TExternalAddress,
+    TExternalPhones,
     TPerson,
     TPhone,
     TProject

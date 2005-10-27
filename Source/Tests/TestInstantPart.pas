@@ -270,7 +270,7 @@ begin
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
 
   FOwner := TContact.Create(FConn);
-  FInstantPart := FOwner._PartExternal;
+  FInstantPart := FOwner._ExternalAddress;
 end;
 
 procedure TestTInstantExtPart.TearDown;
@@ -290,7 +290,7 @@ procedure TestTInstantExtPart.TestAssign;
 var
   vSource: TInstantPart;
   vAttrMetadata: TInstantAttributeMetadata;
-  vPart: TPartExternal;
+  vPart: TExternalAddress;
   vCategory: TCategory;
 begin
   vSource := nil;
@@ -298,8 +298,9 @@ begin
   vAttrMetadata := TInstantAttributeMetadata.Create(nil);
   try
     vAttrMetadata.AttributeClass := TInstantPart;
+    vAttrMetadata.StorageKind := skExternal;
     vSource := TInstantPart.Create(FOwner, vAttrMetadata);
-    vPart := TPartExternal.Create(FConn);
+    vPart := TExternalAddress.Create(FConn);
     FInstantPart.Value := vPart;
     AssertTrue('Value HasVal', FInstantPart.HasValue);
     AssertEquals(1, FInstantPart.Value.RefCount);
@@ -308,19 +309,19 @@ begin
     // Added this to help check for possible memory leakage
     vCategory := TCategory.Create(FConn);
     try
-      TPartExternal(FInstantPart.Value).Category := vCategory;
+      TExternalAddress(FInstantPart.Value).Category := vCategory;
     finally
       vCategory.Free;
     end;
-    AssertEquals(1, TPartExternal(FInstantPart.Value).Category.RefCount);
+    AssertEquals(1, TExternalAddress(FInstantPart.Value).Category.RefCount);
 
     AssertFalse('vSource HasVal', vSource.HasValue);
     AssertNotSame(FInstantPart, vSource);
     vSource.Assign(FInstantPart);
     AssertTrue('vSource HasVal', vSource.HasValue);
     AssertNotSame(FInstantPart.Value, vSource.Value);
-    AssertSame(TPartExternal(FInstantPart.Value).Category,
-        TPartExternal(vSource.Value).Category);
+    AssertSame(TExternalAddress(FInstantPart.Value).Category,
+        TExternalAddress(vSource.Value).Category);
   finally
     vSource.Free;
     vAttrMetadata.Free;
@@ -330,9 +331,9 @@ end;
 procedure TestTInstantExtPart.TestAttach_DetachObject;
 var
   vReturnValue: Boolean;
-  vObject: TPartExternal;
+  vObject: TExternalAddress;
 begin
-  vObject := TPartExternal.Create(FConn);
+  vObject := TExternalAddress.Create(FConn);
   vObject.Id := 'Object.Id';
   AssertEquals('Object RefCount 1', 1, vObject.RefCount);
 
@@ -353,17 +354,17 @@ procedure TestTInstantExtPart.TestHasValue;
 begin
   AssertFalse(FInstantPart.HasValue);
 
-  FInstantPart.Value := TPartExternal.Create(FConn);
+  FInstantPart.Value := TExternalAddress.Create(FConn);
   AssertTrue(FInstantPart.HasValue);
 end;
 
 procedure TestTInstantExtPart.TestIsChanged;
 var
-  vPart: TPartExternal;
+  vPart: TExternalAddress;
 begin
   AssertFalse(FInstantPart.IsChanged);
 
-  vPart := TPartExternal.Create(FConn);
+  vPart := TExternalAddress.Create(FConn);
   vPart.Changed;
   FInstantPart.Value := vPart;
   AssertTrue(FInstantPart.IsChanged);
@@ -371,11 +372,11 @@ end;
 
 procedure TestTInstantExtPart.TestIsDefault;
 var
-  vPart: TPartExternal;
+  vPart: TExternalAddress;
 begin
   AssertTrue(FInstantPart.IsDefault);
 
-  vPart := TPartExternal.Create(FConn);
+  vPart := TExternalAddress.Create(FConn);
   vPart.Id := 'PartId';
   FInstantPart.Value := vPart;
   AssertFalse(FInstantPart.IsDefault);
@@ -383,11 +384,11 @@ end;
 
 procedure TestTInstantExtPart.TestSaveObjectTo_FromStream;
 var
-  vObject: TPartExternal;
+  vObject: TExternalAddress;
   vReturnValue: Boolean;
   vStream: TStream;
 begin
-  vObject := TPartExternal.Create(FConn);
+  vObject := TExternalAddress.Create(FConn);
   AssertNotNull('Create object', vObject);
   AssertEquals('Object RefCount 1', 1, vObject.RefCount);
   vReturnValue := FInstantPart.AttachObject(vObject);
@@ -429,7 +430,7 @@ begin
   AssertTrue('HasValue 2', FInstantPart.HasValue);
   vFirstObj := FInstantPart.Value;
 
-  vSecondObj := TPartExternal.Create(FConn);
+  vSecondObj := TExternalAddress.Create(FConn);
   vSecondObj.Id := 'PartId';
   FInstantPart.Value := vSecondObj;
   AssertEquals('Value.Id', 'PartId', FInstantPart.Value.Id);
