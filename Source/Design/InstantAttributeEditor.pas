@@ -112,7 +112,7 @@ type
     procedure StorageKindEditChange(Sender: TObject);
     procedure ExternalStorageNameEditChange(Sender: TObject);
     procedure AutoExternalStorageNameCheckBoxClick(Sender: TObject);
-    procedure StorageNameEditExit(Sender: TObject);
+    procedure StorageNameEditChange(Sender: TObject);
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
@@ -494,9 +494,15 @@ procedure TInstantAttributeEditorForm.UpdateControls;
   begin
     for I := 0 to Pred(Parent.ControlCount) do
     begin
-      Parent.Controls[I].Enabled := not Disable;
       if Parent.Controls[I] is TWinControl then
+      begin
+        //Disable control only if doesn't have focus
+        if not TWinControl(Parent.Controls[I]).Focused then
+          Parent.Controls[I].Enabled := not Disable;
         DisableSubControls(TWinControl(Parent.Controls[I]), Disable);
+      end
+      else
+        Parent.Controls[I].Enabled := not Disable;
     end;
   end;
 
@@ -625,9 +631,11 @@ begin
 
 end;
 
-procedure TInstantAttributeEditorForm.StorageNameEditExit(Sender: TObject);
+procedure TInstantAttributeEditorForm.StorageNameEditChange(
+  Sender: TObject);
 begin
   inherited;
+  SubjectExposer.AssignFieldValue(StorageNameEdit.Field, StorageNameEdit.Text);
   UpdateControls;
 end;
 

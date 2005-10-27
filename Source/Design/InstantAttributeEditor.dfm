@@ -123,7 +123,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           DataField = 'StorageName'
           DataSource = SubjectSource
           TabOrder = 4
-          OnExit = StorageNameEditExit
+          OnChange = StorageNameEditChange
         end
         object SizeEdit: TDBEdit
           Left = 160
