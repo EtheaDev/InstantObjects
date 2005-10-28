@@ -1,6 +1,6 @@
 HelpScribble project file.
 13
-PvOv`bsg.pbz-16O773
+`grira Zvgpuryy-0Q4954
 0
 1
 InstantObjects Guide 2.0
@@ -8,8 +8,8 @@ InstantObjects Guide 2.0
 
 
 TRUE
-
-D:\ETHEA\InstantObjects\Trunk\Help,D:\ETHEA\INSTAN~3\trunk\Help
+0x0409   English (U.S.)
+D:\L\InstantObjects\Help
 1
 BrowseButtons()
 0
@@ -898,7 +898,7 @@ Imported
 
 FALSE
 121
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fmodern\fcharset0 Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
 \par \strike Associating Objects\strike0\{link=327SA3Y>main\}\{keepn\} 
@@ -965,13 +965,13 @@ FALSE
 \par     Phone.Number := '32187654';
 \par     Result.AddPhone(Phone);
 \par 
-\par     \{\- Add colleagues \}
+\par     \{\- Add colleagues\lang1033\f2  as Friends\lang1040\f1  \}
 \par     with TInstantSelector.Create(nil) do
 \par     try
 \par       Command.Text := 'SELECT * FROM TPerson WHERE Company = ' + Company.Id;
 \par       Open;
 \par       for I := 0 to Pred(ObjectCount) do
-\par         Result.AddColleague(Objects[I] as TPerson);
+\par         Result.AddFriend(Objects[I] as TPerson);
 \par     finally
 \par       Free;
 \par     end;
@@ -991,12 +991,12 @@ FALSE
 \par     ShowMessage(Person.Phones[I].Caption);
 \par end;
 \par 
-\par procedure ShowColleagues(Person: TPerson);
+\par procedure ShowFriends(Person: TPerson);
 \par var
 \par   I: Integer;
 \par begin
-\par   for I := 0 to Pred(Person.ColleagueCount) do
-\par     ShowMessage(Person.Colleagues[I].Caption);
+\par   for I := 0 to Pred(Person.FriendCount) do
+\par     ShowMessage(Person.Friends[I].Caption);
 \par end;
 \par 
 \par procedure DemonstrateRelations;
@@ -1009,7 +1009,7 @@ FALSE
 \par     Person := CreateSamplePerson(Company);
 \par     try
 \par       ShowPhones(Person);
-\par       ShowColleagues(Person);
+\par       ShowFriends(Person);
 \par     finally
 \par       Person.Free;
 \par     end;
