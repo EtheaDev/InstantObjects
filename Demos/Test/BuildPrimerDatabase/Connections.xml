@@ -1,23 +1,24 @@
 <TInstantConnectionDefs>
-  <TInstantIBXConnectionDef>
-    <Name>IBX FB</Name>
-    <IsBuilt>TRUE</IsBuilt>
-    <LoginPrompt>FALSE</LoginPrompt>
-    <Path>C:\IBDATA\PRIMER.FDB</Path>
-    <NetType>ntLocal</NetType>
-    <Options></Options>
-    <Params>User_Name=SYSDBA
-password=a</Params>
-  </TInstantIBXConnectionDef>
   <TInstantBDEConnectionDef>
-    <Name>BDE PARADOX</Name>
+    <Name>ParadoxDB</Name>
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
     <LoginPrompt>FALSE</LoginPrompt>
     <DriverName>STANDARD</DriverName>
-    <Parameters>PATH=D:\BDEBROKER
+    <Parameters>PATH=..\..\PrimerCross\ParadoxDB
 DEFAULT DRIVER=PARADOX
 ENABLE BCD=TRUE
 </Parameters>
   </TInstantBDEConnectionDef>
+  <TInstantIBXConnectionDef>
+    <Name>FirebirdDB</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <Path>..\..\PrimerCross\FirebirdDB\PRIMERDB.FDB</Path>
+    <NetType>ntLocal</NetType>
+    <Options>ibxUseDelimitedIdents</Options>
+    <Params>User_Name=SYSDBA
+Password=masterkey</Params>
+  </TInstantIBXConnectionDef>
 </TInstantConnectionDefs>

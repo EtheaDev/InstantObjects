@@ -3,12 +3,19 @@ unit UBuilder;
 interface
 
 uses
-  InstantPersistence;
+  InstantPersistence, Classes;
 
-function Connect(const ConnectionFileName, ConnectionName : string) : TInstantConnector;
-procedure BuildDatabase(Connector : TInstantConnector);
+procedure BuildAndConnect(const ConnectionFileName, ConnectionName : string);
 procedure CreateRandomContacts(Count: Integer; LoadPictures : boolean = False;
   const PicturePath : string = '');
+
+type
+  TConnectorEventsProvider = class(TComponent)
+    procedure ConnectionManagerConnect(Sender: TObject;
+      var ConnectionDef: TInstantConnectionDef; var Result: Boolean);
+    procedure ConnectionManagerDisconnect(Sender: TObject;
+      var ConnectionDef: TInstantConnectionDef; var Result: Boolean);
+  end;
 
 implementation
 
@@ -37,30 +44,23 @@ uses
     Jpeg, Graphics,
 {$ENDIF}
 {$IFDEF LINUX}
-  QGraphics, 
+  QGraphics,
 {$ENDIF}
-  InstantConnectionManager, InstantClasses, 
-  Classes, Contnrs,
+  InstantConnectionManager, InstantClasses,
+  Contnrs,
   DemoData, RandomData, Model;
 
 var
   ConnectionManager : TInstantConnectionManager;
+  ConnectorEventsProvider : TConnectorEventsProvider;
+  FConnector : TInstantConnector;
 
-function Connect(const ConnectionFileName, ConnectionName : string) : TInstantConnector;
-var
-  ConnectionDef : TInstantConnectionDef;
+procedure BuildAndConnect(const ConnectionFileName, ConnectionName : string);
 begin
-  Result := nil;
   // To use XML format for ConnectionManager file:
   ConnectionManager.FileFormat := sfXML;
   ConnectionManager.FileName := ConnectionFileName;
-  ConnectionManager.LoadConnectionDefs;
-  ConnectionDef := ConnectionManager.ConnectionDefs.Find(ConnectionName) as TInstantConnectionDef;
-  if Assigned(ConnectionDef) then
-  begin
-    ConnectionManager.CurrentConnectionDef := ConnectionDef;
-    Result := ConnectionDef.CreateConnector(nil);
-  end;
+  ConnectionManager.ConnectByName(ConnectionName);// CurrentConnectionDef := ConnectionDef;
 end;
 
 procedure BuildDatabase(Connector : TInstantConnector);
@@ -174,14 +174,50 @@ begin
   end;
 end;
 
+{ TConnectorEventsProvider }
+
+procedure TConnectorEventsProvider.ConnectionManagerConnect(
+  Sender: TObject; var ConnectionDef: TInstantConnectionDef;
+  var Result: Boolean);
+begin
+  FConnector := ConnectionDef.CreateConnector(Self);
+  try
+    FConnector.IsDefault := True;
+    //prima di connettermi creo il database
+    FConnector.BuildDatabase;
+    //poi mi connetto
+    FConnector.Connect;
+    FConnector.IsDefault := True;
+    Result := True;
+  except
+    FreeAndNil(FConnector);
+    raise;
+  end;
+end;
+
+procedure TConnectorEventsProvider.ConnectionManagerDisconnect(
+  Sender: TObject; var ConnectionDef: TInstantConnectionDef;
+  var Result: Boolean);
+begin
+  if Assigned(FConnector) then
+  begin
+    FConnector.Disconnect;
+    FreeAndNil(FConnector);
+  end;
+end;
 
 initialization
   ConnectionManager := TInstantConnectionManager.Create(nil);
+  ConnectorEventsProvider := TConnectorEventsProvider.Create(nil);
+  ConnectionManager.OnConnect := ConnectorEventsProvider.ConnectionManagerConnect;
+  ConnectionManager.OnDisconnect := ConnectorEventsProvider.ConnectionManagerDisconnect;
+
 {$IFDEF MSWINDOWS}
   InstantRegisterGraphicClass(gffJpeg, TJPEGImage);
 {$ENDIF}
 
 finalization
   ConnectionManager.Free;
+  ConnectorEventsProvider.Free;
 
 end.
