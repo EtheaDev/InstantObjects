@@ -1,6 +1,6 @@
 HelpScribble project file.
 13
-`grira Zvgpuryy-0Q4954
+PvOv`bsg.pbz-16O773
 0
 1
 InstantObjects Guide 2.0
@@ -9,7 +9,7 @@ InstantObjects Guide 2.0
 
 TRUE
 0x0409   English (U.S.)
-D:\L\InstantObjects\Help
+D:\ETHEA\InstantObjects\trunk\Help
 1
 BrowseButtons()
 0
@@ -379,45 +379,44 @@ Adding Business Rules, Example 1
 
 
 
-Writing
+Testing
 
 
 
 FALSE
-34
+33
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fswiss Arial;}{\f3\fnil\fcharset0 Arial;}{\f4\fnil\fcharset0 Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs26 Example 1\b0\fs20 
 \par \cf1\strike\f1\fs16 Adding Business Rules\strike0\f2\{link=327SA3V>main\}\{keepn\} \cf0\f0\fs20 
-\par \f3 Normalmente i controlli sui campi vengono fatti negli eventi OnValidate e OnChange. Fortunatamente con InstantObjects non bisogna pi\'f9 utilizzare questo sistema ma si utilizza normalmente il Setter dell'attributo di un oggetto:
+\par \f3 In InstantObject you usually apply single-attribute business rules in the attribute's property setter method:
 \par 
-\par \f4 procedure TAddress.SetPostalCode(const Value: string);
-\par begin
-\par   //OnValidate
-\par   if (Length(Value) <> 6) and (Value <> '') then
-\par     raise Exception.Create('Postal Code must be filled with 6 chars');
-\par   
-\par   _PostalCode.Value := Value;  <-- codice scritto automaticamente da InstantObjects
-\par   
-\par   //OnChange
-\par   if (Value <> '') and (City = '') then
+\par \b\f4 procedure\b0  TAddress.SetPostalCode(\b const \b0 Value: \b string\b0 );
+\par \b begin\b0 
+\par   \i // Validation: raise exceptions to prevent value assignment.
+\par \i0   \b if \b0 (Length(Value) <> 6) \b and \b0 (Value <> '') \b then\b0 
+\par     \b raise \b0 Exception.Create(\i 'Postal Code must be filled with 6 chars'\i0 );
+\par   \i // Assignment: this code will usually be written by InstantObjects automatically.  
+\par \i0   _PostalCode.Value := Value;
+\par \i   // Post-assignment: do things as a consequence of an attribute's value change
+\par   // (see also the virtual method AttributeChanged).
+\par \i0   \b if \b0 (Value <> '') \b and \b0 (City = '') \b then\b0 
 \par     GetDefaultCityByPostalCode(Value);
-\par end;
+\par \b end\b0 ;
 \par \f0 
-\par \f3 Quando invece occorre fare controlli "incrociati" su pi\'f9 attributi \'e8 consigliabile utilizzare il metodo BeforeStore (Look at \cf2\strike Example 2\cf3\strike0\{linkID=130\}\cf0 )
+\par \f3 If you need to apply business rules that involve more than one attribute, instead, you often use the BeforeStore virtual method(see \cf2\strike Example 2\cf3\strike0\{linkID=130\}\cf0 ).
 \par 
-\par N.B. attenzione al codice che si scrive dentro il Setter di un attributo: esso non viene invocato solo in fase di modifica, ma ogni volta che un Exposer aggiorna l'oggetto corrente.
+\par When you code side effects, be aware that the property setters might be called more often than expected, for example when reading an object from an XML file or when you use the data-aware presentation layer. Here is an example:
 \par 
-\par Ad esempio se si vuole svuotare la data pi\'f9 alta di un range di due date quando l'utente modifica la prima si potrebbe scrivere:
-\par \f4 procedure TShipment.SetMinShipDate(const Value: TDateTime);
-\par begin
-\par   _MinShipDate.Value := Value;  <-- codice scritto automaticamente da InstantObjects
-\par   
-\par   if (Value = 0) then
-\par     MaxShipDate := 0;    
-\par end;
-\par \f3 Ma la \f4 MaxShipDate verr\'e0 azzerata anche se l'utente non "modifica" SetMinShipDate, quando l'oggetto viene caricato da un Exposer con LoadFields. L'errore \'e8 concettuale: la logica di business si deve preoccupare solo della correttezza dei dati, quindi in questo caso si dovrebbe solo controllare che la MinShipDate non deve superare la MaxShipDate e questo controllo andrebbe fatto in BeforeStore.
-\par Se si vuole ottenere l'effetto desiderato occorre agire a livello di "interfaccia utente" e quindi a livello di evento OnChange del field sull'Exposer che mostra gli attributi di un oggetto.\f0 
+\par \b\f4 procedure \b0 TShipment.SetMinShipDate(\b const \b0 Value: TDateTime);
+\par \b begin\b0 
+\par   \i // Assignment: this code will usually be written by InstantObjects automatically.  
+\par \i0   _MinShipDate.Value := Value;
+\par   MaxShipDate := 0;    
+\par \b end\b0 ;
+\par \f3 
+\par The intent of this code is to reset MaxShipDate whenever MinShipDate changes, so that a user, in a hypothetical data-entry scenario, will have to re-enter a value for MaxShipDate. But things might not work always as expected; for example, SetMinShipDate might be called after SetMaxShipDate when streaming in an object from a XML file, of when using the "undo" feature of the data-aware presentation layer. The lesson here is: use the property setters and the BeforeStore method only to appy real business rules (like "MaxShipDate must be equal to or greater than MinShipDate"), and code data-entry rules (like "whenever a value for MinShipDate is entered, MaxShipDate should be reset") at the data-entry level (that is, not in the model classes).
+\par 
 \par }
 130
 Scribble130
@@ -426,7 +425,7 @@ Adding Business Rules, Example 2
 
 
 
-Writing
+Testing
 
 
 
@@ -436,24 +435,24 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs26 Example 2\b0\fs20 
 \par \cf1\strike\f1\fs16 Adding Business Rules\strike0\f2\{link=327SA3V>main\}\{keepn\}
-\par \cf0\f3\fs20 Per controllare i dati prima di memorizzare l'oggetto si utilizza di solito il metodo BeforeStore. Questo metodo di norma contiene i controlli che vengono scritti nell'evento BeforePost in una applicazione basata sui dataset.
+\par \cf0\f3\fs20 Business rules that involve more than one attribute are usually applied in BeforeStore, which gets called whenever the Store method is called to write an object (back) to the storage. Example:
 \par 
-\par \f4 procedure TCountry.BeforeStore;
-\par begin
-\par   if Id = '' then
-\par     raise Exception.Create('Country ID missing');
-\par   inherited;
-\par end;
+\par \b\f4 procedure \b0 TShipment.BeforeStore;
+\par \b begin\b0 
+\par   \b if \b0 MinShipDate > MaxShipDate \b then\b0 
+\par     \b raise \b0 Exception.Create(\i 'Date range error'\i0 );
+\par   \b inherited\b0 ;
+\par \b end\b0 ;
 \par \f0 
-\par \f3 Per inizializzare i dati di un oggetto si utilizza di solito il metodo AfterCreate:
-\par \f4 procedure TContact.AfterCreate;
-\par begin
-\par   inherited;
+\par \f3 You initialize an object by overriding Initialize (if you need to apply initialization code both when a new object is created and when it is retrieved from the storage), or AfterCreate (if you need to apply initialization code for newly created objects only). There is also an AfterRetrieve method that you can override to apply initialization code only when an existing object read from the storage and materialized in memory. Here is an example of AfterCreate:
+\par \f0 
+\par \b\f4 procedure \b0 TContact.AfterCreate;
+\par \b begin\b0 
+\par   \b inherited\b0 ;
 \par   Id := InstantGenerateId;
-\par   _Category.ReferenceObject(TCategory, 'CAT000');
-\par end;
-\par \f3 Da notare che AfterCreate non viene chiamato quando un oggetto viene letto (Retrieve) dallo storage: in quel caso viene invocato il metodo AfterRetrieve.
-\par \f0 
+\par   Category := TCategory.Retrieve(\i 'CAT000'\i0 );
+\par \b end\b0 ;
+\par \f3 
 \par }
 140
 327SA3W
@@ -462,12 +461,12 @@ Building/Evolving the Business Model
 
 
 creatingbusinessmodel:000070
-Writing
+Testing
 
 
 
 FALSE
-23
+21
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 Building/Evolving the Business Model \b0\fs16 
@@ -480,14 +479,12 @@ FALSE
 \par Select New in the context menu and the preferred Broker. A specific ConnectionDef Editor appears.\f0 
 \par \cf2\{bmc ConnectionDefEditor.gif\}\cf1 
 \par \f1 Define the connection properties and store the connection definition.\f0 
-\par 
 \par \ul\b\f1 Building a Model into a database\ulnone\b0\f0 
-\par \f1 Select the Broker/Connection do you want to use to Build your database and press "Build" button. A "Database Builder" window appears. You can show the building steps a run the building process. \b Be careful: all data will be lost!\b0 
+\par \f1 Select the Broker/Connection you want to use to Build your database and press the "Build" button. A "Database Builder" window appears. You can see the building steps and run the building process. \b Be careful: all data will be lost!\b0 
 \par \cf2\{bml DatabaseBuilder.gif\}\cf1 
-\par 
-\par \ul\b Evolve a Model into an existing database\ulnone\b0\f0 
-\par \f1 Select the Broker/Connection do you want to use to Build your database and press "Evolve" button. A "Database Evolver" window similar to the "Database Builder" windows appears. You can show the evolving steps needed to upgrade the database structure. Run the evolve process. 
-\par \b All data is preserved into database.
+\par \ul\b Evolving an existing database\ulnone\b0\f0 
+\par \f1 If you build the database, put some data in it and later you change the model, you need to "evolve" the database. Unlike the Build procedure, which will basically destroy and recreate all database objects, the Evolution process will try to save the data. The effectiveness of the Evolution procedure depends on the features of the particular kind of database you are using. For example, if your SQL database server allows you to alter the size of a column with a SQL/DDL statement, then InstantObjects will be able to do it, otherwise it won't. There are plans to improve the evolution process so that it overcomes the limitations of the database. In our example, IO's database evolver could add a new temporary column, copy the old data into it, then drop the old column, recreate it and pump the data back, finally dropping the temporary column.
+\par To evolve an existing database, select the Broker/Connection you want to use and press the "Evolve" button. A "Database Evolver" window similar to the "Database Builder" window appears. You can see the evolution steps needed to upgrade the database structure, selectively disable some of them (useful in special cases) and apply them to the database. \b In this case no data is lost.
 \par 
 \par \b0\f0 
 \par }
@@ -498,7 +495,7 @@ Creating the User Interface
 
 
 creatinguserinterface:000010
-Writing
+Testing
 
 
 
@@ -542,7 +539,7 @@ Persistence by RAD
 
 
 creatinguserinterface:000020
-Writing
+Testing
 
 
 
@@ -564,19 +561,17 @@ The Connector
 
 
 creatinguserinterface:000030
-Writing
+Testing
 
 
 
 FALSE
-21
+20
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 The Connector \cf1\b0\fs16 
 \par \strike Creating the User Interface\strike0\{link=75DE_G4>main\}\{keepn\} 
-\par \pard\sb25\sa25\f1\fs18 Qui andrebbe spiegato un po' meglio il ruolo di un broker. A quanto pare la versione 1.0 non aveva il TInstantBroker\f0 
-\par 
-\par In order for your application to use the database as object storage, you must use a connector component. The connector acts as a gateway between your application and the database, managing all the objects that are stored to and retrieved from the database. A connector component for each type of data access layer that is supported by InstantObjects is available on the component palette. A connector is attached to a database by assigning a connection component to its Connection property. Each connector component supports its own connection type:
+\par \pard\sb25\sa25\fs18 In order for your application to use the database as object storage, you must use a connector component. The connector acts as a gateway between your application and the database\f1  (by means of an internal component called the broker)\f0 , managing all the objects that are stored to and retrieved from the database. A connector component for each type of data access layer that is supported by InstantObjects is available on the component palette. A connector is attached to a database by assigning a connection component to its Connection \f1 (or equivalent) \f0 property. Each connector component supports its own connection type\f1 . For example:\f0 
 \par 
 \par \pard\sb25\sa25\tx1980\tx4800\b Access type\tab Connector type\tab\f1 Type of \f0 Connection\b0 
 \par ADO\tab\cf2\strike TInstantADOConnector\cf1\strike0\{linkID=1910>main\}\tab TADOConnection
@@ -585,11 +580,12 @@ FALSE
 \par \f1 D\f0 BX\tab\cf0 TInstant\f1 D\f0 BXConnector\cf1\tab TSQLConnection
 \par \f1 XML\tab\cf0\f0 TInstantX\f1 ML\f0 Connector\cf1\tab TXMLFilesAccessor
 \par \pard 
-\par \f1 Sono disponibili altri brokers come NexusDB, UIB, ZeosDBO, ecc... per l'utilizzo di database e tecnologie di accesso ai dati alternativea quelle fornite con Delphi.\f0 
+\par \f1 InstantObjects supports a variety of databases and data-access technologies (for example NexusDB, ZeosDBO, Unified InterBase...) by means of packages called brokers. You can build and install the broker(s) you need from the Brokers sub-folder of InstantObjects's Source folder.
+\par \f0 
+\par Drop an appropriate connector component and a matching connection component on a form or a data module in your project. Configure the connection component to access the database and assign it to the Connection \f1 (or equivalent) \f0 property of the connector component. The connector will use the connection to gain access to the database. By setting the IsDefault property to True, the connector will be used as the default connector in the application.
 \par 
-\par Drop an appropriate connector component and a matching connection component on a form or a data module in your project. Configure the connection component to access the database and assign it to the Connection property of the connector component. The connector will use the connection to gain access to the database. By setting the IsDefault property to True, the connector will be used as the default connector in the application.
-\par 
-\par \f1 E' anche possibile usare il TInstantConnectionManager invece che utilizzare direttamente un connector se si vuole mantenere una totale indipendenza dell'applicazione da una specifica tecnologia come mostrato nel Primer demo.\f0 
+\par \f1 You can also use TInstantConnectionManager, which stores connection data in external files and can create connectors and connections automatically based on this data. This is particularly useful when you don't want to hardcode a particular broker or set of brokers into your program. See the Primer demo application for an example of this technique.
+\par \f0 
 \par }
 190
 327SA.R
@@ -598,22 +594,22 @@ The Exposer
 
 
 creatinguserinterface:000040
-Writing
+Testing
 
 
 
 FALSE
 13
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 The Exposer \b0\fs16 
 \par \strike Creating the User Interface\strike0\{link=75DE_G4>main\}\{keepn\} 
 \par \pard\sb25\sa25\strike\fs18 TInstantExposer\strike0\{linkID=6300>main\} is a dataset component that maps objects to the user interface of your application.
 \par Attributes defined in the business model are accessed through properties. Properties that are published can be accessed by data-aware controls via this component. In addition, the content of container attributes can be accessed too. The exposer component maps the published properties of objects to fields in a dataset. The objects being exposed are represented as rows in the dataset.
 \par To expose an object, it must be assigned to the Subject property of a \strike TInstantExposer\strike0\{linkID=6300>main\}. To expose multiple objects contained within another object, assign the main object to the Subject property and enter content mode by changing the Mode property from amObject to amContent. If the exposed class has no default container, specify the desired container in the property ContainerName. Specify the class of the exposed object(s) in the property ObjectClassName.
-\par By default, an exposer will make all simple properties of each exposed object as well as any related object available through fields in the dataset. Every field will have a fieldname matching the property it represents. For related objects, the fieldname will be the complete path to the property using regular dot notation. The property FieldOptions and the event OnIncludeField allow you to limit or extend the number fields to include.
+\par By default, an exposer will make all simple properties of each exposed object as well as any related object available through fields in the dataset. Every field will have a \f1 F\f0 ield\f1 N\f0 ame matching the property it represents. For related objects, the fieldname will be the complete path to the property using regular dot notation. The property FieldOptions and the event OnIncludeField allow you to limit or extend the number fields to include.
 \par Container attributes of exposed objects are automatically recognized by the exposer and represented as nested datasets within the exposer.
-\par Exposers can be linked together in master/detail relations. To link one exposer to another, assign the master exposer to the DataSet property of a TDataSource and assign the TDataSource to the MasterSource property of the detail exposer. The Subject of the detail exposer will be set to the current object of the master exposer, whenever this changes. If you want the detail exposer to expose an object that is related to the current object of the master exposer instead, simply specify the desired property path in MasterProperty.
+\par Exposers can be linked together in master/detail relation\f1 ships\f0 . To link one exposer to another, assign the master exposer to the DataSet property of a TDataSource and assign the TDataSource to the MasterSource property of the detail exposer. The Subject of the detail exposer will be set to the current object of the master exposer, whenever this changes. If you want the detail exposer to expose an object that is related to the current object of the master exposer instead, simply specify the desired property path in MasterProperty.
 \par \strike TInstantExposer\strike0\{linkID=6300>main\} is not limited to exposing \strike TInstantObject\strike0\{linkID=7240>main\} descendants. Any object with published propertied can be exposed. The content of standard VCL containers like TList, TObjectList and TCollection can be exposed in content mode.
 \par 
 \par }
@@ -624,56 +620,48 @@ The Selector
 
 
 creatinguserinterface:000050
-Writing
+Testing
 
 
 
 FALSE
-48
+40
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 The Selector \cf1\b0\fs16 
 \par \strike Creating the User Interface\strike0\{link=75DE_G4>main\}\{keepn\} 
 \par \pard\sb25\sa25\fs18 The \strike TInstantSelector\strike0\{linkID=10050>main\} component allows you to select objects from the database and optionally expose them in the user interface.
-\par To select objects from the database, a command must be specified with the Command property. The syntax of this command is somewhat similar to an SQL SELECT-statement, \f1 called IQL, \f0 but instead of tables and columns, you specify classes and attributes:
+\par To select objects from the database, a command must be specified with the Command property. The syntax of this command\f1  (called an IQL command, from Instant Query Language) \f0  is somewhat similar to an SQL SELECT-statement\f1 , \f0 but instead of tables and columns, you specify classes and attributes:
 \par \pard\keep\f2 
 \par SELECT [DISTINCT] *|<Attribute>
 \par FROM [ANY] <Class>
 \par [WHERE <Expression>]
 \par [ORDER BY <Attribute list>]
 \par \pard\sb25\sa25\f0 
-\par 
 \par The simplest command that can be specified looks like this:
 \par \pard\keep\f2 
 \par SELECT * FROM TContact
 \par \pard\sb25\sa25\f0 
-\par 
-\par This command would select all concrete instances of the class TContact. To select instances of TContact and any descendant class, add the ANY keyword:
+\par This command select\f1 s\f0  all concrete instances of the class TContact. To select instances of TContact and any descendant class, add the ANY keyword:
 \par \pard\keep\f2 
 \par SELECT * FROM ANY Tcontact
 \par \pard\sb25\sa25\f0 
-\par 
-\par If you want to select objects that are related to instances of a class, specify the relation attribute instead of the star, like this:
+\par If you want to select objects that are related to instances of a class, specify the relation attribute instead of the \f1 *\f0 , like this:
 \par \pard\keep\f2 
 \par SELECT Address FROM ANY Tcontact
 \par \pard\sb25\sa25\f0 
-\par 
 \par If the same object is related to from several objects via the specified attribute and you do not want it to appear more than once in the result, use the DISTINCT keyword with the attribute:
 \par \pard\keep\f2 
 \par SELECT DISTINCT Address FROM ANY Tcontact
 \par \pard\sb25\sa25\f0 
-\par 
 \par To select from objects that meet a certain criteria, you must add a WHERE clause to the command. This clause must contain an expression that evaluates to True or False. The expression can use attributes, constants and functions in combination with the most common operators. The following example will select all customers with a negative balance.
 \par \pard\keep\f2 
 \par SELECT * FROM TCustomer WHERE Balance < 0
 \par \pard\sb25\sa25\f0 
-\par 
 \par To order the selected objects by one or more attributes, specify the attributes with ORDER BY:
 \par \pard\keep\f2 
 \par SELECT * FROM TCustomer ORDER BY Balance, Name
 \par \pard\sb25\sa25\f0 
-\par 
-\par For an in-depth explanation of the Command property, please consult the InstantObjects Reference Guide.
 \par When the selector is opened, it performs a query against the database. The resulting objects are available via the Objects property. The number of objects selected can be read via the property ObjectCount.
 \par If you want to expose the selected objects in the user interface, simply assign the selector to a TDataSource that is attached to data-aware controls.
 \par 
@@ -685,7 +673,7 @@ Programming with Persistent Objects
 
 
 programming:000010
-Writing
+Done
 
 
 
@@ -892,7 +880,7 @@ Associating Objects, Example 1
 
 
 
-Imported
+Testing
 
 
 
@@ -1026,20 +1014,19 @@ Using the InstantQuery
 
 
 
-Writing
+Testing
 
 
 
 FALSE
-9
+8
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\cf1\b\f0\fs24 Using the InstantQuery\b0\fs16 
 \par \strike Example 1\strike0\{linkID=310>example\}\tab\strike Programming with Persistent Objects\strike0\{linkID=210>main\}\cf2\{keepn\}\cf1 
-\par \cf0\fs18 TInstant\f1 Query\cf1\f0  \f1\'e8 una classe non disponibile sulla palette dei componenti di InstantObjects ma molto utile per la sua capacit\'e0 di estrarre una lista di oggetti dal database attraverso il linguaggio IQL, allo stesso modo di un \strike\f0 TInstantSelector\strike0\{linkID=10050>main\}\f1 .
-\par Il vantaggio sta nel fatto che gli oggetti non sono poi mappati sul buffer di un dataset ma sono disponibili in una lista della InstantQuery. E' quindi possibile utilizzarli per effettuare delle elaborazioni con prestazioni molto superiori all'utilizzo di un TInstantSelector.
-\par 
-\par \f2 
+\par \cf0\f1\fs18 TInstantQuery is not available in Delphi's Component or Tool Palette, but it is useful to fetch a list of objects from the storage through an IQL query. TInstantQuery basically represents the core of \cf1  \strike\f0 TInstantSelector\strike0\{linkID=10050>main\}\f1 .
+\par The advantage in using TInstantQuery directly lies in the lower overhead, as there is no TDataSet buffer managerment involved. So, if you want to fetch objects and don't have a data-aware presentation layer, TInstantQuery is the preferred way to go.
+\par TInstantQuery is an abstract class. What you actually use are concrete descendant classes, which you instantiate through the connector's CreateQuery method.\f2 
 \par }
 310
 Scribble310
@@ -1048,37 +1035,33 @@ Using the InstantQuery, Example 1
 
 
 
-Writing
+Testing
 
 
 
 FALSE
-27
+23
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Courier New;}{\f3\fnil Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs24 Example 1
 \par \cf1\b0\strike\f1\fs16 Using the InstantQuery\cf2\strike0\{linkID=300\}\cf3\f0\{keepn\} 
-\par \f2\fs18 function CompanyOfCityCount(const CityId : string) : integer;
-\par var
-\par   InstantQuery : TInstantQuery;
-\par begin
-\par   //Create the InstantQuery
+\par \b\f2\fs18 function \b0 CompanyOfCityCount(\b const \b0 CityId: \b string\b0 ): Integer;
+\par \b var\b0 
+\par   InstantQuery: TInstantQuery;
+\par \b begin\b0 
 \par   InstantQuery := InstantDefaultConnector.CreateQuery;
-\par   try
-\par     //Assigning a IQL command
-\par     InstantQuery.Command := 'SELECT * FROM ANY TCompany WHERE City = :City';
-\par     //If there are parameters into Command call FetchParams
+\par   \b try\b0 
+\par     InstantQuery.Command := \i 'SELECT * FROM ANY TCompany WHERE City = :City'\i0 ;
+\par \i     // Since this is a parameterized query, fetch the param definitions.\i0 
 \par     InstantQuery.FetchParams(InstantQuery.Command, InstantQuery.Params);
-\par     //Setting param CityId
-\par     InstantQuery.Params.ParamByName('City').AsString := CityId;
+\par \i     // Set the param values
+\par \i0     InstantQuery.Params.ParamByName('City').AsString := CityId;
 \par     InstantQuery.Open;
 \par     Result := InstantQuery.ObjectCount;
-\par   finally
+\par   \b finally\b0 
 \par     InstantQuery.Free;
-\par   end;
-\par end;
-\par 
-\par 
+\par   \b end\b0 ;
+\par \b end\b0 ;
 \par \cf0\f3\fs20 
 \par }
 320
