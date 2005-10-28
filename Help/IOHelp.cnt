@@ -1,5 +1,5 @@
-;This help file was created with HelpScribble 7.5.1
-;Licensed to: CiBiSoft.com
+;This help file was created with HelpScribble 7.5.0
+;Licensed to: Steven Mitchell
 
 :BASE IOHelp.hlp
 :TITLE InstantObjects Guide 2.0
@@ -105,6 +105,7 @@
 3 InstantCompareValues=327SI9Y>MAIN
 3 InstantConstArrayToVariant=327SI9P>MAIN
 3 InstantDateTimeToStr=327SI9Q>MAIN
+3 InstantDefaultConnector=InstantDefaultConnector>MAIN
 3 InstantDisableNotifiers=327SI9U>MAIN
 3 InstantEnableNotifiers=327SI9W>MAIN
 3 InstantExploreObject=327SI0Y>MAIN
@@ -118,6 +119,7 @@
 3 InstantGetClasses=75DEFG5>MAIN
 3 InstantIsIdentifier=3OA4HS.>MAIN
 3 InstantIsValidObjectId=id_832>MAIN
+3 InstantMatchObject=InstantMatchObject>MAIN
 3 InstantMatchObject=75DE_GZ>MAIN
 3 InstantNameToClassName=327SI8T>MAIN
 3 InstantObjectBinaryToText=75DE_H2>MAIN
@@ -186,6 +188,7 @@
 3 InstantClassPrefix=75DE_D1>MAIN
 3 InstantDateFormat=8DW2.DP>MAIN
 3 InstantDateTimeFormat=327SI9S>MAIN
+3 InstantTimeFormat=InstantTimeFormat>MAIN
 2 Units
 3 InstantADO.pas=id_102>MAIN
 3 InstantADS.pas=id_155>MAIN
@@ -200,3 +203,4 @@
 3 InstantIBX.pas=id_653>MAIN
 3 InstantPersistence.pas=id_5>MAIN
 3 InstantPresentation.pas=id_413>MAIN
+3 InstantUtils.pas=id_1057>MAIN

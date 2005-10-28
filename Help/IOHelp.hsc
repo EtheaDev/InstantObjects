@@ -1,6 +1,6 @@
 HelpScribble project file.
 13
-PvOv`bsg.pbz-16O773
+`grira Zvgpuryy-0Q4954
 0
 1
 InstantObjects Guide 2.0
@@ -9,7 +9,7 @@ InstantObjects Guide 2.0
 
 TRUE
 0x0409   English (U.S.)
-D:\ETHEA\InstantObjects\trunk\Help
+D:\L\InstantObjects\Help
 1
 BrowseButtons()
 0
@@ -44,7 +44,7 @@ InstantObjects Guide 2.0
 
 
 
-Testing
+Done
 
 
 
@@ -55,9 +55,9 @@ FALSE
 \viewkind4\uc1\pard\sb25\sa25\cf1\lang1040\b\f0\fs24 InstantObjects Guide\f1  2.0\cf2\{keepn\}\cf1\f0 
 \par \b0\fs18 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi.
 \par 
-\par InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-marked, and helps keeping business focus.
+\par InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-marke\lang1033\f1 t\lang1040\f0 , and helps keep business focus.
 \par 
-\par Even though it is still a bolted on technology, InstantObjects integrates with the Delphi IDE and Object Pascal in a simple, flexible and intuitive manner. There are no sophisticated environments that have to be comprehended before application development can begin.
+\par Even though it is still a bolted\lang1033\f1 -\lang1040\f0 on technology, InstantObjects integrates with the Delphi IDE and Object Pascal in a simple, flexible and intuitive manner. There are no sophisticated environments that have to be comprehended before application development can begin.
 \par 
 \par \cf2\{bmc instantobjects_logo.gif\}\cf1 
 \par }
@@ -68,7 +68,7 @@ Using InstantObjects
 
 
 
-Testing
+Done
 
 
 
@@ -78,8 +78,8 @@ FALSE
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Using InstantObjects \cf1\b0\fs16 
 \par \pard\sb25\sa25\cf2\strike Group Topics\cf3\strike0\{linkID=25>nav\}\{keepn\}\cf1 
-\par \fs18 This user guide contains \f1 pratical\f0  guidelines for building InstantObjects-based applications. The intention is to give an overview o\f1 f\f0  the classes, components and tools that make up the InstantObjects framework. Although the guide is very detailed, it has not been the intention to cover all aspects of the framework. If more information is needed, we refer to the Symbol Reference.
-\par The guide is divided into three parts, which constitute almost any InstantObjects based development process.
+\par \fs18 This user guide contains \f1 practical\f0  guidelines for building InstantObjects\lang1033\f1  \lang1040\f0 based applications. The intention is to give an overview o\f1 f\f0  the classes, components and tools that make up the InstantObjects framework. Although the guide is very detailed, it has not been the intention to cover all aspects of the framework. If more information is needed, \lang1033\f1 please\lang1040\f0  refer to the Symbol Reference.
+\par The guide is divided into \lang1033\f1 the \lang1040\f0 three parts \lang1033\f1 that\lang1040\f0  constitute almost any InstantObjects based development process.
 \par 
 \par }
 25
@@ -89,7 +89,7 @@ FALSE
 
 
 
-Testing
+Done
 
 
 
@@ -114,7 +114,7 @@ Installing InstantObjects
 
 
 
-Testing
+Done
 
 
 
@@ -124,7 +124,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs24 Installing \f1 InstantObjects\cf1\b0\fs16 
 \par \pard\sb25\tx1435\strike Group Topics\strike0\{linkID=25>nav\}\tab\strike Using InstantObjects\strike0\{linkID=20>main\}\f0  \f1\{keepn\} 
-\par \pard\f0\fs18 For installation information, please refer to the file Readme.txt provided with the InstantObjects archive, in the Docs folder. Installation consists mainly of compiling and installing the appropriate packages in the Delphi IDE. The Readme file helps you determining what packages you need and the correct installation order.
+\par \pard\f0\fs18 For installation information, please refer to the file Readme.txt provided in the Docs folder of the InstantObjects archive. Installation consists mainly of compiling and installing the appropriate packages in the Delphi IDE. The Readme file helps in determining the packages you need and their correct installation order.
 \par 
 \par }
 40
@@ -134,7 +134,7 @@ License Agreement
 
 
 
-Testing
+Done
 
 
 
@@ -146,7 +146,7 @@ FALSE
 \par \cf2\strike Using InstantObjects\cf3\strike0\{linkID=20>main\}\cf1\{keepn\}
 \par \pard\sb25\sa25\cf3\b\fs18\{bm\f1 l\f0  Powered by InstantObjects 150x38.gif\}
 \par \cf1 
-\par \b0\f1 InstantObjects' source files are released under the Mozilla Public License Version 1.1. \f0 You may obtain a copy of the License at\f1  http://www.mozilla.org/MPL/MPL-1.1.html.\f0 
+\par \b0\f1 InstantObjects source files are released under the Mozilla Public License Version 1.1. \f0 You may obtain a copy of the License at\f1  http://www.mozilla.org/MPL/MPL-1.1.html.\f0 
 \par 
 \par \cf4\strike\f2\fs20 www.instantobjects.org\cf3\strike0\{link=*! ExecFile("http://www.instantobjects.org")\}\cf1\f0\fs18 
 \par \b 
@@ -158,17 +158,17 @@ Creating the Business Model
 
 
 creatingbusinessmodel:000010
-Testing
+Done
 
 
 
 FALSE
 7
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Creating the Business Model\cf1\b0\fs16 
 \par \pard\sb25\tx1435\strike Group Topics\strike0\{linkID=60>nav\}\tab\strike Using InstantObjects\strike0\{linkID=20>main\}\cf0\b\fs24  \cf1\b0\fs16\{keepn\} 
-\par \pard\sb25\sa25\tx1435\fs18 Object Oriented applications are based on models. This section covers the initial steps in the creation of an InstantObjects based application, which is the definition of the business model. The InstantObjects Model Explorer is the central tool in this process.
+\par \pard\sb25\sa25\tx1435\fs18 Object Oriented applications are based on models. This section covers the definition of the business model, which is \lang1033\f1  \lang1040\f0 the initial step in the creation of an InstantObjects based application. The InstantObjects Model Explorer is the central tool in this process.
 \par 
 \par }
 60
@@ -178,7 +178,7 @@ FALSE
 
 
 
-Testing
+Done
 
 
 
@@ -203,24 +203,24 @@ The Model Explorer
 
 
 creatingbusinessmodel:000020
-Testing
+Done
 
 
 
 FALSE
 16
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fnil Arial;}{\f2\fnil\fcharset0 Arial;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}{\f3\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 The Model Explorer \cf1\b0\fs16 
 \par \strike Creating the Business Model\strike0\{link=327SA3P>main\}\{keepn\} 
-\par \pard\sb25\sa25\fs18 The first step in building an application with InstantObjects is to define the classes and relations that make up the business model. The business model is created in the Model Explorer, which can be opened via the View-menu in the Delphi IDE.
-\par \cf0\b\f1\fs22 The Model Explorer with \f2 "\f1 Inheritance\f2 "\f1  view of classes\cf2\b0\f0\fs18 
+\par \pard\sb25\sa25\fs18 The first step in building an application with InstantObjects is to define the classes and relations that make up the business model. The business model is created in the Model Explorer, which can be opened via the View\lang1033\f1  \lang1040\f0 menu in the Delphi IDE.
+\par \cf0\b\f2\fs22 The Model Explorer with \f3 "\f2 Inheritance\f3 "\f2  view of classes\cf2\b0\f0\fs18 
 \par \{bmc ModelExplorerInheritance.gif\}\cf1 
-\par \cf0\b\f1\fs22 
-\par The Model Explorer with \f2 "Relations"\f1  view of classes\cf2\b0\f0\fs18 
+\par \cf0\b\f2\fs22 
+\par The Model Explorer with \f3 "Relations"\f2  view of classes\cf2\b0\f0\fs18 
 \par \{bmc ModelExplorerRelations.gif\}\cf1 
 \par 
-\par \cf0\b\f2\fs22 Defining\f1  Model \f2 Units\f1 
+\par \cf0\b\f3\fs22 Defining\f2  Model \f3 Units\f2 
 \par \cf1\b0\f0\fs18 The classes of the business model can be placed in one or more units in the project. These units are referred to as model units. To specify a model unit, create an empty unit via the File|New option in the IDE and save it with an appropriate name. To add the unit to the business model, click the Select Units button on the toolbar of the Model Explorer. This will open a dialog showing all the units of the current project. The left side of the dialog shows the model units and the right side shows the other units included in the project. Use the buttons between the two lists to move one or more units from one side to the other. When you have selected your model unit(s), you are ready to add some classes to the business model.
 \par \cf2\{bmc ModelUnitSelector.gif\}\cf1 
 \par 
@@ -232,13 +232,13 @@ Defining Classes
 
 
 creatingbusinessmodel:000030
-Testing
+Done
 
 
 
 FALSE
 13
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Defining Classes \cf1\b0\fs16 
 \par \strike Creating the Business Model\strike0\{link=327SA3P>main\}\{keepn\} 
@@ -246,9 +246,9 @@ FALSE
 \par \cf2\{bmc ClassEditor.gif\}\cf1 
 \par On the first page of the Class Editor you can edit the general properties of the class. This is where you specify the name and base class, the model unit to hold the class and the persistence status of the class.
 \par The default base class of any business class is \strike TInstantObject\strike0\{linkID=7240>main\}, the class from which persistence capabilities are inherited. When classes are present in your model, you can choose any of these as the immediate base class instead. The unit in which the new class shall be placed can be selected from the list of available model units.
-\par The class can be defined as either persistent or embedded. Instances of persistent classes can be stored in and retrieved from the database. Instances of embedded classes can exist in the database only as part of another embedded or persistent object. If you want instances of a class to be retrievable or available by query, define the class persistent.
-\par \f1 Persistent classes are also required if you use the external storage option for collection attributes. A class used only for objects that are part of other objects should be defined as embedded if those objects use embedded (or classic) storage, and stored (persistent) if those objects use external storage.\f0 
-\par For persistent classes, a storage name can be specified. The storage name defines the table in which attributes of instances of the class are stored. By default, the storage name equals the class name without the preceding T. Change the storage name if you want the attributes stored in another table.
+\par The class can be defined as either persistent or embedded. Instances of persistent classes can be stored in and retrieved from the database. Instances of embedded classes can exist in the database only as part of another embedded or persistent object. If you want instances of a class to be retrievable or available by query, define the class\lang1033\f1  as\lang1040\f0  persistent.
+\par \f1 Persistent classes are also required if you use the external storage option for collection attributes. A class used only for objects that are part of other objects should be defined as embedded if the owning objects use embedded (or classic) storage for the attribute. If, however, the owning objects use external storage for the attribute, define the owned class with persistent storage.\f0 
+\par For persistent classes, a storage name can be specified. The storage name defines the table in which attributes of instances of the class are stored. By default, the storage name equals the class name without the preceding \lang1033\f1 '\lang1040\f0 T\lang1033\f1 '\lang1040\f0 . Change the storage name if you want the attributes stored \lang1033\f1 using\lang1040\f0  another table\lang1033\f1  name\lang1040\f0 .
 \par 
 \par }
 90
@@ -258,7 +258,7 @@ Defining Attributes
 
 
 creatingbusinessmodel:000040
-Testing
+Done
 
 
 
@@ -274,7 +274,7 @@ FALSE
 \par \pard\sb25\sa25\fs18 Right-click the list of introduced attributes and select New from the menu to add some attributes to the class. Attributes are created and edited with the Attribute Editor. The first page of the Attribute Editor contains the name, type and storage name of the attribute.
 \par \cf2\{bmc AttributeEditorDefinition.gif\}\cf1 
 \par The name of the attribute can be any valid Object Pascal identifier. The storage name specifies the storage table column in which attribute values are stored. By default, the storage name is the same as the attribute name.
-\par The type of the attribute can be selected from the list of all the types supported by InstantObjects. Some of the available types are known as simple types, others are known as relational types. The simple types generally have an Object Pascal equivalent simple type. The relational types are used to define relations from instances of the class to other objects. The relational types are; Reference, Part, References and Parts.
+\par The type of the attribute can be selected from the list of all the types supported by InstantObjects. Some of the available types are known as simple types, others are known as relational types. The simple types generally have an Object Pascal equivalent simple type. The relational types are used to define relations from instances of the class to other objects. The relational types are\lang1033\f2 :\lang1040\f0  Reference, Part, References and Parts.
 \par 
 \par \b Reference\b0 
 \par Reference is the simplest object relation supported by InstantObjects. A reference defines a unidirectional relation from one object to another. The object referred to lives outside the referring object and knows nothing about the relation itself.
@@ -291,25 +291,25 @@ FALSE
 \par \b Parts\f2 
 \par \b0\f0 Parts is the one-to-many counterpart of the equivalent one-to-one relation type, Part. A Parts relation can refer to any number of objects that are all considered to be part of the referring object.
 \par See \strike TInstantParts\strike0\{linkID=9240>main\} for more information.
-\par Parts and References are known as container attributes. When defining an attribute of one of these types, a corresponding array property and optional methods to access the container attribute is added to the class. For any of the relational types, the class of the related object(s) must be specified as the Object Class of the attribute.
+\par Parts and References are known as container attributes. When defining an attribute of one of these types, a corresponding array property and optional methods to access the container attribute \lang1033\f2 are\lang1040\f0  added to the class. For any of the relational types, the class of the related object(s) must be specified as the Object Class of the attribute.
 \par 
-\par \f2 For \i "External Storage support"\i0  of Part, Parts and References attribute, refer to \cf3\strike External Storage of attributes\cf2\strike0\{linkID=100\}\cf1 .
+\par \f2 For \i "External Storage support"\i0  of the Part, Parts and References attribute, refer to \cf3\strike External Storage of Attributes\cf2\strike0\{linkID=100\}\cf1 .
 \par \f0 
 \par \cf0\ul\b\f1\fs20 Attribute Visibility and Accessibility\b0 
 \par \cf1\ulnone\f0\fs18 On the next page of the Attribute Editor you specify how the attribute can be accessed. 
 \par \cf2\{bmc AttributeEditorAccess.gif\}\cf1 
-\par For every attribute a corresponding property is added to the class by which the value of the attribute can be accessed. The visibility scope of this property can be set on this page. For container attributes, methods to manipulate the content of the attribute can be selected here as well. Those methods will be created with the same visibility scope as the property. In addition to the array property created to access objects contained in container attributes, a count property reflecting the number of objects in the container will be added too.
+\par For every attribute a corresponding property is added to the class by which the value of the attribute can be accessed. The visibility scope of this property can be set on this page. For container attributes, methods to manipulate the content of the attribute can be selected here as well. Th\lang1033\f2 e selected\lang1040\f0  methods will be created with the same visibility scope as the property. In addition to the array property created to access objects contained in container attributes, a count property reflecting the number of objects in the container will\lang1033\f2  also\lang1040\f0  be added.
 \par For some of the simple attribute types, settings regarding the presentation of the attribute can be specified on the last page of the Attribute Editor. An edit mask to be used when editing the value of the attribute can be specified in Mask. The characters that are accepted during input when editing the attribute value can be specified in Valid Characters.
 \par 
 \par }
 100
 Scribble100
-External Storage of attributes
+External Storage of Attributes
 External Storage of Attributes
 
 
 creatingbusinessmodel:000060
-Testing
+Done
 
 
 
@@ -317,7 +317,7 @@ FALSE
 37
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fswiss Arial;}{\f2\fnil\fcharset0 Courier New;}{\f3\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs24 External Storage of attributes\cf1\b0\f1\fs16 
+\viewkind4\uc1\pard\b\f0\fs24 External Storage of Attributes\cf1\b0\f1\fs16 
 \par \pard\sb25\sa25\strike Creating the Business Model\strike0\{link=327SA3P>main\}\{keepn\} \f0\fs18 
 \par \f1 Historically, IO stores part, parts and references attributes of a class as binary blob fields in the source table. This has caused a number of shortcomings and issues, namely:
 \par a) inability to fully query the database from a SQL-enabled (non-IO) interface;
@@ -326,8 +326,8 @@ FALSE
 \par d) poor retrieve performance due to missing implementation of load-on-demand feature for part, parts and references attributes\f0 .\f1 
 \par \fs16 (*) note that to "corrupt" such a blob it suffices to delete a referenced object; the referencing objects can then no longer be loaded; if the referencing attribute is a "reference" attribute\f0 , then\f1  the fix is easy; if it's a "references" attribute it requires editing the binary blob.
 \par 
-\par \fs18 The addition of the XML option for blobs somehow relieved item c), at the cost of bigger blobs \f0 which made for \f1 even poorer performance.
-\par External storage in IO means the ability to say that a particular part, parts or reference\f0 s\f1  attribute should be mapped outside of the source class' table, that is in an additional ad-hoc intermediate table. In the case of part attributes, the intermediate table is not even needed because the relationship among the owner and the part is 1:1.
+\par \fs18 The addition of the XML option for blobs some\lang1033\f0 what\lang1040\f1  relieved item c), at the cost of bigger blobs \f0 which made for \f1 even poorer performance.
+\par External storage in IO \lang1033\f0 enables\lang1040\f1  the ability to \lang1033\f0 specify that\lang1040\f1  a particular part, parts or reference\f0 s\f1  attribute should be mapped outside of the source class' table\lang1033\f0 ;\lang1040\f1  that is in an additional ad-hoc intermediate table. In the case of part attributes, the intermediate table is not needed because the relationship \lang1033\f0 between\lang1040\f1  the owner and the part is 1:1.
 \par 
 \par \ul\b How to use external storage
 \par \ulnone\b0 Here is a snippet from an example class definition with external attributes:
@@ -337,19 +337,19 @@ FALSE
 \par     TestParts: Parts(TTest) external 'Test2_TestParts';
 \par     TestRef: Reference(TTest);
 \par     TestRefs: References(TTest) external 'Test2_TestRefs'; \}
-\par \f1 The TestPart attribute is an external part attribute, which means that it leads to a mapping very similar to TestRef: instead of having a blob field called TestPart, the Test2 table has a couple TestPartId/TestPartClass, and the actual object is stored in its own Test table.
+\par \f1 The TestPart attribute is an external part attribute, which means that it leads to a mapping very similar to TestRef\lang1033\f0 .\lang1040\f1  \lang1033\f0 I\lang1040\f1 nstead of having a blob field called TestPart, the Test2 table has \lang1033\f0 two reference fields,\lang1040\f1  TestPartId\lang1033\f0  and \lang1040\f1 TestPartClass, and the actual object\lang1033\f0  attributes\lang1040\f1  \lang1033\f0 are\lang1040\f1  stored\lang1033\f0  as a record\lang1040\f1  in its own Test table.
 \par \f0 You can opt for External storage in the Attribute Editor, by setting Storage Kind to the value \i "External"\i0 .\f1 
 \par \cf2\{bmc AttributeEditorDefinitionExternal.gif\}\cf1 
 \par 
-\par PLEASE NOTE that all classes involved in external storage must have the "stored" specification\f0  (in other words, they should be persistent classes)\f1 . "embedded" classes are only useful for "embedded" (the historical arrangement) part and parts attributes.
+\par PLEASE NOTE that all classes involved in external storage must have the "stored" specification\f0  (in other words, they must be persistent classes)\f1 . "embedded" classes \lang1033\f0 may only be used \lang1040\f1 for "embedded" (the historical arrangement) part and parts attributes.
 \par 
 \par The TestParts attribute leads to the creation of an intermediate table called Test2_TestParts which has relationships with both Test2 and Test:
 \par Test2 --1:N--> Test2_TestParts --1:1--> Test.
 \par This intermediate table has fields to hold information about the relationships and the sequence of elements in the source class' collection attribute.
 \par 
-\par The mapping of the TestRefs attribute is very similar; the only difference is that the parts attribute's target object is deleted when the source object is deleted; this of course does not happen with references attributes.
+\par The mapping of the TestRefs attribute is very similar\lang1033\f0 .\lang1040\f1  \lang1033\f0 T\lang1040\f1 he only difference is that the parts attribute's \lang1033\f0 table record\lang1040\f1  is deleted when the source \lang1033\f0 table record\lang1040\f1  is deleted\lang1033\f0 .\lang1040\f1  \lang1033\f0 T\lang1040\f1 his of course does not happen with references attributes.
 \par 
-\par At design time, you can select the "external" specification in the Attribute Editor. The "Storage Kind" combo-box allows to choose between Embedded (the classic model) and External (the new model). For Part attributes, that (in addition to defining the target class "stored" and not "embedded") is enough. For Parts and References you also need to type the External Storage Name, that is the name the intermediate table will have. Personally I use the "<source table name>_<attribute name>" convention, but everyone is of course free to choose a different naming scheme.
+\par At design time, you can select the "external" specification in the Attribute Editor. The "Storage Kind" combo-box allows to choose between Embedded (the classic model) and External (the new model). For Part attributes that (in addition to defining the target class "stored" and not "embedded") is enough. For Parts and References you also need to type the External Storage Name, that is the name the intermediate table will have. \lang1033\f0 One naming \lang1040\f1 convention\lang1033\f0 , suggested as the default, is to \lang1040\f1 use "<source table name>_<attribute name>", but\lang1033\f0 ,\lang1040\f1  of course\lang1033\f0 , any other suitable\lang1040\f1  naming scheme\lang1033\f0  may be used\lang1040\f1 .
 \par \pard\cf0\f3\fs20 
 \par }
 110
@@ -379,7 +379,7 @@ Adding Business Rules, Example 1
 
 
 
-Testing
+Done
 
 
 
@@ -389,7 +389,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs26 Example 1\b0\fs20 
 \par \cf1\strike\f1\fs16 Adding Business Rules\strike0\f2\{link=327SA3V>main\}\{keepn\} \cf0\f0\fs20 
-\par \f3 In InstantObject you usually apply single-attribute business rules in the attribute's property setter method:
+\par \f3 In InstantObjects you usually apply single-attribute business rules in the attribute's property setter method:
 \par 
 \par \b\f4 procedure\b0  TAddress.SetPostalCode(\b const \b0 Value: \b string\b0 );
 \par \b begin\b0 
@@ -415,7 +415,7 @@ FALSE
 \par   MaxShipDate := 0;    
 \par \b end\b0 ;
 \par \f3 
-\par The intent of this code is to reset MaxShipDate whenever MinShipDate changes, so that a user, in a hypothetical data-entry scenario, will have to re-enter a value for MaxShipDate. But things might not work always as expected; for example, SetMinShipDate might be called after SetMaxShipDate when streaming in an object from a XML file, of when using the "undo" feature of the data-aware presentation layer. The lesson here is: use the property setters and the BeforeStore method only to appy real business rules (like "MaxShipDate must be equal to or greater than MinShipDate"), and code data-entry rules (like "whenever a value for MinShipDate is entered, MaxShipDate should be reset") at the data-entry level (that is, not in the model classes).
+\par The intent of this code is to reset MaxShipDate whenever MinShipDate changes, so that a user, in a hypothetical data-entry scenario, will have to re-enter a value for MaxShipDate. But things might not work always as expected. For example, SetMinShipDate might be called after SetMaxShipDate when streaming in an object from a XML file. The lesson here is: use the property setters and the BeforeStore method only to appy real business rules (like "MaxShipDate must be equal to or greater than MinShipDate"), and code data-entry rules (like "whenever a value for MinShipDate is entered, MaxShipDate should be reset") at the data-entry level (that is, not in the model classes).
 \par 
 \par }
 130
@@ -425,12 +425,12 @@ Adding Business Rules, Example 2
 
 
 
-Testing
+Done
 
 
 
 FALSE
-23
+30
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fswiss Arial;}{\f3\fnil\fcharset0 Arial;}{\f4\fnil\fcharset0 Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs26 Example 2\b0\fs20 
@@ -444,13 +444,20 @@ FALSE
 \par   \b inherited\b0 ;
 \par \b end\b0 ;
 \par \f0 
-\par \f3 You initialize an object by overriding Initialize (if you need to apply initialization code both when a new object is created and when it is retrieved from the storage), or AfterCreate (if you need to apply initialization code for newly created objects only). There is also an AfterRetrieve method that you can override to apply initialization code only when an existing object read from the storage and materialized in memory. Here is an example of AfterCreate:
+\par \f3 You initialize an object by overriding Initialize (if you need to apply initialization code both when a new object is created and when it is retrieved from the storage), or AfterCreate (if you need to apply initialization code for newly created objects only). There is also an AfterRetrieve method that you can override to apply initialization code only when an existing object is read from the storage and materialized in memory. Here is an example of AfterCreate:
 \par \f0 
 \par \b\f4 procedure \b0 TContact.AfterCreate;
+\par \b var
+\par \b0   vCategory: TCategory;
 \par \b begin\b0 
 \par   \b inherited\b0 ;
 \par   Id := InstantGenerateId;
-\par   Category := TCategory.Retrieve(\i 'CAT000'\i0 );
+\par   vCategory := TCategory.Retrieve(\i 'CAT000'\i0 );
+\par   \b try\b0 
+\par     Category := vCategory;
+\par   \b finally\b0 
+\par     vCategory.Free;
+\par   \b end\b0 ;
 \par \b end\b0 ;
 \par \f3 
 \par }
@@ -461,30 +468,34 @@ Building/Evolving the Business Model
 
 
 creatingbusinessmodel:000070
-Testing
+Done
 
 
 
 FALSE
-21
+25
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 Building/Evolving the Business Model \b0\fs16 
 \par \strike Creating the Business Model\strike0\{link=327SA3P>main\}\{keepn\} 
-\par \pard\sb25\sa25\fs18 The final step in the modeling phase is to make the model physical in terms of storage for the objects. The required tables and indices have to be created from the business model. InstantObjects allows you to use various types of databases as storage for your persistent objects\f1 , using different brokers.\f0 
+\par \pard\sb25\sa25\fs18 The final step in the modeling phase is to make the model physical in terms of storage for the objects. The required tables and indices have to be created from the business model. InstantObjects allows you to use various types of databases as storage for your persistent objects\lang1033\f1  by\lang1040  using different brokers.
+\par \f0 
 \par The Connection Manager, which is available on the toolbar of the Model Explorer, helps you \f1 define, \f0 create \f1 and evolve \f0 your database. 
-\par \cf2\f1\{bmc ConnectionManager.gif\}\cf1\ul\b 
+\par \cf2\f1\{bmc ConnectionManager.gif\}
+\par \cf1\ul\b 
 \par Defining a Broker/Connection\ulnone\b0\f0 
-\par The first step in preparing the database is to \f1 define\f0  a connect\f1 or\f0  \f1 using a specific broker to estabilish a connection \f0 to the database.\f1 
-\par Select New in the context menu and the preferred Broker. A specific ConnectionDef Editor appears.\f0 
+\par The first step in preparing the database is to \f1 define\f0  a connect\f1 or\f0  \f1 using a specific broker to establish a connection \f0 to the database.\f1 
+\par Click the right mouse button over the \f0 Connection Manager\lang1033\f1  dialog and s\lang1040 elect New in the pop-up context menu. Choose the preferred Broker and its ConnectionDef Editor appears.\f0 
 \par \cf2\{bmc ConnectionDefEditor.gif\}\cf1 
-\par \f1 Define the connection properties and store the connection definition.\f0 
+\par \f1 Define the connection properties and store the connection definition.
+\par \f0 
 \par \ul\b\f1 Building a Model into a database\ulnone\b0\f0 
-\par \f1 Select the Broker/Connection you want to use to Build your database and press the "Build" button. A "Database Builder" window appears. You can see the building steps and run the building process. \b Be careful: all data will be lost!\b0 
-\par \cf2\{bml DatabaseBuilder.gif\}\cf1 
+\par \f1 Select the Broker/Connection you want to use to Build your database and press the "Build" button. A "Database Builder" window appears. You can see the building steps and run the building process. \b Be careful: all current data will be lost during the build!\b0 
+\par \cf2\{bml DatabaseBuilder.gif\}
+\par \cf1 
 \par \ul\b Evolving an existing database\ulnone\b0\f0 
-\par \f1 If you build the database, put some data in it and later you change the model, you need to "evolve" the database. Unlike the Build procedure, which will basically destroy and recreate all database objects, the Evolution process will try to save the data. The effectiveness of the Evolution procedure depends on the features of the particular kind of database you are using. For example, if your SQL database server allows you to alter the size of a column with a SQL/DDL statement, then InstantObjects will be able to do it, otherwise it won't. There are plans to improve the evolution process so that it overcomes the limitations of the database. In our example, IO's database evolver could add a new temporary column, copy the old data into it, then drop the old column, recreate it and pump the data back, finally dropping the temporary column.
-\par To evolve an existing database, select the Broker/Connection you want to use and press the "Evolve" button. A "Database Evolver" window similar to the "Database Builder" window appears. You can see the evolution steps needed to upgrade the database structure, selectively disable some of them (useful in special cases) and apply them to the database. \b In this case no data is lost.
+\par \f1 If you build the database, put some data in it and later change the model, you need to "evolve" the database. Unlike the Build procedure, which will destroy and recreate all database tables, the Evolution process will try to save the data. The effectiveness of the Evolution procedure depends on the features of the particular kind of database you are using. For example, if your SQL database server allows you to alter the size of a column with a SQL/DDL statement, then InstantObjects will attempt to do it, otherwise it won't. There are plans to improve the evolution process so that it overcomes the limitations of the database. In our example, IO's database evolver could add a new temporary column, copy the old data into it, then drop the old column, recreate it and pump the data back, finally dropping the temporary column.
+\par To evolve an existing database, select the Broker/Connection you want to use and press the "Evolve" button. A "Database Evolver" window similar to the "Database Builder" window will appear. In the list you can see the evolution steps needed to upgrade the database structure. You may selectively disable some of them (useful in special cases) and apply them to the database. \b In this case no data is lost.
 \par 
 \par \b0\f0 
 \par }
@@ -495,7 +506,7 @@ Creating the User Interface
 
 
 creatinguserinterface:000010
-Testing
+Done
 
 
 
@@ -515,7 +526,7 @@ FALSE
 
 
 
-Testing
+Done
 
 
 
@@ -539,7 +550,7 @@ Persistence by RAD
 
 
 creatinguserinterface:000020
-Testing
+Done
 
 
 
@@ -561,7 +572,7 @@ The Connector
 
 
 creatinguserinterface:000030
-Testing
+Done
 
 
 
@@ -571,7 +582,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 The Connector \cf1\b0\fs16 
 \par \strike Creating the User Interface\strike0\{link=75DE_G4>main\}\{keepn\} 
-\par \pard\sb25\sa25\fs18 In order for your application to use the database as object storage, you must use a connector component. The connector acts as a gateway between your application and the database\f1  (by means of an internal component called the broker)\f0 , managing all the objects that are stored to and retrieved from the database. A connector component for each type of data access layer that is supported by InstantObjects is available on the component palette. A connector is attached to a database by assigning a connection component to its Connection \f1 (or equivalent) \f0 property. Each connector component supports its own connection type\f1 . For example:\f0 
+\par \pard\sb25\sa25\fs18 In order for your application to use the database \lang1033\f1 for\lang1040\f0  object storage, you must use a connector component. The connector acts as a gateway between your application and the database\f1  (by means of an internal component called the broker) and \f0 manag\lang1033\f1 es\lang1040\f0  all the objects that are stored to and retrieved from the database. A connector component for each type of data access layer that \lang1033\f1 has been installed from\lang1040\f0  InstantObjects is available on the component palette. A connector is attached to a database by assigning a connection component to its Connection \f1 (or equivalent) \f0 property. Each connector component supports its own connection type\f1 . For example:\f0 
 \par 
 \par \pard\sb25\sa25\tx1980\tx4800\b Access type\tab Connector type\tab\f1 Type of \f0 Connection\b0 
 \par ADO\tab\cf2\strike TInstantADOConnector\cf1\strike0\{linkID=1910>main\}\tab TADOConnection
@@ -580,11 +591,11 @@ FALSE
 \par \f1 D\f0 BX\tab\cf0 TInstant\f1 D\f0 BXConnector\cf1\tab TSQLConnection
 \par \f1 XML\tab\cf0\f0 TInstantX\f1 ML\f0 Connector\cf1\tab TXMLFilesAccessor
 \par \pard 
-\par \f1 InstantObjects supports a variety of databases and data-access technologies (for example NexusDB, ZeosDBO, Unified InterBase...) by means of packages called brokers. You can build and install the broker(s) you need from the Brokers sub-folder of InstantObjects's Source folder.
+\par \f1 InstantObjects supports a variety of databases and data-access technologies (for example NexusDB, ZeosDBO, Unified InterBase...) by means of packages called Brokers. You can build and install the broker(s) you need from the Brokers sub-folder of InstantObjects's Source folder.
 \par \f0 
 \par Drop an appropriate connector component and a matching connection component on a form or a data module in your project. Configure the connection component to access the database and assign it to the Connection \f1 (or equivalent) \f0 property of the connector component. The connector will use the connection to gain access to the database. By setting the IsDefault property to True, the connector will be used as the default connector in the application.
 \par 
-\par \f1 You can also use TInstantConnectionManager, which stores connection data in external files and can create connectors and connections automatically based on this data. This is particularly useful when you don't want to hardcode a particular broker or set of brokers into your program. See the Primer demo application for an example of this technique.
+\par \f1 You can also use a TInstantConnectionManager component that stores connection data in external files and can create connectors and connections automatically based on this data. This is particularly useful when you don't want to hardcode a particular broker or set of brokers into your program. See the Primer demo application for an example of this technique.
 \par \f0 
 \par }
 190
@@ -594,22 +605,22 @@ The Exposer
 
 
 creatinguserinterface:000040
-Testing
+Done
 
 
 
 FALSE
 13
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 The Exposer \b0\fs16 
 \par \strike Creating the User Interface\strike0\{link=75DE_G4>main\}\{keepn\} 
 \par \pard\sb25\sa25\strike\fs18 TInstantExposer\strike0\{linkID=6300>main\} is a dataset component that maps objects to the user interface of your application.
 \par Attributes defined in the business model are accessed through properties. Properties that are published can be accessed by data-aware controls via this component. In addition, the content of container attributes can be accessed too. The exposer component maps the published properties of objects to fields in a dataset. The objects being exposed are represented as rows in the dataset.
-\par To expose an object, it must be assigned to the Subject property of a \strike TInstantExposer\strike0\{linkID=6300>main\}. To expose multiple objects contained within another object, assign the main object to the Subject property and enter content mode by changing the Mode property from amObject to amContent. If the exposed class has no default container, specify the desired container in the property ContainerName. Specify the class of the exposed object(s) in the property ObjectClassName.
+\par To expose an object, it must be assigned to the Subject property of a \strike TInstantExposer\strike0\{linkID=6300>main\}. To expose multiple objects contained within another object, assign the main object to the Subject property and enter content mode by changing the Mode property from amObject to amContent. If the exposed class has no default container, specify the desired container in the property ContainerName. Specify the class of the exposed\lang1033\f1 , contained\lang1040\f0  object(s) in the property ObjectClassName.
 \par By default, an exposer will make all simple properties of each exposed object as well as any related object available through fields in the dataset. Every field will have a \f1 F\f0 ield\f1 N\f0 ame matching the property it represents. For related objects, the fieldname will be the complete path to the property using regular dot notation. The property FieldOptions and the event OnIncludeField allow you to limit or extend the number fields to include.
 \par Container attributes of exposed objects are automatically recognized by the exposer and represented as nested datasets within the exposer.
-\par Exposers can be linked together in master/detail relation\f1 ships\f0 . To link one exposer to another, assign the master exposer to the DataSet property of a TDataSource and assign the TDataSource to the MasterSource property of the detail exposer. The Subject of the detail exposer will be set to the current object of the master exposer, whenever this changes. If you want the detail exposer to expose an object that is related to the current object of the master exposer instead, simply specify the desired property path in MasterProperty.
+\par Exposers can be linked together in master/detail relation\f1 ships\f0 . To link one exposer to another, assign the master exposer to the DataSet property of a TDataSource and assign the TDataSource to the MasterSource property of the detail exposer. The Subject of the detail exposer will be set to the current object of the master exposer\lang1033\f1  and updated\lang1040\f0  whenever this changes. If you want the detail exposer to expose an object that is related to the current object of the master exposer instead, simply specify the desired property path in MasterProperty.
 \par \strike TInstantExposer\strike0\{linkID=6300>main\} is not limited to exposing \strike TInstantObject\strike0\{linkID=7240>main\} descendants. Any object with published propertied can be exposed. The content of standard VCL containers like TList, TObjectList and TCollection can be exposed in content mode.
 \par 
 \par }
@@ -620,7 +631,7 @@ The Selector
 
 
 creatinguserinterface:000050
-Testing
+Done
 
 
 
@@ -631,7 +642,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 The Selector \cf1\b0\fs16 
 \par \strike Creating the User Interface\strike0\{link=75DE_G4>main\}\{keepn\} 
 \par \pard\sb25\sa25\fs18 The \strike TInstantSelector\strike0\{linkID=10050>main\} component allows you to select objects from the database and optionally expose them in the user interface.
-\par To select objects from the database, a command must be specified with the Command property. The syntax of this command\f1  (called an IQL command, from Instant Query Language) \f0  is somewhat similar to an SQL SELECT-statement\f1 , \f0 but instead of tables and columns, you specify classes and attributes:
+\par To select objects from the database, a command must be specified \lang1033\f1 in\lang1040\f0  the Command property. The syntax of this command\f1  (called an IQL command, from Instant Query Language) \f0  is somewhat similar to an SQL SELECT-statement\f1 , \f0 but instead of tables and columns, you specify classes and attributes:
 \par \pard\keep\f2 
 \par SELECT [DISTINCT] *|<Attribute>
 \par FROM [ANY] <Class>
@@ -870,7 +881,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Associating Objects \cf1\b0\fs16\{keepn\} 
 \par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=290>example\}\tab\strike Programming with Persistent Objects\strike0\{linkID=210>main\}
 \par \pard\sb25\sa25\tx1435\fs18 Persistent object relations defined by relational attributes in the business model can be accessed just as easy as any other attribute. Single object relations defined by Part and Reference attributes are accessed through the corresponding object property of the class. Multiple object references defined by Parts and References are accessed through the corresponding array property and the container methods defined for the attribute.
-\par The following code defines a class containing the various relation types. The procedure CreateSamplePerson creates a TPerson object with a sample name and address, associates it with a company and adds some phones and colleagues to it. The procedures ShowPhones and ShowColleagues shows a message with the caption of each of the corresponding objects associated with the person. The code assumes that a default connector has been created.
+\par The following code defines a class containing the various relation types. The procedure CreateSamplePerson creates a TPerson object with a sample name and address, associates it with a company and adds some phones and colleagues to it. The procedures ShowPhones and ShowFriends shows a message with the caption of each of the corresponding objects associated with the person. The code assumes that a default connector has been created.
 \par 
 \par }
 290
@@ -880,7 +891,7 @@ Associating Objects, Example 1
 
 
 
-Testing
+Done
 
 
 
@@ -1009,12 +1020,12 @@ FALSE
 \par }
 300
 Scribble300
-Using the InstantQuery
+Using an InstantQuery
 
 
 
 
-Testing
+Done
 
 
 
@@ -1022,11 +1033,11 @@ FALSE
 8
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\cf1\b\f0\fs24 Using the InstantQuery\b0\fs16 
+\viewkind4\uc1\pard\cf1\b\f0\fs24 Using an InstantQuery\b0\fs16 
 \par \strike Example 1\strike0\{linkID=310>example\}\tab\strike Programming with Persistent Objects\strike0\{linkID=210>main\}\cf2\{keepn\}\cf1 
-\par \cf0\f1\fs18 TInstantQuery is not available in Delphi's Component or Tool Palette, but it is useful to fetch a list of objects from the storage through an IQL query. TInstantQuery basically represents the core of \cf1  \strike\f0 TInstantSelector\strike0\{linkID=10050>main\}\f1 .
-\par The advantage in using TInstantQuery directly lies in the lower overhead, as there is no TDataSet buffer managerment involved. So, if you want to fetch objects and don't have a data-aware presentation layer, TInstantQuery is the preferred way to go.
-\par TInstantQuery is an abstract class. What you actually use are concrete descendant classes, which you instantiate through the connector's CreateQuery method.\f2 
+\par \cf0\f1\fs18 TInstantQuery is not available in Delphi's Component or Tool Palette, but it is useful to fetch a list of objects from the storage through an IQL statement. TInstantQuery basically represents the core of \cf1  \strike\f0 TInstantSelector\strike0\{linkID=10050>main\}\f1 .
+\par 
+\par TInstantQuery is an abstract class. What you actually use are concrete descendant classes, which you instantiate through the connector's CreateQuery method. The advantage in using a TInstantQuery descendant lies directly in the lower overhead, as there is no TDataSet buffer management involved. So, if you want to fetch objects and don't have a data-aware presentation layer, TInstantQuery is the preferred way to do it. \f2 
 \par }
 310
 Scribble310
@@ -1035,7 +1046,7 @@ Using the InstantQuery, Example 1
 
 
 
-Testing
+Done
 
 
 
