@@ -32,7 +32,6 @@ package DclIOXML;
 requires
   vcl,
   rtl,
-  dbrtl,
   IOXML,
   vclx;
 

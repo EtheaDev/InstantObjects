@@ -32,9 +32,8 @@ package DclIOXML;
 requires
   vcl,
   rtl,
-  dbrtl,
-  IOXML,
-  vclx;
+  vclx,
+  IOXML;
 
 contains
   InstantXMLReg in '..\InstantXMLReg.pas';
