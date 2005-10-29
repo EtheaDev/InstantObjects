@@ -1,4 +1,4 @@
-INSTALLING INSTANTOBJECTS USING BORLAND PROGRAM GROUPS
+INSTALLING INSTANTOBJECTS USING BORLAND PROJECT GROUPS
 ------------------------------------------------------
 29 October 2005 - Carlo Barazzetta
 
@@ -6,13 +6,13 @@ This tutorial is for newbie developers that want to install InstantObjects in a 
 
 If you want a complete explanation of InstantObjects structure, please refer to the installation section of \Doc\Readme.txt file.
 
-If you want a quick installation process to evaluate InstantObjects, you can use the two "standard" bpg projects in the folder for your Delphi/Kylix version under this Install folder.
+If you want a quick installation process to evaluate InstantObjects, you can use the two "standard" "borland project group" in the folder for your Delphi/Kylix version under this Install folder.
 
 For every Delphi version you can find:
-- RunTimePackages.bpg to Build all of the "standard" run-time packages.
+- RunTimePackages to Build all of the "standard" run-time packages.
   - Open it and "BuildAll" projects.
 
-- DesignTimePackages.bpg to Build/Install all of the "standard" design-time packages.
+- DesignTimePackages to Build/Install all of the "standard" design-time packages.
   - Open it and "Install" each package included.
 
 "Standard" packages means that you can compile it with components included in a standard Delphi installation. If you want to know how to install other brokers to use third party data access components and technologies, please refer to the installation section of \Doc\Readme.txt file.

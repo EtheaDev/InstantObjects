@@ -183,6 +183,7 @@ resourcestring
   SDatabaseBuilt = 'Database was built successfully';
   SDeleteConnectionConfirmation = 'Delete connection "%s"?';
   SConnectionName = 'Connection Name';
+  SUnassignedOnConnectError = 'Unassigned OnConnect event of InstantConnectionManager';
   
 implementation
 
