@@ -23,17 +23,16 @@ package IOXML;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects XML Run-Time Support (Delphi 2005)'}
-{$LIBSUFFIX '_D9'}
+{$DESCRIPTION 'InstantObjects XML Run-Time Support (Delphi 2006)'}
+{$LIBSUFFIX '_D10'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
   vcl,
   rtl,
-  dbrtl,
-  IOCore,
-  vclx;
+  vclx,
+  IOCore;
 
 contains
   InstantXMLCatalog in '..\InstantXMLCatalog.pas',

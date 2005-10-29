@@ -31,9 +31,8 @@ package IOXML;
 requires
   vcl,
   rtl,
-  dbrtl,
-  IOCore,
-  vclx;
+  vclx,
+  IOCore;
 
 contains
   InstantXMLCatalog in '..\InstantXMLCatalog.pas',
