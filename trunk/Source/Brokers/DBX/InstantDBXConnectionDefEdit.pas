@@ -237,10 +237,14 @@ begin
 end;
 
 procedure TInstantDBXConnectionDefEditForm.UpdateParams;
+var
+  i: integer;
 begin
   Connection.ConnectionName := ConnectionName;
   Connection.LoadParamsFromIniFile;
-  ParamsEditor.Lines := Connection.Params;
+  ParamsEditor.Lines.Clear;
+  for i := 0 to Connection.Params.Count -1 do
+    ParamsEditor.Lines.add (Connection.Params[i]);
 end;
 
 end.
