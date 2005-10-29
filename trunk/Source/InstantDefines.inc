@@ -25,6 +25,15 @@
   {$DEFINE D9+}
 {$ENDIF}
 
+{$IFDEF VER180}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10}
+  {$DEFINE D10+}
+{$ENDIF}
+
 {$IFDEF FPC}
   {$DEFINE D5+}
   {$DEFINE D6+}

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+  <PersonalityInfo>
+    <Option>
+      <Option Name="Personality">Default.Personality</Option>
+      <Option Name="ProjectType"></Option>
+      <Option Name="Version">1.0</Option>
+      <Option Name="GUID">{9D2F7B27-7598-419D-BC5F-96591A910DEF}</Option>
+    </Option>
+  </PersonalityInfo>
+  <Default.Personality>
+    
+    <Projects>
+      <Projects Name="IOCore_D9.bpl">..\..\Core\D2005\IOCore.bdsproj</Projects>
+      <Projects Name="IOMSSqlCatalog_D9.bpl">..\..\Catalogs\MSSql\D2005\IOMSSqlCatalog.bdsproj</Projects>
+      <Projects Name="IOIBFbCatalog_D9.bpl">..\..\Catalogs\IBFb\D2005\IOIBFbCatalog.bdsproj</Projects>
+      <Projects Name="IOADO_D9.bpl">..\..\Brokers\ADO\D2005\IOADO.bdsproj</Projects>
+      <Projects Name="IOBDE_D9.bpl">..\..\Brokers\BDE\D2005\IOBDE.bdsproj</Projects>
+      <Projects Name="IODBX_D9.bpl">..\..\Brokers\DBX\D2005\IODBX.bdsproj</Projects>
+      <Projects Name="IOIBX_D9.bpl">..\..\Brokers\IBX\D2005\IOIBX.bdsproj</Projects>
+      <Projects Name="IOXML_D9.bpl">..\..\Brokers\XML\D2005\IOXML.bdsproj</Projects>
+      <Projects Name="Targets">IOCore_D9.bpl IOMSSqlCatalog_D9.bpl IOIBFbCatalog_D9.bpl IOADO_D9.bpl IOBDE_D9.bpl IODBX_D9.bpl IOIBX_D9.bpl IOXML_D9.bpl</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>
