@@ -1,6 +1,6 @@
 HelpScribble project file.
 13
-`grira Zvgpuryy-0Q4954
+PvOv`bsg.pbz-16O773
 0
 1
 InstantObjects Guide 2.0
@@ -9,7 +9,7 @@ InstantObjects Guide 2.0
 
 TRUE
 0x0409   English (U.S.)
-D:\L\InstantObjects\Help
+D:\SELEQT\InstantObjectsCVS\Help
 1
 BrowseButtons()
 0
@@ -49,9 +49,9 @@ Done
 
 
 FALSE
-11
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
+13
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Courier New;}{\f3\fnil Courier New;}}
+{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;\red0\green0\blue255;}
 \viewkind4\uc1\pard\sb25\sa25\cf1\lang1040\b\f0\fs24 InstantObjects Guide\f1  2.0\cf2\{keepn\}\cf1\f0 
 \par \b0\fs18 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi.
 \par 
@@ -59,7 +59,9 @@ FALSE
 \par 
 \par Even though it is still a bolted\lang1033\f1 -\lang1040\f0 on technology, InstantObjects integrates with the Delphi IDE and Object Pascal in a simple, flexible and intuitive manner. There are no sophisticated environments that have to be comprehended before application development can begin.
 \par 
-\par \cf2\{bmc instantobjects_logo.gif\}\cf1 
+\par \f1 You can find more information about this Open-Source project at:  \cf3\strike\f2\fs20 www.instantobjects.org\cf2\strike0\f3\{link=*! ExecFile("http://www.instantobjects.org/")\}\cf1\f0\fs18 
+\par \cf2 
+\par \{bmc instantobjects_logo.gif\}\cf1 
 \par }
 20
 75DE_G6
@@ -114,17 +116,33 @@ Installing InstantObjects
 
 
 
-Done
+Testing
 
 
 
 FALSE
-7
+23
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs24 Installing \f1 InstantObjects\cf1\b0\fs16 
 \par \pard\sb25\tx1435\strike Group Topics\strike0\{linkID=25>nav\}\tab\strike Using InstantObjects\strike0\{linkID=20>main\}\f0  \f1\{keepn\} 
-\par \pard\f0\fs18 For installation information, please refer to the file Readme.txt provided in the Docs folder of the InstantObjects archive. Installation consists mainly of compiling and installing the appropriate packages in the Delphi IDE. The Readme file helps in determining the packages you need and their correct installation order.
+\par \f0\fs18 
+\par To cover the needs of most developers, we offer two different approaches to install InstantObjects.
+\par 
+\par The first one is oriented to proficient developers, and is the same method we use during the development of InstantObjects (that is, on the CVS materials).
+\par This method is very flexible, as you can choose which parts of InstantObjects you will install and when.
+\par It will require a good knowledge about package compile, build and install.
+\par 
+\par You will find detailed instructions in the \b Install.txt\b0  file located in:
+\par \b     <installdir>/Docs\b0 
+\par     
+\par The second one is more oriented to normal developers that would prefer installing some more features even if they know they will never use it, but by means of an easier procedure that does most of the job for them.
+\par 
+\par You will find detailed instructions in the \b Install.txt\b0  file located in:
+\par \b     <installdir>/Source/PackageGroups
+\par 
+\par \b0 One reminder though.
+\par The second option will be kept up to date only for official releases (that is Alpha, Beta, RC and final), so it will be unsupported for the real CVS stuff. If you foresee downloading the "bleeding edge" of IO from CVS quite often, we advice you to go for the first way and stay there for good.
 \par 
 \par }
 40
