@@ -282,7 +282,12 @@ begin
   LoadConnectionDefs;
   ConnectionDef := ConnectionDefs.Find(ConnectionDefName) as TInstantConnectionDef;
   if Assigned(ConnectionDef) then
-    OnConnect(Self, ConnectionDef, Result)
+  begin
+    if Assigned(OnConnect) then
+      OnConnect(Self, ConnectionDef, Result)
+    else
+      raise EInstantError.Create(SUnassignedOnConnectError);
+  end
   else
     raise EInstantError.CreateFmt(SConnectionDefError, [ConnectionDefName, FileName]);
 end;

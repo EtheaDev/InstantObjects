@@ -20,7 +20,7 @@ package Ioibx_D5;
 {$STACKFRAMES OFF}
 {$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
-{$WRITEABLECONST ON}
+{$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
 {$DESCRIPTION 'InstantObjects IBX Run-Time Support (Delphi 5)'}
@@ -29,6 +29,7 @@ package Ioibx_D5;
 
 requires
   IOCore,
+  IOIBFbCatalog_D5,
   VCLIB50;
 
 contains
