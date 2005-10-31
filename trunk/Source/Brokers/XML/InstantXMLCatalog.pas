@@ -35,13 +35,15 @@ unit InstantXMLCatalog;
 {$I '..\..\InstantDefines.inc'}
 {$ENDIF}
 
+{$IFDEF D6+}
+{$WARN UNIT_PLATFORM OFF}
+{$ENDIF}
+
 interface
 
 uses
 {$IFDEF MSWINDOWS}
-  {$IFDEF D5}
-    FileCtrl,
-  {$ENDIF}
+  FileCtrl,
 {$ENDIF}
   InstantPersistence;
 
