@@ -1,0 +1,34 @@
+#------------------------------------------------------------------------------
+VERSION = BWS.01
+#------------------------------------------------------------------------------
+!ifndef ROOT
+ROOT = $(MAKEDIR)\..
+!endif
+#------------------------------------------------------------------------------
+MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
+DCC = $(ROOT)\bin\dcc32.exe $**
+BRCC = $(ROOT)\bin\brcc32.exe $**
+#------------------------------------------------------------------------------
+PROJECTS = dclIOCore_D6.bpl dclIOADO_D6.bpl dclIOBDE_D6.bpl dclIODBX_D6.bpl dclIOIBX_D6.bpl \
+  dclIOXML_D6.bpl
+#------------------------------------------------------------------------------
+default: $(PROJECTS)
+#------------------------------------------------------------------------------
+
+dclIOCore_D6.bpl: ..\..\Design\D6\dclIOCore.dpk
+  $(DCC)
+
+dclIOADO_D6.bpl: ..\..\Brokers\ADO\D6\dclIOADO.dpk
+  $(DCC)
+
+dclIOBDE_D6.bpl: ..\..\Brokers\BDE\D6\dclIOBDE.dpk
+  $(DCC)
+
+dclIODBX_D6.bpl: ..\..\Brokers\DBX\D6\dclIODBX.dpk
+  $(DCC)
+
+dclIOIBX_D6.bpl: ..\..\Brokers\IBX\D6\dclIOIBX.dpk
+  $(DCC)
+
+dclIOXML_D6.bpl: ..\..\Brokers\XML\D6\dclIOXML.dpk
+  $(DCC)
