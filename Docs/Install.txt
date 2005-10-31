@@ -1,0 +1,112 @@
+------------------------------------------------------------------
+
+  InstantObjects 2.0 Beta 1 (1.9.1.1) for Delphi, Kylix, FPC
+
+  Mozilla Public License 1.1 Edition
+  October 2005 release
+
+  Based on Seleqt InstantObjects.
+  Portions created by Seleqt are Copyright (c) 2001-2003 Seleqt.
+  Other portions and changes are Copyright (c) the authors.
+  All rights reserved.
+
+------------------------------------------------------------------
+
+
+WARNING !!!
+
+This file contains detailed info about the first option to install
+InstantObjects, as per the Readme1st.txt file in the root of the
+project.
+
+If you inadvertently skipped reading it, it should be a good thing
+to do it now, before going on, in order to evaluate also the
+second alternative.
+
+There you will find other valuable information about the project.
+
+
+INSTALLATION
+------------
+
+1. Unpack zip file to <installdir>
+
+
+2. Add the following folders to your development environment's library path:
+
+   <installdir>/Source/Core
+   <installdir>/Source/Brokers/<brokername>
+
+   Add a line for each broker you plan to use.
+   If you are going to use a broker that needs a separate catalog
+   (currently the IBX, UIB, DBX and ADO brokers), then
+   you'll also need to add a line for each required catalog:
+
+   <installdir>/Source/Catalogs/<catalogname>
+
+   Here is a table of current broker-catalog dependencies:
+   
+   Broker              Depends on Catalog
+   --------------------------------------
+   IBX                 IBFb
+   UIB                 IBFb
+   DBX                 IBFb, MSSql
+   ADO                 MSSql
+   
+   Other brokers have their catalogs integrated into themselves,
+   so there are not dependency issues for them.
+
+
+3. Build and install the InstantObjects core packages:
+
+   <installdir>/Source/Core/<version>/IOCore.dpk (build)
+   <installdir>/Source/Design/<version>/DclIOCore.dpk (install)
+   
+   Where <version> identifies your version of Delphi, Kylix or
+   FPC. Examples: D5, D6, D7, K3, D2005, D2006, etc.
+
+
+4. Build and install the desired catalog and broker package(s):
+
+   For example, if you need the ADO broker:
+   
+   <installdir>/Source/Catalogs/MSSql/<version>/IOMSSqlCatalog.dpk (build)
+   <installdir>/Source/Brokers/ADO/<version>/IOADO.dpk (build)
+   <installdir>/Source/Brokers/ADO/<version>/DclIOADO.dpk (install)
+
+   If you need a broker that doesn't depend on a catalog, just build and
+   install the broker's packages. Here's an example for the XML broker:
+   
+   <installdir>/Source/Brokers/XML/<version>/IOXML.dpk (build)
+   <installdir>/Source/Brokers/XML/<version>/DclIOXML.dpk (install)
+   
+   Please note that not all brokers are available in all versions
+   of Delphi/Kylix/FPC. If you think you can make a supplied broker
+   work in an unsupported version, or create a new broker from scratch
+   then please contact us.
+   
+   Note for Delphi 5 users: dpk files in Delphi 5 have an additional
+   suffix "_D5". This is because Delphi 5 does not support the LIBSUFFIX
+   compiler directive that InstantObjects uses in newer versions of
+   Delphi.
+
+********************************************************************************
+Note: All InstantObjects packages use non-standard code in the package
+source file. In particular, they miss the standard line:
+
+{$R *.RES}
+
+and have instead something similar to this line:
+
+{$I '../../InstantVersion.inc'}
+
+that includes the InstantVersion.inc file in the $(InstantObjects)\Source
+folder (Substitute the correct relative path in this statement depending on
+where in the installed folder tree the package file resides). However if you
+open the Project Options for a package and click the OK button, the Delphi IDE
+will restore the line with the $R directive, automatically create a
+<packagename>.res file that IO doesn't need and delete the $I
+directive. If you ever do that, please restore the original code by editing
+the Project Source by hand or restoring the original file from the distribution
+archive.
+********************************************************************************
