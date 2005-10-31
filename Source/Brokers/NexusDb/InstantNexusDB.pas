@@ -44,8 +44,7 @@ uses
   Windows,
 {$ENDIF}
   Classes, DB, InstantPersistence, InstantCommand,
-  nxllTransport, nxsdServerEngine, nxdb, nxsdDataDictionary
-  ;
+  nxllTransport, nxsdServerEngine, nxdb, nxsdDataDictionary;
 
 type
   TNexusDBTable = class(TnxTable)
@@ -203,6 +202,7 @@ uses
   Forms,
   InstantConsts,
   InstantUtils,
+  InstantDBBuild,
   InstantNexusDBConnectionDefEdit,
   nxllTypes,
   nxsdTypes,
@@ -210,8 +210,7 @@ uses
   nxtwWinsockTransport,
   nxtnNamedPipeTransport,
   nxreRemoteServerEngine,
-  InstantNexusDBCatalog, 
-  InstantDBBuild;
+  InstantNexusDBCatalog;
 
 const
   SUndefined = 'Undefined';
@@ -776,7 +775,7 @@ begin
   else if CommandType = ctAddField then
     Result := TInstantDBBuildAddFieldSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctAlterField then
-    Result := TInstantDBBuildAlterFieldSQLCommand.Create(CommandType, Connector)
+    Result := TInstantDBBuildAlterFieldGenericSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctDropField then
     Result := TInstantDBBuildDropFieldSQLCommand.Create(CommandType, Connector)
   else if CommandType = ctAddIndex then
