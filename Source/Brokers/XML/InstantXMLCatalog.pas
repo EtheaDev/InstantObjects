@@ -38,6 +38,11 @@ unit InstantXMLCatalog;
 interface
 
 uses
+{$IFDEF MSWINDOWS}
+  {$IFDEF D5}
+    FileCtrl,
+  {$ENDIF}
+{$ENDIF}
   InstantPersistence;
 
 type

@@ -1034,7 +1034,7 @@ var
 begin
   Token := Reader.ReadToken;
   Result := IsConstantToken(Token) or InstantIsNumeric(Token) or
-    ((Length(Token) > 0) and (Token[1] in ['"', '[']));
+    ((Length(Token) > 0) and (Token[1] in ['"', '''', '[']));
 end;
 
 procedure TInstantIQLConstant.InternalClear;
