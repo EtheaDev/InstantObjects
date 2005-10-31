@@ -357,11 +357,27 @@ type
     property NewIndexMetadata: TInstantIndexMetadata read GetNewIndexMetadata;
   end;
 
+  TInstantDBBuildAlterFieldGenericSQLCommand = class(
+      TInstantDBBuildAlterFieldSQLCommand)
+  private
+    FTmpFieldMD: TInstantFieldMetadata;
+  protected
+    function GetDescription: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
+    function GetSQLStatementCount: Integer; override;
+    procedure InternalExecute; override;
+  public
+    destructor Destroy; override;
+  end;
+
 implementation
 
 uses
   DB;
   
+const
+  STmpFieldSuffix = '_XYZ_';
+
 { TInstantCustomDBBuilder }
 
 procedure TInstantCustomDBBuilder.BuildCommandSequence;
@@ -996,6 +1012,75 @@ end;
 function TInstantDBBuildAlterIndexSQLCommand.GetSQLStatementCount: Integer;
 begin
   Result := 2;
+end;
+
+{ TInstantDBBuildAlterFieldSQLCommand }
+
+destructor TInstantDBBuildAlterFieldGenericSQLCommand.Destroy;
+begin
+  FTmpFieldMD.Free;
+  inherited;
+end;
+
+function TInstantDBBuildAlterFieldGenericSQLCommand.GetDescription: string;
+begin
+  Result := Format('ALTER TABLE %s evolve column %s - multi-statement SQL.',
+                  [NewFieldMetadata.TableMetadata.Name, NewFieldMetadata.Name]);
+end;
+
+function TInstantDBBuildAlterFieldGenericSQLCommand.GetSQLStatement(const
+    Index: Integer): string;
+
+  function CreateTmpFieldMetadata(FieldMetadata: TInstantFieldMetadata):
+    TInstantFieldMetadata;
+  begin
+    Result := TInstantFieldMetadata.Create(FieldMetadata.Collection);
+    Result.Name := FieldMetadata.Name + STmpFieldSuffix;
+    Result.DataType := FieldMetadata.DataType;
+    Result.AlternateDataTypes := FieldMetadata.AlternateDataTypes;
+    Result.Options := FieldMetadata.Options;
+    Result.Size := FieldMetadata.Size;
+  end;
+
+begin
+  Result := inherited GetSQLStatement(Index);
+
+  FTmpFieldMD := CreateTmpFieldMetadata(NewFieldMetadata);
+
+  with Broker.Generator do
+    case Index of
+      0 : Result := GenerateAddFieldSQL(FTmpFieldMD);
+
+      1 : Result := GenerateUpdateFieldCopySQL(OldFieldMetadata, FTmpFieldMD);
+
+      2 : Result := GenerateDropFieldSQL(OldFieldMetadata);
+
+      3 : Result := GenerateAddFieldSQL(NewFieldMetadata);
+
+      4 : Result := GenerateUpdateFieldCopySQL(FTmpFieldMD, NewFieldMetadata);
+
+      5 : Result := GenerateDropFieldSQL(FTmpFieldMD);
+    end;
+end;
+
+function TInstantDBBuildAlterFieldGenericSQLCommand.GetSQLStatementCount:
+    Integer;
+begin
+  Result := 6;
+end;
+
+procedure TInstantDBBuildAlterFieldGenericSQLCommand.InternalExecute;
+var
+  iStatement: Integer;
+begin
+  try
+    for iStatement := 0 to Pred(GetSQLStatementCount) do
+      Broker.Execute(GetSQLStatement(iStatement));
+  except
+    if Assigned(FTmpFieldMD) then
+      Broker.Execute(Broker.Generator.GenerateDropFieldSQL(FTmpFieldMD));
+    raise;
+  end;
 end;
 
 end.

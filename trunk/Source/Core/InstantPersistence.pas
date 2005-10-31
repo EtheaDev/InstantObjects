@@ -2289,6 +2289,8 @@ type
     function InternalGenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectTablesSQL: string; virtual;
     function InternalGenerateUpdateConcurrentSQL(Map: TInstantAttributeMap): string; virtual;
+    function InternalGenerateUpdateFieldCopySQL(OldMetadata, NewMetadata:
+        TInstantFieldMetadata): string; virtual;
     function InternalGenerateUpdateSQL(Map: TInstantAttributeMap): string; virtual;
     property Delimiters: string read GetDelimiters;
     property Broker: TInstantSQLBroker read FBroker;
@@ -2311,6 +2313,8 @@ type
     function GenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectTablesSQL: string;
     function GenerateUpdateConcurrentSQL(Map: TInstantAttributeMap): string;
+    function GenerateUpdateFieldCopySQL(OldMetadata, NewMetadata:
+        TInstantFieldMetadata): string;
     function GenerateUpdateSQL(Map: TInstantAttributeMap): string;
   end;
 
@@ -12872,6 +12876,12 @@ begin
   Result := InternalGenerateUpdateConcurrentSQL(Map);
 end;
 
+function TInstantSQLGenerator.GenerateUpdateFieldCopySQL(OldMetadata,
+    NewMetadata: TInstantFieldMetadata): string;
+begin
+  Result := InternalGenerateUpdateFieldCopySQL(OldMetadata, NewMetadata);
+end;
+
 function TInstantSQLGenerator.GenerateUpdateSQL
   (Map: TInstantAttributeMap): string;
 begin
@@ -13087,6 +13097,15 @@ function TInstantSQLGenerator.InternalGenerateUpdateConcurrentSQL
   (Map: TInstantAttributeMap): string;
 begin
   Result := InternalGenerateUpdateSQL(Map) + BuildConcurrencyCriteria;
+end;
+
+function TInstantSQLGenerator.InternalGenerateUpdateFieldCopySQL(OldMetadata,
+    NewMetadata: TInstantFieldMetadata): string;
+begin
+  Result := Format('UPDATE %s SET %s = %s',
+                    [EmbraceTable(OldMetadata.TableMetadata.Name),
+                     EmbraceField(NewMetadata.Name),
+                     EmbraceField(OldMetadata.Name)]);
 end;
 
 function TInstantSQLGenerator.InternalGenerateUpdateSQL
