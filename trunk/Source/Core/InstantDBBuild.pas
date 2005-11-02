@@ -799,6 +799,7 @@ end;
 procedure TInstantDBBuildCommandSequence.Notification(AComponent: TComponent;
   Operation: TOperation);
 begin
+  inherited;
   if Operation = opRemove then
     if AComponent = FConnector then
       FConnector := nil;
