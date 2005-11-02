@@ -9,8 +9,7 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = dclIOCore.bpl dclIOADO_D5.bpl dclIOBDE_D5.bpl dclIOIBX_D5.bpl \
-  dclIOXML_D5.bpl
+PROJECTS = dclIOCore.bpl dclIOBDE_D5.bpl dclIOIBX_D5.bpl dclIOXML_D5.bpl
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -18,13 +17,7 @@ default: $(PROJECTS)
 dclIOCore.bpl: ..\..\Design\D5\dclIOCore.dpk
   $(DCC)
 
-dclIOADO_D5.bpl: ..\..\Brokers\ADO\D5\dclIOADO_D5.dpk
-  $(DCC)
-
 dclIOBDE_D5.bpl: ..\..\Brokers\BDE\D5\dclIOBDE_D5.dpk
-  $(DCC)
-
-dclIODBX_D5.bpl: ..\..\Brokers\DBX\D5\dclIODBX_D5.dpk
   $(DCC)
 
 dclIOIBX_D5.bpl: ..\..\Brokers\IBX\D5\dclIOIBX_D5.dpk
