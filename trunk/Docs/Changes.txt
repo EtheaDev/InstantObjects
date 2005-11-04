@@ -1,7 +1,23 @@
 VERSION HISTORY
 ---------------
 
-Version 2.0 Beta 1 (1.9.1.1) (2005-10)
+Version 2.0 Beta 1 (1.9.1.1) (2005-11)
+
+- Added support for Delphi 2006/Win32 (experimental).
+
+- Help file updated (Work In Progress).
+
+- Added new BPGs for easier installation (Work In
+  Progress).
+
+- Added support for UIB in Delphi 2005.
+
+- Added MSSqlCatalog in Delphi 2005.
+
+- Fixed infinite loop on application shutdown with
+  TInstantDBBuilder.
+
+- Fixes for compatibility with Delphi 5 Professional.
 
 - Several other bug fixes and small improvements.
 
