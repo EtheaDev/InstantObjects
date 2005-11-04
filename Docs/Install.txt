@@ -3,7 +3,7 @@
   InstantObjects 2.0 Beta 1 (1.9.1.1) for Delphi, Kylix, FPC
 
   Mozilla Public License 1.1 Edition
-  October 2005 release
+  November 2005 release
 
   Based on Seleqt InstantObjects.
   Portions created by Seleqt are Copyright (c) 2001-2003 Seleqt.
@@ -16,8 +16,8 @@
 WARNING !!!
 
 This file contains detailed info about the first option to install
-InstantObjects, as per the Readme1st.txt file in the root of the
-project.
+InstantObjects, as per the Readme1st.txt file located in the root
+folder of the project.
 
 If you inadvertently skipped reading it, it should be a good thing
 to do it now, before going on, in order to evaluate also the
@@ -65,6 +65,13 @@ INSTALLATION
    Where <version> identifies your version of Delphi, Kylix or
    FPC. Examples: D5, D6, D7, K3, D2005, D2006, etc.
 
+   NOTE TO DELPHI 2006 USERS:
+   We don't provide the .bdsproj files (as we don't provide
+   .dof and .cfg files for older versions of Delphi), so the
+   IDE will prompt you to create one of these files the first
+   time you open a package. At the prompt that asks whether to
+   make the package a Win32 or a .NET one, please answer Win32.
+
 
 4. Build and install the desired catalog and broker package(s):
 
@@ -85,10 +92,10 @@ INSTALLATION
    work in an unsupported version, or create a new broker from scratch
    then please contact us.
    
-   Note for Delphi 5 users: dpk files in Delphi 5 have an additional
-   suffix "_D5". This is because Delphi 5 does not support the LIBSUFFIX
-   compiler directive that InstantObjects uses in newer versions of
-   Delphi.
+   NOTE TO DELPHI 5 USERS:
+   dpk files in Delphi 5 have an additional suffix "_D5". This is
+   because Delphi 5 does not support the LIBSUFFIX compiler directive
+   that InstantObjects uses in newer versions of Delphi.
 
 ********************************************************************************
 Note: All InstantObjects packages use non-standard code in the package
