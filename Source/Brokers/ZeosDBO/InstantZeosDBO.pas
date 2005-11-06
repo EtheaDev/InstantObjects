@@ -49,7 +49,7 @@ unit InstantZeosDBO;
 interface
 
 uses
-  Classes, Db, InstantPersistence, InstantCommand, ZConnection;
+  Classes, Db, InstantPersistence, InstantCommand, InstantDBBuild, ZConnection;
 
 type
   TInstantZeosDBOConnectionDef = class(TInstantRelationalConnectionDef)
@@ -146,13 +146,13 @@ type
   end;
 
   TInstantZeosDBOResolver = class(TInstantSQLResolver)
-  // Read an integer field and convert it to boolean expression
+    // Read an integer field and convert it to boolean expression
   protected
     function ReadBooleanField(DataSet: TDataSet; const FieldName: string): Boolean; override;
   end;
 
   TInstantZeosDBOTranslator = class(TInstantRelationalTranslator)
-  // Translate boolean expressions to '0' or '1'
+    // Translate boolean expressions to '0' or '1'
   protected
     function TranslateConstant(Constant: TInstantIQLConstant; Writer: TInstantIQLWriter): Boolean; override;
   end;
@@ -217,7 +217,8 @@ type
   {$IFDEF MYSQL_SUPPORT}
   TInstantZeosDBOMySQLBroker = class(TInstantZeosDBOBroker)
   protected
-    function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
+    function InternalDataTypeToColumnType(DataType: TInstantDataType): string;
+      override;
     function UseBooleanFields: Boolean; override;
   end;
   {$ENDIF}
@@ -225,10 +226,46 @@ type
   { SQLite broker }
 
   {$IFDEF SQLITE_SUPPORT}
+
+  //SQLite doesn´t support ALTER TABLE for supports ADD COLUMN, ALTER COLUMN and
+  //DROP COLUMN, is emulated with a couple of CREATE TEMP TABLE, INSERT INTO,
+  //DROP TABLE, CREATE TABLE, INSERT INTO and finally DROP TABLE
+  TInstantDBBuildSQLiteAlterTableSQLCommand = class(TInstantDBBuildSQLCommand)
+  private
+    FTmpTableMD: TInstantTableMetadata;
+    FOldTableMetadata: TInstantTableMetadata;
+    FNewTableMetadata: TInstantTableMetadata;
+    FScheme : TInstantScheme;
+    function GetNewTableMetadata: TInstantTableMetadata;
+    function GetOldTableMetadata: TInstantTableMetadata;
+  protected
+    procedure Rollback; virtual;
+    function GetDescription: string; override;
+    function GetSQLStatement(const Index: Integer): string; override;
+    function GetSQLStatementCount: Integer; override;
+    procedure InternalExecute; override;
+  public
+    destructor Destroy; override;
+    property OldTableMetadata: TInstantTableMetadata read GetOldTableMetadata;
+    property NewTableMetadata: TInstantTableMetadata read GetNewTableMetadata;
+  end;
+
+  TInstantSQLiteGenerator = class(TInstantSQLGenerator)
+  protected
+    function InternalGenerateInsertFromSelectSQL(const SourceMetadata, TargetMetadata: TInstantTableMetadata): string; virtual;
+    function InternalGenerateCreateTempTableSQL(Metadata: TInstantTableMetadata): string; virtual;
+  public
+    function GenerateCreateTempTableSQL(Metadata: TInstantTableMetadata): string;
+    function GenerateInsertFromSelectSQL(const SourceMetadata, TargetMetadata: TInstantTableMetadata): string;
+  end;
+
   TInstantZeosDBOSQLiteBroker = class(TInstantZeosDBOBroker)
   protected
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
     function UseBooleanFields: Boolean; override;
+  public
+    class function GeneratorClass: TInstantSQLGeneratorClass; override;
+    function CreateDBBuildCommand(const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
   end;
   {$ENDIF}
 
@@ -237,11 +274,16 @@ procedure AssignZeosDBOProtocols(Strings: TStrings);
 implementation
 
 uses
-  SysUtils, {$IFDEF D7+}Types,{$ENDIF} Controls, InstantConsts, InstantClasses,
-  InstantDBBuild, InstantZeosDBOConnectionDefEdit, InstantZeosDBOCatalog,
-  InstantUtils, ZClasses, ZCompatibility, ZDbcIntfs, ZDataset;
+  SysUtils, {$IFDEF D7+}Types, {$ENDIF}Controls, InstantConsts, InstantClasses,
+  InstantZeosDBOConnectionDefEdit, InstantZeosDBOCatalog, InstantUtils, ZClasses,
+  ZCompatibility, ZDbcIntfs, ZDataset;
 
-{ Global routines }
+{$IFDEF SQLITE_SUPPORT}
+const
+  STmpTableSuffix = '_XYZ_';
+  {$ENDIF}
+
+  { Global routines }
 
 procedure AssignZeosDBOProtocols(Strings: TStrings);
 var
@@ -267,7 +309,8 @@ begin
   Result := 'ZeosDBO';
 end;
 
-class function TInstantZeosDBOConnectionDef.ConnectorClass: TInstantConnectorClass;
+class function TInstantZeosDBOConnectionDef.ConnectorClass:
+  TInstantConnectorClass;
 begin
   Result := TInstantZeosDBOConnector;
 end;
@@ -347,7 +390,8 @@ begin
     raise EInstantError.Create(SUnassignedConnection);
 end;
 
-class function TInstantZeosDBOConnector.ConnectionDefClass: TInstantConnectionDefClass;
+class function TInstantZeosDBOConnector.ConnectionDefClass:
+  TInstantConnectionDefClass;
 begin
   Result := TInstantZeosDBOConnectionDef;
 end;
@@ -377,45 +421,45 @@ begin
 
   {$IFDEF IBFB_SUPPORT}
   if SameText(FConnection.Protocol, 'interbase-5') or
-   SameText(FConnection.Protocol, 'interbase-6') or
-   SameText(FConnection.Protocol, 'firebird-1.0') or
-   SameText(FConnection.Protocol, 'firebird-1.5') then
+    SameText(FConnection.Protocol, 'interbase-6') or
+    SameText(FConnection.Protocol, 'firebird-1.0') or
+    SameText(FConnection.Protocol, 'firebird-1.5') then
     Result := TInstantZeosDBOIbFbBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF ORACLE_SUPPORT}
   if SameText(FConnection.Protocol, 'oracle') or
-   SameText(FConnection.Protocol, 'oracle-9i') then
+    SameText(FConnection.Protocol, 'oracle-9i') then
     Result := TInstantZeosDBOOracleBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF PGSQL_SUPPORT}
   if SameText(FConnection.Protocol, 'postgresql') or
-   SameText(FConnection.Protocol, 'postgresql-6.5') or
-   SameText(FConnection.Protocol, 'postgresql-7.2') or
-   SameText(FConnection.Protocol, 'postgresql-7.3') or
-   SameText(FConnection.Protocol, 'postgresql-7.4') then
+    SameText(FConnection.Protocol, 'postgresql-6.5') or
+    SameText(FConnection.Protocol, 'postgresql-7.2') or
+    SameText(FConnection.Protocol, 'postgresql-7.3') or
+    SameText(FConnection.Protocol, 'postgresql-7.4') then
     Result := TInstantZeosDBOPgSQLBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF MYSQL_SUPPORT}
   if SameText(FConnection.Protocol, 'mysql') or
-   SameText(FConnection.Protocol, 'mysql-3.20') or
-   SameText(FConnection.Protocol, 'mysql-3.23') or
-   SameText(FConnection.Protocol, 'mysql-4.0') or
-   SameText(FConnection.Protocol, 'mysql-4.1') then
+    SameText(FConnection.Protocol, 'mysql-3.20') or
+    SameText(FConnection.Protocol, 'mysql-3.23') or
+    SameText(FConnection.Protocol, 'mysql-4.0') or
+    SameText(FConnection.Protocol, 'mysql-4.1') then
     Result := TInstantZeosDBOMySQLBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF SQLITE_SUPPORT}
   if SameText(FConnection.Protocol, 'sqlite') or
-   SameText(FConnection.Protocol, 'sqlite-2.8') then
+    SameText(FConnection.Protocol, 'sqlite-2.8') then
     Result := TInstantZeosDBOSQLiteBroker.Create(Self);
   {$ENDIF}
 
   if Result = nil then
     raise EInstantError.CreateFmt('ZeosDBO protocol "%s" not supported',
-     [FConnection.Protocol]);
+      [FConnection.Protocol]);
 end;
 
 procedure TInstantZeosDBOConnector.DoAfterConnectionChange;
@@ -447,7 +491,7 @@ function TInstantZeosDBOConnector.GetConnection: TZConnection;
 begin
   if not (csDesigning in ComponentState) then
     CheckConnection;
-  Result := FConnection; 
+  Result := FConnection;
 end;
 
 function TInstantZeosDBOConnector.HasConnection: Boolean;
@@ -579,8 +623,8 @@ begin
       TargetParam.Value := SourceParam.AsCurrency;
     end;
     *)
-    else
-      TargetParam.Assign(SourceParam);
+  else
+    TargetParam.Assign(SourceParam);
   end;
 end;
 
@@ -643,7 +687,8 @@ end;
 function TInstantZeosDBOBroker.DatabaseSQLDelimiter: string;
 begin
   if Connector.Connected then
-    Result := Connector.Connection.DbcConnection.GetMetadata.GetIdentifierQuoteString;
+    Result :=
+      Connector.Connection.DbcConnection.GetMetadata.GetIdentifierQuoteString;
   { TODO : else? }
 end;
 
@@ -682,7 +727,8 @@ end;
 function TInstantZeosDBOBroker.GetDBMSName: string;
 begin
   if Connector.Connected then
-    Result := Connector.Connection.DbcConnection.GetMetadata.GetDatabaseProductName;
+    Result :=
+      Connector.Connection.DbcConnection.GetMetadata.GetDatabaseProductName;
   { TODO : else? }
 end;
 
@@ -723,18 +769,20 @@ begin
   begin
     Writer.WriteChar('1');
     Result := True;
-  end else
-  if SameText(Constant.Value, InstantFalseString) then
+  end
+  else if SameText(Constant.Value, InstantFalseString) then
   begin
     Writer.WriteChar('0');
     Result := True;
-  end else
+  end
+  else
     Result := inherited TranslateConstant(Constant, Writer);
 end;
 
 { TInstantZeosDBOQuery }
 
-class function TInstantZeosDBOQuery.TranslatorClass: TInstantRelationalTranslatorClass;
+class function TInstantZeosDBOQuery.TranslatorClass:
+  TInstantRelationalTranslatorClass;
 begin
   Result := TInstantZeosDBOTranslator;
 end;
@@ -742,18 +790,19 @@ end;
 { TInstantZeosDBOSybaseBroker }
 
 {$IFDEF SYBASE_SUPPORT}
+
 function TInstantZeosDBOSybaseBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-   'INTEGER',
-   'DOUBLE PRECISION',
-   'MONEY',
-   'TINYINT',
-   'VARCHAR',
-   'TEXT',
-   'DATETIME',
-   'IMAGE');
+    'INTEGER',
+    'DOUBLE PRECISION',
+    'MONEY',
+    'TINYINT',
+    'VARCHAR',
+    'TEXT',
+    'DATETIME',
+    'IMAGE');
 begin
   Result := Types[DataType];
 end;
@@ -767,18 +816,19 @@ end;
 { TInstantZeosDBOMSSQLBroker }
 
 {$IFDEF MSSQL_SUPPORT}
+
 function TInstantZeosDBOMSSQLBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-   'INTEGER',
-   'FLOAT',
-   'MONEY',
-   'BIT',
-   'VARCHAR',
-   'TEXT',
-   'DATETIME',
-   'IMAGE');
+    'INTEGER',
+    'FLOAT',
+    'MONEY',
+    'BIT',
+    'VARCHAR',
+    'TEXT',
+    'DATETIME',
+    'IMAGE');
 begin
   Result := Types[DataType];
 end;
@@ -792,18 +842,19 @@ end;
 { TInstantZeosDBOIbFbBroker }
 
 {$IFDEF IBFB_SUPPORT}
+
 function TInstantZeosDBOIbFbBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-   'INTEGER',
-   'DOUBLE PRECISION',
-   'DECIMAL(14,4)',
-   'SMALLINT',
-   'VARCHAR',
-   'BLOB SUB_TYPE 1',
-   'TIMESTAMP',
-   'BLOB');
+    'INTEGER',
+    'DOUBLE PRECISION',
+    'DECIMAL(14,4)',
+    'SMALLINT',
+    'VARCHAR',
+    'BLOB SUB_TYPE 1',
+    'TIMESTAMP',
+    'BLOB');
 begin
   Result := Types[DataType];
 end;
@@ -817,18 +868,19 @@ end;
 { TInstantZeosDBOOracleBroker }
 
 {$IFDEF ORACLE_SUPPORT}
+
 function TInstantZeosDBOOracleBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-   'NUMBER(10)',
-   'FLOAT',
-   'NUMBER(14,4)',
-   'NUMBER(1)',
-   'VARCHAR2',
-   'CLOB',
-   'DATE',
-   'BLOB');
+    'NUMBER(10)',
+    'FLOAT',
+    'NUMBER(14,4)',
+    'NUMBER(1)',
+    'VARCHAR2',
+    'CLOB',
+    'DATE',
+    'BLOB');
 begin
   Result := Types[DataType];
 end;
@@ -842,18 +894,19 @@ end;
 { TInstantZeosDBOPgSQLBroker }
 
 {$IFDEF PGSQL_SUPPORT}
+
 function TInstantZeosDBOPgSQLBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-   'INTEGER',
-   'FLOAT8',
-   'DECIMAL(14,4)',
-   'BOOLEAN',
-   'VARCHAR',
-   'TEXT',
-   'TIMESTAMP',
-   'BYTEA');
+    'INTEGER',
+    'FLOAT8',
+    'DECIMAL(14,4)',
+    'BOOLEAN',
+    'VARCHAR',
+    'TEXT',
+    'TIMESTAMP',
+    'BYTEA');
 begin
   Result := Types[DataType];
 end;
@@ -867,18 +920,19 @@ end;
 { TInstantZeosDBOMySQLBroker }
 
 {$IFDEF MYSQL_SUPPORT}
+
 function TInstantZeosDBOMySQLBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-   'INTEGER',
-   'FLOAT',
-   'DECIMAL(14,4)',
-   'BOOL',
-   'VARCHAR',
-   'TEXT',
-   'DATETIME',
-   'BLOB');
+    'INTEGER',
+    'FLOAT',
+    'DECIMAL(14,4)',
+    'BOOL',
+    'VARCHAR',
+    'TEXT',
+    'DATETIME',
+    'BLOB');
 begin
   Result := Types[DataType];
 end;
@@ -889,21 +943,223 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF SQLITE_SUPPORT}
+
+{ TInstantDBBuildAlterTableSQLCommand }
+
+destructor TInstantDBBuildSQLiteAlterTableSQLCommand.Destroy;
+begin
+  FNewTableMetadata.Free;
+  FTmpTableMD.Free;
+  FScheme.Free;
+  inherited;
+end;
+
+function TInstantDBBuildSQLiteAlterTableSQLCommand.GetDescription: string;
+begin
+  with Broker.Generator do
+    case CommandType of
+      ctAddField:
+        Result := GenerateAddFieldSQL(NewMetadata as TInstantFieldMetadata);
+      ctAlterField:
+        Result := GenerateAlterFieldSQL(OldMetadata as TInstantFieldMetadata,
+          NewMetadata as TInstantFieldMetadata);
+      ctDropField:
+        Result := GenerateDropFieldSQL(OldMetadata as TInstantFieldMetadata);
+    end;
+    Result := Result + ' - emulated with multi-statement SQL.';
+end;
+
+function TInstantDBBuildSQLiteAlterTableSQLCommand.GetNewTableMetadata: TInstantTableMetadata;
+begin
+  if not Assigned(FNewTableMetadata) then
+  begin
+    FNewTableMetadata := TInstantTableMetadata.Create(OldTableMetadata.Collection);
+    FNewTableMetadata.Assign(OldTableMetadata);
+    case CommandType of
+      ctAddField:
+        FNewTableMetadata.FieldMetadatas.Add.Assign(NewMetadata);
+      ctAlterField:
+      begin
+        with FNewTableMetadata.FieldMetadatas do
+          Remove(Find(OldMetadata.Name));
+        FNewTableMetadata.FieldMetadatas.Add.Assign(NewMetadata);
+      end;
+      ctDropField:
+        with FNewTableMetadata.FieldMetadatas do
+          Remove(Find(OldMetadata.Name));
+    end;
+  end;
+  Result := FNewTableMetadata;
+end;
+
+function TInstantDBBuildSQLiteAlterTableSQLCommand.GetOldTableMetadata: TInstantTableMetadata;
+var
+  FieldMetadata : TInstantFieldMetadata;
+begin
+  if not Assigned(FOldTableMetadata) then
+  begin
+    //Force to read the table from database
+    FScheme := Broker.ReadDatabaseScheme;
+
+    FieldMetadata := nil;
+    case CommandType of
+      ctDropField, ctAlterField:
+        FieldMetadata := TInstantFieldMetadata(OldMetadata);
+      ctAddField:
+        FieldMetadata := TInstantFieldMetadata(NewMetadata);
+    end;
+
+    { TODO : This only works for case-insensitive object names! }
+    FOldTableMetadata :=
+      FScheme.FindTableMetadata(AnsiUpperCase(FieldMetadata.TableMetadata.Name));
+  end;
+  Result := FOldTableMetadata;
+end;
+
+function TInstantDBBuildSQLiteAlterTableSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
+
+  function CreateTmpTableMetadata(TableMetadata: TInstantTableMetadata):
+      TInstantTableMetadata;
+  begin
+    Result := TInstantTableMetadata.Create(TableMetadata.Collection);
+    Result.Assign(TableMetadata);
+    Result.Name := TableMetadata.Name + STmpTableSuffix;
+  end;
+
+begin
+  Result := inherited GetSQLStatement(Index);
+
+  if not Assigned(FTmpTableMD) then
+    FTmpTableMD := CreateTmpTableMetadata(OldTableMetadata);
+
+  with TInstantSQLiteGenerator(Broker.Generator) do
+    case Index of
+      0: Result := GenerateCreateTempTableSQL(FTmpTableMD);
+
+      1: Result := GenerateInsertFromSelectSQL(OldTableMetadata, FTmpTableMD);
+
+      2: Result := GenerateDropTableSQL(OldTableMetadata);
+
+      3: Result := GenerateCreateTableSQL(NewTableMetadata);
+
+      4: Result := GenerateInsertFromSelectSQL(FTmpTableMD, NewTableMetadata);
+
+      5: Result := GenerateDropTableSQL(FTmpTableMD);
+    end;
+end;
+
+function TInstantDBBuildSQLiteAlterTableSQLCommand.GetSQLStatementCount: Integer;
+begin
+  Result := 6;
+end;
+
+procedure TInstantDBBuildSQLiteAlterTableSQLCommand.InternalExecute;
+var
+  iStatement: Integer;
+  InTransaction: Boolean;
+begin
+  InTransaction := false;
+  try
+    for iStatement := 0 to Pred(GetSQLStatementCount) do
+    begin
+      Broker.Execute(GetSQLStatement(iStatement));
+      InTransaction := (iStatement > 2) and (iStatement < 5);
+    end;
+  except
+    if InTransaction then Rollback;
+    raise;
+  end;
+end;
+
+procedure TInstantDBBuildSQLiteAlterTableSQLCommand.Rollback;
+begin
+  { TODO : Some DBMS supports data definition within transactions, ZEOS known that and then the follow code are unnecessary! }
+  with Broker, TInstantSQLiteGenerator(Broker.Generator) do
+  begin
+    try
+      Execute(GenerateDropTableSQL(NewTableMetadata));
+    except
+      //Safe if NewTable doesn´t exist
+    end;
+    Execute(GenerateCreateTableSQL(OldTableMetadata));
+    Execute(GenerateInsertFromSelectSQL(FTmpTableMD, OldTableMetadata));
+    Execute(GenerateDropTableSQL(FTmpTableMD));
+  end;
+end;
+
+{ TInstantSQLiteGenerator }
+
+function TInstantSQLiteGenerator.GenerateCreateTempTableSQL(
+  Metadata: TInstantTableMetadata): string;
+begin
+  Result := InternalGenerateCreateTempTableSQL(Metadata);
+end;
+
+function TInstantSQLiteGenerator.GenerateInsertFromSelectSQL(
+  const SourceMetadata, TargetMetadata: TInstantTableMetadata): string;
+begin
+  Result := InternalGenerateInsertFromSelectSQL(SourceMetadata, TargetMetadata);
+end;
+
+function TInstantSQLiteGenerator.InternalGenerateCreateTempTableSQL(
+  Metadata: TInstantTableMetadata): string;
+begin
+  Result := InternalGenerateCreateTableSQL(Metadata);
+  Insert('TEMP ', Result, Pos('TABLE', Result));
+end;
+
+function TInstantSQLiteGenerator.InternalGenerateInsertFromSelectSQL(
+  const SourceMetadata, TargetMetadata: TInstantTableMetadata): string;
+var
+  i: Integer;
+  TargetField : TInstantFieldMetadata;
+  FieldList : string;
+begin
+  for i := 0 to Pred(TargetMetadata.FieldMetadatas.Count) do
+  begin
+    TargetField := TargetMetadata.FieldMetadatas[i];
+    { TODO : This only works for case-insensitive object names! }
+    if SourceMetadata.FieldMetadatas.IndexOf(AnsiUpperCase(TargetField.Name)) > -1 then
+      FieldList := FieldList + EmbraceField(TargetField.Name) + ', ';
+  end;
+  Delete(FieldList, Length(FieldList) - 1, 2);
+  Result := Format('INSERT INTO %s(%s) SELECT %s FROM %s',
+    [TargetMetadata.Name, FieldList, FieldList, SourceMetadata.Name]);
+end;
+
 { TInstantZeosDBOSQLiteBroker }
 
-{$IFDEF SQLITE_SUPPORT}
+function TInstantZeosDBOSQLiteBroker.CreateDBBuildCommand(
+  const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
+begin
+  case CommandType of
+    ctAddField, ctAlterField, ctDropField:
+      Result := TInstantDBBuildSQLiteAlterTableSQLCommand.Create(CommandType, Connector)
+    else
+      Result := inherited CreateDBBuildCommand(CommandType);
+  end;
+end;
+
+class function TInstantZeosDBOSQLiteBroker.GeneratorClass:
+  TInstantSQLGeneratorClass;
+begin
+  Result := TInstantSQLiteGenerator;
+end;
+
 function TInstantZeosDBOSQLiteBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-   'INTEGER',
-   'FLOAT',
-   'NUMERIC(14,4)',
-   'BOOLEAN',
-   'VARCHAR',
-   'TEXT',
-   'TIMESTAMP',
-   'BLOB');
+    'INTEGER',
+    'FLOAT',
+    'NUMERIC(14,4)',
+    'BOOLEAN',
+    'VARCHAR',
+    'TEXT',
+    'TIMESTAMP',
+    'BLOB');
 begin
   Result := Types[DataType];
 end;

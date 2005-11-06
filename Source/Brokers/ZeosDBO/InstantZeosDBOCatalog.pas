@@ -58,7 +58,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes, ZConnection, InstantConsts, InstantZeosDBO, TypInfo;
+  Types, SysUtils, Classes, ZConnection, InstantConsts, InstantZeosDBO, TypInfo;
 
 procedure TInstantZeosDBOCatalog.AddFieldMetadatas(
   TableMetadata: TInstantTableMetadata);
@@ -71,8 +71,8 @@ begin
     Fields := DbcConnection.GetMetadata.GetColumns(Catalog, '',
       TableMetadata.Name, '');
 
-  Fields.First;
-  while not Fields.IsAfterLast do
+  Fields.BeforeFirst;
+  while Fields.Next do
   begin
     FieldMetadata := TableMetadata.FieldMetadatas.Add;
     FieldMetadata.Name := Fields.GetStringByName('COLUMN_NAME');
@@ -81,7 +81,7 @@ begin
       AlternateDataTypes);
     FieldMetadata.AlternateDataTypes := AlternateDataTypes;
     FieldMetadata.Options := [];
-    if Fields.GetBooleanByName('IS_NULLABLE') then
+    if not Fields.GetBooleanByName('IS_NULLABLE') then
       FieldMetadata.Options := FieldMetadata.Options + [foRequired];
     if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
       FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
@@ -91,7 +91,6 @@ begin
       FieldMetadata.Size := Fields.GetIntByName('CHAR_OCTET_LENGTH')
     else
       FieldMetadata.Size := Fields.GetIntByName('COLUMN_SIZE');
-    Fields.Next;
   end;
 end;
 
@@ -107,30 +106,31 @@ begin
     PrimaryKeys := DbcConnection.GetMetadata.GetPrimaryKeys(Catalog, '',
       TableMetadata.Name);
 
-  PrimaryKeys.First;
-  while not PrimaryKeys.IsAfterLast do
+  IndexMetadata := nil;
+  PrimaryKeys.BeforeFirst;
+  while PrimaryKeys.Next do
   begin
-    IndexMetadata := TableMetadata.IndexMetadatas.Add;
-    IndexMetadata.Name := PrimaryKeys.GetStringByName('PK_NAME');
-    IndexMetadata.Fields := PrimaryKeys.GetStringByName('COLUMN_NAME');
-    IndexMetadata.Options := [ixPrimary, ixUnique];
-    if PrimaryKeys.Next then
-      while AnsiSameStr(IndexMetadata.Name,
-        PrimaryKeys.GetStringByName('COLUMN_NAME')) do
-      begin
-        IndexMetadata.Fields := ';' + IndexMetadata.Fields +
-          PrimaryKeys.GetStringByName('COLUMN_NAME');
-        PrimaryKeys.Next;
-      end;
+    IndexName := PrimaryKeys.GetStringByName('PK_NAME');
+    if Assigned(IndexMetadata) and
+      AnsiSameStr(IndexMetadata.Name, IndexName) then
+      IndexMetadata.Fields := ';' + IndexMetadata.Fields +
+        PrimaryKeys.GetStringByName('COLUMN_NAME')
+    else
+    begin
+      IndexMetadata := TableMetadata.IndexMetadatas.Add;
+      IndexMetadata.Name := IndexName;
+      IndexMetadata.Fields := PrimaryKeys.GetStringByName('COLUMN_NAME');
+      IndexMetadata.Options := [ixPrimary, ixUnique];
+    end;
   end;
-  PrimaryKeys := nil;
 
   with Broker as TInstantZeosDBOBroker, Connector.Connection as TZConnection do
     IndexInfo := DbcConnection.GetMetadata.GetIndexInfo(Catalog, '',
       TableMetadata.Name, False, False);
 
-  IndexInfo.First;
-  while not IndexInfo.IsAfterLast do
+  IndexMetadata := nil;
+  IndexInfo.BeforeFirst;
+  while IndexInfo.Next do
   begin
     //Exclude primary keys
     IndexName := IndexInfo.GetStringByName('INDEX_NAME');
@@ -138,53 +138,49 @@ begin
       //work around bug in GetPrimaryKeys for mysql driver where PK_NAME is not assigned
     (AnsiPos('PRI', IndexName) = 0) then
     begin
-      IndexMetadata := TableMetadata.IndexMetadatas.Add;
-      IndexMetadata.Name := IndexName;
-      IndexMetadata.Fields := IndexInfo.GetStringByName('COLUMN_NAME');
-      IndexMetadata.Options := [];
-      if not IndexInfo.GetBooleanByName('NON_UNIQUE') then
-        IndexMetadata.Options := IndexMetadata.Options + [ixUnique];
-      if IndexInfo.GetStringByName('ASC_OR_DESC') = 'D' then
-        IndexMetadata.Options := IndexMetadata.Options + [ixDescending];
-      if IndexInfo.Next then
-        while AnsiSameStr(IndexMetadata.Name,
-          IndexInfo.GetStringByName('COLUMN_NAME')) do
-        begin
-          IndexMetadata.Fields := ';' + IndexMetadata.Fields +
-            IndexInfo.GetStringByName('COLUMN_NAME');
-          IndexInfo.Next;
-        end;
-    end
-    else
-      IndexInfo.Next;
+      if Assigned(IndexMetadata) and
+        AnsiSameStr(IndexMetadata.Name, IndexName) then
+        IndexMetadata.Fields := ';' + IndexMetadata.Fields +
+          IndexInfo.GetStringByName('COLUMN_NAME');
+      begin
+        IndexMetadata := TableMetadata.IndexMetadatas.Add;
+        IndexMetadata.Name := IndexName;
+        IndexMetadata.Fields := IndexInfo.GetStringByName('COLUMN_NAME');
+        IndexMetadata.Options := [];
+        if not IndexInfo.GetBooleanByName('NON_UNIQUE') then
+          IndexMetadata.Options := IndexMetadata.Options + [ixUnique];
+        if IndexInfo.GetStringByName('ASC_OR_DESC') = 'D' then
+          IndexMetadata.Options := IndexMetadata.Options + [ixDescending];
+      end;
+    end;
   end;
 end;
 
 procedure TInstantZeosDBOCatalog.AddTableMetadatas(
   TableMetadatas: TInstantTableMetadatas);
 var
+  TableType: TStringDynArray;
   TableMetadata: TInstantTableMetadata;
   Tables: IZResultSet;
 begin
+  SetLength(TableType, 1);
+  TableType[0] := 'TABLE';
   with Broker as TInstantZeosDBOBroker, Connector.Connection do
   begin
     if not Connector.Connected then Connector.Connect;
-    Tables := DbcConnection.GetMetadata.GetTables(Catalog, '', '', nil);
+    DbcConnection.GetMetadata.ClearCache;
+    Tables := DbcConnection.GetMetadata.GetTables(Catalog, '', '', TableType);
   end;
 
-  Tables.First;
-  while not Tables.IsAfterLast do
+  Tables.BeforeFirst;
+  while Tables.Next do
   begin
-    if AnsiSameStr(Tables.GetStringByName('TABLE_TYPE'), 'TABLE') then
-    begin
-      TableMetadata := TableMetadatas.Add;
-      TableMetadata.Name := Tables.GetStringByName('TABLE_NAME');
-      // Call AddIndexMetadatas first, so that AddFieldMetadatas can see what
-      // indexes are defined to correctly set the foIndexed option.
-      AddIndexMetadatas(TableMetadata);
-      AddFieldMetadatas(TableMetadata);
-    end;
-    Tables.Next;
+    TableMetadata := TableMetadatas.Add;
+    TableMetadata.Name := Tables.GetStringByName('TABLE_NAME');
+    // Call AddIndexMetadatas first, so that AddFieldMetadatas can see what
+    // indexes are defined to correctly set the foIndexed option.
+    AddIndexMetadatas(TableMetadata);
+    AddFieldMetadatas(TableMetadata);
   end;
 end;
 
