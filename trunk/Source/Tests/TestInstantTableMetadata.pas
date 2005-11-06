@@ -45,6 +45,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestAssign;
     procedure TestFieldMetadatas;
     procedure TestIndexMetadatas;
     procedure TestScheme;
@@ -98,6 +99,26 @@ procedure TestTInstantTableMetadata.TestScheme;
 begin
   AssertNotNull(FInstantTableMetadata.Scheme);
   AssertSame(FOwner, FInstantTableMetadata.Scheme);
+end;
+
+procedure TestTInstantTableMetadata.TestAssign;
+var
+  vDest: TInstantTableMetadata;
+begin
+  vDest := TInstantTableMetadata.Create(nil);
+  try
+    AssertTrue(VDest.FieldMetadatas.Count = 0);
+    AssertTrue(VDest.IndexMetadatas.Count = 0);
+    vDest.Assign(FInstantTableMetadata);
+    AssertNotNull(VDest.FieldMetadatas);
+    AssertTrue(VDest.FieldMetadatas.Count > 0);
+    AssertTrue(VDest.FieldMetadatas[0].Equals(FInstantTableMetadata.FieldMetadatas[0]));
+    AssertNotNull(VDest.IndexMetadatas);
+    AssertTrue(VDest.IndexMetadatas.Count > 0);
+    AssertTrue(VDest.IndexMetadatas[0].Equals(FInstantTableMetadata.IndexMetadatas[0]));
+  finally
+    vDest.Free;
+  end;
 end;
 
 { TestTInstantTableMetadatas }
