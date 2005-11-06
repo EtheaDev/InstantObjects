@@ -46,6 +46,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestAssign;
     procedure TestCollection;
     procedure TestFields;
     procedure TestOptions;
@@ -107,6 +108,20 @@ procedure TestTInstantIndexMetadata.TestTableMetadata;
 begin
   AssertNotNull(FInstantIndexMetadata.TableMetadata);
   AssertSame(FOwner, FInstantIndexMetadata.TableMetadata);
+end;
+
+procedure TestTInstantIndexMetadata.TestAssign;
+var
+  vDest: TInstantIndexMetadata;
+begin
+  vDest := TInstantIndexMetadata.Create(nil);
+  try
+    vDest.Assign(FInstantIndexMetadata);
+    AssertEquals('IndexFields', vDest.Fields);
+    AssertTrue(vDest.Options = [ixPrimary, ixUnique]);
+  finally
+    vDest.Free;
+  end;
 end;
 
 procedure TestTInstantIndexMetadatas.SetUp;

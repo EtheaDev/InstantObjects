@@ -45,10 +45,12 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestAssign;
     procedure TestCollection;
     procedure TestDataType;
     procedure TestOptions;
     procedure TestSize;
+    procedure TestAlternateDataTypes;
   end;
 
   // Test methods for class TInstantFieldMetadatas
@@ -77,6 +79,7 @@ begin
   FInstantFieldMetadata.DataType := dtInteger;
   FInstantFieldMetadata.Size := 10;
   FInstantFieldMetadata.Options := [foRequired];
+  FInstantFieldMetadata.AlternateDataTypes := [dtBoolean]
 end;
 
 procedure TestTInstantFieldMetadata.TearDown;
@@ -104,12 +107,35 @@ end;
 
 procedure TestTInstantFieldMetadata.TestOptions;
 begin
-  AssertTrue(foRequired in FInstantFieldMetadata.Options);
+  AssertTrue(FInstantFieldMetadata.Options = [foRequired]);
 end;
 
 procedure TestTInstantFieldMetadata.TestSize;
 begin
   AssertEquals(10, FInstantFieldMetadata.Size);
+end;
+
+procedure TestTInstantFieldMetadata.TestAlternateDataTypes;
+begin
+  AssertTrue(FInstantFieldMetadata.AlternateDataTypes = [dtBoolean]);
+end;
+
+procedure TestTInstantFieldMetadata.TestAssign;
+var
+  vDest: TInstantFieldMetadata;
+  vStr: string;
+begin
+  vDest := TInstantFieldMetadata.Create(nil);
+  try
+    vDest.Assign(FInstantFieldMetadata);
+    AssertEquals(10, vDest.Size);
+    AssertTrue(vDest.Options = [foRequired]);
+    vStr := GetEnumName(TypeInfo(TInstantDataType), Ord(vDest.DataType));
+    AssertEquals('dtInteger', vStr);
+    AssertTrue(vDest.AlternateDataTypes = [dtBoolean]);
+  finally
+    vDest.Free;
+  end;
 end;
 
 procedure TestTInstantFieldMetadatas.SetUp;

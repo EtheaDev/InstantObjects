@@ -1036,11 +1036,8 @@ function TInstantDBBuildAlterFieldGenericSQLCommand.GetSQLStatement(const
     TInstantFieldMetadata;
   begin
     Result := TInstantFieldMetadata.Create(FieldMetadata.Collection);
+    Result.Assign(FieldMetadata);
     Result.Name := FieldMetadata.Name + STmpFieldSuffix;
-    Result.DataType := FieldMetadata.DataType;
-    Result.AlternateDataTypes := FieldMetadata.AlternateDataTypes;
-    Result.Options := FieldMetadata.Options;
-    Result.Size := FieldMetadata.Size;
   end;
 
 begin

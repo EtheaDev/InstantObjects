@@ -285,6 +285,7 @@ type
     function InternalEquals(const Other: TInstantMetadata): Boolean; override;
   public
     constructor Create(ACollection: TInstantFieldMetadatas); reintroduce;
+    procedure Assign(Source: TPersistent); override;
     // Returns True if one of the data types of Other (Other.DataType and
     // Other.AlternateDataTypes) equals one of the data types of Self.
     function DataTypesEqual(const Other: TInstantFieldMetadata): Boolean;
@@ -330,6 +331,7 @@ type
     function InternalEquals(const Other: TInstantMetadata): Boolean; override;
   public
     constructor Create(ACollection: TInstantMetadatas); reintroduce;
+    procedure Assign(Source: TPersistent); override;
     property Collection: TInstantIndexMetadatas read GetCollection;
     // Returns True if the field identified by AFieldMetadata is part of this
     // index.
@@ -370,6 +372,7 @@ type
     function GetIndexMetadataCount: Integer;
   public
     destructor Destroy; override;
+    procedure Assign(Source: TPersistent); override;
     property Scheme: TInstantScheme read GetScheme;
   published
     property FieldMetadataCount: Integer read GetFieldMetadataCount;
@@ -3752,6 +3755,19 @@ end;
 
 { TInstantFieldMetadata }
 
+procedure TInstantFieldMetadata.Assign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TInstantFieldMetadata then
+    with TInstantFieldMetadata(Source) do
+    begin
+      Self.FDataType := FDataType;
+      Self.FAlternateDataTypes := FAlternateDataTypes;
+      Self.FOptions := FOptions;
+      Self.FSize := FSize;
+    end;
+end;
+
 constructor TInstantFieldMetadata.Create(ACollection: TInstantFieldMetadatas);
 begin
   inherited Create(ACollection);
@@ -3834,6 +3850,17 @@ begin
 end;
 
 { TInstantIndexMetadata }
+
+procedure TInstantIndexMetadata.Assign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TInstantIndexMetadata then
+    with TInstantIndexMetadata(Source) do
+    begin
+      Self.FFields := FFields;
+      Self.FOptions := FOptions;
+    end;
+end;
 
 constructor TInstantIndexMetadata.Create(ACollection: TInstantMetadatas);
 begin
@@ -3943,6 +3970,17 @@ begin
 end;
 
 { TInstantTableMetadata }
+
+procedure TInstantTableMetadata.Assign(Source: TPersistent);
+begin
+  inherited;
+  if Source is TInstantTableMetadata then
+    with TInstantTableMetadata(Source) do
+    begin
+      Self.FieldMetadatas.Assign(FieldMetadatas);
+      Self.IndexMetadatas.Assign(IndexMetadatas);
+    end;
+end;
 
 destructor TInstantTableMetadata.Destroy;
 begin
