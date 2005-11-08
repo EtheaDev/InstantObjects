@@ -1,13 +1,13 @@
-New InstantConnectionManager and InstantConnectionManagerForm
--------------------------------------------------------------
+New InstantConnectionManager and InstantConnectionManagerFormUnit
+-----------------------------------------------------------------
 
 TInstantConnectionManagerForm was extracted from InstantConnectionManager.pas unit so the TInstantConnectionManager component is Forms independent.
 Now the InstantConnectionManager.Execute method launch a procedure registered by a calling to RegisterConnectionManagerExecutor.
-In the initialization section of InstantConnectionManagerForm.pas unit this procedure is called automatically.
+In the initialization section of InstantConnectionManagerFormUnit.pas unit this procedure is called automatically.
 
 Know problems and backward compatibility
 ----------------------------------------
-for applications that uses the default manager (like the Primer demo) you must add InstantConnectionManagerForm in a uses section.
+for applications that uses the default manager (like the Primer demo) you must add InstantConnectionManagerFormUnit in a uses section.
 
 More flexibility
 ----------------
