@@ -339,6 +339,8 @@ var
   Attribute: TInstantCodeAttribute;
   I: Integer;
 begin
+  if OKButton.CanFocus then
+    OKButton.SetFocus;
   if Assigned(Subject.Owner) then
     for I := 0 to Pred(Subject.Owner.AttributeCount) do
     begin
