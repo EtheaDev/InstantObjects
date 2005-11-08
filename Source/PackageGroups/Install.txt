@@ -52,6 +52,13 @@ in a standard Delphi installation. If you want to know how to install
 other brokers to use third party data access components and technologies,
 please refer to the installation section of \Doc\Readme.txt file.
 
+NOTE TO DELPHI 2005 AND 2006 USERS:
+We don't provide the .bdsproj files (as we don't provide
+.dof and .cfg files for older versions of Delphi), so the
+IDE will prompt you to create one of these files the first
+time you open a package. At the prompt that asks whether to
+make the package a Win32 or a .NET one, please answer Win32.
+
 For example RunTimePackages.bpg for Delphi 7 contains:
 --------------------------------
 1) IOCore.dpk: InstantObjects Core Package
