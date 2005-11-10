@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Nando Dessena
+ * Carlo Barazzetta, Nando Dessena, Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -45,15 +45,9 @@ uses
 type
   TInstantIBXConnectionDefEditForm = class(TForm)
     ClientPanel: TPanel;
-    ServerLabel: TLabel;
-    ProtocolLabel: TLabel;
-    DatabaseLabel: TLabel;
-    LocalRadioButton: TRadioButton;
-    RemoteRadioButton: TRadioButton;
-    ServerEdit: TEdit;
-    ProtocolEdit: TComboBox;
-    DatabaseEdit: TEdit;
-    DatabaseButton: TButton;
+    ConnectionStringLabel: TLabel;
+    ConnectionStringEdit: TEdit;
+    ConnectionStringButton: TButton;
     BottomPanel: TPanel;
     OkButton: TButton;
     CancelButton: TButton;
@@ -65,15 +59,13 @@ type
     ParamsLabel: TLabel;
     ParamsEditor: TMemo;
     IdDataTypeComboBox: TComboBox;
-    Label1: TLabel;
+    IdDataTypeLabel: TLabel;
     IdSizeEdit: TEdit;
-    Label2: TLabel;
-    procedure LocalRemoteChange(Sender: TObject);
-    procedure DatabaseButtonClick(Sender: TObject);
+    IdSizeLabel: TLabel;
+    procedure ConnectionStringButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     function GetIsValid: Boolean;
-    procedure UpdateControls;
   public
     procedure LoadData(ConnectionDef: TInstantIBXConnectionDef);
     procedure SaveData(ConnectionDef: TInstantIBXConnectionDef);
@@ -89,17 +81,17 @@ uses
 
 { TInstantIBXConnectionDefEditForm }
 
-procedure TInstantIBXConnectionDefEditForm.DatabaseButtonClick(
+procedure TInstantIBXConnectionDefEditForm.ConnectionStringButtonClick(
   Sender: TObject);
 begin
   with TOpenDialog.Create(nil) do
   try
     Filter :=
-      'FireBird Database (*.fdb)|*.fdb|' +
       'InterBase Database (*.gdb)|*.gdb|' +
+      'FireBird Database (*.fdb)|*.fdb|' +
       'All Files (*.*)|*.*';
     if Execute then
-      DatabaseEdit.Text := FileName;
+      ConnectionStringEdit.Text := FileName;
   finally
     Free;
   end;
@@ -111,14 +103,11 @@ begin
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
   IdDataTypeComboBox.ItemIndex := Ord(dtString);
   IdSizeEdit.Text := IntToStr(InstantDefaultFieldSize);
-  UpdateControls;
 end;
 
 function TInstantIBXConnectionDefEditForm.GetIsValid: Boolean;
 begin
-  Result :=
-    (LocalRadioButton.Checked or (ServerEdit.Text <> '')) and
-    (DatabaseEdit.Text <> '');
+  Result := ConnectionStringEdit.Text <> '';
 end;
 
 procedure TInstantIBXConnectionDefEditForm.LoadData(
@@ -126,11 +115,7 @@ procedure TInstantIBXConnectionDefEditForm.LoadData(
 begin
   with ConnectionDef do
   begin
-    LocalRadioButton.Checked := NetType = ntLocal;
-    RemoteRadioButton.Checked := NetType <> ntLocal;
-    ProtocolEdit.ItemIndex := Ord(NetType) - 1;
-    ServerEdit.Text := ServerName;
-    DatabaseEdit.Text := Path;
+    ConnectionStringEdit.Text := ConnectionString;
     StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat);
     UseDelimitedIdentsCheckBox.Checked := ibxUseDelimitedIdents in Options;
     LoginPromptCheckBox.Checked := LoginPrompt;
@@ -138,13 +123,6 @@ begin
     IdDataTypeComboBox.ItemIndex := Ord(IdDataType);
     IdSizeEdit.Text := IntToStr(IdSize);
   end;
-  UpdateControls;
-end;
-
-procedure TInstantIBXConnectionDefEditForm.LocalRemoteChange(
-  Sender: TObject);
-begin
-  UpdateControls;
 end;
 
 procedure TInstantIBXConnectionDefEditForm.SaveData(
@@ -152,42 +130,17 @@ procedure TInstantIBXConnectionDefEditForm.SaveData(
 begin
   with ConnectionDef do
   begin
-    if LocalRadioButton.Checked then
-      NetType := ntLocal
-    else
-      NetType := TIBXNetType(ProtocolEdit.ItemIndex + 1);
-    ServerName := ServerEdit.Text;
-    Path := DatabaseEdit.Text;
+    ConnectionString := ConnectionStringEdit.Text;
     BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
     Options := [];
     if UseDelimitedIdentsCheckBox.Checked then
-      Options := Options + [ibxUseDelimitedIdents]
-    else
-      Options := Options - [ibxUseDelimitedIdents];
+      Options := Options + [ibxUseDelimitedIdents];
     LoginPrompt := LoginPromptCheckBox.Checked;
-    ConnectionDef.Params := ParamsEditor.Lines.Text;
+    Params := ParamsEditor.Lines.Text;
     IdDataType := TInstantDataType(IdDataTypeComboBox.ItemIndex);
     IdSize := StrToInt(IdSizeEdit.Text);
   end;
 end;
 
-procedure TInstantIBXConnectionDefEditForm.UpdateControls;
-const
-  Colors: array[Boolean] of TColor = (clBtnFace, clWindow);
-var
-  UseRemote: Boolean;
-begin
-  UseRemote := RemoteRadioButton.Checked;
-  ServerLabel.Enabled := UseRemote;
-  ServerEdit.Enabled := UseRemote;
-  ServerEdit.Color := Colors[UseRemote];
-  ProtocolLabel.Enabled := UseRemote;
-  ProtocolEdit.Enabled := UseRemote;
-  ProtocolEdit.Color := Colors[UseRemote];
-  DatabaseButton.Enabled := not UseRemote;
-  with ProtocolEdit do
-    if ItemIndex = -1 then
-      ItemIndex := 0;
-end;
-
 end.
+
