@@ -159,28 +159,28 @@ end;
 procedure TInstantZeosDBOCatalog.AddTableMetadatas(
   TableMetadatas: TInstantTableMetadatas);
 var
-  TableType: TStringDynArray;
   TableMetadata: TInstantTableMetadata;
   Tables: IZResultSet;
 begin
-  SetLength(TableType, 1);
-  TableType[0] := 'TABLE';
   with Broker as TInstantZeosDBOBroker, Connector.Connection do
   begin
     if not Connector.Connected then Connector.Connect;
     DbcConnection.GetMetadata.ClearCache;
-    Tables := DbcConnection.GetMetadata.GetTables(Catalog, '', '', TableType);
+    Tables := DbcConnection.GetMetadata.GetTables(Catalog, '', '', nil);
   end;
 
   Tables.BeforeFirst;
   while Tables.Next do
   begin
-    TableMetadata := TableMetadatas.Add;
-    TableMetadata.Name := Tables.GetStringByName('TABLE_NAME');
-    // Call AddIndexMetadatas first, so that AddFieldMetadatas can see what
-    // indexes are defined to correctly set the foIndexed option.
-    AddIndexMetadatas(TableMetadata);
-    AddFieldMetadatas(TableMetadata);
+    if AnsiSameStr(Tables.GetStringByName('TABLE_TYPE'), 'TABLE') then
+    begin
+      TableMetadata := TableMetadatas.Add;
+      TableMetadata.Name := Tables.GetStringByName('TABLE_NAME');
+      // Call AddIndexMetadatas first, so that AddFieldMetadatas can see what
+      // indexes are defined to correctly set the foIndexed option.
+      AddIndexMetadatas(TableMetadata);
+      AddFieldMetadatas(TableMetadata);
+    end;
   end;
 end;
 
