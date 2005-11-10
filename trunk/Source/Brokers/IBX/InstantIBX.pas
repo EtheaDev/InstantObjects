@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Nando Dessena
+ * Carlo Barazzetta, Nando Dessena, Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -43,8 +43,6 @@ uses
   InstantClasses, InstantCommand;
 
 type
-  TIBXNetType = (ntLocal, ntTCP, ntNetBEUI, ntSPX);
-
   TInstantIBXOption = (ibxUseDelimitedIdents);
   TInstantIBXOptions = set of TInstantIBXOption;
 
@@ -54,13 +52,9 @@ const
 type
   TInstantIBXConnectionDef = class(TInstantConnectionBasedConnectionDef)
   private
-    FPath: string;
-    FServerName: string;
-    FNetType: TIBXNetType;
+    FConnectionString: string;
     FOptions: TInstantIBXOptions;
     FParams: string;
-    function GetDatabaseName: string;
-    function GetServerName: string;
   protected
     function CreateConnection(AOwner: TComponent): TCustomConnection; override;
     procedure InitConnector(Connector: TInstantConnector); override;
@@ -69,11 +63,8 @@ type
     class function ConnectorClass: TInstantConnectorClass; override;
     constructor Create(Collection: TCollection); override;
     function Edit: Boolean; override;
-    property DatabaseName: string read GetDatabaseName;
   published
-    property Path: string read FPath write FPath;
-    property NetType: TIBXNetType read FNetType write FNetType;
-    property ServerName: string read GetServerName write FServerName;
+    property ConnectionString: string read FConnectionString write FConnectionString;
     property Options: TInstantIBXOptions read FOptions write FOptions;
     property Params: string read FParams write FParams;
   end;
@@ -176,7 +167,7 @@ var
 begin
   Connection := TIBDatabase.Create(AOwner);
   try
-    Connection.DatabaseName := DatabaseName;
+    Connection.DatabaseName := ConnectionString;
     Connection.SQLDialect := 3;
     Connection.Params.Text := Params;
   except
@@ -197,30 +188,6 @@ begin
   finally
     Free;
   end;
-end;
-
-function TInstantIBXConnectionDef.GetDatabaseName: string;
-var
-  Fmt: string;
-begin
-  if NetType = ntLocal then
-    Result := Path
-  else begin
-    case NetType of
-      ntTCP: Fmt := '%s:%s';
-      ntNetBEUI: Fmt := '\\%s\%s';
-      ntSPX: Fmt := '%s@%s';
-    end;
-    Result := Format(Fmt, [ServerName, Path]);
-  end;
-end;
-
-function TInstantIBXConnectionDef.GetServerName: string;
-begin
-  if NetType = ntLocal then
-    Result := ''
-  else
-    Result := FServerName;
 end;
 
 procedure TInstantIBXConnectionDef.InitConnector(Connector: TInstantConnector);
@@ -564,3 +531,4 @@ finalization
   TInstantIBXConnector.UnregisterClass;
 
 end.
+

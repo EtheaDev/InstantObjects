@@ -3,7 +3,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
   Top = 238
   BorderStyle = bsDialog
   Caption = 'IBX Connection'
-  ClientHeight = 399
+  ClientHeight = 339
   ClientWidth = 362
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 362
+    Top = 302
     Width = 362
     Height = 2
     Align = alBottom
@@ -28,37 +28,21 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 362
-    Height = 362
+    Height = 302
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    object ServerLabel: TLabel
+    object ConnectionStringLabel: TLabel
       Left = 16
-      Top = 36
-      Width = 31
+      Top = 12
+      Width = 84
       Height = 13
-      Caption = '&Server'
-      FocusControl = ServerEdit
-    end
-    object ProtocolLabel: TLabel
-      Left = 235
-      Top = 36
-      Width = 39
-      Height = 13
-      Caption = '&Protocol'
-      FocusControl = ProtocolEdit
-    end
-    object DatabaseLabel: TLabel
-      Left = 16
-      Top = 76
-      Width = 46
-      Height = 13
-      Caption = '&Database'
-      FocusControl = DatabaseEdit
+      Caption = '&Connection String'
+      FocusControl = ConnectionStringEdit
     end
     object StreamFormatLabel: TLabel
       Left = 16
-      Top = 312
+      Top = 248
       Width = 53
       Height = 13
       Caption = 'Blob &format'
@@ -66,137 +50,97 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
     end
     object ParamsLabel: TLabel
       Left = 16
-      Top = 140
+      Top = 76
       Width = 95
       Height = 13
       Caption = 'Connection &Settings'
       FocusControl = ParamsEditor
     end
-    object Label1: TLabel
+    object IdDataTypeLabel: TLabel
       Left = 136
-      Top = 312
+      Top = 248
       Width = 62
       Height = 13
       Caption = 'Id Data Type'
       FocusControl = IdDataTypeComboBox
     end
-    object Label2: TLabel
+    object IdSizeLabel: TLabel
       Left = 256
-      Top = 312
+      Top = 248
       Width = 32
       Height = 13
       Caption = 'Id Size'
       FocusControl = IdDataTypeComboBox
     end
-    object LocalRadioButton: TRadioButton
+    object ConnectionStringEdit: TEdit
       Left = 16
-      Top = 16
-      Width = 57
-      Height = 17
-      Caption = '&Local'
-      Checked = True
+      Top = 28
+      Width = 301
+      Height = 21
       TabOrder = 0
-      TabStop = True
-      OnClick = LocalRemoteChange
     end
-    object RemoteRadioButton: TRadioButton
-      Left = 86
-      Top = 16
-      Width = 65
-      Height = 17
-      Caption = '&Remote'
-      TabOrder = 1
-      OnClick = LocalRemoteChange
-    end
-    object ServerEdit: TEdit
-      Left = 16
-      Top = 52
-      Width = 209
-      Height = 21
-      TabOrder = 2
-    end
-    object ProtocolEdit: TComboBox
-      Left = 235
-      Top = 52
-      Width = 110
-      Height = 21
-      Style = csDropDownList
-      ItemHeight = 13
-      TabOrder = 3
-      Items.Strings = (
-        'TCP/IP'
-        'NetBEUI'
-        'SPX')
-    end
-    object DatabaseEdit: TEdit
-      Left = 16
-      Top = 92
-      Width = 305
-      Height = 21
-      TabOrder = 4
-    end
-    object DatabaseButton: TButton
+    object ConnectionStringButton: TButton
       Left = 321
-      Top = 92
+      Top = 28
       Width = 21
       Height = 21
       Caption = '...'
-      TabOrder = 5
-      OnClick = DatabaseButtonClick
+      TabOrder = 1
+      OnClick = ConnectionStringButtonClick
     end
     object StreamFormatComboBox: TComboBox
       Left = 16
-      Top = 328
+      Top = 264
       Width = 113
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
       Sorted = True
-      TabOrder = 9
+      TabOrder = 5
     end
     object UseDelimitedIdentsCheckBox: TCheckBox
       Left = 16
-      Top = 118
+      Top = 54
       Width = 150
       Height = 17
       Caption = '&Use delimited identifiers'
-      TabOrder = 6
+      TabOrder = 2
     end
     object LoginPromptCheckBox: TCheckBox
       Left = 196
-      Top = 118
+      Top = 54
       Width = 150
       Height = 17
       Caption = '&Login Prompt'
-      TabOrder = 7
+      TabOrder = 3
     end
     object ParamsEditor: TMemo
       Left = 17
-      Top = 160
+      Top = 96
       Width = 328
       Height = 149
-      TabOrder = 8
+      TabOrder = 4
     end
     object IdDataTypeComboBox: TComboBox
       Left = 136
-      Top = 328
+      Top = 264
       Width = 113
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
-      TabOrder = 10
+      TabOrder = 6
     end
     object IdSizeEdit: TEdit
       Left = 256
-      Top = 328
+      Top = 264
       Width = 89
       Height = 21
-      TabOrder = 11
+      TabOrder = 7
     end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 364
+    Top = 304
     Width = 362
     Height = 35
     Align = alBottom
