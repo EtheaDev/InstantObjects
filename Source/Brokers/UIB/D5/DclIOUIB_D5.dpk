@@ -29,9 +29,6 @@ package DclIOUIB_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  vcl50,
-  vcldb50,
-  IOCore,
   IOUIB_D5;
 
 contains

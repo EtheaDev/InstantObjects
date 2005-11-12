@@ -1,4 +1,4 @@
-package Ioibx_D5;
+package IOIBX_D5;
 
 {$I '..\..\..\InstantVersion.inc'}
 
@@ -28,9 +28,9 @@ package Ioibx_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  IOIBFbCatalog_D5,
-  VCLIB50;
+  VCLIB50,
+  IOCore_D5,
+  IOIBFbCatalog_D5;
 
 contains
   InstantIBXConnectionDefEdit in '..\InstantIBXConnectionDefEdit.pas' {InstantIBXConnectionDefEditForm},

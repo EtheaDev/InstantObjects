@@ -28,8 +28,8 @@ package IOZeosDBO_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  ZComponent;
+  ZComponent,
+  IOCore_D5;
 
 contains
   InstantZeosDBO in '..\InstantZeosDBO.pas',

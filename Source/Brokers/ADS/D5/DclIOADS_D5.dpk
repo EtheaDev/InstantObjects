@@ -29,8 +29,7 @@ package DclIOADS_D5;
 {$IMPLICITBUILD ON}
 
 requires
-  IOCore,
-  ioads_D5;
+  IOADS_D5;
 
 contains
   InstantADSReg in '..\InstantADSReg.pas';

@@ -29,8 +29,7 @@ package DclIOBDE_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  Iobde_D5;
+  IOBDE_D5;
 
 contains
   InstantBDEReg in '..\InstantBDEReg.pas';

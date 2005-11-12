@@ -1,4 +1,4 @@
-package Iobde_D5;
+package IOBDE_D5;
 
 {$I '..\..\..\InstantVersion.inc'}
 
@@ -28,8 +28,8 @@ package Iobde_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  VCLBDE50;
+  VCLBDE50,
+  IOCore_D5;
 
 contains
   InstantBDECatalog in '..\InstantBDECatalog.pas',

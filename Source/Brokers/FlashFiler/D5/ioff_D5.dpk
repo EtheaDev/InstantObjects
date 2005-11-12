@@ -1,4 +1,4 @@
-package ioff_D5;
+package IOff_D5;
 
 {$I '..\..\..\InstantVersion.inc'}
 
@@ -28,11 +28,9 @@ package ioff_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  Vcl50,
-  Vcldb50,
   Vclx50,
   ff2_r50,
-  IOCore;
+  IOCore_D5;
 
 contains
   InstantFlashFilerConnectionDefEdit in '..\InstantFlashFilerConnectionDefEdit.pas' {InstantFlashFilerConnectionDefEditForm},
