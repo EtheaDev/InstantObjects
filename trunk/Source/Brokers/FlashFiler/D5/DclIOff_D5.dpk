@@ -29,8 +29,7 @@ package DclIOff_D5;
 {$IMPLICITBUILD ON}
 
 requires
-  IOCore,
-  ioff_D5;
+  IOff_D5;
 
 contains
   InstantFFReg in '..\InstantFFReg.pas';

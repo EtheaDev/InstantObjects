@@ -1,5 +1,4 @@
-package ioads_D5;
-
+package IOADS_D5;
 
 {$I '..\..\..\InstantVersion.inc'}
 
@@ -28,11 +27,9 @@ package ioads_D5;
 {$IMPLICITBUILD ON}
 
 requires
-  Vcl50,
   Vclx50,
-  Vcldb50,
   ADSD50,
-  IOCore;
+  IOCore_D5;
 
 contains
   InstantADS in '..\InstantADS.pas',

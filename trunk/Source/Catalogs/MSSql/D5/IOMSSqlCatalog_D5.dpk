@@ -28,7 +28,7 @@ package IOMSSqlCatalog_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore;
+  IOCore_D5;
 
 contains
   InstantMsSQLCatalog in '..\InstantMSSqlCatalog.pas';

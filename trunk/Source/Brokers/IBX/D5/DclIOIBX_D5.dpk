@@ -29,8 +29,7 @@ package DclIOIBX_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  Ioibx_D5;
+  IOIBX_D5;
 
 contains
   InstantIBXReg in '..\InstantIBXReg.pas';

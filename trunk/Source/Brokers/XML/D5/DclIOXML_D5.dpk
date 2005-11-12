@@ -29,7 +29,7 @@ package DclIOXML_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  Ioxml_D5;
+  IOXML_D5;
 
 contains
   InstantXMLReg in '..\InstantXMLReg.pas';

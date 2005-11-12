@@ -28,15 +28,12 @@ package IOUIB_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  vcl50,
-  vcldb50,
-  IOCore,
   JvUIBD5R,
-  vcldbx50;
+  vcldbx50,
+  IOCore_D5;
 
 contains
   InstantUIBConnectionDefEdit in '..\InstantUIBConnectionDefEdit.pas' {InstantUIBConnectionDefEditForm},
-  InstantUIB in '..\InstantUIB.pas',
-  InstantUIBConnection in '..\InstantUIBConnection.pas';
+  InstantUIB in '..\InstantUIB.pas';
 
 end.

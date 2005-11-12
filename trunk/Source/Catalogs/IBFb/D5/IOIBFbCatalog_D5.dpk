@@ -28,7 +28,7 @@ package IOIBFbCatalog_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore;
+  IOCore_D5;
 
 contains
   InstantIBFbCatalog in '..\InstantIBFbCatalog.pas';

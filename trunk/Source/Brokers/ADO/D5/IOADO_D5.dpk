@@ -28,9 +28,9 @@ package IOADO_D5;
 {$IMPLICITBUILD OFF}
 
 requires
-  IOCore,
-  IOMSSqlCatalog_D5,
-  vclado50;
+  vclado50,
+  IOCore_D5,
+  IOMSSqlCatalog_D5;
 
 contains
   InstantADOX in '..\InstantADOX.pas',
