@@ -414,7 +414,7 @@ begin
     SourceParam := AParams[I];
     if SourceParam.IsNull then
     begin
-      TargetParams.ByNameIsNull[SourceParam.Name];
+      TargetParams.ByNameIsNull[SourceParam.Name] := True;
     end
     else
     begin
