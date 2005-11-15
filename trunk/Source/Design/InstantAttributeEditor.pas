@@ -633,11 +633,11 @@ begin
 
 end;
 
-procedure TInstantAttributeEditorForm.StorageNameEditChange(
-  Sender: TObject);
+procedure TInstantAttributeEditorForm.StorageNameEditChange(Sender: TObject);
 begin
   inherited;
-  SubjectExposer.AssignFieldValue(StorageNameEdit.Field, StorageNameEdit.Text);
+  if Assigned(StorageNameEdit.DataSource) then 
+    SubjectExposer.AssignFieldValue(StorageNameEdit.Field, StorageNameEdit.Text);
   UpdateControls;
 end;
 
