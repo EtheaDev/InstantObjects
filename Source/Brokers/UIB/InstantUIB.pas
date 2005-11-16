@@ -147,7 +147,7 @@ implementation
 
 uses
   Controls, InstantConsts, InstantUIBConnectionDefEdit, InstantUtils,
-  TypInfo, InstantDBBuild, InstantIBFbCatalog;
+  TypInfo, InstantDBBuild, InstantIBFbCatalog, DbLogDlg;
 
 { TInstantUIBConnectionDef }
 
@@ -386,16 +386,11 @@ var
 begin
   LUserName := DataBase.UserName;
   LPassWord := DataBase.PassWord;
-  if Assigned(LoginDialogProc) then
+  if LoginDialogEx(FDataBase.DatabaseName, LUserName, LPassWord, False) then
   begin
-    if LoginDialogProc(FDataBase.DatabaseName, LUserName, LPassWord) then
-    begin
-      FDataBase.UserName := LUserName;
-      FDataBase.PassWord := LPassWord;
-    end;
-  end
-  else
-    raise EDatabaseError.Create(SLoginPromptFailure);
+    FDataBase.UserName := LUserName;
+    FDataBase.PassWord := LPassWord;
+  end;
 end;
 
 { TInstantUIBBroker}
