@@ -3,7 +3,7 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
   Top = 199
   BorderStyle = bsDialog
   Caption = 'UIB Connection'
-  ClientHeight = 329
+  ClientHeight = 336
   ClientWidth = 362
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 292
+    Top = 299
     Width = 362
     Height = 2
     Align = alBottom
@@ -28,7 +28,7 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 362
-    Height = 292
+    Height = 299
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -140,15 +140,12 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 294
+    Top = 301
     Width = 362
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    DesignSize = (
-      362
-      35)
     object OkButton: TButton
       Left = 204
       Top = 6

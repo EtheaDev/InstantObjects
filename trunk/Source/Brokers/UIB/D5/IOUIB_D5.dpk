@@ -30,7 +30,8 @@ package IOUIB_D5;
 requires
   JvUIBD5R,
   vcldbx50,
-  IOCore_D5;
+  IOCore_D5,
+  IOIBFbCatalog_D5;
 
 contains
   InstantUIBConnectionDefEdit in '..\InstantUIBConnectionDefEdit.pas' {InstantUIBConnectionDefEditForm},
