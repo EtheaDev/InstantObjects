@@ -59,7 +59,7 @@ type
     PortEdit: TEdit;
     ProtocolComboBox: TComboBox;
     DatabaseEdit: TEdit;
-    CatalogEdit: TEdit;
+    CatalogComboBox: TComboBox;
     DatabaseButton: TButton;
     UserNameEdit: TEdit;
     PasswordEdit: TEdit;
@@ -74,6 +74,9 @@ type
     OkButton: TButton;
     CancelButton: TButton;
     procedure FormCreate(Sender: TObject);
+    procedure PortEditExit(Sender: TObject);
+    procedure DatabaseButtonClick(Sender: TObject);
+    procedure CatalogComboBoxDropDown(Sender: TObject);
   private
     procedure UpdateControls;
   public
@@ -98,6 +101,35 @@ begin
   UpdateControls;
 end;
 
+procedure TInstantZeosDBOConnectionDefEditForm.PortEditExit(
+  Sender: TObject);
+begin
+  if Length(PortEdit.Text) > 0 then
+    PortEdit.Text := InttoStr(StrtoInt(PortEdit.Text));
+end;
+
+procedure TInstantZeosDBOConnectionDefEditForm.DatabaseButtonClick(
+  Sender: TObject);
+begin
+  with TOpenDialog.Create(nil) do
+  try
+    Filter := 'All Files (*.*)|*.*';
+    if Execute then
+      DatabaseEdit.Text := FileName;
+  finally
+    Free;
+  end;
+end;
+
+procedure TInstantZeosDBOConnectionDefEditForm.CatalogComboBoxDropDown(
+  Sender: TObject);
+begin
+  AssignZeosDBOCatalogs(CatalogComboBox.Items,
+   ProtocolComboBox.Text, HostNameEdit.Text, PortEdit.Text,
+   UserNameEdit.Text, PasswordEdit.Text,
+   PropertiesEditor.Lines);
+end;
+
 procedure TInstantZeosDBOConnectionDefEditForm.LoadData(
   ConnectionDef: TInstantZeosDBOConnectionDef);
 begin
@@ -105,7 +137,7 @@ begin
   PortEdit.Text := InttoStr(ConnectionDef.Port);
   ProtocolComboBox.ItemIndex := ProtocolComboBox.Items.IndexOf(ConnectionDef.Protocol);
   DatabaseEdit.Text := ConnectionDef.Database;
-  CatalogEdit.Text := ConnectionDef.Catalog;
+  CatalogComboBox.Text := ConnectionDef.Catalog;
   UserNameEdit.Text := ConnectionDef.UserName;
   PasswordEdit.Text := ConnectionDef.Password;
   LoginPromptCheckBox.Checked := ConnectionDef.LoginPrompt;
@@ -121,10 +153,17 @@ procedure TInstantZeosDBOConnectionDefEditForm.SaveData(
   ConnectionDef: TInstantZeosDBOConnectionDef);
 begin
   ConnectionDef.HostName := HostNameEdit.Text;
-  ConnectionDef.Port := StrtoInt(PortEdit.Text);
+  if Length(PortEdit.Text) > 0 then
+    try
+      ConnectionDef.Port := StrtoInt(PortEdit.Text);
+    except
+      ConnectionDef.Port := 0;
+    end
+  else
+    ConnectionDef.Port := 0;
   ConnectionDef.Protocol := ProtocolComboBox.Text;
   ConnectionDef.Database := DatabaseEdit.Text;
-  ConnectionDef.Catalog := CatalogEdit.Text;
+  ConnectionDef.Catalog := CatalogComboBox.Text;
   ConnectionDef.UserName := UserNameEdit.Text;
   ConnectionDef.Password := PasswordEdit.Text;
   ConnectionDef.LoginPrompt := LoginPromptCheckBox.Checked;
@@ -137,8 +176,6 @@ end;
 
 procedure TInstantZeosDBOConnectionDefEditForm.UpdateControls;
 begin
-
 end;
 
 end.
-
