@@ -38,7 +38,7 @@ unit InstantZeosDBOCatalog;
 interface
 
 uses
-  InstantPersistence, DB, ZDbcIntfs;
+  DB, ZDbcIntfs, InstantPersistence, InstantZeosDBO;
 
 type
   // A TInstantCatalog that reads catalog information from a ZeosDBO
@@ -50,15 +50,20 @@ type
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
     function ColumnTypeToDataType(const ColumnType: TZSQLType;
       out AlternateDataTypes: TInstantDataTypes): TInstantDataType;
+    function GetBroker: TInstantZeosDBOBroker;
+    function GetConnector: TInstantZeosDBOConnector;
   public
     procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas);
       override;
+    property Broker: TInstantZeosDBOBroker read GetBroker;
+    property Connector: TInstantZeosDBOConnector read GetConnector;
   end;
 
 implementation
 
 uses
-  Types, SysUtils, Classes, ZConnection, InstantConsts, InstantZeosDBO, TypInfo;
+  {$IFDEF D7+}Types,{$ENDIF} TypInfo, SysUtils, Classes, ZConnection,
+  InstantClasses, InstantConsts;
 
 procedure TInstantZeosDBOCatalog.AddFieldMetadatas(
   TableMetadata: TInstantTableMetadata);
@@ -67,7 +72,7 @@ var
   FieldMetadata: TInstantFieldMetadata;
   AlternateDatatypes: TInstantDataTypes;
 begin
-  with Broker as TInstantZeosDBOBroker, Connector.Connection as TZConnection do
+  with Connector.Connection do
     Fields := DbcConnection.GetMetadata.GetColumns(Catalog, '',
       TableMetadata.Name, '');
 
@@ -85,7 +90,8 @@ begin
       FieldMetadata.Options := FieldMetadata.Options + [foRequired];
     if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
       FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-    //work around bug in GetColumns for all drivers where CHAR_OCTET_LENGTH is not assigned
+    // work around bug in GetColumns for all drivers where
+    // CHAR_OCTET_LENGTH is not assigned
     if (FieldMetadata.DataType in [dtString, dtMemo]) and
       (Fields.GetIntByName('CHAR_OCTET_LENGTH') > 0) then
       FieldMetadata.Size := Fields.GetIntByName('CHAR_OCTET_LENGTH')
@@ -102,7 +108,7 @@ var
   IndexInfo: IZResultSet;
   IndexMetadata: TInstantIndexMetadata;
 begin
-  with Broker as TInstantZeosDBOBroker, Connector.Connection as TZConnection do
+  with Connector.Connection do
     PrimaryKeys := DbcConnection.GetMetadata.GetPrimaryKeys(Catalog, '',
       TableMetadata.Name);
 
@@ -124,7 +130,7 @@ begin
     end;
   end;
 
-  with Broker as TInstantZeosDBOBroker, Connector.Connection as TZConnection do
+  with Connector.Connection do
     IndexInfo := DbcConnection.GetMetadata.GetIndexInfo(Catalog, '',
       TableMetadata.Name, False, False);
 
@@ -162,9 +168,10 @@ var
   TableMetadata: TInstantTableMetadata;
   Tables: IZResultSet;
 begin
-  with Broker as TInstantZeosDBOBroker, Connector.Connection do
+  with Connector.Connection do
   begin
-    if not Connector.Connected then Connector.Connect;
+    if not Connected then
+      Connect;
     DbcConnection.GetMetadata.ClearCache;
     Tables := DbcConnection.GetMetadata.GetTables(Catalog, '', '', nil);
   end;
@@ -215,9 +222,19 @@ begin
     stAsciiStream,
       stUnicodeStream: Result := dtMemo;
   else
-    raise Exception.CreateFmt(SUnsupportedColumnType,
+    raise EInstantError.CreateFmt(SUnsupportedColumnType,
       [GetEnumName(TypeInfo(TZSQLType), Ord(ColumnType))]);
   end;
+end;
+
+function TInstantZeosDBOCatalog.GetBroker: TInstantZeosDBOBroker;
+begin
+  Result := inherited Broker as TInstantZeosDBOBroker;
+end;
+
+function TInstantZeosDBOCatalog.GetConnector: TInstantZeosDBOConnector;
+begin
+  Result := Broker.Connector;
 end;
 
 procedure TInstantZeosDBOCatalog.InitTableMetadatas(
@@ -228,4 +245,3 @@ begin
 end;
 
 end.
-

@@ -92,6 +92,7 @@ type
     procedure DoAfterConnectionChange;
     procedure DoBeforeConnectionChange;
     function GetConnection: TZConnection;
+    function GetLoginPrompt: Boolean;
     procedure SetConnection(Value: TZConnection);
     procedure SetLoginPrompt(const Value: Boolean);
     procedure SetUseDelimitedIdents(const Value: Boolean);
@@ -102,9 +103,11 @@ type
     procedure CheckConnection;
     function CreateBroker: TInstantBroker; override;
     function GetConnected: Boolean; override;
+    function GetDatabaseExists: Boolean; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     procedure InternalCommitTransaction; override;
     procedure InternalConnect; override;
+    procedure InternalCreateDatabase; override;
     procedure InternalDisconnect; override;
     procedure InternalRollbackTransaction; override;
     procedure InternalStartTransaction; override;
@@ -116,7 +119,7 @@ type
     function HasConnection: Boolean;
   published
     property Connection: TZConnection read GetConnection write SetConnection;
-    property LoginPrompt: Boolean read FLoginPrompt write SetLoginPrompt default False;
+    property LoginPrompt: Boolean read GetLoginPrompt write SetLoginPrompt default False;
     property OnLogin: TLoginEvent read FOnLogin write FOnLogin;
     property UseDelimitedIdents: Boolean read FUseDelimitedIdents write SetUseDelimitedIdents default False;
   end;
@@ -270,20 +273,23 @@ type
   {$ENDIF}
 
 procedure AssignZeosDBOProtocols(Strings: TStrings);
+procedure AssignZeosDBOCatalogs(Strings: TStrings; const AProtocol, AHostName,
+ APort, AUser, APassword: string; AProperties: TStrings);
 
 implementation
 
 uses
-  SysUtils, {$IFDEF D7+}Types, {$ENDIF}Controls, InstantConsts, InstantClasses,
-  InstantZeosDBOConnectionDefEdit, InstantZeosDBOCatalog, InstantUtils, ZClasses,
-  ZCompatibility, ZDbcIntfs, ZDataset;
+  SysUtils, {$IFDEF D7+}Types,{$ENDIF} Controls, {$IFDEF D5}DBLogDlg,{$ENDIF}
+  InstantConsts, InstantClasses, InstantZeosDBOConnectionDefEdit,
+  InstantZeosDBOCatalog, InstantUtils, ZClasses, ZCompatibility, ZDbcIntfs,
+  ZDataset;
 
 {$IFDEF SQLITE_SUPPORT}
 const
-  STmpTableSuffix = '_XYZ_';
-  {$ENDIF}
+  STmpTableSuffix = '_IOTmp_';
+{$ENDIF}
 
-  { Global routines }
+{ Global routines }
 
 procedure AssignZeosDBOProtocols(Strings: TStrings);
 var
@@ -301,6 +307,44 @@ begin
       Strings.Add(Protocols[j]);
   end;
 end;
+
+procedure AssignZeosDBOCatalogs(Strings: TStrings; const AProtocol, AHostName,
+ APort, AUser, APassword: string; AProperties: TStrings);
+var
+  DbcConnection: IZConnection;
+  Url: string;
+begin
+  Strings.Clear;
+  try
+    if (APort = '') or (APort = '0') then
+      Url := Format('zdbc:%s://%s/%s?UID=%s;PWD=%s',
+       [AProtocol, AHostName, '', AUser, APassword])
+    else
+      Url := Format('zdbc:%s://%s:%d/%s?UID=%s;PWD=%s',
+       [AProtocol, AHostName, APort, '', AUser, APassword]);
+
+    DbcConnection := DriverManager.GetConnectionWithParams(Url, AProperties);
+    with DbcConnection.GetMetadata.GetCatalogs do
+    try
+      while Next do
+        Strings.Add(GetString(1));
+    finally
+      Close;
+    end;
+  except
+    // Just return an empty list whenever exception raises
+  end;
+end;
+
+{ Local routines }
+
+{$IFDEF D5}
+function LoginDialogProcCompatibility(const ADatabaseName: string;
+ var AUserName, APassword: string): Boolean;
+begin
+  Result := LoginDialogEx(ADatabaseName, AUserName, APassword, False);
+end;
+{$ENDIF}
 
 { TInstantZeosDBOConnectionDef }
 
@@ -359,13 +403,10 @@ end;
 
 procedure TInstantZeosDBOConnector.AfterConnectionChange;
 begin
-  { TODO : Is it a good idea changes connection properties after assignment? }
   if HasConnection then
   begin
     FConnection.Connected := False;
-    // We need to turn Auto Commit off and set ReadCommitted
-    // Transaction Isolation Level
-    FConnection.AutoCommit := False;
+    FConnection.AutoCommit := True;
     FConnection.TransactIsolationLevel := tiReadCommitted;
   end;
 end;
@@ -374,9 +415,9 @@ procedure TInstantZeosDBOConnector.AssignLoginOptions;
 begin
   if HasConnection then
   begin
-    Connection.LoginPrompt := FLoginPrompt;
+    FConnection.LoginPrompt := FLoginPrompt;
     if Assigned(FOnLogin) and not Assigned(Connection.OnLogin) then
-      Connection.OnLogin := FOnLogin;
+      FConnection.OnLogin := FOnLogin;
   end;
 end;
 
@@ -406,7 +447,6 @@ end;
 function TInstantZeosDBOConnector.CreateBroker: TInstantBroker;
 begin
   CheckConnection;
-
   Result := nil;
 
   {$IFDEF SYBASE_SUPPORT}
@@ -494,6 +534,19 @@ begin
   Result := FConnection;
 end;
 
+function TInstantZeosDBOConnector.GetDatabaseExists: Boolean;
+begin
+  { TODO : Implement }
+  Result := True;
+end;
+
+function TInstantZeosDBOConnector.GetLoginPrompt: Boolean;
+begin
+  if HasConnection then
+    FLoginPrompt := FConnection.LoginPrompt;
+  Result := FLoginPrompt;
+end;
+
 function TInstantZeosDBOConnector.HasConnection: Boolean;
 begin
   Result := Assigned(FConnection);
@@ -525,6 +578,11 @@ begin
   FConnection.Connect;
 end;
 
+procedure TInstantZeosDBOConnector.InternalCreateDatabase;
+begin
+  { TODO : Implement }
+end;
+
 procedure TInstantZeosDBOConnector.InternalDisconnect;
 begin
   if HasConnection then
@@ -540,7 +598,11 @@ end;
 
 procedure TInstantZeosDBOConnector.InternalStartTransaction;
 begin
-  // ZeosDBO starts new transaction when necessary
+  CheckConnection;
+  // ZeosDBO check if AutoCommit is true when starting an explicit transaction,
+  // changing AutoCommit to False
+  if FConnection.AutoCommit then
+    FConnection.StartTransaction;
 end;
 
 procedure TInstantZeosDBOConnector.Notification(AComponent: TComponent;
@@ -589,15 +651,14 @@ procedure TInstantZeosDBOBroker.AssignDataSetParams(DataSet: TDataSet;
   AParams: TParams);
 var
   i: Integer;
-  TargetParams: TParams;
   SourceParam, TargetParam: TParam;
 begin
   //don't call inherited
-  TargetParams := (DataSet as TZReadOnlyQuery).Params;
   for i := 0 to Pred(AParams.Count) do
   begin
     SourceParam := AParams[i];
-    TargetParam := TargetParams.FindParam(SourceParam.Name);
+    TargetParam :=
+     (DataSet as TZReadOnlyQuery).Params.FindParam(SourceParam.Name);
     if Assigned(TargetParam) then
       AssignParam(SourceParam, TargetParam);
   end;
@@ -611,20 +672,8 @@ begin
         TargetParam.Assign(SourceParam)
       else
         TargetParam.AsInteger := Integer(SourceParam.AsBoolean);
-    (*
-    ftDateTime:
-    begin
-      TargetParam.DataType := ftTimeStamp;
-      TargetParam.Value := SourceParam.AsDateTime;
-    end;
-    ftCurrency:
-    begin
-      TargetParam.DataType := ftBCD;
-      TargetParam.Value := SourceParam.AsCurrency;
-    end;
-    *)
-  else
-    TargetParam.Assign(SourceParam);
+    else
+      TargetParam.Assign(SourceParam);
   end;
 end;
 
@@ -1173,9 +1222,16 @@ end;
 initialization
   RegisterClass(TInstantZeosDBOConnectionDef);
   TInstantZeosDBOConnector.RegisterClass;
+  {$IFDEF D5}
+  if not Assigned(LoginDialogProc) then
+    LoginDialogProc := LoginDialogProcCompatibility;
+  {$ENDIF}
 
 finalization
   TInstantZeosDBOConnector.UnregisterClass;
+  {$IFDEF D5}
+  if @LoginDialogProc = @LoginDialogProcCompatibility then
+    LoginDialogProc := nil;
+  {$ENDIF}
 
 end.
-

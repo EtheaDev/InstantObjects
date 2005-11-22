@@ -41,11 +41,11 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       FocusControl = HostNameEdit
     end
     object PortLabel: TLabel
-      Left = 176
+      Left = 152
       Top = 16
-      Width = 19
+      Width = 78
       Height = 13
-      Caption = '&Port'
+      Caption = '&Port (0 = default)'
       FocusControl = PortEdit
     end
     object ProtocolLabel: TLabel
@@ -70,7 +70,7 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Width = 36
       Height = 13
       Caption = '&Catalog'
-      FocusControl = CatalogEdit
+      FocusControl = CatalogComboBox
     end
     object UserNameLabel: TLabel
       Left = 16
@@ -123,16 +123,17 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
     object HostNameEdit: TEdit
       Left = 16
       Top = 32
-      Width = 153
+      Width = 129
       Height = 21
       TabOrder = 0
     end
     object PortEdit: TEdit
-      Left = 176
+      Left = 152
       Top = 32
-      Width = 57
+      Width = 81
       Height = 21
       TabOrder = 1
+      OnExit = PortEditExit
     end
     object ProtocolComboBox: TComboBox
       Left = 240
@@ -151,12 +152,14 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Height = 21
       TabOrder = 3
     end
-    object CatalogEdit: TEdit
+    object CatalogComboBox: TComboBox
       Left = 240
       Top = 72
       Width = 113
       Height = 21
+      ItemHeight = 13
       TabOrder = 5
+      OnDropDown = CatalogComboBoxDropDown
     end
     object DatabaseButton: TButton
       Left = 214
@@ -165,6 +168,7 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Height = 21
       Caption = '...'
       TabOrder = 4
+      OnClick = DatabaseButtonClick
     end
     object UserNameEdit: TEdit
       Left = 16
