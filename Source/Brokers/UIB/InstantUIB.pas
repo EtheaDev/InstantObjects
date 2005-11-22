@@ -44,7 +44,7 @@ type
   TInstantUIBOptions = set of TInstantUIBOption;
 
 const
-  DefaultInstantUIBOptions = [uibUseDelimitedIdents];
+  DefaultInstantUIBOptions = [];
 
 type
   TInstantUIBConnectionDef = class(TInstantRelationalConnectionDef)

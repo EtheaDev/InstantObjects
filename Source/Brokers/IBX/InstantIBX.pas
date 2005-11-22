@@ -47,7 +47,7 @@ type
   TInstantIBXOptions = set of TInstantIBXOption;
 
 const
-  DefaultInstantIBXOptions = [ibxUseDelimitedIdents];
+  DefaultInstantIBXOptions = [];
 
 type
   TInstantIBXConnectionDef = class(TInstantConnectionBasedConnectionDef)
