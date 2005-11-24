@@ -64,22 +64,18 @@ type
     FObjectClassName: string;
     FSorted: Boolean;
     FSubject: TObject;
-    FView: TList;
     FOnChange: TInstantChangeEvent;
     FOnCompare: TInstantCompareObjectsEvent;
     FOnLimit: TInstantLimitObjectsEvent;
     FOnProgress: TInstantProgressEvent;
-    procedure DestroyView;
     function GetAltered: Boolean;
     function GetHasSubject: Boolean;
     function GetInContent: Boolean;
     function GetObjectClass: TClass;
     function GetObjectClassName: string;
-    function GetObjectCount: Integer;
     function GetObjects(Index: Integer): TObject;
     function GetSubject: TObject;
     function GetTotalCount: Integer;
-    function GetView: TList;
     procedure SetContainerName(const Value: string);
     procedure SetLimited(Value: Boolean);
     procedure SetMode(Value: TInstantAccessMode);
@@ -89,18 +85,22 @@ type
     procedure SetOnLimit(Value: TInstantLimitObjectsEvent);
     procedure SetOnProgress(const Value: TInstantProgressEvent);
     procedure SetSorted(Value: Boolean);
-    property View: TList read GetView;
   protected
+    FView: TList;
     function AddToView(AObject: TObject): Integer;
     function InsertInView(Index: Integer; AObject: TObject): Integer;
     function RemoveFromView(AObject: TObject): Integer;
     procedure Changed(ChangeType: TInstantChangeType); virtual;
+    procedure DestroyView; virtual;
     procedure DoLimit(AObject: TObject; var Accept: Boolean);
     procedure DoProgress(Sender: TObject; Count: Integer; var Continue: Boolean);
     function GetConnector: TInstantConnector; virtual;
     function GetMode: TInstantAccessMode; virtual;
+    function GetObjectCount: Integer; virtual;
+    function GetView: TList; virtual;
     function IncludeObject(AObject: TObject): Boolean;
     function InternalAddObject(AObject: TObject): Integer; virtual;
+    function InternalAddToView(AObject: TObject): Integer; virtual;
     procedure InternalApplyChanges; virtual;
     procedure InternalClear; virtual;
     function InternalCreateObject: TObject; virtual;
@@ -108,15 +108,21 @@ type
     function InternalGetObjectClassName: string; virtual;
     function InternalGetObjectCount: Integer; virtual;
     function InternalGetObjects(Index: Integer): TObject; virtual;
+    function InternalGetViewObjects(Index: Integer): TObject; virtual;
     function InternalIndexOfInstance(Instance: Pointer): Integer; virtual;
     function InternalIndexOfObject(AObject: TObject): Integer; virtual;
+    procedure InternalInsertInView(Index: Integer; AObject: TObject); virtual;
     function InternalInsertObject(Index: Integer; AObject: TObject): Integer; virtual;
     procedure InternalRefreshObjects; virtual;
     procedure InternalReleaseObject(AObject: TObject); virtual;
+    function InternalRemoveFromView(AObject: TObject): Integer; virtual;
     function InternalRemoveObject(AObject: TObject): Integer; virtual;
+    function InternalViewIndexOfInstance(Instance: Pointer): Integer; virtual;
+    function InternalViewIndexOfObject(AObject: TObject): Integer; virtual;
     property HasSubject: Boolean read GetHasSubject;
     property InternalObjects[Index: Integer]: TObject read InternalGetObjects;
     property InternalObjectCount: Integer read InternalGetObjectCount;
+    property View: TList read GetView;
   public
     constructor Create(ASubject: TObject); virtual;
     destructor Destroy; override;
@@ -1113,7 +1119,7 @@ end;
 function TInstantAccessor.GetObjects(Index: Integer): TObject;
 begin
   if Altered then
-    Result := View[Index]
+    Result := InternalGetViewObjects(Index)
   else
     Result := InternalObjects[Index];
 end;
@@ -1159,7 +1165,7 @@ end;
 function TInstantAccessor.IndexOfInstance(Instance: Pointer): Integer;
 begin
   if Altered then
-    Result := View.IndexOf(Instance)
+    Result := InternalViewIndexOfInstance(Instance)
   else
     Result := InternalIndexOfInstance(Instance);
 end;
@@ -1167,7 +1173,7 @@ end;
 function TInstantAccessor.IndexOfObject(AObject: TObject): Integer;
 begin
   if Altered then
-    Result := View.IndexOf(AObject)
+    Result := InternalViewIndexOfObject(AObject)
   else
     Result := InternalIndexOfObject(AObject);
 end;
@@ -1206,11 +1212,11 @@ begin
     Index := FindIndex;
   if Index < View.Count then
   begin
-    View.Insert(Index, AObject);
+    InternalInsertInView(Index, AObject);
     Result := Index;
   end else
   begin
-    View.Add(AObject);
+    InternalAddToView(AObject);
     Result := Pred(View.Count);
   end;
 end;
@@ -1227,6 +1233,11 @@ end;
 function TInstantAccessor.InternalAddObject(AObject: TObject): Integer;
 begin
   Result := -1;
+end;
+
+function TInstantAccessor.InternalAddToView(AObject: TObject): Integer;
+begin
+  Result := View.Add(AObject);
 end;
 
 procedure TInstantAccessor.InternalApplyChanges;
@@ -1265,6 +1276,11 @@ begin
   Result := Subject;
 end;
 
+function TInstantAccessor.InternalGetViewObjects(Index: Integer): TObject;
+begin
+  Result := View[Index];
+end;
+
 function TInstantAccessor.InternalIndexOfInstance(Instance: Pointer): Integer;
 begin
   Result := InternalIndexOfObject(Instance);
@@ -1276,6 +1292,12 @@ begin
     Result := 0
   else
     Result := -1;
+end;
+
+procedure TInstantAccessor.InternalInsertInView(Index: Integer; AObject:
+    TObject);
+begin
+  View.Insert(Index, AObject);
 end;
 
 function TInstantAccessor.InternalInsertObject(Index: Integer;
@@ -1292,9 +1314,25 @@ procedure TInstantAccessor.InternalReleaseObject(AObject: TObject);
 begin
 end;
 
+function TInstantAccessor.InternalRemoveFromView(AObject: TObject): Integer;
+begin
+  Result := View.Remove(AObject);
+end;
+
 function TInstantAccessor.InternalRemoveObject(AObject: TObject): Integer;
 begin
   Result := -1;
+end;
+
+function TInstantAccessor.InternalViewIndexOfInstance(Instance: Pointer):
+    Integer;
+begin
+  Result := InternalViewIndexOfObject(Instance);
+end;
+
+function TInstantAccessor.InternalViewIndexOfObject(AObject: TObject): Integer;
+begin
+  Result := View.IndexOf(AObject);
 end;
 
 procedure TInstantAccessor.Refresh;
@@ -1322,7 +1360,7 @@ end;
 
 function TInstantAccessor.RemoveFromView(AObject: TObject): Integer;
 begin
-  Result := View.Remove(AObject);
+  Result := InternalRemoveFromView(AObject);
 end;
 
 function TInstantAccessor.RemoveObject(AObject: TObject): Integer;
@@ -1444,6 +1482,12 @@ begin
     ctData:
       if Active then
       begin
+        // TODO: This Reset should not be necessary. 
+        // It is a hack to avoid intermittent AVs. 
+        // Further investigation is required to find
+        // the actual problem. - SM (24 Nov 2005)
+        Reset;
+
         Refresh;
         DoAfterScroll;
       end;
