@@ -44,20 +44,29 @@ uses
 type
   TInstantObjectAccessor = class(TInstantAccessor)
   private
+    function CreateObjectReference(AObject: TObject): TInstantObjectReference;
     function GetContainer: TInstantContainer;
     function GetSubject: TInstantObject;
   protected
     function GetConnector: TInstantConnector; override;
+    function GetObjectCount: Integer; override;
+    function GetView: TList; override;
     function InternalAddObject(AObject: TObject): Integer; override;
+    function InternalAddToView(AObject: TObject): Integer; override;
     procedure InternalApplyChanges; override;
     procedure InternalClear; override;
     function InternalGetObjectClassName: string; override;
     function InternalGetObjects(Index: Integer): TObject; override;
     function InternalGetObjectCount: Integer; override;
+    function InternalGetViewObjects(Index: Integer): TObject; override;
     function InternalIndexOfInstance(Instance: Pointer): Integer; override;
     function InternalIndexOfObject(AObject: TObject): Integer; override;
+    procedure InternalInsertInView(Index: Integer; AObject: TObject); override;
     function InternalInsertObject(Index: Integer; AObject: TObject): Integer; override;
+    function InternalRemoveFromView(AObject: TObject): Integer; override;
     function InternalRemoveObject(AObject: TObject): Integer; override;
+    function InternalViewIndexOfInstance(Instance: Pointer): Integer; override;
+    function InternalViewIndexOfObject(AObject: TObject): Integer; override;
     property Container: TInstantContainer read GetContainer;
   public
     constructor Create(ASubject: TObject); override;
@@ -103,7 +112,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils, Contnrs, InstantClasses, InstantConsts;
 
 { TInstantObjectAccessor }
 
@@ -121,6 +130,16 @@ begin
   inherited;
 end;
 
+function TInstantObjectAccessor.CreateObjectReference(AObject: TObject):
+    TInstantObjectReference;
+begin
+  if AObject is TInstantObject then
+    Result := TInstantObjectReference.Create(TInstantObject(AObject), True)
+  else
+    raise EInstantError.CreateFmt(SInvalidClass,
+            [AObject.ClassName, InternalGetObjectClassName]);
+end;
+
 function TInstantObjectAccessor.GetConnector: TInstantConnector;
 begin
   Result := Subject.Connector;
@@ -131,9 +150,36 @@ begin
   Result := Subject.ContainerByName(ContainerName);
 end;
 
+function TInstantObjectAccessor.GetObjectCount: Integer;
+begin
+  if Altered then
+    Result := View.Count
+  else
+    Result := InternalObjectCount;
+end;
 function TInstantObjectAccessor.GetSubject: TInstantObject;
 begin
   Result := inherited Subject as TInstantObject;
+end;
+
+function TInstantObjectAccessor.GetView: TList;
+var
+  I: Integer;
+  Continue:Boolean;
+begin
+  if not Assigned(FView) then
+  begin
+    Continue:=True;
+    FView := TObjectList.Create;
+    FView.Capacity := InternalObjectCount;
+    for I := 0 to Pred(InternalObjectCount) do
+    begin
+      DoProgress(InternalObjects[I], I+1, Continue);
+      if not Continue then Break;
+      AddToView(InternalObjects[I]);
+    end;
+  end;
+  Result := FView;
 end;
 
 function TInstantObjectAccessor.InternalAddObject(AObject: TObject): Integer;
@@ -142,6 +188,11 @@ begin
     Result := Container.Add(TInstantObject(AObject))
   else
     Result := -1;
+end;
+
+function TInstantObjectAccessor.InternalAddToView(AObject: TObject): Integer;
+begin
+  Result := View.Add(CreateObjectReference(AObject));
 end;
 
 procedure TInstantObjectAccessor.InternalApplyChanges;
@@ -180,6 +231,11 @@ begin
     Result := inherited InternalGetObjects(Index);
 end;
 
+function TInstantObjectAccessor.InternalGetViewObjects(Index: Integer): TObject;
+begin
+  Result := TInstantObjectReference(View[Index]).Dereference(Connector);
+end;
+
 function TInstantObjectAccessor.InternalIndexOfInstance(
   Instance: Pointer): Integer;
 begin
@@ -198,6 +254,12 @@ begin
     Result := -1;
 end;
 
+procedure TInstantObjectAccessor.InternalInsertInView(Index: Integer; AObject:
+    TObject);
+begin
+  View.Insert(Index, CreateObjectReference(AObject));
+end;
+
 function TInstantObjectAccessor.InternalInsertObject(Index: Integer;
   AObject: TObject): Integer;
 begin
@@ -209,6 +271,14 @@ begin
     Result := -1;
 end;
 
+function TInstantObjectAccessor.InternalRemoveFromView(AObject: TObject):
+    Integer;
+begin
+  Result := InternalViewIndexOfObject(AObject);
+  if Result > -1 then
+    View.Delete(Result);
+end;
+
 function TInstantObjectAccessor.InternalRemoveObject(
   AObject: TObject): Integer;
 begin
@@ -216,6 +286,26 @@ begin
     Result := Container.Remove(TInstantObject(AObject))
   else
     Result := -1;
+end;
+
+function TInstantObjectAccessor.InternalViewIndexOfInstance(Instance: Pointer):
+    Integer;
+begin
+  Result := InternalViewIndexOfObject(Instance);
+end;
+
+function TInstantObjectAccessor.InternalViewIndexOfObject(AObject: TObject):
+    Integer;
+var
+  Ref: TInstantObjectReference;
+begin
+  for Result := 0 to Pred(View.Count) do
+  begin
+    Ref := TInstantObjectReference(View[Result]);
+    if Ref.Equals(AObject as TInstantObject) then
+      Exit;
+  end;
+  Result := -1;
 end;
 
 class function TInstantObjectAccessor.SubjectClass: TClass;
