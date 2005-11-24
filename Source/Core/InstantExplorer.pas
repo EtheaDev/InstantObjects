@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
+ * Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -65,6 +66,7 @@ type
   public
     constructor Create(ANodeType: TInstantExplorerNodeType; AName: string;
       AInstance: TObject; AValue: string);
+    destructor Destroy; override;
     property Caption: string read GetCaption;
     property ImageIndex: Integer read GetImageIndex;
     property Instance: TObject read FInstance;
@@ -265,7 +267,16 @@ begin
   FNodeType := ANodeType;
   FName := AName;
   FInstance := AInstance;
+  if FInstance is TInstantObject then
+    TInstantObject(FInstance).AddRef;
   FValue := AValue;
+end;
+
+destructor TInstantExplorerNodeData.Destroy;
+begin
+  if FInstance is TInstantObject then
+    TInstantObject(FInstance).Free;
+  inherited;
 end;
 
 function TInstantExplorerNodeData.GetCaption: string;
@@ -384,6 +395,27 @@ var
   ItemIndex: Integer;
   SaveOnChange: TTVChangedEvent;
   ChildCount: Integer;
+
+  procedure FreeTreeViewNodeData(ATreeNodes: TTreeNodes);
+  var
+    Obj: TObject;
+  begin
+    with ATreeNodes do
+    begin
+      Node := GetFirstNode;
+      while Node <> nil do
+      begin
+        // Don't test 'Assigned(Node.Data)' because value 
+        // of 'Node.Data' could be -1 ('NotLoaded')
+        if Integer(Node.Data) > 0 then
+        begin
+          Obj := TObject(Node.Data);
+          FreeAndNil(Obj);
+        end;
+        Node := Node.GetNext;
+      end;
+    end;
+  end;
 begin
   ItemIndex := 0;
   with TreeView do
@@ -392,6 +424,9 @@ begin
     OnChange := nil;
     Items.BeginUpdate;
     try
+      if Assigned(FRootObject) then
+        FreeTreeViewNodeData(Items);
+
       if Assigned(Selected) then
         ItemIndex := Selected.AbsoluteIndex;
       Items.Clear;
