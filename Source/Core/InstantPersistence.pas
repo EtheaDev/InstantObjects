@@ -523,6 +523,7 @@ type
     FOwner: TInstantComplex;
     FOwnsInstance: Boolean;
     procedure ClearReference;
+    procedure DoAssignInstance(AInstance: TInstantObject; AOwnsInstance: Boolean);
     function GetInstance: TInstantObject;
     function GetObjectClass: TInstantObjectClass;
     function GetObjectClassName: string;
@@ -541,7 +542,7 @@ type
       AOwner: TInstantComplex = nil);
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
-    procedure AssignInstance(AInstance: TInstantObject; AOwner: TInstantComplex = nil);
+    procedure AssignInstance(AInstance: TInstantObject);
     function Dereference(Connector: TInstantConnector = nil;
       AOwnsInstance: Boolean = True; Retry: Boolean = False): TInstantObject;
     procedure DestroyInstance;
@@ -4309,18 +4310,9 @@ begin
     end;
 end;
 
-procedure TInstantObjectReference.AssignInstance(AInstance: TInstantObject;
-  AOwner: TInstantComplex);
+procedure TInstantObjectReference.AssignInstance(AInstance: TInstantObject);
 begin
-  if not Equals(AInstance) then
-    DestroyInstance;
-  if Assigned(AInstance) then
-  begin
-    FInstance := AInstance;
-    if OwnsInstance then
-      Instance.AddRef;
-  end;
-  FOwner := AOwner;
+  DoAssignInstance(AInstance, OwnsInstance);
 end;
 
 procedure TInstantObjectReference.ClearReference;
@@ -4333,18 +4325,17 @@ constructor TInstantObjectReference.Clone(Source: TInstantObjectReference;
   AOwnsInstance: Boolean; AOwner: TInstantComplex);
 begin
   Create;
+  FOwner := AOwner;
   Assign(Source);
   OwnsInstance := AOwnsInstance;
-  FOwner := AOwner;
 end;
 
 constructor TInstantObjectReference.Create(AInstance: TInstantObject;
   AOwnsInstance: Boolean; AOwner: TInstantComplex);
 begin
   inherited Create;
-  Instance := AInstance;
-  OwnsInstance := AOwnsInstance;
   FOwner := AOwner;
+  DoAssignInstance(AInstance, AOwnsInstance);
 end;
 
 class function TInstantObjectReference.CreateInstance(
@@ -4355,14 +4346,19 @@ end;
 
 function TInstantObjectReference.Dereference(Connector: TInstantConnector;
   AOwnsInstance: Boolean; Retry: Boolean): TInstantObject;
+var
+  Obj: TInstantObject;
 begin
   if not Assigned(Instance) or (IsBroken and Retry) then
   begin
     InstantCheckConnector(Connector);
     if HasReference then
-      FInstance := ObjectClass.Retrieve(ObjectId, False, False, Connector);
+    begin
+      Obj := ObjectClass.Retrieve(ObjectId, False, False, Connector);
+      DoAssignInstance(Obj, AOwnsInstance);
+    end;
     if Assigned(FInstance) then
-      FOwnsInstance := AOwnsInstance
+      FInstance.Release
     else
       Integer(FInstance) := -1;
   end;
@@ -4384,11 +4380,25 @@ end;
 
 procedure TInstantObjectReference.DestroyInstance;
 begin
-  if HasInstance and Assigned(FOwner) then
-    Instance.ReferencedBy.Remove(FOwner);
-  if FOwnsInstance then
-    Instance.Free;
+  if HasInstance and FOwnsInstance then
+  begin
+    if Assigned(FOwner) then
+      FInstance.ReferencedBy.Remove(FOwner);
+    FInstance.Free;
+  end;
   FInstance := nil;
+end;
+
+procedure TInstantObjectReference.DoAssignInstance(AInstance: TInstantObject;
+    AOwnsInstance: Boolean);
+begin
+  if FInstance <> AInstance then
+  begin
+    DestroyInstance;
+    FInstance := AInstance;
+    FOwnsInstance := False;
+  end;
+  OwnsInstance := AOwnsInstance;
 end;
 
 function TInstantObjectReference.Equals(AObject: TInstantObject): Boolean;
@@ -4505,24 +4515,25 @@ end;
 procedure TInstantObjectReference.SetInstance(Value: TInstantObject);
 begin
   if not Equals(Value) then
-    Reset;
-  if Assigned(Value) then
-  begin
-    FInstance := Value;
-    if Assigned(FOwner) then
-      FInstance.ReferencedBy.Add(FOwner);
-    if OwnsInstance then
-      FInstance.AddRef;
-  end;
+    ClearReference;
+  DoAssignInstance(Value, OwnsInstance);
 end;
 
 procedure TInstantObjectReference.SetOwnsInstance(const Value: Boolean);
 begin
   if Assigned(Instance) then
     if Value and not OwnsInstance then
-      Instance.AddRef
+    begin
+      FInstance.AddRef;
+      if Assigned(FOwner) then
+        FInstance.ReferencedBy.Add(FOwner);
+    end
     else if not Value and OwnsInstance then
-      Instance.Release;
+    begin
+      FInstance.Release;
+      if Assigned(FOwner) then
+        FInstance.ReferencedBy.Remove(FOwner);
+    end;
   FOwnsInstance := Value;
 end;
 
@@ -6277,15 +6288,15 @@ begin
     if HasReference then
     begin
       if not IsBroken then
-        Obj := RetrieveObject
-      else
-        Obj := nil;
+        RetrieveObject;
     end else
-      Obj := CreateObject;
-    if Assigned(Obj) then
     begin
-      ObjectReference.AssignInstance(Obj);
-      Obj.Release;
+      Obj := CreateObject;
+      if Assigned(Obj) then
+      begin
+        ObjectReference.AssignInstance(Obj);
+        Obj.Release;
+      end;
     end;
   end;
   Result := Instance;
@@ -7260,11 +7271,18 @@ begin
     begin
       Obj := InstantReadObjectFromStream(AStream);
       try
-        ObjectReferenceList.Add(Obj as TInstantObjectReference);
-        TInstantObjectReference(Obj).OwnsInstance := True;
-      except
+        ObjReference := TInstantObjectReference.Create(nil, True, Self);
+        try
+          ObjReference.ReferenceObject(
+                  TInstantObjectReference(Obj).ObjectClassName,
+                  TInstantObjectReference(Obj).ObjectId);
+          ObjectReferenceList.Add(ObjReference);
+        except
+          ObjReference.Free;
+          raise;
+        end;
+      finally
         Obj.Free;
-        raise;
       end;
     end;
   end
@@ -7282,14 +7300,13 @@ begin
         ObjClassName := Processor.ReadTagName; //Tag = classname
         ObjId := Processor.ReadData; //Data = ObjectId
         Processor.ReadTag; //closing tag
-        ObjReference := TInstantObjectReference.Create;
-        Try
+        ObjReference := TInstantObjectReference.Create(nil, True, Self);
+        try
           ObjReference.ReferenceObject(ObjClassName, ObjId);
           ObjectReferenceList.Add(ObjReference);
-        Except
+        except
           ObjReference.Free;
-        End;
-        ObjReference.OwnsInstance := True;
+        end;
       end;
     finally
       Processor.Free;
@@ -7307,7 +7324,7 @@ begin
   Reader.ReadValue;
   while not Reader.EndOfList do
   begin
-    Ref := TInstantObjectReference.Create;
+    Ref := CreateObjectReference(nil);
     try
       Ref.ReadAsObject(Reader);
       ObjectReferenceList.Add(Ref);
@@ -12483,8 +12500,6 @@ begin
   try
     ObjectRow.Row := -1;
     ObjectRow.Instance := AObject;
-    if AObject is TInstantObject then
-      TInstantObject(AObject).AddRef;
     Result := ObjectRowList.Add(ObjectRow);
   except
     Dispose(ObjectRow);
@@ -12539,8 +12554,6 @@ begin
   try
     ObjectRow.Row := -1;
     ObjectRow.Instance := AObject;
-    if AObject is TInstantObject then
-      TInstantObject(AObject).AddRef;
     ObjectRowList.Insert(Index, ObjectRow);
   except
     Dispose(ObjectRow);
@@ -12557,25 +12570,50 @@ end;
 
 procedure TInstantNavigationalQuery.InternalRefreshObjects;
 var
-  I: Integer;
+  I, Idx: Integer;
   BusyObjects: TObjectList;
+  Obj: TInstantObject;
+  ObjStore: TInstantObjectStore;
 begin
   if not DataSet.Active then
     Exit;
   BusyObjects := TObjectList.Create;
   try
+    // Collect a reference to all objects in query.
+    // Note: In this list of TInstantObjectReferences
+    // OwnsInstance is false. 
     for I := 0 to Pred(ObjectRowCount) do
       with ObjectRows[I]^ do
-        if (Instance is TInstantObject)
-          and (TInstantObject(Instance).RefCount > 0) then
+        if (Instance is TInstantObject) then
           begin
-            BusyObjects.Add(Instance);
-            TInstantObject(Instance).AddRef;
+            Idx := BusyObjects.Add(TInstantObjectReference.Create(nil));
+            TInstantObjectReference(BusyObjects[Idx]).ReferenceObject(
+                    TInstantObject(Instance).ClassName,
+                    TInstantObject(Instance).Id);
           end;
+
     Close;
+
+    // Remove references from the BusyList for objects deleted
+    // when the query was closed.
+    for I := Pred(BusyObjects.Count) downto 0 do
+      with TInstantObjectReference(BusyObjects[I]) do
+      begin
+        ObjStore := Connector.ObjectStores.FindObjectStore(ObjectClass);
+        if not (Assigned(ObjStore) and Assigned(ObjStore.Find(ObjectId))) then
+          BusyObjects.Delete(I);
+      end;
+
     Open;
+
+    // Refresh objects in the BusyList that were not deleted
+    // when the query was closed.
     for I := 0 to Pred(BusyObjects.Count) do
-      TInstantObject(BusyObjects[I]).Refresh;
+    begin
+      Obj := TInstantObjectReference(BusyObjects[I]).Dereference(Connector, False);
+      if Assigned(Obj) then
+        Obj.Refresh;
+    end;
   finally
     BusyObjects.Free;
   end;
@@ -14353,9 +14391,10 @@ var
             try
               while not DataSet.Eof do
               begin
-                RefObject := TInstantObjectReference.Create(nil, True);
+                RefObject := TInstantObjectReference.Create(nil, True,
+                        Attribute as TInstantReferences);
                 RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
-                  (Attribute as TInstantReferences).ObjectReferenceList.Add(RefObject);
+                (Attribute as TInstantReferences).ObjectReferenceList.Add(RefObject);
                 DataSet.Next;
               end;
             finally
@@ -14612,6 +14651,7 @@ begin
   ObjectRef := TInstantObjectReference.Create(AObject as TInstantObject, True);
   try
     Result := ObjectReferenceList.Add(ObjectRef);
+    TInstantObject(AObject).Release;
   except
     ObjectRef.Free;
     raise
@@ -14651,6 +14691,7 @@ begin
   ObjectRef := TInstantObjectReference.Create(AObject as TInstantObject, True);
   try
     ObjectReferenceList.Insert(Index, ObjectRef);
+    TInstantObject(AObject).Release;
   except
     ObjectRef.Free;
     raise
@@ -14675,22 +14716,47 @@ end;
 
 procedure TInstantSQLQuery.InternalRefreshObjects;
 var
-  I: Integer;
+  I, Idx: Integer;
   BusyObjects: TObjectList;
+  Obj: TInstantObject;
+  ObjStore: TInstantObjectStore;
 begin
   BusyObjects := TObjectList.Create;
   try
+    // Collect a reference to all objects in query.
+    // Note: In this list of TInstantObjectReferences
+    // OwnsInstance is false. 
     for I := 0 to Pred(ObjectReferenceCount) do
       with ObjectReferences[I] do
-        if HasInstance and (Instance.RefCount > 0) then
+        if HasInstance then
         begin
-          BusyObjects.Add(Instance);
-          TInstantObject(Instance).AddRef;
+          Idx := BusyObjects.Add(TInstantObjectReference.Create(nil));
+          TInstantObjectReference(BusyObjects[Idx]).ReferenceObject(
+                  Instance.ClassName, Instance.Id);
         end;
+
     Close;
+
+    // Remove references from the BusyList for objects deleted
+    // when the query was closed.
+    for I := Pred(BusyObjects.Count) downto 0 do
+      with TInstantObjectReference(BusyObjects[I]) do
+      begin
+        ObjStore := Connector.ObjectStores.FindObjectStore(ObjectClass);
+        if not (Assigned(ObjStore) and Assigned(ObjStore.Find(ObjectId))) then
+          BusyObjects.Delete(I);
+      end;
+
     Open;
-    for I := 0 to Pred(BusyObjects.Count) do
-      TInstantObject(BusyObjects[I]).Refresh;
+
+    // Refresh objects in the BusyList that were not deleted
+    // when the query was closed.
+    for I := Pred(BusyObjects.Count) downto 0 do
+    begin
+      Obj := TInstantObjectReference(BusyObjects[I]).Dereference(Connector, False);
+      if Assigned(Obj) then
+        Obj.Refresh;
+    end;
   finally
     BusyObjects.Free;
   end;
