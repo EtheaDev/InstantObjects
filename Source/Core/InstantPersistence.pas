@@ -3254,6 +3254,7 @@ end;
 function TInstantAttributeMetadata.GetIsDefault: Boolean;
 begin
   Result := Assigned(ClassMetadata) and
+    (ClassMetadata.DefaultContainerName <> '') and
     (ClassMetadata.DefaultContainerName = Name);
 end;
 
