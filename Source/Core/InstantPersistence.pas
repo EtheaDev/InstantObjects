@@ -14283,8 +14283,13 @@ var
     if AttributeMetadata.StorageKind = skExternal then
     begin
       with (Attribute as TInstantPart) do
+      begin
+        // Must clear Value first to avoid leak for Refresh operation
+        // as OldValue = NewValue.
+        Value := nil;
         Value := InstantFindClass(ReadStringField(DataSet, AFieldName + InstantClassFieldName)).Retrieve(
           ReadStringField(DataSet, AFieldName + InstantIdFieldName), False, False, AObject.Connector);
+      end;
     end
     else
     begin
