@@ -634,16 +634,10 @@ begin
 end;
 
 procedure TContactViewForm.UpdateExplorer;
-var
-  Contact: TContact;
 begin
-  if not ExplorerVisible then
-    Exit;
-  if ContactSelector.Active then
-  begin
-    Contact := ContactSelector.CurrentObject as TContact;
-    Explorer.RootObject := Contact;
-  end else
+  if ExplorerVisible and ContactSelector.Active then
+    Explorer.RootObject := ContactSelector.CurrentObject as TContact
+  else if Assigned(Explorer.RootObject) then
     Explorer.Clear;
 end;
 
