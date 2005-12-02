@@ -65,13 +65,6 @@ INSTALLATION
    Where <version> identifies your version of Delphi, Kylix or
    FPC. Examples: D5, D6, D7, K3, D2005, D2006, etc.
 
-   NOTE TO DELPHI 2005 AND 2006 USERS:
-   We don't provide the .bdsproj files (as we don't provide
-   .dof and .cfg files for older versions of Delphi), so the
-   IDE will prompt you to create one of these files the first
-   time you open a package. At the prompt that asks whether to
-   make the package a Win32 or a .NET one, please answer Win32.
-
 
 4. Build and install the desired catalog and broker package(s):
 
