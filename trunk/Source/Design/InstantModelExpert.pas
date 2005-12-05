@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena
+ * Nando Dessena, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -171,7 +171,7 @@ uses
 const
   SBuilderItemCaption = 'Database &Builder...';
   SBuilderItemName = 'InstantBuilderItem';
-  SExplorerItemCaption = '&Model Explorer';
+  SExplorerItemCaption = 'InstantObjects &Model Explorer';
   SExplorerItemName = 'InstantExplorerItem';
   SModelCompiler = 'Model Compiler';
   SResFileExt = '.mdr';
@@ -496,7 +496,11 @@ begin
       ImageIndex := FToolImageOffset;
       OnClick := ExplorerItemClick;
     end;
+{$IFDEF D9+}
+    Item := ItemByName(Menu, 'ViewStructureItem');
+{$ELSE}
     Item := ItemByName(Menu, 'CodeExplorer');
+{$ENDIF}
     if Assigned(Item) then
       Menu.Insert(Item.MenuIndex + 1, FExplorerItem)
     else
