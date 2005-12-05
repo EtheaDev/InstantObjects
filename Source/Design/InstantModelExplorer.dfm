@@ -5,7 +5,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   Height = 433
   VertScrollBar.Range = 20
   AutoScroll = False
-  Caption = 'Model Explorer'
+  Caption = 'InstantObjects Model Explorer'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
