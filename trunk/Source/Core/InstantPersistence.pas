@@ -10187,9 +10187,14 @@ end;
 function TInstantBroker.ReadDatabaseScheme: TInstantScheme;
 begin
   Result := TInstantScheme.Create;
-  Result.Catalog := CreateCatalog(Result);
-  if Result.Catalog = nil then
-    raise Exception.CreateFmt(SUndefinedCatalog, [ClassName]);
+  try
+    Result.Catalog := CreateCatalog(Result);
+    if Result.Catalog = nil then
+      raise Exception.CreateFmt(SUndefinedCatalog, [ClassName]);
+  except
+    Result.Free;
+    raise;
+  end;
 end;
 
 function TInstantBroker.RetrieveObject(AObject: TInstantObject;
