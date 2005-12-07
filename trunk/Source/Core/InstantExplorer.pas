@@ -267,14 +267,14 @@ begin
   FNodeType := ANodeType;
   FName := AName;
   FInstance := AInstance;
-  if FInstance is TInstantObject then
+  if (FNodeType = ntObject) and (FInstance is TInstantObject) then
     TInstantObject(FInstance).AddRef;
   FValue := AValue;
 end;
 
 destructor TInstantExplorerNodeData.Destroy;
 begin
-  if FInstance is TInstantObject then
+  if (FNodeType = ntObject) and (FInstance is TInstantObject) then
     TInstantObject(FInstance).Free;
   inherited;
 end;
