@@ -86,6 +86,7 @@ type
     FUpdateDisableCount: Integer;
     FUpdateTimer: TTimer;
     MetaDataCheckState : TIOMetaDataCheckState;
+    MetaDataCheckUnits : string;
     procedure ExplorerApplyClass(Sender: TObject; AClass: TInstantCodeClass;
       ChangeInfo: TInstantCodeClassChangeInfo);
     procedure ExplorerGotoSource(Sender: TObject; const FileName: string;
@@ -1015,11 +1016,13 @@ begin
         CollectModules(Project, Modules, Units);
         if MetaDataCheckState = mcNeverChecked then
         begin
+          MetadataCheckUnits := '';
           MetaDataCheckState := mcCheckCorrect;
           EnumSources(Modules, CheckIOMetadataKeyword);
           if MetaDataCheckState = mcCheckError then
-            MessageDlg(Format('WARNING: Project %s contains some class metadata without IOMETADATA keyword. Please refer to IOMETADATA_keyword.txt in instantobjects\doc folder.',
-              [FActiveProjectName]), mtWarning, [mbOK], 0);
+            MessageDlg(Format('WARNING: Project %s contains some class metadata without IOMETADATA keyword:'+
+              '%s'+sLineBreak+'Please refer to IOMETADATA_keyword.txt in instantobjects\doc folder.',
+              [FActiveProjectName, MetadataCheckUnits]), mtWarning, [mbOK], 0);
         end;
         Result := (CheckTime = 0) or
           ModuleModified(Project, CheckTime) or
@@ -1180,7 +1183,10 @@ end;
 procedure TInstantModelExpert.CheckIOMetadataKeyword(const FileName, Source: string);
 begin
   if pos('{ stored', Source) > 0 then
+  begin
+    MetaDataCheckUnits := MetaDataCheckUnits + sLineBreak+FileName+';';
     MetaDataCheckState := mcCheckError;
+  end;
 end;
 
 end.
