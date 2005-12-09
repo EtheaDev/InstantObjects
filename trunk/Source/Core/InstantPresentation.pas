@@ -381,6 +381,7 @@ type
     function BreakThorough( const FieldName : string ) : boolean; virtual;
     procedure DoAfterInsert; override;
     procedure DoBeforeDelete; override;
+    procedure DoBeforeRefresh; override;
     function FindContentModifiedObjectBuffer(AObject: TObject): PChar; virtual;
     function GetRecInfoUpdateStatus(ARecBuffer: PChar): TUpdateStatus; virtual;
     procedure SetRecInfoUpdateStatus(ARecBuffer: PChar; AUpdateStatus:
@@ -1482,12 +1483,6 @@ begin
     ctData:
       if Active then
       begin
-        // TODO: This Reset should not be necessary. 
-        // It is a hack to avoid intermittent AVs. 
-        // Further investigation is required to find
-        // the actual problem. - SM (24 Nov 2005)
-        Reset;
-
         Refresh;
         DoAfterScroll;
       end;
@@ -2204,6 +2199,12 @@ procedure TInstantCustomExposer.DoBeforePostField(Field: TField);
 begin
   if Assigned(FBeforePostField) then
     FBeforePostField(Self, Field);
+end;
+
+procedure TInstantCustomExposer.DoBeforeRefresh;
+begin
+  LoadRecord(RecNo, CurrentBuffer);
+  inherited;
 end;
 
 procedure TInstantCustomExposer.DoBeforeScroll;
