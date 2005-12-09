@@ -279,7 +279,9 @@ var
   Result: Boolean;
   ConnectionDef : TInstantConnectionDef;
 begin
-  LoadConnectionDefs;
+  //Load connectiondefs only if connections definitions are not already loaded
+  if ConnectionDefs.Count = 0 then
+    LoadConnectionDefs;
   ConnectionDef := ConnectionDefs.Find(ConnectionDefName) as TInstantConnectionDef;
   if Assigned(ConnectionDef) then
   begin
