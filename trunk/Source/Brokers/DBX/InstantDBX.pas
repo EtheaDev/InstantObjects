@@ -234,9 +234,11 @@ begin
     Result := TInstantDBXInterBaseBroker.Create(Self)
   else if SameText(Connection.DriverName, 'MSSQL') then
     Result := TInstantDBXMSSQLBroker.Create(Self)
-  else if SameText(Connection.DriverName, 'SQLServer') then //For CoreLab DbExpress driver
+  else if SameText(Connection.DriverName, 'SQLServer') then //For CoreLab driver
     Result := TInstantDBXMSSQLBroker.Create(Self)
   else if SameText(Connection.DriverName, 'Oracle') then
+    Result := TInstantDBXOracleBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'Oracle (Core Lab)') then //For CoreLab driver
     Result := TInstantDBXOracleBroker.Create(Self)
   else if SameText(Connection.DriverName, 'DB2') then
     Result := TInstantDBXDB2Broker.Create(Self)
