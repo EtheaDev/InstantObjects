@@ -1749,6 +1749,8 @@ type
     property DatabaseName: string read GetDatabaseName;
   end;
 
+  TInstantObjectReferenceList = class;
+
   TInstantQuery = class(TPersistent)
   private
     FCommand: string;
@@ -2027,6 +2029,8 @@ type
     function GetConnector: TInstantRelationalConnector;
   protected
     function GetStatement: string; virtual;
+    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList); virtual;
+    procedure InternalRefreshObjects; override;
     procedure SetStatement(const Value: string); virtual;
     procedure TranslateCommand; override;
     class function TranslatorClass: TInstantRelationalTranslatorClass; virtual;
@@ -2217,6 +2221,7 @@ type
     function GetRowNumber: Integer; virtual;
     function InternalAddObject(AObject: TObject): Integer; override;
     procedure InternalClose; override;
+    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList); override;
     function InternalGetObjectCount: Integer; override;
     function InternalGetObjects(Index: Integer): TObject; override;
     function InternalIndexOfObject(AObject: TObject): Integer; override;
@@ -2452,12 +2457,12 @@ type
     function GetStatement: string; override;
     function InternalAddObject(AObject: TObject): Integer; override;
     procedure InternalClose; override;
+    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList); override;
     function InternalGetObjectCount: Integer; override;
     function InternalGetObjects(Index: Integer): TObject; override;
     function InternalIndexOfObject(AObject: TObject): Integer; override;
     procedure InternalInsertObject(Index: Integer; AObject: TObject); override;
     procedure InternalOpen; override;
-    procedure InternalRefreshObjects; override;
     procedure InternalReleaseObject(AObject: TObject); override;
     function InternalRemoveObject(AObject: TObject): Integer; override;
     procedure SetParams(Value: TParams); override;
@@ -2572,6 +2577,38 @@ type
     procedure Next;
     procedure Progress(Sender: TObject; Count: Integer; var Continue: Boolean);
     property Step: Integer read FStep;
+  end;
+
+  TInstantObjectReferenceList = class(TObject)
+  private
+    FConnector: TInstantConnector;
+    FList: TObjectList;
+    FRefOwner: TInstantComplex;
+    FRefOwnsInstance: Boolean;
+    function CreateObjectReference(AObject: TInstantObject):
+        TInstantObjectReference;
+    function GetCapacity: Integer;
+    function GetCount: Integer;
+    function GetItems(Index: Integer): TInstantObject;
+    function GetRefItems(Index: Integer): TInstantObjectReference;
+    procedure SetCapacity(Value: Integer);
+    procedure SetItems(Index: Integer; const Value: TInstantObject);
+  public
+    constructor Create(ARefOwnsInstance: Boolean; AConnector: TInstantConnector =
+        nil; ARefOwner: TInstantComplex = nil);
+    destructor Destroy; override;
+    function Add: TInstantObjectReference; overload;
+    function Add(Item: TInstantObject): Integer; overload;
+    procedure Clear;
+    procedure Delete(Index: Integer);
+    function IndexOf(Item: TInstantObject): Integer;
+    procedure Insert(Index: Integer; Item: TInstantObject);
+    function Remove(Item: TInstantObject): Integer;
+    property Capacity: Integer read GetCapacity write SetCapacity;
+    property Count: Integer read GetCount;
+    property Items[Index: Integer]: TInstantObject read GetItems write SetItems;
+        default;
+    property RefItems[Index: Integer]: TInstantObjectReference read GetRefItems;
   end;
 
 procedure AssignInstantStreamFormat(Strings: TStrings);
@@ -11493,6 +11530,80 @@ begin
   Result := '';
 end;
 
+procedure TInstantCustomRelationalQuery.InternalGetInstantObjectRefs(List:
+    TInstantObjectReferenceList);
+begin
+end;
+
+procedure TInstantCustomRelationalQuery.InternalRefreshObjects;
+var
+  BusyObjectRefs: TInstantObjectReferenceList;
+  Obj: TInstantObject;
+  ObjStore: TInstantObjectStore;
+
+  procedure RemoveRefsOfDeletedObjectsFromList;
+  var
+    I: Integer;
+  begin
+    CodeSite.Send('Enter RemoveRefsOfDeletedObjectsFromList');
+    CodeSite.Send('BusyObjectRefs.Count', BusyObjectRefs.Count);
+    for I := Pred(BusyObjectRefs.Count) downto 0 do
+      with BusyObjectRefs.RefItems[I] do
+      begin
+        CodeSite.Send('I', I);
+        ObjStore := Connector.ObjectStores.FindObjectStore(ObjectClass);
+        CodeSite.Send('Assigned(ObjStore)', Assigned(ObjStore));
+        if not (Assigned(ObjStore) and Assigned(ObjStore.Find(ObjectId))) then
+        begin
+          CodeSite.Send('Delete(I)', I);
+          BusyObjectRefs.Delete(I);
+        end;
+      end;
+    CodeSite.Send('Exit RemoveRefsOfDeletedObjectsFromList');
+  end;
+
+  procedure RefreshObjectsInList;
+  var
+    I: Integer;
+  begin
+    CodeSite.Send('Enter RefreshObjectsInList');
+    for I := 0 to Pred(BusyObjectRefs.Count) do
+    begin
+      Obj := BusyObjectRefs[I];
+      if Assigned(Obj) then
+        Obj.Refresh;
+    end;
+    CodeSite.Send('Exit RefreshObjectsInList');
+  end;
+
+begin
+  CodeSite.EnterMethod(Self, 'InternalRefreshObjects');
+  BusyObjectRefs := TInstantObjectReferenceList.Create(False, Connector);
+  try
+    // Collect a reference to all InstantObjects in query.
+    // Note: In this list of TInstantObjectReferences
+    // OwnsInstance is false.
+    InternalGetInstantObjectRefs(BusyObjectRefs);
+
+    Close;
+    CodeSite.Send('After Close');
+
+    // Remove references from the BusyList for objects destroyed
+    // when the query was closed.
+    RemoveRefsOfDeletedObjectsFromList;
+        
+    Open;
+    CodeSite.Send('After Open');
+
+    // Refresh objects in the BusyList that were not destroyed
+    // when the query was closed.
+    RefreshObjectsInList;
+  finally
+    BusyObjectRefs.Free;
+  end;
+  CodeSite.ExitMethod(Self, 'InternalRefreshObjects');
+end;
+
 procedure TInstantCustomRelationalQuery.SetStatement(const Value: string);
 begin
 end;
@@ -12521,6 +12632,16 @@ begin
   DestroyObjectRowList;
 end;
 
+procedure TInstantNavigationalQuery.InternalGetInstantObjectRefs(List:
+    TInstantObjectReferenceList);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(ObjectRowCount) do
+    if (ObjectRows[I]^.Instance is TInstantObject) then
+      List.Add(TInstantObject(ObjectRows[I]^.Instance));
+end;
+
 function TInstantNavigationalQuery.InternalGetObjectCount: Integer;
 begin
   if DataSet.Active then
@@ -12575,54 +12696,11 @@ begin
 end;
 
 procedure TInstantNavigationalQuery.InternalRefreshObjects;
-var
-  I, Idx: Integer;
-  BusyObjects: TObjectList;
-  Obj: TInstantObject;
-  ObjStore: TInstantObjectStore;
 begin
   if not DataSet.Active then
     Exit;
-  BusyObjects := TObjectList.Create;
-  try
-    // Collect a reference to all objects in query.
-    // Note: In this list of TInstantObjectReferences
-    // OwnsInstance is false. 
-    for I := 0 to Pred(ObjectRowCount) do
-      with ObjectRows[I]^ do
-        if (Instance is TInstantObject) then
-          begin
-            Idx := BusyObjects.Add(TInstantObjectReference.Create(nil));
-            TInstantObjectReference(BusyObjects[Idx]).ReferenceObject(
-                    TInstantObject(Instance).ClassName,
-                    TInstantObject(Instance).Id);
-          end;
 
-    Close;
-
-    // Remove references from the BusyList for objects deleted
-    // when the query was closed.
-    for I := Pred(BusyObjects.Count) downto 0 do
-      with TInstantObjectReference(BusyObjects[I]) do
-      begin
-        ObjStore := Connector.ObjectStores.FindObjectStore(ObjectClass);
-        if not (Assigned(ObjStore) and Assigned(ObjStore.Find(ObjectId))) then
-          BusyObjects.Delete(I);
-      end;
-
-    Open;
-
-    // Refresh objects in the BusyList that were not deleted
-    // when the query was closed.
-    for I := 0 to Pred(BusyObjects.Count) do
-    begin
-      Obj := TInstantObjectReference(BusyObjects[I]).Dereference(Connector, False);
-      if Assigned(Obj) then
-        Obj.Refresh;
-    end;
-  finally
-    BusyObjects.Free;
-  end;
+  inherited;
 end;
 
 procedure TInstantNavigationalQuery.InternalReleaseObject(AObject: TObject);
@@ -14675,6 +14753,16 @@ begin
   inherited;
 end;
 
+procedure TInstantSQLQuery.InternalGetInstantObjectRefs(List:
+    TInstantObjectReferenceList);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(ObjectReferenceCount) do
+    if ObjectReferences[I].HasInstance then
+      List.Add(ObjectReferences[I].Instance);
+end;
+
 function TInstantSQLQuery.InternalGetObjectCount: Integer;
 begin
   Result := ObjectReferenceCount;
@@ -14722,54 +14810,6 @@ begin
     InitObjectReferences(DataSet);
   finally
     ReleaseDataSet(DataSet);
-  end;
-end;
-
-procedure TInstantSQLQuery.InternalRefreshObjects;
-var
-  I, Idx: Integer;
-  BusyObjects: TObjectList;
-  Obj: TInstantObject;
-  ObjStore: TInstantObjectStore;
-begin
-  BusyObjects := TObjectList.Create;
-  try
-    // Collect a reference to all objects in query.
-    // Note: In this list of TInstantObjectReferences
-    // OwnsInstance is false. 
-    for I := 0 to Pred(ObjectReferenceCount) do
-      with ObjectReferences[I] do
-        if HasInstance then
-        begin
-          Idx := BusyObjects.Add(TInstantObjectReference.Create(nil));
-          TInstantObjectReference(BusyObjects[Idx]).ReferenceObject(
-                  Instance.ClassName, Instance.Id);
-        end;
-
-    Close;
-
-    // Remove references from the BusyList for objects deleted
-    // when the query was closed.
-    for I := Pred(BusyObjects.Count) downto 0 do
-      with TInstantObjectReference(BusyObjects[I]) do
-      begin
-        ObjStore := Connector.ObjectStores.FindObjectStore(ObjectClass);
-        if not (Assigned(ObjStore) and Assigned(ObjStore.Find(ObjectId))) then
-          BusyObjects.Delete(I);
-      end;
-
-    Open;
-
-    // Refresh objects in the BusyList that were not deleted
-    // when the query was closed.
-    for I := Pred(BusyObjects.Count) downto 0 do
-    begin
-      Obj := TInstantObjectReference(BusyObjects[I]).Dereference(Connector, False);
-      if Assigned(Obj) then
-        Obj.Refresh;
-    end;
-  finally
-    BusyObjects.Free;
   end;
 end;
 
@@ -15489,6 +15529,144 @@ end;
 function TInstantSQLBrokerCatalog.GetBroker: TInstantSQLBroker;
 begin
   Result := inherited Broker as TInstantSQLBroker;
+end;
+
+{ TObjectReferenceList }
+
+constructor TInstantObjectReferenceList.Create(ARefOwnsInstance: Boolean; AConnector:
+    TInstantConnector; ARefOwner: TInstantComplex);
+begin
+  inherited Create;
+  FList := TObjectList.Create;
+  FRefOwnsInstance := ARefOwnsInstance;
+  FRefOwner := ARefOwner;
+  FConnector := AConnector;
+end;
+
+destructor TInstantObjectReferenceList.Destroy;
+begin
+  FList.Free;
+  inherited;
+end;
+
+function TInstantObjectReferenceList.Add: TInstantObjectReference;
+begin
+  Result := CreateObjectReference(nil);
+  try
+    FList.Add(Result);
+  except
+    FreeAndNil(Result);
+    raise;
+  end;
+end;
+
+function TInstantObjectReferenceList.Add(Item: TInstantObject): Integer;
+var
+  Ref: TInstantObjectReference;
+begin
+  Ref := CreateObjectReference(Item);
+  try
+    Result := FList.Add(Ref);
+  except
+    Ref.Free;
+    raise;
+  end;
+end;
+
+procedure TInstantObjectReferenceList.Clear;
+begin
+  FList.Clear;
+end;
+
+function TInstantObjectReferenceList.CreateObjectReference(AObject: TInstantObject):
+    TInstantObjectReference;
+begin
+  Result := TInstantObjectReference.Create(nil, FRefOwnsInstance, FRefOwner);
+  if Assigned(AObject) and FRefOwnsInstance then
+    Result.Instance := AObject
+  else
+    Result.ReferenceObject(AObject.ClassName, AObject.Id);
+end;
+
+procedure TInstantObjectReferenceList.Delete(Index: Integer);
+begin
+  FList.Delete(Index);
+end;
+
+function TInstantObjectReferenceList.GetCapacity: Integer;
+begin
+  Result := FList.Capacity;
+end;
+
+function TInstantObjectReferenceList.GetCount: Integer;
+begin
+  Result := FList.Count;
+end;
+
+function TInstantObjectReferenceList.GetItems(Index: Integer): TInstantObject;
+var
+  Ref: TInstantObjectReference;
+begin
+  Ref := FList.Items[Index] as TInstantObjectReference;
+  Result := Ref.Dereference(FConnector, FRefOwnsInstance);
+end;
+
+function TInstantObjectReferenceList.GetRefItems(Index: Integer):
+    TInstantObjectReference;
+begin
+  Result := FList.Items[Index] as TInstantObjectReference;
+end;
+
+function TInstantObjectReferenceList.IndexOf(Item: TInstantObject): Integer;
+var
+  Ref: TInstantObjectReference;
+begin
+  for Result := 0 to Pred(Count) do
+  begin
+    Ref := RefItems[Result];
+    if Ref.Equals(Item) then
+      Exit;
+  end;
+  Result := -1;
+end;
+
+procedure TInstantObjectReferenceList.Insert(Index: Integer; Item: TInstantObject);
+var
+  Ref: TInstantObjectReference;
+begin
+  Ref := CreateObjectReference(Item);
+  try
+    FList.Insert(Index, Ref);
+  except
+    Ref.Free;
+    raise;
+  end;
+end;
+
+function TInstantObjectReferenceList.Remove(Item: TInstantObject): Integer;
+begin
+  Result := IndexOf(Item);
+  if Result > -1 then
+    FList.Delete(Result);
+end;
+
+procedure TInstantObjectReferenceList.SetCapacity(Value: Integer);
+begin
+  FList.Capacity := Value;
+end;
+
+procedure TInstantObjectReferenceList.SetItems(Index: Integer; const Value:
+    TInstantObject);
+var
+  Ref: TInstantObjectReference;
+begin
+  Ref := CreateObjectReference(Value);
+  try
+    FList.Items[Index] := Ref;
+  except
+    Ref.Free;
+    raise;
+  end;
 end;
 
 initialization
