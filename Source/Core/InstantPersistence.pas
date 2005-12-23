@@ -1398,13 +1398,14 @@ type
   TInstantBrokerCatalog = class(TInstantCatalog)
   private
     FBroker: TInstantBroker;
+    function GetBroker: TInstantBroker;
   public
     // Creates an instance and binds it to the specified TInstantScheme object.
     // ABroker is written to the Broker property.
     constructor Create(const AScheme: TInstantScheme;
       const ABroker: TInstantBroker); virtual;
     // A reference to the broker through which the metadata info is read.
-    property Broker: TInstantBroker read FBroker;
+    property Broker: TInstantBroker read GetBroker;
   end;
 
   TInstantObjectStores = class;
@@ -11545,39 +11546,39 @@ var
   var
     I: Integer;
   begin
-    CodeSite.Send('Enter RemoveRefsOfDeletedObjectsFromList');
-    CodeSite.Send('BusyObjectRefs.Count', BusyObjectRefs.Count);
+    //CodeSite.Send('Enter RemoveRefsOfDeletedObjectsFromList');
+    //CodeSite.Send('BusyObjectRefs.Count', BusyObjectRefs.Count);
     for I := Pred(BusyObjectRefs.Count) downto 0 do
       with BusyObjectRefs.RefItems[I] do
       begin
-        CodeSite.Send('I', I);
+        //CodeSite.Send('I', I);
         ObjStore := Connector.ObjectStores.FindObjectStore(ObjectClass);
-        CodeSite.Send('Assigned(ObjStore)', Assigned(ObjStore));
+        //CodeSite.Send('Assigned(ObjStore)', Assigned(ObjStore));
         if not (Assigned(ObjStore) and Assigned(ObjStore.Find(ObjectId))) then
         begin
-          CodeSite.Send('Delete(I)', I);
+          //CodeSite.Send('Delete(I)', I);
           BusyObjectRefs.Delete(I);
         end;
       end;
-    CodeSite.Send('Exit RemoveRefsOfDeletedObjectsFromList');
+    //CodeSite.Send('Exit RemoveRefsOfDeletedObjectsFromList');
   end;
 
   procedure RefreshObjectsInList;
   var
     I: Integer;
   begin
-    CodeSite.Send('Enter RefreshObjectsInList');
+    //CodeSite.Send('Enter RefreshObjectsInList');
     for I := 0 to Pred(BusyObjectRefs.Count) do
     begin
       Obj := BusyObjectRefs[I];
       if Assigned(Obj) then
         Obj.Refresh;
     end;
-    CodeSite.Send('Exit RefreshObjectsInList');
+    //CodeSite.Send('Exit RefreshObjectsInList');
   end;
 
 begin
-  CodeSite.EnterMethod(Self, 'InternalRefreshObjects');
+  //CodeSite.EnterMethod(Self, 'InternalRefreshObjects');
   BusyObjectRefs := TInstantObjectReferenceList.Create(False, Connector);
   try
     // Collect a reference to all InstantObjects in query.
@@ -11586,14 +11587,14 @@ begin
     InternalGetInstantObjectRefs(BusyObjectRefs);
 
     Close;
-    CodeSite.Send('After Close');
+    //CodeSite.Send('After Close');
 
     // Remove references from the BusyList for objects destroyed
     // when the query was closed.
     RemoveRefsOfDeletedObjectsFromList;
         
     Open;
-    CodeSite.Send('After Open');
+    //CodeSite.Send('After Open');
 
     // Refresh objects in the BusyList that were not destroyed
     // when the query was closed.
@@ -11601,7 +11602,7 @@ begin
   finally
     BusyObjectRefs.Free;
   end;
-  CodeSite.ExitMethod(Self, 'InternalRefreshObjects');
+  //CodeSite.ExitMethod(Self, 'InternalRefreshObjects');
 end;
 
 procedure TInstantCustomRelationalQuery.SetStatement(const Value: string);
@@ -15368,6 +15369,13 @@ constructor TInstantBrokerCatalog.Create(const AScheme: TInstantScheme;
 begin
   inherited Create(AScheme);
   FBroker := ABroker;
+end;
+
+function TInstantBrokerCatalog.GetBroker: TInstantBroker;
+begin
+  if not Assigned(FBroker) then
+    raise EInstantError.Create(SUnassignedBroker);
+  Result := FBroker;
 end;
 
 { TInstantModelCatalog }
