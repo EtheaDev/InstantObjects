@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena, Steven Mitchell
+ * Nando Dessena, Steven Mitchell, Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -94,6 +94,7 @@ resourcestring
   SConnectorInUse = 'Connector %s in use by %d object(s)';
   SConnectorMismatch = 'Connector mismatch';
   SContainerNotFound = 'Container: ''%s'' not found for class %s';
+  SDatabaseCreationNotSupported = '''%s'' does not support automatic database creation';
   SDatabaseEvolutionNonSupported = 'This broker does not support database evolution';
   SDatabaseOpen = 'Cannot perform this operation on an open database';
   SDefaultContainerNotFound = 'Default container not found for class %s';
@@ -144,6 +145,7 @@ resourcestring
   SObjectIsOwned = 'Object %s(''%s'') is owned.';
   SOwnershipRecursion = 'Ownership Recursion for object %s(''%s'')';
   SPersistentObjectNotAllowed = 'Persistent object %s(''%s'') not allowed.';
+  SProtocolNotSupported = 'Protocol ''%s'' not supported';
   SSpecifierMissing = 'Specifier missing';
   SSQLStatementIndexOutOfBounds = 'SQL statement index out of bounds.';
   STransactionInProgress = 'Transaction in progress';
