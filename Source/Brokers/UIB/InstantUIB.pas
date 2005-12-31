@@ -21,7 +21,7 @@
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
  * Contributor(s):
- * Carlo Barazzetta, Nando Dessena
+ * Carlo Barazzetta, Nando Dessena, Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -361,7 +361,7 @@ end;
 procedure TInstantUIBConnector.InternalDisconnect;
 begin
   if HasDataBase then
-    DataBase.Connected := False;
+    FDataBase.Connected := False;
 end;
 
 procedure TInstantUIBConnector.Notification(AComponent: TComponent;
@@ -369,10 +369,7 @@ procedure TInstantUIBConnector.Notification(AComponent: TComponent;
 begin
   inherited;
   if (AComponent = FDataBase) and (Operation = opRemove) then
-  begin
-    Disconnect;
     FDataBase := nil;
-  end;
 end;
 
 function TInstantUIBConnector.HasDataBase: Boolean;
