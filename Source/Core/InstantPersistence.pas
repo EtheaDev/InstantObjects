@@ -1194,6 +1194,7 @@ type
     procedure DoStore(ConflictAction: TInstantConflictAction);
     procedure DoUnchange;
     function FindDefaultContainer: TInstantContainer;
+    procedure FreeCircularReferences;
     function GetClassId: string;
     function GetDefaultContainer: TInstantContainer;
     function GetHasDefaultContainer: Boolean;
@@ -8139,20 +8140,7 @@ begin
 end;
 
 function TInstantObject.DoRelease: Integer;
-var
-  I: Integer;
 begin
-  // This object will be destroyed only when it is referenced
-  // by other object(s) pointing each other
-  if Assigned(FRefBy) and (FRefBy.Count = FRefCount-1) then
-  for I := Pred(FRefBy.Count) downto 0 do
-  if FRefBy[I] is TInstantComplex then
-  with TInstantComplex(FRefBy[I]) do
-  if (AttributeType in [atReference, atReferences]) and
-   (Owner.RefCount = Owner.ReferencedBy.Count) then
-    // FRefCount will be decremented whenever this object is dereferenced
-    repeat until not DetachObject(Self);
-
   if FRefCount > 0 then
   begin
     BeforeRelease;
@@ -8295,9 +8283,25 @@ begin
   DestroyInternalFields;
 end;
 
+procedure TInstantObject.FreeCircularReferences;
+var
+  I: Integer;
+begin
+  if Assigned(FRefBy) and (FRefBy.Count = FRefCount-1) then
+    for I := Pred(FRefBy.Count) downto 0 do
+      if FRefBy[I] is TInstantComplex then
+        with TInstantComplex(FRefBy[I]) do
+          if (AttributeType in [atReference, atReferences]) and
+           (Owner.RefCount = Owner.ReferencedBy.Count) then
+            // FRefCount will be decremented whenever this
+            // instance is Detached
+            repeat until not DetachObject(Self);
+end;
+
 procedure TInstantObject.FreeInstance;
 begin
-  Release;
+  FreeCircularReferences;
+  DoRelease;
   if FRefCount = 0 then
     try
       Finit;
