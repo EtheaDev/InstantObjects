@@ -25,7 +25,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena
+ * Nando Dessena, Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -49,13 +49,44 @@ implementation
 {$R '..\iodesimages.res'}
 {$ENDIF}
 
+{$IFDEF D9+}
+{$R IOCompsSplash.res}
+{$ENDIF}
+
 uses
-  Classes, InstantConsts, InstantPersistence, InstantPresentation,
+  Classes, Graphics, InstantConsts, InstantPersistence, InstantPresentation,
   InstantExplorer, InstantConnectionManager, InstantConnectionManagerFormUnit,
-  InstantPump, InstantDBEvolution, InstantDBBuild;
+  InstantPump, InstantDBEvolution, InstantDBBuild
+  {$IFDEF D9+}
+  , ToolsAPI
+  {$ENDIF}
+  ;
+
+{$IFDEF D9+}
+procedure RegisterWithSplashScreen;
+var
+  Bmp: TBitmap;
+begin
+  // Register IO Splash Icon on Delphi Splash Screen
+  Bmp := TBitmap.Create;
+  Bmp.LoadFromResourceName(HInstance, 'IOCOMPSSPLASH');
+
+  try
+    SplashScreenServices.AddPluginBitmap('InstantObjects Model Explorer',
+                                          Bmp.Handle, False, '', '');
+  finally
+    Bmp.Free;
+  end;
+
+end;
+{$ENDIF}
 
 procedure Register;
 begin
+  {$IFDEF D9+}
+  RegisterWithSplashScreen;
+  {$ENDIF}
+
   RegisterComponents(InstantPaletteName, [
     TInstantSelector,
     TInstantExposer,
