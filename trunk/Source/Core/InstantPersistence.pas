@@ -81,6 +81,7 @@ type
   TInstantObjectClass = class of TInstantObject;
   TInstantAttribute = class;
   TInstantAttributeClass = class of TInstantAttribute;
+  TInstantObjectReferenceList = class;
 
   TInstantStorageKind = (skEmbedded, skExternal);
   TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean, atString,
@@ -1079,13 +1080,10 @@ type
   private
     FAllowOwned: Boolean;
     FConnector: TInstantConnector;
-    FObjectReferenceList: TObjectList;
-    function CreateObjectReference(AObject: TInstantObject): TInstantObjectReference;
-    function GetObjectReferenceList: TObjectList;
-    function GetObjectReferences(Index: Integer): TInstantObjectReference;
-    procedure SetObjectReferences(Index: Integer; Value: TInstantObjectReference);
-    property ObjectReferenceList: TObjectList read GetObjectReferenceList;
-    property ObjectReferences[Index: Integer]: TInstantObjectReference read GetObjectReferences write SetObjectReferences;
+    FObjectReferenceList: TInstantObjectReferenceList;
+    function GetObjectReferenceList: TInstantObjectReferenceList;
+    property ObjectReferenceList: TInstantObjectReferenceList read
+        GetObjectReferenceList;
   protected
     class function AttributeType: TInstantAttributeType; override;
     function GetAllowOwned: Boolean; override;
@@ -1750,8 +1748,6 @@ type
     property Connector: TInstantConnector read GetConnector;
     property DatabaseName: string read GetDatabaseName;
   end;
-
-  TInstantObjectReferenceList = class;
 
   TInstantQuery = class(TPersistent)
   private
@@ -2603,8 +2599,10 @@ type
     function Add(Item: TInstantObject): Integer; overload;
     procedure Clear;
     procedure Delete(Index: Integer);
+    procedure Exchange(Index1, Index2: Integer);
     function IndexOf(Item: TInstantObject): Integer;
     procedure Insert(Index: Integer; Item: TInstantObject);
+    procedure Move(CurIndex, NewIndex: Integer);
     function Remove(Item: TInstantObject): Integer;
     property Capacity: Integer read GetCapacity write SetCapacity;
     property Count: Integer read GetCount;
@@ -7137,12 +7135,6 @@ begin
   Result := atReferences;
 end;
 
-function TInstantReferences.CreateObjectReference(
-  AObject: TInstantObject): TInstantObjectReference;
-begin
-  Result := TInstantObjectReference.Create(AObject, True, Self);
-end;
-
 destructor TInstantReferences.Destroy;
 begin
   FObjectReferenceList.Free;
@@ -7151,7 +7143,7 @@ end;
 
 procedure TInstantReferences.DestroyObject(Index: Integer);
 begin
-  ObjectReferences[Index].DestroyInstance;
+  ObjectReferenceList.RefItems[Index].DestroyInstance;
 end;
 
 function TInstantReferences.GetAllowOwned: Boolean;
@@ -7174,34 +7166,20 @@ end;
 
 function TInstantReferences.GetInstances(Index: Integer): TInstantObject;
 begin
-  Result := ObjectReferences[Index].Instance;
+  Result := ObjectReferenceList[Index];
 end;
 
-function TInstantReferences.GetObjectReferenceList: TObjectList;
+function TInstantReferences.GetObjectReferenceList: TInstantObjectReferenceList;
 begin
   if not Assigned(FObjectReferenceList) then
-    FObjectReferenceList := TObjectList.Create;
+    FObjectReferenceList := TInstantObjectReferenceList.Create(
+            True, Connector, Self);
   Result := FObjectReferenceList;
 end;
 
-function TInstantReferences.GetObjectReferences(
-  Index: Integer): TInstantObjectReference;
+function TInstantReferences.InternalAdd(AObject: TInstantObject): Integer;
 begin
-  Result := TInstantObjectReference(ObjectReferenceList[Index]);
-end;
-
-function TInstantReferences.InternalAdd(
-  AObject: TInstantObject): Integer;
-var
-  Ref: TInstantObjectReference;
-begin
-  Ref := CreateObjectReference(AObject);
-  try
-    Result := ObjectReferenceList.Add(Ref);
-  except
-    Ref.Free;
-    raise;
-  end;
+  Result := ObjectReferenceList.Add(AObject);
 end;
 
 procedure TInstantReferences.InternalClear;
@@ -7220,56 +7198,26 @@ begin
 end;
 
 function TInstantReferences.InternalGetItems(Index: Integer): TInstantObject;
-var
-  Ref: TInstantObjectReference;
 begin
-  Ref := ObjectReferences[Index];
-  if not Assigned(Ref.Instance) then
-    Result := Ref.Dereference(Connector)
-  else
-    Result := Ref.Instance;
+  Result := ObjectReferenceList[Index];
 end;
 
 function TInstantReferences.InternalIndexOf(
   AObject: TInstantObject): Integer;
-var
-  Ref: TInstantObjectReference;
 begin
-  for Result := 0 to Pred(Count) do
-  begin
-    Ref := ObjectReferences[Result];
-    if Ref.Equals(AObject) then
-      Exit;
-  end;
-  Result := -1;
+  Result := ObjectReferenceList.IndexOf(AObject);
 end;
 
 function TInstantReferences.InternalIndexOfInstance(
   Instance: Pointer): Integer;
-var
-  Ref: TInstantObjectReference;
 begin
-  for Result := 0 to Pred(Count) do
-  begin
-    Ref := ObjectReferences[Result];
-    if Ref.Instance = Instance then
-      Exit;
-  end;
-  Result := -1;
+  Result := ObjectReferenceList.IndexOf(TInstantObject(Instance));
 end;
 
 procedure TInstantReferences.InternalInsert(Index: Integer;
   AObject: TInstantObject);
-var
-  Ref: TInstantObjectReference;
 begin
-  Ref := CreateObjectReference(AObject);
-  try
-    ObjectReferenceList.Insert(Index, Ref);
-  except
-    Ref.Free;
-    raise;
-  end;
+  ObjectReferenceList.Insert(Index, AObject);
 end;
 
 procedure TInstantReferences.InternalMove(CurIndex, NewIndex: Integer);
@@ -7280,7 +7228,7 @@ end;
 procedure TInstantReferences.InternalSetItems(Index: Integer;
   AValue: TInstantObject);
 begin
-  ObjectReferences[Index].Instance := AValue;
+  ObjectReferenceList[Index] := AValue;
 end;
 
 procedure TInstantReferences.LoadObjectsFromStream(AStream: TStream);
@@ -7311,14 +7259,13 @@ begin
     begin
       Obj := InstantReadObjectFromStream(AStream);
       try
-        ObjReference := TInstantObjectReference.Create(nil, True, Self);
+        ObjReference := ObjectReferenceList.Add;
         try
           ObjReference.ReferenceObject(
                   TInstantObjectReference(Obj).ObjectClassName,
                   TInstantObjectReference(Obj).ObjectId);
-          ObjectReferenceList.Add(ObjReference);
         except
-          ObjReference.Free;
+          ObjectReferenceList.Delete(Pred(Count));
           raise;
         end;
       finally
@@ -7340,12 +7287,12 @@ begin
         ObjClassName := Processor.ReadTagName; //Tag = classname
         ObjId := Processor.ReadData; //Data = ObjectId
         Processor.ReadTag; //closing tag
-        ObjReference := TInstantObjectReference.Create(nil, True, Self);
+        ObjReference := ObjectReferenceList.Add;
         try
           ObjReference.ReferenceObject(ObjClassName, ObjId);
-          ObjectReferenceList.Add(ObjReference);
         except
-          ObjReference.Free;
+          ObjectReferenceList.Delete(Pred(Count));
+          raise;
         end;
       end;
     finally
@@ -7364,12 +7311,11 @@ begin
   Reader.ReadValue;
   while not Reader.EndOfList do
   begin
-    Ref := CreateObjectReference(nil);
+    Ref := ObjectReferenceList.Add;
     try
       Ref.ReadAsObject(Reader);
-      ObjectReferenceList.Add(Ref);
     except
-      Ref.Free;
+      ObjectReferenceList.Delete(Pred(Count));
       raise;
     end;
   end;
@@ -7388,7 +7334,7 @@ begin
   if Connector.BlobStreamFormat = sfBinary then
   begin
     for I := 0 to Pred(Count) do
-      InstantWriteObjectToStream(AStream, ObjectReferences[I]);
+      InstantWriteObjectToStream(AStream, ObjectReferenceList.RefItems[I]);
   end
   else
   begin
@@ -7400,8 +7346,9 @@ begin
       InstantXMLProducer.WriteEscapedData(sLineBreak);
       for I := 0 to Pred(Count) do
       begin
-        InstantXMLProducer.WriteStartTag(ObjectReferences[I].ObjectClassName);
-        InstantXMLProducer.WriteData(ObjectReferences[I].ObjectId);
+        InstantXMLProducer.WriteStartTag(
+                ObjectReferenceList.RefItems[I].ObjectClassName);
+        InstantXMLProducer.WriteData(ObjectReferenceList.RefItems[I].ObjectId);
         InstantXMLProducer.WriteEndTag;
       end;
       InstantXMLProducer.WriteEndTag;
@@ -7414,12 +7361,6 @@ end;
 procedure TInstantReferences.SetAllowOwned(Value: Boolean);
 begin
   FAllowOwned := Value;
-end;
-
-procedure TInstantReferences.SetObjectReferences(Index: Integer;
-  Value: TInstantObjectReference);
-begin
-  ObjectReferenceList[Index] := Value;
 end;
 
 procedure TInstantReferences.ValidateObject(AObject: TInstantObject);
@@ -7436,7 +7377,7 @@ begin
   WriteName(Writer);
   Writer.WriteValue(vaCollection);
   for I := 0 to Pred(Count) do
-    ObjectReferences[I].WriteAsObject(Writer);
+    ObjectReferenceList.RefItems[I].WriteAsObject(Writer);
   Writer.WriteListEnd;
 end;
 
@@ -14471,10 +14412,9 @@ var
             try
               while not DataSet.Eof do
               begin
-                RefObject := TInstantObjectReference.Create(nil, True,
-                        Attribute as TInstantReferences);
+                RefObject :=
+                    (Attribute as TInstantReferences).ObjectReferenceList.Add;
                 RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
-                (Attribute as TInstantReferences).ObjectReferenceList.Add(RefObject);
                 DataSet.Next;
               end;
             finally
@@ -15580,15 +15520,23 @@ function TInstantObjectReferenceList.CreateObjectReference(AObject: TInstantObje
     TInstantObjectReference;
 begin
   Result := TInstantObjectReference.Create(nil, FRefOwnsInstance, FRefOwner);
-  if Assigned(AObject) and FRefOwnsInstance then
-    Result.Instance := AObject
-  else
-    Result.ReferenceObject(AObject.ClassName, AObject.Id);
+  if Assigned(AObject) then
+  begin
+    if FRefOwnsInstance then
+      Result.Instance := AObject
+    else
+      Result.ReferenceObject(AObject.ClassName, AObject.Id);
+  end;
 end;
 
 procedure TInstantObjectReferenceList.Delete(Index: Integer);
 begin
   FList.Delete(Index);
+end;
+
+procedure TInstantObjectReferenceList.Exchange(Index1, Index2: Integer);
+begin
+  FList.Exchange(Index1, Index2);
 end;
 
 function TInstantObjectReferenceList.GetCapacity: Integer;
@@ -15639,6 +15587,11 @@ begin
     Ref.Free;
     raise;
   end;
+end;
+
+procedure TInstantObjectReferenceList.Move(CurIndex, NewIndex: Integer);
+begin
+  FList.Move(CurIndex, NewIndex);
 end;
 
 function TInstantObjectReferenceList.Remove(Item: TInstantObject): Integer;
