@@ -1,6 +1,6 @@
 library OFExpt;
 
-{$R *.RES}
+{$R OFExpt_ver.res}
 
 uses
   InstantAttributeEditor in '..\Design\InstantAttributeEditor.pas' {InstantAttributeEditorForm},
