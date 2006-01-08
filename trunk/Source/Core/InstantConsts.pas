@@ -91,14 +91,18 @@ resourcestring
   SConnectionDefFilter = 'Connection files|*.con;*.xml';
   SConnectionManagerCaption = 'Connection Manager';
   SConnectionManagerExecutorNotAssigned = 'Connection manager execution procedure not assigned';
+  SConnectionName = 'Connection Name';
   SConnectorInUse = 'Connector %s in use by %d object(s)';
   SConnectorMismatch = 'Connector mismatch';
   SContainerNotFound = 'Container: ''%s'' not found for class %s';
+  SDatabaseBuildConfirmation = 'Build database via connection "%s" and clear all data?';
+  SDatabaseBuilt = 'Database was built successfully';
   SDatabaseCreationNotSupported = '''%s'' does not support automatic database creation';
   SDatabaseEvolutionNonSupported = 'This broker does not support database evolution';
   SDatabaseOpen = 'Cannot perform this operation on an open database';
   SDefaultContainerNotFound = 'Default container not found for class %s';
   SDefaultContainerNotSpecified = 'Default container not specified for class %s';
+  SDeleteConnectionConfirmation = 'Delete connection "%s"?';
   SDeniedDispose = 'Denied dispose of object %s(''%s'')';
   SDeniedRefresh = 'Denied refresh of object %s(''%s'')';
   SDeniedRetrieve = 'Denied retrieve of object %s(''%s'')';
@@ -147,6 +151,7 @@ resourcestring
   SPersistentObjectNotAllowed = 'Persistent object %s(''%s'') not allowed.';
   SProtocolNotSupported = 'Protocol ''%s'' not supported';
   SSpecifierMissing = 'Specifier missing';
+  SSplashScreenTitle = 'InstantObjects - Object Persistence Framework';
   SSQLStatementIndexOutOfBounds = 'SQL statement index out of bounds.';
   STransactionInProgress = 'Transaction in progress';
   STrueString = 'True';
@@ -163,6 +168,7 @@ resourcestring
   SUnassignedGate = 'Unassigned gate';
   SUnassignedMap = 'Unassigned map';
   SUnassignedObjectInAttribute = 'Unassigned object in attribute %s(''%s'')';
+  SUnassignedOnConnectError = 'Unassigned OnConnect event of InstantConnectionManager';
   SUnassignedQuery = 'Unassigned query';
   SUnassignedResolver = 'Unassigned resolver';
   SUnassignedStream = 'Unassigned stream';
@@ -181,12 +187,7 @@ resourcestring
   SUnsupportedOperation = 'Unsupported operation: %s';
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
-  SDatabaseBuildConfirmation = 'Build database via connection "%s" and clear all data?';
-  SDatabaseBuilt = 'Database was built successfully';
-  SDeleteConnectionConfirmation = 'Delete connection "%s"?';
-  SConnectionName = 'Connection Name';
-  SUnassignedOnConnectError = 'Unassigned OnConnect event of InstantConnectionManager';
-  
+
 implementation
 
 end.
