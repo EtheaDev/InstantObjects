@@ -72,8 +72,8 @@ begin
   Bmp.LoadFromResourceName(HInstance, 'IOCOMPSSPLASH');
 
   try
-    SplashScreenServices.AddPluginBitmap('InstantObjects Model Explorer',
-                                          Bmp.Handle, False, '', '');
+    SplashScreenServices.AddPluginBitmap(SSplashScreenTitle,
+            Bmp.Handle, False, '', '');
   finally
     Bmp.Free;
   end;
