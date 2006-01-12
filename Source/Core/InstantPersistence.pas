@@ -8225,6 +8225,29 @@ begin
 end;
 
 procedure TInstantObject.FreeCircularReferences;
+
+  function IsInsideCircularReference(const AItem: TInstantComplex):
+    Boolean;
+  var
+    CurrentItem: TInstantComplex;
+    I: Integer;
+  begin
+    Result := AItem.Owner = Self;
+    if not Result and Assigned(AItem.Owner.FRefBy) then
+      for I := 0 to Pred(AItem.Owner.FRefBy.Count) do
+        if AItem.Owner.FRefBy[I] is TInstantComplex then
+        begin
+          CurrentItem := TInstantComplex(AItem.Owner.FRefBy[I]);
+          if CurrentItem.AttributeType in [atReference, atReferences] then
+          begin
+            Result := (AItem.Owner.RefCount = AItem.Owner.FRefBy.Count) and
+                IsInsideCircularReference(CurrentItem);
+            if Result then
+              Exit;
+          end;
+        end;
+  end;
+
 var
   I: Integer;
 begin
@@ -8233,7 +8256,7 @@ begin
       if FRefBy[I] is TInstantComplex then
         with TInstantComplex(FRefBy[I]) do
           if (AttributeType in [atReference, atReferences]) and
-           (Owner.RefCount = Owner.ReferencedBy.Count) then
+            IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
             // FRefCount will be decremented whenever this
             // instance is Detached
             repeat until not DetachObject(Self);
