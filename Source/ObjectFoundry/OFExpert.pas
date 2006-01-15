@@ -251,23 +251,26 @@ end;
 function TObjectFoundryExpert.GetAttributeType(
   const P: IMMProperty): TIOAttributeType;
 begin
-  with TMMCodeAttribute.Create(P) do
-  try
-    case AttributeType of
-      atPart:
-        Result := ioaPart;
-      atParts:
-        Result := ioaParts;
-      atReference:
-        Result := ioaReference;
-      atReferences:
-        Result := ioaReferences;
-    else
-      Result := ioaSimple;
-    end;
-  finally
-    Free;
-  end;
+  if Assigned(P) and P.Valid then
+    with TMMCodeAttribute.Create(P) do
+    try
+      case AttributeType of
+        atPart:
+          Result := ioaPart;
+        atParts:
+          Result := ioaParts;
+        atReference:
+          Result := ioaReference;
+        atReferences:
+          Result := ioaReferences;
+      else
+        Result := ioaSimple;
+      end;
+    finally
+      Free;
+    end
+  else
+    Result := ioaNoAttribute;
 end;
 
 function TObjectFoundryExpert.GetAvailable: Boolean;
