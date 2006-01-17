@@ -1,6 +1,36 @@
 VERSION HISTORY
 ---------------
 
+Version 2.0 Beta 2 (1.9.1.2) (2006-01)
+
+- Fixed possible AV in TInstantBrokerCatalog.
+
+- Many fixes to the circular references management code.
+
+- ZeosDBO: added IB/Fb/MySQL database creation support.
+
+- UIB: fixed AV that was raised trying to disconnect
+  UIBDatabase while it's being destroyed.
+
+- Delphi 2005/6: added InstantObjects entry for the
+  start up splash screens using the handled sphere icon.
+
+- ModelMaker: added a version resource to show in
+  ModelMaker's Tools/Expert Manager dialog.
+
+- Fixed bug #1403489. Fix for the problem that in some
+  situations, where there aren't circular references,
+  an object is incorrectly detached from a References
+  attribute.
+
+- Fix for EOleException in ModelMaker when cancelling
+  the dialog during the addition of a new IOAttribute.
+
+- Various internal refactorings and optimizations.
+
+- Removal of several memory leaks and sources of AVs.
+
+
 Version 2.0 Beta 1 (1.9.1.1) (2005-11)
 
 - Added support for Delphi 2006/Win32 (experimental).
