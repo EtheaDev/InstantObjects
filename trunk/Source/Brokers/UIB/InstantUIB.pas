@@ -328,7 +328,7 @@ begin
     end;
   except
     on E: EUIBError do begin
-      if (E.SQLCode = -902) and (E.ErrorCode = 335544344) then
+      if (E.SQLCode = -902) and (E.ErrorCode = 24) then
         Result := False
       else
         raise;
