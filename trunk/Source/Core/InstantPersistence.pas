@@ -2048,6 +2048,7 @@ type
     procedure DoAfterConnectionChange;
     procedure DoBeforeConnectionChange;
     function GetConnection: TCustomConnection;
+    function GetLoginPrompt: Boolean;
     procedure SetConnection(Value: TCustomConnection);
     procedure SetLoginPrompt(const Value: Boolean);
   protected
@@ -2064,7 +2065,7 @@ type
     function HasConnection: Boolean;
     constructor Create(AOwner: TComponent); override;
   published
-    property LoginPrompt: Boolean read FLoginPrompt write SetLoginPrompt default True;
+    property LoginPrompt: Boolean read GetLoginPrompt write SetLoginPrompt default True;
   end;
 
   TInstantConnectionBasedConnectionDef = class(TInstantRelationalConnectionDef)
@@ -11675,6 +11676,13 @@ begin
   begin
     FConnection.LoginPrompt := FLoginPrompt;
   end;
+end;
+
+function TInstantConnectionBasedConnector.GetLoginPrompt: Boolean;
+begin
+  if HasConnection then
+    FLoginPrompt := FConnection.LoginPrompt;
+  Result := FLoginPrompt;
 end;
 
 procedure TInstantConnectionBasedConnector.SetLoginPrompt(
