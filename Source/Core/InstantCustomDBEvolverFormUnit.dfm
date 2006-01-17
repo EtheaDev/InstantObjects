@@ -1,8 +1,8 @@
 object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
-  Left = 439
-  Top = 273
+  Left = 244
+  Top = 191
   Width = 601
-  Height = 332
+  Height = 360
   Caption = 'InstantCustomDBEvolverForm'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -113,6 +113,16 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     Anchors = [akTop, akRight]
     TabOrder = 7
   end
+  object CloseButton: TButton
+    Left = 512
+    Top = 304
+    Width = 75
+    Height = 25
+    Action = CloseAction
+    Anchors = [akLeft, akBottom]
+    Cancel = True
+    TabOrder = 8
+  end
   object ActionList: TActionList
     Left = 320
     Top = 96
@@ -144,6 +154,10 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
       Caption = 'Disable All Commands'
       OnExecute = DisableAllCommandsActionExecute
       OnUpdate = DisableAllCommandsActionUpdate
+    end
+    object CloseAction: TAction
+      Caption = 'Close'
+      OnExecute = CloseActionExecute
     end
   end
 end

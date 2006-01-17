@@ -60,6 +60,7 @@ type
     EvolutionLogLabel: TLabel;
     EnableAllButton: TButton;
     DisableAllButton: TButton;
+    CloseButton: TButton;
     ActionList: TActionList;
     ShowSequenceAction: TAction;
     BuildAction: TAction;
@@ -67,6 +68,7 @@ type
     MoveCommandDownAction: TAction;
     EnableAllCommandsAction: TAction;
     DisableAllCommandsAction: TAction;
+    CloseAction: TAction;
     procedure ShowSequenceButtonClick(Sender: TObject);
     procedure ShowSequenceActionExecute(Sender: TObject);
     procedure BuildActionExecute(Sender: TObject);
@@ -79,6 +81,7 @@ type
     procedure MoveCommandDownActionUpdate(Sender: TObject);
     procedure EnableAllCommandsActionUpdate(Sender: TObject);
     procedure DisableAllCommandsActionUpdate(Sender: TObject);
+    procedure CloseActionExecute(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   private
     FAfterBuild: TInstantConnectorEvent;
@@ -324,6 +327,11 @@ end;
 
 procedure TInstantCustomDBEvolverForm.BeforeBuildCommandSequence;
 begin
+end;
+
+procedure TInstantCustomDBEvolverForm.CloseActionExecute(Sender: TObject);
+begin
+  Close;
 end;
 
 end.
