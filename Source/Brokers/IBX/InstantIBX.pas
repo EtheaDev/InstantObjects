@@ -140,7 +140,7 @@ implementation
 
 uses
   Controls, InstantConsts, InstantIBXConnectionDefEdit, InstantUtils,
-  IB, IBHeader, IBIntf, InstantIBFbCatalog, InstantDBBuild;
+  IB, InstantIBFbCatalog, InstantDBBuild;
 
 { TInstantIBXConnectionDef }
 
@@ -287,37 +287,23 @@ begin
 end;
 
 procedure TInstantIBXConnector.InternalCreateDatabase;
-{$IFDEF D7+}
 var
-  db_handle: TISC_DB_HANDLE;
-  tr_handle: TISC_TR_HANDLE;
-{$ENDIF}
+  OldConnectionParams: string;
 begin
   inherited;
-{$IFDEF D7+}
-  // IBX's TIBDatabase.CreateDatabase is fatally flawed and so we have to
-  // bypass it for the time being.
-
-  // **********
-  // Note: if you can't compile this code then you need to upgrade IBX.
-  // The version distributed with Delphi 7 won't do. Please go to Code Central
-  // and get yourself an upgrade.
-  // **********
-
-  Connection.CheckInactive;
-  db_handle := nil;
-  tr_handle := nil;
+  OldConnectionParams := Connection.Params.Text;
+  with Connection.Params do
+    Text := Format('USER ''%s'' PASSWORD ''%s'' PAGE_SIZE 4096',
+     [Values['user_name'], Values['password']]);
   try
-    Connection.Call(
-      GetGDSLibrary().isc_dsql_execute_immediate(StatusVector, @db_handle, @tr_handle, 0,
-        PChar('create database ''' + Connection.DatabaseName + ''' user ''' +
-              Connection.Params.Values['user_name'] + ''' password ''' +
-              Connection.Params.Values['password'] + ''''), Connection.SQLDialect, nil),
-      True);
+    try
+      Connection.CreateDatabase;
+    finally
+      Disconnect;
+    end;
   finally
-    Disconnect;
+    Connection.Params.Text := OldConnectionParams;
   end;
-{$ENDIF}
 end;
 
 function TInstantIBXConnector.GetDatabaseExists: Boolean;
