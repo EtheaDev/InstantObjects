@@ -32,7 +32,7 @@
 
 program Primer;
 
-{$I '../../InstantDefines.inc'}
+{$I '../../Source/InstantDefines.inc'}
 
 uses
   Forms,
