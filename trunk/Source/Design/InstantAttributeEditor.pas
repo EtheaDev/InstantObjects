@@ -51,7 +51,11 @@ uses
   InstantPresentation;
 
 type
-  TInstantStringsEvent = procedure(Sender: TObject; Items: TStrings) of object;
+  TInstantStringsEvent = procedure(Sender: TObject; Items: TStrings;
+    PersistentOnly: Boolean) of object;
+
+  TInstantBooleanEvent = procedure (Sender: TObject; const AClassName: String;
+    var IsPersistent: Boolean) of object;
 
   TInstantAttributeEditorForm = class(TInstantEditForm)
     AccessSheet: TTabSheet;
@@ -117,6 +121,7 @@ type
     FBaseClassStorageName: string;
     FLimited: Boolean;
     FModel: TInstantCodeModel;
+    FOnIsClassPersistent: TInstantBooleanEvent;
     FOnLoadClasses: TInstantStringsEvent;
     function GetSubject: TInstantCodeAttribute;
     procedure SetSubject(const Value: TInstantCodeAttribute);
@@ -135,11 +140,14 @@ type
     procedure SubjectChanged; override;
     procedure UpdateControls;
     procedure ComputeExternalStorageName;
+    function IsClassPersistent(const AClassName: String): Boolean;
   public
     property BaseClassStorageName: string read FBaseClassStorageName write
       FBaseClassStorageName;
     property Limited: Boolean read FLimited write SetLimited;
     property Model: TInstantCodeModel read FModel write SetModel;
+    property OnIsClassPersistent: TInstantBooleanEvent read FOnIsClassPersistent
+        write FOnIsClassPersistent;
     property OnLoadClasses: TInstantStringsEvent read FOnLoadClasses
       write FOnLoadClasses;
     property Subject: TInstantCodeAttribute read GetSubject write SetSubject;
@@ -172,18 +180,33 @@ begin
 end;
 
 procedure TInstantAttributeEditorForm.LoadClasses;
+
+  function NeedOnlyPersistentClasses: Boolean;
+  begin
+    Result := SameText(TypeEdit.Text, 'Reference') or
+            SameText(TypeEdit.Text, 'References');
+  end;
+
 var
   I: Integer;
 begin
   ObjectClassEdit.Items.BeginUpdate;
   try
     ObjectClassEdit.Items.Clear;
-    if Assigned(FOnLoadClasses) then
-      FOnLoadClasses(Self, ObjectClassEdit.Items)
-    else
-      if Assigned(FModel) then
-        for I := 0 to Pred(FModel.ClassCount) do
+
+    if Assigned(FModel) then
+    begin
+      for I := 0 to Pred(FModel.ClassCount) do
+        if not NeedOnlyPersistentClasses or
+            (NeedOnlyPersistentClasses and
+            IsClassPersistent(FModel.Classes[I].Name)) then
           ObjectClassEdit.Items.Add(FModel.Classes[I].Name);
+    end
+    else if Assigned(ObjectClassEdit.Field) then
+      ObjectClassEdit.Items.Add(ObjectClassEdit.Field.AsString)
+    else if Assigned(FOnLoadClasses) then
+      OnLoadClasses(Self, ObjectClassEdit.Items, NeedOnlyPersistentClasses);
+
     if Assigned(ObjectClassEdit.Field) then
       ObjectClassEdit.ItemIndex :=
         ObjectClassEdit.Items.IndexOf(ObjectClassEdit.Field.AsString);
@@ -262,11 +285,24 @@ procedure TInstantAttributeEditorForm.LoadTypes;
 var
   I: Integer;
 begin
-  TypeEdit.ItemIndex := SubjectExposer.GetFieldStrings(TypeEdit.Field,
-    TypeEdit.Items);
-  I := TypeEdit.Items.IndexOf('Unknown');
-  if I <> -1 then
-    TypeEdit.Items.Delete(I);
+  TypeEdit.Items.BeginUpdate;
+  try
+    TypeEdit.ItemIndex := SubjectExposer.GetFieldStrings(TypeEdit.Field,
+      TypeEdit.Items);
+    I := TypeEdit.Items.IndexOf('Unknown');
+    if I <> -1 then
+      TypeEdit.Items.Delete(I);
+    if not Assigned(FModel) then
+      for I := Pred(TypeEdit.Items.Count) downto 0 do
+        if not ((TypeEdit.Items[I] = 'Part') or
+            (TypeEdit.Items[I] = 'Parts') or
+            (IsClassPersistent(ObjectClassEdit.Text) and
+            ((TypeEdit.Items[I] = 'Reference') or
+            (TypeEdit.Items[I] = 'References')))) then
+          TypeEdit.Items.Delete(I);
+  finally
+    TypeEdit.Items.EndUpdate;
+  end;
 end;
 
 procedure TInstantAttributeEditorForm.LoadVisibilities;
@@ -274,28 +310,33 @@ var
   I: Integer;
   S: String;
 begin
-  SubjectExposer.GetFieldStrings(VisibilityEdit.Field, VisibilityEdit.Items);
-  I := VisibilityEdit.Items.IndexOf('Default');
-  if I <> -1 then
-    VisibilityEdit.Items.Delete(I);
-    
-  if Assigned(Subject) and Subject.IsContainer then
-  begin
-    I := VisibilityEdit.Items.IndexOf('Published');
+  VisibilityEdit.Items.BeginUpdate;
+  try
+    SubjectExposer.GetFieldStrings(VisibilityEdit.Field, VisibilityEdit.Items);
+    I := VisibilityEdit.Items.IndexOf('Default');
     if I <> -1 then
       VisibilityEdit.Items.Delete(I);
-  end;
 
-  if Limited then
-  begin
-    S := GetEnumName(TypeInfo(TInstantCodeVisibility),
-      Ord(Subject.FindValueProp.Visibility));
-    VisibilityEdit.ItemIndex :=
-      VisibilityEdit.Items.IndexOf(Copy(S, 3, length(S)));
-  end
-  else if Assigned(VisibilityEdit.Field) then
-    VisibilityEdit.ItemIndex :=
-      VisibilityEdit.Items.IndexOf(VisibilityEdit.Field.AsString);
+    if Assigned(Subject) and Subject.IsContainer then
+    begin
+      I := VisibilityEdit.Items.IndexOf('Published');
+      if I <> -1 then
+        VisibilityEdit.Items.Delete(I);
+    end;
+
+    if Limited then
+    begin
+      S := GetEnumName(TypeInfo(TInstantCodeVisibility),
+        Ord(Subject.FindValueProp.Visibility));
+      VisibilityEdit.ItemIndex :=
+        VisibilityEdit.Items.IndexOf(Copy(S, 3, length(S)));
+    end
+    else if Assigned(VisibilityEdit.Field) then
+      VisibilityEdit.ItemIndex :=
+        VisibilityEdit.Items.IndexOf(VisibilityEdit.Field.AsString);
+  finally
+    VisibilityEdit.Items.EndUpdate;
+  end;
 end;
 
 procedure TInstantAttributeEditorForm.NameEditChange(Sender: TObject);
@@ -360,13 +401,18 @@ begin
       SizeEdit.SetFocus;
       Abort;
     end;
+
+  if ObjectClassEdit.Enabled then
+    if not IsClassPersistent(ObjectClassEdit.Field.AsString) and
+        (Subject.StorageKind <> skEmbedded) then
+      Subject.StorageKind := skEmbedded;
+
   inherited;
 end;
 
 procedure TInstantAttributeEditorForm.PopulateClasses;
 begin
-  if ObjectClassEdit.Items.Count = 0 then
-    LoadClasses;
+  LoadClasses;
 end;
 
 // Must update SubjectExposer fields in SaveData so that
@@ -513,6 +559,13 @@ procedure TInstantAttributeEditorForm.UpdateControls;
     EnableControl(Control, Enable, SubjectSource);
   end;
 
+  function IsObjectClassPersistent: Boolean;
+  begin
+    Result := False;
+    if Assigned(ObjectClassEdit.Field) then
+      Result := IsClassPersistent(ObjectClassEdit.Field.AsString);
+  end;
+
 var
   HasName, HasClass, IsComplex, IsContainer, CanBeExternal,
     CanHaveStorageName, IsMaskable, IsString, IsValid: Boolean;
@@ -561,15 +614,18 @@ begin
     EnableCtrl(MethodInsertCheckBox, IsContainer);
     EnableCtrl(MethodRemoveCheckBox, IsContainer);
 
-    EnableCtrl(StorageKindEdit, CanBeExternal);
-    EnableCtrl(StorageKindLabel, CanBeExternal);
+    EnableCtrl(StorageKindEdit, CanBeExternal and IsObjectClassPersistent);
+    EnableCtrl(StorageKindLabel, CanBeExternal and IsObjectClassPersistent);
   end;
   EnableCtrl(StorageNameLabel, CanHaveStorageName);
   EnableCtrl(StorageNameEdit, CanHaveStorageName);
 
-  EnableCtrl(ExternalStorageNameLabel, not CanHaveStorageName);
-  EnableCtrl(ExternalStorageNameEdit, not CanHaveStorageName);
-  EnableCtrl(AutoExternalStorageNameCheckBox, not CanHaveStorageName);
+  EnableCtrl(ExternalStorageNameLabel, not CanHaveStorageName and
+    IsObjectClassPersistent);
+  EnableCtrl(ExternalStorageNameEdit, not CanHaveStorageName and 
+    IsObjectClassPersistent);
+  EnableCtrl(AutoExternalStorageNameCheckBox, not CanHaveStorageName and 
+    IsObjectClassPersistent);
 
   EnableCtrl(SizeLabel, IsString);
   EnableCtrl(SizeEdit, IsString);
@@ -631,6 +687,23 @@ begin
   else
     ExternalStorageNameEdit.Text := '';
 
+end;
+
+function TInstantAttributeEditorForm.IsClassPersistent(
+  const AClassName: String): Boolean;
+var
+  CM: TInstantClassMetadata;
+begin
+  Result := False;
+
+  if Assigned(FOnIsClassPersistent) then
+    OnIsClassPersistent(Self, AClassName, Result)
+  else
+  begin
+    CM := InstantGetClassMetadata(AClassName);
+    if Assigned(CM) then
+      Result := CM.IsStored;
+  end;
 end;
 
 procedure TInstantAttributeEditorForm.StorageNameEditChange(Sender: TObject);
