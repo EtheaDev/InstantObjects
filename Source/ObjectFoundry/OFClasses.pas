@@ -432,7 +432,7 @@ begin
       an invalid type since types should be TInstant*) the attribute
       is assumed to be new. If the type of the associated property
       is also Integer the attribute type is TInstanInteger, otherwise
-      the attribute is assumed to be a reference to an instance of the
+      the attribute defaults to a TInstantPart of an instance of the
       class specified as the property type. }
 
     FieldTypeName := Attribute.IOStateField.DataName;
@@ -440,11 +440,11 @@ begin
       if Prop.DataName = 'Integer' then
         FieldTypeName := 'TInstantInteger'
       else                                    
-        FieldTypeName := 'TInstantReference';
+        FieldTypeName := 'TInstantPart';
     AttributeClassName := FieldTypeName;
   end;
   if Assigned(AttributeClass) and
-    AttributeClass.InheritsFrom(TInstantComplex) then
+      AttributeClass.InheritsFrom(TInstantComplex) then
     ObjectClassName := Prop.DataName;
   { TODO: Do we need this? (causes Memo to become String)
   else
