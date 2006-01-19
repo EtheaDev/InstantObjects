@@ -39,7 +39,10 @@ type
   TObjectFoundryExpert = class(TInterfacedObject, IUnknown, IMMExpert, IInstantObjectsExpert)
   private
     FOptions: TOFOptions;
-    procedure AttributeEditorLoadClasses(Sender: TObject; Items: TStrings);
+    procedure AttributeEditorLoadClasses(Sender: TObject; Items: TStrings;
+      PersistentOnly: Boolean);
+    procedure ClassIsPersistent(Sender: TObject; const AClassName: String; var
+        IsPersistent: Boolean);
     //procedure AttributeEditorLoadClassAttrs(Sender: TObject;
     //  const ClassName: String; Items: TStrings);
     function GetOptions: TOFOptions;
@@ -91,7 +94,6 @@ uses
 const
   SObjectFoundry = 'ObjectFoundry';
 
-// SRM - 01 Oct 2004: begin
 // Function externalised from AttributeEditorLoadClasses function.
 function TObjectFoundryExpert.IsInstantObjectClass(AClass: IMMClassBase):
   Boolean;
@@ -131,7 +133,7 @@ begin
 end; *)
 
 procedure TObjectFoundryExpert.AttributeEditorLoadClasses(Sender: TObject;
-  Items: TStrings);
+  Items: TStrings; PersistentOnly: Boolean);
 var
   I: Integer;
   CodeModel: IMMCodeModel;
@@ -142,12 +144,33 @@ begin
     for I := 0 to Pred(CodeModel.ClassCount) do
     begin
       AClass := CodeModel.Classes[I];
-      if IsInstantObjectClass(AClass) then
+      if IsInstantObjectClass(AClass) and
+            (not PersistentOnly or
+            (PersistentOnly and (AClass.Persistency = cpPersistent))) then
         Items.Add(AClass.Name);
     end;
   end;    { if }
 end;
-// SRM - 01 Oct 2004: end
+
+procedure TObjectFoundryExpert.ClassIsPersistent(Sender: TObject; const
+    AClassName: String; var IsPersistent: Boolean);
+var
+  I: Integer;
+  CodeModel: IMMCodeModel;
+  lClass: IMMClassBase;
+begin
+  IsPersistent := False;
+  CodeModel := MMToolServices.CodeModel;
+  if Assigned(CodeModel) then begin
+    for I := 0 to Pred(CodeModel.ClassCount) do
+    begin
+      lClass := CodeModel.Classes[I];
+      if IsInstantObjectClass(lClass) and SameText(AClassName, lClass.Name) then
+        IsPersistent := lClass.Persistency = cpPersistent;
+    end;
+  end;    { if }
+end;
+
 
 procedure TObjectFoundryExpert.Destroyed;
 begin
@@ -179,6 +202,7 @@ begin
       try
         BaseClassStorageName := GetBaseClassStorageName;
         OnLoadClasses := AttributeEditorLoadClasses;
+        OnIsClassPersistent := ClassIsPersistent;
         Subject := Attribute;
         Result := ShowModal = mrOK;
         if Result then
