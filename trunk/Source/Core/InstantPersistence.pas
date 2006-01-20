@@ -2439,13 +2439,12 @@ type
 
   TInstantSQLQuery = class(TInstantCustomRelationalQuery)
   private
-    FObjectReferenceList: TObjectList;
+    FObjectReferenceList: TInstantObjectReferenceList;
     FParamsObject: TParams;
     FStatement: string;
     procedure DestroyObjectReferenceList;
     function GetObjectReferenceCount: Integer;
-    function GetObjectReferenceList: TObjectList;
-    function GetObjectReferences(Index: Integer): TInstantObjectReference;
+    function GetObjectReferenceList: TInstantObjectReferenceList;
     function GetParamsObject: TParams;
     procedure InitObjectReferences(DataSet: TDataSet);
   protected
@@ -2468,8 +2467,8 @@ type
     function ObjectFetched(Index: Integer): Boolean; override;
     procedure SetStatement(const Value: string); override;
     property ObjectReferenceCount: Integer read GetObjectReferenceCount;
-    property ObjectReferenceList: TObjectList read GetObjectReferenceList;
-    property ObjectReferences[Index: Integer]: TInstantObjectReference read GetObjectReferences;
+    property ObjectReferenceList: TInstantObjectReferenceList read
+        GetObjectReferenceList;
     property ParamsObject: TParams read GetParamsObject;
   public
     destructor Destroy; override;
@@ -14631,17 +14630,12 @@ begin
   Result := ObjectReferenceList.Count;
 end;
 
-function TInstantSQLQuery.GetObjectReferenceList: TObjectList;
+function TInstantSQLQuery.GetObjectReferenceList: TInstantObjectReferenceList;
 begin
   if not Assigned(FObjectReferenceList) then
-    FObjectReferenceList := TObjectList.Create;
+    FObjectReferenceList :=
+        TInstantObjectReferenceList.Create(True, Connector);
   Result := FObjectReferenceList;
-end;
-
-function TInstantSQLQuery.GetObjectReferences(
-  Index: Integer): TInstantObjectReference;
-begin
-  Result := ObjectReferenceList[Index] as TInstantObjectReference;
 end;
 
 function TInstantSQLQuery.GetParams: TParams;
@@ -14662,22 +14656,8 @@ begin
 end;
 
 procedure TInstantSQLQuery.InitObjectReferences(DataSet: TDataSet);
-
-  function CreateObjectReference(DataSet: TDataSet): TInstantObjectReference;
-  var
-    ClassNameField, ObjectIdField: TField;
-  begin
-    ClassNameField := DataSet.FieldByName(InstantClassFieldName);
-    ObjectIdField := DataSet.FieldByName(InstantIdFieldName);
-    Result := TInstantObjectReference.Create(nil, True);
-    try
-      Result.ReferenceObject(ClassNameField.AsString, ObjectIdField.AsString);
-    except
-      Result.Free;
-      raise
-    end;
-  end;
-
+var
+  ObjRef: TInstantObjectReference;
 begin
   if Assigned(DataSet) then
   begin
@@ -14685,8 +14665,16 @@ begin
     try
       while not DataSet.Eof do
       begin
-        ObjectReferenceList.Add(CreateObjectReference(DataSet));
-        if (MaxCount > 0) and (ObjectReferenceList.Count = MaxCount) then break; 
+        ObjRef := ObjectReferenceList.Add;
+        try
+          ObjRef.ReferenceObject(
+            DataSet.FieldByName(InstantClassFieldName).AsString,
+            DataSet.FieldByName(InstantIdFieldName).AsString);
+        except
+          ObjRef.Free;
+          raise;
+        end;
+        if (MaxCount > 0) and (ObjectReferenceList.Count = MaxCount) then break;
         DataSet.Next;
       end;
     finally
@@ -14696,17 +14684,8 @@ begin
 end;
 
 function TInstantSQLQuery.InternalAddObject(AObject: TObject): Integer;
-var
-  ObjectRef: TInstantObjectReference;
 begin
-  ObjectRef := TInstantObjectReference.Create(AObject as TInstantObject, True);
-  try
-    Result := ObjectReferenceList.Add(ObjectRef);
-    TInstantObject(AObject).Release;
-  except
-    ObjectRef.Free;
-    raise
-  end;
+  Result := ObjectReferenceList.Add(AObject as TInstantObject);
 end;
 
 procedure TInstantSQLQuery.InternalClose;
@@ -14721,8 +14700,8 @@ var
   I: Integer;
 begin
   for I := 0 to Pred(ObjectReferenceCount) do
-    if ObjectReferences[I].HasInstance then
-      List.Add(ObjectReferences[I].Instance);
+    if ObjectReferenceList.RefItems[I].HasInstance then
+      List.Add(ObjectReferenceList[I]);
 end;
 
 function TInstantSQLQuery.InternalGetObjectCount: Integer;
@@ -14732,31 +14711,21 @@ end;
 
 function TInstantSQLQuery.InternalGetObjects(Index: Integer): TObject;
 begin
-  Result := ObjectReferences[Index].Dereference(Connector);
+  Result := ObjectReferenceList[Index];
 end;
 
 function TInstantSQLQuery.InternalIndexOfObject(AObject: TObject): Integer;
 begin
   if AObject is TInstantObject then
-    for Result := 0 to Pred(ObjectReferenceCount) do
-      if ObjectReferences[Result].Equals(TInstantObject(AObject)) then
-        Exit;
-  Result := -1;
+    Result := ObjectReferenceList.IndexOf(TInstantObject(AObject))
+  else
+    Result := -1;
 end;
 
 procedure TInstantSQLQuery.InternalInsertObject(Index: Integer;
   AObject: TObject);
-var
-  ObjectRef: TInstantObjectReference;
 begin
-  ObjectRef := TInstantObjectReference.Create(AObject as TInstantObject, True);
-  try
-    ObjectReferenceList.Insert(Index, ObjectRef);
-    TInstantObject(AObject).Release;
-  except
-    ObjectRef.Free;
-    raise
-  end;
+  ObjectReferenceList.Insert(Index, AObject as TInstantObject);
 end;
 
 procedure TInstantSQLQuery.InternalOpen;
@@ -14781,19 +14750,17 @@ var
 begin
   Index := IndexOfObject(AObject);
   if Index <> -1 then
-    ObjectReferences[Index].DestroyInstance;
+    ObjectReferenceList.RefItems[Index].DestroyInstance;
 end;
 
 function TInstantSQLQuery.InternalRemoveObject(AObject: TObject): Integer;
 begin
-  Result := IndexOfObject(AObject);
-  if Result <> -1 then
-    ObjectReferenceList.Delete(Result);
+  Result := ObjectReferenceList.Remove(AObject as TInstantObject);
 end;
 
 function TInstantSQLQuery.ObjectFetched(Index: Integer): Boolean;
 begin
-  Result := ObjectReferences[Index].HasInstance;
+  Result := ObjectReferenceList.RefItems[Index].HasInstance;
 end;
 
 procedure TInstantSQLQuery.SetParams(Value: TParams);
