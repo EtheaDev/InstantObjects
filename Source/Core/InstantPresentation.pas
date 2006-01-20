@@ -4309,17 +4309,8 @@ begin
 end;
 
 function TInstantSelector.GetIsChanged: Boolean;
-var
-  I: Integer;
 begin
-  Result := False;
-  for I := 0 to Pred(Query.ObjectCount) do
-    if Query.Objects[I] is TInstantObject then
-    begin
-      Result := TInstantObject(Query.Objects[I]).IsChanged;
-      if Result then
-        Break;
-    end;
+  Result := Query.HasChangedObject;
   { TODO : Implement check of deleted records after patch bug #1232576 }
 end;
 
