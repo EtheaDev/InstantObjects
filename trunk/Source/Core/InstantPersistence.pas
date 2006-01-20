@@ -1784,6 +1784,7 @@ type
     procedure ApplyChanges;
     procedure Close;
     procedure FetchParams(const ACommandText: string; AParams: TParams);
+    function HasChangedObject: Boolean;
     function HasObject(AObject: TObject): Boolean;
     function IndexOfObject(AObject: TObject): Integer;
     procedure InsertObject(Index: Integer; AObject: TObject);
@@ -10309,6 +10310,20 @@ end;
 function TInstantQuery.GetParams: TParams;
 begin
   Result := nil;
+end;
+
+function TInstantQuery.HasChangedObject: Boolean;
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(ObjectCount) do
+    if ObjectFetched(I) and (Objects[I] is TInstantObject) then
+    begin
+      Result := TInstantObject(Objects[I]).IsChanged;
+      if Result then
+        Exit;
+    end;
+  Result := False;
 end;
 
 function TInstantQuery.HasObject(AObject: TObject): Boolean;
