@@ -170,7 +170,7 @@ uses
   InstantConnectionManager, Dialogs;
 
 const
-  SBuilderItemCaption = 'Database &Builder...';
+  SBuilderItemCaption = 'InstantObjects Database &Builder...';
   SBuilderItemName = 'InstantBuilderItem';
   SExplorerItemCaption = 'InstantObjects &Model Explorer';
   SExplorerItemName = 'InstantExplorerItem';
@@ -466,6 +466,18 @@ procedure TInstantModelExpert.AttachMenus;
       end;
   end;
 
+  procedure CreateBuilderMenuItem;
+  begin
+    FBuilderItem := TReferencedMenuItem.Create(nil, FBuilderItem);
+    with FBuilderItem do
+    begin
+      Name := SBuilderItemName;
+      Caption := SBuilderItemCaption;
+      Action := Explorer.BuildDatabaseAction;
+      ImageIndex := FToolImageOffset + 1;
+    end;
+  end;
+
 var
   MainMenu: TMainMenu;
   Menu, Item: TMenuItem;
@@ -506,22 +518,27 @@ begin
       Menu.Insert(Item.MenuIndex + 1, FExplorerItem)
     else
       Menu.Add(FExplorerItem);
+
+{$IFDEF D9+}
+  { Add Database InstantObjects Builder to View-menu }
+    CreateBuilderMenuItem;
+    Item := ItemByName(Menu, 'mnuViewDataExplorer');
+    if Assigned(Item) then
+      Menu.Insert(Item.MenuIndex + 1, FBuilderItem)
+    else
+      Menu.Add(FBuilderItem);
+{$ENDIF}
   end;
 
-  { Add Database Builder to Database-menu }
+{$IFNDEF D9+}
+  { Add Database InstantObjects Builder to Database-menu }
   Menu := ItemByName(MainMenu.Items, 'DatabaseMenu');
   if Assigned(Menu) then
   begin
-    FBuilderItem := TReferencedMenuItem.Create(nil, FBuilderItem);
-    with FBuilderItem do
-    begin
-      Name := SBuilderItemName;
-      Caption := SBuilderItemCaption;
-      Action := Explorer.BuildDatabaseAction;
-      ImageIndex := FToolImageOffset + 1;
-    end;
+    CreateBuilderMenuItem;
     Menu.Add(FBuilderItem);
   end;
+{$ENDIF}
 
 end;
 

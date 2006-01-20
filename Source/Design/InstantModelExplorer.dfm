@@ -140,7 +140,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       OnExecute = SelectUnitsActionExecute
     end
     object BuildDatabaseAction: TAction
-      Caption = '&Build Database...'
+      Caption = '&Build InstantObjects Database...'
       Enabled = False
       Hint = 'Build Database'
       ImageIndex = 1
