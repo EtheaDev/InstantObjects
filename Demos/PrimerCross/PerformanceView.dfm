@@ -256,7 +256,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
           object TestResultStoreSeries: TBarSeries
             Marks.ArrowLength = 20
             Marks.Style = smsValue
-            Marks.Visible = False
+            Marks.Visible = True
             SeriesColor = clGreen
             Title = 'Store'
             XValues.DateTime = False
@@ -270,7 +270,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
           end
           object TestResultRetrieveSeries: TBarSeries
             Marks.ArrowLength = 20
-            Marks.Visible = False
+            Marks.Style = smsValue
+            Marks.Visible = True
             SeriesColor = 8454143
             Title = 'Retrieve'
             XValues.DateTime = False
@@ -284,7 +285,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
           end
           object Series1: TBarSeries
             Marks.ArrowLength = 20
-            Marks.Visible = False
+            Marks.Style = smsValue
+            Marks.Visible = True
             SeriesColor = 16744576
             Title = 'Query'
             XValues.DateTime = False
@@ -298,7 +300,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
           end
           object TestResultDisposeSeries: TBarSeries
             Marks.ArrowLength = 20
-            Marks.Visible = False
+            Marks.Style = smsValue
+            Marks.Visible = True
             SeriesColor = clRed
             Title = 'Dispose'
             XValues.DateTime = False
