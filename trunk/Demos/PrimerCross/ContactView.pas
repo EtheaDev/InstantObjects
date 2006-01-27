@@ -255,7 +255,9 @@ procedure TContactViewForm.ContactGridKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   if (Shift = [ssCtrl]) and (Chr(Key) = 'F') then
-    FindEdit.SetFocus;
+    FindEdit.SetFocus
+  else if (Key = VK_F5) and (Shift = []) then
+    ContactSelector.RefreshData;
 end;
 
 procedure TContactViewForm.ContactGridPanelResize(Sender: TObject);
