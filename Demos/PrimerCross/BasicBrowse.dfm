@@ -20,7 +20,7 @@ object BasicBrowseForm: TBasicBrowseForm
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 266
+    Top = 273
     Width = 249
     Height = 19
     Panels = <>
@@ -90,7 +90,7 @@ object BasicBrowseForm: TBasicBrowseForm
     Left = 0
     Top = 26
     Width = 249
-    Height = 240
+    Height = 247
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 1
@@ -99,7 +99,7 @@ object BasicBrowseForm: TBasicBrowseForm
       Left = 1
       Top = 1
       Width = 247
-      Height = 238
+      Height = 245
       Align = alClient
       DataSource = BrowseSource
       Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
@@ -111,6 +111,7 @@ object BasicBrowseForm: TBasicBrowseForm
       TitleFont.Name = 'MS Sans Serif'
       TitleFont.Style = []
       OnDblClick = BrowseGridDblClick
+      OnKeyUp = BrowseGridKeyUp
     end
   end
   object ActionList: TActionList

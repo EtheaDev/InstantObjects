@@ -61,6 +61,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure ToolBarResize(Sender: TObject);
     procedure SearchActionExecute(Sender: TObject);
+    procedure BrowseGridKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     FLookupMode: Boolean;
     function GetExposer: TInstantCustomExposer;
@@ -275,6 +277,13 @@ end;
 procedure TBasicBrowseForm.SearchActionExecute(Sender: TObject);
 begin
   Search;
+end;
+
+procedure TBasicBrowseForm.BrowseGridKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if (Key = VK_F5) and (Shift = []) then
+    (Sender as TDBGrid).DataSource.DataSet.Refresh;
 end;
 
 end.
