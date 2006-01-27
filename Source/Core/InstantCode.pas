@@ -8583,7 +8583,9 @@ begin
       begin
         FMetadata.StorageKind := skExternal;
         FMetadata.ExternalStorageName := '';
-      end;
+      end
+      else if SameText(Token, MetaKeyStored) then
+        FMetadata.StorageName := ReadStringValue;
     end;
   end;
 end;
