@@ -94,8 +94,7 @@ type
   end;
 
   TPhone = class(TInstantObject)
-  {IOMETADATA stored;
-    Name: String(20);
+  {IOMETADATA Name: String(20);
     Number: String(20) mask '(000) 000-0000;0;_'; }
     _Name: TInstantString;
     _Number: TInstantString;
@@ -305,11 +304,38 @@ type
 
   TProject = class(TInstantObject)
   {IOMETADATA stored;
-    Name: String(30); }
+    Name: String(30);
+    Address: Parts(TExternalAddress) external 'Project_Address';
+    SubProjects: Parts(TProject) external 'Project_SubProjects'; }
+    _Address: TInstantParts;
     _Name: TInstantString;
+    _SubProjects: TInstantParts;
   private
+    function GetAddressCount: Integer;
+    function GetAddress(Index: Integer): TExternalAddress;
     function GetName: string;
+    function GetSubProjectCount: Integer;
+    function GetSubProjects(Index: Integer): TProject;
+    procedure SetAddress(Index: Integer; Value: TExternalAddress);
     procedure SetName(const Value: string);
+    procedure SetSubProjects(Index: Integer; Value: TProject);
+  public
+    function AddAddress(Address: TExternalAddress): Integer;
+    function AddSubProject(SubProject: TProject): Integer;
+    procedure ClearAddress;
+    procedure ClearSubProjects;
+    procedure DeleteAddress(Index: Integer);
+    procedure DeleteSubProject(Index: Integer);
+    function IndexOfAddress(Address: TExternalAddress): Integer;
+    function IndexOfSubProject(SubProject: TProject): Integer;
+    procedure InsertAddress(Index: Integer; Address: TExternalAddress);
+    procedure InsertSubProject(Index: Integer; SubProject: TProject);
+    function RemoveAddress(Address: TExternalAddress): Integer;
+    function RemoveSubProject(SubProject: TProject): Integer;
+    property AddressCount: Integer read GetAddressCount;
+    property SubProjectCount: Integer read GetSubProjectCount;
+    property SubProjects[Index: Integer]: TProject read GetSubProjects write SetSubProjects;
+    property Address[Index: Integer]: TExternalAddress read GetAddress write SetAddress;
   published
     property Name: string read GetName write SetName;
   end;
@@ -317,17 +343,22 @@ type
   TExternalAddress = class(TInstantObject)
   {IOMETADATA stored;
     Name: String(30);
-    Category: Reference(TCategory); }
+    Category: Reference(TCategory);
+    Site_Contact: Reference(TPerson); }
     _Category: TInstantReference;
     _Name: TInstantString;
+    _Site_Contact: TInstantReference;
   private
     function GetCategory: TCategory;
     function GetName: string;
+    function GetSite_Contact: TPerson;
     procedure SetCategory(Value: TCategory);
     procedure SetName(const Value: string);
+    procedure SetSite_Contact(Value: TPerson);
   published
     property Category: TCategory read GetCategory write SetCategory;
     property Name: string read GetName write SetName;
+    property Site_Contact: TPerson read GetSite_Contact write SetSite_Contact;
   end;
 
   TExternalPhones = class(TInstantObject)
@@ -639,14 +670,104 @@ end;
 
 { TProject }
 
+function TProject.AddAddress(Address: TExternalAddress): Integer;
+begin
+  Result := _Address.Add(Address);
+end;
+
+function TProject.AddSubProject(SubProject: TProject): Integer;
+begin
+  Result := _SubProjects.Add(SubProject);
+end;
+
+procedure TProject.ClearAddress;
+begin
+  _Address.Clear;
+end;
+
+procedure TProject.ClearSubProjects;
+begin
+  _SubProjects.Clear;
+end;
+
+procedure TProject.DeleteAddress(Index: Integer);
+begin
+  _Address.Delete(Index);
+end;
+
+function TProject.GetAddressCount: Integer;
+begin
+  Result := _Address.Count;
+end;
+
+procedure TProject.DeleteSubProject(Index: Integer);
+begin
+  _SubProjects.Delete(Index);
+end;
+
+function TProject.GetAddress(Index: Integer): TExternalAddress;
+begin
+  Result := _Address[Index] as TExternalAddress;
+end;
+
 function TProject.GetName: string;
 begin
   Result := _Name.Value;
 end;
 
+function TProject.GetSubProjectCount: Integer;
+begin
+  Result := _SubProjects.Count;
+end;
+
+function TProject.GetSubProjects(Index: Integer): TProject;
+begin
+  Result := _SubProjects[Index] as TProject;
+end;
+
+function TProject.IndexOfAddress(Address: TExternalAddress): Integer;
+begin
+  Result := _Address.IndexOf(Address);
+end;
+
+function TProject.IndexOfSubProject(SubProject: TProject): Integer;
+begin
+  Result := _SubProjects.IndexOf(SubProject);
+end;
+
+procedure TProject.InsertAddress(Index: Integer; Address: TExternalAddress);
+begin
+  _Address.Insert(Index, Address);
+end;
+
+procedure TProject.InsertSubProject(Index: Integer; SubProject: TProject);
+begin
+  _SubProjects.Insert(Index, SubProject);
+end;
+
+function TProject.RemoveAddress(Address: TExternalAddress): Integer;
+begin
+  Result := _Address.Remove(Address);
+end;
+
+function TProject.RemoveSubProject(SubProject: TProject): Integer;
+begin
+  Result := _SubProjects.Remove(SubProject);
+end;
+
+procedure TProject.SetAddress(Index: Integer; Value: TExternalAddress);
+begin
+  _Address[Index] := Value;
+end;
+
 procedure TProject.SetName(const Value: string);
 begin
   _Name.Value := Value;
+end;
+
+procedure TProject.SetSubProjects(Index: Integer; Value: TProject);
+begin
+  _SubProjects[Index] := Value;
 end;
 
 { TEmail }
@@ -1011,6 +1132,11 @@ begin
   Result := _Name.Value;
 end;
 
+function TExternalAddress.GetSite_Contact: TPerson;
+begin
+  Result := _Site_Contact.Value as TPerson;
+end;
+
 procedure TExternalAddress.SetCategory(Value: TCategory);
 begin
   _Category.Value := Value;
@@ -1022,6 +1148,11 @@ begin
 end;
 
 { TExternalPhones }
+
+procedure TExternalAddress.SetSite_Contact(Value: TPerson);
+begin
+  _Site_Contact.Value := Value;
+end;
 
 function TExternalPhones.GetName: string;
 begin

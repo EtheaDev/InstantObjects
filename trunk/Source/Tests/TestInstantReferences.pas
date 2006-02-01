@@ -36,6 +36,8 @@ uses fpcunit, InstantMock, InstantPersistence, TestModel;
 
 type
 
+  // Use these tests in conjunction with a memory
+  // leak test utility.
   TestTInstantReferences_Leak = class(TTestCase)
   private
     FConn: TInstantMockConnector;
@@ -47,9 +49,15 @@ type
   published
     procedure TestAddEmbeddedObject;
     procedure TestAddExternalObject;
+
+    // A -> <- B -> C
+    procedure TestCircularReferences;
+    // A -> B {Parts}-> C -> A
+    procedure TestCircularReferences1;
+    // A -> B {Parts}-> C {Parts}-> D -> A
+    procedure TestCircularReferences2;
   end;
 
-  // Test methods for class TInstantReferences
   TestTInstantEmbReferences = class(TTestCase)
   private
     FConn: TInstantMockConnector;
@@ -182,6 +190,164 @@ begin
     vReference.Free;
 //    AssertException(EAccessViolation, vReference.Free);
   end;
+end;
+
+// A -> <- B -> C
+procedure TestTInstantReferences_Leak.TestCircularReferences;
+var
+  vPerson1: TPerson;
+  vCategory: TCategory;
+begin
+  FOwner.Name := 'Owner';
+
+  vPerson1 := TPerson.Create(FConn);
+  try
+    AssertNotNull(vPerson1);
+    vPerson1.Name := 'vPerson1';
+
+    vPerson1.EmployBy(FOwner);
+    AssertNotNull(vPerson1.Employer);
+    AssertEquals('vPerson1.Employer.Name A', 'Owner', vPerson1.Employer.Name);
+  finally
+    vPerson1.Free;
+  end;
+  AssertEquals('FOwner.RefCount 1', 2, FOwner.RefCount);
+  AssertEquals('FOwner.ReferencedBy.Count 1', 1, FOwner.ReferencedBy.Count);
+  AssertEquals('FOwner.EmployeeCount 1', 1, FOwner.EmployeeCount);
+  AssertEquals('FOwner.Employees[0].RefCount 1',
+          1, FOwner.Employees[0].RefCount);
+  AssertEquals('FOwner.Employees[0].ReferencedBy.Count 1',
+          1, FOwner.Employees[0].ReferencedBy.Count);
+
+  vCategory := TCategory.Create(FConn);
+  try
+    AssertNotNull(vCategory);
+    vCategory.Name := 'vCategory';
+
+    FOwner.Employees[0].Category := vCategory;
+  finally
+    vCategory.Free;
+  end;
+  AssertEquals('FOwner.RefCount 2', 2, FOwner.RefCount);
+  AssertEquals('FOwner.ReferencedBy.Count 2', 1, FOwner.ReferencedBy.Count);
+
+  AssertEquals('FOwner.Employees[0].RefCount 2',
+          1, FOwner.Employees[0].RefCount);
+  AssertEquals('FOwner.Employees[0].ReferencedBy.Count 2',
+          1, FOwner.Employees[0].ReferencedBy.Count);
+
+  AssertEquals('FOwner.Employees[0].Category.RefCount 1',
+          1, FOwner.Employees[0].Category.RefCount);
+  AssertEquals('FOwner.Employees[0].Category.ReferencedBy.Count 1',
+          1, FOwner.Employees[0].Category.ReferencedBy.Count);
+end;
+
+// A -> B {Parts}-> C -> A
+procedure TestTInstantReferences_Leak.TestCircularReferences1;
+var
+  vPerson: TPerson;
+  vProject: TProject;
+  vAddress: TExternalAddress;
+begin
+  vPerson := TPerson.Create(FConn);
+  try
+    AssertNotNull(vPerson);
+    vPerson.Name := 'vPerson1';
+
+    vProject := TProject.Create(FConn);
+    try
+      AssertNotNull(vProject);
+      vProject.Name := 'vProject1';
+      vAddress := TExternalAddress.Create(FConn);
+      try
+        AssertNotNull(vAddress);
+        vAddress.Site_Contact := vPerson;
+        AssertEquals('vPerson1', vAddress.Site_Contact.Name);
+        vProject.AddAddress(vAddress);
+      except
+        vAddress.Free;
+      end;
+      vPerson.AddProject(vProject);
+    finally
+      vProject.Free;
+    end;
+  AssertEquals('vPerson.RefCount 1', 2, vPerson.RefCount);
+  AssertEquals('vPerson.ReferencedBy.Count 1', 1, vPerson.ReferencedBy.Count);
+  AssertEquals('vPerson.Projects[0].RefCount', 1, vPerson.Projects[0].RefCount);
+  AssertEquals('vPerson.Projects[0].ReferencedBy.Count',
+          1, vPerson.Projects[0].ReferencedBy.Count);
+  AssertEquals('vPerson.Projects[0].Address[0].RefCount',
+          1, vPerson.Projects[0].Address[0].RefCount);
+  AssertEquals('vPerson.Projects[0].Address[0].ReferencedBy.Count',
+          0, vPerson.Projects[0].Address[0].ReferencedBy.Count);
+  finally
+    vPerson.Free;
+  end;
+//  AssertEquals('vPerson.RefCount 2', 1, vPerson.RefCount);
+//  AssertEquals('vPerson.ReferencedBy.Count 2', 1, vPerson.ReferencedBy.Count);
+end;
+
+// A -> B {Parts}-> C {Parts}-> D -> A
+procedure TestTInstantReferences_Leak.TestCircularReferences2;
+var
+  vPerson: TPerson;
+  vProject: TProject;
+  vSubProject: TProject;
+  vAddress: TExternalAddress;
+begin
+  vPerson := TPerson.Create(FConn);
+  try
+    AssertNotNull(vPerson);
+    vPerson.Name := 'vPerson';
+
+    vProject := TProject.Create(FConn);
+    try
+      AssertNotNull(vProject);
+      vProject.Name := 'vProject';
+
+      vSubProject := TProject.Create(FConn);
+      try
+        vAddress := TExternalAddress.Create(FConn);
+        try
+          AssertNotNull(vAddress);
+          vAddress.Site_Contact := vPerson;
+          AssertEquals('vPerson', vAddress.Site_Contact.Name);
+          vSubProject.AddAddress(vAddress);
+        except
+          vAddress.Free;
+          raise;
+        end;
+        vProject.AddSubProject(vSubProject);
+      except
+        vSubProject.Free;
+        raise;
+      end;
+      vPerson.AddProject(vProject);
+    finally
+      vProject.Free;
+    end;
+    AssertEquals('vPerson.RefCount 1', 2, vPerson.RefCount);
+    AssertEquals('vPerson.ReferencedBy.Count 1', 1, vPerson.ReferencedBy.Count);
+
+    AssertEquals('vPerson.Projects[0].RefCount',
+            1, vPerson.Projects[0].RefCount);
+    AssertEquals('vPerson.Projects[0].ReferencedBy.Count',
+            1, vPerson.Projects[0].ReferencedBy.Count);
+
+    AssertEquals('vPerson.Projects[0].SubProjects[0].RefCount',
+            1, vPerson.Projects[0].SubProjects[0].RefCount);
+    AssertEquals('vPerson.Projects[0].SubProjects[0].ReferencedBy.Count',
+            0, vPerson.Projects[0].SubProjects[0].ReferencedBy.Count);
+
+    AssertEquals('vPerson.Projects[0].SubProjects[0].Address[0].RefCount',
+            1, vPerson.Projects[0].SubProjects[0].Address[0].RefCount);
+    AssertEquals('vPerson.Projects[0].SubProjects[0].Address[0].ReferencedBy.Count',
+            0, vPerson.Projects[0].SubProjects[0].Address[0].ReferencedBy.Count);
+  finally
+    vPerson.Free;
+  end;
+//  AssertEquals('vPerson.RefCount 2', 1, vPerson.RefCount);
+//  AssertEquals('vPerson.ReferencedBy.Count 2', 1, vPerson.ReferencedBy.Count);
 end;
 
 function TestTInstantEmbReferences.RefsEmbeddedCompare(Holder, Obj1, Obj2:
