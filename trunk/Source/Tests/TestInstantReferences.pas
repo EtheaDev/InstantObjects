@@ -276,10 +276,10 @@ begin
   AssertEquals('vPerson.Projects[0].RefCount', 1, vPerson.Projects[0].RefCount);
   AssertEquals('vPerson.Projects[0].ReferencedBy.Count',
           1, vPerson.Projects[0].ReferencedBy.Count);
-  AssertEquals('vPerson.Projects[0].Address[0].RefCount',
-          1, vPerson.Projects[0].Address[0].RefCount);
-  AssertEquals('vPerson.Projects[0].Address[0].ReferencedBy.Count',
-          0, vPerson.Projects[0].Address[0].ReferencedBy.Count);
+  AssertEquals('vPerson.Projects[0].Addresses[0].RefCount',
+          1, vPerson.Projects[0].Addresses[0].RefCount);
+  AssertEquals('vPerson.Projects[0].Addresses[0].ReferencedBy.Count',
+          0, vPerson.Projects[0].Addresses[0].ReferencedBy.Count);
   finally
     vPerson.Free;
   end;
@@ -339,10 +339,10 @@ begin
     AssertEquals('vPerson.Projects[0].SubProjects[0].ReferencedBy.Count',
             0, vPerson.Projects[0].SubProjects[0].ReferencedBy.Count);
 
-    AssertEquals('vPerson.Projects[0].SubProjects[0].Address[0].RefCount',
-            1, vPerson.Projects[0].SubProjects[0].Address[0].RefCount);
-    AssertEquals('vPerson.Projects[0].SubProjects[0].Address[0].ReferencedBy.Count',
-            0, vPerson.Projects[0].SubProjects[0].Address[0].ReferencedBy.Count);
+    AssertEquals('vPerson.Projects[0].SubProjects[0].Addresses[0].RefCount',
+            1, vPerson.Projects[0].SubProjects[0].Addresses[0].RefCount);
+    AssertEquals('vPerson.Projects[0].SubProjects[0].Addresses[0].ReferencedBy.Count',
+            0, vPerson.Projects[0].SubProjects[0].Addresses[0].ReferencedBy.Count);
   finally
     vPerson.Free;
   end;

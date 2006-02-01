@@ -305,24 +305,24 @@ type
   TProject = class(TInstantObject)
   {IOMETADATA stored;
     Name: String(30);
-    Address: Parts(TExternalAddress) external 'Project_Address';
-    SubProjects: Parts(TProject) external 'Project_SubProjects'; }
-    _Address: TInstantParts;
+    SubProjects: Parts(TProject) external 'Project_SubProjects';
+    Addresses: Parts(TExternalAddress) external 'Project_Addresses'; }
+    _Addresses: TInstantParts;
     _Name: TInstantString;
     _SubProjects: TInstantParts;
   private
     function GetAddressCount: Integer;
-    function GetAddress(Index: Integer): TExternalAddress;
+    function GetAddresses(Index: Integer): TExternalAddress;
     function GetName: string;
     function GetSubProjectCount: Integer;
     function GetSubProjects(Index: Integer): TProject;
-    procedure SetAddress(Index: Integer; Value: TExternalAddress);
+    procedure SetAddresses(Index: Integer; Value: TExternalAddress);
     procedure SetName(const Value: string);
     procedure SetSubProjects(Index: Integer; Value: TProject);
   public
     function AddAddress(Address: TExternalAddress): Integer;
     function AddSubProject(SubProject: TProject): Integer;
-    procedure ClearAddress;
+    procedure ClearAddresses;
     procedure ClearSubProjects;
     procedure DeleteAddress(Index: Integer);
     procedure DeleteSubProject(Index: Integer);
@@ -333,9 +333,9 @@ type
     function RemoveAddress(Address: TExternalAddress): Integer;
     function RemoveSubProject(SubProject: TProject): Integer;
     property AddressCount: Integer read GetAddressCount;
+    property Addresses[Index: Integer]: TExternalAddress read GetAddresses write SetAddresses;
     property SubProjectCount: Integer read GetSubProjectCount;
     property SubProjects[Index: Integer]: TProject read GetSubProjects write SetSubProjects;
-    property Address[Index: Integer]: TExternalAddress read GetAddress write SetAddress;
   published
     property Name: string read GetName write SetName;
   end;
@@ -668,11 +668,9 @@ begin
   _Number.Value := Value;
 end;
 
-{ TProject }
-
 function TProject.AddAddress(Address: TExternalAddress): Integer;
 begin
-  Result := _Address.Add(Address);
+  Result := _Addresses.Add(Address);
 end;
 
 function TProject.AddSubProject(SubProject: TProject): Integer;
@@ -680,9 +678,9 @@ begin
   Result := _SubProjects.Add(SubProject);
 end;
 
-procedure TProject.ClearAddress;
+procedure TProject.ClearAddresses;
 begin
-  _Address.Clear;
+  _Addresses.Clear;
 end;
 
 procedure TProject.ClearSubProjects;
@@ -692,12 +690,12 @@ end;
 
 procedure TProject.DeleteAddress(Index: Integer);
 begin
-  _Address.Delete(Index);
+  _Addresses.Delete(Index);
 end;
 
 function TProject.GetAddressCount: Integer;
 begin
-  Result := _Address.Count;
+  Result := _Addresses.Count;
 end;
 
 procedure TProject.DeleteSubProject(Index: Integer);
@@ -705,9 +703,9 @@ begin
   _SubProjects.Delete(Index);
 end;
 
-function TProject.GetAddress(Index: Integer): TExternalAddress;
+function TProject.GetAddresses(Index: Integer): TExternalAddress;
 begin
-  Result := _Address[Index] as TExternalAddress;
+  Result := _Addresses[Index] as TExternalAddress;
 end;
 
 function TProject.GetName: string;
@@ -727,7 +725,7 @@ end;
 
 function TProject.IndexOfAddress(Address: TExternalAddress): Integer;
 begin
-  Result := _Address.IndexOf(Address);
+  Result := _Addresses.IndexOf(Address);
 end;
 
 function TProject.IndexOfSubProject(SubProject: TProject): Integer;
@@ -737,7 +735,7 @@ end;
 
 procedure TProject.InsertAddress(Index: Integer; Address: TExternalAddress);
 begin
-  _Address.Insert(Index, Address);
+  _Addresses.Insert(Index, Address);
 end;
 
 procedure TProject.InsertSubProject(Index: Integer; SubProject: TProject);
@@ -747,7 +745,7 @@ end;
 
 function TProject.RemoveAddress(Address: TExternalAddress): Integer;
 begin
-  Result := _Address.Remove(Address);
+  Result := _Addresses.Remove(Address);
 end;
 
 function TProject.RemoveSubProject(SubProject: TProject): Integer;
@@ -755,9 +753,9 @@ begin
   Result := _SubProjects.Remove(SubProject);
 end;
 
-procedure TProject.SetAddress(Index: Integer; Value: TExternalAddress);
+procedure TProject.SetAddresses(Index: Integer; Value: TExternalAddress);
 begin
-  _Address[Index] := Value;
+  _Addresses[Index] := Value;
 end;
 
 procedure TProject.SetName(const Value: string);
