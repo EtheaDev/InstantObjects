@@ -306,17 +306,21 @@ type
   {IOMETADATA stored;
     Name: String(30);
     SubProjects: Parts(TProject) external 'Project_SubProjects';
-    Addresses: Parts(TExternalAddress) external 'Project_Addresses'; }
+    Addresses: Parts(TExternalAddress) external 'Project_Addresses';
+    Manager: Reference(TPerson); }
     _Addresses: TInstantParts;
+    _Manager: TInstantReference;
     _Name: TInstantString;
     _SubProjects: TInstantParts;
   private
     function GetAddressCount: Integer;
     function GetAddresses(Index: Integer): TExternalAddress;
+    function GetManager: TPerson;
     function GetName: string;
     function GetSubProjectCount: Integer;
     function GetSubProjects(Index: Integer): TProject;
     procedure SetAddresses(Index: Integer; Value: TExternalAddress);
+    procedure SetManager(Value: TPerson);
     procedure SetName(const Value: string);
     procedure SetSubProjects(Index: Integer; Value: TProject);
   public
@@ -337,6 +341,7 @@ type
     property SubProjectCount: Integer read GetSubProjectCount;
     property SubProjects[Index: Integer]: TProject read GetSubProjects write SetSubProjects;
   published
+    property Manager: TPerson read GetManager write SetManager;
     property Name: string read GetName write SetName;
   end;
 
@@ -708,6 +713,11 @@ begin
   Result := _Addresses[Index] as TExternalAddress;
 end;
 
+function TProject.GetManager: TPerson;
+begin
+  Result := _Manager.Value as TPerson;
+end;
+
 function TProject.GetName: string;
 begin
   Result := _Name.Value;
@@ -756,6 +766,11 @@ end;
 procedure TProject.SetAddresses(Index: Integer; Value: TExternalAddress);
 begin
   _Addresses[Index] := Value;
+end;
+
+procedure TProject.SetManager(Value: TPerson);
+begin
+  _Manager.Value := Value;
 end;
 
 procedure TProject.SetName(const Value: string);
