@@ -244,8 +244,9 @@ begin
     try
       FTransaction.DefaultDatabase := Connection;
       FTransaction.Params.Add('read_committed');
+      FTransaction.AutoStopAction := saCommit;
     except
-      FTransaction.Free;
+      FreeAndNil(FTransaction);
       raise;
     end
   end;
