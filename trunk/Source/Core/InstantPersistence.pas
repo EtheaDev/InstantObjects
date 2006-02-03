@@ -1151,6 +1151,7 @@ type
     FChangesDisabledCount: Integer;
     FConnector: TInstantConnector;
     FId: string;
+    FInUpdate: Boolean;
     FObjectStore: TInstantObjectStore;
     FOwner: TInstantObject;
     FOwnerAttribute: TInstantComplex;
@@ -9993,27 +9994,32 @@ begin
   if not (Assigned(AObject) and AObject.Metadata.IsStored) then
     Exit;
   CheckBroker(Broker);
+  AObject.FInUpdate := True;
   try
-    if Broker.StoreObject(AObject, ConflictAction) then
-    begin
-      if AObject.IsPersistent then
+    try
+      if Broker.StoreObject(AObject, ConflictAction) then
       begin
-        MustAdd := AObject.Id <> AObject.PersistentId;
+        if AObject.IsPersistent then
+        begin
+          MustAdd := AObject.Id <> AObject.PersistentId;
+          if MustAdd then
+            RemoveFromCache(AObject);
+        end else
+          MustAdd := True;
+        AObject.SetPersistentId(AObject.Id);
         if MustAdd then
-          RemoveFromCache(AObject);
-      end else
-        MustAdd := True;
-      AObject.SetPersistentId(AObject.Id);
-      if MustAdd then
-        AddToCache(AObject);
+          AddToCache(AObject);
+      end;
+    except
+      on E: Exception do
+        if (E is EInstantError) or (E is EAbort) then
+          raise
+        else
+          raise EInstantError.CreateFmt(SErrorStoringObject,
+            [AObject.ClassName, AObject.Id, E.Message], E);
     end;
-  except
-    on E: Exception do
-      if (E is EInstantError) or (E is EAbort) then
-        raise
-      else
-        raise EInstantError.CreateFmt(SErrorStoringObject,
-          [AObject.ClassName, AObject.Id, E.Message], E);
+  finally
+    AObject.FInUpdate := False;
   end;
 end;
 
@@ -14233,6 +14239,8 @@ var
             for ii := 0 to Pred(ReferencesAttribute.Count) do
             begin
               ReferenceObject := ReferencesAttribute.Items[ii];
+              if ReferenceObject.FInUpdate then     // prevent recursion
+                Continue;
               ReferenceObject.CheckId;
               ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
 
