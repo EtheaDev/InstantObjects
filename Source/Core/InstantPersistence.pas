@@ -1084,6 +1084,7 @@ type
     function GetObjectReferenceList: TInstantObjectReferenceList;
     property ObjectReferenceList: TInstantObjectReferenceList read
         GetObjectReferenceList;
+    function GetRefItems(Index: Integer): TInstantObjectReference;
   protected
     class function AttributeType: TInstantAttributeType; override;
     function GetAllowOwned: Boolean; override;
@@ -1113,6 +1114,7 @@ type
     procedure SaveReferencesToStream(AStream: TStream);
     property AllowOwned write SetAllowOwned;
     property Connector write FConnector;
+    property RefItems[Index: Integer]: TInstantObjectReference read GetRefItems;
   end;
 
   TInstantObjectState = class(TPersistent)
@@ -7178,6 +7180,11 @@ begin
     FObjectReferenceList := TInstantObjectReferenceList.Create(
             True, Connector, Self);
   Result := FObjectReferenceList;
+end;
+
+function TInstantReferences.GetRefItems(Index: Integer): TInstantObjectReference;
+begin
+  Result := ObjectReferenceList.RefItems[Index];
 end;
 
 function TInstantReferences.InternalAdd(AObject: TInstantObject): Integer;
