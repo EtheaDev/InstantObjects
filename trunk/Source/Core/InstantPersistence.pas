@@ -26,7 +26,7 @@
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
  * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor, Hanedi Salas,
- * Riceball Lee
+ * Riceball Lee, David Moorhouse
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -6592,7 +6592,8 @@ end;
 procedure TInstantContainer.Insert(Index: Integer;
   AObject: TInstantObject);
 begin
-  CheckRange(Index);
+  if Index <> 0 then
+    CheckRange(Index);
   ValidateObject(AObject);
   BeforeContentChange(ctAdd, Index, AObject);
   InternalInsert(Index, AObject);
