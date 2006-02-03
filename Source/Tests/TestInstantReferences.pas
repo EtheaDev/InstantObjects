@@ -71,6 +71,8 @@ type
     //    + -> D -> E
     // then delete E
     procedure TestCircularReferences5;
+    //Emulate the retrive behavior
+    procedure TestCircularReferencesRetrive;
   end;
 
   TestTInstantEmbReferences = class(TTestCase)
@@ -574,12 +576,64 @@ begin
             1, vPerson.Employer.Projects[1].Manager.RefCount);
     AssertEquals('vPerson.Employer.Projects[1].Manager.ReferencedBy.Count 1',
             1, vPerson.Employer.Projects[1].Manager.ReferencedBy.Count);
-            
+
     vPerson.Employer.Projects[1].Manager := nil;
     AssertEquals('vPerson.Employer.ProjectCount 1',
             2, vPerson.Employer.ProjectCount);
   finally
     vPerson.Free;
+  end;
+end;
+
+procedure TestTInstantReferences_Leak.TestCircularReferencesRetrive;
+var
+  vPerson1: TPerson;
+  vPerson2: TPerson;
+  vProject1: TProject;
+begin
+  FOwner.Name := 'Owner';
+
+  vPerson1 := TPerson.Create(FConn); //A
+  try
+    AssertNotNull(vPerson1);
+    vPerson1.Name := 'vPerson1';
+    //A -> B
+    vPerson1.EmployBy(FOwner);
+
+    AssertNotNull(vPerson1.Employer);
+    AssertEquals('vPerson1.Employer.Name A', 'Owner', vPerson1.Employer.Name);
+
+    vProject1 := TProject.Create(FConn); //C
+    try
+      AssertNotNull(vProject1);
+      vProject1.Name := 'vProject1';
+      //A -> B -> C -> A
+      vProject1.Manager := vPerson1;
+      FOwner.AddProject(vProject1);
+
+      vPerson2 := TPerson.Create(FConn); //D
+      try
+        AssertNotNull(vPerson1);
+        vPerson2.Name := 'vPerson1';
+        //A -> B -> C -> A
+        //     |
+        //     +-> D
+        vPerson2.EmployBy(FOwner);
+        AssertNotNull(vPerson2.Employer);
+        AssertEquals('vPerson2.Employer.Name A', 'Owner', vPerson2.Employer.Name);
+        //Decrement the RefCount to emulate the Retrive constructor
+        FOwner.Release;
+        vPerson1.Release;
+      finally
+        //This cause an infinite loop and close the test application
+        vPerson2.Free;
+      end;
+    finally
+      vProject1.Free;
+    end;
+
+  finally
+    vPerson1.Free;
   end;
 end;
 
