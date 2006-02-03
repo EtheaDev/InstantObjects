@@ -58,14 +58,19 @@ type
     procedure TestCircularReferences2;
     // A -> <- B
     // |
-    // +-> C
+    // + -> C
     // then delete C
     procedure TestCircularReferences3;
-    // A->B->C->A
+    // A -> B -> C -> A
     //    |
-    //    +->D
+    //    + -> D
     // then delete D
     procedure TestCircularReferences4;
+    // A -> B -> C -> A
+    //    |
+    //    + -> D -> E
+    // then delete E
+    procedure TestCircularReferences5;
   end;
 
   TestTInstantEmbReferences = class(TTestCase)
@@ -362,7 +367,7 @@ end;
 
 // A -> <- B
 // |
-// +-> C
+// + -> C
 // then delete C
 procedure TestTInstantReferences_Leak.TestCircularReferences3;
 var
@@ -413,9 +418,9 @@ begin
   AssertEquals('FOwner.EmployeeCount', 1, FOwner.EmployeeCount);
 end;
 
-// A->B->C->A
+// A -> B -> C -> A
 //    |
-//    +->D
+//    + -> D
 // then delete D
 procedure TestTInstantReferences_Leak.TestCircularReferences4;
 var
@@ -483,6 +488,96 @@ begin
     vPerson.Employer.DeleteProject(1);
     AssertEquals('vPerson.Employer.ProjectCount 1',
             1, vPerson.Employer.ProjectCount);
+  finally
+    vPerson.Free;
+  end;
+end;
+
+// A -> B -> C -> A
+//    |
+//    + -> D -> E
+// then delete E
+procedure TestTInstantReferences_Leak.TestCircularReferences5;
+var
+  vPerson: TPerson;
+  vProject1: TProject;
+  vProject2: TProject;
+  vPerson2: TPerson;
+begin
+  FOwner.Name := 'Owner';
+
+  vPerson := TPerson.Create(FConn);
+  try
+    AssertNotNull(vPerson);
+    vPerson.Name := 'vPerson';
+
+    vPerson.EmployBy(FOwner);
+    AssertNotNull(vPerson.Employer);
+    AssertEquals('vPerson.Employer.Name A', 'Owner', vPerson.Employer.Name);
+    FOwner.DeleteEmployee(0);
+
+    vProject1 := TProject.Create(FConn);
+    try
+      AssertNotNull(vProject1);
+      vProject1.Name := 'vProject1';
+      vProject1.Manager := vPerson;
+      FOwner.AddProject(vProject1);
+    finally
+      vProject1.Free;
+    end;
+
+    vProject2 := TProject.Create(FConn);
+    try
+      AssertNotNull(vProject2);
+      vProject2.Name := 'vProject2';
+      vPerson2 := TPerson.Create(FConn);
+      try
+        AssertNotNull(vPerson2);
+        vPerson2.Name := 'vPerson2';
+
+        vProject2.Manager := vPerson2;
+      finally
+        vPerson2.Free;
+      end;
+      FOwner.AddProject(vProject2);
+    finally
+      vProject2.Free;
+    end;
+
+    FreeAndNil(FOwner);
+
+    AssertEquals('vPerson.RefCount 1',
+            2, vPerson.RefCount);
+    AssertEquals('vPerson.ReferencedBy.Count 1',
+            1, vPerson.ReferencedBy.Count);
+
+    AssertEquals('vPerson.Employer.RefCount 1',
+            1, vPerson.Employer.RefCount);
+    AssertEquals('vPerson.Employer.ReferencedBy.Count 1',
+            1, vPerson.Employer.ReferencedBy.Count);
+
+    AssertEquals('vPerson.Employer.EmployeeCount 1',
+            0, vPerson.Employer.EmployeeCount);
+
+    AssertEquals('vPerson.Employer.ProjectCount 1',
+            2, vPerson.Employer.ProjectCount);
+    AssertEquals('vPerson.Employer.Projects[0].RefCount 1',
+            1, vPerson.Employer.Projects[0].RefCount);
+    AssertEquals('vPerson.Employer.Projects[0].ReferencedBy.Count 1',
+            1, vPerson.Employer.Projects[0].ReferencedBy.Count);
+    AssertEquals('vPerson.Employer.Projects[1].RefCount 1',
+            1, vPerson.Employer.Projects[1].RefCount);
+    AssertEquals('vPerson.Employer.Projects[1].ReferencedBy.Count 1',
+            1, vPerson.Employer.Projects[1].ReferencedBy.Count);
+
+    AssertEquals('vPerson.Employer.Projects[1].Manager.RefCount 1',
+            1, vPerson.Employer.Projects[1].Manager.RefCount);
+    AssertEquals('vPerson.Employer.Projects[1].Manager.ReferencedBy.Count 1',
+            1, vPerson.Employer.Projects[1].Manager.ReferencedBy.Count);
+            
+    vPerson.Employer.Projects[1].Manager := nil;
+    AssertEquals('vPerson.Employer.ProjectCount 1',
+            2, vPerson.Employer.ProjectCount);
   finally
     vPerson.Free;
   end;
