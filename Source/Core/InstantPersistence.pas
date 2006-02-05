@@ -8900,7 +8900,14 @@ end;
 
 function TInstantObject._Release: Integer;
 begin
-  Result := Release;
+  FreeCircularReferences;
+  Result := DoRelease;
+  if FRefCount = 1 then
+    try
+      Finit;
+    finally
+      inherited FreeInstance;
+    end;
 end;
 
 { TInstantConnectionDef }
