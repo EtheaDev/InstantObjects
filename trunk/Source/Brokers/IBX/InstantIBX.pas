@@ -288,14 +288,21 @@ begin
 end;
 
 procedure TInstantIBXConnector.InternalCreateDatabase;
+const
+  CreateDatabaseParam =
+   'USER ''%s'' PASSWORD ''%s'' PAGE_SIZE 4096 DEFAULT CHARACTER SET %s';
 var
   OldConnectionParams: string;
+  CharacterSetName: string;
 begin
   inherited;
   OldConnectionParams := Connection.Params.Text;
+  CharacterSetName := Connection.Params.Values['lc_ctype'];
+  if CharacterSetName = '' then
+    CharacterSetName := 'none';
   with Connection.Params do
-    Text := Format('USER ''%s'' PASSWORD ''%s'' PAGE_SIZE 4096',
-     [Values['user_name'], Values['password']]);
+    Text := Format(CreateDatabaseParam,
+     [Values['user_name'], Values['password'], CharacterSetName]);
   try
     try
       Connection.CreateDatabase;
