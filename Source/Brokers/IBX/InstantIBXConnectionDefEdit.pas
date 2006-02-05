@@ -62,8 +62,20 @@ type
     IdDataTypeLabel: TLabel;
     IdSizeEdit: TEdit;
     IdSizeLabel: TLabel;
+    UserNameLabel: TLabel;
+    UserNameEdit: TEdit;
+    PasswordLabel: TLabel;
+    PasswordEdit: TEdit;
+    SQLRoleLabel: TLabel;
+    SQLRoleEdit: TEdit;
+    CharacterSetLabel: TLabel;
+    CharacterSetComboBox: TComboBox;
     procedure ConnectionStringButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure UserNameEditChange(Sender: TObject);
+    procedure PasswordEditChange(Sender: TObject);
+    procedure SQLRoleEditChange(Sender: TObject);
+    procedure CharacterSetComboBoxChange(Sender: TObject);
   private
     function GetIsValid: Boolean;
   public
@@ -122,6 +134,10 @@ begin
     ParamsEditor.Lines.Text := ConnectionDef.Params;
     IdDataTypeComboBox.ItemIndex := Ord(IdDataType);
     IdSizeEdit.Text := IntToStr(IdSize);
+    UserNameEdit.Text := ParamsEditor.Lines.Values['user_name'];
+    PasswordEdit.Text := ParamsEditor.Lines.Values['password'];
+    SQLRoleEdit.Text := ParamsEditor.Lines.Values['sql_role_name'];
+    CharacterSetComboBox.Text := ParamsEditor.Lines.Values['lc_ctype'];
   end;
 end;
 
@@ -142,5 +158,28 @@ begin
   end;
 end;
 
-end.
+procedure TInstantIBXConnectionDefEditForm.UserNameEditChange(
+  Sender: TObject);
+begin
+  ParamsEditor.Lines.Values['user_name'] := UserNameEdit.Text;
+end;
 
+procedure TInstantIBXConnectionDefEditForm.PasswordEditChange(
+  Sender: TObject);
+begin
+  ParamsEditor.Lines.Values['password'] := PasswordEdit.Text;
+end;
+
+procedure TInstantIBXConnectionDefEditForm.SQLRoleEditChange(
+  Sender: TObject);
+begin
+  ParamsEditor.Lines.Values['sql_role_name'] := SQLRoleEdit.Text;
+end;
+
+procedure TInstantIBXConnectionDefEditForm.CharacterSetComboBoxChange(
+  Sender: TObject);
+begin
+  ParamsEditor.Lines.Values['lc_ctype'] := CharacterSetComboBox.Text;
+end;
+
+end.
