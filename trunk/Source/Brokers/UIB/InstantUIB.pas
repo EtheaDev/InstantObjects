@@ -49,8 +49,10 @@ const
 type
   TInstantUIBConnectionDef = class(TInstantRelationalConnectionDef)
   private
-    FLoginPrompt: Boolean;
+    FCharacterSet: TCharacterSet;
     FConnectionString: string;
+    FLibraryName: string;
+    FLoginPrompt: Boolean;
     FOptions: TInstantUIBOptions;
     FParams: string;
   protected
@@ -62,7 +64,9 @@ type
     constructor Create(Collection: TCollection); override;
     function Edit: Boolean; override;
   published
+    property CharacterSet: TCharacterSet read FCharacterSet write FCharacterSet default csNONE;
     property ConnectionString: string read FConnectionString write FConnectionString;
+    property LibraryName: string read FLibraryName write FLibraryName;
     property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt default True;
     property Options: TInstantUIBOptions read FOptions write FOptions;
     property Params: string read FParams write FParams;
@@ -164,6 +168,8 @@ end;
 constructor TInstantUIBConnectionDef.Create(Collection: TCollection);
 begin
   inherited;
+  FCharacterSet := csNONE;
+  FLibraryName := 'gds32.dll';
   FLoginPrompt := True;
   FOptions := DefaultInstantUIBOptions;
 end;
@@ -173,6 +179,8 @@ function TInstantUIBConnectionDef.CreateDataBase(
 begin
   Result := TJvUIBDataBase.Create(AOwner);
   try
+    Result.CharacterSet := CharacterSet;
+    Result.LibraryName := LibraryName;
     Result.Params.Text := Params;
     Result.DatabaseName := ConnectionString;
     Result.SQLDialect := 3;
