@@ -8236,26 +8236,33 @@ end;
 
 procedure TInstantObject.FreeCircularReferences;
 
-  function IsInsideCircularReference(const AItem: TInstantComplex):
-    Boolean;
+  function IsInsideCircularReference(const AItem: TInstantComplex): Boolean;
   var
+    ItemOwner: TInstantObject;
     CurrentItem: TInstantComplex;
     I: Integer;
   begin
-    Result := AItem.Owner = Self;
-    if not Result and Assigned(AItem.Owner.FRefBy) then
-      for I := 0 to Pred(AItem.Owner.FRefBy.Count) do
-        if AItem.Owner.FRefBy[I] is TInstantComplex then
+    Result := Assigned(AItem);
+    if not Result then
+      Exit;
+    ItemOwner := AItem.Owner;
+    Result := (ItemOwner = Self) or
+     IsInsideCircularReference(ItemOwner.OwnerAttribute);
+    if not Result and Assigned(ItemOwner.FRefBy) then
+    begin
+      for I := 0 to Pred(ItemOwner.FRefBy.Count) do
+        if ItemOwner.FRefBy[I] is TInstantComplex then
         begin
-          CurrentItem := TInstantComplex(AItem.Owner.FRefBy[I]);
+          CurrentItem := TInstantComplex(ItemOwner.FRefBy[I]);
           if CurrentItem.AttributeType in [atReference, atReferences] then
           begin
-            Result := (AItem.Owner.RefCount = AItem.Owner.FRefBy.Count) and
-                IsInsideCircularReference(CurrentItem);
+            Result := (ItemOwner.RefCount = ItemOwner.FRefBy.Count) and
+              IsInsideCircularReference(CurrentItem);
             if Result then
               Exit;
           end;
         end;
+    end;
   end;
 
 var
