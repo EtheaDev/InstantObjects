@@ -4303,7 +4303,8 @@ begin
     else
       FQuery := Connector.CreateQuery;
     FQuery.MaxCount := MaxCount;
-    FQuery.Command := Command.Text;
+    if not (csReading in ComponentState) then
+      FQuery.Command := Command.Text;
   end;
   Result := FQuery;
 end;
