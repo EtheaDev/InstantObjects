@@ -145,6 +145,7 @@ type
     procedure TreeViewExpanding(Sender: TObject; Node: TTreeNode;
       var AllowExpansion: Boolean);
     procedure TreeViewGetImageIndex(Sender: TObject; Node: TTreeNode);
+    procedure TreeViewNodeDeletion(Sender: TObject; Node: TTreeNode);
   protected
     procedure ChangeNode(Node: TTreeNode); virtual;
     function CreateContentEditor(AOwner: TComponent;
@@ -396,26 +397,6 @@ var
   SaveOnChange: TTVChangedEvent;
   ChildCount: Integer;
 
-  procedure FreeTreeViewNodeData(ATreeNodes: TTreeNodes);
-  var
-    Obj: TObject;
-  begin
-    with ATreeNodes do
-    begin
-      Node := GetFirstNode;
-      while Node <> nil do
-      begin
-        // Don't test 'Assigned(Node.Data)' because value 
-        // of 'Node.Data' could be -1 ('NotLoaded')
-        if Integer(Node.Data) > 0 then
-        begin
-          Obj := TObject(Node.Data);
-          FreeAndNil(Obj);
-        end;
-        Node := Node.GetNext;
-      end;
-    end;
-  end;
 begin
   ItemIndex := 0;
   with TreeView do
@@ -424,8 +405,6 @@ begin
     OnChange := nil;
     Items.BeginUpdate;
     try
-      if Assigned(FRootObject) then
-        FreeTreeViewNodeData(Items);
 
       if Assigned(Selected) then
         ItemIndex := Selected.AbsoluteIndex;
@@ -689,6 +668,7 @@ begin
 {$IFDEF MSWINDOWS}
   Result.ShowRoot := ShowRoot;
 {$ENDIF}
+  Result.OnDeletion := TreeViewNodeDeletion;
 end;
 
 destructor TInstantExplorer.Destroy;
@@ -847,6 +827,19 @@ begin
   if (Instance is TInstantObject) and (ntContainer in NodeTypes) then
     AddContainerNodes(Node, TInstantObject(Instance), ChildCount,
       LoadChildren);
+end;
+
+procedure TInstantExplorer.TreeViewNodeDeletion(Sender: TObject; Node: TTreeNode);
+var
+  Obj: TObject;
+begin
+  // Don't test 'Assigned(Node.Data)' because value
+  // of 'Node.Data' could be -1 ('NotLoaded')
+  if Integer(Node.Data) > 0 then
+  begin
+    Obj := TObject(Node.Data);
+    FreeAndNil(Obj);
+  end;
 end;
 
 function TInstantExplorer.NodeIsLoaded(Node: TTreeNode): Boolean;
