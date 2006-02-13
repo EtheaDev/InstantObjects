@@ -599,20 +599,15 @@ end;
 
 destructor EInstantError.Destroy;
 begin
-  {$IFDEF D6+}
-  ReleaseExceptionObject;
-  {$ELSE}
-  FOriginalException.Free;
-  {$ENDIF}
+  FreeAndNil(FOriginalException);
   inherited;
-end;                              
+end;
 
 procedure EInstantError.Initialize(E: TObject);
 begin
   {$IFDEF D6+}
-  FOriginalException := AcquireExceptionObject;
-  if FOriginalException <> E then
-    FOriginalException := nil;
+  if ((ExceptObject <> nil) and (ExceptObject = E)) then
+    FOriginalException := AcquireExceptionObject;
   {$ELSE}
   if Assigned(E) and (RaiseList <> nil) and
     (PRaiseFrame(RaiseList)^.ExceptObject = E) then
@@ -1373,7 +1368,7 @@ begin
       Esc := Format(EscStr, [Format('#%d', [Ord(C)])]);
       WriteString(Esc);
     end;
-*)    
+*)
   end;
 end;
 
@@ -1728,7 +1723,7 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
           end;
           Reader.ReadListEnd;
         end;
-*)        
+*)
       vaIdent:
         Producer.WriteEscapedData(Reader.ReadIdent);
       vaFalse:
