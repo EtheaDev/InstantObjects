@@ -104,6 +104,7 @@ type
       var RaiseError: Boolean); virtual;
     procedure CustomDBEvolverBeforeCommandSequenceExecute(Sender: TObject); virtual;
     procedure CustomDBEvolverAfterCommandSequenceExecute(Sender: TObject); virtual;
+    procedure CustomDBEvolverWarning(const Sender: TObject; const AWarningText: string); virtual;
     procedure BeforeBuildCommandSequence; virtual;
   public
     // Assign a connector before calling the Execute method, otherwise the
@@ -222,6 +223,7 @@ begin
   OldScreenCursor := Screen.Cursor;
   Screen.Cursor := crHourglass;
   try
+    EvolutionLogMemo.Lines.Clear;
     BeforeBuildCommandSequence;
     GetCustomDBEvolver.BuildCommandSequence;
     SequenceToScreen;
@@ -323,6 +325,7 @@ begin
   GetCustomDBEvolver.BeforeCommandSequenceExecute := CustomDBEvolverBeforeCommandSequenceExecute;
   GetCustomDBEvolver.AfterCommandSequenceExecute := CustomDBEvolverAfterCommandSequenceExecute;
   GetCustomDBEvolver.OnCommandExecuteError := CustomDBEvolverCommandExecuteError;
+  GetCustomDBEvolver.OnWarning := CustomDBEvolverWarning;
 end;
 
 procedure TInstantCustomDBEvolverForm.BeforeBuildCommandSequence;
@@ -332,6 +335,12 @@ end;
 procedure TInstantCustomDBEvolverForm.CloseActionExecute(Sender: TObject);
 begin
   Close;
+end;
+
+procedure TInstantCustomDBEvolverForm.CustomDBEvolverWarning(
+  const Sender: TObject; const AWarningText: string);
+begin
+  Log('Warning: ' + AWarningText);
 end;
 
 end.

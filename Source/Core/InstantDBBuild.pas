@@ -58,6 +58,7 @@ type
   private
     FConnector: TInstantConnector;
     FCommandSequence: TInstantDBBuildCommandSequence;
+    FOnWarning: TInstantWarningEvent;
     function GetAfterCommandExecute: TInstantDBBuildCommandNotifyEvent;
     function GetAfterCommandSequenceExecute: TNotifyEvent;
     function GetBeforeCommandExecute: TInstantDBBuildCommandNotifyEvent;
@@ -71,6 +72,7 @@ type
     function GetCommandExecuteError: TInstantDBBuildCommandErrorEvent;
     procedure SetCommandExecuteError(
       const Value: TInstantDBBuildCommandErrorEvent);
+    procedure DoWarning(const WarningText: string);
   protected
     function GetConnector: TInstantConnector; virtual;
     procedure InternalBuildCommandSequence; virtual; abstract;
@@ -95,6 +97,8 @@ type
     // data definition, not a very commonly available feature).
     property OnCommandExecuteError: TInstantDBBuildCommandErrorEvent
       read GetCommandExecuteError write SetCommandExecuteError;
+    procedure SourceSchemeWarningHandler(const Sender: TObject;
+      const AWarningText: string);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -112,6 +116,7 @@ type
     // Reference to a Connector that points to the target database for
     // evolution. Default is InstantDefaultConnector.
     property Connector: TInstantConnector read GetConnector write SetConnector;
+    property OnWarning: TInstantWarningEvent read FOnWarning write FOnWarning;
   end;
 
   // Base class for database builders and evolvers. Abstract.
@@ -483,6 +488,18 @@ begin
   end;
 end;
 
+procedure TInstantCustomDBBuilder.SourceSchemeWarningHandler(
+  const Sender: TObject; const AWarningText: string);
+begin
+  DoWarning(AWarningText);
+end;
+
+procedure TInstantCustomDBBuilder.DoWarning(const WarningText: string);
+begin
+  if Assigned(FOnWarning) then
+    FOnWarning(Self, WarningText);
+end;
+
 { TInstantCustomDBEvolver }
 
 function TInstantCustomDBEvolver.GetTargetModel: TInstantModel;
@@ -636,7 +653,7 @@ end;
 procedure TInstantDBBuilder.InternalBuildCommandSequence;
 begin
   CommandSequence.Clear;
-  CommandSequence.SourceScheme := Connector.Broker.ReadDatabaseScheme;
+  CommandSequence.SourceScheme := Connector.Broker.ReadDatabaseScheme(SourceSchemeWarningHandler);
   CommandSequence.TargetScheme := Connector.CreateScheme(TargetModel);
   GenerateCommandSequence(CommandSequence);
 end;

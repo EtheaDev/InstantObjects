@@ -1148,7 +1148,7 @@ begin
   if not Assigned(FOldTableMetadata) then
   begin
     //Force to read the table from database
-    FScheme := Broker.ReadDatabaseScheme;
+    FScheme := Broker.ReadDatabaseScheme(nil);
 
     FieldMetadata := nil;
     case CommandType of

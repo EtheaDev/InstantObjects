@@ -64,7 +64,7 @@ uses
 procedure TInstantDBEvolver.InternalBuildCommandSequence;
 begin
   CommandSequence.Clear;
-  CommandSequence.SourceScheme := Connector.Broker.ReadDatabaseScheme;
+  CommandSequence.SourceScheme := Connector.Broker.ReadDatabaseScheme(SourceSchemeWarningHandler);
   CommandSequence.TargetScheme := Connector.CreateScheme(TargetModel);
   GenerateSchemeDiff(CommandSequence);
 end;
