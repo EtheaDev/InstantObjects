@@ -14403,6 +14403,8 @@ var
   procedure ReadPartAttribute;
   var
     Stream: TInstantStringStream;
+    LPartClassName: string;
+    LPartId: string;
   begin
     if AttributeMetadata.StorageKind = skExternal then
     begin
@@ -14411,13 +14413,23 @@ var
         // Must clear Value first to avoid leak for Refresh operation
         // as OldValue = NewValue.
         Value := nil;
-        Value := InstantFindClass(ReadStringField(DataSet, AFieldName + InstantClassFieldName)).Retrieve(
-          ReadStringField(DataSet, AFieldName + InstantIdFieldName), False, False, AObject.Connector);
+        LPartClassName := ReadStringField(DataSet, AFieldName +
+          InstantClassFieldName);
+        LPartId := ReadStringField(DataSet, AFieldName +
+          InstantIdFieldName);
+        // LPartClassName and LPartId will be empty if the attribute was
+        // added to a class with existing instances in the database.
+        if (LPartClassName = '') and (LPartId = '') then
+           (Attribute as TInstantPart).Reset
+        else
+          Value := InstantFindClass(LPartClassName).Retrieve(LPartId,
+            False, False, AObject.Connector);
       end;
     end
     else
     begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
+      Stream := TInstantStringStream.Create(ReadBlobField(DataSet,
+        AFieldName));
       try
         if Stream.Size = 0 then
           (Attribute as TInstantPart).Reset
