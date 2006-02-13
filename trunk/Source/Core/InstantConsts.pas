@@ -180,7 +180,7 @@ resourcestring
   SUnexpectedToken = 'Unexpected token ''%s''. Expected token ''%s''';
   SUnknownAttributeClass = 'Unknown attribute class for attribute %s(''%s'')';
   SUnspecifiedCommand = 'Command is not specified';
-  SUnsupportedColumnType = 'ColumnType %s not supported';
+  SUnsupportedColumnSkipped = 'Skipped column %s.%s. Unsupported type %s.';
   SUnsupportedDataType = 'Unsupported datatype: %s';
   SUnsupportedGraphicClass = 'Unsupported graphic class';
   SUnsupportedGraphicStream = 'Unsupported graphic stream format';

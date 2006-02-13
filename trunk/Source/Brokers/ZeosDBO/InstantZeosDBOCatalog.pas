@@ -49,7 +49,8 @@ type
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
     function ColumnTypeToDataType(const ColumnType: TZSQLType;
-      out AlternateDataTypes: TInstantDataTypes): TInstantDataType;
+      out DataType: TInstantDataType;
+      out AlternateDataTypes: TInstantDataTypes): Boolean;
     function GetBroker: TInstantZeosDBOBroker;
     function GetConnector: TInstantZeosDBOConnector;
   public
@@ -70,7 +71,8 @@ procedure TInstantZeosDBOCatalog.AddFieldMetadatas(
 var
   Fields: IZResultSet;
   FieldMetadata: TInstantFieldMetadata;
-  AlternateDatatypes: TInstantDataTypes;
+  FieldDataType: TInstantDataType;
+  FieldAlternateDataTypes: TInstantDataTypes;
 begin
   with Connector.Connection do
     Fields := DbcConnection.GetMetadata.GetColumns(Catalog, '',
@@ -79,24 +81,30 @@ begin
   Fields.BeforeFirst;
   while Fields.Next do
   begin
-    FieldMetadata := TableMetadata.FieldMetadatas.Add;
-    FieldMetadata.Name := Fields.GetStringByName('COLUMN_NAME');
-    FieldMetadata.DataType :=
-      ColumnTypeToDataType(TZSQLType(Fields.GetShortByName('DATA_TYPE')),
-      AlternateDataTypes);
-    FieldMetadata.AlternateDataTypes := AlternateDataTypes;
-    FieldMetadata.Options := [];
-    if not Fields.GetBooleanByName('IS_NULLABLE') then
-      FieldMetadata.Options := FieldMetadata.Options + [foRequired];
-    if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
-      FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-    // work around bug in GetColumns for all drivers where
-    // CHAR_OCTET_LENGTH is not assigned
-    if (FieldMetadata.DataType in [dtString, dtMemo]) and
-      (Fields.GetIntByName('CHAR_OCTET_LENGTH') > 0) then
-      FieldMetadata.Size := Fields.GetIntByName('CHAR_OCTET_LENGTH')
+    if ColumnTypeToDataType(TZSQLType(Fields.GetShortByName('DATA_TYPE')),
+      FieldDataType, FieldAlternateDataTypes) then
+    begin
+      FieldMetadata := TableMetadata.FieldMetadatas.Add;
+      FieldMetadata.Name := Fields.GetStringByName('COLUMN_NAME');
+      FieldMetadata.DataType := FieldDataType;
+      FieldMetadata.AlternateDataTypes := FieldAlternateDataTypes;
+      FieldMetadata.Options := [];
+      if not Fields.GetBooleanByName('IS_NULLABLE') then
+        FieldMetadata.Options := FieldMetadata.Options + [foRequired];
+      if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
+        FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
+      // work around bug in GetColumns for all drivers where
+      // CHAR_OCTET_LENGTH is not assigned
+      if (FieldMetadata.DataType in [dtString, dtMemo]) and
+        (Fields.GetIntByName('CHAR_OCTET_LENGTH') > 0) then
+        FieldMetadata.Size := Fields.GetIntByName('CHAR_OCTET_LENGTH')
+      else
+        FieldMetadata.Size := Fields.GetIntByName('COLUMN_SIZE');
+    end
     else
-      FieldMetadata.Size := Fields.GetIntByName('COLUMN_SIZE');
+      DoWarning(Format(SUnsupportedColumnSkipped, [
+        TableMetadata.Name, Fields.GetStringByName('COLUMN_NAME'),
+        GetEnumName(TypeInfo(TZSQLType), Fields.GetShortByName('DATA_TYPE'))]));
   end;
 end;
 
@@ -191,39 +199,40 @@ begin
   end;
 end;
 
-function TInstantZeosDBOCatalog.ColumnTypeToDataType(const ColumnType:
-  TZSQLType; out AlternateDataTypes: TInstantDataTypes): TInstantDataType;
+function TInstantZeosDBOCatalog.ColumnTypeToDataType(const ColumnType: TZSQLType;
+  out DataType: TInstantDataType;
+  out AlternateDataTypes: TInstantDataTypes): Boolean;
 begin
+  Result := True;
   AlternateDataTypes := [];
   case ColumnType of
     stString,
-      stUnicodeString: Result := dtString;
-    stBoolean: Result := dtBoolean;
+      stUnicodeString: DataType := dtString;
+    stBoolean: DataType := dtBoolean;
     stShort:
       begin
-        Result := dtBoolean;
+        DataType := dtBoolean;
         Include(AlternateDataTypes, dtInteger);
       end;
     stByte,
       stInteger,
-      stLong: Result := dtInteger;
+      stLong: DataType := dtInteger;
     stFloat,
       stDouble:
       begin
-        Result := dtFloat;
+        DataType := dtFloat;
         Include(AlternateDataTypes, dtCurrency);
       end;
-    stBigDecimal: Result := dtCurrency;
+    stBigDecimal: DataType := dtCurrency;
     stDate,
       stTime,
-      stTimeStamp: Result := dtDateTime;
+      stTimeStamp: DataType := dtDateTime;
     stBytes,
-      stBinaryStream: Result := dtBlob;
+      stBinaryStream: DataType := dtBlob;
     stAsciiStream,
-      stUnicodeStream: Result := dtMemo;
+      stUnicodeStream: DataType := dtMemo;
   else
-    raise EInstantError.CreateFmt(SUnsupportedColumnType,
-      [GetEnumName(TypeInfo(TZSQLType), Ord(ColumnType))]);
+    Result := False;
   end;
 end;
 

@@ -49,7 +49,8 @@ type
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
     function ColumnTypeToDataType(const ColumnType: string;
-      const ColumnSubType, FieldScale: Integer): TInstantDataType;
+      const ColumnSubType, FieldScale: Integer;
+      out DataType: TInstantDataType): Boolean;
     function GetSelectFieldsSQL(const ATableName: string): string;
     function GetSelectIndexesSQL(const ATableName: string): string;
     function GetSelectIndexFieldsSQL(const AIndexName: string): string;
@@ -90,7 +91,7 @@ var
         try
           while not IndexFields.Eof do
           begin
-            IndexFieldList.Add(Trim(IndexFields.FieldByName('COLUMN_NAME').AsString));
+            IndexFieldList.Add(IndexFields.FieldByName('COLUMN_NAME').AsString);
             IndexFields.Next;
           end;
         finally
@@ -114,7 +115,7 @@ begin
       while not Indexes.Eof do
       begin
         IndexMetadata := TableMetadata.IndexMetadatas.Add;
-        IndexMetadata.Name := Trim(Indexes.FieldByName('INDEX_NAME').AsString);
+        IndexMetadata.Name := Indexes.FieldByName('INDEX_NAME').AsString;
         IndexMetadata.Fields := GetIndexFields(IndexMetadata.Name);
         IndexMetadata.Options := [];
 
@@ -141,6 +142,7 @@ procedure TInstantMSSqlCatalog.AddFieldMetadatas(
 var
   Fields: TDataSet;
   FieldMetadata: TInstantFieldMetadata;
+  FieldDataType: TInstantDataType;
 begin
   Fields := Broker.AcquireDataSet(GetSelectFieldsSQL(TableMetadata.Name));
   try
@@ -148,18 +150,25 @@ begin
     try
       while not Fields.Eof do
       begin
-        FieldMetadata := TableMetadata.FieldMetadatas.Add;
-        FieldMetadata.Name := Trim(Fields.FieldByName('COLUMN_NAME').AsString);
-        FieldMetadata.DataType := ColumnTypeToDataType(
-          Trim(Fields.FieldByName('COLUMN_TYPENAME').AsString),
+        if ColumnTypeToDataType(
+          Fields.FieldByName('COLUMN_TYPENAME').AsString,
           Fields.FieldByName('COLUMN_SUBTYPE').AsInteger,
-          Fields.FieldByName('COLUMN_SCALE').AsInteger);
-        FieldMetadata.Options := [];
-        if Fields.FieldByName('COLUMN_NULLABLE').AsInteger <> 1 then
-          FieldMetadata.Options := FieldMetadata.Options + [foRequired];
-        if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
-          FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-        FieldMetadata.Size := Fields.FieldByName('COLUMN_LENGTH').AsInteger;
+          Fields.FieldByName('COLUMN_SCALE').AsInteger, FieldDataType) then
+        begin
+          FieldMetadata := TableMetadata.FieldMetadatas.Add;
+          FieldMetadata.Name := Fields.FieldByName('COLUMN_NAME').AsString;
+          FieldMetadata.DataType := FieldDataType;
+          FieldMetadata.Options := [];
+          if Fields.FieldByName('COLUMN_NULLABLE').AsInteger <> 1 then
+            FieldMetadata.Options := FieldMetadata.Options + [foRequired];
+          if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
+            FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
+          FieldMetadata.Size := Fields.FieldByName('COLUMN_LENGTH').AsInteger;
+        end
+        else
+          DoWarning(Format(SUnsupportedColumnSkipped, [
+            TableMetadata.Name, Fields.FieldByName('COLUMN_NAME').AsString,
+            Fields.FieldByName('COLUMN_TYPENAME').AsString]));
         Fields.Next;
       end;
     finally
@@ -183,7 +192,7 @@ begin
       while not Tables.Eof do
       begin
         TableMetadata := TableMetadatas.Add;
-        TableMetadata.Name := Trim(Tables.FieldByName('TABLE_NAME').AsString);
+        TableMetadata.Name := Tables.FieldByName('TABLE_NAME').AsString;
         // Call AddIndexMetadatas first, so that AddFieldMetadatas can see what
         // indexes are defined to correctly set the foIndexed option.
         AddIndexMetadatas(TableMetadata);
@@ -199,26 +208,28 @@ begin
 end;
 
 function TInstantMSSqlCatalog.ColumnTypeToDataType(const ColumnType: string;
-  const ColumnSubType, FieldScale: Integer): TInstantDataType;
+  const ColumnSubType, FieldScale: Integer;
+  out DataType: TInstantDataType): Boolean;
 begin
+  Result := True;
   if SameText(ColumnType, 'int') then
-    Result := dtInteger
+    DataType := dtInteger
   else if SameText(ColumnType, 'float') then
-    Result := dtFloat
+    DataType := dtFloat
   else if SameText(ColumnType, 'money') then
-    Result := dtCurrency
+    DataType := dtCurrency
   else if SameText(ColumnType, 'bit') then
-    Result := dtBoolean
+    DataType := dtBoolean
   else if SameText(ColumnType, 'varchar') then
-    Result := dtString
+    DataType := dtString
   else if SameText(ColumnType, 'text') then
-    Result := dtMemo
+    DataType := dtMemo
   else if SameText(ColumnType, 'datetime') then
-    Result := dtDateTime
+    DataType := dtDateTime
   else if SameText(ColumnType, 'image') then
-    Result := dtBlob
+    DataType := dtBlob
   else
-    raise Exception.CreateFmt(SUnsupportedColumnType, [ColumnType]);
+    Result := False;
 end;
 
 function TInstantMSSqlCatalog.GetSelectFieldsSQL(
@@ -304,7 +315,7 @@ begin
     'SELECT ' +
     '  name AS TABLE_NAME ' +
     'FROM sysobjects ' +
-    'WHERE type = ''U'' ' +
+    'WHERE type = ''U'' and OBJECTPROPERTY(id, N''IsMSShipped'') <> 1' +
     'ORDER BY name';
 end;
 

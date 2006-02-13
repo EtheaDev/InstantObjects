@@ -23,7 +23,7 @@
  * Portions created by the Initial Developer are Copyright (C) 2005
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s):
+ * Contributor(s): Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -48,7 +48,8 @@ type
     procedure AddFieldMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
-    function ColumnTypeToDataType(const ColumnType: TFieldType): TInstantDataType;
+    function ColumnTypeToDataType(const ColumnType: TFieldType;
+      out DataType: TInstantDataType): Boolean;
   public
     procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas);
       override;
@@ -65,6 +66,7 @@ var
   vTable: TTable;
   FieldMetadata: TInstantFieldMetadata;
   i: Integer;
+  FieldDataType: TInstantDataType;
 begin
   vTable := TTable.Create(nil);
   try
@@ -73,17 +75,24 @@ begin
     vTable.FieldDefs.Update;
     for i := 0 to Pred(vTable.FieldDefs.Count) do
     begin
-      FieldMetadata := TableMetadata.FieldMetadatas.Add;
-      FieldMetadata.Name := Trim(vTable.FieldDefs[i].Name);
-      FieldMetadata.DataType := ColumnTypeToDataType(vTable.FieldDefs[i].DataType);
-      FieldMetadata.Options := [];
-      if vTable.FieldDefs[i].Required then
-        FieldMetadata.Options := FieldMetadata.Options + [foRequired];
-      if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
-        FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-      { TODO : support ExternalTableName? }
-      if FieldMetadata.DataType in [dtString, dtMemo] then
-        FieldMetadata.Size := vTable.FieldDefs[i].Size;
+      if ColumnTypeToDataType(vTable.FieldDefs[i].DataType, FieldDataType) then
+      begin
+        FieldMetadata := TableMetadata.FieldMetadatas.Add;
+        FieldMetadata.Name := vTable.FieldDefs[i].Name;
+        FieldMetadata.DataType := FieldDataType;
+        FieldMetadata.Options := [];
+        if vTable.FieldDefs[i].Required then
+          FieldMetadata.Options := FieldMetadata.Options + [foRequired];
+        if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
+          FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
+        { TODO : support ExternalTableName? }
+        if FieldMetadata.DataType in [dtString, dtMemo] then
+          FieldMetadata.Size := vTable.FieldDefs[i].Size;
+      end
+      else
+        DoWarning(Format(SUnsupportedColumnSkipped, [
+          TableMetadata.Name, vTable.FieldDefs[i].Name,
+          GetEnumName(TypeInfo(TFieldType), Ord(vTable.FieldDefs[i].DataType))]));
     end;
   finally
     vTable.Free;
@@ -109,10 +118,10 @@ begin
     begin
       IndexMetadata := TableMetadata.IndexMetadatas.Add;
       if ixPrimary in vTable.IndexDefs[i].Options then
-        IndexMetadata.Name := Trim(vTable.IndexDefs[i].Name)
+        IndexMetadata.Name := vTable.IndexDefs[i].Name
       else
         IndexMetadata.Name := ChangeFileExt(vTable.TableName, '')
-                + Trim(vTable.IndexDefs[i].Name);
+          + vTable.IndexDefs[i].Name;
       IndexMetadata.Fields := vTable.IndexDefs[i].Fields;
       IndexMetadata.Options := vTable.IndexDefs[i].Options;
     end;
@@ -136,7 +145,7 @@ begin
     Session.GetTableNames(vDatabaseName, '*.*', true, false, vTables);
     for i := 0 to Pred(vTables.Count) do
     begin
-      vTableName := ExtractFileName(Trim(vTables.Strings[i]));
+      vTableName := ExtractFileName(vTables.Strings[i]);
       TableMetadata := TableMetadatas.Add;
       TableMetadata.Name := vTableName;
       // Call AddIndexMetadatas first, so that AddFieldMetadatas can see what
@@ -150,26 +159,26 @@ begin
   end;
 end;
 
-function TInstantBDECatalog.ColumnTypeToDataType(const ColumnType: TFieldType):
-    TInstantDataType;
+function TInstantBDECatalog.ColumnTypeToDataType(const ColumnType: TFieldType;
+  out DataType: TInstantDataType): Boolean;
 begin
+  Result := True;
   case ColumnType of
-    ftString:       Result := dtString;
+    ftString:       DataType := dtString;
     ftSmallint,
-    ftInteger:      Result := dtInteger;
-    ftBoolean:      Result := dtBoolean;
-    ftFloat:        Result := dtFloat;
-    ftCurrency:     Result := dtCurrency;
+    ftInteger:      DataType := dtInteger;
+    ftBoolean:      DataType := dtBoolean;
+    ftFloat:        DataType := dtFloat;
+    ftCurrency:     DataType := dtCurrency;
     ftDate,
     ftTime,
-    ftDateTime:     Result := dtDateTime;
-    ftAutoInc:      Result := dtInteger;
+    ftDateTime:     DataType := dtDateTime;
+    ftAutoInc:      DataType := dtInteger;
     ftBlob,
-    ftGraphic:      Result := dtBlob;
-    ftMemo:         Result := dtMemo;
+    ftGraphic:      DataType := dtBlob;
+    ftMemo:         DataType := dtMemo;
   else
-    raise Exception.CreateFmt(SUnsupportedColumnType,
-            [GetEnumName(TypeInfo(TFieldType), Ord(ColumnType))]);
+    Result := False;
   end;
 end;
 

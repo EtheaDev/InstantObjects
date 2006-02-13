@@ -53,6 +53,9 @@ uses
   Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand, InstantConsts;
 
 type
+  TInstantWarningEvent = procedure (const Sender: TObject;
+    const AWarningText: string) of object;
+
   TInstantMetadatas = class;
 
   TInstantMetadata = class(TInstantCollectionItem)
@@ -407,8 +410,10 @@ type
   TInstantCatalog = class
   private
     FScheme: TInstantScheme;
+    FOnWarning: TInstantWarningEvent;
   protected
     function GetFeatures: TInstantCatalogFeatures; virtual;
+    procedure DoWarning(const WarningText: string);
   public
     // Creates an instance and binds it to the specified TInstantScheme object.
     constructor Create(const AScheme: TInstantScheme);
@@ -423,6 +428,10 @@ type
     // says that the catalog support everything; derived classes might not
     // support all features.
     property Features: TInstantCatalogFeatures read GetFeatures;
+    // Triggered when the catalog has something to report about its activity,
+    // typically during InitTableMetadatas, which is not a fatal error.
+    property OnWarning: TInstantWarningEvent
+      read FOnWarning write FOnWarning;
   end;
 
   // A TInstantCatalog that gathers its info from a TInstantModel.
@@ -444,6 +453,7 @@ type
 
   TInstantScheme = class(TInstantStreamable)
   private
+    FOnWarning: TInstantWarningEvent;
     FCatalog: TInstantCatalog;
     FTableMetadataCollection: TInstantTableMetadatas;
     FBlobStreamFormat: TInstantStreamFormat;
@@ -453,7 +463,10 @@ type
     function GetTableMetadatas(Index: Integer): TInstantTableMetadata;
     function GetTableMetadataCount: Integer;
     procedure SetCatalog(const Value: TInstantCatalog);
+    procedure CatalogWarningEventHandler(const Sender: TObject;
+      const AWarningText: string);
   protected
+    procedure DoWarning(const AWarningText: string);
     function AttributeTypeToDataType(
       AttributeType: TInstantAttributeType): TInstantDataType; virtual;
     property TableMetadataCollection: TInstantTableMetadatas read GetTableMetadataCollection;
@@ -467,6 +480,9 @@ type
     property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
     property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
     property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
+    // Triggered when the scheme has something to report about its activity,
+    // typically during database building/evolution, which is not a fatal error.
+    property OnWarning: TInstantWarningEvent read FOnWarning write FOnWarning;
   end;
 
   TInstantAttributeMap = class(TInstantNamedList)
@@ -1737,8 +1753,9 @@ type
     // database scheme (which may differ from the model-derived scheme).
     // If the broker doesn't have a catalog, calling this method will raise
     // an exception. Call IsCatalogSupported if you need to know in advance
-    // whether you can safely call ReadDatabaseSchema or not.
-    function ReadDatabaseScheme: TInstantScheme; virtual;
+    // whether you can safely call ReadDatabaseScheme or not.
+    function ReadDatabaseScheme(
+      const AWarningEventHandler: TInstantWarningEvent): TInstantScheme; virtual;
     // Returns True if the broker supports creating a valid catalog. If this
     // method returns False, it means that calling CreateCatalog will yield nil,
     // and calling ReadDatabaseSchema will raise an exception.
@@ -4107,6 +4124,12 @@ begin
   Result := InstantAttributeTypeToDataType(AttributeType, BlobStreamFormat);
 end;
 
+procedure TInstantScheme.CatalogWarningEventHandler(const Sender: TObject;
+  const AWarningText: string);
+begin
+  DoWarning(AWarningText);
+end;
+
 constructor TInstantScheme.Create;
 begin
   inherited Create;
@@ -4120,6 +4143,12 @@ begin
   FCatalog.Free;
   FTableMetadataCollection.Free;
   inherited;
+end;
+
+procedure TInstantScheme.DoWarning(const AWarningText: string);
+begin
+  if Assigned(FOnWarning) then
+    FOnWarning(Self, AWarningText);
 end;
 
 function TInstantScheme.FindTableMetadata(
@@ -4151,7 +4180,10 @@ begin
   FreeAndNil(FCatalog);
   FCatalog := Value;
   if Assigned(FCatalog) then
+  begin
+    FCatalog.OnWarning := CatalogWarningEventHandler;
     FCatalog.InitTableMetadatas(TableMetadataCollection);
+  end;
 end;
 
 { TInstantAttributeMap }
@@ -10219,10 +10251,12 @@ begin
   Result := TInstantQuery.Create(Connector);
 end;
 
-function TInstantBroker.ReadDatabaseScheme: TInstantScheme;
+function TInstantBroker.ReadDatabaseScheme(
+  const AWarningEventHandler: TInstantWarningEvent): TInstantScheme;
 begin
   Result := TInstantScheme.Create;
   try
+    Result.OnWarning := AWarningEventHandler;
     Result.Catalog := CreateCatalog(Result);
     if Result.Catalog = nil then
       raise Exception.CreateFmt(SUndefinedCatalog, [ClassName]);
@@ -15498,6 +15532,12 @@ constructor TInstantCatalog.Create(const AScheme: TInstantScheme);
 begin
   inherited Create;
   FScheme := AScheme;
+end;
+
+procedure TInstantCatalog.DoWarning(const WarningText: string);
+begin
+  if Assigned(FOnWarning) then
+    FOnWarning(Self, WarningText);
 end;
 
 function TInstantCatalog.GetFeatures: TInstantCatalogFeatures;
