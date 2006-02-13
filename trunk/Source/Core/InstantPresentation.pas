@@ -218,6 +218,7 @@ type
     FAfterPostField: TInstantFieldEvent;
     FBeforePostField: TInstantFieldEvent;
     FContentModifiedList: TList;
+    FInSetFieldData: Boolean;
     FMemoList: TStrings;
     FOnCompare: TInstantCompareObjectsEvent;
     FOnCreateObject: TInstantCreateObjectEvent;
@@ -2011,8 +2012,7 @@ begin
     Result := Accessor.CreateObject;
 end;
 
-procedure TInstantCustomExposer.DataEvent(Event: TDataEvent;
-  Info: Integer);
+procedure TInstantCustomExposer.DataEvent(Event: TDataEvent; Info: Longint);
 var
   I: Integer;
   DataSet: TDataSet;
@@ -3742,10 +3742,16 @@ begin
     Move(Buffer^, CurrentBuffer[GetFieldOffset(Field)], Field.DataSize)
   else
     FillChar(CurrentBuffer[GetFieldOffset(Field)], Field.DataSize, 0);
-  if not (State in [dsCalcFields, dsInternalCalc, dsFilter, dsNewValue]) then
+  if not (State in [dsCalcFields, dsInternalCalc, dsFilter, dsNewValue]) and
+          not FInSetFieldData then
   begin
-    PostField(Field);
-    DataEvent(deFieldChange, Longint(Field));
+    FInSetFieldData := True;
+    try
+      PostField(Field);
+      DataEvent(deFieldChange, Longint(Field));
+    finally
+      FInSetFieldData := False;
+    end;
   end;
 end;
 
