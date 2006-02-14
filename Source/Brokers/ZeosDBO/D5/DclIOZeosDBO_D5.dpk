@@ -1,8 +1,8 @@
 package DclIOZeosDBO_D5;
 
-{$I '..\..\..\InstantVersion.inc'}
-
+{$R *.res}
 {$R '..\InstantZeosDBO.dcr'}
+
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
