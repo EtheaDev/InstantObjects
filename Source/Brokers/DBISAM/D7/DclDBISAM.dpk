@@ -1,8 +1,8 @@
 package DclDBISAM;
 
-{$I '..\..\..\InstantVersion.inc'}
-
+{$R *.res}
 {$R '..\InstantDBISAM.dcr'}
+
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
