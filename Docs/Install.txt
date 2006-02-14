@@ -89,24 +89,3 @@ INSTALLATION
    dpk files in Delphi 5 have an additional suffix "_D5". This is
    because Delphi 5 does not support the LIBSUFFIX compiler directive
    that InstantObjects uses in newer versions of Delphi.
-
-********************************************************************************
-Note: All InstantObjects packages use non-standard code in the package
-source file. In particular, they miss the standard line:
-
-{$R *.RES}
-
-and have instead something similar to this line:
-
-{$I '../../InstantVersion.inc'}
-
-that includes the InstantVersion.inc file in the $(InstantObjects)\Source
-folder (Substitute the correct relative path in this statement depending on
-where in the installed folder tree the package file resides). However if you
-open the Project Options for a package and click the OK button, the Delphi IDE
-will restore the line with the $R directive, automatically create a
-<packagename>.res file that IO doesn't need and delete the $I
-directive. If you ever do that, please restore the original code by editing
-the Project Source by hand or restoring the original file from the distribution
-archive.
-********************************************************************************
