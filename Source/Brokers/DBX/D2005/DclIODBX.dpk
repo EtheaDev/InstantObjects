@@ -1,7 +1,8 @@
 package DclIODBX;
 
-{$I '..\..\..\InstantVersion.inc'}
+{$R *.res}
 {$R '..\InstantDBX.dcr'}
+
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
