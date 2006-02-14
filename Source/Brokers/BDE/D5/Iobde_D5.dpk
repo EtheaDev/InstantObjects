@@ -1,6 +1,6 @@
 package IOBDE_D5;
 
-{$I '..\..\..\InstantVersion.inc'}
+{$R *.res}
 
 {$ALIGN ON}
 {$ASSERTIONS ON}
