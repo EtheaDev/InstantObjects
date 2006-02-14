@@ -1,13 +1,13 @@
 package DclIOCore_D5;
 
-{$I '..\..\InstantPackageVersion.inc'}
-
+{$R *.res}
 {$R '..\..\Core\InstantPresentation.dcr'}
 {$R '..\..\Core\InstantExplorer.dcr'}
 {$R '..\..\Core\InstantPersistence.dcr'}
 {$R '..\..\Core\InstantConnectionManager.dcr'}
 {$R '..\..\Core\InstantPump.dcr'}
 {$R '..\..\Core\InstantDBEvolution.dcr'}
+
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
