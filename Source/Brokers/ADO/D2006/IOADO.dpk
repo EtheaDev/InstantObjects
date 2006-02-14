@@ -1,6 +1,6 @@
 package IOADO;
 
-{$I '..\..\..\InstantVersion.inc'}
+{$R *.res}
 
 {$ALIGN 8}
 {$ASSERTIONS ON}
