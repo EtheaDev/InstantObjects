@@ -1,8 +1,8 @@
 package DclIONexusDB;
 
-{$I '..\..\..\InstantVersion.inc'}
-
+{$R *.res}
 {$R '..\InstantNexusDB.dcr'}
+
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
