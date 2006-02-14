@@ -1,6 +1,6 @@
 package IOCore_D5;
 
-{$I '..\..\InstantPackageVersion.inc'}
+{$R *.res}
 
 {$ALIGN ON}
 {$ASSERTIONS ON}
