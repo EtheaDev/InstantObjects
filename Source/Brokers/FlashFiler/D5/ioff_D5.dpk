@@ -1,8 +1,7 @@
 package IOff_D5;
 
-{$I '..\..\..\InstantVersion.inc'}
+{$R *.res}
 
-{$R '..\InstantFlashFiler.dcr'}
 {$ALIGN ON}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
