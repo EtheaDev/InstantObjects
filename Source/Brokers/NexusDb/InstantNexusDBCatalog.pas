@@ -49,8 +49,8 @@ type
     procedure AddFieldMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
-    function ColumnTypeToDataType(const ColumnType: string; const NexusType,
-        FieldScale: Integer): TInstantDataType;
+    function ColumnTypeToDataType(const ColumnType: string; out DataType:
+        TInstantDataType): Boolean;
     function GetSelectFieldsSQL(const ATableName: string): string;
     function GetSelectIndexesSQL(const ATableName: string): string;
     function GetSelectIndexFieldsSQL(const AIndexName: string): string;
@@ -63,7 +63,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes, DB;
+  SysUtils, Classes, DB, InstantConsts;
   
 { TInstantNexusDBCatalog }
 
@@ -86,7 +86,7 @@ var
         try
           while not IndexFields.Eof do
           begin
-            IndexFieldList.Add(Trim(IndexFields.FieldByName('SEGMENT_FIELD').AsString));
+            IndexFieldList.Add(IndexFields.FieldByName('SEGMENT_FIELD').AsString);
             IndexFields.Next;
           end;
         finally
@@ -110,7 +110,7 @@ begin
       while not Indexes.Eof do
       begin
         IndexMetadata := TableMetadata.IndexMetadatas.Add;
-        IndexMetadata.Name := Trim(Indexes.FieldByName('INDEX_NAME').AsString);
+        IndexMetadata.Name := Indexes.FieldByName('INDEX_NAME').AsString;
 
         // Ignore automatically generated 'Sequential Access Index'
         if SameText('Sequential Access Index', IndexMetadata.Name) then
@@ -148,6 +148,8 @@ procedure TInstantNexusDBCatalog.AddFieldMetadatas(
 var
   Fields: TDataSet;
   FieldMetadata: TInstantFieldMetadata;
+  FieldDataType: String;
+  FieldMetaDataType: TInstantDataType;
 begin
   Fields := Broker.AcquireDataSet(GetSelectFieldsSQL(TableMetadata.Name));
   try
@@ -156,26 +158,29 @@ begin
       while not Fields.Eof do
       begin
         FieldMetadata := TableMetadata.FieldMetadatas.Add;
-        FieldMetadata.Name := Trim(Fields.FieldByName('FIELD_NAME').AsString);
-        FieldMetadata.DataType := ColumnTypeToDataType(
+        FieldMetadata.Name := Fields.FieldByName('FIELD_NAME').AsString;
 {$IFDEF NX1}
-          Trim(Fields.FieldByName('FIELD_TYPE').AsString),
+        FieldDataType := Fields.FieldByName('FIELD_TYPE').AsString;
 {$ELSE}
-          Trim(Fields.FieldByName('FIELD_TYPE_NEXUS').AsString),
+        FieldDataType := Fields.FieldByName('FIELD_TYPE_NEXUS').AsString;
 {$ENDIF}
-          0,// No need for 'FIELD_SUB_TYPE' here
-          Fields.FieldByName('FIELD_DECIMALS').AsInteger);
-        FieldMetadata.Options := [];
-        if Fields.FieldByName('FIELD_REQUIRED').AsBoolean then
-          FieldMetadata.Options := FieldMetadata.Options + [foRequired];
-        if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
-          FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-        { TODO : support ExternalTableName? }
-        if FieldMetadata.DataType = dtString then
-          FieldMetadata.Size := Fields.FieldByName('FIELD_UNITS').AsInteger
+        if ColumnTypeToDataType(FieldDataType, FieldMetaDataType) then
+        begin
+          FieldMetadata.DataType := FieldMetaDataType;
+          FieldMetadata.Options := [];
+          if Fields.FieldByName('FIELD_REQUIRED').AsBoolean then
+            FieldMetadata.Options := FieldMetadata.Options + [foRequired];
+          if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
+            FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
+          if FieldMetadata.DataType = dtString then
+            FieldMetadata.Size := Fields.FieldByName('FIELD_UNITS').AsInteger
+          else
+            FieldMetadata.Size := Fields.FieldByName('FIELD_LENGTH').AsInteger;
+          Fields.Next;
+        end
         else
-          FieldMetadata.Size := Fields.FieldByName('FIELD_LENGTH').AsInteger;
-        Fields.Next;
+          DoWarning(Format(SUnsupportedColumnSkipped,
+            [TableMetadata.Name, FieldMetadata.Name, FieldDataType]));
       end;
     finally
       Fields.Close;
@@ -198,7 +203,7 @@ begin
       while not Tables.Eof do
       begin
         TableMetadata := TableMetadatas.Add;
-        TableMetadata.Name := Trim(Tables.FieldByName('TABLE_NAME').AsString);
+        TableMetadata.Name := Tables.FieldByName('TABLE_NAME').AsString;
         // Call AddIndexMetadatas first, so that AddFieldMetadatas can see what
         // indexes are defined to correctly set the foIndexed option.
         AddIndexMetadatas(TableMetadata);
@@ -213,63 +218,63 @@ begin
   end;
 end;
 
-function TInstantNexusDBCatalog.ColumnTypeToDataType(const ColumnType: string; const
-    NexusType, FieldScale: Integer): TInstantDataType;
+function TInstantNexusDBCatalog.ColumnTypeToDataType(const ColumnType: string;
+    out DataType: TInstantDataType): Boolean;
 begin
-  { TODO : How to use FieldScale? }
+  Result := True;
 {$IFDEF NX1}
   if SameText(ColumnType, 'ShortString')
           or SameText(ColumnType, 'NullString') then
-    Result := dtString
+    DataType := dtString
   else if SameText(ColumnType, 'Int8')
           or SameText(ColumnType, 'Int16')
           or SameText(ColumnType, 'Int32') then
           //or SameText(ColumnType, 'nxtAutoInc') then    // is unsigned 32 bit
-    Result := dtInteger
+    DataType := dtInteger
   else if SameText(ColumnType, 'Single')
           or SameText(ColumnType, 'Double')
           or SameText(ColumnType, 'Extended') then
-    Result := dtFloat
+    DataType := dtFloat
   else if SameText(ColumnType, 'Currency') then
-    Result := dtCurrency
+    DataType := dtCurrency
   else if SameText(ColumnType, 'Boolean') then
-    Result := dtBoolean
+    DataType := dtBoolean
   else if SameText(ColumnType, 'DateTime')
           or SameText(ColumnType, 'Date')
           or SameText(ColumnType, 'Time')then
-    Result := dtDateTime
+    DataType := dtDateTime
   else if SameText(ColumnType, 'BLOB') then
-      Result := dtBlob
+      DataType := dtBlob
   else if SameText(ColumnType, 'BLOB Memo') then
-      Result := dtMemo
+      DataType := dtMemo
 {$ELSE}
   if SameText(ColumnType, 'nxtNullString')
           or SameText(ColumnType, 'nxtShortString') then
-    Result := dtString
+    DataType := dtString
   else if SameText(ColumnType, 'nxtInt8')
           or SameText(ColumnType, 'nxtInt16')
           or SameText(ColumnType, 'nxtInt32') then
           //or SameText(ColumnType, 'nxtAutoInc') then    // is unsigned 32 bit
-    Result := dtInteger
+    DataType := dtInteger
   else if SameText(ColumnType, 'nxtSingle')
           or SameText(ColumnType, 'nxtDouble')
           or SameText(ColumnType, 'nxtExtended') then
-    Result := dtFloat
+    DataType := dtFloat
   else if SameText(ColumnType, 'nxtCurrency') then
-    Result := dtCurrency
+    DataType := dtCurrency
   else if SameText(ColumnType, 'nxtBoolean') then
-    Result := dtBoolean
+    DataType := dtBoolean
   else if SameText(ColumnType, 'nxtDateTime')
           or SameText(ColumnType, 'nxtDate')
           or SameText(ColumnType, 'nxtTime')then
-    Result := dtDateTime
+    DataType := dtDateTime
   else if SameText(ColumnType, 'nxtBlob') then
-      Result := dtBlob
+      DataType := dtBlob
   else if SameText(ColumnType, 'nxtBlobMemo') then
-      Result := dtMemo
+      DataType := dtMemo
 {$ENDIF}
   else
-    raise Exception.CreateFmt('ColumnType %s not supported.', [ColumnType]);
+    Result := False;
 end;
 
 function TInstantNexusDBCatalog.GetSelectFieldsSQL(

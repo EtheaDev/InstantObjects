@@ -48,13 +48,13 @@ model unit along with the implementation of access methods for the defined attri
 
 A database for storing the business objects can be automatically generated from the
 defined model via the Database Builder. InstantObjects supports databases available
-via BDE, ADO, InterBase Express, dbExpress, DBISAM, FlashFiler, NexusDb, UIB and 
+via BDE, ADO, InterBase Express, dbExpress, DBISAM, FlashFiler, NexusDB, UIB and 
 Advantage Database Server, plus a native, file-based XML storage.
 
 OBJECT PERSISTENCE
 
 One of the major issues when developing object-oriented applications is object
-persistence. InstantObjects adresses this issue by providing a powerful persistence
+persistence. InstantObjects addresses this issue by providing a powerful persistence
 mechanism that allows using the most common databases as storage. Storing and
 retrieving objects is a simple matter of invoking methods of the common ancestor
 class, TInstantObject. Mapping of objects to and from tables is done automatically
@@ -107,7 +107,7 @@ DOCUMENTATION AND SUPPORT
 -------------------------
 
 The InstantObjects Guide IOHelp.hlp in the <installdir>\Help folder contains more
-informations about InstantObjects.
+information about InstantObjects.
 
 The section "User Guide" explains how to build applications with InstantObjects.
 The section "Reference Guide" contains a detailed explanation of every class
