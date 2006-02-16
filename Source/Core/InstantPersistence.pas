@@ -8297,7 +8297,6 @@ procedure TInstantObject.FreeCircularReferences;
   function IsInsideCircularReference(const AItem: TInstantComplex): Boolean;
   var
     ItemOwner: TInstantObject;
-    CurrentItem: TInstantComplex;
     I: Integer;
   begin
     Result := Assigned(AItem);
@@ -8307,20 +8306,15 @@ procedure TInstantObject.FreeCircularReferences;
     Result := (ItemOwner = Self) or
      IsInsideCircularReference(ItemOwner.OwnerAttribute);
     if not Result and Assigned(ItemOwner.FRefBy) then
-    begin
       for I := 0 to Pred(ItemOwner.FRefBy.Count) do
         if ItemOwner.FRefBy[I] is TInstantComplex then
         begin
-          CurrentItem := TInstantComplex(ItemOwner.FRefBy[I]);
-          if CurrentItem.AttributeType in [atReference, atReferences] then
-          begin
-            Result := (ItemOwner.RefCount = ItemOwner.FRefBy.Count) and
-              IsInsideCircularReference(CurrentItem);
-            if Result then
-              Exit;
-          end;
+          Result := (ItemOwner.RefCount = 1) and
+           (ItemOwner.RefCount = ItemOwner.FRefBy.Count) and
+           IsInsideCircularReference(TInstantComplex(ItemOwner.FRefBy[I]));
+          if Result then
+            Exit;
         end;
-    end;
   end;
 
 var
@@ -8329,12 +8323,15 @@ begin
   if Assigned(FRefBy) and (FRefBy.Count = FRefCount-1) then
     for I := Pred(FRefBy.Count) downto 0 do
       if FRefBy[I] is TInstantComplex then
-        with TInstantComplex(FRefBy[I]) do
-          if (AttributeType in [atReference, atReferences]) and
-            IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
-            // FRefCount will be decremented whenever this
-            // instance is Detached
-            repeat until not DetachObject(Self);
+        case TInstantComplex(FRefBy[I]).AttributeType of
+          atReference:
+            if IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
+              TInstantReference(FRefBy[I]).ObjectReference.DestroyInstance;
+          atReferences:
+            if IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
+              with TInstantReferences(FRefBy[I]) do
+                repeat until not DestroyObject(Self);
+        end;
 end;
 
 procedure TInstantObject.FreeInstance;
