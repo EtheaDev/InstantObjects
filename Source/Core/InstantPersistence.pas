@@ -1088,7 +1088,8 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure Unchanged; override;
-    procedure DestroyObject(Index: Integer);
+    procedure DestroyObject(Index: Integer); overload;
+    function DestroyObject(AObject: TInstantObject): Boolean; overload;
     property AllowOwned write SetAllowOwned;
   end;
 
@@ -1124,7 +1125,8 @@ type
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
-    procedure DestroyObject(Index: Integer);
+    procedure DestroyObject(Index: Integer); overload;
+    function DestroyObject(AObject: TInstantObject): Boolean; overload;
     procedure LoadObjectsFromStream(AStream: TStream); override;
     procedure LoadReferencesFromStream(AStream: TStream);
     procedure SaveReferencesToStream(AStream: TStream);
@@ -6853,6 +6855,20 @@ begin
     ObjectReferences[Index].DestroyInstance;
 end;
 
+function TInstantParts.DestroyObject(AObject: TInstantObject): Boolean;
+var
+  Index: Integer;
+begin
+  if Metadata.StorageKind <> skEmbedded then
+  begin
+    Index := IndexOf(AObject);
+    Result := Index >= 0;
+    if Result then
+      ObjectReferences[Index].DestroyInstance;
+  end else
+    Result := False;
+end;
+
 function TInstantParts.GetAllowOwned: Boolean;
 begin
   Result := FAllowOwned;
@@ -7181,6 +7197,16 @@ end;
 procedure TInstantReferences.DestroyObject(Index: Integer);
 begin
   ObjectReferenceList.RefItems[Index].DestroyInstance;
+end;
+
+function TInstantReferences.DestroyObject(AObject: TInstantObject): Boolean;
+var
+  Index: Integer;
+begin
+  Index := IndexOf(AObject);
+  Result := Index >= 0;
+  if Result then
+    ObjectReferenceList.RefItems[Index].DestroyInstance;
 end;
 
 function TInstantReferences.GetAllowOwned: Boolean;
