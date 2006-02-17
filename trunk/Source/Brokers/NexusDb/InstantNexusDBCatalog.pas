@@ -176,11 +176,11 @@ begin
             FieldMetadata.Size := Fields.FieldByName('FIELD_UNITS').AsInteger
           else
             FieldMetadata.Size := Fields.FieldByName('FIELD_LENGTH').AsInteger;
-          Fields.Next;
         end
         else
           DoWarning(Format(SUnsupportedColumnSkipped,
             [TableMetadata.Name, FieldMetadata.Name, FieldDataType]));
+        Fields.Next;
       end;
     finally
       Fields.Close;
