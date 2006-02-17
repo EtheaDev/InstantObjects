@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -49,13 +50,13 @@ type
     procedure AddFieldMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
-    // Returns the TInstantDataType value that matches the supplied
-    // combination of ColumnType, BlobSubType and FieldScale. If more than
-    // on datatypes apply, alternate data types are returned in
+    // Returns True if the TInstantDataType value that matches the supplied
+    // combination of ColumnType, BlobSubType and FieldScale is found. If 
+    // more than one datatypes apply, alternate data types are returned in
     // AlternateDataTypes, otherwise AlternateDataTypes is [] on exit.
     function ColumnTypeToDataType(const ColumnType: string;
-      const BlobSubType, FieldScale: Integer;
-      out AlternateDataTypes: TInstantDataTypes): TInstantDataType;
+        const BlobSubType, FieldScale: Integer; out DataType: TInstantDataType;
+        out AlternateDataTypes: TInstantDataTypes): Boolean;
     function GetSelectFieldsSQL(const ATableName: string): string;
     function GetSelectIndexesSQL(const ATableName: string): string;
     function GetSelectIndexFieldsSQL(const AIndexName: string): string;
@@ -68,7 +69,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes, DB;
+  SysUtils, Classes, DB, InstantConsts;
   
 { TInstantIBFbCatalog }
 
@@ -139,6 +140,7 @@ var
   Fields: TDataSet;
   FieldMetadata: TInstantFieldMetadata;
   AlternateDataTypes: TInstantDataTypes;
+  FieldMetaDataType: TInstantDataType;
 begin
   Fields := Broker.AcquireDataSet(GetSelectFieldsSQL(TableMetadata.Name));
   try
@@ -148,21 +150,29 @@ begin
       begin
         FieldMetadata := TableMetadata.FieldMetadatas.Add;
         FieldMetadata.Name := Trim(Fields.FieldByName('RDB$FIELD_NAME').AsString);
-        FieldMetadata.DataType := ColumnTypeToDataType(
+        if ColumnTypeToDataType(
           Trim(Fields.FieldByName('RDB$TYPE_NAME').AsString),
           Fields.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
           Fields.FieldByName('RDB$FIELD_SCALE').AsInteger,
-          AlternateDataTypes);
-        FieldMetadata.AlternateDataTypes := AlternateDataTypes;
-        FieldMetadata.Options := [];
-        if Fields.FieldByName('RDB$NULL_FLAG').AsInteger <> 0 then
-          FieldMetadata.Options := FieldMetadata.Options + [foRequired];
-        if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
-          FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-        if FieldMetadata.DataType = dtString then
-          FieldMetadata.Size := Fields.FieldByName('RDB$CHARACTER_LENGTH').AsInteger
+          FieldMetaDataType,
+          AlternateDataTypes) then
+        begin
+          FieldMetadata.DataType := FieldMetaDataType;
+          FieldMetadata.AlternateDataTypes := AlternateDataTypes;
+          FieldMetadata.Options := [];
+          if Fields.FieldByName('RDB$NULL_FLAG').AsInteger <> 0 then
+            FieldMetadata.Options := FieldMetadata.Options + [foRequired];
+          if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
+            FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
+          if FieldMetadata.DataType = dtString then
+            FieldMetadata.Size := Fields.FieldByName('RDB$CHARACTER_LENGTH').AsInteger
+          else
+            FieldMetadata.Size := Fields.FieldByName('RDB$FIELD_LENGTH').AsInteger;
+        end
         else
-          FieldMetadata.Size := Fields.FieldByName('RDB$FIELD_LENGTH').AsInteger;
+          DoWarning(Format(SUnsupportedColumnSkipped,
+            [TableMetadata.Name, FieldMetadata.Name,
+             Trim(Fields.FieldByName('RDB$TYPE_NAME').AsString)]));
         Fields.Next;
       end;
     finally
@@ -202,35 +212,37 @@ begin
 end;
 
 function TInstantIBFbCatalog.ColumnTypeToDataType(const ColumnType: string;
-  const BlobSubType, FieldScale: Integer;
-  out AlternateDataTypes: TInstantDataTypes): TInstantDataType;
+    const BlobSubType, FieldScale: Integer; out DataType: TInstantDataType;
+    out AlternateDataTypes: TInstantDataTypes): Boolean;
 begin
   AlternateDataTypes := [];
+  Result := True;
   { TODO : How to use FieldScale? }
   if SameText(ColumnType, 'TEXT') or SameText(ColumnType, 'VARYING') then
-    Result := dtString
-  else if SameText(ColumnType, 'SHORT') then begin
-    Result := dtBoolean;
+    DataType := dtString
+  else if SameText(ColumnType, 'SHORT') then
+  begin
+    DataType := dtBoolean;
     Include(AlternateDataTypes, dtInteger);
   end
   else if SameText(ColumnType, 'LONG') then
-    Result := dtInteger
+    DataType := dtInteger
   else if SameText(ColumnType, 'FLOAT') or SameText(ColumnType, 'DOUBLE') then
-    Result := dtFloat
+    DataType := dtFloat
   else if SameText(ColumnType, 'TIMESTAMP') or SameText(ColumnType, 'DATE')
       or SameText(ColumnType, 'TIME')then
-    Result := dtDateTime
+    DataType := dtDateTime
   else if SameText(ColumnType, 'BLOB') then
   begin
     if BlobSubType = 1 then
-      Result := dtMemo
+      DataType := dtMemo
     else
-      Result := dtBlob;
+      DataType := dtBlob;
   end
   else if SameText(ColumnType, 'INT64') then
-    Result := dtCurrency
+    DataType := dtCurrency
   else
-    raise Exception.CreateFmt('ColumnType %s not supported.', [ColumnType]);
+    Result := False;
 end;
 
 function TInstantIBFbCatalog.GetSelectFieldsSQL(
