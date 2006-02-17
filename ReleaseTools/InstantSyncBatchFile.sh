@@ -11,13 +11,20 @@ echo -n -e \
 "@echo off\r\n"\
 "echo.\r\n"\
 "echo This script will replicate ${InstantVersionResFile},\r\n"\
-"echo creating or overwriting all projects' resource files.\r\n"\
+"echo creating or overwriting all packages' resource files.\r\n"\
 "echo.\r\n"\
 "echo Press Enter to continue, Ctrl+C to cancel.\r\n"\
-"pause > nul\r\n" > ${InstantScriptFile}
+"echo.\r\n"\
+"pause > nul\r\n"\
+"echo Copying...\r\n"\
+"echo.\r\n" > ${InstantScriptFile}
 
 find .. -name "*.dpk" -type f | sed 's/\//\\\\/g' | while read DpkFile
 do
-  echo -e copy \"${InstantVersionResFile}\" \"${DpkFile/.dpk/.res}\"" > nul\r"
+  echo -e "copy \"${InstantVersionResFile}\" \"${DpkFile/.dpk/.res}\" > nul\r"
+  echo -e "echo ${DpkFile/.dpk/.res}\r"
 done >> ${InstantScriptFile}
+echo -n -e \
+"echo.\r\n"\
+"echo Done.\r\n" >> ${InstantScriptFile}
 echo "Done."
