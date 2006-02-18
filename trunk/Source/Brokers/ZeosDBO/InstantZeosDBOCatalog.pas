@@ -64,7 +64,7 @@ implementation
 
 uses
   {$IFDEF D7+}Types,{$ENDIF} TypInfo, SysUtils, Classes, ZConnection,
-  InstantClasses, InstantConsts;
+  InstantClasses, InstantConsts, ZCompatibility;
 
 procedure TInstantZeosDBOCatalog.AddFieldMetadatas(
   TableMetadata: TInstantTableMetadata);
@@ -80,31 +80,35 @@ begin
 
   Fields.BeforeFirst;
   while Fields.Next do
-  begin
-    if ColumnTypeToDataType(TZSQLType(Fields.GetShortByName('DATA_TYPE')),
-      FieldDataType, FieldAlternateDataTypes) then
+    // Work around for a ZeosDBO behavior with Interbase and Firebird, where
+    // metadata name with wildcards ('_' or '%') receives a '%' after its name,
+    // and another drivers where metadata names are searched with LIKE clause
+    if SameText(Fields.GetStringByName('TABLE_NAME'), TableMetadata.Name) then
     begin
-      FieldMetadata := TableMetadata.FieldMetadatas.Add;
-      FieldMetadata.Name := Fields.GetStringByName('COLUMN_NAME');
-      FieldMetadata.DataType := FieldDataType;
-      FieldMetadata.AlternateDataTypes := FieldAlternateDataTypes;
-      FieldMetadata.Options := [];
-      if not Fields.GetBooleanByName('IS_NULLABLE') then
-        FieldMetadata.Options := FieldMetadata.Options + [foRequired];
-      if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
-        FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
-      // work around bug in GetColumns for all drivers where
-      // CHAR_OCTET_LENGTH is not assigned
-      if (FieldMetadata.DataType in [dtString, dtMemo]) and
-        (Fields.GetIntByName('CHAR_OCTET_LENGTH') > 0) then
-        FieldMetadata.Size := Fields.GetIntByName('CHAR_OCTET_LENGTH')
+      if ColumnTypeToDataType(TZSQLType(Fields.GetShortByName('DATA_TYPE')),
+        FieldDataType, FieldAlternateDataTypes) then
+      begin
+        FieldMetadata := TableMetadata.FieldMetadatas.Add;
+        FieldMetadata.Name := Fields.GetStringByName('COLUMN_NAME');
+        FieldMetadata.DataType := FieldDataType;
+        FieldMetadata.AlternateDataTypes := FieldAlternateDataTypes;
+        FieldMetadata.Options := [];
+        if not Fields.GetBooleanByName('IS_NULLABLE') then
+          FieldMetadata.Options := FieldMetadata.Options + [foRequired];
+        if TableMetadata.IndexMetadatas.IsFieldIndexed(FieldMetadata) then
+          FieldMetadata.Options := FieldMetadata.Options + [foIndexed];
+        // work around bug in GetColumns for all drivers where
+        // CHAR_OCTET_LENGTH is not assigned
+        if (FieldMetadata.DataType in [dtString, dtMemo]) and
+          (Fields.GetIntByName('CHAR_OCTET_LENGTH') > 0) then
+          FieldMetadata.Size := Fields.GetIntByName('CHAR_OCTET_LENGTH')
+        else
+          FieldMetadata.Size := Fields.GetIntByName('COLUMN_SIZE');
+      end
       else
-        FieldMetadata.Size := Fields.GetIntByName('COLUMN_SIZE');
-    end
-    else
-      DoWarning(Format(SUnsupportedColumnSkipped, [
-        TableMetadata.Name, Fields.GetStringByName('COLUMN_NAME'),
-        GetEnumName(TypeInfo(TZSQLType), Fields.GetShortByName('DATA_TYPE'))]));
+        DoWarning(Format(SUnsupportedColumnSkipped, [
+          TableMetadata.Name, Fields.GetStringByName('COLUMN_NAME'),
+          GetEnumName(TypeInfo(TZSQLType), Fields.GetShortByName('DATA_TYPE'))]));
   end;
 end;
 
@@ -123,20 +127,25 @@ begin
   IndexMetadata := nil;
   PrimaryKeys.BeforeFirst;
   while PrimaryKeys.Next do
-  begin
-    IndexName := PrimaryKeys.GetStringByName('PK_NAME');
-    if Assigned(IndexMetadata) and
-      AnsiSameStr(IndexMetadata.Name, IndexName) then
-      IndexMetadata.Fields := ';' + IndexMetadata.Fields +
-        PrimaryKeys.GetStringByName('COLUMN_NAME')
-    else
+    // Work around for a ZeosDBO behavior with Interbase and Firebird where
+    // metadata names are searched with LIKE clause
+    if SameText(PrimaryKeys.GetStringByName('TABLE_NAME'), TableMetadata.Name) then
     begin
-      IndexMetadata := TableMetadata.IndexMetadatas.Add;
-      IndexMetadata.Name := IndexName;
-      IndexMetadata.Fields := PrimaryKeys.GetStringByName('COLUMN_NAME');
-      IndexMetadata.Options := [ixPrimary, ixUnique];
+      IndexName := PrimaryKeys.GetStringByName('PK_NAME');
+      // MySQL driver doesn't assign PK_NAME
+      if IndexName = '' then
+        IndexName := 'PRIMARY';
+      if Assigned(IndexMetadata) and SameText(IndexMetadata.Name, IndexName) then
+        IndexMetadata.Fields := IndexMetadata.Fields + ';' +
+          PrimaryKeys.GetStringByName('COLUMN_NAME')
+      else
+      begin
+        IndexMetadata := TableMetadata.IndexMetadatas.Add;
+        IndexMetadata.Name := IndexName;
+        IndexMetadata.Fields := PrimaryKeys.GetStringByName('COLUMN_NAME');
+        IndexMetadata.Options := [ixPrimary, ixUnique];
+      end;
     end;
-  end;
 
   with Connector.Connection do
     IndexInfo := DbcConnection.GetMetadata.GetIndexInfo(Catalog, '',
@@ -146,22 +155,23 @@ begin
   IndexInfo.BeforeFirst;
   while IndexInfo.Next do
   begin
-    //Exclude primary keys
     IndexName := IndexInfo.GetStringByName('INDEX_NAME');
-    if not Assigned(TableMetadata.IndexMetadatas.Find(IndexName)) or
-      //work around bug in GetPrimaryKeys for mysql driver where PK_NAME is not assigned
-    (AnsiPos('PRI', IndexName) = 0) then
+    // Exclude primary keys
+    if not Assigned(TableMetadata.IndexMetadatas.Find(IndexName)) then
     begin
-      if Assigned(IndexMetadata) and
-        AnsiSameStr(IndexMetadata.Name, IndexName) then
-        IndexMetadata.Fields := ';' + IndexMetadata.Fields +
+      if Assigned(IndexMetadata) and SameText(IndexMetadata.Name, IndexName) then
+        IndexMetadata.Fields := IndexMetadata.Fields + ';' +
           IndexInfo.GetStringByName('COLUMN_NAME');
       begin
         IndexMetadata := TableMetadata.IndexMetadatas.Add;
         IndexMetadata.Name := IndexName;
         IndexMetadata.Fields := IndexInfo.GetStringByName('COLUMN_NAME');
         IndexMetadata.Options := [];
-        if not IndexInfo.GetBooleanByName('NON_UNIQUE') then
+        if not IndexInfo.GetBooleanByName('NON_UNIQUE')
+         { TODO : This work around must be removed for ZeosDBO versions
+           that doesn't have the issue }
+         // Work around for MySQL driver that return reverted value
+         xor (Broker is TInstantZeosDBOMySQLBroker) then
           IndexMetadata.Options := IndexMetadata.Options + [ixUnique];
         if IndexInfo.GetStringByName('ASC_OR_DESC') = 'D' then
           IndexMetadata.Options := IndexMetadata.Options + [ixDescending];
@@ -187,11 +197,11 @@ begin
   Tables.BeforeFirst;
   while Tables.Next do
   begin
-    if AnsiSameStr(Tables.GetStringByName('TABLE_TYPE'), 'TABLE') then
+    if SameText(Tables.GetStringByName('TABLE_TYPE'), 'TABLE') then
     begin
       TableMetadata := TableMetadatas.Add;
       TableMetadata.Name := Tables.GetStringByName('TABLE_NAME');
-      // Call AddIndexMetadatas first, so that AddFieldMetadatas can see what
+      // Call AddIndexMetadatas first, so that AddFieldMetadatas can see which
       // indexes are defined to correctly set the foIndexed option.
       AddIndexMetadatas(TableMetadata);
       AddFieldMetadatas(TableMetadata);
