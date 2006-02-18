@@ -93,12 +93,12 @@ type
     FUseDelimitedIdents: Boolean;
     procedure DoAfterConnectionChange;
     procedure DoBeforeConnectionChange;
+    function GetBroker: TInstantZeosDBOBroker;
     function GetConnection: TZConnection;
     function GetLoginPrompt: Boolean;
     procedure SetConnection(Value: TZConnection);
     procedure SetLoginPrompt(const Value: Boolean);
     procedure SetUseDelimitedIdents(const Value: Boolean);
-    function GetBroker: TInstantZeosDBOBroker;
   protected
     procedure AfterConnectionChange; virtual;
     procedure BeforeConnectionChange; virtual;
@@ -136,7 +136,6 @@ type
     procedure AssignParam(SourceParam, TargetParam: TParam); virtual;
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
-    function DatabaseSQLDelimiter: string;
     function GetDatabaseName: string; override;
     function GetDBMSName: string; override;
     function GetSQLDelimiters: string; override;
@@ -145,6 +144,7 @@ type
     function InternalCreateQuery: TInstantQuery; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; virtual; abstract;
     function InternalDBNotExistsErrorCode: Integer; virtual;
+    function InternalSQLDelimiter: string; virtual;
     function UseBooleanFields: Boolean; virtual; abstract;
   public
     procedure CreateDatabase;
@@ -228,13 +228,21 @@ type
   { MySQL broker }
 
   {$IFDEF MYSQL_SUPPORT}
+  TInstantMySQLGenerator = class(TInstantSQLGenerator)
+  protected
+    function InternalGenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string; override;
+  end;
+
   TInstantZeosDBOMySQLBroker = class(TInstantZeosDBOBroker)
   protected
     procedure InternalCreateDatabase; override;
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string;
       override;
     function InternalDBNotExistsErrorCode: Integer; override;
+    function InternalSQLDelimiter: string; override;
     function UseBooleanFields: Boolean; override;
+  public
+    class function GeneratorClass: TInstantSQLGeneratorClass; override;
   end;
   {$ENDIF}
 
@@ -533,8 +541,6 @@ end;
 
 function TInstantZeosDBOConnector.GetBroker: TInstantZeosDBOBroker;
 begin
-  { TODO : Check if current broker is appropriate
-    (before FConnection.Protocol). }
   Result := inherited Broker as TInstantZeosDBOBroker;
 end;
 
@@ -562,13 +568,10 @@ begin
     Connection.Disconnect;
   except
     on E : EZSQLException do
-    begin
       if (E.ErrorCode = Broker.DBNotExistsErrorCode) then
         Result := False
       else
-        raise EZSQLException.CreateWithCode(E.ErrorCode,
-         Format('%s. Error Code: %d', [E.Message, E.ErrorCode]));
-    end;
+        raise;
   end;
 end;
 
@@ -612,7 +615,7 @@ end;
 
 procedure TInstantZeosDBOConnector.InternalCreateDatabase;
 begin
-  if (Connection.Connected) then
+  if Connection.Connected then
     raise EInstantError.Create(SDatabaseOpen);
   Broker.CreateDatabase;
 end;
@@ -644,15 +647,11 @@ procedure TInstantZeosDBOConnector.Notification(AComponent: TComponent;
 begin
   inherited;
   if (AComponent = FConnection) and (Operation = opRemove) then
-  begin
-    Disconnect;
     FConnection := nil;
-  end;
 end;
 
 function TInstantZeosDBOConnector.ParamByName(const AName: string): string;
 begin
-  { TODO : Check }
   Result := Connection.Properties.Values[AName];
 end;
 
@@ -772,14 +771,6 @@ begin
     Result := TInstantZeosDBOResolver.Create(Self, Map);
 end;
 
-function TInstantZeosDBOBroker.DatabaseSQLDelimiter: string;
-begin
-  if Connector.Connected then
-    Result :=
-      Connector.Connection.DbcConnection.GetMetadata.GetIdentifierQuoteString;
-  { TODO : else? }
-end;
-
 function TInstantZeosDBOBroker.DataTypeToColumnType(DataType: TInstantDataType;
   Size: Integer): string;
 begin
@@ -820,16 +811,21 @@ end;
 function TInstantZeosDBOBroker.GetDBMSName: string;
 begin
   if Connector.Connected then
-    Result :=
-      Connector.Connection.DbcConnection.GetMetadata.GetDatabaseProductName;
-  { TODO : else? }
+    Result := Connector.Connection.DbcConnection.GetMetadata.GetDatabaseProductName
+  else
+    Result := Connector.Connection.Protocol;
 end;
 
 function TInstantZeosDBOBroker.GetSQLDelimiters: string;
 begin
-  Result := DatabaseSQLDelimiter;
-  if not Connector.UseDelimitedIdents or (Result = ' ') then
-    Result := '';
+  if not Connector.UseDelimitedIdents then
+    Result := ''
+  else
+  begin
+    Result := InternalSQLDelimiter;
+    if Result = ' ' then
+      Result := '';
+  end;
 end;
 
 function TInstantZeosDBOBroker.GetSQLQuote: Char;
@@ -853,6 +849,13 @@ end;
 function TInstantZeosDBOBroker.InternalDBNotExistsErrorCode: Integer;
 begin
   Result := 0;
+end;
+
+// Return the string used to quote SQL identifiers
+// If quoting is not supported, returns ' '
+function TInstantZeosDBOBroker.InternalSQLDelimiter: string;
+begin
+  Result := '"';
 end;
 
 { TInstantZeosDBOResolver }
@@ -944,19 +947,26 @@ end;
 
 {$IFDEF IBFB_SUPPORT}
 procedure TInstantZeosDBOIbFbBroker.InternalCreateDatabase;
+var
+  OldProperties: string;
+  CharacterSet: string;
 begin
   // do not call inherited
   with Connector.Connection do
   begin
+    OldProperties := Properties.Text;
+    CharacterSet := Properties.Values['codepage'];
+    if CharacterSet = '' then
+      CharacterSet := 'ISO8859_1';
     Properties.Text := Format(
      'createNewDatabase=CREATE DATABASE ''%s'' ' +
      'USER ''%s'' PASSWORD ''%s'' PAGE_SIZE 4096 ' +
-     'DEFAULT CHARACTER SET ISO8859_1', [Database, User, Password]);
+     'DEFAULT CHARACTER SET %s', [Database, User, Password, CharacterSet]);
     try
       Connect;
-    finally
       Disconnect;
-      Properties.Clear;
+    finally
+      Properties.Text := OldProperties;
     end;
   end;
 end;
@@ -1038,28 +1048,48 @@ begin
 end;
 {$ENDIF}
 
+{$IFDEF MYSQL_SUPPORT}
+
+{ TInstantMySQLGenerator }
+
+function TInstantMySQLGenerator.InternalGenerateDropIndexSQL(
+  Metadata: TInstantIndexMetadata): string;
+begin
+  Result := Format('ALTER TABLE %s DROP INDEX %s',
+   [Metadata.TableMetadata.Name, Metadata.Name]);
+end;
+
 { TInstantZeosDBOMySQLBroker }
 
-{$IFDEF MYSQL_SUPPORT}
+class function TInstantZeosDBOMySQLBroker.GeneratorClass: TInstantSQLGeneratorClass;
+begin
+  Result := TInstantMySQLGenerator;
+end;
+
 procedure TInstantZeosDBOMySQLBroker.InternalCreateDatabase;
 var
   MySqlConnection: IZMySqlConnection;
+  OldProperties: string;
 begin
   // do not call inherited
   with Connector.Connection do
   begin
-    Properties.Text := 'dbless=TRUE';
+    OldProperties := Properties.Text;
+    Properties.Values['dbless'] := 'TRUE';
     try
-      Connect;
-      DbcConnection.QueryInterface(IZMySqlConnection, MySqlConnection);
-      if Assigned(MySqlConnection) then
-        MySqlConnection.GetPlainDriver.
-         CreateDatabase(MySqlConnection.GetConnectionHandle, PChar(Database))
-      else
-        inherited;
+      try
+        Connect;
+        DbcConnection.QueryInterface(IZMySqlConnection, MySqlConnection);
+        if Assigned(MySqlConnection) then
+          MySqlConnection.GetPlainDriver.
+           CreateDatabase(MySqlConnection.GetConnectionHandle, PChar(Database))
+        else
+          inherited;
+      finally
+        Disconnect;
+      end;
     finally
-      Disconnect;
-      Properties.Clear;
+      Properties.Text := OldProperties;
     end;
   end;
 end;
@@ -1083,6 +1113,11 @@ end;
 function TInstantZeosDBOMySQLBroker.InternalDBNotExistsErrorCode: Integer;
 begin
   Result := 1049;
+end;
+
+function TInstantZeosDBOMySQLBroker.InternalSQLDelimiter: string;
+begin
+  Result := '`';
 end;
 
 function TInstantZeosDBOMySQLBroker.UseBooleanFields: Boolean;
