@@ -12679,6 +12679,8 @@ begin
   try
     ObjectRow.Row := -1;
     ObjectRow.Instance := AObject;
+    if AObject is TInstantObject then
+      TInstantObject(AObject).AddRef;
     Result := ObjectRowList.Add(ObjectRow);
   except
     Dispose(ObjectRow);
@@ -12743,6 +12745,8 @@ begin
   try
     ObjectRow.Row := -1;
     ObjectRow.Instance := AObject;
+    if AObject is TInstantObject then
+      TInstantObject(AObject).AddRef;
     ObjectRowList.Insert(Index, ObjectRow);
   except
     Dispose(ObjectRow);
@@ -12784,12 +12788,16 @@ end;
 
 function TInstantNavigationalQuery.InternalRemoveObject(
   AObject: TObject): Integer;
+var
+  ObjectRow: PObjectRow;
 begin
   Result := IndexOfObject(AObject);
   if Result <> -1 then
   begin
+    ObjectRow := ObjectRows[Result];
     ObjectRowList.Delete(Result);
-    AObject.Free;
+    FreeAndNil(ObjectRow.Instance);
+    Dispose(ObjectRow);
   end;
 end;
 
@@ -14537,7 +14545,7 @@ var
     RefObject:TInstantObjectReference;
     Stream: TInstantStringStream;
     Statement: string;
-    Params: TParams;    
+    Params: TParams;
   begin
     if AttributeMetadata.StorageKind = skExternal then
     begin
