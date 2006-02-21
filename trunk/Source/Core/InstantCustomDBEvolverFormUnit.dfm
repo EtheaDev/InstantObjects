@@ -55,7 +55,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
         Caption = 'Evolution sequence'
         Width = 400
       end>
-    TabOrder = 1
+    TabOrder = 2
     ViewStyle = vsReport
   end
   object EvolveButton: TButton
@@ -64,7 +64,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     Width = 145
     Height = 25
     Action = BuildAction
-    TabOrder = 2
+    TabOrder = 1
   end
   object MoveCommandUpButton: TButton
     Left = 456
@@ -92,7 +92,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     Anchors = [akLeft, akRight, akBottom]
     ReadOnly = True
     ScrollBars = ssBoth
-    TabOrder = 5
+    TabOrder = 7
     WordWrap = False
   end
   object EnableAllButton: TButton
@@ -102,7 +102,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     Height = 25
     Action = EnableAllCommandsAction
     Anchors = [akTop, akRight]
-    TabOrder = 6
+    TabOrder = 5
   end
   object DisableAllButton: TButton
     Left = 456
@@ -111,7 +111,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     Height = 25
     Action = DisableAllCommandsAction
     Anchors = [akTop, akRight]
-    TabOrder = 7
+    TabOrder = 6
   end
   object CloseButton: TButton
     Left = 512
@@ -119,7 +119,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     Width = 75
     Height = 25
     Action = CloseAction
-    Anchors = [akLeft, akBottom]
+    Anchors = [akRight, akBottom]
     Cancel = True
     TabOrder = 8
   end
