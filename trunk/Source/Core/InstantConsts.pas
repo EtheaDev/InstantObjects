@@ -113,6 +113,7 @@ resourcestring
   SErrorRefreshingObject = 'Error refreshing object %s(''%s''): "%s"';
   SErrorRetrievingObject = 'Error retrieving object %s(''%s''): "%s"';
   SErrorStoringObject = 'Error storing object %s(''%s''): "%s"';
+  SExposerChanged = 'Cannot perform this operation on a changed Exposer';
   SFalseString = 'False';
   SFatalError = 'Fatal Error for object %s(''%s''): "%s"';
   SFieldReadError = 'Error reading value from field ''%s'': %s';
