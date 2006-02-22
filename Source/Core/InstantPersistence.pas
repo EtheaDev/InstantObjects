@@ -5790,7 +5790,7 @@ procedure TInstantBlob.LoadDataFromStream(AStream: TStream);
 begin
   if not Assigned(AStream) then
     Exit;
-  Stream.Position := 0;
+  Stream.Clear;
   Stream.CopyFrom(AStream, 0);
   Changed;
 end;
@@ -8295,21 +8295,36 @@ end;
 procedure TInstantObject.FreeCircularReferences;
 
   function IsInsideCircularReference(const AItem: TInstantComplex): Boolean;
+
+    function SameInstances(const AList: TObjectList): Boolean;
+    var
+      I: Integer;
+    begin
+      Result := False;
+      if Assigned(AList) then
+        for I := 1 to Pred(AList.Count) do
+          if TInstantComplex(AList[0]).Owner <> TInstantComplex(AList[I]).Owner then
+            Exit;
+      Result := True;
+    end;
+
   var
     ItemOwner: TInstantObject;
     I: Integer;
+    OwnerRefByOneInstance: Boolean;
   begin
-    Result := Assigned(AItem);
+    Result := Assigned(AItem) and Assigned(AItem.Owner);
     if not Result then
       Exit;
     ItemOwner := AItem.Owner;
     Result := (ItemOwner = Self) or
      IsInsideCircularReference(ItemOwner.OwnerAttribute);
+    OwnerRefByOneInstance := SameInstances(ItemOwner.FRefBy);
     if not Result and Assigned(ItemOwner.FRefBy) then
       for I := 0 to Pred(ItemOwner.FRefBy.Count) do
         if ItemOwner.FRefBy[I] is TInstantComplex then
         begin
-          Result := (ItemOwner.RefCount = 1) and
+          Result := OwnerRefByOneInstance and
            (ItemOwner.RefCount = ItemOwner.FRefBy.Count) and
            IsInsideCircularReference(TInstantComplex(ItemOwner.FRefBy[I]));
           if Result then
