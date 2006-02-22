@@ -55,6 +55,7 @@ type
     function InternalAddToView(AObject: TObject): Integer; override;
     procedure InternalApplyChanges; override;
     procedure InternalClear; override;
+    function InternalGetIsChanged: Boolean; override;
     function InternalGetObjectClassName: string; override;
     function InternalGetObjects(Index: Integer): TObject; override;
     function InternalGetObjectCount: Integer; override;
@@ -185,8 +186,11 @@ end;
 function TInstantObjectAccessor.InternalAddObject(AObject: TObject): Integer;
 begin
   if InContent and (AObject is TInstantObject) then
-    Result := Container.Add(TInstantObject(AObject))
-  else
+  begin
+    Result := Container.Add(TInstantObject(AObject));
+    if Container is TInstantParts then
+      TInstantObject(AObject).AddRef;
+  end else
     Result := -1;
 end;
 
@@ -204,6 +208,11 @@ procedure TInstantObjectAccessor.InternalClear;
 begin
   if InContent then
     Container.Clear;
+end;
+
+function TInstantObjectAccessor.InternalGetIsChanged: Boolean;
+begin
+  Result := Subject.IsChanged;
 end;
 
 function TInstantObjectAccessor.InternalGetObjectClassName: string;
@@ -266,6 +275,8 @@ begin
   if InContent and (AObject is TInstantObject) then
   begin
     Container.Insert(Index, TInstantObject(AObject));
+    if Container is TInstantParts then
+      TInstantObject(AObject).AddRef;
     Result := Index;
   end else
     Result := -1;
