@@ -7204,7 +7204,7 @@ var
   Index: Integer;
 begin
   Index := IndexOf(AObject);
-  Result := Index >= 0;
+  Result := (Index >= 0) and ObjectReferenceList.RefItems[Index].HasInstance;
   if Result then
     ObjectReferenceList.RefItems[Index].DestroyInstance;
 end;
