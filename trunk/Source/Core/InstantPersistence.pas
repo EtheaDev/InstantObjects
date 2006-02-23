@@ -13781,7 +13781,7 @@ begin
   try
     Result := Broker.Execute(AStatement, AParams);
     Info.Success := Result >= 1;
-    Info.Conflict := not Info.Success or (ConflictAction = caIgnore);
+    Info.Conflict := not (Info.Success or (ConflictAction = caIgnore));
   except
     on EAbort do
       raise;
