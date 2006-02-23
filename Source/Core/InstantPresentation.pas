@@ -4504,7 +4504,7 @@ end;
 
 function TInstantSelector.GetConnector: TInstantConnector;
 begin
-  if Assigned(FConnector) or (csDesigning in ComponentState) then
+  if Assigned(FConnector) then
     Result := FConnector
   else
     Result := InstantDefaultConnector;
