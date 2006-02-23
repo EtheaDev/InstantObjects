@@ -268,12 +268,14 @@ end;
 
 procedure TInstantIBXConnector.InternalCommitTransaction;
 begin
-  Transaction.Commit;
+  if Transaction.InTransaction then
+    Transaction.Commit;
 end;
 
 procedure TInstantIBXConnector.InternalRollbackTransaction;
 begin
-  Transaction.Rollback;
+  if Transaction.InTransaction then
+    Transaction.Rollback;
 end;
 
 procedure TInstantIBXConnector.InternalStartTransaction;
