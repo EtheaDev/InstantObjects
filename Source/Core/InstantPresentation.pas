@@ -3799,6 +3799,7 @@ begin
   Result := InternalRemoveObject(AObject);
   if Result <> -1 then
     Refresh;
+  FRemovedObject := nil;  
 end;
 
 procedure TInstantCustomExposer.Reset;
