@@ -2145,6 +2145,8 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
       case AttributeMetadata.AttributeType of
         atBlob:
           Result := ftBlob;
+        atGraphic:
+          Result := ftGraphic;
         atMemo:
           Result := ftMemo;
       else

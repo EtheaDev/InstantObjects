@@ -3120,7 +3120,7 @@ begin
       else if (p[0] = #$47) and (p[1] = #$49) and (p[2] = #$46) then Result := gffGif;
     finally
       AStream.Position := 0;
-    end;    
+    end;
   finally
     Freemem( p );
   end;
@@ -5790,8 +5790,7 @@ procedure TInstantBlob.LoadDataFromStream(AStream: TStream);
 begin
   if not Assigned(AStream) then
     Exit;
-  Stream.Clear;
-  Stream.CopyFrom(AStream, 0);
+  Stream.LoadFromStream(AStream);
   Changed;
 end;
 
@@ -5825,7 +5824,7 @@ end;
 procedure TInstantBlob.SaveDataToStream(AStream: TStream);
 begin
   if Assigned(AStream) then
-    AStream.CopyFrom(Stream, 0);
+    Stream.SaveToStream(AStream);
 end;
 
 procedure TInstantBlob.SetAsString(const AValue: string);
