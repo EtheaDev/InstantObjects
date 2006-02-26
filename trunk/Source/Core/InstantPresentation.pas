@@ -1639,9 +1639,9 @@ end;
 procedure TInstantRecordBuffer.RegisterAsDeleted(ARecNo: Integer;
   AAutoApplyChanges: Boolean);
 begin
-  { TODO : Por que executar UndoChanges? }
-  {if UpdateStatus = usModified then
-    UndoChanges;}
+  if UpdateStatus = usModified then
+    // Roll back changes, so RevertDeleted will restore the original object
+    UndoChanges;
   if UpdateStatus <> usInserted then
   begin
     FDeletedObjectBM.RecNo := ARecNo;
@@ -1857,6 +1857,7 @@ procedure TInstantContentBuffer.RevertChanges(AExposer: TInstantCustomExposer);
       // Only Selectors can AutoStore new objects
       ARecordBuffer.Subject.Dispose;
     AExposer.InternalRemoveObject(ARecordBuffer.Subject);  // Friend class
+    AExposer.Resync([]);
   end;
 
   var
@@ -1900,6 +1901,7 @@ begin
     end;
   if SubjectChanged then
     (AExposer.Subject as TInstantObject).Store;
+  FreeRecordBufferList;
 end;
 
 { TInstantCustomExposer }
@@ -2221,6 +2223,7 @@ begin
     GotoObject(AObject);
     if FSaveRevertBuffer then
       ContentBuffer.RegisterAsInserted(AObject);
+    FContentChanged := True;
   end;
 end;
 
@@ -2233,8 +2236,13 @@ procedure TInstantCustomExposer.ApplyChanges;
 begin
   PostChanges;
   Accessor.ApplyChanges;
-  if InContent and not AutoApplyChanges and Assigned(FContentBuffer) then
-    FContentBuffer.DisposeDeletedObjects;
+  if Assigned(FContentBuffer) then
+  begin
+    if InContent and not AutoApplyChanges then
+      FContentBuffer.DisposeDeletedObjects;
+    FreeAndNil(FContentBuffer);
+  end;
+  FContentChanged := False;
 end;
 
 procedure TInstantCustomExposer.AssignFieldValue(Field: TField; Value: Variant);
@@ -3133,6 +3141,7 @@ begin
     GotoObject(AObject);
     if FSaveRevertBuffer then
       ContentBuffer.RegisterAsInserted(AObject);
+    FContentChanged := True;
   end;
 end;
 
@@ -3357,9 +3366,9 @@ begin
     FContentChanged := True;
   end;
   FreeAndNil(FRecordBuffer);
-  AutoStore(AObject);
   if (State = dsInsert) and (eoDeferInsert in Options) then
     PutObject(ActiveBuffer, AObject, False);
+  AutoStore(AObject);
   NewPos := Accessor.RepositionObject(AObject);
   if NewPos >= 0 then
     FRecNo := Succ(NewPos);
@@ -3383,10 +3392,8 @@ begin
   begin
     DisableChanges;
     try
-      Result := RemoveObject(AObject);
       FRemovedObject := AObject;
-      if Result >= 0 then
-        Resync([]);
+      Result := RemoveObject(AObject);
     finally
       EnableChanges;
     end;
@@ -3796,10 +3803,25 @@ end;
 
 function TInstantCustomExposer.RemoveObject(AObject: TObject): Integer;
 begin
-  Result := InternalRemoveObject(AObject);
-  if Result <> -1 then
-    Refresh;
-  FRemovedObject := nil;  
+  if AObject is TInstantObject then
+    TInstantObject(AObject).AddRef;
+  try
+    Result := InternalRemoveObject(AObject);
+    if Result <> -1 then
+    begin
+      if InContent then
+      begin
+        if FSaveRevertBuffer then
+          ContentBuffer.RegisterAsDeleted(AObject, Succ(Result));
+        FContentChanged := True;
+      end;
+      Refresh;
+    end;
+    FRemovedObject := nil;
+  finally
+    if AObject is TInstantObject then
+      TInstantObject(AObject).Free;
+  end;
 end;
 
 procedure TInstantCustomExposer.Reset;
