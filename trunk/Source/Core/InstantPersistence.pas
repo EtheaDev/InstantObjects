@@ -91,7 +91,8 @@ type
     atDateTime, atBlob, atMemo, atGraphic, atPart, atReference, atParts, atReferences);
   TInstantAttributeCategory = (acUnknown, acSimple, acElement, acContainer);
 
-  TInstantGraphicFileFormat = (gffUnknow, gffBmp, gffTiff, gffJpeg, gffPng, gffDcx, gffPcx, gffEmf, gffGif);
+  TInstantGraphicFileFormat = (gffUnknown, gffBmp, gffTiff, gffJpeg, gffPng,
+    gffDcx, gffPcx, gffEmf, gffGif);
 
   TInstantAttributeMetadata = class(TInstantMetadata)
   private
@@ -3088,41 +3089,55 @@ end;
 
 function InstantResolveGraphicFileType(AStream: TStream): TInstantGraphicFileFormat;
 var
-  p: pChar;
+  P: PChar;
+  StreamLength: Longint;
 begin
-  Result := gffUnknow;
-  if not Assigned( AStream ) then Exit;
-  GetMem( p, 10 );
+  Result := gffUnknown;
+  if not Assigned(AStream) then
+    Exit;
+  GetMem(P, 10);
   try
+    StreamLength := AStream.Size;
     AStream.Position := 0;
-    AStream.Read( p[0], 10 );
-    Try
-      { bitmap format }
-      if ( p[0] = #66 ) and ( p[1] = #77 ) then Result := gffBmp
-      { tiff format }
-      else if ( ( p[0] = #73 ) and ( p[1] = #73 ) and ( p[2] = #42 ) and ( p[3] = #0 ) ) or
-         ( ( p[0] = #77 ) and ( p[1] = #77 ) and ( p[2] = #42 ) and ( p[3] =#0 ) ) then Result := gffTiff
-      { jpg format }
-      else if ( p[6] = #74 ) and ( p[7] = #70 ) and ( p[8] = #73 ) and ( p[9] = #70 ) or
-              ( p[6] = #69 ) and ( p[7] = #120 ) and ( p[8] = #105 ) and ( p[9] = #102 ) then Result := gffJpeg
-      { png format }
-      else if ( p[0] = #137 ) and ( p[1] = #80 ) and ( p[2] = #78 ) and ( p[3] = #71 ) and
-         ( p[4] = #13 ) and ( p[5] = #10 ) and ( p[6] = #26 ) and ( p[7] = #10 ) then Result := gffPng
-      { dcx format }
-      else if ( p[0] = #177 ) and ( p[1] = #104 ) and ( p[2] = #222 ) and ( p[3] = #58 ) then Result := gffDcx
-      { pcx format }
-      else if p[0] = #10 then Result := gffPcx
-      { emf format }
-      else if ( p[0] = #215 ) and ( p[1] = #205 ) and ( p[2] = #198 ) and ( p[3] = #154 ) then Result := gffEmf
-      { emf format }
-      else if ( p[0] = #1 ) and ( p[1] = #0 ) and ( p[2] = #0 ) and ( p[3] = #0 ) then Result := gffEmf
-      { GIF format }
-      else if (p[0] = #$47) and (p[1] = #$49) and (p[2] = #$46) then Result := gffGif;
-    finally
-      AStream.Position := 0;
+    AStream.Read(P[0], 10);
+    AStream.Position := 0;
+    // bitmap format
+    if (P[0] = #66) and (P[1] = #77) then
+      Result := gffBmp
+    // tiff format
+    else if ((P[0] = #73) and (P[1] = #73) and (P[2] = #42) and (P[3] = #0))
+     or ((P[0] = #77) and (P[1] = #77) and (P[2] = #42) and (P[3] = #0)) then
+      Result := gffTiff
+    // jpg format
+    else if (P[6] = #74) and (P[7] = #70) and (P[8] = #73) and (P[9] = #70)
+     or (P[6] = #69) and (P[7] = #120) and (P[8] = #105) and (P[9] = #102) then
+      Result := gffJpeg
+    // png format
+    else if (P[0] = #137 ) and (P[1] = #80) and (P[2] = #78) and (P[3] = #71)
+     and (P[4] = #13) and (P[5] = #10) and (P[6] = #26) and (P[7] = #10) then
+      Result := gffPng
+    // dcx format
+    else if (P[0] = #177) and (P[1] = #104) and (P[2] = #222) and (P[3] = #58) then
+      Result := gffDcx
+    // pcx format
+    else if p[0] = #10 then
+      Result := gffPcx
+    // emf format
+    else if ((P[0] = #215) and (P[1] = #205) and (P[2] = #198) and (P[3] = #154))
+     or ((P[0] = #1) and (P[1] = #0) and (P[2] = #0) and (P[3] = #0)) then
+      Result := gffEmf
+    // gif format
+    else if (P[0] = #$47) and (P[1] = #$49) and (P[2] = #$46) then
+      Result := gffGif
+    // bitmap format with TGraphicHeader header }
+    else if (P[0] = #01) and (P[1] = #00) and (P[2] = #00) and (P[3] = #01)
+     and (PLongint(@p[4])^ = StreamLength - 8) then
+    begin
+      Result := gffBmp;
+      AStream.Position := 8;
     end;
   finally
-    Freemem( p );
+    Freemem(P);
   end;
 end;
 
@@ -5919,7 +5934,7 @@ begin
   begin
     Stream.Position := 0;
     InstantGraphicFileFormat := InstantResolveGraphicFileType(Stream);
-    if InstantGraphicFileFormat = gffUnknow then
+    if InstantGraphicFileFormat = gffUnknown then
       raise EInstantError.Create(SUnsupportedGraphicStream);
     GraphicClass := InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat);
     if not Assigned(GraphicClass) then
@@ -8168,7 +8183,7 @@ begin
        Abort;
      vrError:
        raise EInstantError.CreateFmt(SDeniedStore, [ClassName, Id]);
-   end;
+  end;
   DoBeforeStore;
   if not IsOwned then
   begin
