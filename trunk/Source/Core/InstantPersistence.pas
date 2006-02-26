@@ -7537,6 +7537,8 @@ end;
 
 procedure TInstantObject.ApplyState;
 begin
+  if FSaveStateLevel = 0 then
+    Exit;
   if FSaveStateLevel = 1 then
     try
       SavedState.Assign(State);
@@ -8791,6 +8793,8 @@ procedure TInstantObject.RestoreState;
 var
   vInCache: Boolean;
 begin
+  if FSaveStateLevel = 0 then
+    Exit;
   if (FSaveStateLevel = 1) and not IsAbandoned then
     try
       vInCache := ObjectStore.Find(Self.PersistentId) = Self;
@@ -8868,7 +8872,6 @@ procedure TInstantObject.SaveState;
 begin
   if State.PersistentId = '' then
     Exit;
-
   if FSaveStateLevel = 0 then
     try
       SavedState.Assign(State);
