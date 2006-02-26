@@ -222,7 +222,7 @@ type
   public
     constructor Create(AObject: TObject; AOwner: TInstantContentBuffer = nil);
     destructor Destroy; override;
-    procedure RegisterAsDeleted(ARecNo: Integer; AAutoApplyChanges: Boolean);
+    procedure RegisterAsDeleted(ARecNo: Integer; AAutoApplyChanges, ACanDispose: Boolean);
     procedure RegisterAsInserted;
     procedure RegisterAsModified;
     procedure RegisterField(AField: TField);
@@ -241,6 +241,7 @@ type
   TInstantContentBuffer = class(TObject)
   private
     FAutoApplyChanges: Boolean;
+    FCanDispose: Boolean;
     FRecordBufferList: TList;
     procedure FreeRecordBufferList;
     function GetRecordBuffer(AIndex: Integer): TInstantRecordBuffer;
@@ -251,11 +252,12 @@ type
     function FindRecordBufferIndex(AObject: TObject): Integer;
     procedure RegisterObjectUpdate(AObject: TObject; ARecNo: Integer; AUpdateStatus: TUpdateStatus);
     property AutoApplyChanges: Boolean read FAutoApplyChanges;
+    property CanDispose: Boolean read FCanDispose;
     property RecordBuffer[AIndex: Integer]: TInstantRecordBuffer read GetRecordBuffer;
     property RecordBufferCount: Integer read GetRecordBufferCount;
     property RecordBufferList: TList read GetRecordBufferList;
   public
-    constructor Create(AAutoApplyChanges: Boolean);
+    constructor Create(AAutoApplyChanges, ACanDispose: Boolean);
     destructor Destroy; override;
     procedure AddRecordBuffer(ARecordBuffer: TInstantRecordBuffer);
     procedure DisposeDeletedObjects;
@@ -317,6 +319,7 @@ type
     procedure ClearRecord(Buffer: PChar);
     function DataFieldsSize: Integer;
     function GetAutoApplyChanges: Boolean;
+    function GetCanDispose: Boolean;
     function GetContentBuffer: TInstantContentBuffer;
     function GetCurrentBuffer: PChar;
     function GetDesignClass: TInstantCodeClass;
@@ -461,6 +464,7 @@ type
     procedure DoBeforeRefresh; override;
     property Accessor: TInstantAccessor read GetAccessor;
     property AutoApplyChanges: Boolean read GetAutoApplyChanges;
+    property CanDispose: Boolean read GetCanDispose;
     property ContainerName: string read FContainerName write SetContainerName;
     property ContentBuffer: TInstantContentBuffer read GetContentBuffer;
     property CurrentBuffer: PChar read GetCurrentBuffer;
@@ -1637,7 +1641,7 @@ begin
 end;
 
 procedure TInstantRecordBuffer.RegisterAsDeleted(ARecNo: Integer;
-  AAutoApplyChanges: Boolean);
+  AAutoApplyChanges, ACanDispose: Boolean);
 begin
   if UpdateStatus = usModified then
     // Roll back changes, so RevertDeleted will restore the original object
@@ -1646,7 +1650,7 @@ begin
   begin
     FDeletedObjectBM.RecNo := ARecNo;
     FDeletedObjectBM.Instance.Free;
-    if AAutoApplyChanges then
+    if AAutoApplyChanges and ACanDispose then
       FDeletedObjectBM.Instance := Subject.Clone
     else
     begin
@@ -1715,10 +1719,11 @@ begin
     RecordBufferList.Add(ARecordBuffer);
 end;
 
-constructor TInstantContentBuffer.Create(AAutoApplyChanges: Boolean);
+constructor TInstantContentBuffer.Create(AAutoApplyChanges, ACanDispose: Boolean);
 begin
   inherited Create;
   FAutoApplyChanges := AAutoApplyChanges;
+  FCanDispose := ACanDispose; 
 end;
 
 destructor TInstantContentBuffer.Destroy;
@@ -1731,7 +1736,7 @@ procedure TInstantContentBuffer.DisposeDeletedObjects;
 var
   I: Integer;
 begin
-  if not AutoApplyChanges then
+  if not AutoApplyChanges and CanDispose then
     for I := 0 to Pred(RecordBufferCount) do
       if RecordBuffer[I].UpdateStatus = usDeleted then
         with RecordBuffer[I].FDeletedObjectBM.Instance do
@@ -1830,7 +1835,7 @@ begin
     usInserted:
       VRecordBuffer.RegisterAsInserted;
     usDeleted:
-      VRecordBuffer.RegisterAsDeleted(ARecNo, AutoApplyChanges);
+      VRecordBuffer.RegisterAsDeleted(ARecNo, AutoApplyChanges, CanDispose);
     else
       ;
   end;
@@ -1872,13 +1877,13 @@ procedure TInstantContentBuffer.RevertChanges(AExposer: TInstantCustomExposer);
       else
         AExposer.InternalInsertObject(DeletedObjectRecNo,
          DeletedObjectInstance);  // Friend class
-      if AutoApplyChanges then
+      if AutoApplyChanges and CanDispose then
       begin
         if AExposer is TInstantSelector then
           // TInstantQuery - TheObject.Store is enough
           DeletedObjectInstance.Store
         else
-          // TInstantParts or TInstantReferences - need to call Subject.Store
+          // TInstantParts - need to call Subject.Store
           SubjectChanged := True;
       end;
     end;
@@ -2257,7 +2262,7 @@ end;
 
 procedure TInstantCustomExposer.AutoDispose(AObject: TObject);
 begin
-  if AutoApplyChanges and (AObject is TInstantObject) then
+  if AutoApplyChanges and (AObject is TInstantObject) and CanDispose then
     with TInstantObject(AObject) do
       if CanDispose then
         Dispose;
@@ -2638,6 +2643,14 @@ begin
   Result := GetRecInfo(Buffer).BookmarkFlag;
 end;
 
+function TInstantCustomExposer.GetCanDispose: Boolean;
+begin
+  if InContent and (Subject is TInstantObject) then
+    Result := not (TInstantObject(Subject).FindContainer(ContainerName) is TInstantReferences)
+  else
+    Result := True;
+end;
+
 function TInstantCustomExposer.GetCanModify: Boolean;
 begin
   Result := inherited GetCanModify and HasSubject and not ReadOnly;
@@ -2646,7 +2659,7 @@ end;
 function TInstantCustomExposer.GetContentBuffer: TInstantContentBuffer;
 begin
   if not Assigned(FContentBuffer) then
-    FContentBuffer := TInstantContentBuffer.Create(AutoApplyChanges);
+    FContentBuffer := TInstantContentBuffer.Create(AutoApplyChanges, CanDispose);
   Result := FContentBuffer;
 end;
 
