@@ -1001,8 +1001,6 @@ end;
 function TInstantAccessor.AddObject(AObject: TObject): Integer;
 begin
   Result := InternalAddObject(AObject);
-  if Altered then
-    Result := AddToView(AObject);
   ChangedData;
 end;
 
@@ -1307,8 +1305,6 @@ function TInstantAccessor.InsertObject(Index: Integer;
   AObject: TObject): Integer;
 begin
   Result := InternalInsertObject(Index, AObject);
-  if Altered then
-    Result := InsertInView(Index, AObject);
   ChangedData;
 end;
 
@@ -1453,8 +1449,6 @@ end;
 function TInstantAccessor.RemoveObject(AObject: TObject): Integer;
 begin
   Result := InternalRemoveObject(AObject);
-  if Altered then
-    Result := RemoveFromView(AObject);
   ChangedData;
 end;
 
