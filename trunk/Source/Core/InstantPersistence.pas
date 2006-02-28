@@ -1433,7 +1433,8 @@ type
   TInstantQuery = class;
 
   TInstantSchemeEvent = procedure(Sender: TObject; Scheme: TInstantScheme) of object;
-  TInstantGenerateIdEvent = procedure(Sender: TObject; var Id: String) of object;
+  TInstantGenerateIdEvent = procedure(Sender: TObject; const AObject: TInstantObject;
+    var Id: string) of object;
 
   TInstantConnector = class(TComponent)
   private
@@ -1483,7 +1484,7 @@ type
     function InternalCreateQuery: TInstantQuery; virtual;
     function InternalCreateScheme(Model: TInstantModel): TInstantScheme; virtual; abstract;
     procedure InternalDisconnect; virtual; abstract;
-    function InternalGenerateId: string; virtual;
+    function InternalGenerateId(const AObject: TInstantObject = nil): string; virtual;
     procedure InternalRollbackTransaction; virtual;
     procedure InternalStartTransaction; virtual;
     function RemoveTransactedObject(AObject: TInstantObject): Integer;
@@ -1503,7 +1504,7 @@ type
     function CreateQuery: TInstantQuery;
     procedure Disconnect;
     function EnsureObjectStore(AClass: TInstantObjectClass): TInstantObjectStore;
-    function GenerateId: string;
+    function GenerateId(const AObject: TInstantObject = nil): string;
     class procedure RegisterClass;
     procedure RegisterClient(Client: TObject);
     procedure RollbackTransaction;
@@ -9225,9 +9226,9 @@ begin
   end;
 end;
 
-function TInstantConnector.GenerateId: string;
+function TInstantConnector.GenerateId(const AObject: TInstantObject = nil): string;
 begin
-  Result := InternalGenerateId;
+  Result := InternalGenerateId(AObject);
 end;
 
 function TInstantConnector.GetBroker: TInstantBroker;
@@ -9366,12 +9367,12 @@ begin
   Result := Broker.CreateQuery;
 end;
 
-function TInstantConnector.InternalGenerateId: string;
+function TInstantConnector.InternalGenerateId(const AObject: TInstantObject = nil): string;
 begin
   if Assigned(FOnGenerateId) then
   begin
     Result := '';
-    FOnGenerateId(Self, Result);
+    FOnGenerateId(Self, AObject, Result);
   end
   else
     Result := InstantGenerateId;
