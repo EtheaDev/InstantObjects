@@ -24,8 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
- * Carlo Barazzetta: Currency and LoginPrompt support
+ * Carlo Barazzetta, Nando Dessena
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantADO;
@@ -195,7 +195,7 @@ uses
 const
   ADOLinkPrefix = 'FILE NAME=';
 
-procedure AssignParameters(Params: TParams; Parameters: TParameters);
+procedure AssignParamsToParameters(Params: TParams; Parameters: TParameters);
 var
   I: Integer;
   Parameter: TParameter;
@@ -214,7 +214,8 @@ begin
         Param := Params.ParamByName(Parameter.Name);
         Parameter.DataType := Param.DataType;
         if Param.ParamType = DB.ptUnknown then
-          Parameter.Direction := pdInput else
+          Parameter.Direction := pdInput
+        else
           Parameter.Direction := TParameterDirection(Param.ParamType);
         Parameter.Attributes := [];
         Parameter.NumericScale := 0;
@@ -949,8 +950,8 @@ end;
 
 procedure TInstantADOQuery.SetParams(Value: TParams);
 begin
-  ParamsObject.Assign(Query.Parameters);
-  AssignParameters(Params, Query.Parameters);
+  ParamsObject.Assign(Value);
+  AssignParamsToParameters(ParamsObject, Query.Parameters);
 end;
 
 procedure TInstantADOQuery.SetStatement(const Value: string);
@@ -1028,7 +1029,7 @@ end;
 procedure TInstantADOMSSQLBroker.AssignDataSetParams(DataSet: TDataSet;
   AParams: TParams);
 begin
-  AssignParameters(AParams,TADOQuery(DataSet).Parameters);
+  AssignParamsToParameters(AParams, TADOQuery(DataSet).Parameters);
 end;
 
 function TInstantADOMSSQLBroker.CreateCatalog(
@@ -1049,7 +1050,7 @@ begin
     Query.Connection := (Connector as TInstantADOConnector).Connection;
     Query.SQL.Text := Statement;
     if Assigned(Params) then
-      AssignParameters(Params, Query.Parameters);
+      AssignParamsToParameters(Params, Query.Parameters);
     Result := Query;
   Except
     Query.Free;
