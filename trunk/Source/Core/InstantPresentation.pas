@@ -3363,6 +3363,9 @@ var
   AObject: TObject;
   NewPos: Integer;
 begin
+{$IFDEF D7+}
+  inherited;
+{$ENDIF}
   AObject := CurrentObject;
   CopyBufferToObject(ActiveBuffer, AObject);
   if InContent then
