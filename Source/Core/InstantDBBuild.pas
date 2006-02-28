@@ -875,7 +875,7 @@ begin
   for iStatement := 0 to Pred(GetSQLStatementCount) do
   begin
     if Result <> '' then
-      Result := Result + sLineBreak;
+      Result := Result + '; ';
     Result := Result + GetSQLStatement(iStatement);
   end;
 end;
