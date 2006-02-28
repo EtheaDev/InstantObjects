@@ -3088,9 +3088,13 @@ begin
 end;
 
 function InstantResolveGraphicFileType(AStream: TStream): TInstantGraphicFileFormat;
+const
+  SizeOfGraphicHeader = 8;
+  MinimumBytesToRead = 10;
 var
   P: PChar;
   StreamLength: Longint;
+  BytesRetrieved: Integer;
 begin
   Result := gffUnknown;
   if not Assigned(AStream) then
@@ -3099,8 +3103,10 @@ begin
   try
     StreamLength := AStream.Size;
     AStream.Position := 0;
-    AStream.Read(P[0], 10);
+    BytesRetrieved := AStream.Read(P[0], MinimumBytesToRead);
     AStream.Position := 0;
+    if BytesRetrieved < MinimumBytesToRead then
+      Exit;
     // bitmap format
     if (P[0] = #66) and (P[1] = #77) then
       Result := gffBmp
@@ -3129,15 +3135,15 @@ begin
     // gif format
     else if (P[0] = #$47) and (P[1] = #$49) and (P[2] = #$46) then
       Result := gffGif
-    // bitmap format with TGraphicHeader header }
+    // bitmap format with TGraphicHeader header
     else if (P[0] = #01) and (P[1] = #00) and (P[2] = #00) and (P[3] = #01)
-     and (PLongint(@p[4])^ = StreamLength - 8) then
+     and (PLongint(@p[4])^ = StreamLength - SizeOfGraphicHeader) then
     begin
       Result := gffBmp;
-      AStream.Position := 8;
+      AStream.Position := SizeOfGraphicHeader;
     end;
   finally
-    Freemem(P);
+    FreeMem(P);
   end;
 end;
 
