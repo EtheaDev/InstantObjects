@@ -20,6 +20,8 @@ type
     Actions: TActionList;
     ActionImages: TImageList;
     EmployeeButtonPanel: TPanel;
+    EmployeeDeleteAction: TAction;
+    EmployeeDeleteButton: TBitBtn;
     EmployeeDeleteItem: TMenuItem;
     EmployeeEditAction: TAction;
     EmployeeEditButton: TBitBtn;
@@ -42,6 +44,7 @@ type
     procedure ActionsUpdate(Action: TBasicAction; var Handled: Boolean);
     procedure EmployeeNewActionExecute(Sender: TObject);
     procedure EmployeeEditActionExecute(Sender: TObject);
+    procedure EmployeeDeleteActionExecute(Sender: TObject);
     procedure EmployeeLookupActionExecute(Sender: TObject);
     procedure EmployeeRemoveActionExecute(Sender: TObject);
     procedure EmployeeExposerCompare(Sender, AObject1, AObject2: TObject;
@@ -71,9 +74,19 @@ var
 begin
   Employee := EmployeeExposer.CurrentObject as TPerson;
   EmployeeEditAction.Enabled := Assigned(Employee);
+  EmployeeDeleteAction.Enabled := Assigned(Employee);
   EmployeeRemoveAction.Enabled := Assigned(Employee);
 
   Handled := True;
+end;
+
+procedure TCompanyEditForm.EmployeeDeleteActionExecute(Sender: TObject);
+var
+  Employee: TPerson;
+begin
+  Employee := EmployeeExposer.CurrentObject as TPerson;
+  if Confirm(Format('Delete "%s"?', [Employee.Name])) then
+    EmployeeExposer.Delete;
 end;
 
 procedure TCompanyEditForm.EmployeeEditActionExecute(Sender: TObject);
@@ -164,6 +177,7 @@ begin
   EmployeeLookupButton.Action := EmployeeLookupAction;
   EmployeeEditButton.Action := EmployeeEditAction;
   EmployeeRemoveButton.Action := EmployeeRemoveAction;
+  EmployeeDeleteButton.Action := EmployeeDeleteAction;
 end;
 
 initialization

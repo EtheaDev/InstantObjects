@@ -3,7 +3,6 @@ inherited CompanyEditForm: TCompanyEditForm
   Top = 250
   Width = 468
   Height = 321
-  ActiveControl = EmployeeGrid
   Caption = 'Company'
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
@@ -31,7 +30,6 @@ inherited CompanyEditForm: TCompanyEditForm
     inherited PageControl: TPageControl
       Width = 456
       Height = 259
-      ActivePage = EmployeeSheet
       inherited DetailsSheet: TTabSheet
         TabVisible = True
         inherited ZipLabel: TLabel
@@ -148,6 +146,15 @@ inherited CompanyEditForm: TCompanyEditForm
             Caption = '&Edit...'
             TabOrder = 2
           end
+          object EmployeeDeleteButton: TBitBtn
+            Left = 10
+            Top = 136
+            Width = 75
+            Height = 25
+            Action = EmployeeDeleteAction
+            Caption = '&Delete'
+            TabOrder = 4
+          end
           object EmployeeLookupButton: TBitBtn
             Left = 10
             Top = 40
@@ -227,6 +234,12 @@ inherited CompanyEditForm: TCompanyEditForm
       ImageIndex = 3
       OnExecute = EmployeeRemoveActionExecute
     end
+    object EmployeeDeleteAction: TAction
+      Caption = '&Delete'
+      Hint = 'Delete'
+      ImageIndex = 4
+      OnExecute = EmployeeDeleteActionExecute
+    end
   end
   object ActionImages: TImageList
     Left = 390
@@ -249,9 +262,7 @@ inherited CompanyEditForm: TCompanyEditForm
       Action = EmployeeRemoveAction
     end
     object EmployeeDeleteItem: TMenuItem
-      Caption = '&Delete'
-      Hint = 'Delete'
-      ImageIndex = 4
+      Action = EmployeeDeleteAction
     end
   end
 end
