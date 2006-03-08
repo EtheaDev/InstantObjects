@@ -273,7 +273,7 @@ type
     Instance: TObject;
   end;
 
-  TInstantExposerOption = (eoAutoApply, eoDeferInsert, eoSyncEdit);
+  TInstantExposerOption = (eoAutoApply, eoDisposeReferences, eoDeferInsert, eoSyncEdit);
   TInstantExposerOptions = set of TInstantExposerOption;
 
   TInstantCustomExposer = class(TDataSet)
@@ -522,7 +522,7 @@ type
     property FieldOptions: TInstantFieldOptions read FFieldOptions write SetFieldOptions default [foThorough];
     property Filtered;
     property Limited: Boolean read GetLimited write SetLimited default False;
-    property Options: TInstantExposerOptions read FOptions write SetOptions default [eoAutoApply];
+    property Options: TInstantExposerOptions read FOptions write SetOptions default [eoAutoApply, eoDisposeReferences];
     property ReadOnly: Boolean read FReadOnly write FReadOnly default False;
     property Sorted: Boolean read GetSorted write SetSorted default False;
     property AfterCancel;
@@ -2401,7 +2401,7 @@ end;
 constructor TInstantCustomExposer.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
-  FOptions := [eoAutoApply];
+  FOptions := [eoAutoApply, eoDisposeReferences];
   BookmarkSize := SizeOf(TInstantBookmark);
   FIsOpen := False;
   FFieldOptions := [foThorough];
@@ -2639,7 +2639,7 @@ end;
 
 function TInstantCustomExposer.GetCanDispose: Boolean;
 begin
-  if InContent and (Subject is TInstantObject) then
+  if not (eoDisposeReferences in FOptions) and InContent and (Subject is TInstantObject) then
     Result := not (TInstantObject(Subject).FindContainer(ContainerName) is TInstantReferences)
   else
     Result := True;
