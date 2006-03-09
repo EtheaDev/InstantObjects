@@ -8312,60 +8312,76 @@ begin
 end;
 
 procedure TInstantObject.FreeCircularReferences;
+var
+  CheckedObjects: TObjectList;
 
   function IsInsideCircularReference(const AItem: TInstantComplex): Boolean;
 
-    function SameInstances(const AList: TObjectList): Boolean;
+    function CanUnassign(const AOwner: TInstantObject): Boolean;
     var
+      CurrentItemOwner: TInstantObject;
       I: Integer;
     begin
-      Result := False;
-      if Assigned(AList) then
-        for I := 1 to Pred(AList.Count) do
-          if TInstantComplex(AList[0]).Owner <> TInstantComplex(AList[I]).Owner then
-            Exit;
       Result := True;
+      if Assigned(AOwner.FRefBy) then
+        for I := 0 to Pred(AOwner.FRefBy.Count) do
+          if AOwner.FRefBy[I] is TInstantComplex then
+          begin
+            CurrentItemOwner := TInstantComplex(AOwner.FRefBy[I]).Owner;
+            Result := TInstantComplex(AOwner.FRefBy[0]).Owner = CurrentItemOwner;
+            if not Result and Assigned(CurrentItemOwner) and
+             Assigned(CurrentItemOwner.FRefBy) and (CurrentItemOwner.FRefBy.Count = 1) then
+              Result := (CurrentItemOwner.RefCount = 1) or
+               ((CurrentItemOwner.RefCount = 2) and (CurrentItemOwner = Self));
+            if not Result then
+              Exit;
+          end;
     end;
 
   var
     ItemOwner: TInstantObject;
     I: Integer;
-    OwnerRefByOneInstance: Boolean;
   begin
     Result := Assigned(AItem) and Assigned(AItem.Owner);
     if not Result then
       Exit;
     ItemOwner := AItem.Owner;
     Result := (ItemOwner = Self) or
+     (CheckedObjects.IndexOf(ItemOwner) > -1) or
      IsInsideCircularReference(ItemOwner.OwnerAttribute);
-    OwnerRefByOneInstance := SameInstances(ItemOwner.FRefBy);
-    if not Result and Assigned(ItemOwner.FRefBy) then
+    if not Result and Assigned(ItemOwner.FRefBy) and CanUnassign(ItemOwner) then
+    begin
+      CheckedObjects.Add(ItemOwner);
       for I := 0 to Pred(ItemOwner.FRefBy.Count) do
         if ItemOwner.FRefBy[I] is TInstantComplex then
         begin
-          Result := OwnerRefByOneInstance and
-           (ItemOwner.RefCount = ItemOwner.FRefBy.Count) and
+          Result := (ItemOwner.RefCount = ItemOwner.FRefBy.Count) and
            IsInsideCircularReference(TInstantComplex(ItemOwner.FRefBy[I]));
           if Result then
             Exit;
         end;
+      end;
   end;
 
 var
   I: Integer;
 begin
-  if Assigned(FRefBy) and (FRefBy.Count = FRefCount-1) then
-    for I := Pred(FRefBy.Count) downto 0 do
-      if FRefBy[I] is TInstantComplex then
-        case TInstantComplex(FRefBy[I]).AttributeType of
-          atReference:
-            if IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
+  CheckedObjects := TObjectList.Create(False);
+  try
+    if Assigned(FRefBy) and (FRefBy.Count = FRefCount-1) then
+      for I := Pred(FRefBy.Count) downto 0 do
+        if (FRefBy[I] is TInstantComplex) and
+         IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
+          case TInstantComplex(FRefBy[I]).AttributeType of
+            atReference:
               TInstantReference(FRefBy[I]).ObjectReference.DestroyInstance;
-          atReferences:
-            if IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
-              with TInstantReferences(FRefBy[I]) do
-                repeat until not DestroyObject(Self);
-        end;
+            atReferences:
+              while TInstantReferences(FRefBy[I]).DestroyObject(Self) do
+                ;
+          end;
+  finally
+    CheckedObjects.Free;
+  end;
 end;
 
 procedure TInstantObject.FreeInstance;
