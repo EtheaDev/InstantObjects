@@ -244,7 +244,10 @@ begin
     try
       FTransaction.DefaultDatabase := Connection;
       FTransaction.Params.Add('read_committed');
+      {$IFDEF D6+}
+      // AutoStopAction property from IBX 5.x is broken
       FTransaction.AutoStopAction := saCommit;
+      {$ENDIF}
     except
       FreeAndNil(FTransaction);
       raise;
