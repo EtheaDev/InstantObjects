@@ -2625,7 +2625,8 @@ type
     procedure Clear;
     procedure Delete(Index: Integer);
     procedure Exchange(Index1, Index2: Integer);
-    function IndexOf(Item: TInstantObject): Integer;
+    function IndexOf(Item: TInstantObject; NeedInstance: Boolean = False): Integer;
+    function IndexOfInstance(Item: TInstantObject): Integer;
     procedure Insert(Index: Integer; Item: TInstantObject);
     procedure Move(CurIndex, NewIndex: Integer);
     function Remove(Item: TInstantObject): Integer;
@@ -7220,8 +7221,8 @@ function TInstantReferences.DestroyObject(AObject: TInstantObject): Boolean;
 var
   Index: Integer;
 begin
-  Index := IndexOf(AObject);
-  Result := (Index >= 0) and ObjectReferenceList.RefItems[Index].HasInstance;
+  Index := ObjectReferenceList.IndexOfInstance(AObject);
+  Result := Index >= 0;
   if Result then
     ObjectReferenceList.RefItems[Index].DestroyInstance;
 end;
@@ -8376,8 +8377,7 @@ begin
             atReference:
               TInstantReference(FRefBy[I]).ObjectReference.DestroyInstance;
             atReferences:
-              while TInstantReferences(FRefBy[I]).DestroyObject(Self) do
-                ;
+              TInstantReferences(FRefBy[I]).DestroyObject(Self);
           end;
   finally
     CheckedObjects.Free;
@@ -15740,17 +15740,23 @@ begin
   Result := FList.Items[Index] as TInstantObjectReference;
 end;
 
-function TInstantObjectReferenceList.IndexOf(Item: TInstantObject): Integer;
+function TInstantObjectReferenceList.IndexOf(Item: TInstantObject;
+  NeedInstance: Boolean = False): Integer;
 var
   Ref: TInstantObjectReference;
 begin
   for Result := 0 to Pred(Count) do
   begin
     Ref := RefItems[Result];
-    if Ref.Equals(Item) then
+    if Ref.Equals(Item) and (not NeedInstance or Ref.HasInstance) then
       Exit;
   end;
   Result := -1;
+end;
+
+function TInstantObjectReferenceList.IndexOfInstance(Item: TInstantObject): Integer;
+begin
+  Result := IndexOf(Item, True);
 end;
 
 procedure TInstantObjectReferenceList.Insert(Index: Integer; Item: TInstantObject);
