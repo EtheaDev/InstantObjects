@@ -36,7 +36,13 @@ uses
   Classes, SysUtils,
   InstantRtti,
   fpcunit,
-  {$IFNDEF FPC}MaskUtils,{$ENDIF}
+  {$IFNDEF FPC}
+    {$IFDEF VER130}
+      Mask,
+    {$ELSE}
+      MaskUtils,
+    {$ENDIF}
+  {$ENDIF}
   {$IFDEF FPC}InstantFpcUtils,{$ENDIF}
   testregistry;
 
@@ -79,8 +85,10 @@ type
 
 implementation
 
+{$IFNDEF VER130}
 uses
   Variants;
+{$ENDIF}
 
 { TTestInstantRtti }
 

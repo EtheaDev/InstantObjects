@@ -181,10 +181,15 @@ begin
 end;
 
 procedure TestTInstantString.TestAsVariant;
-begin                                           
+begin
   FInstantString.AsVariant := 'DifferentString';
+{$IFDEF VER130}
+  AssertEquals('DifferentString', VarToStr(FInstantString.Value));
+  AssertEquals('DifferentString', VarToStr(FInstantString.AsVariant));
+{$ELSE}
   AssertEquals('DifferentString', FInstantString.Value);
   AssertEquals('DifferentString', FInstantString.AsVariant);
+{$ENDIF}
 end;
 
 procedure TestTInstantString.TestName;

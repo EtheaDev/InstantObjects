@@ -652,12 +652,6 @@ initialization
   RegisterTests([TestTInstantExtParts,
                 TestTinstantEmbParts,
                 TestTInstantParts_Leak]);
-{$ELSE}
-  RegisterTests([
-                TestTInstantExtParts,
-                TestTinstantEmbParts,
-                TestTInstantParts_Leak
-                ]);
 {$ENDIF}
 
 end.
