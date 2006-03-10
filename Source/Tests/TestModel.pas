@@ -253,6 +253,7 @@ type
     procedure SetBirthDate(Value: TDateTime);
     procedure SetEmails(Index: Integer; Value: TEmail);
     procedure SetEmployed(Value: Boolean);
+    procedure SetEmployer(const Value: TCompany);
     procedure SetMainEmailAddress(const Value: string);
     procedure SetPicture(const Value: string);
     procedure SetSalary(Value: Currency);
@@ -272,7 +273,7 @@ type
     property AL_hours: Double read GetAL_hours write SetAL_hours;
     property BirthDate: TDateTime read GetBirthDate write SetBirthDate;
     property Employed: Boolean read GetEmployed write SetEmployed;
-    property Employer: TCompany read GetEmployer;
+    property Employer: TCompany read GetEmployer write SetEmployer;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
     property Picture: string read GetPicture write SetPicture;
     property Salary: Currency read GetSalary write SetSalary;
@@ -307,41 +308,54 @@ type
     Name: String(30);
     SubProjects: Parts(TProject) external 'Project_SubProjects';
     Addresses: Parts(TExternalAddress) external 'Project_Addresses';
-    Manager: Reference(TPerson); }
+    Manager: Reference(TContact);
+    Participants: References(TContact) external 'Project_Participants'; }
     _Addresses: TInstantParts;
     _Manager: TInstantReference;
     _Name: TInstantString;
+    _Participants: TInstantReferences;
     _SubProjects: TInstantParts;
   private
     function GetAddressCount: Integer;
     function GetAddresses(Index: Integer): TExternalAddress;
-    function GetManager: TPerson;
+    function GetManager: TContact;
     function GetName: string;
+    function GetParticipantCount: Integer;
+    function GetParticipants(Index: Integer): TContact;
     function GetSubProjectCount: Integer;
     function GetSubProjects(Index: Integer): TProject;
     procedure SetAddresses(Index: Integer; Value: TExternalAddress);
-    procedure SetManager(Value: TPerson);
+    procedure SetManager(Value: TContact);
     procedure SetName(const Value: string);
+    procedure SetParticipants(Index: Integer; Value: TContact);
     procedure SetSubProjects(Index: Integer; Value: TProject);
   public
     function AddAddress(Address: TExternalAddress): Integer;
+    function AddParticipant(Participant: TContact): Integer;
     function AddSubProject(SubProject: TProject): Integer;
     procedure ClearAddresses;
+    procedure ClearParticipants;
     procedure ClearSubProjects;
     procedure DeleteAddress(Index: Integer);
+    procedure DeleteParticipant(Index: Integer);
     procedure DeleteSubProject(Index: Integer);
     function IndexOfAddress(Address: TExternalAddress): Integer;
+    function IndexOfParticipant(Participant: TContact): Integer;
     function IndexOfSubProject(SubProject: TProject): Integer;
     procedure InsertAddress(Index: Integer; Address: TExternalAddress);
+    procedure InsertParticipant(Index: Integer; Participant: TContact);
     procedure InsertSubProject(Index: Integer; SubProject: TProject);
     function RemoveAddress(Address: TExternalAddress): Integer;
+    function RemoveParticipant(Participant: TContact): Integer;
     function RemoveSubProject(SubProject: TProject): Integer;
     property AddressCount: Integer read GetAddressCount;
     property Addresses[Index: Integer]: TExternalAddress read GetAddresses write SetAddresses;
+    property ParticipantCount: Integer read GetParticipantCount;
+    property Participants[Index: Integer]: TContact read GetParticipants write SetParticipants;
     property SubProjectCount: Integer read GetSubProjectCount;
     property SubProjects[Index: Integer]: TProject read GetSubProjects write SetSubProjects;
   published
-    property Manager: TPerson read GetManager write SetManager;
+    property Manager: TContact read GetManager write SetManager;
     property Name: string read GetName write SetName;
   end;
 
@@ -625,6 +639,11 @@ begin
   _Employed.Value := Value;
 end;
 
+procedure TPerson.SetEmployer(const Value: TCompany);
+begin
+  _Employer.Value := Value;
+end;
+
 procedure TPerson.SetMainEmailAddress(const Value: string);
 var
   Email: TEmail;
@@ -678,6 +697,11 @@ begin
   Result := _Addresses.Add(Address);
 end;
 
+function TProject.AddParticipant(Participant: TContact): Integer;
+begin
+  Result := _Participants.Add(Participant);
+end;
+
 function TProject.AddSubProject(SubProject: TProject): Integer;
 begin
   Result := _SubProjects.Add(SubProject);
@@ -686,6 +710,11 @@ end;
 procedure TProject.ClearAddresses;
 begin
   _Addresses.Clear;
+end;
+
+procedure TProject.ClearParticipants;
+begin
+  _Participants.Clear;
 end;
 
 procedure TProject.ClearSubProjects;
@@ -703,6 +732,11 @@ begin
   Result := _Addresses.Count;
 end;
 
+procedure TProject.DeleteParticipant(Index: Integer);
+begin
+  _Participants.Delete(Index);
+end;
+
 procedure TProject.DeleteSubProject(Index: Integer);
 begin
   _SubProjects.Delete(Index);
@@ -713,14 +747,24 @@ begin
   Result := _Addresses[Index] as TExternalAddress;
 end;
 
-function TProject.GetManager: TPerson;
+function TProject.GetManager: TContact;
 begin
-  Result := _Manager.Value as TPerson;
+  Result := _Manager.Value as TContact;
 end;
 
 function TProject.GetName: string;
 begin
   Result := _Name.Value;
+end;
+
+function TProject.GetParticipantCount: Integer;
+begin
+  Result := _Participants.Count;
+end;
+
+function TProject.GetParticipants(Index: Integer): TContact;
+begin
+  Result := _Participants[Index] as TContact;
 end;
 
 function TProject.GetSubProjectCount: Integer;
@@ -738,6 +782,11 @@ begin
   Result := _Addresses.IndexOf(Address);
 end;
 
+function TProject.IndexOfParticipant(Participant: TContact): Integer;
+begin
+  Result := _Participants.IndexOf(Participant);
+end;
+
 function TProject.IndexOfSubProject(SubProject: TProject): Integer;
 begin
   Result := _SubProjects.IndexOf(SubProject);
@@ -746,6 +795,11 @@ end;
 procedure TProject.InsertAddress(Index: Integer; Address: TExternalAddress);
 begin
   _Addresses.Insert(Index, Address);
+end;
+
+procedure TProject.InsertParticipant(Index: Integer; Participant: TContact);
+begin
+  _Participants.Insert(Index, Participant);
 end;
 
 procedure TProject.InsertSubProject(Index: Integer; SubProject: TProject);
@@ -758,6 +812,11 @@ begin
   Result := _Addresses.Remove(Address);
 end;
 
+function TProject.RemoveParticipant(Participant: TContact): Integer;
+begin
+  Result := _Participants.Remove(Participant);
+end;
+
 function TProject.RemoveSubProject(SubProject: TProject): Integer;
 begin
   Result := _SubProjects.Remove(SubProject);
@@ -768,7 +827,7 @@ begin
   _Addresses[Index] := Value;
 end;
 
-procedure TProject.SetManager(Value: TPerson);
+procedure TProject.SetManager(Value: TContact);
 begin
   _Manager.Value := Value;
 end;
@@ -776,6 +835,11 @@ end;
 procedure TProject.SetName(const Value: string);
 begin
   _Name.Value := Value;
+end;
+
+procedure TProject.SetParticipants(Index: Integer; Value: TContact);
+begin
+  _Participants[Index] := Value;
 end;
 
 procedure TProject.SetSubProjects(Index: Integer; Value: TProject);

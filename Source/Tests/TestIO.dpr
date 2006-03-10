@@ -20,8 +20,8 @@ uses
   InstantMock in 'InstantMock.pas',
   TestMockConnector in 'TestMockConnector.pas',
   TestMockBroker in 'TestMockBroker.pas',
-  TestInstantMetadata in 'TestInstantMetadata.pas',
   TestModel in 'TestModel.pas',
+  TestInstantMetadata in 'TestInstantMetadata.pas',
   TestInstantFieldMetadata in 'TestInstantFieldMetadata.pas',
   TestInstantClassMetadata in 'TestInstantClassMetadata.pas',
   TestInstantAttributeMetadata in 'TestInstantAttributeMetadata.pas',
@@ -49,7 +49,8 @@ uses
   TestInstantCache in 'TestInstantCache.pas',
   TestInstantObjectStore in 'TestInstantObjectStore.pas',
   TestInstantParts in 'TestInstantParts.pas',
-  TestInstantReferences in 'TestInstantReferences.pas';
+  TestInstantReferences in 'TestInstantReferences.pas',
+  TestInstantCircularReferences in 'TestInstantCircularReferences.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
