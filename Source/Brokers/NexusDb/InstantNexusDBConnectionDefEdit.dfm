@@ -1,6 +1,6 @@
 object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
-  Left = 1622
-  Top = 49
+  Left = 360
+  Top = 384
   BorderStyle = bsDialog
   Caption = 'NexusDB Connection'
   ClientHeight = 340
