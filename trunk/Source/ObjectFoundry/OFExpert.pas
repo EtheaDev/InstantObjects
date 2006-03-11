@@ -33,7 +33,11 @@ unit OFExpert;
 interface
 
 uses
-  Classes, MMIOAPI, OFOptions, SysUtils, MMToolsAPI, OFDefs;
+  Classes,
+  {$IFDEF VER130}
+  Windows,    // Need in D5 for definition of THandle 
+  {$ENDIF}
+  MMIOAPI, OFOptions, SysUtils, MMToolsAPI, OFDefs;
 
 type
   TObjectFoundryExpert = class(TInterfacedObject, IUnknown, IMMExpert, IInstantObjectsExpert)
@@ -87,7 +91,7 @@ type
 implementation
 
 uses
-  Contnrs, Windows, OFClasses, OFUtils, OFCritic, InstantAttributeEditor,
+  Contnrs, OFClasses, OFUtils, OFCritic, InstantAttributeEditor,
   InstantPersistence, InstantCode, Forms, Controls, Menus, MMEngineDefs,
   OFClassRegWizard, InstantDesignUtils;
 

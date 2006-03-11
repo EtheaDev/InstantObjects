@@ -125,10 +125,15 @@ begin
             begin
               {$IFDEF D6+}
               if VarIsStr(Value) and (VarToStr(Value) = '') then
-              {$ELSE}
-              if Value = '' then
-              {$ENDIF}
                 Value := 0;
+              {$ELSE}
+              case VarType(Value) of
+                varString :   if VarToStr(Value) = '' then
+                                Value := 0;
+                varBoolean:   if (VarToStr(Value) <> '0') then
+                                Value := 1;
+              end;
+              {$ENDIF}
               SetPropValue(AObject, PropInfo^.Name, Value);
             end;
           tkSet:
