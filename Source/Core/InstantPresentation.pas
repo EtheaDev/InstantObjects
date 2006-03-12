@@ -3917,6 +3917,7 @@ begin
     ftBCD:
       begin
         Move(Buffer^, Bcd, SizeOf(Bcd));
+        C := 0;
         BCDToCurr(Bcd,C);
         Value := C;
       end;
