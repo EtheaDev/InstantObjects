@@ -44,7 +44,7 @@ uses
   Windows,
 {$ENDIF}
   Classes, DB, InstantPersistence, InstantCommand,
-  nxllTransport, nxsdServerEngine, nxdb, nxsdDataDictionary;
+  nxptBasePooledTransport, nxsdServerEngine, nxdb, nxsdDataDictionary
 
 type
   TNexusDBTable = class(TnxTable)
@@ -55,7 +55,8 @@ type
     procedure SetRecNo(Value: Integer); override;
   end;
 
-  TInstantNexusDBProtocolType = (ptTCPIP, ptNamedPipes);
+  TInstantNexusDBProtocolType = (ptTCPIP, ptNamedPipes 
+    {$IFNDEF NX1}, ptSharedMemory{$ENDIF});
 
   TInstantNexusDBBaseConnectionDef = class(TInstantRelationalConnectionDef)
   private
@@ -83,10 +84,10 @@ type
     FServerName: string;
   protected
     class function CreateServerEngine(aOwner: TComponent; const aServerName:
-        string; aTransport: TnxBaseTransport): TnxBaseServerEngine;
+        string; aTransport: TnxBasePooledTransport): TnxBaseServerEngine;
     class function CreateTransport(aOwner: TComponent; aProtocolType:
         TInstantNexusDBProtocolType; const aServerName: string; aPort: Integer):
-        TnxBaseTransport;
+        TnxBasePooledTransport;
     procedure InitConnector(Connector: TInstantConnector); override;
   public
     constructor Create(Collection: TCollection); override;
@@ -177,7 +178,9 @@ type
   protected
     function GetDelimiters: string; override;
     function GetQuote: Char; override;
+{$IFDEF NX1}
     function IncludeOrderFields: Boolean; override;
+{$ENDIF}
   end;
 
   TInstantNexusDBQuery = class(TInstantSQLQuery)
@@ -209,6 +212,10 @@ uses
   nxdbBase,
   nxtwWinsockTransport,
   nxtnNamedPipeTransport,
+{$IFNDEF NX1}
+  nxpvPlatformImplementation,
+  nxtmSharedMemoryTransport,
+{$ENDIF}
   nxreRemoteServerEngine,
   InstantNexusDBCatalog;
 
@@ -279,14 +286,13 @@ end;
 constructor TInstantNexusDBConnectionDef.Create(Collection: TCollection);
 begin
   inherited;
-  FServerName := 'NexusDB@localhost';
   FPort := 16000;
   FProtocolType := ptTCPIP;
 end;
 
 { SQL Based ------------------------------------------------------------------ }
 
-{ TInstantNexusDBSQLConnectionDef }
+{ TInstantNexusDBConnectionDef }
 
 class function TInstantNexusDBConnectionDef.ConnectionTypeName: string;
 begin
@@ -300,7 +306,7 @@ begin
 end;
 
 class function TInstantNexusDBConnectionDef.CreateServerEngine(aOwner:
-    TComponent; const aServerName: string; aTransport: TnxBaseTransport):
+    TComponent; const aServerName: string; aTransport: TnxBasePooledTransport):
     TnxBaseServerEngine;
 begin
   Result := TnxRemoteServerEngine.Create(aOwner);
@@ -315,40 +321,27 @@ begin
   end;
 end;
 
-class function TInstantNexusDBConnectionDef.CreateTransport(aOwner:
-    TComponent; aProtocolType: TInstantNexusDBProtocolType; const aServerName:
-    string; aPort: Integer): TnxBaseTransport;
+class function TInstantNexusDBConnectionDef.CreateTransport(aOwner: TComponent;
+    aProtocolType: TInstantNexusDBProtocolType; const aServerName: string;
+    aPort: Integer): TnxBasePooledTransport;
 begin
   case aProtocolType of
-    ptTCPIP:
-      begin
-        Result := TnxWinsockTransport.Create(aOwner);
-        with TnxWinsockTransport(Result) do
-        try
-          ServerName := aServerName;
-          Port := aPort;
-          Active := True;
-        except
-          if Assigned(Result) then
-            FreeAndNil(Result);
-          raise;
-        end;
-      end;
+    ptTCPIP       : Result := TnxWinsockTransport.Create(aOwner);
+    ptNamedPipes  : Result := TnxNamedPipeTransport.Create(aOwner);
+  {$IFNDEF NX1}
+    ptSharedMemory: Result := TnxSharedMemoryTransport.Create(aOwner);
+  {$ENDIF}
+  end;
 
-    ptNamedPipes:
-      begin
-        Result := TnxNamedPipeTransport.Create(aOwner);
-        with TnxNamedPipeTransport(Result) do
-        try
-          ServerName := aServerName;
-          Port := aPort;
-          Active := True;
-        except
-          if Assigned(Result) then
-            FreeAndNil(Result);
-          raise;
-        end;
-      end;
+  with Result do
+  try
+    ServerName := aServerName;
+    Port := aPort;
+    Active := True;
+  except
+    if Assigned(Result) then
+      FreeAndNil(Result);
+    raise;
   end;
 end;
 
@@ -369,7 +362,7 @@ procedure TInstantNexusDBConnectionDef.InitConnector(Connector:
     TInstantConnector);
 var
   SavedCursor: TCursor;
-  Transport: TnxBaseTransport;
+  Transport: TnxBasePooledTransport;
   ServerEngine: TnxBaseServerEngine;
   Session: TnxSession;
   Database: TnxDatabase;
@@ -413,7 +406,7 @@ class procedure TInstantNexusDBConnectionDef.LoadAliasList(aProtocolType:
     TInstantNexusDBProtocolType; const aServerName: string; aPort: Integer;
     aList: TStrings);
 var
-  Transport: TnxBaseTransport;
+  Transport: TnxBasePooledTransport;
   ServerEngine: TnxBaseServerEngine;
   Session: TnxSession;
 begin
@@ -439,7 +432,7 @@ end;
 class procedure TInstantNexusDBConnectionDef.LoadServerList(aProtocolType:
     TInstantNexusDBProtocolType; aPort: Integer; aList: TStrings);
 var
-  Transport: TnxBaseTransport;
+  Transport: TnxBasePooledTransport;
 begin
   Transport := CreateTransport(nil, aProtocolType, '', aPort);
   try
@@ -450,7 +443,7 @@ begin
   end;
 end;
 
-{ TInstantNexusDBSQLConnector }
+{ TInstantNexusDBConnector }
 
 procedure TInstantNexusDBConnector.SetSession(Value: TnxSession);
 begin
@@ -693,7 +686,7 @@ begin
   Database.Close;
 end;
 
-{ TInstantNexusDBSQLBroker }
+{ TInstantNexusDBBroker }
 
 function TInstantNexusDBBroker.GetConnector: TInstantNexusDBConnector;
 begin
@@ -842,10 +835,12 @@ begin
   Result := '''';
 end;
 
+{$IFDEF NX1}
 function TInstantNexusDBTranslator.IncludeOrderFields: Boolean;
 begin
   Result := True;
 end;
+{$ENDIF}
 
 { TInstantNexusDBSQLQuery }
 

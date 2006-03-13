@@ -135,14 +135,14 @@ procedure TInstantNexusDBConnectionDefEditForm.UpdateActions;
 begin
   inherited;
   LoadServersButton.Enabled := TransportTypeRadGrp.Enabled;
-  AliasesCbx.Enabled := not AliasIsPath;
+  AliasesCbx.Enabled := not AliasIsPath and ServersCbx.Enabled;
   LoadAliasesButton.Enabled := AliasesCbx.Enabled;
-  PathEdit.Enabled := AliasIsPath;
+  PathEdit.Enabled := AliasIsPath and ServersCbx.Enabled;
   BrowseButton.Enabled := PathEdit.Enabled;
   OkButton.Enabled :=
-    (not AliasIsPath or (AliasIsPath and DirectoryExists(Alias))) and
-    (ServerName > '') and
-    (Alias > '');
+    (ServerName <> '') and 
+    ((not AliasIsPath and (Alias <> '')) or
+      (AliasIsPath and DirectoryExists(Alias)));
 end;
 
 type
@@ -267,6 +267,9 @@ procedure TInstantNexusDBConnectionDefEditForm.LoadAliases(aList: TStrings);
 var
   SavedCursor: TCursor;
 begin
+  if ServerName = '' then
+    Exit;
+
   try
     SavedCursor := Screen.Cursor;
     try
@@ -295,22 +298,28 @@ begin
       Self.ProtocolType := ProtocolType;
       Self.Port := Port;
 
-      Self.LoadServers(ServersCbx.Items);
+      Self.ServerName := ServerName;
 
       if ServerName <> '' then
       begin
-        Self.ServerName := ServerName;
+        ServersCbx.Items.Add(ServerName);
+        ServersCbx.ItemIndex := ServersCbx.Items.IndexOf(ServerName);
+
         Self.LoadAliases(AliasesCbx.Items);
 
         Self.AliasIsPath := AliasIsPath;
         Self.Alias := Alias;
+      end
+      else
+      begin
+        ServersCbx.Text := SNone;
+        ServersCbx.Enabled := False;
+        AliasesCbx.Text := SNone;
       end;
 
-      // Begin SRM - 14 Mar 2005
       StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat);
       IdDataTypeComboBox.ItemIndex := Ord(ConnectionDef.IdDataType);
       IdSizeEdit.Text := IntToStr(ConnectionDef.IdSize);
-      // End SRM - 14 Mar 2005
     end;
   finally
     Screen.Cursor := SavedCursor;
@@ -328,29 +337,55 @@ begin
     Alias := Self.Alias;
     AliasIsPath := Self.AliasIsPath;
 
-    // Begin SRM - 14 Mar 2005
     ConnectionDef.BlobStreamFormat :=
       TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
     ConnectionDef.IdDataType := TInstantDataType(IdDataTypeComboBox.ItemIndex);
     ConnectionDef.IdSize := StrToInt(IdSizeEdit.Text);
-    // End SRM - 14 Mar 2005
   end;
 end;
 
 procedure TInstantNexusDBConnectionDefEditForm.LoadServersButtonClick(
   Sender: TObject);
 begin
+  ServersCbx.Clear;
+  ServersCbx.Text := SLoadingServers;
+  ServersCbx.Refresh;
+
   LoadServers(ServersCbx.Items);
-  with ServersCbx, Items do
-    ItemIndex := IndexOf(ServerName);
+
+  AliasesCbx.Clear;
+  AliasesCbx.Text := SNone;
+  AliasesCbx.Refresh;
+
+  ServersCbx.Enabled := True;
+  if (ServerName <> '') then
+    ServersCbx.ItemIndex := ServersCbx.Items.IndexOf(ServerName);
+
+  if (ServersCbx.Items.Count > 0) and (ServersCbx.ItemIndex < 0) then
+    ServersCbx.Text := SSelectServerFromList
+  else
+  begin
+    ServersCbx.Text := SNone;
+    ServersCbx.Enabled := False;
+  end;
 end;
 
 procedure TInstantNexusDBConnectionDefEditForm.LoadAliasesButtonClick(
   Sender: TObject);
 begin
+  AliasesCbx.Clear;
+  AliasesCbx.Text := SLoadingAliases;
+  AliasesCbx.Refresh;
+
   LoadAliases(AliasesCbx.Items);
-  with AliasesCbx, Items do
-    ItemIndex := IndexOf(Alias);
+
+  if (Alias <> '') then
+    AliasesCbx.ItemIndex := AliasesCbx.Items.IndexOf(Alias);
+
+  if (AliasesCbx.Items.Count > 0) and (AliasesCbx.ItemIndex < 0) then
+    AliasesCbx.Text := SSelectAliasFromList
+  else
+    AliasesCbx.Text := SNone;
 end;
 
 procedure TInstantNexusDBConnectionDefEditForm.BrowseButtonClick(
@@ -359,18 +394,24 @@ var
   AliasDir: string;
 begin
   AliasDir := Alias;
-  if SelectDirectory(SSelectAnAliasPathPlease, '', AliasDir) then
+  if SelectDirectory(SSelectAnAliasPath, '', AliasDir) then
     Alias := AliasDir;
 end;
 
 procedure TInstantNexusDBConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
-  // Begin SRM - 14 Mar 2005
+  LoadServersButton.Hint := SLoadAvailableNexusDBServers;
+  LoadAliasesButton.Hint := SLoadAvailableAliases;
+  BrowseButton.Hint := SSelectAnAliasPath;
+
   AssignInstantStreamFormat(StreamFormatComboBox.Items);
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
   IdDataTypeComboBox.ItemIndex := Ord(dtString);
   IdSizeEdit.Text := IntToStr(InstantDefaultFieldSize);
-  // End SRM - 14 Mar 2005
+
+  {$IFDEF NX1}
+  TransportTypeRadGrp.Items.Delete(Pred(TransportTypeRadGrp.Items.Count));
+  {$ENDIF}
 end;
 
 end.

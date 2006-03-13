@@ -1,6 +1,6 @@
 object InstantNexusDBEmbeddedConnectionDefEditForm: TInstantNexusDBEmbeddedConnectionDefEditForm
-  Left = 1633
-  Top = 436
+  Left = 475
+  Top = 389
   BorderStyle = bsDialog
   Caption = 'NexusDB Embedded Connection'
   ClientHeight = 275
