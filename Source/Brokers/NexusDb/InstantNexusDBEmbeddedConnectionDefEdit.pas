@@ -191,11 +191,9 @@ begin
       Self.AliasIsPath := AliasIsPath;
       Self.Alias := Alias;
 
-      // Begin SRM - 14 Mar 2005
       StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat);
       IdDataTypeComboBox.ItemIndex := Ord(ConnectionDef.IdDataType);
       IdSizeEdit.Text := IntToStr(ConnectionDef.IdSize);
-      // End SRM - 14 Mar 2005
     end;
   finally
     Screen.Cursor := SavedCursor;
@@ -210,12 +208,10 @@ begin
     Alias := Self.Alias;
     AliasIsPath := Self.AliasIsPath;
 
-    // Begin SRM - 14 Mar 2005
     ConnectionDef.BlobStreamFormat :=
       TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
     ConnectionDef.IdDataType := TInstantDataType(IdDataTypeComboBox.ItemIndex);
     ConnectionDef.IdSize := StrToInt(IdSizeEdit.Text);
-    // End SRM - 14 Mar 2005
   end;
 end;
 
@@ -233,19 +229,20 @@ var
   AliasDir: string;
 begin
   AliasDir := Alias;
-  if SelectDirectory(SSelectAnAliasPathPlease, '', AliasDir) then
+  if SelectDirectory(SSelectAnAliasPath, '', AliasDir) then
     Alias := AliasDir;
 end;
 
 procedure TInstantNexusDBEmbeddedConnectionDefEditForm.FormCreate(Sender:
   TObject);
 begin
-  // Begin SRM - 14 Mar 2005
+  LoadAliasesButton.Hint := SLoadAvailableAliases;
+  BrowseButton.Hint := SSelectAnAliasPath;
+
   AssignInstantStreamFormat(StreamFormatComboBox.Items);
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
   IdDataTypeComboBox.ItemIndex := Ord(dtString);
   IdSizeEdit.Text := IntToStr(InstantDefaultFieldSize);
-  // End SRM - 14 Mar 2005
 end;
 
 end.

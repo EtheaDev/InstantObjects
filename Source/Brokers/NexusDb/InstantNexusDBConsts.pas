@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * 
+ * Steven Mitchell
  * 
  * ***** END LICENSE BLOCK ***** *)
 
@@ -40,7 +40,14 @@ unit InstantNexusDBConsts;
 interface
 
 resourcestring
-  SSelectAnAliasPathPlease = 'Select an alias path please ...';
+  SLoadAvailableAliases = 'Load available aliases';
+  SLoadAvailableNexusDBServers = 'Load available NexusDB servers';
+  SLoadingAliases = 'Loading Aliases ...';
+  SLoadingServers = 'Loading Servers ...';
+  SNone = '[None]';
+  SSelectAliasFromList = '[Select an alias from the list]';
+  SSelectAnAliasPath = 'Select an alias path';
+  SSelectServerFromList = '[Select a server from the list]';
 
 implementation
 

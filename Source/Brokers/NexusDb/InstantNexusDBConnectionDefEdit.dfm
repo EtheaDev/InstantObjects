@@ -1,9 +1,9 @@
 object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
-  Left = 360
-  Top = 384
+  Left = 246
+  Top = 288
   BorderStyle = bsDialog
   Caption = 'NexusDB Connection'
-  ClientHeight = 340
+  ClientHeight = 368
   ClientWidth = 506
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -18,7 +18,7 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 303
+    Top = 331
     Width = 506
     Height = 2
     Align = alBottom
@@ -28,21 +28,22 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 506
-    Height = 303
+    Height = 331
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 4
     TabOrder = 0
     object AliasesLabel: TLabel
       Left = 8
-      Top = 222
+      Top = 255
       Width = 36
       Height = 13
       Caption = '&Aliases:'
+      FocusControl = AliasesCbx
     end
     object PathLabel: TLabel
       Left = 8
-      Top = 250
+      Top = 283
       Width = 25
       Height = 13
       Caption = '&Path:'
@@ -50,7 +51,7 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
     end
     object ServerLabel: TLabel
       Left = 8
-      Top = 108
+      Top = 141
       Width = 34
       Height = 13
       Caption = '&Server:'
@@ -58,16 +59,16 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
     end
     object PortLabel: TLabel
       Left = 8
-      Top = 80
+      Top = 113
       Width = 70
       Height = 13
-      Caption = 'Transport Port:'
+      Caption = 'Transport P&ort:'
       FocusControl = PortEdit
     end
     object NexusDBLogo: TImage
-      Left = 344
+      Left = 348
       Top = 8
-      Width = 153
+      Width = 149
       Height = 81
       Center = True
       Picture.Data = {
@@ -1149,11 +1150,11 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
         C3D4CBC3D4CBC3D4CBC3F5F3F1FFFFFFE172}
     end
     object LoadServersButton: TSpeedButton
-      Left = 312
-      Top = 108
-      Width = 23
+      Left = 348
+      Top = 141
+      Width = 149
       Height = 21
-      Flat = True
+      Caption = '&Load Servers'
       Glyph.Data = {
         36060000424D3606000000000000360400002800000020000000100000000100
         0800000000000002000000000000000000000001000000000000000000000000
@@ -1206,11 +1207,14 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
         FD07F609090909EDFDFDFDFDFDFDFDFDFD08F6F6F6F6F607FDFDFDFDFDFDFDFD
         FDFDEDED0909FDFDFDFDFDFDFDFDFDFDFDFD07070808FDFDFDFD}
       NumGlyphs = 2
+      ParentShowHint = False
+      ShowHint = True
+      Spacing = 8
       OnClick = LoadServersButtonClick
     end
     object LoadAliasesButton: TSpeedButton
       Left = 312
-      Top = 220
+      Top = 253
       Width = 23
       Height = 21
       Flat = True
@@ -1266,11 +1270,13 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
         FD07F609090909EDFDFDFDFDFDFDFDFDFD08F6F6F6F6F607FDFDFDFDFDFDFDFD
         FDFDEDED0909FDFDFDFDFDFDFDFDFDFDFDFD07070808FDFDFDFD}
       NumGlyphs = 2
+      ParentShowHint = False
+      ShowHint = True
       OnClick = LoadAliasesButtonClick
     end
     object BrowseButton: TSpeedButton
       Left = 312
-      Top = 268
+      Top = 301
       Width = 23
       Height = 21
       Flat = True
@@ -1326,11 +1332,13 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
         FD07F609090909EDFDFDFDFDFDFDFDFDFD08F6F6F6F6F607FDFDFDFDFDFDFDFD
         FDFDEDED0909FDFDFDFDFDFDFDFDFDFDFDFD07070808FDFDFDFD}
       NumGlyphs = 2
+      ParentShowHint = False
+      ShowHint = True
       OnClick = BrowseButtonClick
     end
     object StreamFormatLabel: TLabel
       Left = 348
-      Top = 140
+      Top = 173
       Width = 56
       Height = 13
       Caption = 'Blob &format:'
@@ -1338,7 +1346,7 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
     end
     object DatabaseRadGrp: TRadioGroup
       Left = 8
-      Top = 138
+      Top = 171
       Width = 329
       Height = 73
       Caption = '&Database Access Type'
@@ -1347,18 +1355,19 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
         'Alias'
         'Path (NOTE: This is a path on the server!)')
       TabOrder = 4
+      TabStop = True
     end
     object ServersCbx: TComboBox
       Left = 96
-      Top = 108
-      Width = 217
+      Top = 141
+      Width = 241
       Height = 21
       ItemHeight = 13
       TabOrder = 3
     end
     object PathEdit: TEdit
       Left = 8
-      Top = 268
+      Top = 301
       Width = 305
       Height = 21
       TabOrder = 6
@@ -1367,17 +1376,19 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
       Left = 8
       Top = 8
       Width = 329
-      Height = 65
-      Caption = 'Transport Type'
+      Height = 81
+      Caption = '&Transport Type'
       ItemIndex = 0
       Items.Strings = (
         'TCP/IP'
-        'Named Pipes (Windows NT and higher only)')
+        'Named Pipes (Windows NT and higher only)'
+        'Shared Memory')
       TabOrder = 0
+      TabStop = True
     end
     object PortEdit: TEdit
       Left = 96
-      Top = 80
+      Top = 113
       Width = 49
       Height = 21
       TabOrder = 1
@@ -1385,7 +1396,7 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
     end
     object PortUpDown: TUpDown
       Left = 145
-      Top = 80
+      Top = 113
       Width = 16
       Height = 21
       Associate = PortEdit
@@ -1393,11 +1404,13 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
       Max = 32767
       Position = 16000
       TabOrder = 2
+      TabStop = True
       Thousands = False
+      Wrap = False
     end
     object AliasesCbx: TComboBox
       Left = 96
-      Top = 220
+      Top = 253
       Width = 217
       Height = 21
       ItemHeight = 13
@@ -1405,7 +1418,7 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
     end
     object StreamFormatComboBox: TComboBox
       Left = 348
-      Top = 156
+      Top = 189
       Width = 149
       Height = 21
       Style = csDropDownList
@@ -1415,17 +1428,17 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
     end
     object IDGroupBox: TGroupBox
       Left = 348
-      Top = 188
+      Top = 221
       Width = 149
       Height = 103
-      Caption = 'Object ID'
+      Caption = 'Object &ID'
       TabOrder = 8
       object lblIdDataType: TLabel
         Left = 13
         Top = 24
         Width = 53
         Height = 13
-        Caption = 'Data Type:'
+        Caption = 'Data T&ype:'
         FocusControl = IdDataTypeComboBox
       end
       object lblIdSize: TLabel
@@ -1433,8 +1446,8 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
         Top = 72
         Width = 23
         Height = 13
-        Caption = 'Size:'
-        FocusControl = IdDataTypeComboBox
+        Caption = 'Si&ze:'
+        FocusControl = IdSizeEdit
       end
       object IdDataTypeComboBox: TComboBox
         Left = 13
@@ -1456,15 +1469,12 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 305
+    Top = 333
     Width = 506
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    DesignSize = (
-      506
-      35)
     object OkButton: TButton
       Left = 348
       Top = 6
