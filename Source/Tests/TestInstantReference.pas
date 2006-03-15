@@ -96,15 +96,15 @@ begin
   vSource := TInstantReference.Create(FOwner, vAttrMetadata);
   try
     vCategory := TCategory.Create(FConn);
-    AssertEquals(0, vCategory.ReferencedBy.Count);
+    AssertEquals(0, vCategory.RefByCount);
     FInstantReference.Value := vCategory;
-    AssertEquals(1, vCategory.ReferencedBy.Count);
+    AssertEquals(1, vCategory.RefByCount);
     AssertTrue('Value HasVal', FInstantReference.HasValue);
     AssertTrue('Value HasReference', FInstantReference.HasReference);
 
     AssertFalse('vSource HasVal', vSource.HasValue);
     vSource.Assign(FInstantReference);
-    AssertEquals(2, vCategory.ReferencedBy.Count);
+    AssertEquals(2, vCategory.RefByCount);
     AssertEquals(3, vCategory.RefCount);
     AssertTrue('Assign HasVal', vSource.HasValue);
     AssertTrue('Assign HasReference', vSource.HasReference);
