@@ -282,23 +282,36 @@ type
   TCompany = class(TContact)
   {IOMETADATA stored;
     Employees: References(TPerson);
-    NoOfBranches: Integer; }
+    NoOfBranches: Integer;
+    Subsidiaries: References(TCompany); }
     _Employees: TInstantReferences;
     _NoOfBranches: TInstantInteger;
+    _Subsidiaries: TInstantReferences;
   private
     function GetEmployeeCount: Integer;
     function GetEmployees(Index: Integer): TPerson;
     function GetNoOfBranches: Integer;
+    function GetSubsidiaries(Index: Integer): TCompany;
+    function GetSubsidiaryCount: Integer;
     procedure SetNoOfBranches(Value: Integer);
+    procedure SetSubsidiaries(Index: Integer; Value: TCompany);
   public
     function AddEmployee(Employee: TPerson): Integer;
+    function AddSubsidiary(Subsidiary: TCompany): Integer;
     procedure ClearEmployees;
+    procedure ClearSubsidiaries;
     procedure DeleteEmployee(Index: Integer);
+    procedure DeleteSubsidiary(Index: Integer);
     function IndexOfEmployee(Employee: TPerson): Integer;
+    function IndexOfSubsidiary(Subsidiary: TCompany): Integer;
     procedure InsertEmployee(Index: Integer; Employee: TPerson);
+    procedure InsertSubsidiary(Index: Integer; Subsidiary: TCompany);
     function RemoveEmployee(Employee: TPerson): Integer;
+    function RemoveSubsidiary(Subsidiary: TCompany): Integer;
     property EmployeeCount: Integer read GetEmployeeCount;
     property Employees[Index: Integer]: TPerson read GetEmployees;
+    property Subsidiaries[Index: Integer]: TCompany read GetSubsidiaries write SetSubsidiaries;
+    property SubsidiaryCount: Integer read GetSubsidiaryCount;
   published
     property NoOfBranches: Integer read GetNoOfBranches write SetNoOfBranches;
   end;
@@ -878,9 +891,19 @@ end;
 
 { TContact }
 
+function TCompany.RemoveSubsidiary(Subsidiary: TCompany): Integer;
+begin
+  Result := _Subsidiaries.Remove(Subsidiary);
+end;
+
 procedure TCompany.SetNoOfBranches(Value: Integer);
 begin
   _NoOfBranches.Value := Value;
+end;
+
+procedure TCompany.SetSubsidiaries(Index: Integer; Value: TCompany);
+begin
+  _Subsidiaries[Index] := Value;
 end;
 
 function TContact.AddExternalPart(ExternalPart: TExternalPhones): Integer;
@@ -1157,14 +1180,29 @@ begin
   Result := _Employees.Add(Employee)
 end;
 
+function TCompany.AddSubsidiary(Subsidiary: TCompany): Integer;
+begin
+  Result := _Subsidiaries.Add(Subsidiary);
+end;
+
 procedure TCompany.ClearEmployees;
 begin
   _Employees.Clear;
 end;
 
+procedure TCompany.ClearSubsidiaries;
+begin
+  _Subsidiaries.Clear;
+end;
+
 procedure TCompany.DeleteEmployee(Index: Integer);
 begin
   _Employees.Delete(Index);
+end;
+
+procedure TCompany.DeleteSubsidiary(Index: Integer);
+begin
+  _Subsidiaries.Delete(Index);
 end;
 
 function TCompany.GetEmployeeCount: Integer;
@@ -1182,14 +1220,34 @@ begin
   Result := _NoOfBranches.Value;
 end;
 
+function TCompany.GetSubsidiaries(Index: Integer): TCompany;
+begin
+  Result := _Subsidiaries[Index] as TCompany;
+end;
+
+function TCompany.GetSubsidiaryCount: Integer;
+begin
+  Result := _Subsidiaries.Count;
+end;
+
 function TCompany.IndexOfEmployee(Employee: TPerson): Integer;
 begin
   Result := _Employees.IndexOf(Employee);
 end;
 
+function TCompany.IndexOfSubsidiary(Subsidiary: TCompany): Integer;
+begin
+  Result := _Subsidiaries.IndexOf(Subsidiary);
+end;
+
 procedure TCompany.InsertEmployee(Index: Integer; Employee: TPerson);
 begin
   _Employees.Insert(Index, Employee);
+end;
+
+procedure TCompany.InsertSubsidiary(Index: Integer; Subsidiary: TCompany);
+begin
+  _Subsidiaries.Insert(Index, Subsidiary);
 end;
 
 function TCompany.RemoveEmployee(Employee: TPerson): Integer;
