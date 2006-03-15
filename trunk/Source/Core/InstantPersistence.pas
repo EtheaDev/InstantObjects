@@ -1229,7 +1229,9 @@ type
     function GetObjects(Index: Integer): TInstantObject;
     function GetObjectStore: TInstantObjectStore;
     function GetPersistentId: string;
-    function GetReferencedBy: TObjectList;
+    function GetRefBy(Index: Integer): TInstantComplex;
+    function GetRefByCount: Integer;
+    function GetRefByList: TObjectList;
     function GetSavedState: TInstantObjectState;
     function GetState: TInstantObjectState;
     function GetUpdateCount: Integer;
@@ -1298,6 +1300,7 @@ type
     function _AddRef: Integer; stdcall;
     function _Release: Integer; stdcall;
     property DefaultContainer: TInstantContainer read GetDefaultContainer;
+    property RefByList: TObjectList read GetRefByList;
   public
     constructor Clone(Source: TInstantObject;
       AConnector: TInstantConnector = nil); overload; virtual;
@@ -1364,7 +1367,8 @@ type
     property OwnerAttribute: TInstantComplex read FOwnerAttribute;
     property PersistentId: string read GetPersistentId;
     property RefCount: Integer read FRefCount;
-    property ReferencedBy: TObjectList read GetReferencedBy;
+    property RefBy[Index: Integer]: TInstantComplex read GetRefBy;
+    property RefByCount: Integer read GetRefByCount;
     property UpdateCount: Integer read GetUpdateCount;
     property OnAfterContentChange: TInstantContentChangeEvent read FOnAfterContentChange write FOnAfterContentChange;
     property OnAttributeChanged: TInstantAttributeChangeEvent read FOnAttributeChanged write FOnAttributeChanged;
@@ -4478,7 +4482,7 @@ begin
   if HasInstance and FOwnsInstance then
   begin
     if Assigned(FOwner) then
-      FInstance.ReferencedBy.Remove(FOwner);
+      FInstance.RefByList.Remove(FOwner);
     FInstance.Free;
   end;
   FInstance := nil;
@@ -4621,13 +4625,13 @@ begin
     begin
       FInstance.AddRef;
       if Assigned(FOwner) then
-        FInstance.ReferencedBy.Add(FOwner);
+        FInstance.RefByList.Add(FOwner);
     end
     else if not Value and OwnsInstance then
     begin
       FInstance.Release;
       if Assigned(FOwner) then
-        FInstance.ReferencedBy.Remove(FOwner);
+        FInstance.RefByList.Remove(FOwner);
     end;
   FOwnsInstance := Value;
 end;
@@ -8324,19 +8328,18 @@ var
       I: Integer;
     begin
       Result := True;
-      if Assigned(AOwner.FRefBy) then
-        for I := 0 to Pred(AOwner.FRefBy.Count) do
-          if AOwner.FRefBy[I] is TInstantComplex then
-          begin
-            CurrentItemOwner := TInstantComplex(AOwner.FRefBy[I]).Owner;
-            Result := TInstantComplex(AOwner.FRefBy[0]).Owner = CurrentItemOwner;
-            if not Result and Assigned(CurrentItemOwner) and
-             Assigned(CurrentItemOwner.FRefBy) and (CurrentItemOwner.FRefBy.Count = 1) then
-              Result := (CurrentItemOwner.RefCount = 1) or
-               ((CurrentItemOwner.RefCount = 2) and (CurrentItemOwner = Self));
-            if not Result then
-              Exit;
-          end;
+      for I := 0 to Pred(AOwner.RefByCount) do
+        if AOwner.FRefBy[I] is TInstantComplex then
+        begin
+          CurrentItemOwner := TInstantComplex(AOwner.FRefBy[I]).Owner;
+          Result := TInstantComplex(AOwner.FRefBy[0]).Owner = CurrentItemOwner;
+          if not Result and Assigned(CurrentItemOwner) and
+           (CurrentItemOwner.RefByCount = 1) then
+            Result := (CurrentItemOwner.RefCount = 1) or
+             ((CurrentItemOwner.RefCount = 2) and (CurrentItemOwner = Self));
+          if not Result then
+            Exit;
+        end;
     end;
 
   var
@@ -8353,10 +8356,10 @@ var
     if not Result and Assigned(ItemOwner.FRefBy) and CanUnassign(ItemOwner) then
     begin
       CheckedObjects.Add(ItemOwner);
-      for I := 0 to Pred(ItemOwner.FRefBy.Count) do
+      for I := 0 to Pred(ItemOwner.RefByCount) do
         if ItemOwner.FRefBy[I] is TInstantComplex then
         begin
-          Result := (ItemOwner.RefCount = ItemOwner.FRefBy.Count) and
+          Result := (ItemOwner.RefCount = ItemOwner.RefByCount) and
            IsInsideCircularReference(TInstantComplex(ItemOwner.FRefBy[I]));
           if Result then
             Exit;
@@ -8369,8 +8372,8 @@ var
 begin
   CheckedObjects := TObjectList.Create(False);
   try
-    if Assigned(FRefBy) and (FRefBy.Count = FRefCount-1) then
-      for I := Pred(FRefBy.Count) downto 0 do
+    if RefByCount = RefCount - 1 then
+      for I := Pred(RefByCount) downto 0 do
         if (FRefBy[I] is TInstantComplex) and
          IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
           case TInstantComplex(FRefBy[I]).AttributeType of
@@ -8515,7 +8518,20 @@ begin
   Result := State.PersistentId;
 end;
 
-function TInstantObject.GetReferencedBy: TObjectList;
+function TInstantObject.GetRefBy(Index: Integer): TInstantComplex;
+begin
+  Result := RefByList[Index] as TInstantComplex;
+end;
+
+function TInstantObject.GetRefByCount: Integer;
+begin
+  if Assigned(FRefBy) then
+    Result := FRefBy.Count
+  else
+    Result := 0;
+end;
+
+function TInstantObject.GetRefByList: TObjectList;
 begin
   if not Assigned(FRefBy) then
     FRefBy := TObjectList.Create(False);

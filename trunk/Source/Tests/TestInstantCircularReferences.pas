@@ -1,6 +1,6 @@
 (*
  *   InstantObjects Test Suite
- *   TestInstantReferences
+ *   TestInstantCircularReferences
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- *
+ * Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -84,6 +84,13 @@ type
     // +-- C --+
     // Free order: A, B, C
     procedure TestCircularReferences7;
+    // A -> B -> A
+    // |         ^
+    // +--> C ---+
+    // Free order: A, B, C
+    procedure TestCircularReferences8;
+    // A -> A
+    procedure TestCircularReferences9;
   end;
 
 implementation
@@ -180,12 +187,12 @@ begin
     vPerson1.Free;
   end;
   AssertEquals('FOwner.RefCount 1', 2, FOwner.RefCount);
-  AssertEquals('FOwner.ReferencedBy.Count 1', 1, FOwner.ReferencedBy.Count);
+  AssertEquals('FOwner.RefByCount 1', 1, FOwner.RefByCount);
   AssertEquals('FOwner.EmployeeCount 1', 1, FOwner.EmployeeCount);
   AssertEquals('FOwner.Employees[0].RefCount 1',
           1, FOwner.Employees[0].RefCount);
-  AssertEquals('FOwner.Employees[0].ReferencedBy.Count 1',
-          1, FOwner.Employees[0].ReferencedBy.Count);
+  AssertEquals('FOwner.Employees[0].RefByCount 1',
+          1, FOwner.Employees[0].RefByCount);
 
   vCategory := TCategory.Create(FConn);
   try
@@ -197,17 +204,17 @@ begin
     vCategory.Free;
   end;
   AssertEquals('FOwner.RefCount 2', 2, FOwner.RefCount);
-  AssertEquals('FOwner.ReferencedBy.Count 2', 1, FOwner.ReferencedBy.Count);
+  AssertEquals('FOwner.RefByCount 2', 1, FOwner.RefByCount);
 
   AssertEquals('FOwner.Employees[0].RefCount 2',
           1, FOwner.Employees[0].RefCount);
-  AssertEquals('FOwner.Employees[0].ReferencedBy.Count 2',
-          1, FOwner.Employees[0].ReferencedBy.Count);
+  AssertEquals('FOwner.Employees[0].RefByCount 2',
+          1, FOwner.Employees[0].RefByCount);
 
   AssertEquals('FOwner.Employees[0].Category.RefCount 1',
           1, FOwner.Employees[0].Category.RefCount);
-  AssertEquals('FOwner.Employees[0].Category.ReferencedBy.Count 1',
-          1, FOwner.Employees[0].Category.ReferencedBy.Count);
+  AssertEquals('FOwner.Employees[0].Category.RefByCount 1',
+          1, FOwner.Employees[0].Category.RefByCount);
 end;
 
 // A -> B {Parts}-> C -> A
@@ -240,19 +247,19 @@ begin
       vProject.Free;
     end;
   AssertEquals('vPerson.RefCount 1', 2, vPerson.RefCount);
-  AssertEquals('vPerson.ReferencedBy.Count 1', 1, vPerson.ReferencedBy.Count);
+  AssertEquals('vPerson.RefByCount 1', 1, vPerson.RefByCount);
   AssertEquals('vPerson.Projects[0].RefCount', 1, vPerson.Projects[0].RefCount);
-  AssertEquals('vPerson.Projects[0].ReferencedBy.Count',
-          1, vPerson.Projects[0].ReferencedBy.Count);
+  AssertEquals('vPerson.Projects[0].RefByCount',
+          1, vPerson.Projects[0].RefByCount);
   AssertEquals('vPerson.Projects[0].Addresses[0].RefCount',
           1, vPerson.Projects[0].Addresses[0].RefCount);
-  AssertEquals('vPerson.Projects[0].Addresses[0].ReferencedBy.Count',
-          0, vPerson.Projects[0].Addresses[0].ReferencedBy.Count);
+  AssertEquals('vPerson.Projects[0].Addresses[0].RefByCount',
+          0, vPerson.Projects[0].Addresses[0].RefByCount);
   finally
     vPerson.Free;
   end;
 //  AssertEquals('vPerson.RefCount 2', 1, vPerson.RefCount);
-//  AssertEquals('vPerson.ReferencedBy.Count 2', 1, vPerson.ReferencedBy.Count);
+//  AssertEquals('vPerson.RefByCount 2', 1, vPerson.RefByCount);
 end;
 
 // A -> B {Parts}-> C {Parts}-> D -> A
@@ -295,27 +302,27 @@ begin
       vProject.Free;
     end;
     AssertEquals('vPerson.RefCount 1', 2, vPerson.RefCount);
-    AssertEquals('vPerson.ReferencedBy.Count 1', 1, vPerson.ReferencedBy.Count);
+    AssertEquals('vPerson.RefByCount 1', 1, vPerson.RefByCount);
 
     AssertEquals('vPerson.Projects[0].RefCount',
             1, vPerson.Projects[0].RefCount);
-    AssertEquals('vPerson.Projects[0].ReferencedBy.Count',
-            1, vPerson.Projects[0].ReferencedBy.Count);
+    AssertEquals('vPerson.Projects[0].RefByCount',
+            1, vPerson.Projects[0].RefByCount);
 
     AssertEquals('vPerson.Projects[0].SubProjects[0].RefCount',
             1, vPerson.Projects[0].SubProjects[0].RefCount);
-    AssertEquals('vPerson.Projects[0].SubProjects[0].ReferencedBy.Count',
-            0, vPerson.Projects[0].SubProjects[0].ReferencedBy.Count);
+    AssertEquals('vPerson.Projects[0].SubProjects[0].RefByCount',
+            0, vPerson.Projects[0].SubProjects[0].RefByCount);
 
     AssertEquals('vPerson.Projects[0].SubProjects[0].Addresses[0].RefCount',
             1, vPerson.Projects[0].SubProjects[0].Addresses[0].RefCount);
-    AssertEquals('vPerson.Projects[0].SubProjects[0].Addresses[0].ReferencedBy.Count',
-            0, vPerson.Projects[0].SubProjects[0].Addresses[0].ReferencedBy.Count);
+    AssertEquals('vPerson.Projects[0].SubProjects[0].Addresses[0].RefByCount',
+            0, vPerson.Projects[0].SubProjects[0].Addresses[0].RefByCount);
   finally
     vPerson.Free;
   end;
 //  AssertEquals('vPerson.RefCount 2', 1, vPerson.RefCount);
-//  AssertEquals('vPerson.ReferencedBy.Count 2', 1, vPerson.ReferencedBy.Count);
+//  AssertEquals('vPerson.RefByCount 2', 1, vPerson.RefByCount);
 end;
 
 // A -> <- B
@@ -341,12 +348,12 @@ begin
     vPerson1.Free;
   end;
   AssertEquals('FOwner.RefCount 1', 2, FOwner.RefCount);
-  AssertEquals('FOwner.ReferencedBy.Count 1', 1, FOwner.ReferencedBy.Count);
+  AssertEquals('FOwner.RefByCount 1', 1, FOwner.RefByCount);
   AssertEquals('FOwner.EmployeeCount 1', 1, FOwner.EmployeeCount);
   AssertEquals('FOwner.Employees[0].RefCount 1',
           1, FOwner.Employees[0].RefCount);
-  AssertEquals('FOwner.Employees[0].ReferencedBy.Count 1',
-          1, FOwner.Employees[0].ReferencedBy.Count);
+  AssertEquals('FOwner.Employees[0].RefByCount 1',
+          1, FOwner.Employees[0].RefByCount);
 
   vPerson2 := TPerson.Create(FConn);
   try
@@ -359,13 +366,13 @@ begin
     vPerson2.Free;
   end;
   AssertEquals('FOwner.RefCount 1', 2, FOwner.RefCount);
-  AssertEquals('FOwner.ReferencedBy.Count 1', 1, FOwner.ReferencedBy.Count);
+  AssertEquals('FOwner.RefByCount 1', 1, FOwner.RefByCount);
 
   AssertEquals('FOwner.EmployeeCount', 2, FOwner.EmployeeCount);
   AssertEquals('FOwner.Employees[1].RefCount 1',
           1, FOwner.Employees[1].RefCount);
-  AssertEquals('FOwner.Employees[1].ReferencedBy.Count 1',
-          1, FOwner.Employees[1].ReferencedBy.Count);
+  AssertEquals('FOwner.Employees[1].RefByCount 1',
+          1, FOwner.Employees[1].RefByCount);
 
   FOwner.DeleteEmployee(1);
   AssertEquals('FOwner.EmployeeCount', 1, FOwner.EmployeeCount);
@@ -416,13 +423,13 @@ begin
 
     AssertEquals('vPerson.RefCount 1',
             2, vPerson.RefCount);
-    AssertEquals('vPerson.ReferencedBy.Count 1',
-            1, vPerson.ReferencedBy.Count);
+    AssertEquals('vPerson.RefByCount 1',
+            1, vPerson.RefByCount);
 
     AssertEquals('vPerson.Employer.RefCount 1',
             1, vPerson.Employer.RefCount);
-    AssertEquals('vPerson.Employer.ReferencedBy.Count 1',
-            1, vPerson.Employer.ReferencedBy.Count);
+    AssertEquals('vPerson.Employer.RefByCount 1',
+            1, vPerson.Employer.RefByCount);
 
     AssertEquals('vPerson.Employer.EmployeeCount 1',
             0, vPerson.Employer.EmployeeCount);
@@ -431,12 +438,12 @@ begin
             2, vPerson.Employer.ProjectCount);
     AssertEquals('vPerson.Employer.Projects[0].RefCount 1',
             1, vPerson.Employer.Projects[0].RefCount);
-    AssertEquals('vPerson.Employer.Projects[0].ReferencedBy.Count 1',
-            1, vPerson.Employer.Projects[0].ReferencedBy.Count);
+    AssertEquals('vPerson.Employer.Projects[0].RefByCount 1',
+            1, vPerson.Employer.Projects[0].RefByCount);
     AssertEquals('vPerson.Employer.Projects[1].RefCount 1',
             1, vPerson.Employer.Projects[1].RefCount);
-    AssertEquals('vPerson.Employer.Projects[1].ReferencedBy.Count 1',
-            1, vPerson.Employer.Projects[1].ReferencedBy.Count);
+    AssertEquals('vPerson.Employer.Projects[1].RefByCount 1',
+            1, vPerson.Employer.Projects[1].RefByCount);
 
     vPerson.Employer.DeleteProject(1);
     AssertEquals('vPerson.Employer.ProjectCount 1',
@@ -501,13 +508,13 @@ begin
 
     AssertEquals('vPerson.RefCount 1',
             2, vPerson.RefCount);
-    AssertEquals('vPerson.ReferencedBy.Count 1',
-            1, vPerson.ReferencedBy.Count);
+    AssertEquals('vPerson.RefByCount 1',
+            1, vPerson.RefByCount);
 
     AssertEquals('vPerson.Employer.RefCount 1',
             1, vPerson.Employer.RefCount);
-    AssertEquals('vPerson.Employer.ReferencedBy.Count 1',
-            1, vPerson.Employer.ReferencedBy.Count);
+    AssertEquals('vPerson.Employer.RefByCount 1',
+            1, vPerson.Employer.RefByCount);
 
     AssertEquals('vPerson.Employer.EmployeeCount 1',
             0, vPerson.Employer.EmployeeCount);
@@ -516,17 +523,17 @@ begin
             2, vPerson.Employer.ProjectCount);
     AssertEquals('vPerson.Employer.Projects[0].RefCount 1',
             1, vPerson.Employer.Projects[0].RefCount);
-    AssertEquals('vPerson.Employer.Projects[0].ReferencedBy.Count 1',
-            1, vPerson.Employer.Projects[0].ReferencedBy.Count);
+    AssertEquals('vPerson.Employer.Projects[0].RefByCount 1',
+            1, vPerson.Employer.Projects[0].RefByCount);
     AssertEquals('vPerson.Employer.Projects[1].RefCount 1',
             1, vPerson.Employer.Projects[1].RefCount);
-    AssertEquals('vPerson.Employer.Projects[1].ReferencedBy.Count 1',
-            1, vPerson.Employer.Projects[1].ReferencedBy.Count);
+    AssertEquals('vPerson.Employer.Projects[1].RefByCount 1',
+            1, vPerson.Employer.Projects[1].RefByCount);
 
     AssertEquals('vPerson.Employer.Projects[1].Manager.RefCount 1',
             1, vPerson.Employer.Projects[1].Manager.RefCount);
-    AssertEquals('vPerson.Employer.Projects[1].Manager.ReferencedBy.Count 1',
-            1, vPerson.Employer.Projects[1].Manager.ReferencedBy.Count);
+    AssertEquals('vPerson.Employer.Projects[1].Manager.RefByCount 1',
+            1, vPerson.Employer.Projects[1].Manager.RefByCount);
 
     vPerson.Employer.Projects[1].Manager := nil;
     AssertEquals('vPerson.Employer.ProjectCount 1',
@@ -625,13 +632,13 @@ begin
 
     AssertEquals('vPerson.RefCount 1',
             3, vPerson.RefCount);
-    AssertEquals('vPerson.ReferencedBy.Count 1',
-            2, vPerson.ReferencedBy.Count);
+    AssertEquals('vPerson.RefByCount 1',
+            2, vPerson.RefByCount);
 
     AssertEquals('FOwner.RefCount 1',
             3, FOwner.RefCount);
-    AssertEquals('FOwner.ReferencedBy.Count 1',
-            2, FOwner.ReferencedBy.Count);
+    AssertEquals('FOwner.RefByCount 1',
+            2, FOwner.RefByCount);
 
     AssertEquals('FOwner.EmployeeCount 1',
             1, vPerson.Employer.EmployeeCount);
@@ -640,23 +647,23 @@ begin
             1, FOwner.ProjectCount);
     AssertEquals('vProject1.RefCount 1',
             3, vProject1.RefCount);
-    AssertEquals('vProject1.ReferencedBy.Count 1',
-            2, vProject1.ReferencedBy.Count);
+    AssertEquals('vProject1.RefByCount 1',
+            2, vProject1.RefByCount);
 
     AssertEquals('vPerson2.RefCount 1',
             2, vPerson2.RefCount);
-    AssertEquals('vPerson2.ReferencedBy.Count 1',
-            1, vPerson2.ReferencedBy.Count);
+    AssertEquals('vPerson2.RefByCount 1',
+            1, vPerson2.RefByCount);
 
     AssertEquals('vCategory.RefCount 1',
             2, vCategory.RefCount);
-    AssertEquals('vCategory.ReferencedBy.Count 1',
-            1, vCategory.ReferencedBy.Count);
+    AssertEquals('vCategory.RefByCount 1',
+            1, vCategory.RefByCount);
 
     AssertEquals('vCompany2.RefCount 1',
             1, vCompany2.RefCount);
-    AssertEquals('vCompany2.ReferencedBy.Count 1',
-            0, vCompany2.ReferencedBy.Count);
+    AssertEquals('vCompany2.RefByCount 1',
+            0, vCompany2.RefByCount);
 
     vPerson2.Free;   //E
     FOwner.Free;     //B
@@ -666,13 +673,13 @@ begin
   
       AssertEquals('vPerson.RefCount 2',
               2, vPerson.RefCount);
-      AssertEquals('vPerson.ReferencedBy.Count 2',
-              2, vPerson.ReferencedBy.Count);
+      AssertEquals('vPerson.RefByCount 2',
+              2, vPerson.RefByCount);
   
       AssertEquals('FOwner.RefCount 2',
               2, FOwner.RefCount);
-      AssertEquals('FOwner.ReferencedBy.Count 2',
-              2, FOwner.ReferencedBy.Count);
+      AssertEquals('FOwner.RefByCount 2',
+              2, FOwner.RefByCount);
   
       AssertEquals('FOwner.EmployeeCount 2',
               1, vPerson.Employer.EmployeeCount);
@@ -681,23 +688,23 @@ begin
               1, FOwner.ProjectCount);
       AssertEquals('vProject1.RefCount 2',
               2, vProject1.RefCount);
-      AssertEquals('vProject1.ReferencedBy.Count 2',
-              2, vProject1.ReferencedBy.Count);
+      AssertEquals('vProject1.RefByCount 2',
+              2, vProject1.RefByCount);
   
       AssertEquals('vPerson2.RefCount 2',
               1, vPerson2.RefCount);
-      AssertEquals('vPerson2.ReferencedBy.Count 2',
-              1, vPerson2.ReferencedBy.Count);
+      AssertEquals('vPerson2.RefByCount 2',
+              1, vPerson2.RefByCount);
   
       AssertEquals('vCategory.RefCount 2',
               2, vCategory.RefCount);
-      AssertEquals('vCategory.ReferencedBy.Count 2',
-              1, vCategory.ReferencedBy.Count);
+      AssertEquals('vCategory.RefByCount 2',
+              1, vCategory.RefByCount);
   
       AssertEquals('vCompany2.RefCount 2',
               1, vCompany2.RefCount);
-      AssertEquals('vCompany2.ReferencedBy.Count 2',
-              0, vCompany2.ReferencedBy.Count);
+      AssertEquals('vCompany2.RefByCount 2',
+              0, vCompany2.RefByCount);
     finally
       FOwner := nil;
     end;
@@ -743,21 +750,22 @@ begin
 
     AssertEquals('vPerson.RefCount 1',
             3, vPerson.RefCount);
-    AssertEquals('vPerson.ReferencedBy.Count 1',
-            2, vPerson.ReferencedBy.Count);
+    AssertEquals('vPerson.RefByCount 1',
+            2, vPerson.RefByCount);
 
     AssertEquals('FOwner.RefCount 1',
             3, FOwner.RefCount);
-    AssertEquals('FOwner.ReferencedBy.Count 1',
-            2, FOwner.ReferencedBy.Count);
+    AssertEquals('FOwner.RefByCount 1',
+            2, FOwner.RefByCount);
 
     AssertEquals('FOwner.EmployeeCount 1',
             1, vPerson.Employer.EmployeeCount);
 
     AssertEquals('vCompany2.RefCount 1',
             1, vCompany2.RefCount);
-    AssertEquals('vCompany2.ReferencedBy.Count 1',
-            0, vCompany2.ReferencedBy.Count);
+    AssertEquals('vCompany2.RefByCount 1',
+            0, vCompany2.RefByCount);
+
   finally
     vPerson.Free;        //A
     FreeAndNil(FOwner);  //B
@@ -765,6 +773,137 @@ begin
   end;
 end;
 
+// A -> B -> A
+// |         ^
+// +--> C ---+
+// Free order: A, B, C
+procedure TestCircularReferences.TestCircularReferences8;
+var
+  vPerson1: TPerson;
+  vPerson2: TPerson;
+begin
+  vPerson2 := nil;  // C
+
+  FOwner.Name := 'Employer';  // A
+
+  vPerson1 := TPerson.Create(FConn);  // B
+  try
+    vPerson1.Name := 'vPerson1';
+    // A -> B
+    FOwner.AddEmployee(vPerson1);
+
+    vPerson2 := TPerson.Create(FConn);
+    vPerson2.Name := 'vPerson2';
+    // A -> C
+    FOwner.AddEmployee(vPerson2);
+
+    // B -> A
+    vPerson1.Employer := FOwner;
+
+    // C -> A
+    vPerson2.Employer := FOwner;
+
+    AssertEquals('FOwner.RefCount 1',
+            3, FOwner.RefCount);
+    AssertEquals('FOwner.RefByCount 1',
+            2, FOwner.RefByCount);
+
+    AssertEquals('vPerson1.RefCount 1',
+            2, vPerson1.RefCount);
+    AssertEquals('vPerson1.RefByCount 1',
+            1, vPerson1.RefByCount);
+
+    AssertEquals('vPerson2.RefCount 1',
+            2, vPerson2.RefCount);
+    AssertEquals('vPerson2.RefByCount 1',
+            1, vPerson2.RefByCount);
+
+    FOwner.Free;    // A
+    try
+      AssertEquals('FOwner.RefCount 2',
+              2, FOwner.RefCount);
+
+      AssertEquals('vPerson1.RefCount 2',
+              2, vPerson1.RefCount);
+
+      AssertEquals('vPerson2.RefCount 2',
+              2, vPerson2.RefCount);
+
+      vPerson1.Free;       // B
+      try
+        AssertEquals('FOwner.RefCount 3',
+                2, FOwner.RefCount);
+
+        AssertEquals('vPerson1.RefCount 3',
+                1, vPerson1.RefCount);
+
+        AssertEquals('vPerson2.RefCount 3',
+                2, vPerson2.RefCount);
+
+        // This shouldn't raise AV because objects will be checked just after
+        // being removed. If you have problem within this test, just
+        // uncomment the following Exit call:
+
+        // Exit;
+
+        vPerson2.Free;       // C
+
+        try
+          AssertEquals('FOwner.RefCount 4',
+                  0, FOwner.RefCount);
+
+          AssertEquals('vPerson1.RefCount 4',
+                  0, vPerson1.RefCount);
+
+          AssertEquals('vPerson2.RefCount 4',
+                  0, vPerson2.RefCount);
+        finally
+          vPerson2 := nil;
+        end;
+
+      finally
+        vPerson1 := nil;
+      end;
+
+    finally
+      FOwner := nil;
+    end;
+
+  finally
+    FreeAndNil(FOwner);  // A
+    vPerson1.Free;       // B
+    vPerson2.Free;       // C
+  end;
+end;
+
+// A -> A
+procedure TestCircularReferences.TestCircularReferences9;
+begin
+  FOwner.AddSubsidiary(FOwner);
+  try
+    AssertEquals('FOwner.RefCount 1',
+            2, FOwner.RefCount);
+    AssertEquals('FOwner.RefByCount 1',
+            1, FOwner.RefByCount);
+
+    // This shouldn't raise AV because objects will be checked just after
+    // being removed. If you have problem within this test, just
+    // uncomment the following Exit call:
+
+    // Exit;
+
+    FOwner.Free;
+    try
+      AssertEquals('FOwner.RefCount 2',
+              0, FOwner.RefCount);
+    finally
+      FOwner := nil;
+    end;
+
+  finally
+    FreeAndNil(FOwner);
+  end;
+end;
 
 initialization
   // Register any test cases with the test runner
@@ -773,4 +912,4 @@ initialization
 {$ENDIF}
 
 end.
- 
+
