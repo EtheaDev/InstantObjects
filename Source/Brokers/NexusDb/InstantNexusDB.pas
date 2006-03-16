@@ -44,7 +44,7 @@ uses
   Windows,
 {$ENDIF}
   Classes, DB, InstantPersistence, InstantCommand,
-  nxptBasePooledTransport, nxsdServerEngine, nxdb, nxsdDataDictionary
+  nxptBasePooledTransport, nxsdServerEngine, nxdb, nxsdDataDictionary;
 
 type
   TNexusDBTable = class(TnxTable)
