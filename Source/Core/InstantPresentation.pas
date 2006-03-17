@@ -199,6 +199,7 @@ type
     Field: TField;
     Attribute: TInstantAttribute;
     ClonedAttr: TInstantAttribute;
+    PropertyValue: Variant;
   end;
 
   TInstantContentBuffer = class;
@@ -208,7 +209,7 @@ type
     FDeletedObjectBM: TInstantDeletedObjectBookmark;
     FFieldBufferList: TList;
     FOwner: TInstantContentBuffer;
-    FSubject: TInstantObject;
+    FSubject: TObject;
     FUpdateStatus: TUpdateStatus;
     procedure FreeFieldBufferList;
     function GetDeletedObjectInstance: TInstantObject;
@@ -235,7 +236,7 @@ type
     property FieldBuffer[AIndex: Integer]: PInstantFieldBuffer read GetFieldBuffer;
     property FieldBufferCount: Integer read GetFieldBufferCount;
     property IsChanged: Boolean read GetIsChanged;
-    property Subject: TInstantObject read FSubject;
+    property Subject: TObject read FSubject;
     property UpdateStatus: TUpdateStatus read FUpdateStatus;
   end;
 
@@ -1562,10 +1563,10 @@ end;
 constructor TInstantRecordBuffer.Create(AObject: TObject; AOwner: TInstantContentBuffer);
 begin
   inherited Create;
-  if AObject is TInstantObject then
-    FSubject := TInstantObject(AObject);
+  FSubject := AObject;
   FOwner := AOwner;
   FUpdateStatus := usUnmodified;
+  FDeletedObjectBM.Instance := nil;
 end;
 
 destructor TInstantRecordBuffer.Destroy;
@@ -1651,14 +1652,15 @@ begin
   if UpdateStatus <> usInserted then
   begin
     FDeletedObjectBM.RecNo := ARecNo;
-    FDeletedObjectBM.Instance.Free;
-    if AAutoApplyChanges and ADispose then
-      FDeletedObjectBM.Instance := Subject.Clone
-    else
-    begin
-      FDeletedObjectBM.Instance := Subject;
-      Subject.AddRef;
-    end;
+    FreeAndNil(FDeletedObjectBM.Instance);
+    if Subject is TInstantObject then
+      if AAutoApplyChanges and ADispose then
+        FDeletedObjectBM.Instance := TInstantObject(Subject).Clone
+      else
+      begin
+        FDeletedObjectBM.Instance := TInstantObject(Subject);
+        FDeletedObjectBM.Instance.AddRef;
+      end;
     FDeletedObjectBM.WasDisposed := ADispose;
     FUpdateStatus := usDeleted;
   end else
@@ -1681,20 +1683,39 @@ procedure TInstantRecordBuffer.RegisterField(AField: TField);
 var
   VFieldBuffer: PInstantFieldBuffer;
   VAttr: TInstantAttribute;
+  VProperty: Variant;
 begin
-  if not Assigned(FSubject) or
-   not Assigned(AField) or (FindFieldIndex(AField) >= 0) then
-    Exit;
-  VAttr := InstantFindAttribute(AField.FieldName, FSubject);
-  if Assigned(VAttr) then
+  if Assigned(FSubject) and Assigned(AField) and (FindFieldIndex(AField) = -1) then
   begin
+    VAttr := nil;
+    try
+      if FSubject is TInstantObject then
+        VAttr := InstantFindAttribute(AField.FieldName, TInstantObject(FSubject));
+    except
+    end;
+    if Assigned(VAttr) then
+      VarClear(VProperty)
+    else
+      VProperty := InstantGetProperty(FSubject, AField.FieldName);
+
     New(VFieldBuffer);
-    VFieldBuffer.Field := AField;
-    VFieldBuffer.Attribute := VAttr;
-    VFieldBuffer.ClonedAttr :=
-     TInstantAttributeClass(VAttr.ClassType).Create(nil, nil);
-    VFieldBuffer.ClonedAttr.Assign(VAttr);
-    FieldBufferList.Add(VFieldBuffer);
+    VFieldBuffer.ClonedAttr := nil;
+    try
+      VFieldBuffer.Field := AField;
+      VFieldBuffer.Attribute := VAttr;
+      if Assigned(VAttr) then
+      begin
+        VFieldBuffer.ClonedAttr :=
+         TInstantAttributeClass(VAttr.ClassType).Create(nil, nil);
+        VFieldBuffer.ClonedAttr.Assign(VAttr);
+      end;
+      VFieldBuffer.PropertyValue := VProperty;
+      FieldBufferList.Add(VFieldBuffer);
+    except
+      FreeAndNil(VFieldBuffer.ClonedAttr);
+      Dispose(VFieldBuffer);
+      raise;
+    end;
     if UpdateStatus = usUnmodified then
       FUpdateStatus := usModified;
   end;
@@ -1708,7 +1729,10 @@ begin
   begin
     for I := Pred(FieldBufferCount) downto 0 do
       with FieldBuffer[I]^ do
-        Attribute.Assign(ClonedAttr);
+        if Assigned(Attribute) then
+          Attribute.Assign(ClonedAttr)
+        else if not VarIsEmpty(PropertyValue) and not VarIsNull(PropertyValue) then
+          InstantSetProperty(FSubject, Field.FieldName, PropertyValue);
     FreeFieldBufferList;
     FUpdateStatus := usUnmodified;
   end;
@@ -1740,11 +1764,12 @@ var
 begin
   if not AutoApplyChanges then
     for I := 0 to Pred(RecordBufferCount) do
-      if (RecordBuffer[I].UpdateStatus = usDeleted) and
-       RecordBuffer[I].DeletedObjectWasDisposed then
-        with RecordBuffer[I].DeletedObjectInstance do
-          if CanDispose then
-            Dispose;
+      with RecordBuffer[I] do
+        if (UpdateStatus = usDeleted) and
+         Assigned(DeletedObjectInstance) and DeletedObjectWasDisposed then
+          with DeletedObjectInstance do
+            if CanDispose then
+              Dispose;
 end;
 
 function TInstantContentBuffer.FindRecordBuffer(AObject: TObject): TInstantRecordBuffer;
@@ -1861,15 +1886,16 @@ procedure TInstantContentBuffer.RevertChanges(AExposer: TInstantCustomExposer);
   procedure RevertModified(ARecordBuffer: TInstantRecordBuffer);
   begin
     ARecordBuffer.UndoChanges;
-    if AutoApplyChanges then
-      ARecordBuffer.Subject.Store;
+    if AutoApplyChanges and (ARecordBuffer.Subject is TInstantObject) then
+      TInstantObject(ARecordBuffer.Subject).Store;
   end;
 
   procedure RevertInserted(ARecordBuffer: TInstantRecordBuffer);
   begin
-    if AutoApplyChanges and (AExposer is TInstantSelector) then
+    if AutoApplyChanges and (ARecordBuffer.Subject is TInstantObject) and
+     (AExposer is TInstantSelector) then
       // Only Selectors can AutoStore new objects
-      ARecordBuffer.Subject.Dispose;
+      TInstantObject(ARecordBuffer.Subject).Dispose;
     AExposer.InternalRemoveObject(ARecordBuffer.Subject);  // Friend class
     AExposer.Resync([]);
   end;
@@ -1886,11 +1912,12 @@ procedure TInstantContentBuffer.RevertChanges(AExposer: TInstantCustomExposer);
       else
         AExposer.InternalInsertObject(DeletedObjectRecNo,
          DeletedObjectInstance);  // Friend class
-      if AutoApplyChanges and DeletedObjectWasDisposed then
+      if AutoApplyChanges and DeletedObjectWasDisposed and
+       (DeletedObjectInstance is TInstantObject) then
       begin
         if AExposer is TInstantSelector then
           // TInstantQuery - TheObject.Store is enough
-          DeletedObjectInstance.Store
+          TInstantObject(DeletedObjectInstance).Store
         else
           // TInstantParts or TInstantRefereces - need to call Subject.Store
           SubjectChanged := True;
@@ -1913,8 +1940,8 @@ begin
       else
         ;
     end;
-  if SubjectChanged then
-    (AExposer.Subject as TInstantObject).Store;
+  if SubjectChanged and (AExposer.Subject is TInstantObject) then
+    TInstantObject(AExposer.Subject).Store;
   FreeRecordBufferList;
 end;
 
