@@ -1906,6 +1906,7 @@ procedure TInstantContentBuffer.RevertChanges(AExposer: TInstantCustomExposer);
   procedure RevertDeleted(ARecordBuffer: TInstantRecordBuffer);
   begin
     with ARecordBuffer do
+    if Assigned(DeletedObjectInstance) then
     begin
       if DeletedObjectRecNo > AExposer.ObjectCount then
         AExposer.InternalAddObject(DeletedObjectInstance)  // Friend class
