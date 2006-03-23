@@ -1460,8 +1460,9 @@ function TInstantAccessor.RepositionObject(AObject: TObject): Integer;
 begin
   if Altered then
   begin
-    RemoveFromView(AObject);
-    Result := AddToView(AObject);
+    Result := RemoveFromView(AObject);
+    if Result >= 0 then
+      Result := AddToView(AObject);
   end else
     Result := -1;
 end;
@@ -1765,11 +1766,9 @@ begin
   if not AutoApplyChanges then
     for I := 0 to Pred(RecordBufferCount) do
       with RecordBuffer[I] do
-        if (UpdateStatus = usDeleted) and
-         Assigned(DeletedObjectInstance) and DeletedObjectWasDisposed then
-          with DeletedObjectInstance do
-            if CanDispose then
-              Dispose;
+        if (UpdateStatus = usDeleted) and DeletedObjectWasDisposed and
+         DeletedObjectInstance.CanDispose then
+          DeletedObjectInstance.Dispose;
 end;
 
 function TInstantContentBuffer.FindRecordBuffer(AObject: TObject): TInstantRecordBuffer;
@@ -1785,10 +1784,9 @@ end;
 
 function TInstantContentBuffer.FindRecordBufferIndex(AObject: TObject): Integer;
 begin
-  if AObject is TInstantObject then
-    for Result := 0 to Pred(RecordBufferCount) do
-      if RecordBuffer[Result].Subject = AObject then
-        Exit;
+  for Result := 0 to Pred(RecordBufferCount) do
+    if RecordBuffer[Result].Subject = AObject then
+      Exit;
   Result := -1;
 end;
 
@@ -1888,6 +1886,7 @@ procedure TInstantContentBuffer.RevertChanges(AExposer: TInstantCustomExposer);
     ARecordBuffer.UndoChanges;
     if AutoApplyChanges and (ARecordBuffer.Subject is TInstantObject) then
       TInstantObject(ARecordBuffer.Subject).Store;
+    AExposer.Accessor.RepositionObject(ARecordBuffer.Subject);  // Friend class
   end;
 
   procedure RevertInserted(ARecordBuffer: TInstantRecordBuffer);
@@ -1913,12 +1912,11 @@ procedure TInstantContentBuffer.RevertChanges(AExposer: TInstantCustomExposer);
       else
         AExposer.InternalInsertObject(DeletedObjectRecNo,
          DeletedObjectInstance);  // Friend class
-      if AutoApplyChanges and DeletedObjectWasDisposed and
-       (DeletedObjectInstance is TInstantObject) then
+      if AutoApplyChanges and DeletedObjectWasDisposed then
       begin
         if AExposer is TInstantSelector then
           // TInstantQuery - TheObject.Store is enough
-          TInstantObject(DeletedObjectInstance).Store
+          DeletedObjectInstance.Store
         else
           // TInstantParts or TInstantRefereces - need to call Subject.Store
           SubjectChanged := True;
@@ -3912,16 +3910,15 @@ begin
   finally
     List.Free;
   end;
+  if State in [dsEdit, dsInsert] then
+    Cancel;
   if InContent and Assigned(FContentBuffer) then
   begin
     FContentBuffer.RevertChanges(Self);
     FreeAndNil(FContentBuffer);
     FContentChanged := False;
   end else if not InContent then
-  begin
-    Undo;
     RefreshDataView;
-  end;
 end;
 
 procedure TInstantCustomExposer.SaveField(Field: TField);
@@ -4465,8 +4462,16 @@ end;
 
 function TInstantQueryAccessor.InternalAddObject(
   AObject: TObject): Integer;
+var
+  Index: Integer;
 begin
   Result := Subject.AddObject(AObject);
+  if Altered then
+  begin
+    Index := AddToView(AObject);
+    if Index > -1 then
+      Result := Index;
+  end;
 end;
 
 procedure TInstantQueryAccessor.InternalApplyChanges;
@@ -4504,6 +4509,8 @@ function TInstantQueryAccessor.InternalInsertObject(Index: Integer;
   AObject: TObject): Integer;
 begin
   Subject.InsertObject(Index, AObject);
+  if Altered then
+    InsertInView(Index, AObject);
   Result := Index;
 end;
 
@@ -4519,8 +4526,16 @@ end;
 
 function TInstantQueryAccessor.InternalRemoveObject(
   AObject: TObject): Integer;
+var
+  Index: Integer;
 begin
   Result := Subject.RemoveObject(AObject);
+  if Altered then
+  begin
+    Index := RemoveFromView(AObject);
+    if Index > -1 then
+      Result := Index;
+  end;
 end;
 
 class function TInstantQueryAccessor.SubjectClass: TClass;
