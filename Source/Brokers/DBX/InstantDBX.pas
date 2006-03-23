@@ -240,6 +240,8 @@ begin
     Result := TInstantDBXOracleBroker.Create(Self)
   else if SameText(Connection.DriverName, 'Oracle (Core Lab)') then //For CoreLab driver
     Result := TInstantDBXOracleBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'Oracle Net (Core Lab)') then //For CoreLab driver
+    Result := TInstantDBXOracleBroker.Create(Self)
   else if SameText(Connection.DriverName, 'DB2') then
     Result := TInstantDBXDB2Broker.Create(Self)
   else if SameText(Connection.DriverName, 'MySQL') then
