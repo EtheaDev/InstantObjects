@@ -1689,11 +1689,8 @@ begin
   if Assigned(FSubject) and Assigned(AField) and (FindFieldIndex(AField) = -1) then
   begin
     VAttr := nil;
-    try
-      if FSubject is TInstantObject then
-        VAttr := InstantFindAttribute(AField.FieldName, TInstantObject(FSubject));
-    except
-    end;
+    if FSubject is TInstantObject then
+      VAttr := InstantFindAttribute(AField.FieldName, TInstantObject(FSubject), False);
     if Assigned(VAttr) then
       VarClear(VProperty)
     else
