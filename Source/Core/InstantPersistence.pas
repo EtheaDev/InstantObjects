@@ -2652,7 +2652,7 @@ function InstantCreateStorageMaps(Metadatas: TInstantClassMetadatas = nil): TIns
 function InstantDefaultConnector: TInstantConnector;
 procedure InstantDisableNotifiers;
 procedure InstantEnableNotifiers;
-function InstantFindAttribute(const Path: string; AObject: TInstantObject): TInstantAttribute;
+function InstantFindAttribute(const Path: string; AObject: TInstantObject; RaiseExceptions: Boolean = True): TInstantAttribute;
 function InstantFindClass(const ClassName: string): TInstantObjectClass;
 function InstantFindClassMetadata(const ClassName: string): TInstantClassMetadata;
 function InstantGetClass(const ClassName: string): TInstantObjectClass;
@@ -2956,8 +2956,8 @@ begin
   ObjectNotifiers.Enable;
 end;
 
-function InstantFindAttribute(const Path: string;
-  AObject: TInstantObject): TInstantAttribute;
+function InstantFindAttribute(const Path: string; AObject: TInstantObject;
+  RaiseExceptions: Boolean = True): TInstantAttribute;
 var
   I: Integer;
   AttribName: string;
@@ -2969,7 +2969,12 @@ begin
   AttribName := InstantPartStr(Path, I, InstantDot);
   while (AttribName <> '') and Assigned(AObject) do
   begin
-    Result := AObject.AttributeByName(AttribName);
+    if RaiseExceptions then
+      Result := AObject.AttributeByName(AttribName)
+    else
+      Result := AObject.FindAttribute(AttribName);
+    if not Assigned(Result) then
+      Exit;
     Inc(I);
     AttribName := InstantPartStr(Path, I, InstantDot);
     if (AttribName <> '') and (Result is TInstantElement) then
