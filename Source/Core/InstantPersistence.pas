@@ -9036,7 +9036,7 @@ function TInstantObject._Release: Integer;
 begin
   FreeCircularReferences;
   Result := DoRelease;
-  if FRefCount = 1 then
+  if FRefCount = 0 then
     try
       Finit;
     finally
