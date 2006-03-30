@@ -1,6 +1,226 @@
 VERSION HISTORY
 ---------------
 
+
+Version 2.0 Beta 3 (1.9.1.3) (2006-03-31)
+
+- The IDE menu item "Build Database..." has been changed
+  to "Build InstantObjects Database...".
+
+- The BDS IDEs do not have a "Database" Main menu item, so
+  the "&Build InstantObjects Database..." menu item is
+  inserted in the Main View menu item under the "Data Explorer"
+  item if it exists. Otherwise it is appended.
+
+- Fixed bug # 1410657, where TInstantSelector.GetIsChanged
+  fetches all non-retrieved objects looking for changes.
+
+- Fixed bug #1416083 (Storage Name ignored for external
+  Part attributes).
+
+- IBX: Internal transaction now AutoCommits.
+  Fix for bug 1402383 "Hanging Transactions".
+  Warning: the bug is not fixed if you use Delphi 5.
+
+- Fix for Bug 1423157. Parts Attribute Insert causes Error.
+
+- Fixed Bug 1385748 "Nested calls to Store cause Stack Overflow".
+
+- Added new public property RefItems to TInstantReferences.
+  This is an indexed property that returns the
+  TInstantObjectReference from the internal list, allowing you
+  to get a list of referenced object IDs without retrieving them.
+
+- FR # 1424512 - Added fields to enter user name, password,
+  sql role and character set name to IBX's ConnectionDef form.
+  InternalCreateDatabase uses current character set to create
+  physical database.
+
+- Added fields for user name, password, sql role, character
+  set and db library name for UIB broker. FR # 1424520.
+
+- Fixed leakage using TInstantObject instance via interface
+  pointer. Bug # 1424540.
+
+- PrimerCross: added ability to refresh grid contents
+  through the F5 key.
+
+- Test: minor changes to Model.pas to allow required circular
+  reference test structures.
+
+- Added test procedures to TestInstantReferences.pas to
+  facilitate memory leak testing for object structures
+  with circular references.
+
+- Added another test procedure to TestInstantReferences.pas
+  to facilitate memory leak testing for object structures
+  with circular references:
+  A -> B -> C -> A
+       |
+       + -> D -> E
+  then delete E.
+
+- Test case to demostrate the infinite loop in
+  FreeCircularReferences.
+
+- Many fixes and enhancements in demos and tests.
+
+- Fixed leakage using TInstantObject instance via interface pointer.
+  Bug # 1424540.
+
+- Fixed bug # 1410138 where in some situations a Selector raises
+  an exception because database component name wasn't uploaded
+  from stream.
+
+- Fixed leakages with part and parts attributes in circular
+  reference check effort.
+
+- Unsupported column types found in the database no longer stop
+  the build/evolution process.
+
+- Fix for bug #1426929. For an application compiled in D2006,
+  adding entries into a new record in a DbGrid with an attached
+  Selector results in an application crash (stack overflow)
+  when trying to tab from the second column.
+
+- InstantExplorer memory leak resolved (bug n. 1423344).
+
+- Fix for bug #1423177 - Memory leak handling exceptions.
+
+- Fix for Bug 1375131: Evolving database with part attributes
+  causes "Class Not Registered" error when object is retrieved.
+
+- Changed how packages include resource files: we're back to the
+  standard approach of one res file per package.
+
+- Implemented overloaded version of TInstantParts.DestroyObject
+  and TInstantReferences.DestroyObject that receives a
+  TInstantObject parameter.
+
+- Fixed an unwished disconnection inside FreeCircularReference
+  method.
+
+- Fixes for ZeosDBO broker and catalog:
+  - Changed SQLGenerator's drop index for MySQL database,
+    that doesn't support DROP INDEX statement. Bug # 1434240;
+  - Built own SQLDelimiter method, because ZeosDBO's method
+    is available only when database (or at least the driver)
+    is connected;
+  - Changed GetDBMSName method to return property value for
+    disconnected databases;
+  - Changed physical IB/FB creation to support codepage
+    parameter (Character Set);
+  - Fixed evolve error. Bug # 1429529;
+  - Performed work arounds for MySQL driver (Bug # 1434244) that:
+    1. doesn't name Primary Key;
+    2. return wrong value for Unique fields (true/false).
+
+- Fixed AV (bug # 1434585) and leakage (bug # 1434710) inside
+  TInstantNavigationalQuery.
+
+- Fixed a leakage with some kinds of circular references.
+
+- Fixed bug # 1430106.
+
+- New Remember/Revert mechanism; fixed bugs:
+  1232576 Deleting from Selectors without eoAutoApply;
+  1410736 Revert method is overriding References attributes;
+  1430109 InternalRemoveObject of Exposers doesn't refresh grid;
+  1430117 Add/InsertObject (Exposers) with inconsistent behavior;
+  1430119 Leakage inserting record;
+  1430127 Leakage with InternalCancel and DeferInsert checked;
+  1436858 Exposer.AutoDispose disposing referenced object.
+
+- Fixed Info.Conflict assignment into
+  TInstantSQLResolver.ExecuteStatement method.
+
+- Fixed exception into D5 and IBX.
+  InternalCommit and InternalRollback methods.
+
+- Fixed bug #1430106 - TInstantBlobAttribute.Assign doesn't work
+  properly because LoadDataFromStream doesn't clear stream.
+
+- Fixed bug #1410143 - When an EditForm of a Person with image
+  that was just edited is opened, Primer raises an exception
+  with message "Unsupported graphic stream format", "Metafile
+  is not valid" or "Stream read error".
+
+- Fix for bug 1437815 - Exposer.RemoveObject messes up TDataSet
+  data.
+
+- Fixed bug # 1438840 Exposers with DeferInsert doesn't own object
+  before store.
+
+- Implemented Revert buffer for objects removed through
+  RemoveObject method.
+
+- Implemented bmp with TGraphicHeader recognition
+  (bug # 1439017).
+
+- Fixed bug # 1439025 Apply/RestoreState decrementing StateLevel.
+
+- Fixed bug # 1436858 Exposer.AutoDispose disposing referenced
+  object.
+
+- FR# 1440209 - Pass the object instance to OnGenerateId.
+
+- Fixed Bug # 1439851 - Required fields not checked in Exposers.
+
+- Fixed Bug # 1439234 - Params not working with MS Access.
+
+- Fixed bug # 1439091 - Exposer.AddObject duplicating object
+  (sorted lists).
+
+- Implemented Exposer's eoNotDisposeReferences option.
+
+- Fixed stack overflow due to recursive calls to
+  IsInsideCircularReference function;
+  Improvements into circular reference check.
+
+- Update of tests suite to be compatible with D5.
+  Need ubMock project files modified for compatibility with
+  D5 to compile and run the tests in D5.
+
+- Fixed Index out of Bounds error into FreeCircularReference.
+
+- Fixed bugs [SF #1447789] in InstantRtti.pas related to
+  compilation and handling of Boolean type in private unit
+  function AccessProperty.
+
+- Bug fix [SF #1447794] for ObjectFoundry.
+
+- Fixed bug [1446833] - Currency fields receives odd values.
+
+- Update to NexusDB Broker. The modifications mainly apply
+  to the connection dialog of the Remote server version.
+  Modifications to the Embedded version were due to
+  resource string renaming and some extra connection
+  dialog
+button hints. Main changes:
+  - The default Servername 'NexusDB@localhost' has been removed.
+    The default is now an empty string.
+  - There is no longer an initial delay when launching the
+    connection
+dialog as there is no checking of available
+    NexusDB servers until requested via the 'Load Servers' button.
+  - The 'Load Servers' speed button has been enlarged and has a
+    caption to make its function more obvious.
+  - There is more user feedback in the entry combo boxes to
+    indicate current status. Popup hints are also available on
+    the speed buttons.
+  - A bug fix for enablement of the OK button when using alias
+    as path entries.
+
+- Implemented TInstantCustomExposer.Remove method.
+
+- Implemented eoAutoRemember option.
+
+- Fixed bug # 1461222 - "ORA-01722: invalid number" with
+  DBX broker.
+
+- Many small bug fixes and improvements.
+
+
 Version 2.0 Beta 2 (1.9.1.2) (2006-01)
 
 - Fixed possible AV in TInstantBrokerCatalog.
