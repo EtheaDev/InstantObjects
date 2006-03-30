@@ -602,8 +602,6 @@ begin
   case SourceParam.DataType of
     ftBoolean:
       TargetParam.AsString := IntToStr(Integer(SourceParam.AsBoolean));
-    ftFloat:
-      TargetParam.AsString := FloatToStr(SourceParam.AsFloat);
     ftInteger:
       TargetParam.AsString := IntToStr(SourceParam.AsInteger);
   else
