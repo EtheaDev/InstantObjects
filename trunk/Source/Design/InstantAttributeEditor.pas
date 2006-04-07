@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell, David Moorhouse
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -389,8 +389,9 @@ begin
       if (Attribute <> Subject) and SameText(Attribute.Name, Subject.Name) then
       begin
         ModalResult := mrNone;
+        PageControl.ActivePage := DefinitionSheet;
         NameEdit.SetFocus;
-        raise Exception.Create('Name already used');
+        raise Exception.Create('Attribute Name already used');
       end;
     end;
 
@@ -398,6 +399,7 @@ begin
     if not Confirm(SConfirmZeroSizeStringAttribute) then
     begin
       ModalResult := mrNone;
+      PageControl.ActivePage := DefinitionSheet;
       SizeEdit.SetFocus;
       Abort;
     end;
