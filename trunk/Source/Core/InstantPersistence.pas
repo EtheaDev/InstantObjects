@@ -6285,7 +6285,12 @@ begin
     begin
       // cross-connector object assignment must be supported for InstantPump.
       if Self.Connector <> Connector then
-        Self.Value := Value.Clone(Self.Connector)
+      begin
+        if Assigned(Value) then
+          Self.Value := Value.Clone(Self.Connector)
+        else
+          Self.Value := nil;  
+      end
       else
         Self.Value := Value;
     end;
