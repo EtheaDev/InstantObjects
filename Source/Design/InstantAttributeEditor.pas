@@ -282,6 +282,20 @@ begin
 end;
 
 procedure TInstantAttributeEditorForm.LoadTypes;
+
+  procedure RestrictForComplexAttr;
+  var
+    I: Integer;
+  begin
+    for I := Pred(TypeEdit.Items.Count) downto 0 do
+      if not ((TypeEdit.Items[I] = 'Part') or
+          (TypeEdit.Items[I] = 'Parts') or
+          (IsClassPersistent(ObjectClassEdit.Text) and
+          ((TypeEdit.Items[I] = 'Reference') or
+          (TypeEdit.Items[I] = 'References')))) then
+        TypeEdit.Items.Delete(I);
+  end;
+
 var
   I: Integer;
 begin
@@ -292,14 +306,8 @@ begin
     I := TypeEdit.Items.IndexOf('Unknown');
     if I <> -1 then
       TypeEdit.Items.Delete(I);
-    if not Assigned(FModel) then
-      for I := Pred(TypeEdit.Items.Count) downto 0 do
-        if not ((TypeEdit.Items[I] = 'Part') or
-            (TypeEdit.Items[I] = 'Parts') or
-            (IsClassPersistent(ObjectClassEdit.Text) and
-            ((TypeEdit.Items[I] = 'Reference') or
-            (TypeEdit.Items[I] = 'References')))) then
-          TypeEdit.Items.Delete(I);
+    if not Assigned(FModel) and Subject.IsComplex then
+      RestrictForComplexAttr;
   finally
     TypeEdit.Items.EndUpdate;
   end;
