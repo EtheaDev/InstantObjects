@@ -6817,7 +6817,8 @@ end;
 
 procedure TInstantContainer.Sort(Compare: TInstantSortCompare);
 begin
-  QuickSort(0, Pred(Count), Compare);
+  if Count > 1 then
+    QuickSort(0, Pred(Count), Compare);
 end;
 
 procedure TInstantContainer.ValidateObject(AObject: TInstantObject);
