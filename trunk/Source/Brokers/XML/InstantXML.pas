@@ -35,8 +35,8 @@ unit InstantXML;
 {$ENDIF}
 
 {$IFDEF D6+}
-  {$WARN SYMBOL_PLATFORM OFF}
-  {$WARN UNIT_PLATFORM OFF}
+{$WARN SYMBOL_PLATFORM OFF}
+{$WARN UNIT_PLATFORM OFF}
 {$ENDIF}
 
 interface
@@ -48,10 +48,11 @@ const
   XML_UTF8_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
   XML_ISO_HEADER = '<?xml version="1.0" encoding="ISO-8859-1"?>';
   XML_EXT = 'xml';
-  DOT_XML_EXT = '.'+XML_EXT;
-  XML_WILDCARD = '*'+DOT_XML_EXT;
+  DOT_XML_EXT = '.' + XML_EXT;
+  XML_WILDCARD = '*' + DOT_XML_EXT;
 {$IFNDEF LINUX}
-  {$IFDEF D5}PathDelim = '\';{$ENDIF}
+{$IFDEF D5}PathDelim = '\';
+{$ENDIF}
 {$ENDIF}
 
 type
@@ -60,38 +61,52 @@ type
   { TXMLFilesAccessor }
   TXMLFilesAccessor = class(TCustomConnection)
   private
-    FConnected : boolean;
-    FRootFolder : string;
+    FConnected: boolean;
+    FRootFolder: string;
     FUseVersioning: Boolean;
     FXMLFileFormat: TXMLFileFormat;
-    procedure MkStorageDir(const StorageName : string);
+    procedure MkStorageDir(const StorageName: string);
     function GetRootFolder: string;
     procedure SetRootFolder(const Value: string);
-    function SaveToFileXML_UTF8(AObject: TInstantObject; const FileName: string) : boolean;
-    function LoadFromFileXML_UTF8(AObject: TInstantObject; const FileName: string) : boolean;
-    function PlainObjectFileName(const StorageName, ClassName, Id: string): string;
-    function NewObjectFileName(const StorageName, ClassName, Id: string): string;
-    function DeleteObjectFileName(const StorageName, ClassName, Id: string): string;
+    function SaveToFileXML_UTF8(AObject: TInstantObject; const FileName:
+      string): boolean;
+    function LoadFromFileXML_UTF8(AObject: TInstantObject; const FileName:
+      string): boolean;
+    function PlainObjectFileName(const StorageName, ClassName, Id: string):
+      string;
+    function NewObjectFileName(const StorageName, ClassName, Id: string):
+      string;
+    function DeleteObjectFileName(const StorageName, ClassName, Id: string):
+      string;
     function VersionFromFilename(const longfilename: string): Integer;
   protected
     procedure DoConnect; override;
     procedure DoDisconnect; override;
     function GetConnected: Boolean; override;
   public
-    constructor Create (AOwner: TComponent); override;
-    function LastObjectFileName(const StorageName, ClassName, Id: string) : string;
-    function ReadInstantObject(AObject : TInstantObject; const StorageName, AObjectId: string;
-      out Version : integer): boolean;
-    function WriteInstantObject(AObject : TInstantObject; const StorageName: string;
-      out Version : integer): boolean;
-    function DeleteInstantObject(AObject : TInstantObject; const StorageName: string) : boolean;
-    function Locate(const StorageName, AObjectClassName, AObjectId: string): Boolean;
-    function CheckConflict (AObject : TInstantObject; const StorageName, AObjectId: string): Boolean;
-    procedure LoadFileList (FFileListAccessor: TStringList; const StorageName: string);
+    constructor Create(AOwner: TComponent); override;
+    function LastObjectFileName(const StorageName, ClassName, Id: string):
+      string;
+    function ReadInstantObject(AObject: TInstantObject; const StorageName,
+      AObjectId: string;
+      out Version: integer): boolean;
+    function WriteInstantObject(AObject: TInstantObject; const StorageName:
+      string;
+      out Version: integer): boolean;
+    function DeleteInstantObject(AObject: TInstantObject; const StorageName:
+      string): boolean;
+    function Locate(const StorageName, AObjectClassName, AObjectId: string):
+      Boolean;
+    function CheckConflict(AObject: TInstantObject; const StorageName,
+      AObjectId: string): Boolean;
+    procedure LoadFileList(FFileListAccessor: TStringList; const StorageName:
+      string);
   published
-    property RootFolder : string read GetRootFolder write SetRootFolder;
-    property UseVersioning: Boolean read FUseVersioning write FUseVersioning default False;
-    property XMLFileFormat: TXMLFileFormat read FXMLFileFormat write FXMLFileFormat default xffUtf8;
+    property RootFolder: string read GetRootFolder write SetRootFolder;
+    property UseVersioning: Boolean read FUseVersioning write FUseVersioning
+      default False;
+    property XMLFileFormat: TXMLFileFormat read FXMLFileFormat write
+      FXMLFileFormat default xffUtf8;
   end;
 
   TInstantXMLConnectionDef = class(TInstantConnectionBasedConnectionDef)
@@ -106,9 +121,11 @@ type
     class function ConnectionTypeName: string; override;
     class function ConnectorClass: TInstantConnectorClass; override;
   published
-    property RootFolder : string read FRootFolder write FRootFolder;
-    property UseVersioning: Boolean read FUseVersioning write FUseVersioning default False;
-    property XMLFileFormat: TXMLFileFormat read FXMLFileFormat write FXMLFileFormat default xffUtf8;
+    property RootFolder: string read FRootFolder write FRootFolder;
+    property UseVersioning: Boolean read FUseVersioning write FUseVersioning
+      default False;
+    property XMLFileFormat: TXMLFileFormat read FXMLFileFormat write
+      FXMLFileFormat default xffUtf8;
   end;
 
   TInstantXMLConnector = class(TInstantConnectionBasedConnector)
@@ -128,7 +145,8 @@ type
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
     constructor Create(AOwner: TComponent); override;
   published
-    property Connection: TXMLFilesAccessor read GetConnection write SetConnection;
+    property Connection: TXMLFilesAccessor read GetConnection write
+      SetConnection;
     property UseTransactions default False;
     property LoginPrompt default False;
   end;
@@ -145,16 +163,18 @@ type
     function GetConnector: TInstantXMLConnector;
   protected
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
-        override;
+      override;
     function CreateResolver(const StorageName: string): TInstantXMLResolver;
-    function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver; override;
+    function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver;
+      override;
     function FindResolver(const StorageName: string): TInstantXMLResolver;
     property ResolverCount: Integer read GetResolverCount;
     property Resolvers[Index: Integer]: TInstantXMLResolver read GetResolvers;
   public
     destructor Destroy; override;
-    function CreateDBBuildCommand(const CommandType: TInstantDBBuildCommandType):
-        TInstantDBBuildCommand; override;
+    function CreateDBBuildCommand(const CommandType:
+      TInstantDBBuildCommandType):
+      TInstantDBBuildCommand; override;
     property Connector: TInstantXMLConnector read GetConnector;
   end;
 
@@ -165,18 +185,27 @@ type
     function CheckConflict(AObject: TInstantObject; const AObjectId: string;
       ConflictAction: TInstantConflictAction): Boolean;
   protected
-    procedure InternalDisposeMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    procedure InternalRetrieveMap(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    procedure InternalStoreMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    procedure ResetAttributes(AObject: TInstantObject; Map: TInstantAttributeMap);
-    function Locate(AObject : TObject; const AObjectId: string): Boolean; virtual;
-    function ReadInstantObject(AObject : TInstantObject; const AObjectId: string;
-      out Version : integer): boolean;
-    function WriteInstantObject(AObject : TInstantObject; const AObjectId: string;
-      out Version : integer): boolean;
+    procedure InternalDisposeMap(AObject: TInstantObject; Map:
+      TInstantAttributeMap;
+      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
+        override;
+    procedure InternalRetrieveMap(AObject: TInstantObject; const AObjectId:
+      string;
+      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info:
+        PInstantOperationInfo); override;
+    procedure InternalStoreMap(AObject: TInstantObject; Map:
+      TInstantAttributeMap;
+      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
+        override;
+    procedure ResetAttributes(AObject: TInstantObject; Map:
+      TInstantAttributeMap);
+    function Locate(AObject: TObject; const AObjectId: string): Boolean;
+      virtual;
+    function ReadInstantObject(AObject: TInstantObject; const AObjectId: string;
+      out Version: integer): boolean;
+    function WriteInstantObject(AObject: TInstantObject; const AObjectId:
+      string;
+      out Version: integer): boolean;
   public
     constructor Create(ABroker: TInstantCustomRelationalBroker;
       const AStorageName: string);
@@ -186,7 +215,8 @@ type
 
   TInstantXMLTranslator = class(TInstantRelationalTranslator)
   protected
-    function TranslateClassRef(ClassRef: TInstantIQLClassRef; Writer: TInstantIQLWriter): Boolean; override;
+    function TranslateClassRef(ClassRef: TInstantIQLClassRef; Writer:
+      TInstantIQLWriter): Boolean; override;
   end;
 
   TInstantXMLQuery = class(TInstantCustomRelationalQuery)
@@ -198,7 +228,7 @@ type
     function GetObjectReferenceCount: Integer;
     function GetObjectReferenceList: TObjectList;
     function GetObjectReferences(Index: Integer): TInstantObjectReference;
-    procedure InitObjectReferences(FileListAccessor : TStringList);
+    procedure InitObjectReferences(FileListAccessor: TStringList);
     function GetParamsObject: TParams;
     function GetConnector: TInstantXMLConnector;
   protected
@@ -221,10 +251,11 @@ type
     procedure SetStatement(const Value: string); override;
     property ObjectReferenceCount: Integer read GetObjectReferenceCount;
     property ObjectReferenceList: TObjectList read GetObjectReferenceList;
-    property ObjectReferences[Index: Integer]: TInstantObjectReference read GetObjectReferences;
+    property ObjectReferences[Index: Integer]: TInstantObjectReference read
+      GetObjectReferences;
     property ParamsObject: TParams read GetParamsObject;
   public
-    StorageName : string;
+    StorageName: string;
     destructor Destroy; override;
     property Connector: TInstantXMLConnector read GetConnector;
   end;
@@ -274,44 +305,45 @@ uses
   SysUtils, InstantConsts, InstantClasses, TypInfo, InstantXMLCatalog,
   InstantXMLConnectionDefEdit,
 {$IFDEF MSWINDOWS}
-  {$IFDEF D5}
-    FileCtrl,
-  {$ENDIF}
-  Controls;
+{$IFDEF D5}
+  FileCtrl,
+{$ENDIF}
+  Windows, Controls;
 {$ENDIF}
 {$IFDEF LINUX}
-  QControls;
+QControls;
 {$ENDIF}
 
 resourcestring
   SCannotCreateDirectory = 'Cannot create directory %s';
   SCommandIndexOutOfBounds = 'Command index out of bounds.';
 
-function GetFileClassName(const FileName : string) : string; forward;
-function GetFileId(const FileName : string) : string; forward;
-function GetFileVersion(const FileName : string) : Integer; forward;
+function GetFileClassName(const FileName: string): string; forward;
+function GetFileId(const FileName: string): string; forward;
+function GetFileVersion(const FileName: string): Integer; forward;
 
 {$IFDEF D5}
-function IncludeTrailingPathDelimiter(const S : string) : string;
+
+function IncludeTrailingPathDelimiter(const S: string): string;
 begin
   Result := IncludeTrailingBackSlash(S);
 end;
 {$ENDIF}
 
-procedure GlobalLoadFileList(const Path: string; FileList : TStringList);
+procedure GlobalLoadFileList(const Path: string; FileList: TStringList);
 var
-  SearchRec : TSearchRec;
-  R : Integer;
-  PathWithWildCards : string;
+  SearchRec: TSearchRec;
+  R: Integer;
+  PathWithWildCards: string;
 begin
   FileList.Clear;
-  PathWithWildCards := IncludeTrailingPathDelimiter(Path)+XML_WILDCARD;
+  PathWithWildCards := IncludeTrailingPathDelimiter(Path) + XML_WILDCARD;
   //Find the first file
-  R := SysUtils.FindFirst( PathWithWildCards, faAnyFile, SearchRec );
+  R := SysUtils.FindFirst(PathWithWildCards, faAnyFile, SearchRec);
   try
     while R = 0 do // file found!
     begin
-      FileList.Append( SearchRec.Name ); // Add file to list
+      FileList.Append(SearchRec.Name); // Add file to list
       R := SysUtils.FindNext(SearchRec); // Find next file
     end;
   finally
@@ -322,13 +354,15 @@ end;
 // fill filelist with unique names of files, using the last version
 // number or skipping the deleted files (version = 0)
 // code badly needs to be optimized - marcoc
-procedure GlobalLoadFileListLastVersion(const Path: string; FileList : TStringList);
+
+procedure GlobalLoadFileListLastVersion(const Path: string; FileList:
+  TStringList);
 var
-  i, currentVersion, activeVersionPos, newVersion : Integer;
-  currentid, shortFileName : string;
+  i, currentVersion, activeVersionPos, newVersion: Integer;
+  currentid, shortFileName: string;
 begin
   // first load all of them
-  GlobalLoadFileList (Path, FileList);
+  GlobalLoadFileList(Path, FileList);
 
   // now remove version duplicates and deleted documents
   FileList.Sorted := True;
@@ -337,8 +371,8 @@ begin
   activeVersionPos := -1;
   for i := FileList.Count - 1 downto 0 do
   begin
-    shortFileName := extractFilename (filelist[i]);
-    if currentid = GetFileId (shortFileName) then
+    shortFileName := extractFilename(filelist[i]);
+    if currentid = GetFileId(shortFileName) then
     begin
       newVersion := GetFileVersion(shortFileName);
       // if the file is marked as deleted
@@ -350,14 +384,13 @@ begin
         if activeVersionPos <> -1 then
           fileList.Delete(activeVersionPos);
       end
-      // if it is already marked as deleted, skip it
+        // if it is already marked as deleted, skip it
       else if currentVersion = 0 then
       begin
         fileList.Delete(i);
       end
-      // if the file is "newer"
-      else
-      if currentVersion < newVersion then
+        // if the file is "newer"
+      else if currentVersion < newVersion then
       begin
         // delete the other version, as this is newer
         CurrentVersion := GetFileVersion(shortFileName);
@@ -371,7 +404,7 @@ begin
     end
     else // we have moved to a new objectid, reset all
     begin
-      currentid := GetFileId (shortFileName);
+      currentid := GetFileId(shortFileName);
       currentVersion := GetFileVersion(shortFileName);
       activeVersionPos := i;
       // if the first file of this instance is marked as deleted...
@@ -381,29 +414,54 @@ begin
   end;
 end;
 
-function GetFileClassName(const FileName : string) : string;
-begin
-  Result := Copy(FileName,1,pos('.',FileName)-1);
-end;
-
-function GetFileId(const FileName : string) : string;
-begin
-  //File Name: ClassName.Id.UpdateCount.xml
-  Result := Copy(FileName,pos('.',FileName)+1,MaxInt);   //Extract ClassName
-  Result := Copy(Result,1,pos('.',Result)-1); //Extract UpdateCount
-end;
-
-function GetFileVersion(const FileName : string) : Integer;
+function RightPos(const ASubString, AString: string): Integer;
 var
-  s: string;
+  I: Integer;
+  SubStringLength: Integer;
 begin
-  //File Name: ClassName.Id.UpdateCount.xml
-  s := Copy(FileName,pos('.',FileName)+1,MaxInt);   //Extract ClassName
-  s := Copy(s,pos('.',s)+1,MaxInt); //Extract Id
-  s := Copy(s,1,pos('.',s)-1); //Extract UpdateCount
-  Result := StrToIntDef (s, 0);
+  Result := 0;
+  SubStringLength := Length(ASubString);
+  for I := Length(AString) - Length(ASubString) + 1 downto 1 do
+  begin
+    if Copy(AString, I, SubStringLength) = ASubString then
+    begin
+      Result := I;
+      Break;
+    end;
+  end;
 end;
 
+function GetFileClassName(const FileName: string): string;
+begin
+  // File Name: ClassName.Id.UpdateCount.xml
+  Result := Copy(FileName, 1, Pos('.', FileName) - 1);
+end;
+
+function GetFileId(const FileName: string): string;
+var
+  P: Integer;
+begin
+  // File Name: ClassName.Id.UpdateCount.xml
+  // Drop ClassName and extension.
+  P := Pos('.', FileName);
+  Result := Copy(FileName, P + 1, RightPos('.', FileName) - P - 1);
+  // Drop UpdateCount.
+  Delete(Result, RightPos('.', Result), MaxInt);
+end;
+
+function GetFileVersion(const FileName: string): Integer;
+var
+  S: string;
+  P: Integer;
+begin
+  // File Name: ClassName.Id.UpdateCount.xml
+  // Drop ClassName and extension.
+  P := Pos('.', FileName);
+  S := Copy(FileName, P + 1, RightPos('.', FileName) - P - 1);
+  // Drop Id.
+  Delete(S, 1, RightPos('.', S));
+  Result := StrToIntDef(S, 0);
+end;
 
 { TInstantXMLConnectionDef }
 
@@ -445,7 +503,8 @@ function TInstantXMLResolver.CheckConflict(AObject: TInstantObject;
   const AObjectId: string;
   ConflictAction: TInstantConflictAction): Boolean;
 begin
-  Result := Broker.Connector.Connection.CheckConflict(AObject, FStorageName, AObjectId);
+  Result := Broker.Connector.Connection.CheckConflict(AObject, FStorageName,
+    AObjectId);
 
   if Result and (ConflictAction = caFail) then
     raise EInstantConflict.CreateFmt(SUpdateConflict,
@@ -481,7 +540,7 @@ begin
   begin
     // Delete object file
     try
-      Broker.Connector.Connection.DeleteInstantObject (AObject, FStorageName);
+      Broker.Connector.Connection.DeleteInstantObject(AObject, FStorageName);
       Info.Success := True;
       Info.Conflict := not Info.Success;
     except
@@ -489,7 +548,7 @@ begin
         raise;
       on E: Exception do
       begin
-//        TransError := TranslateError(AObject, E);
+        //        TransError := TranslateError(AObject, E);
         TransError := nil;
         if Assigned(TransError) then
           raise TransError
@@ -497,7 +556,8 @@ begin
           raise;
       end;
     end;
-  end else if Map.IsRootMap and (ConflictAction = caFail) then
+  end
+  else if Map.IsRootMap and (ConflictAction = caFail) then
     raise EInstantConflict.CreateFmt(SDisposeConflict,
       [AObject.ClassName, AObject.PersistentId])
 end;
@@ -524,7 +584,8 @@ begin
     begin
       Broker.SetObjectUpdateCount(AObject, Version);
     end;
-  end else
+  end
+  else
     ResetAttributes(AObject, Map);
 end;
 
@@ -557,7 +618,7 @@ begin
   try
     if (ConflictAction = caIgnore) or not Info.Conflict then
     begin
-      Info.Success := WriteInstantObject(AObject,NewId,Version);
+      Info.Success := WriteInstantObject(AObject, NewId, Version);
       Info.Conflict := not Info.Success;
       if Map.IsRootMap then
         Broker.SetObjectUpdateCount(AObject, version);
@@ -569,8 +630,9 @@ begin
     begin
       if E is EAbort then
         raise
-      else begin
-//        TransError := TranslateError(AObject, E);
+      else
+      begin
+        //        TransError := TranslateError(AObject, E);
         TransError := nil;
         if Assigned(TransError) then
           raise TransError
@@ -581,16 +643,19 @@ begin
   end;
 end;
 
-function TInstantXMLResolver.Locate(AObject : TObject; const AObjectId: string): Boolean;
+function TInstantXMLResolver.Locate(AObject: TObject; const AObjectId: string):
+  Boolean;
 begin
   Result := Broker.Connector.Connection.Locate(
     FStorageName, AObject.ClassName, AObjectId);
 end;
 
-function TInstantXMLResolver.ReadInstantObject(AObject : TInstantObject; const AObjectId: string;
-  out Version : integer): boolean;
+function TInstantXMLResolver.ReadInstantObject(AObject: TInstantObject; const
+  AObjectId: string;
+  out Version: integer): boolean;
 begin
-  Result := Broker.Connector.Connection.ReadInstantObject(AObject, FStorageName, AObjectId, Version);
+  Result := Broker.Connector.Connection.ReadInstantObject(AObject, FStorageName,
+    AObjectId, Version);
 end;
 
 procedure TInstantXMLResolver.ResetAttributes(AObject: TInstantObject;
@@ -599,10 +664,12 @@ begin
 
 end;
 
-function TInstantXMLResolver.WriteInstantObject(AObject: TInstantObject; const AObjectId: string;
-  out Version : integer): boolean;
+function TInstantXMLResolver.WriteInstantObject(AObject: TInstantObject; const
+  AObjectId: string;
+  out Version: integer): boolean;
 begin
-  Result := Broker.Connector.Connection.WriteInstantObject(AObject, FStorageName, Version);
+  Result := Broker.Connector.Connection.WriteInstantObject(AObject,
+    FStorageName, Version);
 end;
 
 { TInstantXMLConnector }
@@ -613,7 +680,8 @@ begin
     raise EPropertyError.Create(SUnassignedConnection);
 end;
 
-class function TInstantXMLConnector.ConnectionDefClass: TInstantConnectionDefClass;
+class function TInstantXMLConnector.ConnectionDefClass:
+  TInstantConnectionDefClass;
 begin
   Result := TInstantXMLConnectionDef;
 end;
@@ -642,21 +710,22 @@ end;
 
 procedure TInstantXMLConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 var
-  i : integer;
-  StorageName : string;
+  i: integer;
+  StorageName: string;
 begin
   CheckConnection;
   //build RootFolder if not exists
   if not DirectoryExists(Connection.RootFolder) and
     not ForceDirectories(Connection.RootFolder) then
-    raise EInOutError.CreateFmt(SCannotCreateDirectory, [Connection.RootFolder]);
+    raise EInOutError.CreateFmt(SCannotCreateDirectory,
+      [Connection.RootFolder]);
 
   //build SubFolder for each "storage name"
-  for i := 0 to Scheme.TableMetadataCount -1 do
+  for i := 0 to Scheme.TableMetadataCount - 1 do
   begin
     StorageName := Scheme.TableMetadatas[i].Name;
-    if not DirectoryExists(Connection.RootFolder+StorageName) then
-      MkDir(Connection.RootFolder+StorageName);
+    if not DirectoryExists(Connection.RootFolder + StorageName) then
+      MkDir(Connection.RootFolder + StorageName);
   end;
 end;
 
@@ -701,13 +770,13 @@ begin
 end;
 
 function TInstantXMLBroker.CreateCatalog(const AScheme: TInstantScheme):
-    TInstantCatalog;
+  TInstantCatalog;
 begin
   Result := TInstantXMLCatalog.Create(AScheme, Self);
 end;
 
 function TInstantXMLBroker.CreateDBBuildCommand(const CommandType:
-    TInstantDBBuildCommandType): TInstantDBBuildCommand;
+  TInstantDBBuildCommandType): TInstantDBBuildCommand;
 begin
   if CommandType = ctAddTable then
     Result := TInstantDBBuildXMLAddTableCommand.Create(CommandType, Connector)
@@ -752,7 +821,7 @@ end;
 
 function TInstantXMLBroker.GetResolverCount: Integer;
 begin
- Result := ResolverList.Count;
+  Result := ResolverList.Count;
 end;
 
 function TInstantXMLBroker.GetResolverList: TObjectList;
@@ -827,11 +896,12 @@ begin
   Result := FStatement;
 end;
 
-procedure TInstantXMLQuery.InitObjectReferences(FileListAccessor : TStringList);
+procedure TInstantXMLQuery.InitObjectReferences(FileListAccessor: TStringList);
 var
-  i : integer;
+  i: integer;
 
-  function CreateObjectReference(const FileName : string): TInstantObjectReference;
+  function CreateObjectReference(const FileName: string):
+    TInstantObjectReference;
   var
     ClassName, ObjectId: string;
   begin
@@ -847,7 +917,7 @@ var
   end;
 
 begin
-  for i := 0 to FileListAccessor.Count -1 do
+  for i := 0 to FileListAccessor.Count - 1 do
   begin
     ObjectReferenceList.Add(CreateObjectReference(FileListAccessor.Strings[i]));
   end;
@@ -907,13 +977,13 @@ end;
 
 procedure TInstantXMLQuery.InternalOpen;
 var
-  FFileListAccessor : TStringList;
+  FFileListAccessor: TStringList;
 begin
   inherited;
   FFileListAccessor := TStringList.Create;
   try
     Connector.Connection.Open;
-    Connector.Connection.LoadFileList (FFileListAccessor, StorageName);
+    Connector.Connection.LoadFileList(FFileListAccessor, StorageName);
     InitObjectReferences(FFileListAccessor);
   finally
     FFileListAccessor.Free;
@@ -975,7 +1045,8 @@ begin
   FStatement := Value;
 end;
 
-class function TInstantXMLQuery.TranslatorClass: TInstantRelationalTranslatorClass;
+class function TInstantXMLQuery.TranslatorClass:
+  TInstantRelationalTranslatorClass;
 begin
   Result := TInstantXMLTranslator;
 end;
@@ -996,20 +1067,20 @@ begin
 end;
 
 function TXMLFilesAccessor.SaveToFileXML_UTF8(AObject: TInstantObject;
-  const FileName: string) : boolean;
+  const FileName: string): boolean;
 var
   strstream: TStringStream;
   fileStream: TFileStream;
-  DataStr : string;
+  DataStr: string;
 begin
   strstream := TStringStream.Create('');
   try
     InstantWriteObject(strStream, sfXML, AObject);
 {$IFNDEF VER130}
     if FXMLFileFormat in [xffUtf8, xffUtf8Bot] then
-      DataStr := AnsiToUtf8(XML_UTF8_HEADER+strStream.DataString)
+      DataStr := AnsiToUtf8(XML_UTF8_HEADER + strStream.DataString)
     else
-      DataStr := XML_ISO_HEADER+strStream.DataString;
+      DataStr := XML_ISO_HEADER + strStream.DataString;
 {$ELSE}
     DataStr := strStream.DataString;
 {$ENDIF}
@@ -1018,7 +1089,7 @@ begin
   end;
   fileStream := TFileStream.Create(FileName, fmCreate);
   try
-    Result := fileStream.Write (DataStr[1], Length (DataStr)) <> 0;
+    Result := fileStream.Write(DataStr[1], Length(DataStr)) <> 0;
   finally
     fileStream.Free;
   end;
@@ -1036,7 +1107,7 @@ begin
 end;
 
 function TXMLFilesAccessor.LoadFromFileXML_UTF8(AObject: TInstantObject;
-  const FileName: string) : boolean;
+  const FileName: string): boolean;
 var
   fileStream: TFileStream;
   strUtf8: string;
@@ -1046,20 +1117,20 @@ begin
   try
     // if FXMLFileFormat = xffUtf8Bot then
        // check/skip BOT
-    SetLength(strUtf8,fileStream.Size);
-    Result := fileStream.Read(strUtf8[1],fileStream.Size) <> 0;
+    SetLength(strUtf8, fileStream.Size);
+    Result := fileStream.Read(strUtf8[1], fileStream.Size) <> 0;
     // skip XML HEADER (until the parser is "dumb")
-    strUtf8 := RemoveXmlDeclaration (strUtf8);
+    strUtf8 := RemoveXmlDeclaration(strUtf8);
   finally
     fileStream.Free;
   end;
 
 {$IFNDEF VER130}
   if FXMLFileFormat in [xffUtf8, xffUtf8Bot] then
-    strUtf8 := Utf8ToAnsi (strUtf8);
+    strUtf8 := Utf8ToAnsi(strUtf8);
 {$ENDIF}
 
-  strstream := TStringStream.Create (strUtf8);
+  strstream := TStringStream.Create(strUtf8);
   try
     InstantReadObject(strstream, sfXML, AObject);
   finally
@@ -1067,8 +1138,9 @@ begin
   end;
 end;
 
-function TXMLFilesAccessor.ReadInstantObject(AObject : TInstantObject; const StorageName, AObjectId: string;
-  out Version : integer): boolean;
+function TXMLFilesAccessor.ReadInstantObject(AObject: TInstantObject; const
+  StorageName, AObjectId: string;
+  out Version: integer): boolean;
 var
   filename: string;
 begin
@@ -1080,17 +1152,18 @@ begin
   Version := VersionFromFilename(filename);
 end;
 
-function TXMLFilesAccessor.WriteInstantObject(AObject : TInstantObject; const StorageName: string;
-  out Version : integer): boolean;
+function TXMLFilesAccessor.WriteInstantObject(AObject: TInstantObject; const
+  StorageName: string;
+  out Version: integer): boolean;
 var
   filename: string;
 begin
   MkStorageDir(StorageName);
   if FUseVersioning then
-    filename := NewObjectFileName(StorageName,AObject.ClassName,AObject.Id)
+    filename := NewObjectFileName(StorageName, AObject.ClassName, AObject.Id)
   else
-    filename := PlainObjectFileName(StorageName,AObject.ClassName,AObject.Id);
-  Result := SavetoFileXML_UTF8(AObject,filename);
+    filename := PlainObjectFileName(StorageName, AObject.ClassName, AObject.Id);
+  Result := SavetoFileXML_UTF8(AObject, filename);
   Version := VersionFromFilename(filename);
 end;
 
@@ -1114,8 +1187,8 @@ end;
 
 procedure TXMLFilesAccessor.MkStorageDir(const StorageName: string);
 begin
-  if not DirectoryExists(RootFolder+StorageName) then
-    MkDir(RootFolder+StorageName);
+  if not DirectoryExists(RootFolder + StorageName) then
+    MkDir(RootFolder + StorageName);
 end;
 
 function TXMLFilesAccessor.LastObjectFileName(const StorageName, ClassName,
@@ -1125,34 +1198,36 @@ var
   lastnum, nCurrent: Integer;
 begin
   if FindFirst(
-    RootFolder+StorageName+PathDelim+ClassName+'.'+Id+'.*'+DOT_XML_EXT,
+    RootFolder + StorageName + PathDelim + ClassName + '.' + Id + '.*' +
+      DOT_XML_EXT,
     faAnyFile, SR) = 0 then
   try
-    Result := RootFolder+StorageName+PathDelim+sr.Name;
-    lastnum := VersionFromFileName (sr.Name);
+    Result := RootFolder + StorageName + PathDelim + sr.Name;
+    lastnum := VersionFromFileName(sr.Name);
     while FindNext(sr) = 0 do
     begin
       nCurrent := VersionFromFilename(sr.Name);
       // version "zero" means the file has been deleted
       if (nCurrent = 0) then
       begin
-        Result := RootFolder+StorageName+PathDelim+sr.Name;
+        Result := RootFolder + StorageName + PathDelim + sr.Name;
         Break;
       end;
       if nCurrent > lastnum then
       begin
         lastnum := nCurrent;
-        Result := RootFolder+StorageName+PathDelim+sr.Name;
+        Result := RootFolder + StorageName + PathDelim + sr.Name;
       end;
     end;
   finally
-    FindClose (sr);
+    SysUtils.FindClose(sr);
   end
   else
     Result := ''; // not found, new object/file
 end;
 
-function TXMLFilesAccessor.VersionFromFilename(const longfilename: string): Integer;
+function TXMLFilesAccessor.VersionFromFilename(const longfilename: string):
+  Integer;
 begin
   Result := GetFileVersion(ExtractFileName(longfilename));
 end;
@@ -1169,7 +1244,7 @@ begin
     filename := LastObjectFileName(storagename, ClassName, Id);
     if filename <> '' then
     begin
-      nVersion := VersionFromFilename (filename);
+      nVersion := VersionFromFilename(filename);
       inc(nVersion);
     end
     else
@@ -1180,22 +1255,24 @@ begin
     filename := PlainObjectFileName(StorageName, ClassName, Id);
     nVersion := 1; // no version always 1
   end;
-  Result := RootFolder+StorageName+PathDelim+ClassName+'.'+Id+'.'+IntToStr(nVersion)+DOT_XML_EXT;
+  Result := RootFolder + StorageName + PathDelim + ClassName + '.' + Id + '.' +
+    IntToStr(nVersion) + DOT_XML_EXT;
 end;
 
 function TXMLFilesAccessor.DeleteInstantObject(AObject: TInstantObject;
-  const StorageName: string) : boolean;
+  const StorageName: string): boolean;
 begin
   if UseVersioning then
   begin
     // save the document once more with 0 in the version name
     Result := SavetoFileXML_UTF8(AObject,
-      DeleteObjectFileName(StorageName,AObject.ClassName,AObject.Id));
+      DeleteObjectFileName(StorageName, AObject.ClassName, AObject.Id));
   end
   else
   begin
     // delete file from disk
-    Result := DeleteFile(PlainObjectFileName(StorageName,AObject.ClassName,AObject.Id));
+    Result := SysUtils.DeleteFile(PlainObjectFileName(StorageName,
+      AObject.ClassName, AObject.Id));
   end;
 end;
 
@@ -1203,8 +1280,8 @@ function TXMLFilesAccessor.DeleteObjectFileName(const StorageName,
   ClassName, Id: string): string;
 begin
   // mark deleted file as version 0
-  Result := RootFolder+StorageName+PathDelim+ClassName+'.'+Id+'.'+
-    IntToStr (0)+DOT_XML_EXT;
+  Result := RootFolder + StorageName + PathDelim + ClassName + '.' + Id + '.' +
+    IntToStr(0) + DOT_XML_EXT;
 end;
 
 constructor TXMLFilesAccessor.Create(AOwner: TComponent);
@@ -1221,7 +1298,8 @@ function TXMLFilesAccessor.PlainObjectFileName(const StorageName,
 begin
   // ignore versioning
   //FileName: ClassName.Id.UpdateCount.xml
-  Result := RootFolder+StorageName+PathDelim+ClassName+'.'+Id+'.1'+DOT_XML_EXT;
+  Result := RootFolder + StorageName + PathDelim + ClassName + '.' + Id + '.1' +
+    DOT_XML_EXT;
 end;
 
 function TXMLFilesAccessor.CheckConflict(AObject: TInstantObject;
@@ -1240,7 +1318,8 @@ begin
     Result := False; // don't care about updatecount and versioning
 end;
 
-procedure TXMLFilesAccessor.LoadFileList(FFileListAccessor: TStringList; const StorageName: string);
+procedure TXMLFilesAccessor.LoadFileList(FFileListAccessor: TStringList; const
+  StorageName: string);
 //var
   // xmldom: TGeoXslProcess; - to be finished by marcoc
   //strXPath,  - to be finished by marcoc
@@ -1248,9 +1327,9 @@ procedure TXMLFilesAccessor.LoadFileList(FFileListAccessor: TStringList; const S
   // posOpenSquare, posCloseSquare: Integer;
 begin
   if FUseVersioning then
-    GlobalLoadFileListLastVersion (RootFolder + StorageName, FFileListAccessor)
+    GlobalLoadFileListLastVersion(RootFolder + StorageName, FFileListAccessor)
   else
-    GlobalLoadFileList (RootFolder + StorageName, FFileListAccessor);
+    GlobalLoadFileList(RootFolder + StorageName, FFileListAccessor);
 
   // tentative XPATH support by marcoc
     {posOpenSquare := Pos ('[', Statement);  - to be finished by marcoc
@@ -1328,14 +1407,14 @@ begin
 end;
 
 function TInstantDBBuildXMLAddTableCommand.GetTableMetadata:
-    TInstantTableMetadata;
+  TInstantTableMetadata;
 begin
   Result := NewMetadata as TInstantTableMetadata;
 end;
 
 procedure TInstantDBBuildXMLAddTableCommand.InternalExecute;
 var
-  vDatabaseName: String;
+  vDatabaseName: string;
 begin
   Connector.CheckConnection;
   vDatabaseName := Connector.DatabaseName;
@@ -1351,16 +1430,16 @@ begin
 end;
 
 function TInstantDBBuildXMLDropTableCommand.GetTableMetadata:
-    TInstantTableMetadata;
+  TInstantTableMetadata;
 begin
   Result := OldMetadata as TInstantTableMetadata;
 end;
 
 procedure TInstantDBBuildXMLDropTableCommand.InternalExecute;
 var
-  vTableName: String;
+  vTableName: string;
   sr: TSearchRec;
-  vDatabaseName: String;
+  vDatabaseName: string;
 begin
   Connector.CheckConnection;
   vDatabaseName := Connector.DatabaseName;
@@ -1372,20 +1451,20 @@ begin
     if FindFirst(vTableName + '\*.*', faAnyFile, sr) = 0 then
     begin
       repeat
-        DeleteFile(vTableName + '\' + sr.Name);
+        SysUtils.DeleteFile(vTableName + '\' + sr.Name);
       until FindNext(sr) <> 0;
-      FindClose(sr);
+      SysUtils.FindClose(sr);
     end;
     RemoveDir(vTableName);
   end;
 end;
 
-
 initialization
-  RegisterClass(TInstantXMLConnectionDef);
+  Classes.RegisterClass(TInstantXMLConnectionDef);
   TInstantXMLConnector.RegisterClass;
 
 finalization
   TInstantXMLConnector.UnregisterClass;
 
 end.
+
