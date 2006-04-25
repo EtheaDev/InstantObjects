@@ -1695,6 +1695,11 @@ type
     procedure InternalExecute; virtual; abstract;
     // Computes and returns the step's description.
     function GetDescription: string; virtual;
+    // Called if an exception occurs in InternalExecute. It should do
+    // whatever is needed to handle the error and return True if the exception
+    // needs to be trapped, otherwise it's re-raised. The default implementation
+    // just returns False.
+    function InternalExecuteHandleError(const E: Exception): Boolean; virtual;
   public
     constructor Create(const ACommandType: TInstantDBBuildCommandType;
       const AConnector: TInstantConnector = nil);
@@ -15469,7 +15474,13 @@ end;
 
 procedure TInstantDBBuildCommand.Execute;
 begin
-  InternalExecute;
+  try
+    InternalExecute;
+  except
+    on E: Exception do
+      if not InternalExecuteHandleError(E) then
+        raise;
+  end;
 end;
 
 function TInstantDBBuildCommand.GetConnector: TInstantConnector;
@@ -15488,6 +15499,12 @@ begin
   if Assigned(NewMetadata) then
     Result := Result + ', ' + NewMetadata.Name;
   Result := Result + ']';
+end;
+
+function TInstantDBBuildCommand.InternalExecuteHandleError(
+  const E: Exception): Boolean;
+begin
+  Result := False;
 end;
 
 { TInstantBrokerCatalog }
@@ -15643,8 +15660,7 @@ end;
 
 procedure TInstantUnsupportedDBBuildCommand.InternalExecute;
 begin
-  raise EInstantDBBuildError.CreateFmt(SCannotBuildDB,
-    [Description]);
+  raise EInstantDBBuildError.CreateFmt(SCannotBuildDB, [Description]);
 end;
 
 { TInstantCatalog }
