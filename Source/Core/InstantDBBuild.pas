@@ -198,7 +198,6 @@ type
     procedure DoCommandExecuteError(const ACommand: TInstantDBBuildCommand;
       const Error: Exception; var RaiseError: Boolean);
     procedure DoExecute;
-    procedure DoExecuteInTransaction;
     function GetCount: Integer;
     function GetItem(const Index: Integer): TInstantDBBuildCommand;
     procedure SetSourceScheme(const Value: TInstantScheme);
@@ -270,6 +269,9 @@ type
     // beginning of the overridden version, just returns '', or raises an
     // exception if Index is not in the allowed range.
     function GetSQLStatement(const Index: Integer): string; virtual;
+    // Executes the Nth statement. Handles transactions internally.
+    procedure ExecuteSQLStatement(const Index: Integer);
+    // Executes all statements.
     procedure InternalExecute; override;
   public
     property Connector: TInstantRelationalConnector read GetConnector;
@@ -362,15 +364,25 @@ type
     property NewIndexMetadata: TInstantIndexMetadata read GetNewIndexMetadata;
   end;
 
+  // Alters a field using a sequence of 6 instructions:
+  // 1. adds a temporary new field of the new type.
+  // 2. copies the values from the old field to the new field.
+  // 3. drops the old field.
+  // 4. adds a field with the old name and the new type.
+  // 5. copies back the values from the new temp field to the field with
+  //    the old name.
+  // 6. drops the temp field.
+  // This class should be used for those database that don't support the
+  // SQL ALTER TABLE ALTER COLUMN statement.
   TInstantDBBuildAlterFieldGenericSQLCommand = class(
-      TInstantDBBuildAlterFieldSQLCommand)
+    TInstantDBBuildAlterFieldSQLCommand)
   private
-    FTmpFieldMD: TInstantFieldMetadata;
+    FTempFieldMetadata: TInstantFieldMetadata;
   protected
     function GetDescription: string; override;
     function GetSQLStatement(const Index: Integer): string; override;
     function GetSQLStatementCount: Integer; override;
-    procedure InternalExecute; override;
+    function InternalExecuteHandleError(const E: Exception): Boolean; override;
   public
     destructor Destroy; override;
   end;
@@ -720,17 +732,26 @@ end;
 
 procedure TInstantDBBuildCommandSequence.DoExecute;
 var
-  i: Integer;
+  I: Integer;
   CurrentCommand: TInstantDBBuildCommand;
   RaiseError: Boolean;
 begin
-  for i := 0 to FCommands.Count - 1 do
+  for I := 0 to FCommands.Count - 1 do
   begin
-    CurrentCommand := FCommands[i] as TInstantDBBuildCommand;
+    CurrentCommand := FCommands[I] as TInstantDBBuildCommand;
     DoBeforeCommandExecute(CurrentCommand);
     try
       if CurrentCommand.Enabled then
-        CurrentCommand.Execute;
+      begin
+        Connector.StartTransaction;
+        try
+          CurrentCommand.Execute;
+          Connector.CommitTransaction;
+        except
+          Connector.RollbackTransaction;
+          raise;
+        end;
+      end;
     except
       on E: Exception do
       begin
@@ -744,37 +765,19 @@ begin
   end;
 end;
 
-procedure TInstantDBBuildCommandSequence.DoExecuteInTransaction;
-begin
-  Connector.StartTransaction;
-  try
-    DoExecute;
-    Connector.CommitTransaction;
-  except
-    Connector.RollbackTransaction;
-    raise;
-  end;
-end;
-
 procedure TInstantDBBuildCommandSequence.Execute;
 var
-  ConnState: Boolean;
+  LWasConnected: Boolean;
 begin
-  ConnState := Connector.Connected;
-  if not ConnState then
+  LWasConnected := Connector.Connected;
+  if not LWasConnected then
     Connector.Connect;
-
   DoBeforeExecute;
-
   try
-    if Connector.DDLTransactionSupported then
-      DoExecuteInTransaction
-    else
-      DoExecute;
-      
+    DoExecute;
     DoAfterExecute;
   finally
-    if not ConnState then
+    if not LWasConnected then
       Connector.Disconnect;
   end;
 end;
@@ -857,6 +860,21 @@ end;
 
 { TInstantDBBuildSQLCommand }
 
+procedure TInstantDBBuildSQLCommand.ExecuteSQLStatement(const Index: Integer);
+begin
+  if Connector.DDLTransactionSupported then
+    Connector.StartTransaction;
+  try
+    Broker.Execute(GetSQLStatement(Index));
+    if Connector.DDLTransactionSupported then
+      Connector.CommitTransaction;
+  except
+    if Connector.DDLTransactionSupported then
+      Connector.RollbackTransaction;
+    raise;
+  end;
+end;
+
 function TInstantDBBuildSQLCommand.GetBroker: TInstantSQLBroker;
 begin
   Result := Connector.Broker as TInstantSQLBroker;
@@ -896,10 +914,10 @@ end;
 
 procedure TInstantDBBuildSQLCommand.InternalExecute;
 var
-  iStatement: Integer;
+  IStatement: Integer;
 begin
-  for iStatement := 0 to Pred(GetSQLStatementCount) do
-    Broker.Execute(GetSQLStatement(iStatement));
+  for IStatement := 0 to Pred(GetSQLStatementCount) do
+    ExecuteSQLStatement(IStatement);
 end;
 
 { TInstantDBBuildAddTableSQLCommand }
@@ -1036,20 +1054,20 @@ end;
 
 destructor TInstantDBBuildAlterFieldGenericSQLCommand.Destroy;
 begin
-  FTmpFieldMD.Free;
+  FTempFieldMetadata.Free;
   inherited;
 end;
 
 function TInstantDBBuildAlterFieldGenericSQLCommand.GetDescription: string;
 begin
   Result := Format('ALTER TABLE %s evolve column %s - multi-statement SQL.',
-                  [NewFieldMetadata.TableMetadata.Name, NewFieldMetadata.Name]);
+    [NewFieldMetadata.TableMetadata.Name, NewFieldMetadata.Name]);
 end;
 
-function TInstantDBBuildAlterFieldGenericSQLCommand.GetSQLStatement(const
-    Index: Integer): string;
+function TInstantDBBuildAlterFieldGenericSQLCommand.GetSQLStatement(
+  const Index: Integer): string;
 
-  function CreateTmpFieldMetadata(FieldMetadata: TInstantFieldMetadata):
+  function CreateTempFieldMetadata(FieldMetadata: TInstantFieldMetadata):
     TInstantFieldMetadata;
   begin
     Result := TInstantFieldMetadata.Create(FieldMetadata.Collection);
@@ -1059,43 +1077,30 @@ function TInstantDBBuildAlterFieldGenericSQLCommand.GetSQLStatement(const
 
 begin
   Result := inherited GetSQLStatement(Index);
-
-  FTmpFieldMD := CreateTmpFieldMetadata(NewFieldMetadata);
-
+  FTempFieldMetadata := CreateTempFieldMetadata(NewFieldMetadata);
   with Broker.Generator do
     case Index of
-      0 : Result := GenerateAddFieldSQL(FTmpFieldMD);
-
-      1 : Result := GenerateUpdateFieldCopySQL(OldFieldMetadata, FTmpFieldMD);
-
-      2 : Result := GenerateDropFieldSQL(OldFieldMetadata);
-
-      3 : Result := GenerateAddFieldSQL(NewFieldMetadata);
-
-      4 : Result := GenerateUpdateFieldCopySQL(FTmpFieldMD, NewFieldMetadata);
-
-      5 : Result := GenerateDropFieldSQL(FTmpFieldMD);
+      0: Result := GenerateAddFieldSQL(FTempFieldMetadata);
+      1: Result := GenerateUpdateFieldCopySQL(OldFieldMetadata, FTempFieldMetadata);
+      2: Result := GenerateDropFieldSQL(OldFieldMetadata);
+      3: Result := GenerateAddFieldSQL(NewFieldMetadata);
+      4: Result := GenerateUpdateFieldCopySQL(FTempFieldMetadata, NewFieldMetadata);
+      5: Result := GenerateDropFieldSQL(FTempFieldMetadata);
     end;
 end;
 
-function TInstantDBBuildAlterFieldGenericSQLCommand.GetSQLStatementCount:
-    Integer;
+function TInstantDBBuildAlterFieldGenericSQLCommand.GetSQLStatementCount: Integer;
 begin
   Result := 6;
 end;
 
-procedure TInstantDBBuildAlterFieldGenericSQLCommand.InternalExecute;
-var
-  iStatement: Integer;
+function TInstantDBBuildAlterFieldGenericSQLCommand.InternalExecuteHandleError(
+  const E: Exception): Boolean;
 begin
-  try
-    for iStatement := 0 to Pred(GetSQLStatementCount) do
-      Broker.Execute(GetSQLStatement(iStatement));
-  except
-    if Assigned(FTmpFieldMD) then
-      Broker.Execute(Broker.Generator.GenerateDropFieldSQL(FTmpFieldMD));
-    raise;
-  end;
+  // Try not to leave the temp field around.
+  if Assigned(FTempFieldMetadata) then
+    Broker.Execute(Broker.Generator.GenerateDropFieldSQL(FTempFieldMetadata));
+  Result := False;
 end;
 
 end.
