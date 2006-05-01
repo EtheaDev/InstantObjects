@@ -102,7 +102,7 @@ uses
   InstantUIB,
   InstantDBX,
   InstantADO,
-  InstantConnectionManagerForm;
+  InstantConnectionManagerFormUnit;
 
 var
   BusySaveCursor: TCursor;
