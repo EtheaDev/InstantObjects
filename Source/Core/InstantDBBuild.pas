@@ -742,16 +742,7 @@ begin
     DoBeforeCommandExecute(CurrentCommand);
     try
       if CurrentCommand.Enabled then
-      begin
-        Connector.StartTransaction;
-        try
-          CurrentCommand.Execute;
-          Connector.CommitTransaction;
-        except
-          Connector.RollbackTransaction;
-          raise;
-        end;
-      end;
+        CurrentCommand.Execute;
     except
       on E: Exception do
       begin
