@@ -174,12 +174,16 @@ procedure TestTInstantEmbPart.TestIsChanged;
 var
   vPart: TAddress;
 begin
-  AssertFalse(FInstantPart.IsChanged);
+  AssertFalse('Initial IsChanged', FInstantPart.IsChanged);
 
   vPart := TAddress.Create(FConn);
-  vPart.Changed;
   FInstantPart.Value := vPart;
-  AssertTrue(FInstantPart.IsChanged);
+  AssertTrue('IsChanged False after Value assignment', FInstantPart.IsChanged);
+
+  FInstantPart.Unchanged;
+  AssertFalse(FInstantPart.IsChanged);
+  vPart.Changed;
+  AssertTrue('IsChanged False after part changed', FInstantPart.IsChanged);
 end;
 
 procedure TestTInstantEmbPart.TestIsDefault;
@@ -245,6 +249,11 @@ var
   vFirstObj: TInstantObject;
   vSecondObj: TInstantObject;
 begin
+  AssertTrue(FInstantPart.IsDefault);
+  AssertFalse(FInstantPart.IsChanged);
+  FInstantPart.Reset;
+  AssertFalse('IsChanged True after initial Reset', FInstantPart.IsChanged);
+
   AssertFalse('HasValue 1', FInstantPart.HasValue);
   AssertNotNull('AssertNotNull', FInstantPart.Value);
   AssertTrue('HasValue 2', FInstantPart.HasValue);
@@ -255,9 +264,15 @@ begin
   FInstantPart.Value := vSecondObj;
   AssertEquals('Value.Id', 'PartId', FInstantPart.Value.Id);
   AssertNotSame('AssertNotSame', vFirstObj, FInstantPart.Value);
+  AssertTrue('IsChanged False after second Value assignment',
+      FInstantPart.IsChanged);
+
+  FInstantPart.Unchanged;
+  AssertFalse(FInstantPart.IsChanged);
 
   FInstantPart.Reset;
   AssertFalse('HasValue 3', FInstantPart.HasValue);
+  AssertTrue('IsChanged False after Reset', FInstantPart.IsChanged);
 end;
 
 procedure TestTInstantExtPart.SetUp;

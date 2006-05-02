@@ -6229,7 +6229,11 @@ end;
 
 procedure TInstantPart.Reset;
 begin
-  DestroyObject;
+  if not IsDefault then
+  begin
+    DestroyObject;
+    Changed;
+  end;
 end;
 
 procedure TInstantPart.SetOwnerContext(AObject: TInstantObject);
@@ -6470,7 +6474,11 @@ end;
 
 procedure TInstantReference.Reset;
 begin
-  DestroyObjectReference;
+  if not IsDefault then
+  begin
+    DestroyObjectReference;
+    Changed;
+  end;
 end;
 
 function TInstantReference.RetrieveObject: TInstantObject;
