@@ -1100,8 +1100,6 @@ type
     FConnector: TInstantConnector;
     FObjectReferenceList: TInstantObjectReferenceList;
     function GetObjectReferenceList: TInstantObjectReferenceList;
-    property ObjectReferenceList: TInstantObjectReferenceList read
-        GetObjectReferenceList;
     function GetRefItems(Index: Integer): TInstantObjectReference;
   protected
     class function AttributeType: TInstantAttributeType; override;
@@ -1123,6 +1121,8 @@ type
     procedure SetAllowOwned(Value: Boolean); virtual;
     procedure ValidateObject(AObject: TInstantObject); override;
     procedure WriteObject(Writer: TInstantWriter); override;
+    property ObjectReferenceList: TInstantObjectReferenceList read
+        GetObjectReferenceList;
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
