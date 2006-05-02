@@ -50,6 +50,7 @@ type
     procedure TestAttach_DetachObject;
     procedure TestDestroyObject_HasReference_HasValue;
     procedure TestHasValue;
+    procedure TestIsChanged;
     procedure TestLoadObjectFromStream;
     procedure TestObjectClass_ObjectClassName_ObjectId;
     procedure TestReferenceObject_Class;
@@ -73,6 +74,7 @@ begin
 
   FOwner := TContact.Create(FConn);
   FInstantReference := FOwner._Category;
+  FInstantReference.UnChanged;
 end;
 
 procedure TestTInstantReference.TearDown;
@@ -169,6 +171,28 @@ end;
 procedure TestTInstantReference.TestHasValue;
 begin
   AssertFalse(FInstantReference.HasValue);
+end;
+
+procedure TestTInstantReference.TestIsChanged;
+var
+  vObject: TCategory;
+begin
+  AssertFalse('Initial IsChanged', FInstantReference.IsChanged);
+
+  vObject := TCategory.Create(FConn);
+  try
+    AssertNotNull('Create object is nil', vObject);
+    FInstantReference.Value := vObject;
+    AssertTrue('IsChanged False after Value assignment', FInstantReference.IsChanged);
+
+    FInstantReference.Unchanged;
+    AssertFalse(FInstantReference.IsChanged);
+    vObject.Changed;
+    AssertFalse('IsChanged True after referenced object changed',
+        FInstantReference.IsChanged);
+  finally
+    vObject.Free;
+  end;
 end;
 
 procedure TestTInstantReference.TestLoadObjectFromStream;
@@ -270,6 +294,12 @@ var
 begin
   AssertTrue('Initial HasRef', FInstantReference.HasReference);
   AssertFalse('Initial HasVal', FInstantReference.HasValue);
+  AssertFalse('Initial IsChanged', FInstantReference.IsChanged);
+  AssertFalse('Initial IsDefault', FInstantReference.IsDefault);
+  FInstantReference.Reset;
+  AssertTrue('IsDefault after Reset', FInstantReference.IsDefault);
+  AssertTrue('IsChanged True after initial Reset',
+      FInstantReference.IsChanged);
 
   vObj := TCategory.Create(FConn);
   try
@@ -277,10 +307,13 @@ begin
     AssertTrue(FInstantReference.HasReference);
     AssertTrue(FInstantReference.HasValue);
     AssertSame(vObj, FInstantReference.Value);
+    AssertTrue('IsChanged 2 is False!', FInstantReference.IsChanged);
+    FInstantReference.UnChanged;
 
     FInstantReference.Reset;
     AssertFalse('Final HasRef', FInstantReference.HasReference);
     AssertFalse('Final HasVal', FInstantReference.HasValue);
+    AssertTrue('Final IsChanged', FInstantReference.IsChanged);
   finally
     vObj.Free;
   end;
