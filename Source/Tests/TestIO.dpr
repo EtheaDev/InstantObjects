@@ -50,7 +50,8 @@ uses
   TestInstantObjectStore in 'TestInstantObjectStore.pas',
   TestInstantParts in 'TestInstantParts.pas',
   TestInstantReferences in 'TestInstantReferences.pas',
-  TestInstantCircularReferences in 'TestInstantCircularReferences.pas';
+  TestInstantCircularReferences in 'TestInstantCircularReferences.pas',
+  TestInstantObjectReference in 'TestInstantObjectReference.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
