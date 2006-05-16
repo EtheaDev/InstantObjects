@@ -2379,7 +2379,7 @@ type
     function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual; abstract;
   public
     destructor Destroy; override;
-    function AcquireDataSet(const AStatement: string; AParams: TParams = nil): TDataSet;
+    function AcquireDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual;
     procedure ReleaseDataSet(const ADataSet: TDataSet); virtual;
     function DataTypeToColumnType(DataType: TInstantDataType;
       Size: Integer): string; virtual; abstract;
