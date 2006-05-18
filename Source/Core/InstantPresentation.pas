@@ -461,6 +461,7 @@ type
     procedure SetFiltered(Value: Boolean); override;
     procedure SetRecNo(Value: Integer); override;
     procedure Undo; virtual;
+    procedure UndoRecordBuffer(RecordBuffer: TInstantRecordBuffer); virtual;
     procedure UpdateCalcFields;
     procedure WriteProperty(Field: TField; Instance: TObject; Value: Variant); virtual;
     function BreakThorough( const FieldName : string ) : boolean; virtual;
@@ -4197,9 +4198,14 @@ begin
   end;
   if Assigned(FRecordBuffer) then
   begin
-    FRecordBuffer.UndoChanges;
+    UndoRecordBuffer(FRecordBuffer);
     FreeAndNil(FRecordBuffer);
   end;
+end;
+
+procedure TInstantCustomExposer.UndoRecordBuffer(RecordBuffer: TInstantRecordBuffer);
+begin
+  RecordBuffer.UndoChanges;
 end;
 
 procedure TInstantCustomExposer.UpdateBookmark(var BM: TInstantBookmark);
