@@ -1,19 +1,20 @@
-;This help file was created with HelpScribble 7.5.1
-;Licensed to: CiBiSoft.com
+;This help file was created with HelpScribble 7.6.0
+;Licensed to: Steven Mitchell
 
 :BASE IOHelp.hlp
 :TITLE InstantObjects Guide 2.0
 1 Welcome=id_0
-1 InstantObjects overview
+1 License Agreement=327SA3X
+1 Installing InstantObjects=Scribble40
+1 InstantObjects User Guide
 2 Using InstantObjects=75DE_G6
-2 Installing InstantObjects=Scribble30
-2 License Agreement=327SA3X
 2 Creating the Business Model
 3 Creating the Business Model=327SA3P
 3 The Model Explorer=327SA3S
-3 Defining Classes=327SA3T
-3 Defining Attributes=327SA3U
-3 External Storage of attributes=Scribble100
+3 Defining Classes
+4 Defining Classes=327SA3T
+4 Class Editor=Scribble130
+4 Attribute Editor=327SA3U
 3 Adding Business Rules=327SA3V
 3 Building/Evolving the Business Model=327SA3W
 2 Creating the User Interface
@@ -27,21 +28,21 @@
 3 Creating New Objects=327SA.W
 3 Retrieving Existing Objects=327SA.X
 3 Associating Objects=327SA3Y
-3 Using the InstantQuery=Scribble300
+3 Using the InstantQuery=Scribble440
 2 The Primer demo
-3 Learning the Primer demo=Scribble320
-3 Introduction=Scribble330
-3 The Business Model=Scribble340
-3 The User Interface=Scribble350
-3 Persisting Objects=Scribble360
-3 Mapping Scheme=Scribble370
-3 Streaming=Scribble380
-3 Exposing Objects=Scribble390
-3 Selecting Objects=Scribble400
-3 Filtering=Scribble410
-3 Sorting=Scribble420
-3 Object Explorer=Scribble430
-3 Connection Manager=Scribble440
+3 Learning the Primer demo=Scribble460
+3 Introduction=Scribble480
+3 The Business Model=Scribble490
+3 The User Interface=Scribble500
+3 Persisting Objects=Scribble510
+3 Mapping Scheme=Scribble520
+3 Streaming=Scribble530
+3 Exposing Objects=Scribble540
+3 Selecting Objects=Scribble550
+3 Filtering=Scribble560
+3 Sorting=Scribble570
+3 Object Explorer=Scribble580
+3 Connection Manager=Scribble590
 1 InstantObjects Symbol Reference
 2 Classes
 3 EInstantAccessError=id_1>MAIN
@@ -105,6 +106,7 @@
 3 InstantCompareValues=327SI9Y>MAIN
 3 InstantConstArrayToVariant=327SI9P>MAIN
 3 InstantDateTimeToStr=327SI9Q>MAIN
+3 InstantDefaultConnector=InstantDefaultConnector>MAIN
 3 InstantDisableNotifiers=327SI9U>MAIN
 3 InstantEnableNotifiers=327SI9W>MAIN
 3 InstantExploreObject=327SI0Y>MAIN
@@ -118,6 +120,7 @@
 3 InstantGetClasses=75DEFG5>MAIN
 3 InstantIsIdentifier=3OA4HS.>MAIN
 3 InstantIsValidObjectId=id_832>MAIN
+3 InstantMatchObject=InstantMatchObject>MAIN
 3 InstantMatchObject=75DE_GZ>MAIN
 3 InstantNameToClassName=327SI8T>MAIN
 3 InstantObjectBinaryToText=75DE_H2>MAIN
@@ -186,6 +189,7 @@
 3 InstantClassPrefix=75DE_D1>MAIN
 3 InstantDateFormat=8DW2.DP>MAIN
 3 InstantDateTimeFormat=327SI9S>MAIN
+3 InstantTimeFormat=InstantTimeFormat>MAIN
 2 Units
 3 InstantADO.pas=id_102>MAIN
 3 InstantADS.pas=id_155>MAIN
@@ -200,3 +204,4 @@
 3 InstantIBX.pas=id_653>MAIN
 3 InstantPersistence.pas=id_5>MAIN
 3 InstantPresentation.pas=id_413>MAIN
+3 InstantUtils.pas=id_1057>MAIN
