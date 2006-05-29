@@ -1,6 +1,45 @@
 VERSION HISTORY
 ---------------
 
+Version 2.0 RC 1 (1.9.1.4) (2006-05-31)
+
+- Help file has been improved.
+
+- Bug fix for # 1475841. "TInstantContainer.Sort error if empty".
+
+- Bug fix for # 1475982. Rebuilding a Firebird database creates
+  disabled PKs.
+
+- Changed the visibility of the 
+  TInstantReferences.ObjectReferenceList property from private to
+  protected.
+
+- Bug fix for # 1479652. "Problem with PrimeCross demo and 
+  InstantReference.Reset".
+
+- Changed TInstantSQLBroker.AcquireDataSet method to virtual.
+
+- Added a protected, virtual method UndoRecordBuffer to
+  TInstantCustomExposer to enable customization of its Undo
+  method.
+
+- Bug fix for # 1466586. Minor Error in Attribute Editor.
+  Force the main definition tabsheet to be active before trying
+  to focus the attribute Name or Size edit controls.
+
+- Fix for bug # 1467511. When adding a new attribute in
+  ModelMaker, in the attribute editor there aren't field types
+  other than "part" and "parts" available.
+
+- Updated unit tests. Added TestInstantObjectReference.pas unit
+  to the Tests folder. This new unit contains tests for the 
+  TInstantObjectReference class.
+
+- InstantPart and InstantReference tests updated.
+
+- Bug Fix for # 1464661. TInstantReference.Assign causes AV. Check
+  for nil needed before trying to clone a TInstantReference
+  attribute object.
 
 Version 2.0 Beta 3 (1.9.1.3) (2006-03-31)
 
