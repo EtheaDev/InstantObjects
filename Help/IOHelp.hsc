@@ -37,7 +37,7 @@ Previous
 Next
 FALSE
 
-1262
+1265
 10
 ID_0
 InstantObjects Welcome
@@ -10688,8 +10688,8 @@ Imported
 
 
 FALSE
-24
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+25
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\tx355\lang1040\b\f0\fs24 TInstantCustomExposer Properties \cf1\b0\fs16 
 \par \strike TInstantCustomExposer\strike0\{linkID=4790>main\}\tab\ul Legend\ulnone\{link=ID_434\}\{keepn\} 
@@ -10699,7 +10699,8 @@ FALSE
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike CurrentObject\strike0\{linkID=4920>main\}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike FieldOptions\strike0\{linkID=4930>main\}
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike HasSubject\strike0\{linkID=4950>main\}
-\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0\{linkID=4960>main\}
+\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0\{linkID=49\lang1033\f1 55\lang1040\f0 >main\}
+\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike Is\lang1033\f1 Subject\lang1040\f0 Changed\strike0\{linkID=49\lang1033\f1 60\lang1040\f0 >main\}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike Limited\strike0\{linkID=4970>main\}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike Mode\strike0\{linkID=4990>main\}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike ObjectClass\strike0\{linkID=5000>main\}
@@ -10858,8 +10859,8 @@ Imported
 
 
 FALSE
-59
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+60
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\tx355\lang1040\b\f0\fs24 TInstantCustomExposer Members \cf1\b0\fs16 
 \par \strike TInstantCustomExposer\strike0\{linkID=4790>main\}\tab\ul Legend\ulnone\{link=ID_470\}\{keepn\} 
@@ -10869,7 +10870,8 @@ FALSE
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike CurrentObject\strike0\{linkID=4920>main\}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike FieldOptions\strike0\{linkID=4930>main\}
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike HasSubject\strike0\{linkID=4950>main\}
-\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0\{linkID=4960>main\}
+\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0\{linkID=49\lang1033\f1 55\lang1040\f0 >main\}
+\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike Is\lang1033\f1 Subject\lang1040\f0 Changed\strike0\{linkID=49\lang1033\f1 60\lang1040\f0 >main\}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike Limited\strike0\{linkID=4970>main\}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike Mode\strike0\{linkID=4990>main\}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike ObjectClass\strike0\{linkID=5000>main\}
@@ -11074,28 +11076,91 @@ FALSE
 \par \pard\sb25\sa25\b0 Use HasSubject to determine if the exposer has a subject.
 \par 
 \par }
-4960
+4955
 ID_424
 TInstantCustomExposer.IsChanged
 IsChanged;IsChanged,TInstantCustomExposer;TInstantCustomExposer,IsChanged;
 
 
 
-Imported
-main
+Modified
+
 
 IsChanged;IsChanged_Property;TInstantCustomExposer_IsChanged
 FALSE
 10
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCustomExposer.IsChanged \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\}\{keepn\} 
-\par \pard\sb25\sa85\fs18 Specifies if changes have been made to the exposed subject.
+\par \cf2\strike TInstantCustomExposer\cf3\strike0\{linkID=4790>main\}\cf1\tab\ul See Also\ulnone\{linkID=49\lang1033\f1 57\lang1040\f0\}\{keepn\} 
+\par \pard\sb25\sa85\fs18 Specifies if changes have been made to the expose\lang1033\f1 r's\lang1040\f0  \lang1033\f1 dataset fields or records\lang1040\f0 .
 \par \pard\sb25\sa25\b\f2 property\b0  IsChanged: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 If objects have been added or removed or any changes have been made to the subject or any object within the subject, IsChanged is True. Otherwise IsChanged is False.
+\par \pard\sb25\sa25\b0 If \lang1033\f1 dataset records\lang1040\f0  have been added or removed or any changes have been made to \lang1033\f1 their fields\lang1040\f0 , IsChanged is True. Otherwise IsChanged is False.
 \par 
+\par }
+4957
+Scribble4957
+
+
+
+
+
+Imported
+
+
+
+FALSE
+7
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
+\par \pard\li95\sb25\sa25\cf1\b0\fs18 
+\par \strike TInstantCustomExposer.\lang1033\f1 IsSubjectChanged\lang1040\strike0\f0\{linkID=\lang1033\f1 496\lang1040\f0 0>main\}
+\par \strike 
+\par }
+4960
+Scribble4960
+TInstantCustomExposer.IsSubjectChanged
+IsSubjectChanged;IsSubjectChanged,TInstantCustomExposer;TInstantCustomExposer,IsSubjectChanged;
+
+
+
+Added
+main
+
+IsSubjectChanged;IsSubjectChanged_Property;TInstantCustomExposer_IsSubjectChanged
+FALSE
+10
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCustomExposer.IsSubjectChanged \cf1\b0\fs16 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0\{linkID=4790>main\}\cf1\tab\ul See Also\ulnone\{linkID=49\lang1033\f1 65\lang1040\f0\}\{keepn\} 
+\par \pard\sb25\sa85\fs18 Specifies if changes have been made to the exposed subject.
+\par \pard\sb25\sa25\b\f2 property\b0  IsSubjectChanged: Boolean;
+\par \pard\sb55\sa25\b\f0 Description
+\par \pard\sb25\sa25\b0 If objects have been added or removed or any changes have been made to the subject or any object within the subject, IsSubjectChanged is True. Otherwise IsSubjectChanged is False.
+\par 
+\par }
+4965
+Scribble4965
+
+
+
+
+
+Imported
+
+
+
+FALSE
+7
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
+\par \pard\li95\sb25\sa25\cf1\b0\fs18 
+\par \strike TInstantCustomExposer.\lang1033\f1 IsChanged\lang1040\strike0\f0\{linkID=\lang1033\f1 4955\lang1040\f0 >main\}
+\par \strike 
 \par }
 4970
 ID_425
