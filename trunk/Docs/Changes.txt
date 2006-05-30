@@ -5,6 +5,9 @@ Version 2.0 RC 1 (1.9.1.4) (2006-05-31)
 
 - Help file has been improved.
 
+- Bug fix for # 1496971 Bug In Model Explorer Setting Index and 
+  Required properties.
+
 - Bug fix for # 1475841. "TInstantContainer.Sort error if empty".
 
 - Bug fix for # 1475982. Rebuilding a Firebird database creates

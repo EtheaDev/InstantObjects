@@ -3440,11 +3440,17 @@ end;
 procedure TInstantCodeAttributeTailor.DeleteMethods;
 begin
   DeleteItem(FAddMethod);
+  FAddMethod := nil;
   DeleteItem(FClearMethod);
+  FClearMethod := nil;
   DeleteItem(FDeleteMethod);
+  FDeleteMethod := nil;
   DeleteItem(FIndexOfMethod);
+  FIndexOfMethod := nil;
   DeleteItem(FInsertMethod);
+  FInsertMethod := nil;
   DeleteItem(FRemoveMethod);
+  FRemoveMethod := nil;
 end;
 
 destructor TInstantCodeAttributeTailor.Destroy;
