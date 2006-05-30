@@ -429,38 +429,58 @@ end;
 // SubjectExposer.PostChanges does not overwrite our changes.
 procedure TInstantAttributeEditorForm.SaveData;
 
-  procedure SaveOptions;
+  function SetChangedField(const AFieldName: String; ACheckBoxChecked: Boolean):
+    Boolean;
   begin
-    SubjectExposer.FieldByName('IsIndexed').AsBoolean :=
-      OptionIndexedCheckBox.Checked;
-    SubjectExposer.FieldByName('IsRequired').AsBoolean :=
-      OptionRequiredCheckBox.Checked;
-    SubjectExposer.FieldByName('ReadOnly').AsBoolean :=
-      OptionReadOnlyCheckBox.Checked;
-    SubjectExposer.FieldByName('IsDefault').AsBoolean :=
-      OptionDefaultCheckBox.Checked;
+    Result := False;
+    if SubjectExposer.FieldByName(AFieldName).AsBoolean <>
+      ACheckBoxChecked then
+    begin
+      SubjectExposer.FieldByName(AFieldName).AsBoolean :=
+        ACheckBoxChecked;
+      Result := True;
+    end;
   end;
 
-  procedure SaveMethods;
+  function SaveOptions: Boolean;
   begin
-    SubjectExposer.FieldByName('IncludeAddMethod').AsBoolean :=
-      MethodAddCheckBox.Checked;
-    SubjectExposer.FieldByName('IncludeRemoveMethod').AsBoolean :=
-      MethodRemoveCheckBox.Checked;
-    SubjectExposer.FieldByName('IncludeInsertMethod').AsBoolean :=
-      MethodInsertCheckBox.Checked;
-    SubjectExposer.FieldByName('IncludeDeleteMethod').AsBoolean :=
-      MethodDeleteCheckBox.Checked;
-    SubjectExposer.FieldByName('IncludeIndexOfMethod').AsBoolean :=
-      MethodIndexOfCheckBox.Checked;
-    SubjectExposer.FieldByName('IncludeClearMethod').AsBoolean :=
-      MethodClearCheckBox.Checked;
+    Result := False;
+    if SetChangedField('IsIndexed', OptionIndexedCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IsRequired', OptionRequiredCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('ReadOnly', OptionReadOnlyCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IsDefault', OptionDefaultCheckBox.Checked) then
+      Result := True;
   end;
 
+  function SaveMethods: Boolean;
+  begin
+    Result := False;
+    if SetChangedField('IncludeAddMethod', MethodAddCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IncludeRemoveMethod', MethodRemoveCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IncludeInsertMethod', MethodInsertCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IncludeDeleteMethod', MethodDeleteCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IncludeIndexOfMethod', MethodIndexOfCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IncludeClearMethod', MethodClearCheckBox.Checked) then
+      Result := True;
+  end;
+
+var
+  OptionsChanged: Boolean;
+  MethodsChanged: Boolean;
 begin
   inherited;
-  SaveOptions;
-  SaveMethods;
+  OptionsChanged := SaveOptions;
+  MethodsChanged := SaveMethods;
+  if OptionsChanged or MethodsChanged then
+    SubjectExposer.Edit;
 end;
 
 procedure TInstantAttributeEditorForm.SetLimited(Value: Boolean);
