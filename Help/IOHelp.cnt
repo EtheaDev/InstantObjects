@@ -1,4 +1,4 @@
-;This help file was created with HelpScribble 7.6.0
+;This help file was created with HelpScribble 7.6.1
 ;Licensed to: Steven Mitchell
 
 :BASE IOHelp.hlp
@@ -66,6 +66,7 @@
 3 TInstantConnectionManager=id_317>MAIN
 3 TInstantConnector=id_104>MAIN
 3 TInstantContainer=id_306>MAIN
+3 TInstantCurrency=Scribble4670>MAIN
 3 TInstantCustomExposer=id_407>MAIN
 3 TInstantDateTime=id_9>MAIN
 3 TInstantDBISAMConnector=id_513>MAIN
@@ -106,7 +107,7 @@
 3 InstantCompareValues=327SI9Y>MAIN
 3 InstantConstArrayToVariant=327SI9P>MAIN
 3 InstantDateTimeToStr=327SI9Q>MAIN
-3 InstantDefaultConnector=InstantDefaultConnector>MAIN
+3 InstantDefaultConnector=327SI8Q>MAIN
 3 InstantDisableNotifiers=327SI9U>MAIN
 3 InstantEnableNotifiers=327SI9W>MAIN
 3 InstantExploreObject=327SI0Y>MAIN
@@ -120,8 +121,8 @@
 3 InstantGetClasses=75DEFG5>MAIN
 3 InstantIsIdentifier=3OA4HS.>MAIN
 3 InstantIsValidObjectId=id_832>MAIN
-3 InstantMatchObject=InstantMatchObject>MAIN
-3 InstantMatchObject=75DE_GZ>MAIN
+3 InstantMatchObject 1=3OA4HS_>MAIN
+3 InstantMatchObject 2=75DE_GZ>MAIN
 3 InstantNameToClassName=327SI8T>MAIN
 3 InstantObjectBinaryToText=75DE_H2>MAIN
 3 InstantObjectTextToBinary=75DE_H4>MAIN
@@ -144,7 +145,6 @@
 3 InstantWriteObject=7RMQ.VA>MAIN
 3 InstantWriteObjects=7RMQ.VD>MAIN
 2 Types
-3 PInstantAttribute=id_169>MAIN
 3 TInstantAccessMode=id_473>MAIN
 3 TInstantADOProviderType=id_149>MAIN
 3 TInstantAttributeChangeEvent=id_871>MAIN
@@ -166,7 +166,6 @@
 3 TInstantExplorerLayout=id_582>MAIN
 3 TInstantExplorerNodeType=75DE_BZ>MAIN
 3 TInstantExplorerNodeTypes=id_583>MAIN
-3 TInstantExposerOption=8DW2.FP>MAIN
 3 TInstantExposerOptions=id_478>MAIN
 3 TInstantFieldDefEvent=id_499>MAIN
 3 TInstantFieldErrorEvent=id_492>MAIN
@@ -189,7 +188,7 @@
 3 InstantClassPrefix=75DE_D1>MAIN
 3 InstantDateFormat=8DW2.DP>MAIN
 3 InstantDateTimeFormat=327SI9S>MAIN
-3 InstantTimeFormat=InstantTimeFormat>MAIN
+3 InstantTimeFormat=75DE_A6>MAIN
 2 Units
 3 InstantADO.pas=id_102>MAIN
 3 InstantADS.pas=id_155>MAIN
@@ -204,4 +203,4 @@
 3 InstantIBX.pas=id_653>MAIN
 3 InstantPersistence.pas=id_5>MAIN
 3 InstantPresentation.pas=id_413>MAIN
-3 InstantUtils.pas=id_1057>MAIN
+3 InstantUtils.pas=327SI7V>MAIN
