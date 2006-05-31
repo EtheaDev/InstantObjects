@@ -618,11 +618,10 @@
 {\up K}{\footnote {\up K} Building/Evolving the Business Model;Business Model,Building,Evolving;}
 }
 \viewkind4\uc1\pard\keepn\cf1\lang1040\b\f0\fs24 Building/Evolving the Business Model \b0\fs16 
-\par \strike Creating the Business Model\strike0{\v 327SA3P>main} 
+\par \cf2\strike Creating the Business Model\cf3\strike0{\v 327SA3P>main}\cf1 
 \par \pard\sb25\sa25\fs18 The final step in the modeling phase is to make the model physical in terms of storage for the objects. The required tables and indices have to be created from the business model. InstantObjects allows \lang1033\f1 the\lang1040\f0  use\lang1033\f1  of\lang1040\f0  various types of databases as storage for \lang1033\f1 the business class \lang1040\f0 objects\lang1033\f1  by\lang1040  using different brokers.
 \par \f2\fs10 
-\par \f0\fs18 The Connection Manager \lang1033\f1 manages the\lang1040\f0  \f1 definition, \f0 creat\lang1033\f1 ion\lang1040\f0  \f1 and evolution of \lang1033 the\lang1040\f0  database. \lang1033\f1 It\lang1040\f0  \lang1033\f1 can be launched using the \cf3\{bmc ModelExplorerBuildDatabaseButton.gif\}\cf1 Build Database speed button\lang1040\f0  on the toolbar of the\lang1033\f1  \cf2\strike InstantObjects\lang1040\f0  Model Explorer
-\par \cf3\strike0\f1{\v 327SA3S>main}
+\par \f0\fs18 The Connection Manager \lang1033\f1 manages the\lang1040\f0  \f1 definition, \f0 creat\lang1033\f1 ion\lang1040\f0  \f1 and evolution of \lang1033 the\lang1040\f0  database. \lang1033\f1 It\lang1040\f0  \lang1033\f1 can be launched using the \cf3\{bmc ModelExplorerBuildDatabaseButton.gif\}\cf1 Build Database speed button\lang1040\f0  on the toolbar of the\lang1033\f1  \cf2\strike InstantObjects\lang1040\f0  Model Explorer\cf3\strike0{\v 327SA3S>main}\f1 
 \par \cf1\f2\fs10 
 \par \cf3\f1\fs18\{bmc ConnectionManager.gif\}
 \par \cf1\f2\fs10 
@@ -686,7 +685,7 @@
 {\up K}{\footnote {\up K} Persistence by RAD;RAD, Persistence;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Persistence by RAD \cf1\b0\fs16 
-\par \strike Creating the User Interface\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 280\lang1040\f0 >main\} 
+\par \cf2\strike Creating the User Interface\cf3\strike0{\v 75DE_G4>main}\cf1 
 \par \pard\sb25\sa25\fs18 When InstantObjects has been installed in your Delphi environment, a set of components is available on the InstantObjects tab of the Delphi component palette.
 \par \cf3\{bmc InstantObjectsPalette.gif\}\cf1 
 \par Applications can be built with InstantObjects using the same RAD approach used when building traditional database applications in Delphi. InstantObjects allows you to use standard VCL data-aware controls with your persistent business objects. The InstantObjects components are used to connect to the database and to make business objects available in the user interface of the application\f1 .\f0 
@@ -702,7 +701,7 @@
 {\up K}{\footnote {\up K} Connector;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 The Connector \cf1\b0\fs16 
-\par \strike Creating the User Interface\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 280\lang1040\f0 >main\} 
+\par \cf2\strike Creating the User Interface\cf3\strike0{\v 75DE_G4>main}\cf1 
 \par \pard\sb25\sa25\fs18 In order for your application to use the database \lang1033\f1 for\lang1040\f0  object storage, you must use a connector component. The connector acts as a gateway between your application and the database\f1  (by means of an internal component called the broker) and \f0 manag\lang1033\f1 es\lang1040\f0  all the objects that are stored to and retrieved from the database. A connector component for each type of data access layer that \lang1033\f1 has been installed from\lang1040\f0  InstantObjects is available on the component palette. A connector is attached to a database by assigning a connection component to its Connection \f1 (or equivalent) \f0 property. Each connector component supports its own connection type\f1 . For example:\f0 
 \par \f2\fs10 
 \par \pard\sb25\sa25\tx1980\tx4800\b\f0\fs18 Access type\tab Connector type\tab\f1 Type of \f0 Connection\b0 
@@ -729,7 +728,7 @@
 {\up K}{\footnote {\up K} Exposer;}
 }
 \viewkind4\uc1\pard\keepn\cf1\lang1040\b\f0\fs24 The Exposer \b0\fs16 
-\par \strike Creating the User Interface\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 280\lang1040\f0 >main\} 
+\par \cf2\strike Creating the User Interface\cf3\strike0{\v 75DE_G4>main}\cf1 
 \par \pard\sb25\sa25\strike\fs18 TInstantExposer\strike0{\v ID_416>main} is a dataset component that maps objects to the user interface of your application.
 \par Attributes defined in the business model are accessed through properties. Properties that are published can be accessed by data-aware controls via this component. In addition, the content of container attributes can be accessed too. The exposer component maps the published properties of objects to fields in a dataset. The objects being exposed are represented as rows in the dataset.
 \par To expose an object, it must be assigned to the \strike Subject\strike0{\v ID_414>main} property of a \strike TInstantExposer\strike0{\v ID_416>main}. To expose multiple objects contained within another object, assign the main object to the Subject property and enter content mode by changing the \strike Mode\strike0{\v ID_415>main} property from amObject to amContent. If the exposed class has no default container, specify the desired container in the property \strike ContainerName\strike0{\v ID_589>main}. Specify the class of the exposed\lang1033\f1 , contained\lang1040\f0  object(s) in the property \strike ObjectClassName\strike0{\v ID_594>main}.
@@ -749,7 +748,7 @@
 {\up K}{\footnote {\up K} Selector;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 The Selector \cf1\b0\fs16 
-\par \strike Creating the User Interface\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 280\lang1040\f0 >main\} 
+\par \cf2\strike Creating the User Interface\cf3\strike0{\v 75DE_G4>main}\cf1 
 \par \pard\sb25\sa25\fs18 The \strike TInstantSelector\strike0{\v ID_417>main} is a dataset component \lang1033\f1 that \lang1040\f0 allows you to select objects from the database and optionally expose them in the user interface.
 \par To select objects from the database, a command must be specified \lang1033\f1 in\lang1040\f0  the Command property. The syntax of this command\f1  (called an IQL command, from Instant Query Language) \f0  is somewhat similar to an SQL SELECT-statement\f1 , \f0 but instead of tables and columns, you specify classes and attributes:
 \par \pard\keep\f7 
@@ -807,7 +806,7 @@
 {\up #}{\footnote {\up #} 327SA.U}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 Programming with Persistent Objects \cf1\b0\fs16 
-\par \strike Programming with Persistent Objects\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 340\lang1040\f0 >main\} 
+\par \cf2\strike Programming with Persistent Objects\cf3\strike0{\v 327SA.T>main}\cf1 
 \par \pard\keep\li95\sb25\sa25\strike\fs18 Creating New Objects\strike0{\v 327SA.W>main}
 \par \strike Retrieving Existing Objects\strike0{\v 327SA.X>main}
 \par \strike Associating Objects\strike0{\v 327SA3Y>main}
@@ -840,7 +839,7 @@
 {\up K}{\footnote {\up K} Creating New Objects,Example 1;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike Creating New Objects\strike0\{link\lang1033\f1 ID\lang1040\f0 =3\lang1033\f1 60\lang1040\f0 >main\} 
+\par \cf2\strike Creating New Objects\cf3\strike0{\v 327SA.W>main}\cf1 
 \par \pard\keep\f7\fs18 
 \par \b var\b0 
 \par   Person: TPerson
@@ -882,7 +881,7 @@
 {\up K}{\footnote {\up K} Retrieving Existing Objects,Example 1;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike Retrieving Existing Objects\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 380\lang1040\f0 >main\} 
+\par \cf2\strike Retrieving Existing Objects\cf3\strike0{\v 327SA.X>main}\cf1 
 \par \pard\keep\f7\fs18 
 \par \b var\b0 
 \par   Person: TPerson;
@@ -905,7 +904,7 @@
 {\up K}{\footnote {\up K} Retrieving Existing Objects,Example 2;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 2 \cf1\b0\fs16 
-\par \strike Retrieving Existing Objects\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 380\lang1040\f0 >main\} 
+\par \cf2\strike Retrieving Existing Objects\cf3\strike0{\v 327SA.X>main}\cf1 
 \par \pard\keep\f7\fs18 
 \par \b var\b0 
 \par   I: Integer;
@@ -937,7 +936,7 @@
 {\up K}{\footnote {\up K} Retrieving Existing Objects,Example 3;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example \lang1033\f1 3\lang1040\f0  \cf1\b0\fs16 
-\par \strike Retrieving Existing Objects\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 380\lang1040\f0 >main\} 
+\par \cf2\strike Retrieving Existing Objects\cf3\strike0{\v 327SA.X>main}\cf1 
 \par \pard\keep\f7\fs18 
 \par \b var\b0 
 \par   I: Integer;
@@ -984,7 +983,7 @@
 {\up K}{\footnote {\up K} Associating Objects,Example 1;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike Associating Objects\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 420\lang1040\f0 >main\} 
+\par \cf2\strike Associating Objects\cf3\strike0{\v 327SA3Y>main}\cf1 
 \par \pard\keep\f7\fs18 
 \par \pard\sb25\sa25\tx1435\f0 The \lang1033\f1 following\lang1040\f0  code defines a class containing the various relation types. The procedure CreateSamplePerson creates a TPerson object with a sample name and address, associates it with a company and adds some phones and colleagues to it. The procedures ShowPhones and ShowFriends shows a message with the caption of each of the corresponding objects associated with the person. The code assumes that a default connector has been created.
 \par \pard\sb25\sa25\f2\fs10 
@@ -1428,6 +1427,7 @@
 {\up #}{\footnote {\up #} ID_1}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} EInstantAccessError}
+{\up +}{\footnote {\up +} classessymbol:000010}
 {\up K}{\footnote {\up K} EInstantAccessError;}
 {\up A}{\footnote {\up A} EInstantAccessError;EInstantAccessError_Object}
 }
@@ -1460,7 +1460,7 @@
 {\up K}{\footnote {\up K} EInstantAccessError,Example 1;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike EInstantAccessError\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1000\lang1040\f0 >main\}
+\par \cf2\strike EInstantAccessError\cf3\strike0{\v ID_1>main}\cf1
 \par \pard\keep\b\f7\fs18 function \b0 DateTimeToBoolean(DateTime: \strike TInstantDateTime\strike0{\v ID_9>main}): Boolean;
 \par \b begin\b0 
 \par   Result := DateTime.AsBoolean;
@@ -1577,6 +1577,7 @@
 {\up #}{\footnote {\up #} ID_22}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} EInstantConflict}
+{\up +}{\footnote {\up +} classessymbol:000020}
 {\up K}{\footnote {\up K} EInstantConflict;}
 {\up A}{\footnote {\up A} EInstantConflict;EInstantConflict_Object}
 }
@@ -1598,7 +1599,7 @@
 {\up K}{\footnote {\up K} EInstantConflict,Example 1;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike EInstantConflict\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1120\lang1040\f0 >main\}
+\par \cf2\strike EInstantConflict\cf3\strike0{\v ID_4>main}\cf1
 \par \pard\fs18 
 \par \pard\tx3240\ul\b User 1\tab User 2\f1                                              \f0 
 \par \ulnone\b0 Retrieve Foo\tab Retrieve Foo
@@ -1715,6 +1716,7 @@
 {\up #}{\footnote {\up #} ID_8}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} EInstantConversionError}
+{\up +}{\footnote {\up +} classessymbol:000030}
 {\up K}{\footnote {\up K} EInstantConversionError;}
 {\up A}{\footnote {\up A} EInstantConversionError;EInstantConversionError_Object}
 }
@@ -1747,7 +1749,7 @@
 {\up K}{\footnote {\up K} EInstantConversionError,Example 1;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike EInstantConversionError\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1230\lang1040\f0 >main\}
+\par \cf2\strike EInstantConversionError\cf3\strike0{\v ID_8>main}\cf1
 \par \pard\keep\f7\fs18 procedure StringToDateTime(const S: string; DateTime: \strike TInstantDateTime\strike0{\v ID_9>main});
 \par begin
 \par   DateTime.AsString := S;
@@ -1865,6 +1867,7 @@
 {\up #}{\footnote {\up #} ID_6}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} EInstantError}
+{\up +}{\footnote {\up +} classessymbol:000040}
 {\up K}{\footnote {\up K} EInstantError;}
 {\up A}{\footnote {\up A} EInstantError;EInstantError_Object}
 }
@@ -1993,7 +1996,7 @@
 {\up A}{\footnote {\up A} EInstantError_OriginalException;OriginalException;OriginalException_Property}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 EInstantError.OriginalException \cf1\b0\fs16 
-\par \strike EInstantError\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1350\lang1040\f0 >main\}
+\par \cf2\strike EInstantError\cf3\strike0{\v ID_6>main}\cf1
 \par \pard\sb25\sa85\fs18 Contains the original exception causing the \strike EInstantError\strike0{\v ID_6>main} exception.
 \par \pard\sb25\sa25\b\f7 property\b0  OriginalException: TObject;
 \par \pard\sb55\sa25\b\f0 Description
@@ -2011,7 +2014,7 @@
 {\up A}{\footnote {\up A} CreateRes;CreateRes_Method;EInstantError_CreateRes}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 EInstantError.CreateRes \cf1\b0\fs16 
-\par \strike EInstantError\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1350\lang1040\f0 >main\}
+\par \cf2\strike EInstantError\cf3\strike0{\v ID_6>main}\cf1
 \par \pard\sb25\sa85\fs18 Creates an exception instance with a message loaded from the applications resources.
 \par \pard\sb25\sa25\b\f7 constructor\b0  CreateRes(ResStringRec: PResStringRec; E: TObject);
 \par \pard\sb55\sa25\b\f0 Description
@@ -2029,7 +2032,7 @@
 {\up A}{\footnote {\up A} CreateResFmt;CreateResFmt_Method;EInstantError_CreateResFmt}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 EInstantError.CreateResFmt \cf1\b0\fs16 
-\par \strike EInstantError\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1350\lang1040\f0 >main\}
+\par \cf2\strike EInstantError\cf3\strike0{\v ID_6>main}\cf1
 \par \pard\sb25\sa85\fs18 Creates an exception instance with a formatted message loaded from the applications resources.
 \par \pard\sb25\sa25\b\f7 constructor\b0  CreateResFmt(ResStringRec: PResStringRec; \b const\b0  Args: \b array\b0  \b of\b0  \b const\b0 ; E: TObject);
 \par \pard\sb55\sa25\b\f0 Description
@@ -2047,7 +2050,7 @@
 {\up A}{\footnote {\up A} Destroy;Destroy_Method;EInstantError_Destroy}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 EInstantError.Destroy \cf1\b0\fs16 
-\par \strike EInstantError\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1350\lang1040\f0 >main\}
+\par \cf2\strike EInstantError\cf3\strike0{\v ID_6>main}\cf1
 \par \pard\sb25\sa85\fs18 Destroys the exception instance.
 \par \pard\sb25\sa25\b\f7 destructor\b0  Destroy; \b override\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -2061,6 +2064,7 @@
 {\up #}{\footnote {\up #} ID_54}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} EInstantKeyViolation}
+{\up +}{\footnote {\up +} classessymbol:000050}
 {\up K}{\footnote {\up K} EInstantKeyViolation;}
 {\up A}{\footnote {\up A} EInstantKeyViolation;EInstantKeyViolation_Object}
 }
@@ -2193,6 +2197,7 @@
 {\up #}{\footnote {\up #} ID_66}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} EInstantRangeError}
+{\up +}{\footnote {\up +} classessymbol:000060}
 {\up K}{\footnote {\up K} EInstantRangeError;}
 {\up A}{\footnote {\up A} EInstantRangeError;EInstantRangeError_Object}
 }
@@ -2313,6 +2318,7 @@
 {\up #}{\footnote {\up #} ID_76}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} EInstantStreamError}
+{\up +}{\footnote {\up +} classessymbol:000070}
 {\up K}{\footnote {\up K} EInstantStreamError;}
 {\up A}{\footnote {\up A} EInstantStreamError;EInstantStreamError_Object}
 }
@@ -2433,6 +2439,7 @@
 {\up #}{\footnote {\up #} ID_86}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} EInstantValidationError}
+{\up +}{\footnote {\up +} classessymbol:000080}
 {\up K}{\footnote {\up K} EInstantValidationError;}
 {\up A}{\footnote {\up A} EInstantValidationError;EInstantValidationError_Object}
 }
@@ -2553,6 +2560,7 @@
 {\up #}{\footnote {\up #} ID_97}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantADOConnector}
+{\up +}{\footnote {\up +} classessymbol:000090}
 {\up K}{\footnote {\up K} TInstantADOConnector;}
 {\up A}{\footnote {\up A} TInstantADOConnector;TInstantADOConnector_Object}
 }
@@ -2737,7 +2745,7 @@
 {\up A}{\footnote {\up A} CanTransaction;CanTransaction_Property;TInstantADOConnector_CanTransaction}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantADOConnector.CanTransaction \cf1\b0\fs16 
-\par \strike TInstantADOConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1900\lang1040\f0 >main\}
+\par \cf2\strike TInstantADOConnector\cf3\strike0{\v ID_97>main}\cf1
 \par \pard\sb25\sa85\fs18 Determines if the associated database engine supports transactions.
 \par \pard\sb25\sa25\b\f7 property\b0  CanTransaction: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -2755,7 +2763,7 @@
 {\up A}{\footnote {\up A} Connection;Connection_Property;TInstantADOConnector_Connection}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantADOConnector.Connection \cf1\b0\fs16 
-\par \strike TInstantADOConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1900\lang1040\f0 >main\}
+\par \cf2\strike TInstantADOConnector\cf3\strike0{\v ID_97>main}\cf1
 \par \pard\sb25\sa85\fs18 Specifies the connection used by the connector component.
 \par \pard\sb25\sa25\b\f7 property\b0  Connection: TADOConnection;
 \par \pard\sb55\sa25\b\f0 Description
@@ -2773,7 +2781,7 @@
 {\up A}{\footnote {\up A} ProviderType;ProviderType_Property;TInstantADOConnector_ProviderType}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantADOConnector.ProviderType \cf1\b0\fs16 
-\par \strike TInstantADOConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1900\lang1040\f0 >main\}
+\par \cf2\strike TInstantADOConnector\cf3\strike0{\v ID_97>main}\cf1
 \par \pard\sb25\sa85\fs18 Specifies the provider type
 \par \pard\sb25\sa25\b\f7 property\b0  ProviderType: \strike TInstantADOProviderType\strike0{\v ID_149>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -2792,7 +2800,7 @@
 {\up A}{\footnote {\up A} CompactDatabase;CompactDatabase_Method;TInstantADOConnector_CompactDatabase}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantADOConnector.CompactDatabase \cf1\b0\fs16 
-\par \strike TInstantADOConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 1900\lang1040\f0 >main\}
+\par \cf2\strike TInstantADOConnector\cf3\strike0{\v ID_97>main}\cf1
 \par \pard\sb25\sa85\fs18 Compacts a database.
 \par \pard\sb25\sa25\b\f7 procedure\b0  CompactDatabase;
 \par \pard\sb55\sa25\b\f0 Description
@@ -2806,6 +2814,7 @@
 {\up #}{\footnote {\up #} ID_150}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantADSConnector}
+{\up +}{\footnote {\up +} classessymbol:000100}
 {\up K}{\footnote {\up K} TInstantADSConnector;}
 {\up A}{\footnote {\up A} TInstantADSConnector;TInstantADSConnector_Object}
 }
@@ -2980,7 +2989,7 @@
 {\up A}{\footnote {\up A} Connection;Connection_Property;TInstantADSConnector_Connection}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantADSConnector.Connection \cf1\b0\fs16 
-\par \strike TInstantADSConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2040\lang1040\f0 >main\}
+\par \cf2\strike TInstantADSConnector\cf3\strike0{\v ID_150>main}\cf1
 \par \pard\sb25\sa85\fs18 Specifies the connection used by the connector component.
 \par \pard\sb25\sa25\b\f7 property\b0  Connection: TADSConnection;
 \par \pard\sb55\sa25\b\f0 Description
@@ -2998,7 +3007,7 @@
 {\up A}{\footnote {\up A} AllowTransactions;AllowTransactions_Method;TInstantADSConnector_AllowTransactions}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantADSConnector.AllowTransactions \cf1\b0\fs16 
-\par \strike TInstantADSConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2040\lang1040\f0 >main\}
+\par \cf2\strike TInstantADSConnector\cf3\strike0{\v ID_150>main}\cf1
 \par \pard\sb25\sa85\fs18 Determines if transactions are allowed.
 \par \pard\sb25\sa25\b\f7 function\b0  AllowTransactions: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3016,7 +3025,7 @@
 {\up A}{\footnote {\up A} HasConnection;HasConnection_Method;TInstantADSConnector_HasConnection}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantADSConnector.HasConnection \cf1\b0\fs16 
-\par \strike TInstantADSConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2040\lang1040\f0 >main\}
+\par \cf2\strike TInstantADSConnector\cf3\strike0{\v ID_150>main}\cf1
 \par \pard\sb25\sa85\fs18 Determines if a connection is associated with the connector.
 \par \pard\sb25\sa25\b\f7 function\b0  HasConnection: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3030,6 +3039,7 @@
 {\up #}{\footnote {\up #} ID_7}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantAttribute}
+{\up +}{\footnote {\up +} classessymbol:000110}
 {\up K}{\footnote {\up K} TInstantAttribute;PInstantAttribute;}
 {\up A}{\footnote {\up A} TInstantAttribute;TInstantAttribute_Object}
 }
@@ -3226,7 +3236,7 @@
 {\up A}{\footnote {\up A} AsBoolean;AsBoolean_Property;TInstantAttribute_AsBoolean}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AsBoolean \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as a Boolean.
 \par \pard\sb25\sa25\b\f7 property\b0  AsBoolean: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3244,7 +3254,7 @@
 {\up A}{\footnote {\up A} AsCurrency;AsCurrency_Property;TInstantAttribute_AsCurrency}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AsCurrency \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as a Currency.
 \par \pard\sb25\sa25\b\f7 property\b0  AsCurrency: Currency;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3262,7 +3272,7 @@
 {\up A}{\footnote {\up A} AsDateTime;AsDateTime_Property;TInstantAttribute_AsDateTime}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AsDateTime \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as a TDateTime.
 \par \pard\sb25\sa25\b\f7 property\b0  AsDateTime: TDateTime;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3280,7 +3290,7 @@
 {\up A}{\footnote {\up A} AsFloat;AsFloat_Property;TInstantAttribute_AsFloat}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AsFloat \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as a Double.
 \par \pard\sb25\sa25\b\f7 property\b0  AsFloat: Double;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3298,7 +3308,7 @@
 {\up A}{\footnote {\up A} AsInteger;AsInteger_Property;TInstantAttribute_AsInteger}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AsInteger \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as an Integer.
 \par \pard\sb25\sa25\b\f7 property\b0  AsInteger: Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3316,7 +3326,7 @@
 {\up A}{\footnote {\up A} AsObject;AsObject_Property;TInstantAttribute_AsObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AsObject \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as a \strike TInstantObject\strike0{\v ID_170>main}.
 \par \pard\sb25\sa25\b\f7 property\b0  AsObject: \strike TInstantObject\strike0{\v ID_170>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -3334,7 +3344,7 @@
 {\up A}{\footnote {\up A} AsString;AsString_Property;TInstantAttribute_AsString}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AsString \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as a string.
 \par \pard\sb25\sa25\b\f7 property\b0  AsString: \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3352,7 +3362,7 @@
 {\up A}{\footnote {\up A} AsVariant;AsVariant_Property;TInstantAttribute_AsVariant}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AsVariant \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as a Variant.
 \par \pard\sb25\sa25\b\f7 property\b0  AsVariant: Variant;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3370,7 +3380,7 @@
 {\up A}{\footnote {\up A} DisplayText;DisplayText_Property;TInstantAttribute_DisplayText}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.DisplayText \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the attribute as it will be displayed in a data-aware control.
 \par \pard\sb25\sa25\b\f7 property\b0  DisplayText: \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3416,7 +3426,7 @@
 {\up A}{\footnote {\up A} IsDefault;IsDefault_Property;TInstantAttribute_IsDefault}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.IsDefault \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines if the value of the attribute is default.
 \par \pard\sb25\sa25\b\f7 property\b0  IsDefault: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3521,7 +3531,7 @@
 {\up A}{\footnote {\up A} Metadata;Metadata_Property;TInstantAttribute_Metadata}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Metadata \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the metadata object associated with the attribute
 \par \pard\sb25\sa25\b\f7 property\b0  Metadata: TInstantAttributeMetadata;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3539,7 +3549,7 @@
 {\up A}{\footnote {\up A} Name;Name_Property;TInstantAttribute_Name}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Name \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the name of the attribute.
 \par \pard\sb25\sa25\b\f7 property\b0  \b Name\b0 : \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3557,7 +3567,7 @@
 {\up A}{\footnote {\up A} Owner;Owner_Property;TInstantAttribute_Owner}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Owner \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 States the owner of the attribute.
 \par \pard\sb25\sa25\b\f7 property\b0  Owner: \strike TInstantObject\strike0{\v ID_170>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -3575,7 +3585,7 @@
 {\up A}{\footnote {\up A} TInstantAttribute_Value;Value;Value_Property}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Value \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of an attribute as a Variant.
 \par \pard\sb25\sa25\b\f7 property\b0  Value: Variant;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3593,7 +3603,7 @@
 {\up A}{\footnote {\up A} AttributeType;AttributeType_Method;TInstantAttribute_AttributeType}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.AttributeType \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 States the data type of the attribute
 \par \pard\sb25\sa25\b\f7 class\b0  \b function\b0  AttributeType: \strike TInstantAttributeType\strike0{\v ID_219>main}; \b virtual\b0 ; \b abstract\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3611,7 +3621,7 @@
 {\up A}{\footnote {\up A} Changed;Changed_Method;TInstantAttribute_Changed}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Changed \cf1\b0\fs16 
-\par \pard\keepn\sb25\tx1435\strike TInstantAttribute\strike0{\v ID_7>main}\tab\ul See Also\ulnone{\v ID_220} 
+\par \pard\keepn\sb25\tx1435\cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1\tab\ul See Also\ulnone{\v ID_220} 
 \par \pard\sb25\sa85\tx1435\fs18 Marks the attribute as changed.
 \par \pard\sb25\sa25\tx1435\b\f7 procedure\b0  Changed;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -3639,7 +3649,7 @@
 {\up A}{\footnote {\up A} Create;Create_Method;TInstantAttribute_Create}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Create \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Constructor that creates and initializes an attribute object.
 \par \pard\sb25\sa25\b\f7 constructor\b0  Create(AOwner: \strike TInstantObject\strike0{\v ID_170>main}; AMetadata: TInstantAttributeMetadata); \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3658,7 +3668,7 @@
 {\up A}{\footnote {\up A} Initialize;Initialize_Method;TInstantAttribute_Initialize}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Initialize \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Initializes the value of the attribute.
 \par \pard\sb25\sa25\b\f7 procedure\b0  Initialize; \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3676,7 +3686,7 @@
 {\up A}{\footnote {\up A} Reset;Reset_Method;TInstantAttribute_Reset}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Reset \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Resets the actual value of the attribute to the initialization value.
 \par \pard\sb25\sa25\b\f7 procedure\b0  Reset; \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3694,7 +3704,7 @@
 {\up A}{\footnote {\up A} TInstantAttribute_Unchanged;Unchanged;Unchanged_Method}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttribute.Unchanged \cf1\b0\fs16 
-\par \strike TInstantAttribute\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2170\lang1040\f0 >main\} 
+\par \cf2\strike TInstantAttribute\cf3\strike0{\v ID_7>main}\cf1 
 \par \pard\sb25\sa85\fs18 Marks the attribute as unchanged.
 \par \pard\sb25\sa25\b\f7 procedure\b0  Unchanged; \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3708,6 +3718,7 @@
 {\up #}{\footnote {\up #} ID_221}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantBDEConnector}
+{\up +}{\footnote {\up +} classessymbol:000120}
 {\up K}{\footnote {\up K} TInstantBDEConnector;}
 {\up A}{\footnote {\up A} TInstantBDEConnector;TInstantBDEConnector_Object}
 }
@@ -3886,7 +3897,7 @@
 {\up A}{\footnote {\up A} Connection;Connection_Property;TInstantBDEConnector_Connection}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBDEConnector.Connection \cf1\b0\fs16 
-\par \strike TInstantBDEConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2560\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBDEConnector\cf3\strike0{\v ID_221>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the connection used by the connector component.
 \par \pard\sb25\sa25\b\f7 property\b0  Connection: TDatabase;
 \par \pard\sb55\sa25\b\f0 Description
@@ -3904,7 +3915,7 @@
 {\up A}{\footnote {\up A} DriverType;DriverType_Property;TInstantBDEConnector_DriverType}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBDEConnector.DriverType \cf1\b0\fs16 
-\par \strike TInstantBDEConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2560\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBDEConnector\cf3\strike0{\v ID_221>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the BDE driver type
 \par \pard\sb25\sa25\b\f7 property\b0  DriverType: \strike TInstantBDEDriverType\strike0{\v ID_234>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -3918,6 +3929,7 @@
 {\up #}{\footnote {\up #} ID_179}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantBlob}
+{\up +}{\footnote {\up +} classessymbol:000130}
 {\up K}{\footnote {\up K} TInstantBlob;}
 {\up A}{\footnote {\up A} TInstantBlob;TInstantBlob_Object}
 }
@@ -4106,7 +4118,7 @@
 {\up A}{\footnote {\up A} Size;Size_Property;TInstantBlob_Size}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBlob.Size \cf1\b0\fs16 
-\par \strike TInstantBlob\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2680\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBlob\cf3\strike0{\v ID_179>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines the size of the Blob Attribute.
 \par \pard\sb25\sa25\b\f7 property\b0  Size: Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4124,7 +4136,7 @@
 {\up A}{\footnote {\up A} TInstantBlob_Value;Value;Value_Property}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBlob.Value \cf1\b0\fs16 
-\par \strike TInstantBlob\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2680\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBlob\cf3\strike0{\v ID_179>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the BLOB attribute as a string.
 \par \pard\sb25\sa25\b\f7 property\b0  Value: \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4143,7 +4155,7 @@
 {\up A}{\footnote {\up A} Clear;Clear_Method;TInstantBlob_Clear}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBlob.Clear \cf1\b0\fs16 
-\par \strike TInstantBlob\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2680\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBlob\cf3\strike0{\v ID_179>main}\cf1 
 \par \pard\sb25\sa85\fs18 Discards all data associated with the blob attribute
 \par \pard\sb25\sa25\b\f7 procedure\b0  Clear;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4161,7 +4173,7 @@
 {\up A}{\footnote {\up A} LoadDataFromStream;LoadDataFromStream_Method;TInstantBlob_LoadDataFromStream}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBlob.LoadDataFromStream \cf1\b0\fs16 
-\par \strike TInstantBlob\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2680\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBlob\cf3\strike0{\v ID_179>main}\cf1 
 \par \pard\sb25\sa85\fs18 Loads data from a TStream object into the attribute.
 \par \pard\sb25\sa25\b\f7 procedure\b0  LoadDataFromStream(AStream: TStream);
 \par \pard\sb55\sa25\b\f0 Description
@@ -4179,7 +4191,7 @@
 {\up A}{\footnote {\up A} ReadBuffer;ReadBuffer_Method;TInstantBlob_ReadBuffer}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBlob.ReadBuffer \cf1\b0\fs16 
-\par \strike TInstantBlob\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2680\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBlob\cf3\strike0{\v ID_179>main}\cf1 
 \par \pard\sb25\sa85\fs18 Reads from the blob attribute into a buffer
 \par \pard\sb25\sa25\b\f7 function\b0  ReadBuffer(\b var\b0  Buffer; Position: Integer; Count: Integer): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4197,7 +4209,7 @@
 {\up A}{\footnote {\up A} SaveDataToStream;SaveDataToStream_Method;TInstantBlob_SaveDataToStream}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBlob.SaveDataToStream \cf1\b0\fs16 
-\par \strike TInstantBlob\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2680\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBlob\cf3\strike0{\v ID_179>main}\cf1 
 \par \pard\sb25\sa85\fs18 Saves the value of the attribute to a TStream object.
 \par \pard\sb25\sa25\b\f7 procedure\b0  SaveDataToStream(AStream: TStream);
 \par \pard\sb55\sa25\b\f0 Description
@@ -4215,7 +4227,7 @@
 {\up A}{\footnote {\up A} TInstantBlob_WriteBuffer;WriteBuffer;WriteBuffer_Method}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBlob.WriteBuffer \cf1\b0\fs16 
-\par \strike TInstantBlob\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2680\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBlob\cf3\strike0{\v ID_179>main}\cf1 
 \par \pard\sb25\sa85\fs18 Reads from the blob attribute into a buffer
 \par \pard\sb25\sa25\b\f7 function\b0  WriteBuffer(\b const\b0  Buffer; Position: Integer; Count: Integer): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4229,6 +4241,7 @@
 {\up #}{\footnote {\up #} ID_175}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantBoolean}
+{\up +}{\footnote {\up +} classessymbol:000140}
 {\up K}{\footnote {\up K} TInstantBoolean;}
 {\up A}{\footnote {\up A} TInstantBoolean;TInstantBoolean_Object}
 }
@@ -4393,7 +4406,7 @@
 {\up A}{\footnote {\up A} TInstantBoolean_Value;Value;Value_Property}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBoolean.Value \cf1\b0\fs16 
-\par \strike TInstantBoolean\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2860\lang1040\f0 >main\} 
+\par \cf2\strike TInstantBoolean\cf3\strike0{\v ID_175>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the Boolean attribute
 \par \pard\sb25\sa25\b\f7 property\b0  Value: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4407,6 +4420,7 @@
 {\up #}{\footnote {\up #} ID_263}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantCollection}
+{\up +}{\footnote {\up +} classessymbol:000150}
 {\up K}{\footnote {\up K} TInstantCollection;}
 {\up A}{\footnote {\up A} TInstantCollection;TInstantCollection_Object}
 }
@@ -4484,7 +4498,7 @@
 {\up #}{\footnote {\up #} ID_265}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 TInstantCollection Members \cf1\b0\fs16 
-\par \strike TInstantCollection\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2970\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCollection\cf3\strike0{\v ID_263>main}\cf1 
 \par \pard\sb55\sa55\b\fs18 Methods
 \par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike Find\strike0{\v ID_271>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike GetItemNames\strike0{\v ID_272>main}
@@ -4504,7 +4518,7 @@
 {\up A}{\footnote {\up A} Find;Find_Method;TInstantCollection_Find}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCollection.Find \cf1\b0\fs16 
-\par \strike TInstantCollection\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2970\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCollection\cf3\strike0{\v ID_263>main}\cf1 
 \par \pard\sb25\sa85\fs18 Locates an item by its name.
 \par \pard\sb25\sa25\b\f7 function\b0  Find(\b const\b0  AName: \b string\b0 ): \strike TInstantCollectionItem\strike0{\v ID_267>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -4522,7 +4536,7 @@
 {\up A}{\footnote {\up A} GetItemNames;GetItemNames_Method;TInstantCollection_GetItemNames}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCollection.GetItemNames \cf1\b0\fs16 
-\par \strike TInstantCollection\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2970\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCollection\cf3\strike0{\v ID_263>main}\cf1 
 \par \pard\sb25\sa85\fs18 Fills a TStrings object with the names of all items.
 \par \pard\sb25\sa25\b\f7 procedure\b0  GetItemNames(List: TStrings);
 \par \pard\sb55\sa25\b\f0 Description
@@ -4540,7 +4554,7 @@
 {\up A}{\footnote {\up A} IndexOf;IndexOf_Method;TInstantCollection_IndexOf}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCollection.IndexOf \cf1\b0\fs16 
-\par \strike TInstantCollection\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2970\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCollection\cf3\strike0{\v ID_263>main}\cf1 
 \par \pard\sb25\sa85\fs18 Returns the index of an item with the specified name.
 \par \pard\sb25\sa25\b\f7 function\b0  IndexOf(\b const\b0  AName: \b string\b0 ): Integer; \b overload\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4558,7 +4572,7 @@
 {\up A}{\footnote {\up A} IndexOf;IndexOf_Method;TInstantCollection_IndexOf}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCollection.IndexOf \cf1\b0\fs16 
-\par \strike TInstantCollection\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2970\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCollection\cf3\strike0{\v ID_263>main}\cf1 
 \par \pard\sb25\sa85\fs18 Returns the index of an item
 \par \pard\sb25\sa25\b\f7 function\b0  \strike IndexOf\strike0{\v ID_273>main}(Item: \strike TInstantCollectionItem\strike0{\v ID_267>main}): Integer; \b overload\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4576,7 +4590,7 @@
 {\up A}{\footnote {\up A} Remove;Remove_Method;TInstantCollection_Remove}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCollection.Remove \cf1\b0\fs16 
-\par \strike TInstantCollection\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 2970\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCollection\cf3\strike0{\v ID_263>main}\cf1 
 \par \pard\sb25\sa85\fs18 Remove an item from the collection.
 \par \pard\sb25\sa25\b\f7 function\b0  Remove(Item: \strike TInstantCollectionItem\strike0{\v ID_267>main}): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4590,6 +4604,7 @@
 {\up #}{\footnote {\up #} ID_267}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantCollectionItem}
+{\up +}{\footnote {\up +} classessymbol:000160}
 {\up K}{\footnote {\up K} TInstantCollectionItem;}
 {\up A}{\footnote {\up A} TInstantCollectionItem;TInstantCollectionItem_Object}
 }
@@ -4700,7 +4715,7 @@
 {\up A}{\footnote {\up A} Name;Name_Property;TInstantCollectionItem_Name}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCollectionItem.Name \cf1\b0\fs16 
-\par \strike TInstantCollectionItem\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3090\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCollectionItem\cf3\strike0{\v ID_267>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies then name of the item.
 \par \pard\sb25\sa25\b\f7 property\b0  \b Name\b0 : \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4714,6 +4729,7 @@
 {\up #}{\footnote {\up #} ID_285}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantComplex}
+{\up +}{\footnote {\up +} classessymbol:000170}
 {\up K}{\footnote {\up K} TInstantComplex;}
 {\up A}{\footnote {\up A} TInstantComplex;TInstantComplex_Object}
 }
@@ -4908,7 +4924,7 @@
 {\up A}{\footnote {\up A} AllowOwned;AllowOwned_Property;TInstantComplex_AllowOwned}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantComplex.AllowOwned \cf1\b0\fs16 
-\par \strike TInstantComplex\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3190\lang1040\f0 >main\} 
+\par \cf2\strike TInstantComplex\cf3\strike0{\v ID_285>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies whether the attribute should allow owned objects.
 \par \pard\sb25\sa25\b\f7 property\b0  AllowOwned: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -4926,7 +4942,7 @@
 {\up A}{\footnote {\up A} Connector;Connector_Property;TInstantComplex_Connector}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantComplex.Connector \cf1\b0\fs16 
-\par \strike TInstantComplex\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3190\lang1040\f0 >main\} 
+\par \cf2\strike TInstantComplex\cf3\strike0{\v ID_285>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines the connector used by the attribute.
 \par \pard\sb25\sa25\b\f7 property\b0  Connector: \strike TInstantConnector\strike0{\v ID_104>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -5000,7 +5016,7 @@
 {\up A}{\footnote {\up A} AttachObject;AttachObject_Method;TInstantComplex_AttachObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantComplex.AttachObject \cf1\b0\fs16 
-\par \strike TInstantComplex\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3190\lang1040\f0 >main\} 
+\par \cf2\strike TInstantComplex\cf3\strike0{\v ID_285>main}\cf1 
 \par \pard\sb25\sa85\fs18 Attaches an object to the attribute.
 \par \pard\sb25\sa25\b\f7 function\b0  AttachObject(AObject: \strike TInstantObject\strike0{\v ID_170>main}): Boolean; \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5026,7 +5042,7 @@
 {\up A}{\footnote {\up A} DetachObject;DetachObject_Method;TInstantComplex_DetachObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantComplex.DetachObject \cf1\b0\fs16 
-\par \strike TInstantComplex\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3190\lang1040\f0 >main\} 
+\par \cf2\strike TInstantComplex\cf3\strike0{\v ID_285>main}\cf1 
 \par \pard\sb25\sa85\fs18 Detaches an object from the attribute.
 \par \pard\sb25\sa25\b\f7 function\b0  DetachObject(AObject: \strike TInstantObject\strike0{\v ID_170>main}): Boolean; \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5075,6 +5091,7 @@
 {\up #}{\footnote {\up #} ID_106}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantConnectionBasedConnector}
+{\up +}{\footnote {\up +} classessymbol:000180}
 {\up K}{\footnote {\up K} TInstantConnectionBasedConnector;}
 {\up A}{\footnote {\up A} TInstantConnectionBasedConnector;TInstantConnectionBasedConnector_Object}
 }
@@ -5193,7 +5210,7 @@
 {\up #}{\footnote {\up #} ID_311}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 TInstantConnectionBasedConnector Methods \cf1\b0\fs16 
-\par \strike TInstantConnectionBasedConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3400\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionBasedConnector\cf3\strike0{\v ID_106>main}\cf1 
 \par \pard\sb55\sa55\b\fs18 TInstantConnectionBasedConnector
 \par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike HasConnection\strike0{\v ID_135>main}
 \par \pard\sb55\sa55\b TInstantConnector
@@ -5248,7 +5265,7 @@
 {\up A}{\footnote {\up A} Connection;Connection_Property;TInstantConnectionBasedConnector_Connection}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionBasedConnector.Connection \cf1\b0\fs16 
-\par \strike TInstantConnectionBasedConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3400\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionBasedConnector\cf3\strike0{\v ID_106>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the connection used by the connector component.
 \par \pard\sb25\sa25\b\f7 property\b0  Connection: TCustomConnection;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5266,7 +5283,7 @@
 {\up A}{\footnote {\up A} HasConnection;HasConnection_Method;TInstantConnectionBasedConnector_HasConnection}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionBasedConnector.HasConnection \cf1\b0\fs16 
-\par \strike TInstantConnectionBasedConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3400\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionBasedConnector\cf3\strike0{\v ID_106>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines if a connection is associated with the connector.
 \par \pard\sb25\sa25\b\f7 function\b0  HasConnection: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5280,6 +5297,7 @@
 {\up #}{\footnote {\up #} ID_317}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantConnectionManager}
+{\up +}{\footnote {\up +} classessymbol:000190}
 {\up K}{\footnote {\up K} TInstantConnectionManager;}
 {\up A}{\footnote {\up A} TInstantConnectionManager;TInstantConnectionManager_Object}
 }
@@ -5433,7 +5451,7 @@
 {\up A}{\footnote {\up A} Caption;Caption_Property;TInstantConnectionManager_Caption}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.Caption \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the Caption of the ConnectionManager form.
 \par \pard\sb25\sa25\b\f7 property\b0  Caption: \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5451,7 +5469,7 @@
 {\up A}{\footnote {\up A} CurrentConnectionDef;CurrentConnectionDef_Property;TInstantConnectionManager_CurrentConnectionDef}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.CurrentConnectionDef \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the currently selected connection within the manager.
 \par \pard\sb25\sa25\b\f7 property\b0  CurrentConnectionDef: TInstantConnectionDef;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5469,7 +5487,7 @@
 {\up A}{\footnote {\up A} FileName;FileName_Property;TInstantConnectionManager_FileName}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.FileName \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 The name of the file in which to save connection definitions.
 \par \pard\sb25\sa25\b\f7 property\b0  FileName: \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5487,7 +5505,7 @@
 {\up A}{\footnote {\up A} Form;Form_Property;TInstantConnectionManager_Form}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.Form \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Contains the actual form used by the connection manager.
 \par \pard\sb25\sa25\b\f7 property\b0  Form: TInstantConnectionManagerForm;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5505,7 +5523,7 @@
 {\up A}{\footnote {\up A} Model;Model_Property;TInstantConnectionManager_Model}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.Model \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the model for building a database.
 \par \pard\sb25\sa25\b\f7 property\b0  Model: TInstantModel;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5523,7 +5541,7 @@
 {\up A}{\footnote {\up A} OnBuild;OnBuild_Property;TInstantConnectionManager_OnBuild}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.OnBuild \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs when the user requests to build a database from the connection manager.
 \par \pard\sb25\sa25\b\f7 property\b0  OnBuild: TInstantConnectionDefEvent;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5541,7 +5559,7 @@
 {\up A}{\footnote {\up A} OnConnect;OnConnect_Property;TInstantConnectionManager_OnConnect}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.OnConnect \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs when the user requests to connect to a database from the connection manager.
 \par \pard\sb25\sa25\b\f7 property\b0  OnConnect: TInstantConnectionDefEvent;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5559,7 +5577,7 @@
 {\up A}{\footnote {\up A} OnDisconnect;OnDisconnect_Property;TInstantConnectionManager_OnDisconnect}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.OnDisconnect \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs when the user requests to disconnect an active connection from the connection manager.
 \par \pard\sb25\sa25\b\f7 property\b0  OnDisconnect: TInstantConnectionDefEvent;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5577,7 +5595,7 @@
 {\up A}{\footnote {\up A} OnEdit;OnEdit_Property;TInstantConnectionManager_OnEdit}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.OnEdit \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs when the user requests to edit a connection definition.
 \par \pard\sb25\sa25\b\f7 property\b0  OnEdit: TInstantConnectionDefEvent;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5595,7 +5613,7 @@
 {\up A}{\footnote {\up A} OnIsConnected;OnIsConnected_Property;TInstantConnectionManager_OnIsConnected}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.OnIsConnected \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs when the connection manager needs to know if a certain connection is open or not.
 \par \pard\sb25\sa25\b\f7 property\b0  OnIsConnected: TInstantConnectionDefEvent;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5613,7 +5631,7 @@
 {\up A}{\footnote {\up A} OnPrepare;OnPrepare_Property;TInstantConnectionManager_OnPrepare}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.OnPrepare \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs after a database has been built from the connection manager.
 \par \pard\sb25\sa25\b\f7 property\b0  OnPrepare: TInstantConnectorEvent;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5631,7 +5649,7 @@
 {\up A}{\footnote {\up A} OnSupportConnector;OnSupportConnector_Property;TInstantConnectionManager_OnSupportConnector}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.OnSupportConnector \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs when the connection manager needs to know if a certain connector class shall be supported.
 \par \pard\sb25\sa25\b\f7 property\b0  OnSupportConnector: TInstantConnectorClassEvent;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5649,7 +5667,7 @@
 {\up A}{\footnote {\up A} TInstantConnectionManager_VisibleActions;VisibleActions;VisibleActions_Property}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.VisibleActions \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines which actions are available in the connection manager.
 \par \pard\sb25\sa25\b\f7 property\b0  VisibleActions: \strike TInstantConnectionManagerActionTypes\strike0{\v ID_343>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -5667,7 +5685,7 @@
 {\up A}{\footnote {\up A} Execute;Execute_Method;TInstantConnectionManager_Execute}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.Execute \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Opens the connection manager.
 \par \pard\sb25\sa25\b\f7 function\b0  Execute: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5685,7 +5703,7 @@
 {\up A}{\footnote {\up A} HasForm;HasForm_Method;TInstantConnectionManager_HasForm}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManager.HasForm \cf1\b0\fs16 
-\par \strike TInstantConnectionManager\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3520\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnectionManager\cf3\strike0{\v ID_317>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines if the connection manager has a form instance.
 \par \pard\sb25\sa25\b\f7 function\b0  HasForm: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -5699,6 +5717,7 @@
 {\up #}{\footnote {\up #} ID_104}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantConnector}
+{\up +}{\footnote {\up +} classessymbol:000200}
 {\up K}{\footnote {\up K} TInstantConnector;}
 {\up A}{\footnote {\up A} TInstantConnector;TInstantConnector_Object}
 }
@@ -5806,10 +5825,10 @@
 {\up #}{\footnote {\up #} ID_347}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 TInstantConnector Methods \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb55\sa55\b\fs18 TInstantConnector
-\par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike procedure BuildDatabase(Model: TInstantModel); overload;\strike0{\v ID_136>main}
-\par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike procedure BuildDatabase(AClasses: array of TInstantObjectClass); overload;\strike0{\v ID_137>main}
+\par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike BuildDatabase\lang1033\f1  1\lang1040\strike0\f0{\v ID_136>main}
+\par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike BuildDatabase\lang1033\f1  2\lang1040\strike0\f0{\v ID_137>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike CommitTransaction\strike0{\v ID_138>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike Connect\strike0{\v ID_139>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike CreateQuery\strike0{\v ID_140>main}
@@ -5997,7 +6016,7 @@
 {\up A}{\footnote {\up A} Broker;Broker_Property;TInstantConnector_Broker}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.Broker \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 States the associated broker object.
 \par \pard\sb25\sa25\b\f7 property\b0  Broker: TInstantBroker;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6073,7 +6092,7 @@
 {\up A}{\footnote {\up A} Connected;Connected_Property;TInstantConnector_Connected}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.Connected \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies if a connection has been established to the database.
 \par \pard\sb25\sa25\b\f7 property\b0  Connected: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6091,7 +6110,7 @@
 {\up A}{\footnote {\up A} DatabaseName;DatabaseName_Property;TInstantConnector_DatabaseName}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.DatabaseName \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines the name of the database the connector component connects to.
 \par \pard\sb25\sa25\b\f7 property\b0  DatabaseName: \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6109,7 +6128,7 @@
 {\up A}{\footnote {\up A} InTransaction;InTransaction_Property;TInstantConnector_InTransaction}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.InTransaction \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines if a transaction is in progress.
 \par \pard\sb25\sa25\b\f7 property\b0  InTransaction: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6127,7 +6146,7 @@
 {\up A}{\footnote {\up A} InUse;InUse_Property;TInstantConnector_InUse}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.InUse \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines if the connector component is in use.
 \par \pard\sb25\sa25\b\f7 property\b0  InUse: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6145,7 +6164,7 @@
 {\up A}{\footnote {\up A} IsDefault;IsDefault_Property;TInstantConnector_IsDefault}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.IsDefault \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies if the connector is the default connector of the application.
 \par \pard\sb25\sa25\b\f7 property\b0  IsDefault: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6163,7 +6182,7 @@
 {\up A}{\footnote {\up A} ObjectCount;ObjectCount_Property;TInstantConnector_ObjectCount}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.ObjectCount \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines the number of objects using the connector.
 \par \pard\sb25\sa25\b\f7 property\b0  ObjectCount: Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6208,7 +6227,7 @@
 {\up A}{\footnote {\up A} TInstantConnector_UseTransactions;UseTransactions;UseTransactions_Property}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.UseTransactions \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies if the connector uses transactions.
 \par \pard\sb25\sa25\b\f7 property\b0  UseTransactions: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6221,12 +6240,12 @@
 {\pard\plain\f0\fs20
 {\up #}{\footnote {\up #} ID_136}
 {\up >}{\footnote {\up >} main}
-{\up $}{\footnote {\up $} TInstantConnector.BuildDatabase}
-{\up K}{\footnote {\up K} BuildDatabase;BuildDatabase,TInstantConnector;TInstantConnector,BuildDatabase;}
-{\up A}{\footnote {\up A} BuildDatabase;BuildDatabase_Method;TInstantConnector_BuildDatabase}
+{\up $}{\footnote {\up $} TInstantConnector.BuildDatabase 1}
+{\up K}{\footnote {\up K} BuildDatabase,1;BuildDatabase 1,TInstantConnector;TInstantConnector,BuildDatabase;}
+{\up A}{\footnote {\up A} BuildDatabase_1;BuildDatabase1_Method;TInstantConnector_BuildDatabase1}
 }
-\viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.BuildDatabase \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.BuildDatabase 1 \cf1\b0\fs16 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\lang1033\f1\tab\cf2\strike BuildDatabase 2\cf3\strike0{\v ID_137>main}\cf1\lang1040\f0 
 \par \pard\sb25\sa85\fs18 Builds the database.
 \par \pard\sb25\sa25\b\f7 procedure\b0  \strike BuildDatabase\strike0{\v ID_137>main}(Model: TInstantModel); \b overload\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6239,12 +6258,12 @@
 {\pard\plain\f0\fs20
 {\up #}{\footnote {\up #} ID_137}
 {\up >}{\footnote {\up >} main}
-{\up $}{\footnote {\up $} TInstantConnector.BuildDatabase}
-{\up K}{\footnote {\up K} BuildDatabase;BuildDatabase,TInstantConnector;TInstantConnector,BuildDatabase;}
-{\up A}{\footnote {\up A} BuildDatabase;BuildDatabase_Method;TInstantConnector_BuildDatabase}
+{\up $}{\footnote {\up $} TInstantConnector.BuildDatabase 2}
+{\up K}{\footnote {\up K} BuildDatabase,2;BuildDatabase 2,TInstantConnector;TInstantConnector,BuildDatabase;}
+{\up A}{\footnote {\up A} BuildDatabase_2;BuildDatabase2_Method;TInstantConnector_BuildDatabase2}
 }
-\viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.BuildDatabase \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.BuildDatabase 2 \cf1\b0\fs16 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\lang1033\f1\tab\cf2\strike BuildDatabase 1\cf3\strike0{\v ID_136>main}\cf1\lang1040\f0 
 \par \pard\sb25\sa85\fs18 Builds a database for an array of classes.
 \par \pard\sb25\sa25\b\f7 procedure\b0  BuildDatabase(AClasses: \b array\b0  \b of\b0  TInstantObjectClass); \b overload\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6320,7 +6339,7 @@
 {\up A}{\footnote {\up A} CreateQuery;CreateQuery_Method;TInstantConnector_CreateQuery}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.CreateQuery \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Creates and returns an instance of a Query object.
 \par \pard\sb25\sa25\b\f7 function\b0  CreateQuery: TInstantQuery;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6367,7 +6386,7 @@
 {\up A}{\footnote {\up A} EnsureObjectStore;EnsureObjectStore_Method;TInstantConnector_EnsureObjectStore}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.EnsureObjectStore \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Returns an object store for a specified class type.
 \par \pard\sb25\sa25\b\f7 function\b0  EnsureObjectStore(AClass: TInstantObjectClass): TInstantObjectStore;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6527,7 +6546,7 @@
 {\up A}{\footnote {\up A} BeforeBuildDatabase;BeforeBuildDatabase_Event;TInstantConnector_BeforeBuildDatabase}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnector.BeforeBuildDatabase \cf1\b0\fs16 
-\par \strike TInstantConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 3770\lang1040\f0 >main\} 
+\par \cf2\strike TInstantConnector\cf3\strike0{\v ID_104>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs before the database is build.
 \par \pard\sb25\sa25\b\f7 property\b0  BeforeBuildDatabase: \strike TInstantSchemeEvent\strike0{\v ID_369>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -6541,6 +6560,7 @@
 {\up #}{\footnote {\up #} ID_306}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantContainer}
+{\up +}{\footnote {\up +} classessymbol:000210}
 {\up K}{\footnote {\up K} TInstantContainer;}
 {\up A}{\footnote {\up A} TInstantContainer;TInstantContainer_Object}
 }
@@ -6755,7 +6775,7 @@
 {\up A}{\footnote {\up A} ChangeCount;ChangeCount_Property;TInstantContainer_ChangeCount}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContainer.ChangeCount \cf1\b0\fs16 
-\par \strike TInstantContainer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4300\lang1040\f0 >main\} 
+\par \cf2\strike TInstantContainer\cf3\strike0{\v ID_306>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines the number of changed objects in the container.
 \par \pard\sb25\sa25\b\f7 property\b0  ChangeCount: Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6857,7 +6877,7 @@
 {\up A}{\footnote {\up A} AttachObject;AttachObject_Method;TInstantContainer_AttachObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContainer.AttachObject \cf1\b0\fs16 
-\par \strike TInstantContainer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4300\lang1040\f0 >main\} 
+\par \cf2\strike TInstantContainer\cf3\strike0{\v ID_306>main}\cf1 
 \par \pard\sb25\sa85\fs18 Attaches an object to the attribute.
 \par \pard\sb25\sa25\b\f7 function\b0  AttachObject(AObject: \strike TInstantObject\strike0{\v ID_170>main}): Boolean; \b override\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6882,7 +6902,7 @@
 {\up A}{\footnote {\up A} Clear;Clear_Method;TInstantContainer_Clear}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContainer.Clear \cf1\b0\fs16 
-\par \strike TInstantContainer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4300\lang1040\f0 >main\} 
+\par \cf2\strike TInstantContainer\cf3\strike0{\v ID_306>main}\cf1 
 \par \pard\sb25\sa85\fs18 Clears the containers array of objects.
 \par \pard\sb25\sa25\b\f7 procedure\b0  Clear;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6928,7 +6948,7 @@
 {\up A}{\footnote {\up A} DetachObject;DetachObject_Method;TInstantContainer_DetachObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContainer.DetachObject \cf1\b0\fs16 
-\par \strike TInstantContainer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4300\lang1040\f0 >main\} 
+\par \cf2\strike TInstantContainer\cf3\strike0{\v ID_306>main}\cf1 
 \par \pard\sb25\sa85\fs18 Detaches an object from the attribute.
 \par \pard\sb25\sa25\b\f7 function\b0  DetachObject(AObject: \strike TInstantObject\strike0{\v ID_170>main}): Boolean; \b override\b0 ;
 \par \pard\sb55\sa25\b\f0 Description\b0 
@@ -6981,7 +7001,7 @@
 {\up A}{\footnote {\up A} HasItem;HasItem_Method;TInstantContainer_HasItem}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContainer.HasItem \cf1\b0\fs16 
-\par \strike TInstantContainer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4300\lang1040\f0 >main\} 
+\par \cf2\strike TInstantContainer\cf3\strike0{\v ID_306>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines if an Item at a specified position is assigned.
 \par \pard\sb25\sa25\b\f7 function\b0  HasItem(\b Index\b0 : Integer): Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -6999,7 +7019,7 @@
 {\up A}{\footnote {\up A} IndexOf;IndexOf_Method;TInstantContainer_IndexOf}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContainer.IndexOf \cf1\b0\fs16 
-\par \strike TInstantContainer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4300\lang1040\f0 >main\} 
+\par \cf2\strike TInstantContainer\cf3\strike0{\v ID_306>main}\cf1 
 \par \pard\sb25\sa85\fs18 Returns the index of a specified object in the containers array of objects.
 \par \pard\sb25\sa25\b\f7 function\b0  IndexOf(AObject: \strike TInstantObject\strike0{\v ID_170>main}): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7156,7 +7176,7 @@
 {\up A}{\footnote {\up A} Sort;Sort_Method;TInstantContainer_Sort}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContainer.Sort \cf1\b0\fs16 
-\par \strike TInstantContainer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4300\lang1040\f0 >main\} 
+\par \cf2\strike TInstantContainer\cf3\strike0{\v ID_306>main}\cf1 
 \par \pard\sb25\sa85\fs18 Sorts the objects in the container based on comparison function.
 \par \pard\sb25\sa25\b\f7 procedure\b0  Sort(Compare: \strike TInstantSortCompare\strike0{\v ID_406>main});
 \par \pard\sb55\sa25\b\f0 Description
@@ -7169,6 +7189,7 @@
 {\pard\plain\f0\fs20
 {\up #}{\footnote {\up #} Scribble4670}
 {\up $}{\footnote {\up $} TInstantCurrency}
+{\up +}{\footnote {\up +} classessymbol:000220}
 {\up K}{\footnote {\up K} TInstantCurrency;}
 }
 \viewkind4\uc1\pard\keepn\lang1033\b\fs24 TInstantCurrency\cf1\lang3081\b0\f2\fs18 
@@ -7347,7 +7368,7 @@
 {\up A}{\footnote {\up A} TInstantCurrency_Value;Value;Value_Property}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCurrency.Value \cf1\b0\fs16 
-\par \strike TInstantCurrency\strike0\{linkID\lang1033\f1 =4670\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCurrency\cf3\strike0{\v Scribble4670>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the Currency\lang1033\f1  \lang1040\f0 attribute
 \par \pard\sb25\sa25\b\f7 property\b0  Value: Currency;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7361,6 +7382,7 @@
 {\up #}{\footnote {\up #} ID_407}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantCustomExposer}
+{\up +}{\footnote {\up +} classessymbol:000230}
 {\up K}{\footnote {\up K} TInstantCustomExposer;}
 {\up A}{\footnote {\up A} TInstantCustomExposer;TInstantCustomExposer_Object}
 }
@@ -7419,7 +7441,7 @@
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike FieldOptions\strike0{\v ID_422>main}
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike HasSubject\strike0{\v ID_423>main}
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0{\v ID_424>main}
-\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike Is\lang1033\f1 Subject\lang1040\f0 Changed\strike0{\v Scribble4960>main}
+\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike Is\lang1033\f1 Subject\lang1040\f0 Changed\strike0{\v Scribble4980>main}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike Limited\strike0{\v ID_425>main}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike Mode\strike0{\v ID_415>main}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike ObjectClass\strike0{\v ID_426>main}
@@ -7536,7 +7558,7 @@
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike FieldOptions\strike0{\v ID_422>main}
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike HasSubject\strike0{\v ID_423>main}
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0{\v ID_424>main}
-\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike Is\lang1033\f1 Subject\lang1040\f0 Changed\strike0{\v Scribble4960>main}
+\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike Is\lang1033\f1 Subject\lang1040\f0 Changed\strike0{\v Scribble4980>main}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike Limited\strike0{\v ID_425>main}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike Mode\strike0{\v ID_415>main}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike ObjectClass\strike0{\v ID_426>main}
@@ -7609,7 +7631,7 @@
 {\up A}{\footnote {\up A} Accessor;Accessor_Property;TInstantCustomExposer_Accessor}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.Accessor \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Holds the accessor that is currently being used by the exposer to access the subject.
 \par \pard\sb25\sa25\b\f7 property\b0  Accessor: TInstantAccessor;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7627,7 +7649,7 @@
 {\up A}{\footnote {\up A} ContainerName;ContainerName_Property;TInstantCustomExposer_ContainerName}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.ContainerName \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the name of the container whose objects are to be exposed.
 \par \pard\sb25\sa25\b\f7 property\b0  ContainerName: \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7645,7 +7667,7 @@
 {\up A}{\footnote {\up A} CurrentObject;CurrentObject_Property;TInstantCustomExposer_CurrentObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.CurrentObject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the object at the current position of the exposer.
 \par \pard\sb25\sa25\b\f7 property\b0  CurrentObject: TObject;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7691,7 +7713,7 @@
 {\up A}{\footnote {\up A} HasSubject;HasSubject_Property;TInstantCustomExposer_HasSubject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.HasSubject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies if the exposer has a subject
 \par \pard\sb25\sa25\b\f7 property\b0  HasSubject: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7708,7 +7730,7 @@
 {\up A}{\footnote {\up A} IsChanged;IsChanged_Property;TInstantCustomExposer_IsChanged}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.IsChanged \cf1\b0\fs16 
-\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1\tab\ul See Also\ulnone{\v Scribble4957} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1\tab\ul See Also\ulnone{\v Scribble4970} 
 \par \pard\sb25\sa85\fs18 Specifies if changes have been made to the expose\lang1033\f1 r's\lang1040\f0  \lang1033\f1 dataset fields or records\lang1040\f0 .
 \par \pard\sb25\sa25\b\f7 property\b0  IsChanged: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7719,25 +7741,25 @@
 {\page}
 
 {\pard\plain\f0\fs20
-{\up #}{\footnote {\up #} Scribble4957}
+{\up #}{\footnote {\up #} Scribble4970}
 }
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
-\par \strike TInstantCustomExposer.\lang1033\f1 IsSubjectChanged\lang1040\strike0\f0{\v Scribble4960>main}
+\par \strike TInstantCustomExposer.\lang1033\f1 IsSubjectChanged\lang1040\strike0\f0{\v Scribble4980>main}
 \par \strike 
 \par \pard\plain\f0
 
 {\page}
 
 {\pard\plain\f0\fs20
-{\up #}{\footnote {\up #} Scribble4960}
+{\up #}{\footnote {\up #} Scribble4980}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantCustomExposer.IsSubjectChanged}
 {\up K}{\footnote {\up K} IsSubjectChanged;IsSubjectChanged,TInstantCustomExposer;TInstantCustomExposer,IsSubjectChanged;}
 {\up A}{\footnote {\up A} IsSubjectChanged;IsSubjectChanged_Property;TInstantCustomExposer_IsSubjectChanged}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.IsSubjectChanged \cf1\b0\fs16 
-\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1\tab\ul See Also\ulnone{\v Scribble4965} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1\tab\ul See Also\ulnone{\v Scribble4990} 
 \par \pard\sb25\sa85\fs18 Specifies if changes have been made to the exposed subject.
 \par \pard\sb25\sa25\b\f7 property\b0  IsSubjectChanged: Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7748,7 +7770,7 @@
 {\page}
 
 {\pard\plain\f0\fs20
-{\up #}{\footnote {\up #} Scribble4965}
+{\up #}{\footnote {\up #} Scribble4990}
 }
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
@@ -7798,7 +7820,7 @@
 {\up A}{\footnote {\up A} Mode;Mode_Property;TInstantCustomExposer_Mode}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.Mode \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies how the attached subject is being exposed.
 \par \pard\sb25\sa25\b\f7 property\b0  Mode: \strike TInstantAccessMode\strike0{\v ID_473>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -7930,7 +7952,7 @@
 {\up A}{\footnote {\up A} Options;Options_Property;TInstantCustomExposer_Options}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.Options \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the options of the exposer.
 \par \pard\sb25\sa25\b\f7 property\b0  Options: \strike TInstantExposerOptions\strike0{\v ID_478>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -7949,7 +7971,7 @@
 {\up A}{\footnote {\up A} ReadOnly;ReadOnly_Property;TInstantCustomExposer_ReadOnly}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.ReadOnly \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies whether the exposer is read-only or writeable.
 \par \pard\sb25\sa25\b\f7 property\b0  \b ReadOnly\b0 : Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -7997,7 +8019,7 @@
 {\up A}{\footnote {\up A} Subject;Subject_Property;TInstantCustomExposer_Subject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.Subject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the object that is being exposed.
 \par \pard\sb25\sa25\b\f7 property\b0  Subject: TObject;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8044,7 +8066,7 @@
 {\up A}{\footnote {\up A} AddObject;AddObject_Method;TInstantCustomExposer_AddObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.AddObject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Adds an object to the exposed container.
 \par \pard\sb25\sa25\b\f7 function\b0  AddObject(AObject: TObject): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8063,7 +8085,7 @@
 {\up A}{\footnote {\up A} ApplyChanges;ApplyChanges_Method;TInstantCustomExposer_ApplyChanges}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.ApplyChanges \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Saves pending changes.
 \par \pard\sb25\sa25\b\f7 procedure\b0  ApplyChanges;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8081,7 +8103,7 @@
 {\up A}{\footnote {\up A} AssignFieldValue;AssignFieldValue_Method;TInstantCustomExposer_AssignFieldValue}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.AssignFieldValue \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Applies a given value to a specified field of the exposer.
 \par \pard\sb25\sa25\b\f7 procedure\b0  AssignFieldValue(Field: TField; Value: Variant);
 \par \pard\sb55\sa25\b\f0 Description
@@ -8128,7 +8150,7 @@
 {\up A}{\footnote {\up A} Clear;Clear_Method;TInstantCustomExposer_Clear}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.Clear \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Removes all objects from the exposed container.
 \par \pard\sb25\sa25\b\f7 procedure\b0  Clear;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8233,7 +8255,7 @@
 {\up A}{\footnote {\up A} GetFieldStrings;GetFieldStrings_Method;TInstantCustomExposer_GetFieldStrings}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.GetFieldStrings \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Loads a stringlist with the possible values of the specified field.
 \par \pard\sb25\sa25\b\f7 function\b0  GetFieldStrings(Field: TField; Strings: TStrings): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8252,7 +8274,7 @@
 {\up A}{\footnote {\up A} GotoObject;GotoObject_Method;TInstantCustomExposer_GotoObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.GotoObject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Positions the exposer at a given object.
 \par \pard\sb25\sa25\b\f7 function\b0  GotoObject(AObject: TObject): Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8272,7 +8294,7 @@
 {\up A}{\footnote {\up A} HandleFieldError;HandleFieldError_Method;TInstantCustomExposer_HandleFieldError}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.HandleFieldError \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Handles errors occurred during read or write of field values.
 \par \pard\sb25\sa25\b\f7 function\b0  HandleFieldError(E: Exception; Field: TField; Value: Variant; \b Write\b0 : Boolean): Boolean; \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8290,7 +8312,7 @@
 {\up A}{\footnote {\up A} IncludeField;IncludeField_Method;TInstantCustomExposer_IncludeField}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.IncludeField \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Determines, if a field should be generated for the property with the specified fieldname.
 \par \pard\sb25\sa25\b\f7 function\b0  IncludeField(FieldName: \b string\b0 ; \b Default\b0 : Boolean): Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8310,7 +8332,7 @@
 {\up A}{\footnote {\up A} IndexOfObject;IndexOfObject_Method;TInstantCustomExposer_IndexOfObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.IndexOfObject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Returns the index of the specified object.
 \par \pard\sb25\sa25\b\f7 function\b0  IndexOfObject(AObject: TObject): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8329,7 +8351,7 @@
 {\up A}{\footnote {\up A} InitField;InitField_Method;TInstantCustomExposer_InitField}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.InitField \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Initializes a field of the exposer.
 \par \pard\sb25\sa25\b\f7 procedure\b0  InitField(Field: TField); \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8348,7 +8370,7 @@
 {\up A}{\footnote {\up A} InitFieldDef;InitFieldDef_Method;TInstantCustomExposer_InitFieldDef}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.InitFieldDef \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Initializes a field definition.
 \par \pard\sb25\sa25\b\f7 procedure\b0  InitFieldDef(FieldDef: TFieldDef); \b virtual\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8367,7 +8389,7 @@
 {\up A}{\footnote {\up A} InsertObject;InsertObject_Method;TInstantCustomExposer_InsertObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.InsertObject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Inserts an object into the exposed container.
 \par \pard\sb25\sa25\b\f7 procedure\b0  InsertObject(AObject: TObject);
 \par \pard\sb55\sa25\b\f0 Description
@@ -8386,7 +8408,7 @@
 {\up A}{\footnote {\up A} LoadFields;LoadFields_Method;TInstantCustomExposer_LoadFields}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.LoadFields \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Loads fields from the current object.
 \par \pard\sb25\sa25\b\f7 procedure\b0  LoadFields;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8404,7 +8426,7 @@
 {\up A}{\footnote {\up A} PostChanges;PostChanges_Method;TInstantCustomExposer_PostChanges}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.PostChanges \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Posts any changes made while in edit or insert mode.
 \par \pard\sb25\sa25\b\f7 procedure\b0  PostChanges;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8422,7 +8444,7 @@
 {\up A}{\footnote {\up A} RefreshCurrentObject;RefreshCurrentObject_Method;TInstantCustomExposer_RefreshCurrentObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.RefreshCurrentObject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Refreshes the current object.
 \par \pard\sb25\sa25\b\f7 procedure\b0  RefreshCurrentObject;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8440,7 +8462,7 @@
 {\up A}{\footnote {\up A} RefreshData;RefreshData_Method;TInstantCustomExposer_RefreshData}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.RefreshData \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Performs a complete refresh.
 \par \pard\sb25\sa25\b\f7 procedure\b0  RefreshData;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8458,7 +8480,7 @@
 {\up A}{\footnote {\up A} ReleaseObject;ReleaseObject_Method;TInstantCustomExposer_ReleaseObject}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.ReleaseObject \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa25\b\f7\fs18 procedure\b0  ReleaseObject(AObject: TObject);
 \par 
 \par \pard\plain\f0
@@ -8529,7 +8551,7 @@
 {\up A}{\footnote {\up A} Reset;Reset_Method;TInstantCustomExposer_Reset}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.Reset \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Completely resets the exposer.
 \par \pard\sb25\sa25\b\f7 procedure\b0  Reset;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8575,7 +8597,7 @@
 {\up A}{\footnote {\up A} TInstantCustomExposer_Undo;Undo;Undo_Method}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCustomExposer.Undo \cf1\b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Reverts pending changes.
 \par \pard\sb25\sa25\b\f7 procedure\b0  Undo;
 \par \pard\sb55\sa25\b\f0 Description
@@ -8614,7 +8636,7 @@
 {\up $}{\footnote {\up $} TInstantCustomExposer.OnCompare, Example 1}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike TInstantCustomExposer.OnCompare\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 5480\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer.OnCompare\cf3\strike0{\v ID_435}\cf1 
 \par \pard\sb25\sa25\fs18 The following event handler will sort the TCustomer objects exposed by MyExposer by their Name property.
 \par \pard\keep\f7 
 \par procedure MyExposer.OnCompare(Object1, Object2: TObject; out Compare: Boolean);
@@ -8634,7 +8656,7 @@
 {\up A}{\footnote {\up A} OnCreateObject;OnCreateObject_Event;TInstantCustomExposer_OnCreateObject}
 }
 \viewkind4\uc1\pard\keepn\cf1\lang1040\b\f0\fs24 TInstantCustomExposer.OnCreateObject \b0\fs16 
-\par \strike TInstantCustomExposer\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 4790\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer\cf3\strike0{\v ID_407>main}\cf1 
 \par \pard\sb25\sa85\fs18 Occurs every time a new object is created via the exposer.
 \par \pard\sb25\sa25\b\f7 property\b0  OnCreateObject: \strike TInstantCreateObjectEvent\strike0{\v ID_490>main};
 \par \pard\sb55\sa25\b\f0 Description
@@ -8706,7 +8728,7 @@
 {\up $}{\footnote {\up $} TInstantCustomExposer.OnIncludeField, Example 1}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike TInstantCustomExposer.OnIncludeField\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 5530\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer.OnIncludeField\cf3\strike0{\v ID_438>main}\cf1 
 \par \pard\sb25\sa25\fs18 The following code explicitly includes a field that would not have been included by default:
 \par \pard\keep\f7 
 \par procedure MyExposer.OnIncludeField(const FieldName: string; var Include: Boolean);
@@ -8811,7 +8833,7 @@
 {\up $}{\footnote {\up $} TInstantCustomExposer.OnLimit, Example 1}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \strike TInstantCustomExposer.OnLimit\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 5600\lang1040\f0 >main\} 
+\par \cf2\strike TInstantCustomExposer.OnLimit\cf3\strike0{\v ID_441>main}\cf1 
 \par \pard\sb25\sa25\fs18 The following event handler will limit MyExposer to include only the customers in California.
 \par \pard\keep\f7 
 \par procedure MyExposer.OnLimit(AObject: TObject; var Include: Boolean);
@@ -8827,6 +8849,7 @@
 {\up #}{\footnote {\up #} ID_9}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantDateTime}
+{\up +}{\footnote {\up +} classessymbol:000240}
 {\up K}{\footnote {\up K} TInstantDateTime;}
 {\up A}{\footnote {\up A} TInstantDateTime;TInstantDateTime_Object}
 }
@@ -8991,7 +9014,7 @@
 {\up A}{\footnote {\up A} TInstantDateTime_Value;Value;Value_Property}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantDateTime.Value \cf1\b0\fs16 
-\par \strike TInstantDateTime\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 5630\lang1040\f0 >main\} 
+\par \cf2\strike TInstantDateTime\cf3\strike0{\v ID_9>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the value of the DateTime attribute
 \par \pard\sb25\sa25\b\f7 property\b0  Value: TDateTime;
 \par \pard\sb55\sa25\b\f0 Description
@@ -9005,6 +9028,7 @@
 {\up #}{\footnote {\up #} ID_513}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantDBISAMConnector}
+{\up +}{\footnote {\up +} classessymbol:000250}
 {\up K}{\footnote {\up K} TInstantDBISAMConnector;}
 {\up A}{\footnote {\up A} TInstantDBISAMConnector;TInstantDBISAMConnector_Object}
 }
@@ -9125,7 +9149,7 @@
 {\up #}{\footnote {\up #} ID_517}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 TInstantDBISAMConnector Methods \cf1\b0\fs16 
-\par \strike TInstantDBISAMConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 5740\lang1040\f0 >main\} 
+\par \cf2\strike TInstantDBISAMConnector\cf3\strike0{\v ID_513>main}\cf1 
 \par \pard\sb55\sa55\b\fs18 TInstantDBISAMConnector
 \par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike HasDatabase\strike0{\v ID_526>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike HasSession\strike0{\v ID_527>main}
@@ -9183,7 +9207,7 @@
 {\up A}{\footnote {\up A} Database;Database_Property;TInstantDBISAMConnector_Database}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantDBISAMConnector.Database \cf1\b0\fs16 
-\par \strike TInstantDBISAMConnector\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 5740\lang1040\f0 >main\} 
+\par \cf2\strike TInstantDBISAMConnector\cf3\strike0{\v ID_513>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the database used by the connector component.
 \par \pard\sb25\sa25\b\f7 property\b0  Database: TDBISAMDatabase;
 \par \pard\sb55\sa25\b\f0 Description
@@ -9289,6 +9313,7 @@
 {\up #}{\footnote {\up #} ID_531}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantDBXConnector}
+{\up +}{\footnote {\up +} classessymbol:000260}
 {\up K}{\footnote {\up K} TInstantDBXConnector;}
 {\up A}{\footnote {\up A} TInstantDBXConnector;TInstantDBXConnector_Object}
 }
@@ -9457,6 +9482,7 @@
 {\up #}{\footnote {\up #} ID_305}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantElement}
+{\up +}{\footnote {\up +} classessymbol:000270}
 {\up K}{\footnote {\up K} TInstantElement;}
 {\up A}{\footnote {\up A} TInstantElement;TInstantElement_Object}
 }
@@ -9784,6 +9810,7 @@
 {\up #}{\footnote {\up #} ID_559}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantExplorer}
+{\up +}{\footnote {\up +} classessymbol:000280}
 {\up K}{\footnote {\up K} TInstantExplorer;}
 {\up A}{\footnote {\up A} TInstantExplorer;TInstantExplorer_Object}
 }
@@ -10149,6 +10176,7 @@
 {\up #}{\footnote {\up #} ID_416}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantExposer}
+{\up +}{\footnote {\up +} classessymbol:000290}
 {\up K}{\footnote {\up K} TInstantExposer;}
 {\up A}{\footnote {\up A} TInstantExposer;TInstantExposer_Object}
 }
@@ -10208,7 +10236,7 @@
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike CurrentObject\strike0{\v ID_421>main}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike FieldOptions\strike0{\v ID_422>main}
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike HasSubject\strike0{\v ID_423>main}
-\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0{\v Scribble4960>main}
+\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0{\v Scribble4980>main}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike Limited\strike0{\v ID_425>main}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike Mode\strike0{\v ID_415>main}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike ObjectClass\strike0{\v ID_426>main}
@@ -10507,6 +10535,7 @@
 {\up #}{\footnote {\up #} ID_604}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantFileStream}
+{\up +}{\footnote {\up +} classessymbol:000300}
 {\up K}{\footnote {\up K} TInstantFileStream;}
 {\up A}{\footnote {\up A} TInstantFileStream;TInstantFileStream_Object}
 }
@@ -10649,6 +10678,7 @@
 {\up #}{\footnote {\up #} ID_626}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantFlashFilerConnector}
+{\up +}{\footnote {\up +} classessymbol:000310}
 {\up K}{\footnote {\up K} TInstantFlashFilerConnector;}
 {\up A}{\footnote {\up A} TInstantFlashFilerConnector;TInstantFlashFilerConnector_Object}
 }
@@ -10809,6 +10839,7 @@
 {\up #}{\footnote {\up #} ID_173}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantFloat}
+{\up +}{\footnote {\up +} classessymbol:000320}
 {\up K}{\footnote {\up K} TInstantFloat;}
 {\up A}{\footnote {\up A} TInstantFloat;TInstantFloat_Object}
 }
@@ -11001,6 +11032,7 @@
 {\up #}{\footnote {\up #} ID_649}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantIBXConnector}
+{\up +}{\footnote {\up +} classessymbol:000330}
 {\up K}{\footnote {\up K} TInstantIBXConnector;}
 {\up A}{\footnote {\up A} TInstantIBXConnector;TInstantIBXConnector_Object}
 }
@@ -11177,7 +11209,7 @@
 {\up A}{\footnote {\up A} Connection;Connection_Property;TInstantIBXConnector_Connection}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantIBXConnector.Connection \cf1\b0\fs16 
-\par \strike TInstantIBXConnector\strike0\{linklinkID=\lang1033\f1 692\lang1040\f0 0>main\} 
+\par \cf2\strike TInstantIBXConnector\cf3\strike0{\v ID_649>main}\cf1 
 \par \pard\sb25\sa85\fs18 Specifies the connection used by the connector component.
 \par \pard\sb25\sa25\b\f7 property\b0  Connection: TIBDatabase;
 \par \pard\sb55\sa25\b\f0 Description
@@ -11191,6 +11223,7 @@
 {\up #}{\footnote {\up #} ID_171}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantInteger}
+{\up +}{\footnote {\up +} classessymbol:000340}
 {\up K}{\footnote {\up K} TInstantInteger;}
 {\up A}{\footnote {\up A} TInstantInteger;TInstantInteger_Object}
 }
@@ -11381,6 +11414,7 @@
 {\up #}{\footnote {\up #} ID_180}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantMemo}
+{\up +}{\footnote {\up +} classessymbol:000350}
 {\up K}{\footnote {\up K} TInstantMemo;}
 {\up A}{\footnote {\up A} TInstantMemo;TInstantMemo_Object}
 }
@@ -11548,6 +11582,7 @@
 {\up #}{\footnote {\up #} ID_641}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantNumeric}
+{\up +}{\footnote {\up +} classessymbol:000360}
 {\up K}{\footnote {\up K} TInstantNumeric;}
 {\up A}{\footnote {\up A} TInstantNumeric;TInstantNumeric_Object}
 }
@@ -11708,6 +11743,7 @@
 {\up #}{\footnote {\up #} ID_170}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantObject}
+{\up +}{\footnote {\up +} classessymbol:000370}
 {\up K}{\footnote {\up K} TInstantObject;}
 {\up A}{\footnote {\up A} TInstantObject;TInstantObject_Object}
 }
@@ -14553,6 +14589,7 @@
 {\up #}{\footnote {\up #} ID_877}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantOwnedCollection}
+{\up +}{\footnote {\up +} classessymbol:000380}
 {\up K}{\footnote {\up K} TInstantOwnedCollection;}
 {\up A}{\footnote {\up A} TInstantOwnedCollection;TInstantOwnedCollection_Object}
 }
@@ -14664,6 +14701,7 @@
 {\up #}{\footnote {\up #} ID_172}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantPart}
+{\up +}{\footnote {\up +} classessymbol:000390}
 {\up K}{\footnote {\up K} TInstantPart;}
 {\up A}{\footnote {\up A} TInstantPart;TInstantPart_Object}
 }
@@ -14924,6 +14962,7 @@
 {\up #}{\footnote {\up #} ID_176}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantParts}
+{\up +}{\footnote {\up +} classessymbol:000400}
 {\up K}{\footnote {\up K} TInstantParts;}
 {\up A}{\footnote {\up A} TInstantParts;TInstantParts_Object}
 }
@@ -15173,6 +15212,7 @@
 {\up #}{\footnote {\up #} ID_174}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantReference}
+{\up +}{\footnote {\up +} classessymbol:000410}
 {\up K}{\footnote {\up K} TInstantReference;}
 {\up A}{\footnote {\up A} TInstantReference;TInstantReference_Object}
 }
@@ -15652,6 +15692,7 @@
 {\up #}{\footnote {\up #} ID_178}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantReferences}
+{\up +}{\footnote {\up +} classessymbol:000420}
 {\up K}{\footnote {\up K} TInstantReferences;}
 {\up A}{\footnote {\up A} TInstantReferences;TInstantReferences_Object}
 }
@@ -15743,7 +15784,7 @@
 {\up #}{\footnote {\up #} ID_937}
 }
 \viewkind4\uc1\pard\keepn\sb25\tx355\lang1040\b\f0\fs24 TInstantReferences Properties \cf1\b0\fs16 
-\par \strike TInstantReferences\strike0{\v ID_178>main}\tab\ul Legend\ulnone{\v ID_943} 
+\par \strike TInstantReferences\strike0{\v ID_178>main}\tab\lang1033\f1\tab\lang1040\ul\f0 Legend\ulnone{\v ID_943} 
 \par \pard\sb55\sa55\tx355\b\fs18 TInstantReferences
 \par \pard\keep\li95\sb25\sa25\tx355\b0\{bmct bm0.BMP\}\{bmct bm7.BMP\} \strike AllowOwned\strike0{\v ID_942>main}
 \par \pard\sb55\sa55\tx355\b TInstantContainer
@@ -15804,7 +15845,7 @@
 {\up #}{\footnote {\up #} ID_938}
 }
 \viewkind4\uc1\pard\keepn\sb25\tx355\lang1040\b\f0\fs24 TInstantReferences Methods \cf1\b0\fs16 
-\par \strike TInstantReferences\strike0{\v ID_178>main}\tab\ul Legend\ulnone{\v ID_948} 
+\par \strike TInstantReferences\strike0{\v ID_178>main}\tab\lang1033\f1\tab\lang1040\ul\f0 Legend\ulnone{\v ID_948} 
 \par \pard\sb55\sa55\tx355\b\fs18 TInstantReferences
 \par \pard\keep\li95\sb25\sa25\tx355\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike DestroyObject\strike0{\v ID_945>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike LoadReferencesFromStream\strike0{\v ID_946>main}
@@ -15862,7 +15903,7 @@
 {\up #}{\footnote {\up #} ID_936}
 }
 \viewkind4\uc1\pard\keepn\sb25\tx355\lang1040\b\f0\fs24 TInstantReferences Members \cf1\b0\fs16 
-\par \strike TInstantReferences\strike0{\v ID_178>main}\tab\ul Legend\ulnone{\v ID_949} 
+\par \strike TInstantReferences\strike0{\v ID_178>main}\tab\lang1033\f1\tab\lang1040\ul\f0 Legend\ulnone{\v ID_949} 
 \par \pard\sb55\sa55\tx355\b\fs18 Properties
 \par \pard\keep\li95\sb25\sa25\tx355\b0\{bmct bm0.BMP\}\{bmct bm7.BMP\} \strike AllowOwned\strike0{\v ID_942>main}
 \par \pard\sb55\sa55\tx355\b Methods
@@ -15984,6 +16025,7 @@
 {\up #}{\footnote {\up #} ID_105}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantRelationalConnector}
+{\up +}{\footnote {\up +} classessymbol:000430}
 {\up K}{\footnote {\up K} TInstantRelationalConnector;}
 {\up A}{\footnote {\up A} TInstantRelationalConnector;TInstantRelationalConnector_Object}
 }
@@ -16223,6 +16265,7 @@
 {\up #}{\footnote {\up #} ID_965}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantResourceStream}
+{\up +}{\footnote {\up +} classessymbol:000440}
 {\up K}{\footnote {\up K} TInstantResourceStream;}
 {\up A}{\footnote {\up A} TInstantResourceStream;TInstantResourceStream_Object}
 }
@@ -16266,7 +16309,7 @@
 {\up #}{\footnote {\up #} ID_970}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 TInstantResourceStream Properties \cf1\b0\fs16 
-\par \strike TInstantResourceStream\strike0{\v ID_622>main} 
+\par \cf2\strike TInstantResourceStream\cf3\strike0{\v ID_965>main}\cf1 
 \par \pard\sb55\sa55\b\fs18 TInstantStream
 \par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike FreeSource\strike0{\v ID_610>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike Source\strike0{\v ID_611>main}
@@ -16279,7 +16322,7 @@
 {\up #}{\footnote {\up #} ID_971}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 TInstantResourceStream Events \cf1\b0\fs16 
-\par \strike TInstantResourceStream\strike0{\v ID_622>main}
+\par \cf2\strike TInstantResourceStream\cf3\strike0{\v ID_965>main}\cf1
 \par \pard\sb55\sa55\b\fs18 TInstantStream
 \par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike OnProcessObject\strike0{\v ID_613>main}
 \par 
@@ -16291,7 +16334,7 @@
 {\up #}{\footnote {\up #} ID_968}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 TInstantResourceStream Methods \cf1\b0\fs16 
-\par \strike TInstantResourceStream\strike0{\v ID_622>main}
+\par \cf2\strike TInstantResourceStream\cf3\strike0{\v ID_965>main}\cf1
 \par \pard\sb55\sa55\b\fs18 TInstantResourceStream
 \par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike Create\strike0{\v ID_972>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike CreateFromId\strike0{\v ID_973>main}
@@ -16315,7 +16358,7 @@
 {\up #}{\footnote {\up #} ID_967}
 }
 \viewkind4\uc1\pard\keepn\sb25\lang1040\b\f0\fs24 TInstantResourceStream Members \cf1\b0\fs16 
-\par \strike TInstantResourceStream\strike0{\v ID_622>main} 
+\par \cf2\strike TInstantResourceStream\cf3\strike0{\v ID_965>main}\cf1 
 \par \pard\sb55\sa55\b\fs18 Methods
 \par \pard\keep\li95\sb25\sa25\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike Create\strike0{\v ID_972>main}
 \par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike CreateFromId\strike0{\v ID_973>main}
@@ -16332,7 +16375,7 @@
 {\up A}{\footnote {\up A} Create;Create_Method;TInstantResourceStream_Create}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantResourceStream.Create \cf1\b0\fs16 
-\par \strike TInstantResourceStream\strike0{\v ID_622>main}
+\par \cf2\strike TInstantResourceStream\cf3\strike0{\v ID_965>main}\cf1
 \par \pard\sb25\sa85\fs18 Creates an instance of \strike TInstantResourceStream\strike0{\v ID_965>main} associated with a particular resource.
 \par \pard\sb25\sa25\b\f7 constructor\b0  Create(Instance: THandle; \b const\b0  ResName: \b string\b0 ; ResType: PChar);
 \par \pard\sb55\sa25\b\f0 Description
@@ -16350,7 +16393,7 @@
 {\up A}{\footnote {\up A} CreateFromId;CreateFromId_Method;TInstantResourceStream_CreateFromId}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantResourceStream.CreateFromId \cf1\b0\fs16 
-\par \strike TInstantResourceStream\strike0{\v ID_622>main}
+\par \cf2\strike TInstantResourceStream\cf3\strike0{\v ID_965>main}\cf1
 \par \pard\sb25\sa85\fs18 Creates an instance of \strike TInstantResourceStream\strike0{\v ID_965>main} associated with a particular resource.
 \par \pard\sb25\sa25\b\f7 constructor\b0  CreateFromId(Instance: THandle; ResID: Integer; ResType: PChar);
 \par \pard\sb55\sa25\b\f0 Description
@@ -16364,6 +16407,7 @@
 {\up #}{\footnote {\up #} ID_417}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantSelector}
+{\up +}{\footnote {\up +} classessymbol:000450}
 {\up K}{\footnote {\up K} TInstantSelector;}
 {\up A}{\footnote {\up A} TInstantSelector;TInstantSelector_Object}
 }
@@ -16435,7 +16479,7 @@
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike CurrentObject\strike0{\v ID_421>main}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike FieldOptions\strike0{\v ID_422>main}
 \par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike HasSubject\strike0{\v ID_423>main}
-\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0{\v Scribble4960>main}
+\par \{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike IsChanged\strike0{\v Scribble4980>main}
 \par \{bmct bm0.BMP\}\{bmct bm4.BMP\} \strike Limited\strike0{\v ID_425>main}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike Mode\strike0{\v ID_415>main}
 \par \{bmct bm0.BMP\}\{bmct bm5.BMP\} \strike ObjectClass\strike0{\v ID_426>main}
@@ -16766,6 +16810,7 @@
 {\up #}{\footnote {\up #} ID_240}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantSimple}
+{\up +}{\footnote {\up +} classessymbol:000460}
 {\up K}{\footnote {\up K} TInstantSimple;}
 {\up A}{\footnote {\up A} TInstantSimple;TInstantSimple_Object}
 }
@@ -16937,6 +16982,7 @@
 {\up #}{\footnote {\up #} ID_608}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantStream}
+{\up +}{\footnote {\up +} classessymbol:000470}
 {\up K}{\footnote {\up K} TInstantStream;}
 {\up A}{\footnote {\up A} TInstantStream;TInstantStream_Object}
 }
@@ -17378,6 +17424,7 @@
 {\up #}{\footnote {\up #} ID_168}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantStreamable}
+{\up +}{\footnote {\up +} classessymbol:000480}
 {\up K}{\footnote {\up K} TInstantStreamable;}
 {\up A}{\footnote {\up A} TInstantStreamable;TInstantStreamable_Object}
 }
@@ -17613,6 +17660,7 @@
 {\up #}{\footnote {\up #} ID_177}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantString}
+{\up +}{\footnote {\up +} classessymbol:000490}
 {\up K}{\footnote {\up K} TInstantString;}
 {\up A}{\footnote {\up A} TInstantString;TInstantString_Object}
 }
@@ -17791,6 +17839,7 @@
 {\up #}{\footnote {\up #} 327SI6R}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantStringStream}
+{\up +}{\footnote {\up +} classessymbol:000500}
 {\up K}{\footnote {\up K} TInstantStringStream;}
 {\up A}{\footnote {\up A} TInstantStringStream;TInstantStringStream_Object}
 }
@@ -17954,6 +18003,7 @@
 {\up #}{\footnote {\up #} 327SI7S}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantCharSetToStr}
+{\up +}{\footnote {\up +} functionsssymbol:000010}
 {\up K}{\footnote {\up K} InstantCharSetToStr;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantCharSetToStr \cf1\b0\fs16  
@@ -17997,6 +18047,7 @@
 {\up #}{\footnote {\up #} 327SI7X}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantCheckConnection}
+{\up +}{\footnote {\up +} functionsssymbol:000020}
 {\up K}{\footnote {\up K} InstantCheckConnection;}
 }
 \viewkind4\uc1\pard\keepn\cf1\lang1040\b\f0\fs24 InstantCheckConnection \b0\fs16 
@@ -18014,6 +18065,7 @@
 {\up #}{\footnote {\up #} 327SI8Y}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantCheckConnector}
+{\up +}{\footnote {\up +} functionsssymbol:000030}
 {\up K}{\footnote {\up K} InstantCheckConnector;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantCheckConnector \cf1\b0\fs16 
@@ -18041,6 +18093,7 @@
 {\up #}{\footnote {\up #} 327SI8R}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantClassNameToName}
+{\up +}{\footnote {\up +} functionsssymbol:000040}
 {\up K}{\footnote {\up K} InstantClassNameToName;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantClassNameToName \cf1\b0\fs16 
@@ -18068,6 +18121,7 @@
 {\up #}{\footnote {\up #} 327SI8U}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantCompareObjects}
+{\up +}{\footnote {\up +} functionsssymbol:000050}
 {\up K}{\footnote {\up K} InstantCompareObjects;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantCompareObjects \cf1\b0\fs16 
@@ -18112,6 +18166,7 @@
 {\up #}{\footnote {\up #} 327SI8X}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantCompareText}
+{\up +}{\footnote {\up +} functionsssymbol:000060}
 {\up K}{\footnote {\up K} InstantCompareText;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantCompareText \cf1\b0\fs16 
@@ -18129,6 +18184,7 @@
 {\up #}{\footnote {\up #} 327SI9Y}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantCompareValues}
+{\up +}{\footnote {\up +} functionsssymbol:000070}
 {\up K}{\footnote {\up K} InstantCompareValues;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantCompareValues \cf1\b0\fs16 
@@ -18151,6 +18207,7 @@
 {\up #}{\footnote {\up #} 327SI9P}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantConstArrayToVariant}
+{\up +}{\footnote {\up +} functionsssymbol:000080}
 {\up K}{\footnote {\up K} InstantConstArrayToVariant;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantConstArrayToVariant \cf1\b0\fs16 
@@ -18168,6 +18225,7 @@
 {\up #}{\footnote {\up #} 327SI9Q}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantDateTimeToStr}
+{\up +}{\footnote {\up +} functionsssymbol:000090}
 {\up K}{\footnote {\up K} InstantDateTimeToStr;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantDateTimeToStr \cf1\b0\fs16 
@@ -18195,6 +18253,7 @@
 {\up #}{\footnote {\up #} 327SI8Q}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantDefaultConnector}
+{\up +}{\footnote {\up +} functionsssymbol:000100}
 {\up K}{\footnote {\up K} InstantDefaultConnector;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantDefaultConnector \cf1\b0\fs16 
@@ -18212,6 +18271,7 @@
 {\up #}{\footnote {\up #} 327SI9U}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantDisableNotifiers}
+{\up +}{\footnote {\up +} functionsssymbol:000110}
 {\up K}{\footnote {\up K} InstantDisableNotifiers;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantDisableNotifiers \cf1\b0\fs16  
@@ -18239,6 +18299,7 @@
 {\up #}{\footnote {\up #} 327SI9W}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantEnableNotifiers}
+{\up +}{\footnote {\up +} functionsssymbol:000120}
 {\up K}{\footnote {\up K} InstantEnableNotifiers;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantEnableNotifiers \cf1\b0\fs16  
@@ -18266,6 +18327,7 @@
 {\up #}{\footnote {\up #} 327SI0Y}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantExploreObject}
+{\up +}{\footnote {\up +} functionsssymbol:000130}
 {\up K}{\footnote {\up K} InstantExploreObject;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantExploreObject \cf1\b0\fs16 
@@ -18293,6 +18355,7 @@
 {\up #}{\footnote {\up #} 327SI0Q}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantFileVersion}
+{\up +}{\footnote {\up +} functionsssymbol:000140}
 {\up K}{\footnote {\up K} InstantFileVersion;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantFileVersion \cf1\b0\fs16  
@@ -18320,6 +18383,7 @@
 {\up #}{\footnote {\up #} 327SI0T}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantFileVersionStr}
+{\up +}{\footnote {\up +} functionsssymbol:000150}
 {\up K}{\footnote {\up K} InstantFileVersionStr;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantFileVersionStr \cf1\b0\fs16 
@@ -18347,6 +18411,7 @@
 {\up #}{\footnote {\up #} 327SI0V}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantFindAccessorClass}
+{\up +}{\footnote {\up +} functionsssymbol:000160}
 {\up K}{\footnote {\up K} InstantFindAccessorClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantFindAccessorClass \cf1\b0\fs16  
@@ -18376,6 +18441,7 @@
 {\up #}{\footnote {\up #} 3OA4HS5}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantFindClass}
+{\up +}{\footnote {\up +} functionsssymbol:000170}
 {\up K}{\footnote {\up K} InstantFindClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantFindClass \cf1\b0\fs16  
@@ -18405,6 +18471,7 @@
 {\up #}{\footnote {\up #} ID_831}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantGenerateId}
+{\up +}{\footnote {\up +} functionsssymbol:000180}
 {\up K}{\footnote {\up K} InstantGenerateId;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantGenerateId \cf1\b0\fs16 
@@ -18422,6 +18489,7 @@
 {\up #}{\footnote {\up #} 327SI0X}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantGetAccessorClass}
+{\up +}{\footnote {\up +} functionsssymbol:000190}
 {\up K}{\footnote {\up K} InstantGetAccessorClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantGetAccessorClass \cf1\b0\fs16 
@@ -18450,6 +18518,7 @@
 {\up #}{\footnote {\up #} 3OA4HS7}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantGetClass}
+{\up +}{\footnote {\up +} functionsssymbol:000200}
 {\up K}{\footnote {\up K} InstantGetClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantGetClass \cf1\b0\fs16 
@@ -18478,6 +18547,7 @@
 {\up #}{\footnote {\up #} 75DEFG5}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantGetClasses}
+{\up +}{\footnote {\up +} functionsssymbol:000210}
 {\up K}{\footnote {\up K} InstantGetClasses;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantGetClasses \cf1\b0\fs16 
@@ -18495,6 +18565,7 @@
 {\up #}{\footnote {\up #} 3OA4HS.}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantIsIdentifier}
+{\up +}{\footnote {\up +} functionsssymbol:000220}
 {\up K}{\footnote {\up K} InstantIsIdentifier;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantIsIdentifier \cf1\b0\fs16 
@@ -18512,6 +18583,7 @@
 {\up #}{\footnote {\up #} ID_832}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantIsValidObjectId}
+{\up +}{\footnote {\up +} functionsssymbol:000230}
 {\up K}{\footnote {\up K} InstantIsValidObjectId;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantIsValidObjectId \cf1\b0\fs16 
@@ -18528,10 +18600,11 @@
 {\pard\plain\f0\fs20
 {\up #}{\footnote {\up #} 3OA4HS_}
 {\up >}{\footnote {\up >} main}
-{\up $}{\footnote {\up $} InstantMatchObject}
-{\up K}{\footnote {\up K} InstantMatchObject;}
+{\up $}{\footnote {\up $} InstantMatchObject 1}
+{\up +}{\footnote {\up +} functionsssymbol:000240}
+{\up K}{\footnote {\up K} InstantMatchObject,1;}
 }
-\viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantMatchObject \cf1\b0\fs16 
+\viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantMatchObject 1 \cf1\b0\fs16 
 \par \pard\keepn\sb25\tx1435\ul See Also\ulnone{\v 75DE_H8}\tab\strike Unit: InstantUtils\strike0{\v 327SI7V>main} 
 \par \pard\sb25\sa85\tx1435\fs18 Compares a value to the value of an objects property
 \par \pard\sb25\sa25\tx1435\b\f7 function\b0  InstantMatchObject(Obj: TObject; PropName: \b string\b0 ; \b const\b0  KeyValue: Variant; Options: \strike TInstantCompareOptions\strike0{\v 327SI8V>main}): Boolean;
@@ -18555,10 +18628,11 @@
 {\pard\plain\f0\fs20
 {\up #}{\footnote {\up #} 75DE_GZ}
 {\up >}{\footnote {\up >} main}
-{\up $}{\footnote {\up $} InstantMatchObject}
-{\up K}{\footnote {\up K} InstantMatchObject;}
+{\up $}{\footnote {\up $} InstantMatchObject 2}
+{\up +}{\footnote {\up +} functionsssymbol:000250}
+{\up K}{\footnote {\up K} InstantMatchObject,2;}
 }
-\viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantMatchObject \cf1\b0\fs16  
+\viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantMatchObject 2  \cf1\b0\fs16 
 \par \pard\keepn\sb25\tx1435\ul See Also\ulnone{\v 8DW2.KP}\tab\strike Unit: InstantUtils\strike0{\v 327SI7V>main}
 \par \pard\sb25\sa85\tx1435\fs18 Compares multiple values to the values of an objects properties
 \par \pard\sb25\sa25\tx1435\b\f7 function\b0  \strike InstantMatchObject\strike0{\v 3OA4HS_>main}(Obj: TObject; PropNames: TStrings; \b const\b0  KeyValues: Variant; Options: \strike TInstantCompareOptions\strike0{\v 327SI8V>main}): Boolean;
@@ -18583,6 +18657,7 @@
 {\up #}{\footnote {\up #} 327SI8T}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantNameToClassName}
+{\up +}{\footnote {\up +} functionsssymbol:000260}
 {\up K}{\footnote {\up K} InstantNameToClassName;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantNameToClassName \cf1\b0\fs16  
@@ -18610,6 +18685,7 @@
 {\up #}{\footnote {\up #} 75DE_H2}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantObjectBinaryToText}
+{\up +}{\footnote {\up +} functionsssymbol:000270}
 {\up K}{\footnote {\up K} InstantObjectBinaryToText;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantObjectBinaryToText \cf1\b0\fs16  
@@ -18638,6 +18714,7 @@
 {\up #}{\footnote {\up #} 75DE_H4}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantObjectTextToBinary}
+{\up +}{\footnote {\up +} functionsssymbol:000280}
 {\up K}{\footnote {\up K} InstantObjectTextToBinary;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantObjectTextToBinary \cf1\b0\fs16 
@@ -18666,6 +18743,7 @@
 {\up #}{\footnote {\up #} 75DE_H6}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantPartStr}
+{\up +}{\footnote {\up +} functionsssymbol:000290}
 {\up K}{\footnote {\up K} InstantPartStr;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantPartStr \cf1\b0\fs16  
@@ -18698,6 +18776,7 @@
 {\up #}{\footnote {\up #} 7RMQ.VH}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantReadObject}
+{\up +}{\footnote {\up +} functionsssymbol:000300}
 {\up K}{\footnote {\up K} InstantReadObject;}
 }
 \viewkind4\uc1\pard\keepn\cf1\lang1040\b\f0\fs24 InstantReadObject \b0\fs16 
@@ -18726,6 +18805,7 @@
 {\up #}{\footnote {\up #} 7RMQ.VB}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantReadObjects}
+{\up +}{\footnote {\up +} functionsssymbol:000310}
 {\up K}{\footnote {\up K} InstantReadObjects;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantReadObjects \cf1\b0\fs16  
@@ -18754,6 +18834,7 @@
 {\up #}{\footnote {\up #} 7RMQ.VE}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantRefreshObjects}
+{\up +}{\footnote {\up +} functionsssymbol:000320}
 {\up K}{\footnote {\up K} InstantRefreshObjects;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantRefreshObjects \cf1\b0\fs16 
@@ -18782,6 +18863,7 @@
 {\up #}{\footnote {\up #} 53SLGW3}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantRegisterAccessorClass}
+{\up +}{\footnote {\up +} functionsssymbol:000330}
 {\up K}{\footnote {\up K} InstantRegisterAccessorClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantRegisterAccessorClass \cf1\b0\fs16  
@@ -18809,6 +18891,7 @@
 {\up #}{\footnote {\up #} 3OA4HS8}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantRegisterClass}
+{\up +}{\footnote {\up +} functionsssymbol:000340}
 {\up K}{\footnote {\up K} InstantRegisterClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantRegisterClass \cf1\b0\fs16  
@@ -18838,6 +18921,7 @@
 {\up #}{\footnote {\up #} 7RMQ.WA}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantRegisterClasses}
+{\up +}{\footnote {\up +} functionsssymbol:000350}
 {\up K}{\footnote {\up K} InstantRegisterClasses;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantRegisterClasses \cf1\b0\fs16  
@@ -18867,6 +18951,7 @@
 {\up #}{\footnote {\up #} 7RMQ.WD}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantRightPos}
+{\up +}{\footnote {\up +} functionsssymbol:000360}
 {\up K}{\footnote {\up K} InstantRightPos;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantRightPos \cf1\b0\fs16 
@@ -18902,6 +18987,7 @@
 {\pard\plain\f0\fs20
 {\up #}{\footnote {\up #} 327SI7W}
 {\up $}{\footnote {\up $} InstantStrToCharSet}
+{\up +}{\footnote {\up +} functionsssymbol:000370}
 {\up K}{\footnote {\up K} InstantStrToCharSet;}
 }
 \viewkind4\uc1\pard\keepn\cf1\lang1040\b\f0\fs24 InstantStrToCharSet \b0\fs16  
@@ -18945,6 +19031,7 @@
 {\up #}{\footnote {\up #} 75DE_A8}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantStrToDate}
+{\up +}{\footnote {\up +} functionsssymbol:000380}
 {\up K}{\footnote {\up K} InstantStrToDate;}
 }
 \viewkind4\uc1\pard\keepn\cf1\lang1040\b\f0\fs24 InstantStrToDate \b0\fs16  
@@ -18974,6 +19061,7 @@
 {\up #}{\footnote {\up #} 327SI9T}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantStrToDateTime}
+{\up +}{\footnote {\up +} functionsssymbol:000390}
 {\up K}{\footnote {\up K} InstantStrToDateTime;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantStrToDateTime \cf1\b0\fs16 
@@ -19004,6 +19092,7 @@
 {\up #}{\footnote {\up #} 75DE_A3}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantStrToList}
+{\up +}{\footnote {\up +} functionsssymbol:000400}
 {\up K}{\footnote {\up K} InstantStrToList;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantStrToList \cf1\b0\fs16  
@@ -19047,6 +19136,7 @@
 {\up #}{\footnote {\up #} 75DE_A1}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantStrToTime}
+{\up +}{\footnote {\up +} functionsssymbol:000410}
 {\up K}{\footnote {\up K} InstantStrToTime;}
 }
 \viewkind4\uc1\pard\keepn\cf1\lang1040\b\f0\fs24 InstantStrToTime \b0\fs16  
@@ -19076,6 +19166,7 @@
 {\up #}{\footnote {\up #} 7RMQ.WH}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantUnregisterAccessorClass}
+{\up +}{\footnote {\up +} functionsssymbol:000420}
 {\up K}{\footnote {\up K} InstantUnregisterAccessorClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantUnregisterAccessorClass \cf1\b0\fs16  
@@ -19103,6 +19194,7 @@
 {\up #}{\footnote {\up #} 8DW2.CP}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantUnregisterClass}
+{\up +}{\footnote {\up +} functionsssymbol:000430}
 {\up K}{\footnote {\up K} InstantUnregisterClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantUnregisterClass \cf1\b0\fs16 
@@ -19130,6 +19222,7 @@
 {\up #}{\footnote {\up #} 7RMQ.WC}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantUnregisterClasses}
+{\up +}{\footnote {\up +} functionsssymbol:000440}
 {\up K}{\footnote {\up K} InstantUnregisterClasses;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantUnregisterClasses \cf1\b0\fs16  
@@ -19157,6 +19250,7 @@
 {\up #}{\footnote {\up #} 7RMQ.VA}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantWriteObject}
+{\up +}{\footnote {\up +} functionsssymbol:000450}
 {\up K}{\footnote {\up K} InstantWriteObject;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantWriteObject \cf1\b0\fs16 
@@ -19185,6 +19279,7 @@
 {\up #}{\footnote {\up #} 7RMQ.VD}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantWriteObjects}
+{\up +}{\footnote {\up +} functionsssymbol:000460}
 {\up K}{\footnote {\up K} InstantWriteObjects;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantWriteObjects \cf1\b0\fs16 
@@ -19213,6 +19308,7 @@
 {\up #}{\footnote {\up #} 327SI0S}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantVersion}
+{\up +}{\footnote {\up +} recordssymbol:000010}
 {\up K}{\footnote {\up K} TInstantVersion;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantVersion \cf1\b0\fs16 
@@ -19245,6 +19341,7 @@
 {\up #}{\footnote {\up #} ID_473}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantAccessMode}
+{\up +}{\footnote {\up +} typessymbol:000010}
 {\up K}{\footnote {\up K} TInstantAccessMode;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAccessMode \cf1\b0\fs16 
@@ -19266,6 +19363,7 @@
 {\up #}{\footnote {\up #} ID_149}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantADOProviderType}
+{\up +}{\footnote {\up +} typessymbol:000020}
 {\up K}{\footnote {\up K} TInstantADOProviderType;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantADOProviderType \cf1\b0\fs16 
@@ -19291,6 +19389,7 @@
 {\up #}{\footnote {\up #} ID_871}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantAttributeChangeEvent}
+{\up +}{\footnote {\up +} typessymbol:000030}
 {\up K}{\footnote {\up K} TInstantAttributeChangeEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttributeChangeEvent \cf1\b0\fs16 
@@ -19308,6 +19407,7 @@
 {\up #}{\footnote {\up #} ID_219}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantAttributeType}
+{\up +}{\footnote {\up +} typessymbol:000040}
 {\up K}{\footnote {\up K} TInstantAttributeType;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantAttributeType \cf1\b0\fs16 
@@ -19339,6 +19439,7 @@
 {\up #}{\footnote {\up #} ID_234}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantBDEDriverType}
+{\up +}{\footnote {\up +} typessymbol:000050}
 {\up K}{\footnote {\up K} TInstantBDEDriverType;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantBDEDriverType \cf1\b0\fs16 
@@ -19365,6 +19466,7 @@
 {\up #}{\footnote {\up #} ID_489}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantCompareObjectsEvent}
+{\up +}{\footnote {\up +} typessymbol:000060}
 {\up K}{\footnote {\up K} TInstantCompareObjectsEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCompareObjectsEvent \cf1\b0\fs16 
@@ -19382,6 +19484,7 @@
 {\up #}{\footnote {\up #} 75DE_B3}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantCompareOption}
+{\up +}{\footnote {\up +} typessymbol:000070}
 {\up K}{\footnote {\up K} TInstantCompareOption;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCompareOption \cf1\b0\fs16 
@@ -19404,6 +19507,7 @@
 {\up #}{\footnote {\up #} 327SI8V}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantCompareOptions}
+{\up +}{\footnote {\up +} typessymbol:000080}
 {\up K}{\footnote {\up K} TInstantCompareOptions;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCompareOptions \cf1\b0\fs16 
@@ -19426,6 +19530,7 @@
 {\up #}{\footnote {\up #} ID_843}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantConflictAction}
+{\up +}{\footnote {\up +} typessymbol:000090}
 {\up K}{\footnote {\up K} TInstantConflictAction;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConflictAction \cf1\b0\fs16 
@@ -19447,6 +19552,7 @@
 {\up #}{\footnote {\up #} 75DE_B4}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantConnectionManagerActionType}
+{\up +}{\footnote {\up +} typessymbol:000100}
 {\up K}{\footnote {\up K} TInstantConnectionManagerActionType;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManagerActionType \cf1\b0\fs16 
@@ -19475,10 +19581,11 @@
 {\up #}{\footnote {\up #} ID_343}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantConnectionManagerActionTypes}
+{\up +}{\footnote {\up +} typessymbol:000110}
 {\up K}{\footnote {\up K} TInstantConnectionManagerActionTypes;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectionManagerActionTypes \cf1\b0\fs16 
-\par \strike Unit: InstantConnectionManager\strike0\{linklinkID=\lang1033\f1 12730\lang1040\f0 >main\} 
+\par \strike Unit: InstantConnectionManager\strike0{\v ID_322>main} 
 \par \pard\sb25\sa85\fs18 Connection manager action types.
 \par \pard\sb25\sa25\strike\f7 TInstantConnectionManagerActionType\strike0{\v 75DE_B4>main} = (atNew, atEdit, atDelete, atRename, atConnect, atDisconnect, atBuild);
 \par TInstantConnectionManagerActionTypes = \b set\b0  \b of\b0  \strike TInstantConnectionManagerActionType\strike0{\v 75DE_B4>main};
@@ -19503,6 +19610,7 @@
 {\up #}{\footnote {\up #} ID_103}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantConnectorClass}
+{\up +}{\footnote {\up +} typessymbol:000120}
 {\up K}{\footnote {\up K} TInstantConnectorClass;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantConnectorClass \cf1\b0\fs16 
@@ -19527,6 +19635,7 @@
 {\up #}{\footnote {\up #} ID_870}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantContentChangeEvent}
+{\up +}{\footnote {\up +} typessymbol:000130}
 {\up K}{\footnote {\up K} TInstantContentChangeEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContentChangeEvent \cf1\b0\fs16  
@@ -19555,6 +19664,7 @@
 {\up #}{\footnote {\up #} ID_812}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantContentChangeType}
+{\up +}{\footnote {\up +} typessymbol:000140}
 {\up K}{\footnote {\up K} TInstantContentChangeType;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantContentChangeType \cf1\b0\fs16  
@@ -19587,6 +19697,7 @@
 {\up #}{\footnote {\up #} ID_490}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantCreateObjectEvent}
+{\up +}{\footnote {\up +} typessymbol:000150}
 {\up K}{\footnote {\up K} TInstantCreateObjectEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantCreateObjectEvent \cf1\b0\fs16 
@@ -19604,6 +19715,7 @@
 {\up #}{\footnote {\up #} 75DE_B7}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantDataType}
+{\up +}{\footnote {\up +} typessymbol:000160}
 {\up K}{\footnote {\up K} TInstantDataType;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantDataType \cf1\b0\fs16 
@@ -19621,6 +19733,7 @@
 {\up #}{\footnote {\up #} ID_853}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantErrorAction}
+{\up +}{\footnote {\up +} typessymbol:000170}
 {\up K}{\footnote {\up K} TInstantErrorAction;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantErrorAction \cf1\b0\fs16 
@@ -19658,6 +19771,7 @@
 {\up #}{\footnote {\up #} ID_876}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantErrorEvent}
+{\up +}{\footnote {\up +} typessymbol:000180}
 {\up K}{\footnote {\up K} TInstantErrorEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantErrorEvent \cf1\b0\fs16 
@@ -19675,6 +19789,7 @@
 {\up #}{\footnote {\up #} ID_582}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantExplorerLayout}
+{\up +}{\footnote {\up +} typessymbol:000190}
 {\up K}{\footnote {\up K} TInstantExplorerLayout;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantExplorerLayout \cf1\b0\fs16 
@@ -19697,6 +19812,7 @@
 {\up #}{\footnote {\up #} 75DE_BZ}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantExplorerNodeType}
+{\up +}{\footnote {\up +} typessymbol:000200}
 {\up K}{\footnote {\up K} TInstantExplorerNodeType;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantExplorerNodeType \cf1\b0\fs16 
@@ -19722,6 +19838,7 @@
 {\up #}{\footnote {\up #} ID_583}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantExplorerNodeTypes}
+{\up +}{\footnote {\up +} typessymbol:000210}
 {\up K}{\footnote {\up K} TInstantExplorerNodeTypes;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantExplorerNodeTypes \cf1\b0\fs16 
@@ -19746,6 +19863,7 @@
 {\up #}{\footnote {\up #} ID_478}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantExposerOptions}
+{\up +}{\footnote {\up +} typessymbol:000220}
 {\up K}{\footnote {\up K} TInstantExposerOption;TInstantExposerOptions;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantExposerOptions\cf1\b0\fs16 
@@ -19781,6 +19899,7 @@
 {\up #}{\footnote {\up #} ID_499}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantFieldDefEvent}
+{\up +}{\footnote {\up +} typessymbol:000230}
 {\up K}{\footnote {\up K} TInstantFieldDefEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantFieldDefEvent \cf1\b0\fs16 
@@ -19798,6 +19917,7 @@
 {\up #}{\footnote {\up #} ID_492}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantFieldErrorEvent}
+{\up +}{\footnote {\up +} typessymbol:000240}
 {\up K}{\footnote {\up K} TInstantFieldErrorEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantFieldErrorEvent \cf1\b0\fs16 
@@ -19815,6 +19935,7 @@
 {\up #}{\footnote {\up #} ID_497}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantFieldEvent}
+{\up +}{\footnote {\up +} typessymbol:000250}
 {\up K}{\footnote {\up K} TInstantFieldEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantFieldEvent \cf1\b0\fs16 
@@ -19832,6 +19953,7 @@
 {\up #}{\footnote {\up #} ID_962}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantGetDataSetEvent}
+{\up +}{\footnote {\up +} typessymbol:000260}
 {\up K}{\footnote {\up K} TInstantGetDataSetEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantGetDataSetEvent \cf1\b0\fs16  
@@ -19859,6 +19981,7 @@
 {\up #}{\footnote {\up #} ID_495}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantIncludeFieldEvent}
+{\up +}{\footnote {\up +} typessymbol:000270}
 {\up K}{\footnote {\up K} TInstantIncludeFieldEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantIncludeFieldEvent \cf1\b0\fs16 
@@ -19876,6 +19999,7 @@
 {\up #}{\footnote {\up #} ID_964}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantInitDataSetEvent}
+{\up +}{\footnote {\up +} typessymbol:000280}
 {\up K}{\footnote {\up K} TInstantInitDataSetEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantInitDataSetEvent \cf1\b0\fs16 
@@ -19903,6 +20027,7 @@
 {\up #}{\footnote {\up #} ID_502}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantLimitObjectsEvent}
+{\up +}{\footnote {\up +} typessymbol:000290}
 {\up K}{\footnote {\up K} TInstantLimitObjectsEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantLimitObjectsEvent \cf1\b0\fs16 
@@ -19920,6 +20045,7 @@
 {\up #}{\footnote {\up #} ID_874}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantNotifyEvent}
+{\up +}{\footnote {\up +} typessymbol:000300}
 {\up K}{\footnote {\up K} TInstantNotifyEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantNotifyEvent \cf1\b0\fs16 
@@ -19937,6 +20063,7 @@
 {\up #}{\footnote {\up #} 75DE_C5}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantObjectNotifyEvent}
+{\up +}{\footnote {\up +} typessymbol:000310}
 {\up K}{\footnote {\up K} TInstantObjectNotifyEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantObjectNotifyEvent \cf1\b0\fs16 
@@ -19954,6 +20081,7 @@
 {\up #}{\footnote {\up #} ID_852}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantOperationType}
+{\up +}{\footnote {\up +} typessymbol:000320}
 {\up K}{\footnote {\up K} TInstantOperationType;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantOperationType \cf1\b0\fs16 
@@ -19980,6 +20108,7 @@
 {\up #}{\footnote {\up #} 327SI4P}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantProcessObjectEvent}
+{\up +}{\footnote {\up +} typessymbol:000330}
 {\up K}{\footnote {\up K} TInstantProcessObjectEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantProcessObjectEvent \cf1\b0\fs16 
@@ -19997,6 +20126,7 @@
 {\up #}{\footnote {\up #} ID_860}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantProgressEvent}
+{\up +}{\footnote {\up +} typessymbol:000340}
 {\up K}{\footnote {\up K} TInstantProgressEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantProgressEvent \cf1\b0\fs16 
@@ -20014,6 +20144,7 @@
 {\up #}{\footnote {\up #} ID_369}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantSchemeEvent}
+{\up +}{\footnote {\up +} typessymbol:000350}
 {\up K}{\footnote {\up K} TInstantSchemeEvent;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantSchemeEvent \cf1\b0\fs16 
@@ -20031,6 +20162,7 @@
 {\up #}{\footnote {\up #} ID_406}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantSortCompare}
+{\up +}{\footnote {\up +} typessymbol:000360}
 {\up K}{\footnote {\up K} TInstantSortCompare;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantSortCompare \cf1\b0\fs16  
@@ -20058,6 +20190,7 @@
 {\up #}{\footnote {\up #} 8DW2.BP}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantStreamFormat}
+{\up +}{\footnote {\up +} typessymbol:000370}
 {\up K}{\footnote {\up K} TInstantStreamFormat;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantStreamFormat\cf1\b0\fs16  
@@ -20089,6 +20222,7 @@
 {\up #}{\footnote {\up #} ID_868}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} TInstantVerificationResult}
+{\up +}{\footnote {\up +} typessymbol:000380}
 {\up K}{\footnote {\up K} TInstantVerificationResult;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 TInstantVerificationResult \cf1\b0\fs16  
@@ -20124,6 +20258,7 @@
 {\up #}{\footnote {\up #} 75DE_CZ}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantAttributePrefix}
+{\up +}{\footnote {\up +} constssymbol:000010}
 {\up K}{\footnote {\up K} InstantAttributePrefix;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantAttributePrefix \cf1\b0\fs16 
@@ -20151,6 +20286,7 @@
 {\up #}{\footnote {\up #} 75DE_D1}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantClassPrefix}
+{\up +}{\footnote {\up +} constssymbol:000020}
 {\up K}{\footnote {\up K} InstantClassPrefix;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantClassPrefix \cf1\b0\fs16 
@@ -20168,6 +20304,7 @@
 {\up #}{\footnote {\up #} 8DW2.DP}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantDateFormat}
+{\up +}{\footnote {\up +} constssymbol:000030}
 {\up K}{\footnote {\up K} InstantDateFormat;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantDateFormat \cf1\b0\fs16 
@@ -20195,6 +20332,7 @@
 {\up #}{\footnote {\up #} 327SI9S}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantDateTimeFormat}
+{\up +}{\footnote {\up +} constssymbol:000040}
 {\up K}{\footnote {\up K} InstantDateTimeFormat;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantDateTimeFormat \cf1\b0\fs16  
@@ -20223,6 +20361,7 @@
 {\up #}{\footnote {\up #} 75DE_A6}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantTimeFormat}
+{\up +}{\footnote {\up +} constssymbol:000050}
 {\up K}{\footnote {\up K} InstantTimeFormat;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantTimeFormat \cf1\b0\fs16 
@@ -20250,6 +20389,7 @@
 {\up #}{\footnote {\up #} ID_102}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantADO.pas}
+{\up +}{\footnote {\up +} unitssymbol:000010}
 {\up K}{\footnote {\up K} InstantADO.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantADO.pas \cf1\b0\fs16 
@@ -20290,6 +20430,7 @@
 {\up #}{\footnote {\up #} ID_155}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantADS.pas}
+{\up +}{\footnote {\up +} unitssymbol:000020}
 {\up K}{\footnote {\up K} InstantADS.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantADS.pas \cf1\b0\fs16 
@@ -20317,6 +20458,7 @@
 {\up #}{\footnote {\up #} ID_225}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantBDE.pas}
+{\up +}{\footnote {\up +} unitssymbol:000030}
 {\up K}{\footnote {\up K} InstantBDE.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantBDE.pas \cf1\b0\fs16 
@@ -20357,6 +20499,7 @@
 {\up #}{\footnote {\up #} ID_36}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantClasses.pas}
+{\up +}{\footnote {\up +} unitssymbol:000040}
 {\up K}{\footnote {\up K} InstantClasses.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantClasses.pas \cf1\b0\fs16  
@@ -20446,6 +20589,7 @@
 {\up #}{\footnote {\up #} ID_322}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantConnectionManager.pas}
+{\up +}{\footnote {\up +} unitssymbol:000050}
 {\up K}{\footnote {\up K} InstantConnectionManager.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantConnectionManager.pas \cf1\b0\fs16 
@@ -20488,6 +20632,7 @@
 {\up #}{\footnote {\up #} 75DE_D3}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantConsts.pas}
+{\up +}{\footnote {\up +} unitssymbol:000060}
 {\up K}{\footnote {\up K} InstantConsts.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantConsts.pas \cf1\b0\fs16 
@@ -20516,6 +20661,7 @@
 {\up #}{\footnote {\up #} ID_518}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantDBISAM.pas}
+{\up +}{\footnote {\up +} unitssymbol:000070}
 {\up K}{\footnote {\up K} InstantDBISAM.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantDBISAM.pas \cf1\b0\fs16 
@@ -20543,6 +20689,7 @@
 {\up #}{\footnote {\up #} ID_533}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantDBX.pas}
+{\up +}{\footnote {\up +} unitssymbol:000080}
 {\up K}{\footnote {\up K} InstantDBX.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantDBX.pas \cf1\b0\fs16 
@@ -20570,6 +20717,7 @@
 {\up #}{\footnote {\up #} ID_564}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantExplorer.pas}
+{\up +}{\footnote {\up +} unitssymbol:000090}
 {\up K}{\footnote {\up K} InstantExplorer.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantExplorer.pas \cf1\b0\fs16  
@@ -20627,6 +20775,7 @@
 {\up #}{\footnote {\up #} ID_628}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantFlashFiler.pas}
+{\up +}{\footnote {\up +} unitssymbol:000100}
 {\up K}{\footnote {\up K} InstantFlashFiler.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantFlashFiler.pas \cf1\b0\fs16 
@@ -20654,6 +20803,7 @@
 {\up #}{\footnote {\up #} ID_653}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantIBX.pas}
+{\up +}{\footnote {\up +} unitssymbol:000110}
 {\up K}{\footnote {\up K} InstantIBX.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantIBX.pas \cf1\b0\fs16 
@@ -20681,6 +20831,7 @@
 {\up #}{\footnote {\up #} ID_5}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantPersistence.pas}
+{\up +}{\footnote {\up +} unitssymbol:000120}
 {\up K}{\footnote {\up K} InstantPersistence.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantPersistence.pas \cf1\b0\fs16 
@@ -20861,6 +21012,7 @@
 {\up #}{\footnote {\up #} ID_413}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantPresentation.pas}
+{\up +}{\footnote {\up +} unitssymbol:000130}
 {\up K}{\footnote {\up K} InstantPresentation.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantPresentation.pas \cf1\b0\fs16 
@@ -20940,6 +21092,7 @@
 {\up #}{\footnote {\up #} 327SI7V}
 {\up >}{\footnote {\up >} main}
 {\up $}{\footnote {\up $} InstantUtils.pas}
+{\up +}{\footnote {\up +} unitssymbol:000140}
 {\up K}{\footnote {\up K} InstantUtils.pas;}
 }
 \viewkind4\uc1\pard\keepn\lang1040\b\f0\fs24 InstantUtils.pas \cf1\b0\fs16  
