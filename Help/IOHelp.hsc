@@ -181,11 +181,11 @@ FALSE
 \par \pard\sb25\sa25\fs18 This user guide contains \f1 practical\f0  guidelines for building InstantObjects\lang1033\f1  \lang1040\f0 based applications. The intention is to give an overview o\f1 f\f0  the classes, components and tools that make up the InstantObjects framework. Although the guide is very detailed, it has not been the intention to cover all aspects of the framework. If more information is needed, \lang1033\f1 please\lang1040\f0  refer to the Symbol Reference.
 \par Th\lang1033\f1 is\lang1040\f0  guide \lang1033\f1 contains\lang1040\f0  three parts \lang1033\f1 that\lang1040\f0  constitute almost any InstantObjects based development process.
 \par \f2\fs10 
-\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\keep\fi-200\li295\sb25\sa25\tx280\lang1033\f1\fs18  \lang1040\strike\f0 Creating the Business Model\strike0\{linkID=70>main\}
-\par \lang1033\f1{\pntext\f3\'B7\tab} \lang1040\strike\f0 Creating the User Interface\strike0\{linkID=280>main\}
-\par \lang1033\f1{\pntext\f3\'B7\tab} \lang1040\strike\f0 Programming with Persistent Objects\strike0\{linkID=340>main\}
+\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\keep\fi-200\li295\sb25\sa25\tx280\lang1033\f1\fs18  \cf2\lang1040\strike\f0 Creating the Business Model\cf3\strike0\{linkID=70>main\}\cf1 
+\par \lang1033\f1{\pntext\f3\'B7\tab} \cf2\lang1040\strike\f0 Creating the User Interface\cf3\strike0\{linkID=280>main\}\cf1 
+\par \lang1033\f1{\pntext\f3\'B7\tab} \cf2\lang1040\strike\f0 Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\cf1 
 \par \pard\sb25\sa25\f2\fs10 
-\par \pard\keep\li95\sb25\sa25\lang1033\f1\fs18 There is also a section on \lang1040\strike Learning the Primer Demo\cf3\strike0\{linkID=460>main\}\cf1\lang1033 .\lang1040\f0 
+\par \pard\keep\li95\sb25\sa25\lang1033\f1\fs18 There is also a section on \cf2\lang1040\strike Learning the Primer Demo\cf3\strike0\{linkID=460>main\}\cf1\lang1033 .\lang1040\f0 
 \par \pard\sb25\sa25 
 \par }
 60
@@ -202,13 +202,13 @@ Done
 FALSE
 10
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Us\lang1033\f1 er Guide\lang1040\f0  \cf1\b0\fs16 
-\par \strike Using InstantObjects\strike0\fs18\{linkID=50>main\}\cf2\{keepn\}\cf1\fs16 
-\par \pard\keep\li95\sb25\sa25\strike\fs18 Creating the Business Model\strike0\{linkID=70>main\}
-\par \strike Creating the User Interface\strike0\{linkID=280>main\}
-\par \strike Programming with Persistent Objects\strike0\{linkID=340>main\}
-\par \strike\f1 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\cf1\strike\f0 
+\par \cf2\strike Using InstantObjects\cf3\strike0\fs18\{linkID=50>main\}\{keepn\}\cf1\fs16 
+\par \pard\keep\li95\sb25\sa25\cf2\strike\fs18 Creating the Business Model\cf3\strike0\{linkID=70>main\}\cf1 
+\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\cf1 
+\par \cf2\strike Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\cf1 
+\par \cf2\strike\f1 Learning the Primer Demo\cf3\strike0\{linkID=460>main\}\cf1\strike\f0 
 \par \strike0 
 \par }
 70
@@ -225,36 +225,36 @@ Done
 FALSE
 33
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}}
-{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;\red0\green128\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Creating the Business Model\cf1\b0\fs16 
-\par \pard\sb25\tx1435\strike Group Topics\strike0\{linkID=80>nav\}\tab\strike Using InstantObjects\strike0\{linkID=50>main\}\cf0\b\fs24  \cf1\b0\fs16\{keepn\} 
+\par \pard\sb25\tx1435\cf2\strike Group Topics\cf3\strike0\{linkID=80>nav\}\cf1\tab\cf2\strike Using InstantObjects\cf3\strike0\{linkID=50>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\tx1435\fs18 Object Oriented applications are based on models. This section covers the definition of the InstantObjects business\lang1033\f1  \lang1040\f0 model, which is \lang1033\f1  \lang1040\f0 the initial step in the creation of an InstantObjects based application. The InstantObjects Model Explorer is the central tool in this process.
 \par \lang1033\f1 T\lang1040\f0 he InstantObjects business\lang1033\f1  \lang1040\f0 model\lang1033\f1  consists of a collection of user designed classes, many of which are related through inheritance or association. Most if not all of the data controlled by these classes is required to be persisted or stored in such a way that the relationships among this data are retained.  In addition to the simple class attribute types, which provide persistence for the \lang1040\f0 Object Pascal equivalent simple type\lang1033\f1 s (eg string or integer)\lang1040\f0  \lang1033\f1 , the InstantObjects framework provides several class attribute types to facilitate the persistence of instances of related classes. These attribute types are known as relational or complex attributes.
 \par \pard\sb25\sa25\f2\fs10 
-\par \cf2\fs18\{target=RelationalAttributeTypes\}\cf0\b\fs22 Re\lang1040 lational \lang1033 Attribute T\lang1040 ypes\cf1\b0\f0\fs18 
+\par \cf3\fs18\{target=RelationalAttributeTypes\}\cf0\b\fs22 Re\lang1040 lational \lang1033 Attribute T\lang1040 ypes\cf1\b0\f0\fs18 
 \par The relational types are\lang1033\f1 :\lang1040\f0  Reference, Part, References and Parts.\lang1033\f1  It is important to understand the nature of the relationship that each of these attribute types provides so that the desired behaviour is reflected within the \lang1040\f0 business\lang1033\f1  \lang1040\f0 model\lang1033\f1 .
 \par \f2\fs10 
 \par \lang1040\b\f1\fs18 Container attributes \b0 is the collective name for the subset of relational types consisting of Parts and References type attributes.\lang1033\b 
 \par \b0\f2\fs10 
 \par \lang1040\b\f0\fs18 Reference\b0 
 \par Reference is the simplest object relation supported by InstantObjects. A reference defines a unidirectional relation from one object to another. The object referred to lives outside the referring object and knows nothing about the relation itself.
-\par See \strike TInstantReference\strike0\{linkID=9510>main\} for more information.
+\par See \cf2\strike TInstantReference\cf3\strike0\{linkID=9510>main\}\cf1  for more information.
 \par \f2\fs10 
 \par \b\f0\fs18 Part\f1 
 \par \b0\f0 Objects in Part relations are tied together more closely. A Part relation is bi-directional, meaning the object at each end of the relation knows about the object at the other end. The object referred to in a Part relation is considered to be a part of the owning object and as such can only be reached via the owning object. In addition, an object referred to in a part relation is disposed along with its owner.
-\par See \strike TInstantPart\strike0\{linkID=9240>main\} for more information.
+\par See \cf2\strike TInstantPart\cf3\strike0\{linkID=9240>main\}\cf1  for more information.
 \par \f2\fs10 
 \par \b\f0\fs18 References\b0 
 \par Like its singular counterpart, Reference, the References relation is unidirectional. But instead of just referring to a single object, a References relation can refer to any number of objects and thereby defining a one-to-many relation to objects outside of the referring object.
-\par See \strike TInstantReferences\strike0\{linkID=9770>main\} for more information.
+\par See \cf2\strike TInstantReferences\cf3\strike0\{linkID=9770>main\}\cf1  for more information.
 \par \f2\fs10 
 \par \b\f0\fs18 Parts\f1 
 \par \b0\f0 Parts is the one-to-many counterpart of the equivalent one-to-one relation type, Part. A Parts relation can refer to any number of objects that are all considered to be part of the referring object.
-\par See \strike TInstantParts\strike0\{linkID=9380>main\} for more information.
+\par See \cf2\strike TInstantParts\cf3\strike0\{linkID=9380>main\}\cf1  for more information.
 \par Parts and References are known as container attributes. When defining an attribute of one of these types, a corresponding array property and optional methods to access the container attribute \lang1033\f1 are\lang1040\f0  added to the class. For any of the relational types, the class of the related object(s) must be specified as the Object Class of the attribute.
 \par \f2\fs10 
 \par \f1\fs18 Notes:
-\par \pard\sb25\sa25\tx200 For \i "External Storage support"\i0  of the Part, Parts and References attribute, refer to \cf3\strike External Storage of Attributes\cf2\strike0\{linkID=220\}\cf1 .
+\par \pard\sb25\sa25\tx200 For \i "External Storage support"\i0  of the Part, Parts and References attribute, refer to \cf2\strike External Storage of Attributes\cf3\strike0\{linkID=220\}\cf1 .
 \par \pard\sb25\sa25\tx1435\f0 
 \par }
 80
@@ -273,13 +273,13 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Creating the Business Model \cf1\b0\fs16 
-\par \strike Creating the Business Model\strike0\{LinkID=70>main\}\{keepn\} 
-\par \pard\keep\li95\sb25\sa25\strike\fs18 The \lang1033\f1 InstantObjects \lang1040\f0 Model Explorer\strike0\{linkID=90>main\}
+\par \cf2\strike Creating the Business Model\cf3\strike0\{LinkID=70>main\}\{keepn\}\cf1  
+\par \pard\keep\li95\sb25\sa25\cf2\strike\fs18 The \lang1033\f1 InstantObjects \lang1040\f0 Model Explorer\cf3\strike0\{linkID=90>main\}
 \par \cf2\lang1033\strike\f1 Declaring Model Units\cf3\strike0\{linkID=110>main\}\cf1\lang1040\f0 
-\par \strike Defining Classes\strike0\{linkID=120>main\}
-\par \strike Adding Business Rules\strike0\{linkID=240>main\}
-\par \strike Building/Evolving the Business Model\strike0\{linkID=270>main\}
-\par 
+\par \cf2\strike Defining Classes\cf3\strike0\{linkID=120>main\}\cf1 
+\par \cf2\strike Adding Business Rules\cf3\strike0\{linkID=240>main\}
+\par \cf2\strike Building/Evolving the Business Model\cf3\strike0\{linkID=270>main\}
+\par \cf1 
 \par }
 90
 327SA3S
@@ -295,29 +295,29 @@ Modified
 FALSE
 27
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}{\f3\fnil\fcharset0 Arial;}{\f4\fnil\fcharset2 Symbol;}}
-{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;\red0\green128\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 The InstantObjects Model Explorer \cf1\b0\fs16 
-\par \strike Creating the Business Model\strike0\{LinkID=70>main\}\{keepn\} 
+\par \cf2\strike Creating the Business Model\cf3\strike0\{LinkID=70>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\fs18 The first step in building an application with InstantObjects is to define the classes and relations that make up the business model. The business model\lang1033\f1  for the application\lang1040\f0  is created\lang1033\f1  and managed\lang1040\f0  in the \lang1033\f1 InstantObjects \lang1040\f0 Model Explorer, which can be opened via the View\lang1033\f1  \lang1040\f0 menu in the Delphi IDE.\lang1033\f1  T\lang1040\f0 he \lang1033\f1 InstantObjects \lang1040\f0 Model Explorer\lang1033\f1  window is non-modal and can be docked, if desired, in the Delphi IDE. This allows the \lang1040\f0 Explorer\lang1033\f1  window to remain open while working in other areas of the IDE.
 \par \lang1040\f2\fs10 
-\par \cf0\b\fs22 Th\lang1033\f3 e \lang1040\f2 InstantObjects Model Explorer \lang1033\f3 (\lang1040\f2 with \f3 "\f2 Inheritance\f3 "\f2  view of classes\lang1033\f3 )\cf2\lang1040\b0\f0\fs18 
+\par \cf0\b\fs22 Th\lang1033\f3 e \lang1040\f2 InstantObjects Model Explorer \lang1033\f3 (\lang1040\f2 with \f3 "\f2 Inheritance\f3 "\f2  view of classes\lang1033\f3 )\cf3\lang1040\b0\f0\fs18 
 \par \{bmc ModelExplorerInheritance.gif\}
 \par \cf1\f2\fs10 
 \par \lang1033\f1\fs18 T\lang1040\f0 he \lang1033\f1 InstantObjects \lang1040\f0 Model Explorer\lang1033\f1  window has two main areas of interest.
 \par \f2\fs10 
 \par \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\f1\fs18 The toolbar that holds the action speed buttons. \f3 The speed buttons display mouse-over, pop-up hints. These speed buttons provide access to the configuration aspects for model code units, persistence broker connections and type of class view presented in the tree view pane;\cf0\lang1040\b\f2\fs22 
 \par \pard\sb25\sa25\cf1\b0\fs10 
-\par \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\lang1033\f1\fs18 The tree view pane that displays the model's classes.\cf0\b\f3\fs22  \cf1\b0\fs18 The tree view pane has a mouse right button click, \cf3\strike pop-up menu\cf2\strike0\{linkID=100>main\}\cf1  that is used to access the procedures for managing the model.\cf0\lang1040\b\f2\fs22 
+\par \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\lang1033\f1\fs18 The tree view pane that displays the model's classes.\cf0\b\f3\fs22  \cf1\b0\fs18 The tree view pane has a mouse right button click, \cf2\strike pop-up menu\cf3\strike0\{linkID=100>main\}\cf1  that is used to access the procedures for managing the model.\cf0\lang1040\b\f2\fs22 
 \par \pard\sb25\sa25\cf1\b0\fs10 
 \par \cf0\lang1033\b\fs22 Class Views
-\par \cf1\b0\fs18 A\f3  useful feature of the \f1 InstantObjects \lang1040\f0 Model Explorer\lang1033\f1  when creating or managing the class model is the ability to toggle \f3 the tree view pane \f1 between inheritance and relational  type views. This is done using the 'View [Type]' speed button on the toolbar. The button has a context sensitive glyph, \cf2\{bmc ModelExplorerViewRelationsButton.gif\} \cf0 or\cf1  \cf2\{bmc ModelExplorerViewInheritanceButton.gif\}\cf0 ,\cf1  and pop-up hint.
+\par \cf1\b0\fs18 A\f3  useful feature of the \f1 InstantObjects \lang1040\f0 Model Explorer\lang1033\f1  when creating or managing the class model is the ability to toggle \f3 the tree view pane \f1 between inheritance and relational  type views. This is done using the 'View [Type]' speed button on the toolbar. The button has a context sensitive glyph, \cf3\{bmc ModelExplorerViewRelationsButton.gif\} \cf0 or\cf1  \cf3\{bmc ModelExplorerViewInheritanceButton.gif\}\cf0 ,\cf1  and pop-up hint.
 \par \f2\fs10 
 \par \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\f3\fs18 Inheritance View - The tree view is based on the class inheritance structure;
 \par \pard\sb25\sa25\f2\fs10 
 \par \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\f3\fs18 Relations View - The tree view is based on the relationships between the classes.
 \par \pard\sb25\sa25\f2\fs10 
 \par \f1\fs18 The Relations view for the above example Inheritance view is shown below.\cf0\lang1040\b\f2\fs22 
-\par The InstantObjects Model Explorer \lang1033\f3 (\lang1040\f2 with \f3 "Relations"\f2  view of classes\lang1033\f3 )\cf2\lang1040\b0\f0\fs18 
+\par The InstantObjects Model Explorer \lang1033\f3 (\lang1040\f2 with \f3 "Relations"\f2  view of classes\lang1033\f3 )\cf3\lang1040\b0\f0\fs18 
 \par \{bmc ModelExplorerRelations.gif\}\cf1 
 \par 
 \par }
@@ -356,14 +356,14 @@ Modified
 FALSE
 11
 {\rtf1\ansi\ansicpg1252\deff0\deflang3081{\fonttbl{\f0\fnil Arial;}{\f1\fswiss Arial;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;\red0\green128\blue0;}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs24 Declaring Model Units
-\par \cf1\lang1040\b0\strike\f1\fs16 Creating the Business Model\strike0\{LinkID=70>main\}\{keepn\} 
+\par \cf1\lang1040\b0\strike\f1\fs16 Creating the Business Model\cf2\strike0\{LinkID=70>main\}\{keepn\}\cf3  
 \par \pard\sb25\sa25\lang1033\f2\fs18 It is good practice to keep an application's business classes encapsulated and separated from other classes such as the user interface classes. The convention when using InstantObjects is to create separate code units within the application's IDE project solely for the purpose of containing the \lang1040\f1 business \lang1033\f2 classes that constitute an InstantObjects model. \lang1040\f1 Th\lang1033\f2 is\lang1040\f1  model can be placed in one or more \lang1033\f2 code \lang1040\f1 units in the project. These units are referred to as model units.
 \par \f0\fs10 
-\par \lang1033\f2\fs18 The InstantObjects Model Explorer needs to know which of the application project's units are intended to be model units. This is done using\lang1040\f1  the \cf2\{bmc ModelExplorerSelectUnitsButton.gif\}\cf1 Select Units button on the toolbar of the InstantObjects Model Explorer. \lang1033\f2 T\lang1040\f1 he Select Units button\lang1033\f2  \lang1040\f1 will open a dialog showing all the units of the current project. The left side of the dialog shows the model units and the right side shows the other units included in the project. Use the buttons between the two lists to move one or more units from one side to the other. \lang1033\f2  Select the OK or Cancel button to close the dialog and save or cancel, respectively, any changes. \lang1040\f1 When \lang1033\f2 the \lang1040\f1 model unit(s)\lang1033\f2  has been declared \lang1040\f1 the business model\lang1033\f2  can be created or maintained using the \f3 tree view pane's right button click, \cf3\strike pop-up menu\cf2\strike0\{linkID=100>main\}\cf1  \lang1040\f1 .
+\par \lang1033\f2\fs18 The InstantObjects Model Explorer needs to know which of the application project's units are intended to be model units. This is done using\lang1040\f1  the \cf2\{bmc ModelExplorerSelectUnitsButton.gif\}\cf3 Select Units button on the toolbar of the InstantObjects Model Explorer. \lang1033\f2 T\lang1040\f1 he Select Units button\lang1033\f2  \lang1040\f1 will open a dialog showing all the units of the current project. The left side of the dialog shows the model units and the right side shows the other units included in the project. Use the buttons between the two lists to move one or more units from one side to the other. \lang1033\f2  Select the OK or Cancel button to close the dialog and save or cancel, respectively, any changes. \lang1040\f1 When \lang1033\f2 the \lang1040\f1 model unit(s)\lang1033\f2  has been declared \lang1040\f1 the business model\lang1033\f2  can be created or maintained using the \f3 tree view pane's right button click, \cf1\strike pop-up menu\cf2\strike0\{linkID=100>main\}\cf3  \lang1040\f1 .
 \par \f0\fs10 
-\par \cf2\f1\fs18\{bmc ModelUnitSelector.gif\}\cf1 
+\par \cf2\f1\fs18\{bmc ModelUnitSelector.gif\}\cf3 
 \par \pard\lang3081\f0 
 \par }
 120
@@ -382,7 +382,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}{\f3\fnil\fcharset2 Symbol;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Defining Classes \cf1\b0\fs16 
-\par \strike Creating the Business Model\strike0\{LinkID=70>main\}\{keepn\} 
+\par \cf2\strike Creating the Business Model\cf3\strike0\{LinkID=70>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\fs18 Classes can be added\lang1033\f1 , deleted\lang1040\f0  and edited\lang1033\f1  as follows (note that keyboard short cuts are also available):
 \par \lang1040\f0\fs10 
 \par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\fs18 Add a new class to the model by right-clicking in the empty area of the \lang1033\f1 tree view pane in InstantObjects \lang1040\f0 Model Explorer\lang1033\f1 . This will launch the \cf2\strike pop-up menu\cf3\strike0\{linkID=100>main\}\cf1\lang1040\f0 . Select New Class from the menu\lang1033\f1  to\lang1040\f0  bring up the Class Editor with an empty class definition\lang1033\f1 ;\lang1040\f0 
@@ -439,7 +439,7 @@ FALSE
 \par \cf2\f2\fs18\{bmc ClassEditor\lang1033\f3 Class\lang1040\f2 .gif\}
 \par \cf1\f1\fs10 
 \par \lang1033\f3\fs18 The \b class name \b0 can be any valid Object Pascal class identifier.\lang1040\f2 
-\par The default \b base class \b0 of any business class is \strike TInstantObject\strike0\{linkID=7380>main\}, the class from which persistence capabilities are inherited. When classes are present in your model, you can choose any of these as the immediate base class instead.
+\par The default \b base class \b0 of any business class is \cf3\strike TInstantObject\cf2\strike0\{linkID=7380>main\}\cf1 , the class from which persistence capabilities are inherited. When classes are present in your model, you can choose any of these as the immediate base class instead.
 \par The \lang1033\f3 model \lang1040\b\f2 unit \b0 in which \lang1033\f3 a\lang1040\f2  new class \lang1033\f3 will\lang1040\f2  be placed can be selected from the list of available model units.\lang1033\f3  This entry is read only when editing an existing class.\lang1040\f2 
 \par The class\lang1033\f3  \b persistence\lang1040\f2  \b0 can be defined as either \lang1033\i\f3 stored\lang1040\f2  \i0 or \i embedded\i0 . Instances of \lang1033\i\f3 stored\lang1040\f2  \i0 classes can be \lang1033\f3 independently \lang1040\f2 stored in and retrieved from \lang1033\f3 the database\lang1040\f2 . \lang1033\f3 An i\lang1040\f2 nstance of \lang1033\f3 an \lang1040\i\f2 embedded \i0 class can exist in the database only as \lang1033\f3 an attribute\lang1040\f2  of \lang1033\f3 its owner, which is \lang1040\f2 another \i embedded \i0 or \lang1033\i\f3 stored\lang1040\f2  \lang1033\i0\f3 class instance. In practice this means that the attribute values of an \lang1040\i\f2 embedded \i0 class \lang1033\f3 are stored in the database in a BLOB type field.\lang1040\f2  \lang1033\f3 Therefore, i\lang1040\f2 f you want instances of a class to be \lang1033\f3 independently \lang1040\f2 retrievable or available by query, define the class\lang1033\f3  persistence as\lang1040\f2  \lang1033\i\f3 stored\lang1040\i0\f2 .
 \par \f3 S\i tored \i0 persistence is also required for those classes used by Reference attributes or other \cf3\strike attributes with \i external \i0 storage\cf2\strike0\{linkID=220>main\}\cf1 . A class, used only for objects that are owned by other objects, should be defined with \i embedded \i0 persistence if the owning objects use \i embedded \i0 storage for the attribute. If, however, the owning objects use \i external \i0 storage kind for the attribute, define the owned class with \i stored \i0 persistence.\f2 
@@ -513,7 +513,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Arial;}{\f3\fnil Arial;}{\f4\fnil\fcharset2 Symbol;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Attribute Editor \cf1\b0\fs16 
-\par \strike Creating the Business Model\strike0\{LinkID=70>main\}\tab\lang1033\f1\tab\lang1040\ul\f0 See Also\ulnone\{linkID=180\}\{keepn\} 
+\par \cf2\strike Creating the Business Model\cf3\strike0\{LinkID=70>main\}\cf1\tab\lang1033\f1\tab\cf2\lang1040\ul\f0 See Also\cf3\ulnone\{linkID=180\}\{keepn\}\cf1  
 \par \lang1033\f2\fs18 The Attribute Editor is used to manage an attribute's properties. It contains the tabbed pages as follows:
 \par \f3\fs10 
 \par \pard{\pntext\f4\'B7\tab}{\*\pn\pnlvlblt\pnf4\pnindent0{\pntxtb\'B7}}\fi-200\li200\tx200\cf2\strike\f2\fs18 Definition Page\cf3\strike0\{linkID=190>main\}\cf1  - This is where the attribute's properties are defined;\lang3081\f3 
@@ -537,10 +537,10 @@ Added
 FALSE
 7
 {\rtf1\ansi\ansicpg1252\deff0\deflang3081{\fonttbl{\f0\fswiss Arial;}{\f1\fnil Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\sb25\sa25\cf1\b0\f1\fs10 
-\par \pard\li60\sb25\sa25\strike\fs18 External Storage of Attributes\strike0\{linkID=220>main\}
+\par \pard\li60\sb25\sa25\cf2\strike\fs18 External Storage of Attributes\cf3\strike0\{linkID=220>main\}\cf1 
 \par \pard\lang3081 
 \par }
 190
@@ -633,11 +633,11 @@ Modified
 
 
 FALSE
-32
+33
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fswiss Arial;}{\f2\fnil Arial;}{\f3\fnil\fcharset2 Symbol;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs24 External Storage of Attributes\cf1\b0\f1\fs16 
-\par \pard\sb25\sa25\cf2\lang1033\strike\f0 Example\cf3\strike0\{linkID=230>example\}\cf1\tab\tab\lang1040\strike\f1 Creating the Business Model\strike0\{LinkID=70>main\}\{keepn\} \f0\fs18 
+\par \pard\sb25\sa25\cf2\lang1033\strike\f0 Example\cf3\strike0\{linkID=230>example\}\cf1\tab\tab\cf2\lang1040\strike\f1 Creating the Business Model\cf3\strike0\{LinkID=70>main\}\{keepn\} \cf1\f0\fs18 
 \par \lang1033 The E\lang1040\f1 xternal \lang1033\f0 S\lang1040\f1 torage\lang1033\f0  option\lang1040\f1  \lang1033\f0 for \cf2\strike relational attributes\cf3\strike0\{linkTarget=RelationalAttributeTypes>main\}\cf1\lang1040\f1  \lang1033\f0 was introduced to resolve several shortcomings and issues in earlier versions of InstantObjects. These include the following:
 \par \f2\fs10 
 \par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\f0\fs18 the \lang1040\f1 inability to fully query the database from a SQL-enabled (non-IO) interface;
@@ -663,6 +663,7 @@ FALSE
 \par \pard\sb25\sa25\lang1033\f0\fs18 IMPORTANT\lang1040\f1  NOTE\lang1033\f0 S:
 \par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\b\i External Storage and Class Persistence\b0\i0  - A cl\lang1040\f1 ass must \lang1033\f0 have its Persistence property set to\lang1040\f1  \i stored\i0  \lang1033\f0 if it is referred\lang1040\f1  \lang1033\f0 to by attributes that use\lang1040\f1  \i external \i0 storage. \lang1033\f0 A c\lang1040\f1 lass\lang1033\f0  defined with\lang1040\f1  \i embedded\i0  \lang1033\f0 Persistence may only be used by\lang1040\f1  \i embedded\i0  (the \lang1033\f0 InstantObjects \lang1040\f1 historical arrangement) part and parts attributes\lang1033\f0 ;\lang1040\f1 
 \par \cf3\lang1033\i\f0{\pntext\f3\'B7\tab}\{target=ExternalStorageandPersistenceBrokers\}\cf1\b External Storage and Persistence Brokers\b0\i0  - Currently (V2), the InstantObjects library requires the use of persistence brokers derived from TInstantSQLBroker to support \i external \i0 storage of attributes\lang1040\f1 .\lang1033\f0  Brokers that are derived from TInstantNavigationalBroker, including the BDE and some ADO brokers, DO NOT SUPPORT \i external \i0 storage of attributes and MUST NOT BE USED if the class model makes use of this feature.\lang1040\f1 
+\par \lang1033\b\i\f0{\pntext\f3\'B7\tab}Performance Hint\b0\i0  - Currently (V2.0), the InstantObjects (IO) library does not create parent class indices for the linking tables in the database. A significant improvement in performance, therefore, can often be achieved by manually adding these indices (fields 'ParentClass' and 'ParentId', non-unique) to the linking tables for your external \cf2\strike container attributes\cf3\strike0\{linkTarget=RelationalAttributeTypes>main\}\cf1 . Remember that these manually added indices will be removed by each IO database build and probably after an evolve, so they will need to monitored and re-added as necessary. The need to add these indices manually will be eliminated after the introduction of Referential Integrity (RI) options to IO. This is expected to happen in the near future and will enhance both the integrity of data in and performance of the database for brokers that can implement RI. \lang1040\f1 
 \par \pard\sb25\sa25\f2\fs10 
 \par \pard\cf0\fs20 
 \par }
@@ -715,10 +716,10 @@ Done
 FALSE
 7
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Adding Business Rules \cf1\b0\fs16 
-\par \strike Example 1\strike0\{linkID=250>example\}\tab\strike Example 2\strike0\{linkID=260>example\}\f1\tab\strike\f0 Creating the Business Model\strike0\{LinkID=70>main\}\{keepn\} 
-\par \pard\sb25\sa25\fs18 Validation rules and other business related behavior is added to your business classes by adding the required code plus additional methods and properties to the class. Validation rules and side effects of changing the value of an attribute are often added to the setter method of the corresponding property. Complete validation of business objects before they are stored to the database can be added by overriding the BeforeStore method of the class. New objects can be initialized by overriding the Initialize method. For a complete list of the virtual methods of \strike TInstantObject\strike0\{linkID=7380>main\}, please refer to the InstantObjects Reference Guide.
+\par \cf2\strike Example 1\cf3\strike0\{linkID=250>example\}\cf1\tab\cf2\strike Example 2\cf3\strike0\{linkID=260>example\}\cf1\f1\tab\cf2\strike\f0 Creating the Business Model\cf3\strike0\{LinkID=70>main\}\{keepn\}\cf1  
+\par \pard\sb25\sa25\fs18 Validation rules and other business related behavior is added to your business classes by adding the required code plus additional methods and properties to the class. Validation rules and side effects of changing the value of an attribute are often added to the setter method of the corresponding property. Complete validation of business objects before they are stored to the database can be added by overriding the BeforeStore method of the class. New objects can be initialized by overriding the Initialize method. For a complete list of the virtual methods of \cf2\strike TInstantObject\cf3\strike0\{linkID=7380>main\}\cf1 , please refer to the InstantObjects Reference Guide.
 \par 
 \par }
 250
@@ -735,9 +736,9 @@ Done
 FALSE
 33
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fswiss Arial;}{\f3\fnil\fcharset0 Arial;}{\f4\fnil\fcharset0 Courier New;}}
-{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Example 1\b0\fs20 
-\par \cf1\strike\f1\fs16 Adding Business Rules\strike0\f2\{LinkID=240>main\}\{keepn\} \cf0\f0\fs20 
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
+\viewkind4\uc1\pard\b\f0\fs24 Example 1\b0\fs20 
+\par \cf1\strike\f1\fs16 Adding Business Rules\cf2\strike0\f2\{LinkID=240>main\}\{keepn\}\cf3  \cf0\f0\fs20 
 \par \f3 In InstantObjects you usually apply single-attribute business rules in the attribute's property setter method:
 \par 
 \par \b\f4 procedure\b0  TAddress.SetPostalCode(\b const \b0 Value: \b string\b0 );
@@ -753,7 +754,7 @@ FALSE
 \par     GetDefaultCityByPostalCode(Value);
 \par \b end\b0 ;
 \par \f0 
-\par \f3 If you need to apply business rules that involve more than one attribute, instead, you often use the BeforeStore virtual method(see \cf2\strike Example 2\cf3\strike0\{linkID=260\}\cf0 ).
+\par \f3 If you need to apply business rules that involve more than one attribute, instead, you often use the BeforeStore virtual method(see \cf1\strike Example 2\cf2\strike0\{linkID=260\}\cf0 ).
 \par 
 \par When you code side effects, be aware that the property setters might be called more often than expected, for example when reading an object from an XML file or when you use the data-aware presentation layer. Here is an example:
 \par 
@@ -764,7 +765,7 @@ FALSE
 \par   MaxShipDate := 0;    
 \par \b end\b0 ;
 \par \f3 
-\par The intent of this code is to reset MaxShipDate whenever MinShipDate changes, so that a user, in a hypothetical data-entry scenario, will have to re-enter a value for MaxShipDate. But things might not work always as expected. For example, SetMinShipDate might be called after SetMaxShipDate when streaming in an object from a XML file. The lesson here is: use the property setters and the BeforeStore method only to appy real business rules (like "MaxShipDate must be equal to or greater than MinShipDate"), and code data-entry rules (like "whenever a value for MinShipDate is entered, MaxShipDate should be reset") at the data-entry level (that is, not in the model classes).
+\par The intent of this code is to reset MaxShipDate whenever MinShipDate changes, so that a user, in a hypothetical data-entry scenario, will have to re-enter a value for MaxShipDate. But things might not work always as expected. For example, SetMinShipDate might be called after SetMaxShipDate when streaming in an object from a XML file. The lesson here is: use the property setters and the BeforeStore method only to apply real business rules (like "MaxShipDate must be equal to or greater than MinShipDate"), and code data-entry rules (like "whenever a value for MinShipDate is entered, MaxShipDate should be reset") at the data-entry level (that is, not in the model classes).
 \par 
 \par }
 260
@@ -781,9 +782,9 @@ Done
 FALSE
 30
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fswiss Arial;}{\f3\fnil\fcharset0 Arial;}{\f4\fnil\fcharset0 Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Example 2\b0\fs20 
-\par \cf1\strike\f1\fs16 Adding Business Rules\strike0\f2\{LinkID=240>main\}\{keepn\}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
+\viewkind4\uc1\pard\b\f0\fs24 Example 2\b0\fs20 
+\par \cf1\strike\f1\fs16 Adding Business Rules\cf2\strike0\f2\{LinkID=240>main\}\{keepn\}\cf3 
 \par \cf0\f3\fs20 Business rules that involve more than one attribute are usually applied in BeforeStore, which gets called whenever the Store method is called to write an object (back) to the storage. Example:
 \par 
 \par \b\f4 procedure \b0 TShipment.BeforeStore;
@@ -826,10 +827,10 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}{\f3\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 Building/Evolving the Business Model \b0\fs16 
-\par \cf2\strike Creating the Business Model\cf3\strike0\{linkID=70>main\}\cf1\{keepn\} 
+\par \cf2\strike Creating the Business Model\cf3\strike0\{linkID=70>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\fs18 The final step in the modeling phase is to make the model physical in terms of storage for the objects. The required tables and indices have to be created from the business model. InstantObjects allows \lang1033\f1 the\lang1040\f0  use\lang1033\f1  of\lang1040\f0  various types of databases as storage for \lang1033\f1 the business class \lang1040\f0 objects\lang1033\f1  by\lang1040  using different brokers.
 \par \f2\fs10 
-\par \f0\fs18 The Connection Manager \lang1033\f1 manages the\lang1040\f0  \f1 definition, \f0 creat\lang1033\f1 ion\lang1040\f0  \f1 and evolution of \lang1033 the\lang1040\f0  database. \lang1033\f1 It\lang1040\f0  \lang1033\f1 can be launched using the \cf3\{bmc ModelExplorerBuildDatabaseButton.gif\}\cf1 Build Database speed button\lang1040\f0  on the toolbar of the\lang1033\f1  \cf2\strike InstantObjects\lang1040\f0  Model Explorer\cf3\strike0\{linkID=90>main\}\f1 
+\par \f0\fs18 The Connection Manager \lang1033\f1 manages the\lang1040\f0  \f1 definition, \f0 creat\lang1033\f1 ion\lang1040\f0  \f1 and evolution of \lang1033 the\lang1040\f0  database. \lang1033\f1 It\lang1040\f0  \lang1033\f1 can be launched using the \cf3\{bmc ModelExplorerBuildDatabaseButton.gif\} \cf1 Build Database speed button\lang1040\f0  on the toolbar of the\lang1033\f1  \cf2\strike InstantObjects\lang1040\f0  Model Explorer\cf3\strike0\{linkID=90>main\}\f1 
 \par \cf1\f2\fs10 
 \par \cf3\f1\fs18\{bmc ConnectionManager.gif\}
 \par \cf1\f2\fs10 
@@ -868,9 +869,9 @@ Done
 FALSE
 7
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Creating the User Interface\cf1\b0\fs16 
-\par \pard\sb25\tx1435\strike Group Topics\strike0\{linkID=290>nav\}\tab\strike Using InstantObjects\strike0\{linkID=50>main\}\cf0\b\fs24  \cf1\b0\fs16\{keepn\} 
+\par \pard\sb25\tx1435\cf2\strike Group Topics\cf3\strike0\{linkID=290>nav\}\cf1\tab\cf2\strike Using InstantObjects\cf3\strike0\{linkID=50>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\tx1435\fs18 The next phase in the development process is to create a user interface through which the business objects may interact with the user. This section explains the components that are involved in the creation of the user interface.
 \par 
 \par }
@@ -887,14 +888,14 @@ Done
 
 FALSE
 11
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Creating the User Interface \cf1\b0\fs16 
-\par \strike Creating the User Interface\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 280\lang1040\f0 >main\}\{keepn\} 
-\par \pard\keep\li95\sb25\sa25\strike\fs18 Persistence by RAD\strike0\{linkID=300>main\}
-\par \strike The Connector\strike0\{linkID=310>main\}
-\par \strike The Exposer\strike0\{linkID=320>main\}
-\par \strike The Selector\strike0\{linkID=330>main\}
+\par \cf2\strike Creating the User Interface\cf3\strike0\{link\lang1033\f1 ID\lang1040\f0 =\lang1033\f1 280\lang1040\f0 >main\}\{keepn\}\cf1  
+\par \pard\keep\li95\sb25\sa25\cf2\strike\fs18 Persistence by RAD\cf3\strike0\{linkID=300>main\}\cf1 
+\par \cf2\strike The Connector\cf3\strike0\{linkID=\f2 310\f0 >main\}\cf1 
+\par \cf2\strike The Exposer\cf3\strike0\{linkID=\f2 320\f0 >main\}\cf1 
+\par \cf2\strike The Selector\cf3\strike0\{linkID=330>main\}\cf1 
 \par 
 \par 
 \par }
@@ -914,7 +915,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Persistence by RAD \cf1\b0\fs16 
-\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\cf1\{keepn\} 
+\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\fs18 When InstantObjects has been installed in your Delphi environment, a set of components is available on the InstantObjects tab of the Delphi component palette.
 \par \cf3\{bmc InstantObjectsPalette.gif\}\cf1 
 \par Applications can be built with InstantObjects using the same RAD approach used when building traditional database applications in Delphi. InstantObjects allows you to use standard VCL data-aware controls with your persistent business objects. The InstantObjects components are used to connect to the database and to make business objects available in the user interface of the application\f1 .\f0 
@@ -936,13 +937,13 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 The Connector \cf1\b0\fs16 
-\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\cf1\{keepn\} 
+\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\fs18 In order for your application to use the database \lang1033\f1 for\lang1040\f0  object storage, you must use a connector component. The connector acts as a gateway between your application and the database\f1  (by means of an internal component called the broker) and \f0 manag\lang1033\f1 es\lang1040\f0  all the objects that are stored to and retrieved from the database. A connector component for each type of data access layer that \lang1033\f1 has been installed from\lang1040\f0  InstantObjects is available on the component palette. A connector is attached to a database by assigning a connection component to its Connection \f1 (or equivalent) \f0 property. Each connector component supports its own connection type\f1 . For example:\f0 
 \par \f2\fs10 
 \par \pard\sb25\sa25\tx1980\tx4800\b\f0\fs18 Access type\tab Connector type\tab\f1 Type of \f0 Connection\b0 
-\par ADO\tab\cf2\strike TInstantADOConnector\cf1\strike0\{linkID=1900>main\}\tab TADOConnection
-\par BDE\tab\cf2\strike TInstantBDEConnector\cf1\strike0\{linkID=2560>main\}\tab TDatabase
-\par IBX\tab\cf2\strike TInstantIBXConnector\cf1\strike0\{linkID=6950>main\}\tab TIBDatabase
+\par ADO\tab\cf2\strike TInstantADOConnector\cf3\strike0\{linkID=1900>main\}\cf1\tab TADOConnection
+\par BDE\tab\cf2\strike TInstantBDEConnector\cf3\strike0\{linkID=2560>main\}\cf1\tab TDatabase
+\par IBX\tab\cf2\strike TInstantIBXConnector\cf3\strike0\{linkID=6950>main\}\cf1\tab TIBDatabase
 \par \f1 D\f0 BX\tab\cf0 TInstant\f1 D\f0 BXConnector\cf1\tab TSQLConnection
 \par \f1 XML\tab\cf0\f0 TInstantX\f1 ML\f0 Connector\cf1\tab TXMLFilesAccessor
 \par \pard\f2\fs10 
@@ -969,14 +970,14 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 The Exposer \b0\fs16 
-\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\cf1\{keepn\} 
-\par \pard\sb25\sa25\strike\fs18 TInstantExposer\strike0\{linkID=6440>main\} is a dataset component that maps objects to the user interface of your application.
+\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\{keepn\}\cf1  
+\par \pard\sb25\sa25\cf2\strike\fs18 TInstantExposer\cf3\strike0\{linkID=6440>main\}\cf1  is a dataset component that maps objects to the user interface of your application.
 \par Attributes defined in the business model are accessed through properties. Properties that are published can be accessed by data-aware controls via this component. In addition, the content of container attributes can be accessed too. The exposer component maps the published properties of objects to fields in a dataset. The objects being exposed are represented as rows in the dataset.
-\par To expose an object, it must be assigned to the \strike Subject\strike0\{linkID=5150>main\} property of a \strike TInstantExposer\strike0\{linkID=6440>main\}. To expose multiple objects contained within another object, assign the main object to the Subject property and enter content mode by changing the \strike Mode\strike0\{linkID=5020>main\} property from amObject to amContent. If the exposed class has no default container, specify the desired container in the property \strike ContainerName\strike0\{linkID=6550>main\}. Specify the class of the exposed\lang1033\f1 , contained\lang1040\f0  object(s) in the property \strike ObjectClassName\strike0\{linkID=6620>main\}.
-\par By default, an exposer will make all simple properties of each exposed object as well as any related object available through fields in the dataset. Every field will have a \f1 F\f0 ield\f1 N\f0 ame matching the property it represents. For related objects, the fieldname will be the complete path to the property using regular dot notation. The property \strike FieldOptions\strike0\{linkID=4930>main\} and the event \strike OnIncludeField\strike0\{linkID=5560>main\} allow you to limit or extend the number fields to include.
+\par To expose an object, it must be assigned to the \cf2\strike Subject\cf3\strike0\{linkID=5150>main\}\cf1  property of a \cf2\strike TInstantExposer\cf3\strike0\{linkID=6440>main\}\cf1 . To expose multiple objects contained within another object, assign the main object to the Subject property and enter content mode by changing the \cf2\strike Mode\cf3\strike0\{linkID=5020>main\}\cf1  property from amObject to amContent. If the exposed class has no default container, specify the desired container in the property \cf2\strike ContainerName\cf3\strike0\{linkID=6550>main\}\cf1 . Specify the class of the exposed\lang1033\f1 , contained\lang1040\f0  object(s) in the property \cf2\strike ObjectClassName\cf3\strike0\{linkID=6620>main\}\cf1 .
+\par By default, an exposer will make all simple properties of each exposed object as well as any related object available through fields in the dataset. Every field will have a \f1 F\f0 ield\f1 N\f0 ame matching the property it represents. For related objects, the fieldname will be the complete path to the property using regular dot notation. The property \cf2\strike FieldOptions\cf3\strike0\{linkID=4930>main\}\cf1  and the event \cf2\strike OnIncludeField\cf3\strike0\{linkID=5560>main\}\cf1  allow you to limit or extend the number fields to include.
 \par Container attributes of exposed objects are automatically recognized by the exposer and \lang1033\f1 are \lang1040\f0 represented as nested datasets within the exposer.
-\par Exposers can be linked together in master/detail relation\f1 ships\f0 . To link one exposer to another, assign the master exposer to the DataSet property of a TDataSource and assign the TDataSource to the \strike MasterSource\strike0\{linkID=6570>main\} property of the detail exposer. The Subject of the detail exposer will be set to the current object of the master exposer\lang1033\f1  and updated\lang1040\f0  whenever this changes. If you want the detail exposer to expose an object that is related to the current object of the master exposer instead, simply specify the desired property path in \strike MasterProperty\strike0\{linkID=6560>main\}.
-\par \strike TInstantExposer\strike0\{linkID=6440>main\} is not limited to exposing \strike TInstantObject\strike0\{linkID=7380>main\} descendants. Any object with published propertied can be exposed. The content of standard VCL containers like TList, TObjectList and TCollection can be exposed in content mode.
+\par Exposers can be linked together in master/detail relation\f1 ships\f0 . To link one exposer to another, assign the master exposer to the DataSet property of a TDataSource and assign the TDataSource to the \cf2\strike MasterSource\cf3\strike0\{linkID=6570>main\}\cf1  property of the detail exposer. The Subject of the detail exposer will be set to the current object of the master exposer\lang1033\f1  and updated\lang1040\f0  whenever this changes. If you want the detail exposer to expose an object that is related to the current object of the master exposer instead, simply specify the desired property path in \cf2\strike MasterProperty\cf3\strike0\{linkID=6560>main\}\cf1 .
+\par \cf2\strike TInstantExposer\cf3\strike0\{linkID=6440>main\}\cf1  is not limited to exposing \cf2\strike TInstantObject\cf3\strike0\{linkID=7380>main\}\cf1  descendants. Any object with published propertied can be exposed. The content of standard VCL containers like TList, TObjectList and TCollection can be exposed in content mode.
 \par 
 \par }
 330
@@ -995,8 +996,8 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 The Selector \cf1\b0\fs16 
-\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\cf1\{keepn\} 
-\par \pard\sb25\sa25\fs18 The \strike TInstantSelector\strike0\{linkID=10190>main\} is a dataset component \lang1033\f1 that \lang1040\f0 allows you to select objects from the database and optionally expose them in the user interface.
+\par \cf2\strike Creating the User Interface\cf3\strike0\{linkID=280>main\}\{keepn\}\cf1  
+\par \pard\sb25\sa25\fs18 The \cf2\strike TInstantSelector\cf3\strike0\{linkID=10190>main\}\cf1  is a dataset component \lang1033\f1 that \lang1040\f0 allows you to select objects from the database and optionally expose them in the user interface.
 \par To select objects from the database, a command must be specified \lang1033\f1 in\lang1040\f0  the Command property. The syntax of this command\f1  (called an IQL command, from Instant Query Language) \f0  is somewhat similar to an SQL SELECT-statement\f1 , \f0 but instead of tables and columns, you specify classes and attributes:
 \par \pard\keep\f2 
 \par SELECT [DISTINCT] *|<Attribute>
@@ -1046,10 +1047,10 @@ Modified
 FALSE
 7
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Programming with Persistent Objects\cf1\b0\fs16 
-\par \pard\sb25\tx1435\strike Group Topics\strike0\{linkID=350>nav\}\tab\strike Using InstantObjects\strike0\{linkID=50>main\}\f1  \cf0\b\f0\fs24  \cf1\b0\fs16\{keepn\} 
-\par \pard\sb25\sa25\tx1435\fs18 The driving force in InstantObjects based applications \lang1033\f1 is\lang1040\f0  the persistent classes \lang1033\f1 that\lang1040\f0  contain the business logic. These business classes all descend from the fundamental \strike TInstantObject\strike0\{linkID=7380>main\} class. This section covers aspects of working directly with the business classes of \lang1033\f1 an\lang1040\f0  application.
+\par \pard\sb25\tx1435\cf2\strike Group Topics\cf3\strike0\{linkID=350>nav\}\cf1\tab\cf2\strike Using InstantObjects\cf3\strike0\{linkID=50>main\}\{keepn\}\cf1  
+\par \pard\sb25\sa25\tx1435\fs18 The driving force in InstantObjects based applications \lang1033\f1 is\lang1040\f0  the persistent classes \lang1033\f1 that\lang1040\f0  contain the business logic. These business classes all descend from the fundamental \cf2\strike TInstantObject\cf3\strike0\{linkID=7380>main\}\cf1  class. This section covers aspects of working directly with the business classes of \lang1033\f1 an\lang1040\f0  application.
 \par 
 \par }
 350
@@ -1068,11 +1069,11 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Programming with Persistent Objects \cf1\b0\fs16 
-\par \cf2\strike Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\cf1\{keepn\} 
-\par \pard\keep\li95\sb25\sa25\strike\fs18 Creating New Objects\strike0\{linkID=360>main\}
-\par \strike Retrieving Existing Objects\strike0\{linkID=380>main\}
-\par \strike Associating Objects\strike0\{linkID=420>main\}
-\par \strike\f1 Using t\f0 he \f1 InstantQuery\strike0\f0\{linkID=440>main\}
+\par \cf2\strike Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\{keepn\}\cf1  
+\par \pard\keep\li95\sb25\sa25\cf2\strike\fs18 Creating New Objects\cf3\strike0\{linkID=360>main\}\cf1 
+\par \cf2\strike Retrieving Existing Objects\cf3\strike0\{linkID=380>main\}\cf1 
+\par \cf2\strike Associating Objects\cf3\strike0\{linkID=420>main\}\cf1 
+\par \cf2\strike\f1 Using t\f0 he \f1 InstantQuery\cf3\strike0\f0\{linkID=440>main\}\cf1 
 \par 
 \par }
 360
@@ -1089,9 +1090,9 @@ Imported
 FALSE
 10
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 Creating New Objects\b0\fs16 
-\par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=370>example\}\tab\strike Programming with Persistent Objects\strike0\{linkID=340>main\}\{keepn\} 
+\par \pard\sb25\tx1435\cf2\strike Example 1\cf3\strike0\{linkID=370>example\}\cf1\tab\cf2\strike Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\tx1435\fs18 Business objects are created just like any other object. The Create constructor of the class creates a new instance of the class.
 \par The constructor can be called with an optional Connector parameter. This connector specifies the database in which to make the object persistent. If no connector is specified, the default connector will be used.
 \par To make an object persistent, call its Store method. Only instances of classes declared \lang1033\f1 with\lang1040\f0  \lang1033\f1 a \lang1040\f0 persisten\lang1033\f1 ce property of \i stored\lang1040\f0  \i0 in the business model can be \lang1033\f1 S\lang1040\f0 tored.
@@ -1114,7 +1115,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \cf2\strike Creating New Objects\cf3\strike0\{linkID=360>main\}\cf1\{keepn\} 
+\par \cf2\strike Creating New Objects\cf3\strike0\{linkID=360>main\}\{keepn\}\cf1  
 \par \pard\keep\f1\fs18 
 \par \b var\b0 
 \par   Person: TPerson
@@ -1144,13 +1145,13 @@ Imported
 FALSE
 10
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}{\f3\fnil\fcharset2 Symbol;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Retrieving Existing Objects\cf1\b0\fs16 
-\par \pard\sb25\tx1435\tx2875\strike Example 1\strike0\{linkID=390>example\}\tab\strike Example 2\strike0\{linkID=400>example\}\tab\strike Example \lang1033\f1 3\lang1040\strike0\f0\{linkID=410>example\}\lang1033\f1\tab\tab\lang1040\strike\f0 Programming with Persistent Objects\strike0\{linkID=340>main\}\{keepn\} 
+\par \pard\sb25\tx1435\tx2875\cf2\strike Example 1\cf3\strike0\{linkID=390>example\}\cf1\tab\cf2\strike Example 2\cf3\strike0\{linkID=400>example\}\cf1\tab\cf2\strike Example \lang1033\f1 3\cf3\lang1040\strike0\f0\{linkID=410>example\}\cf1\lang1033\f1\tab\tab\cf2\lang1040\strike\f0 Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\tx1435\tx2875\fs18 Objects that have been stored to the database can be retrieved into memory \lang1033\f1 by using any of the following techniques:
-\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\tx2875 If the Id of the object is known \lang1040\f0 the Retrieve constructor\lang1033\f1  can be used\lang1040\f0 . An optional connector through which the object shall be retrieved can be specified. If no connector is specified, the default connector is used. If the object already exists in memory, the existing object is returned. If the object is not found, the constructor returns nil.\lang1033\f1  See \strike example 1\lang1040\strike0\f0\fs16\{linkID=390>example\}\lang1033\f1\fs18 .\lang1040\f0 
+\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\tx2875 If the Id of the object is known \lang1040\f0 the Retrieve constructor\lang1033\f1  can be used\lang1040\f0 . An optional connector through which the object shall be retrieved can be specified. If no connector is specified, the default connector is used. If the object already exists in memory, the existing object is returned. If the object is not found, the constructor returns nil.\lang1033\f1  See \cf2\strike example 1\cf3\lang1040\strike0\f0\fs16\{linkID=390>example\}\cf1\lang1033\f1\fs18 .\lang1040\f0 
 \par \pard\sb25\sa25\f2\fs10 
-\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\tx2875\f0\fs18 If the Id of the object is not known or multiple objects meeting a certain criteria \lang1033\f1 need to\lang1040\f0  be retrieved, a \lang1033\strike\f1 S\lang1040\f0 elector\strike0\fs16\{linkID=330>main\}\fs18  \lang1033\f1 or an \lang1040\strike InstantQuery\strike0\f0\fs16\{linkID=440>main\}\lang1033\f1  \lang1040\f0\fs18 can be used\lang1033\f1 . See \strike example 2\lang1040\strike0\f0\fs16\{linkID=400>example\}\lang1033\f1\fs18  and \strike example 3\lang1040\strike0\f0\fs16\{linkID=410>example\}\lang1033\f1\fs18 .\lang1040\f0 
+\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\tx2875\f0\fs18 If the Id of the object is not known or multiple objects meeting a certain criteria \lang1033\f1 need to\lang1040\f0  be retrieved, a \cf2\lang1033\strike\f1 S\lang1040\f0 elector\cf3\strike0\fs16\{linkID=330>main\}\cf1\fs18  \lang1033\f1 or an \cf2\lang1040\strike InstantQuery\cf3\strike0\f0\fs16\{linkID=440>main\}\cf1\lang1033\f1  \lang1040\f0\fs18 can be used\lang1033\f1 . See \cf2\strike example 2\cf3\lang1040\strike0\f0\fs16\{linkID=400>example\}\cf1\lang1033\f1\fs18  and \cf2\strike example 3\cf3\lang1040\strike0\f0\fs16\{linkID=410>example\}\cf1\lang1033\f1\fs18 .\lang1040\f0 
 \par \pard\sb25\sa25\tx200\tx2875\f2\fs10 
 \par }
 390
@@ -1169,7 +1170,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \cf2\strike Retrieving Existing Objects\cf3\strike0\{linkID=380>main\}\cf1\{keepn\} 
+\par \cf2\strike Retrieving Existing Objects\cf3\strike0\{linkID=380>main\}\{keepn\}\cf1  
 \par \pard\keep\f1\fs18 
 \par \b var\b0 
 \par   Person: TPerson;
@@ -1199,7 +1200,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example 2 \cf1\b0\fs16 
-\par \cf2\strike Retrieving Existing Objects\cf3\strike0\{linkID=380>main\}\cf1\{keepn\} 
+\par \cf2\strike Retrieving Existing Objects\cf3\strike0\{linkID=380>main\}\{keepn\}\cf1  
 \par \pard\keep\f1\fs18 
 \par \b var\b0 
 \par   I: Integer;
@@ -1238,7 +1239,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0\deflang3081{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}{\f3\fnil\fcharset0 Courier New;}{\f4\fmodern\fcharset0 Courier New;}{\f5\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example \lang1033\f1 3\lang1040\f0  \cf1\b0\fs16 
-\par \cf2\strike Retrieving Existing Objects\cf3\strike0\{linkID=380>main\}\cf1\{keepn\} 
+\par \cf2\strike Retrieving Existing Objects\cf3\strike0\{linkID=380>main\}\{keepn\}\cf1  
 \par \pard\keep\f2\fs18 
 \par \b var\b0 
 \par   I: Integer;
@@ -1274,9 +1275,9 @@ Imported
 FALSE
 9
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Associating Objects\cf1\b0\fs16 
-\par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=430>example\}\tab\strike Programming with Persistent Objects\strike0\{linkID=340>main\}\{keepn\} 
+\par \pard\sb25\tx1435\cf2\strike Example 1\cf3\strike0\{linkID=430>example\}\cf1\tab\cf2\strike Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\tx1435\fs18 Persistent object relations defined by relational attributes in the business model can be accessed just as easy as any other attribute.
 \par Single object relations defined by Part and Reference attributes are accessed through the corresponding object property of the class.
 \par Multiple object references defined by Parts and References attributes are accessed through the corresponding array property and the container methods defined for the attribute.
@@ -1298,23 +1299,23 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}{\f4\fmodern\fcharset0 Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \cf2\strike Associating Objects\cf3\strike0\{linkID=420>main\}\cf1\{keepn\} 
+\par \cf2\strike Associating Objects\cf3\strike0\{linkID=420>main\}\{keepn\}\cf1  
 \par \pard\keep\f1\fs18 
 \par \pard\sb25\sa25\tx1435\f0 The \lang1033\f2 following\lang1040\f0  code defines a class containing the various relation types. The procedure CreateSamplePerson creates a TPerson object with a sample name and address, associates it with a company and adds some phones and colleagues to it. The procedures ShowPhones and ShowFriends shows a message with the caption of each of the corresponding objects associated with the person. The code assumes that a default connector has been created.
 \par \pard\sb25\sa25\f3\fs10 
 \par \pard\keep\b\f1\fs18 type\b0 
-\par   TPerson = class(\strike TInstantObject\strike0\{linkID=7380>main\})
+\par   TPerson = class(\cf2\strike TInstantObject\cf3\strike0\{linkID=7380>main\}\cf1 )
 \par   \{\-IOMETADATA stored;
 \par     Address: Part(TAddress);
 \par     Company: Reference(TCompany);
 \par     Friends: References(TPerson);
 \par     Name: String(30);
 \par     Phones: Parts(TPhone); \}
-\par     _Address: \strike TInstantPart\strike0\{linkID=9240>main\};
-\par     _Company: \strike TInstantReference\strike0\{linkID=9510>main\};
-\par     _Friends: \strike TInstantReferences\strike0\{linkID=9770>main\};
-\par     _Name: \strike TInstantString\strike0\{linkID=10990>main\};
-\par     _Phones: \strike TInstantParts\strike0\{linkID=9380>main\};
+\par     _Address: \cf2\strike TInstantPart\cf3\strike0\{linkID=9240>main\}\cf1 ;
+\par     _Company: \cf2\strike TInstantReference\cf3\strike0\{linkID=9510>main\}\cf1 ;
+\par     _Friends: \cf2\strike TInstantReferences\cf3\strike0\{linkID=9770>main\}\cf1 ;
+\par     _Name: \cf2\strike TInstantString\cf3\strike0\{linkID=10990>main\}\cf1 ;
+\par     _Phones: \cf2\strike TInstantParts\cf3\strike0\{linkID=9380>main\}\cf1 ;
 \par   \b private\b0 
 \par     \b function \b0 GetAddress: TAddress;
 \par     \b function \b0 GetCompany: TCompany;
@@ -1432,10 +1433,10 @@ Done
 FALSE
 8
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Courier New;}}
-{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\cf1\b\f0\fs24 Using an InstantQuery\b0\fs16 
-\par \strike Example 1\strike0\{linkID=450>example\}\tab\strike Programming with Persistent Objects\strike0\{linkID=340>main\}\cf2\{keepn\}\cf1 
-\par \cf0\f1\fs18 TInstantQuery is not available in Delphi's Component or Tool Palette, but it is useful to fetch a list of objects from the storage through an IQL statement. TInstantQuery basically represents the core of \cf1  \strike\f0 TInstantSelector\strike0\{linkID=10190>main\}\f1 .
+\par \cf2\strike Example 1\cf3\strike0\{linkID=450>example\}\cf1\tab\cf2\strike Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\{keepn\}\cf1 
+\par \cf0\f1\fs18 TInstantQuery is not available in Delphi's Component or Tool Palette, but it is useful to fetch a list of objects from the storage through an IQL statement. TInstantQuery basically represents the core of \cf1  \cf2\strike\f0 TInstantSelector\cf3\strike0\{linkID=10190>main\}\cf1\f1 .
 \par 
 \par TInstantQuery is an abstract class. What you actually use are concrete descendant classes, which you instantiate through the connector's CreateQuery method. The advantage in using a TInstantQuery descendant lies directly in the lower overhead, as there is no TDataSet buffer management involved. So, if you want to fetch objects and don't have a data-aware presentation layer, TInstantQuery is the preferred way to do it. \f2 
 \par }
@@ -1455,7 +1456,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Courier New;}{\f3\fnil Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs24 Example 1
-\par \cf1\b0\strike\f1\fs16 Using the InstantQuery\cf2\strike0\{linkID=440\}\cf3\f0\{keepn\} 
+\par \cf1\b0\strike\f1\fs16 Using the InstantQuery\cf2\strike0\{linkID=440\}\f0\{keepn\}\cf3  
 \par \b\f2\fs18 function \b0 CompanyOfCityCount(\b const\b0  ACityId: \b string\b0 ): Integer;
 \par \b begin\b0 
 \par   \b with\b0  InstantDefaultConnector.CreateQuery \b do\b0 
@@ -1487,9 +1488,9 @@ Done
 FALSE
 8
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil\fcharset0 Arial;}{\f1\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\fs22 Learning the Primer Demo
-\par \cf1\b0\strike\f1\fs16 Group Topics\strike0\{linkID=470>nav\}\tab\strike Using InstantObjects\strike0\{linkID=50>main\}\cf0\b\fs24  \cf1\b0\fs16\{keepn\} \cf0\f0\fs20 
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
+\viewkind4\uc1\pard\b\fs24 Learning the Primer Demo\cf1\fs22 
+\par \b0\strike\f1\fs16 Group Topics\cf2\strike0\{linkID=470>nav\}\cf3\tab\cf1\strike Using InstantObjects\cf2\strike0\{linkID=50>main\}\{keepn\}\cf3  \cf0\f0\fs20 
 \par 
 \par \fs18 InstantObjects Primer is an example application that was built using the InstantObjects Object Persistence Framework. It demonstrates how InstantObjects enables you to build truly object oriented database applications in Delphi using the same RAD approach you use, when building traditional database applications. 
 \par \ul\b\fs20 
@@ -1509,27 +1510,27 @@ FALSE
 24
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fswiss Arial;}{\f2\fnil\fcharset0 Arial;}{\f3\fnil\fcharset2 Symbol;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\sb25\b\f0\fs24 Primer Demo summary\cf1\b0\f1\fs16 
-\par \cf2\strike\f0 Learning the Primer Demo\cf3\strike0\{linkID=460>main\}\cf1\f1\{keepn\} 
+\viewkind4\uc1\pard\sb25\b\f0\fs24 Primer Demo Summary\cf1\b0\f1\fs16 
+\par \cf2\strike\f0 Learning the Primer Demo\cf3\strike0\{linkID=460>main\}\f1\{keepn\}\cf1  
 \par \pard\cf0\b\f2\fs20 Summary\b0 
 \par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\tx200\cf2\strike\fs18 Introduction\cf3\strike0\{linkID=480>main\}\cf0 
 \par \cf2\strike{\pntext\f3\'B7\tab}The Business Model\cf3\strike0\{linkID=490>main\}\cf0 
-\par \strike{\pntext\f3\'B7\tab}The User Interface\cf3\strike0\{linkID=500>main\}\cf0 
+\par \cf2\strike{\pntext\f3\'B7\tab}The User Interface\cf3\strike0\{linkID=500>main\}\cf0 
 \par \pard 
 \par \b Persistence
-\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\tx200\b0\strike Persisting Objects\cf3\strike0\{linkID=510>main\}\cf0 
-\par \strike{\pntext\f3\'B7\tab}Mapping Scheme\cf3\strike0\{linkID=520>main\}\cf0 
-\par \strike{\pntext\f3\'B7\tab}Streaming\cf3\strike0\{linkID=530>main\}\cf0 
+\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\tx200\cf2\b0\strike Persisting Objects\cf3\strike0\{linkID=510>main\}\cf0 
+\par \cf2\strike{\pntext\f3\'B7\tab}Mapping Scheme\cf3\strike0\{linkID=520>main\}\cf0 
+\par \cf2\strike{\pntext\f3\'B7\tab}Streaming\cf3\strike0\{linkID=530>main\}\cf0 
 \par \pard 
 \par \b Presentation\b0 
-\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\tx200\strike Exposing Objects\cf3\strike0\{linkID=540>main\}\cf0 
-\par \strike{\pntext\f3\'B7\tab}Selecting Objects\cf3\strike0\{linkID=550>main\}\cf0 
-\par \strike{\pntext\f3\'B7\tab}Filtering\cf3\strike0\{linkID=560>main\}\cf0 
-\par \strike{\pntext\f3\'B7\tab}Sorting\cf3\strike0\{linkID=570>main\}\cf0 
+\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\tx200\cf2\strike Exposing Objects\cf3\strike0\{linkID=540>main\}\cf0 
+\par \cf2\strike{\pntext\f3\'B7\tab}Selecting Objects\cf3\strike0\{linkID=550>main\}\cf0 
+\par \cf2\strike{\pntext\f3\'B7\tab}Filtering\cf3\strike0\{linkID=560>main\}\cf0 
+\par \cf2\strike{\pntext\f3\'B7\tab}Sorting\cf3\strike0\{linkID=570>main\}\cf0 
 \par \pard 
 \par \b Tools\b0 
-\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\tx200\strike Object Explorer\cf3\strike0\{linkID=580>main\}\cf0\fs20 
-\par \strike{\pntext\f3\'B7\tab}Connection Manager\cf3\strike0\{linkID=590>main\}\cf1\f1\fs18 
+\par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\tx200\cf2\strike Object Explorer\cf3\strike0\{linkID=580>main\}\cf0 
+\par \cf2\strike{\pntext\f3\'B7\tab}Connection Manager\cf3\strike0\{linkID=590>main\}\cf1\f1 
 \par }
 480
 Scribble480
@@ -1546,11 +1547,11 @@ FALSE
 15
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer\f1  Demo\f0 : Introduction
+\viewkind4\uc1\pard\b\f0\fs24 Primer\f1  Demo\f0 : Introduction\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \f0 
-\par \b\f1\fs18 Contactbook\b0 
-\par InstantObjects Primer features a contactbook in which contacts can be registered and maintained. The main screen of the contactbook is available via the Contacts icon on the navigation bar to the left. The following topics in this section describe the business model and user interface of the contactbook.
+\par \b\f1\fs18 Contact book\b0 
+\par InstantObjects Primer features a contact book in which contacts can be registered and maintained. The main screen of the contact book is available via the Contacts icon on the navigation bar to the left. The following topics in this section describe the business model and user interface of the contact book.
 \par  
 \par \b Query Tester\b0 
 \par With the query tester available via the Query icon on the navigation bar, you can try out the query engine of InstantObjects. The query tester allows you to write and execute your own queries or choose from a list of example queries.
@@ -1574,9 +1575,9 @@ FALSE
 10
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: \f1 The Business Model\f0 
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: \f1 The Business Model\f0\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\b\fs20 
-\par \cf3\b0\f0\fs18 The contactbook featured in this application is based on a simple business model of contact related information. The following UML class diagram shows how this information is organized.
+\par \cf3\b0\f0\fs18 The contact book featured in this application is based on a simple business model of contact related information. The following UML class diagram shows how this information is organized.
 \par \fs10 
 \par \cf2\f1\fs20\{bmc model.gif\}
 \par \cf3\f0\fs10 
@@ -1597,9 +1598,9 @@ FALSE
 13
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: The User Interface
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: The User Interface\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
-\par \cf3\f0\fs18 The user interface of the contactbook relies on visual form inheritance. The following diagram shows the form class hierarchi. 
+\par \cf3\f0\fs18 The user interface of the contact book relies on visual form inheritance. The following diagram shows the form class hierarchy. 
 \par 
 \par TBasicEditForm introduces basic editing capabilities for editing single objects. Descendant forms introduce capabilities required for editing objects of their corresponding business class. 
 \par 
@@ -1623,7 +1624,7 @@ FALSE
 14
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Persisting Objects
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Persisting Objects\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \cf3\f0\fs18 One of the main issues when building truly object oriented business applications is the ability to persist business objects. InstantObjects addresses this issue by supporting the most common relational databases as object storage. Relations between objects defined in the business model are handled seamlessly by InstantObjects when storing objects to or retrieving objects from the database.
 \par 
@@ -1631,7 +1632,7 @@ FALSE
 \par 
 \par When objects are not accessed via the user interface, persistence is achieved by application code instead. 
 \par 
-\par Business classes inherit their persistent capabilities from \cf1\strike TInstantObject\cf3\strike0\{linkID=7380>main\}. Like other classes in Delphi, instances of classes that descent from TInstantObject are created with the Create constructor of the class. Objects can be stored in the database by invoking the Store method. Existing objects can be retrieved from the database with the Retrieve constructor. When objects are no longer needed, they can be removed from the database by invoking the Dispose method.
+\par Business classes inherit their persistent capabilities from \cf1\strike TInstantObject\cf2\strike0\{linkID=7380>main\}\cf3 . Like other classes in Delphi, instances of classes that descent from TInstantObject are created with the Create constructor of the class. Objects can be stored in the database by invoking the Store method. Existing objects can be retrieved from the database with the Retrieve constructor. When objects are no longer needed, they can be removed from the database by invoking the Dispose method.
 \par 
 \par Examples of persisting objects by code can be found in the unit DemoData.pas. This unit contains the code for random generation of contacts. Study the code to learn how easy it is to create persistent objects with InstantObjects.
 \par }
@@ -1650,7 +1651,7 @@ FALSE
 10
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Mapping Scheme
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Mapping Scheme\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \cf3\f0\fs18 One aspect to consider when creating the business model of your application is the  mapping scheme. The mapping scheme defines how the business objects are mapped to tables in the relational database.
 \par 
@@ -1673,7 +1674,7 @@ FALSE
 8
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Streaming
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Streaming\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \cf3\f0\fs18 All business objects created with InstantObjects can be written to and read from any standard VCL stream. The structure of the stream can be either binary or XML.
 \par 
@@ -1694,13 +1695,13 @@ FALSE
 16
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Exposing Objects
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Exposing Objects\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \cf3\f0\fs18 Making objects available in the user interface of an application through data-aware controls is known as  exposing objects. InstantObjects allows you to expose any object with published properties.
 \par 
 \par \cf1\strike TInstantExposer\cf2\strike0\{linkID=320\}\cf3  is the component to use when an object or part of an object that is already present in memory needs to be exposed. TInstantExposer is a TDataSet descendant, which means it can be attached to data-aware controls via a TDataSource. When an object is assigned to the Subject property of a TInstantExposer component, the object or the objects contained in the object are represented as rows in the dataset. The published properties of the exposed object(s) are represented as columns in the dataset.
 \par 
-\par The contactbook demonstrates how exposers can be used to show and edit business objects in the user interface. TBasicEditForm is the base for all forms used by the application to edit objects. This form contains an exposer which is connected through a TDataSource to data-aware controls introduced in descending forms designed for editing objects of specific classes. When an object needs to be edited, it is passed to the exposer in a suitable edit form.
+\par The contact book demonstrates how exposers can be used to show and edit business objects in the user interface. TBasicEditForm is the base for all forms used by the application to edit objects. This form contains an exposer which is connected through a TDataSource to data-aware controls introduced in descending forms designed for editing objects of specific classes. When an object needs to be edited, it is passed to the exposer in a suitable edit form.
 \par 
 \par When exposing business objects, relations to other objects defined in the business model are recognized and handled automatically. One-to-many relations are represented as nested datasets within the exposer. In addition, exposers can be linked in a master-detail fashion allowing any related object to be exposed via the referring object. The exposers PhonesExposer on the form TContactEditForm and EmailsExposer on the form TPersonEditForm are examples of detail exposers that are linked to a master exposer.
 \par \fs10 
@@ -1723,7 +1724,7 @@ FALSE
 24
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Selecting Objects
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Selecting Objects\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \cf3\f0\fs18 In order to work with business objects they have to be retrieved into memory. Specific objects can be retrieved via the  Retrieve constructor of their class if their object Id is known. If this is not the case or if multiple objects need to be accessed at once, either for presentation or manipulation, they can be  selected from the database.
 \par 
@@ -1739,9 +1740,9 @@ FALSE
 \par \fs10 
 \par \fs18 Attributes are specified using regular dot-notation. This allows you to specify attributes of the selected object and objects related to this object. Please consult the InstantObjects Reference Guide for an in-depth explanation of the TInstantSelector Command property.
 \par 
-\par TInstantSelector is being used in the contactbook in several areas. First of all, the main contact grid used for browsing contacts is connected via a TDataSource to a selector. The command of this selector is changed when clicking one of the index-tabs above the grid and when performing a search via the Find feature.
+\par TInstantSelector is being used in the contact book in several areas. First of all, the main contact grid used for browsing contacts is connected via a TDataSource to a selector. The command of this selector is changed when clicking one of the index-tabs above the grid and when performing a search via the Find feature.
 \par 
-\par In TContactEditForm, The country and category fields of a contact are edited via a standard TDBLookupComboBox in which the dropdown list is connected to a selector that is exposing the objects that can be associated with the field.
+\par In TContactEditForm, The country and category fields of a contact are edited via a standard TDBLookupComboBox in which the drop down list is connected to a selector that is exposing the objects that can be associated with the field.
 \par 
 \par All forms used for browsing and looking up objects descent from TBasicBrowseForm. These forms all use a selector to select and expose the desired objects.
 \par }
@@ -1760,9 +1761,9 @@ FALSE
 12
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Filtering
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Filtering\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
-\par \cf3\f0\fs18 When exposing objects through an exposer or a selector, a filter can be used to hide unwanted objects. With selectors you can select objects from the database by specifying criterias to be met for the persistent attributes of the objects. Filters, on the other hand, allow you to determine which objects to include at business logic level. This means that objects can be shown or hidden depending on business rules defined by their class. Filters come in two flavours:  dynamic and static.
+\par \cf3\f0\fs18 When exposing objects through an exposer or a selector, a filter can be used to hide unwanted objects. With selectors you can select objects from the database by specifying criteria to be met for the persistent attributes of the objects. Filters, on the other hand, allow you to determine which objects to include at business logic level. This means that objects can be shown or hidden depending on business rules defined by their class. Filters come in two f\lang1033\f1 l\lang1040\f0 avors:  dynamic and static.
 \par 
 \par Dynamic filters are applied to each object when navigating through the dataset. Since only the objects that are touched during navigation are examined by the filter, this is the fastest filtering method if exposing a large number of objects. Dynamic filters are implemented via the FilterRecord event.
 \par 
@@ -1785,7 +1786,7 @@ FALSE
 8
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Sorting
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Sorting\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \cf3\f0\fs18 Objects retrieved via a selector can be sorted by the underlying database by specifying one or more persistent attributes of the object or related objects with the ORDER BY clause. In addition, objects exposed through an exposer or a selector can be sorted in memory by adding a custom sort method to the OnCompare event.
 \par 
@@ -1806,7 +1807,7 @@ FALSE
 11
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Object Explorer
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Object Explorer\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \cf1\strike\f0\fs18 TInstantExplorer\cf2\strike0\{linkID=6220>main\}\cf3  is a visual component that display\lang1033 s\lang1040  an object and its related objects in a tree\lang1033  view\lang1040 . In its basic form, the component can be used to inspect and edit any object with published properties. The explorer can be customized for more application specific use by adding various event handlers.
 \par \fs10 
@@ -1830,7 +1831,7 @@ FALSE
 8
 {\rtf1\ansi\ansicpg1252\deff0\deflang1040{\fonttbl{\f0\fnil Arial;}{\f1\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
-\viewkind4\uc1\pard\b\f0\fs26 Primer Demo: Connection Manager
+\viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Connection Manager\fs26 
 \par \cf1\b0\strike\f1\fs16 Learning the Primer Demo\cf2\strike0\{linkID=460>main\}\{keepn\}\cf0\fs20 
 \par \cf3\f0\fs18 If you want the end-user of your application to be able to manage connections to databases, the  \cf1\strike TInstantConnectionManager\cf2\strike0\{linkID=3520>main\}\cf3  component and the TInstantConnectionManagerForm will provide your application with the necessary tools. The component wraps a dialog in which the user can define and manage connections to various databases.
 \par 
@@ -1850,13 +1851,13 @@ EInstantAccessError;EInstantAccessError_Object
 FALSE
 10
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantAccessError \cf1\b0\fs16  
-\par \pard\sb25\tx1435\tx2875\tx4315\ul Hierarchy\ulnone\{linkID=1030\}\tab\ul See Also\ulnone\{linkID=1010\}\tab\strike Example 1\strike0\{linkID=1020>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\}
+\par \pard\sb25\tx1435\tx2875\tx4315\cf2\ul Hierarchy\cf3\ulnone\{linkID=1030\}\cf1\tab\cf2\ul See Also\cf3\ulnone\{linkID=1010\}\cf1\tab\cf2\strike Example 1\cf3\strike0\{linkID=1020>example\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=12930>main\}\{keepn\}\cf1 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 The exception class for access errors.
-\par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 EInstantAccessError = \b class\b0 (\strike EInstantError\strike0\{linkID=1350>main\})
+\par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 EInstantAccessError = \b class\b0 (\cf2\strike EInstantError\cf3\strike0\{linkID=1350>main\}\cf1 )
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
-\par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 EInstantAccessError is raised when an illegal conversion is attempted. Most commonly EInstantAccessError is encountered when using the properties of a \strike TInstantAttribute\strike0\{linkID=2170>main\} descendant to access the data the attribute represents as a non-compatible type.
+\par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 EInstantAccessError is raised when an illegal conversion is attempted. Most commonly EInstantAccessError is encountered when using the properties of a \cf2\strike TInstantAttribute\cf3\strike0\{linkID=2170>main\}\cf1  descendant to access the data the attribute represents as a non-compatible type.
 \par 
 \par }
 1010
@@ -1873,11 +1874,11 @@ Imported
 FALSE
 7
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
-\par \pard\li60\sb25\sa25\strike EInstantConversionError\strike0\{linkID=1230>main\}
-\par \pard\li95\sb25\sa25\strike TInstantAttribute\strike0\{linkID=2170>main\}
+\par \pard\li60\sb25\sa25\cf2\strike EInstantConversionError\cf3\strike0\{linkID=1230>main\}\cf1 
+\par \pard\li95\sb25\sa25\cf2\strike TInstantAttribute\cf3\strike0\{linkID=2170>main\}\cf1 
 \par }
 1020
 ID_4
@@ -1895,8 +1896,8 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \cf2\strike EInstantAccessError\cf3\strike0\{linkID=1000>main\}\cf1\{keepn\}
-\par \pard\keep\b\f1\fs18 function \b0 DateTimeToBoolean(DateTime: \strike TInstantDateTime\strike0\{linkID=5660>main\}): Boolean;
+\par \cf2\strike EInstantAccessError\cf3\strike0\{linkID=1000>main\}\{keepn\}\cf1 
+\par \pard\keep\b\f1\fs18 function \b0 DateTimeToBoolean(DateTime: \cf2\strike TInstantDateTime\cf3\strike0\{linkID=5660>main\}\cf1 ): Boolean;
 \par \b begin\b0 
 \par   Result := DateTime.AsBoolean;
 \par \b end\b0 ;
@@ -1916,14 +1917,14 @@ Imported
 FALSE
 11
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\cf1\lang1040\b\f0\fs18 Class Hierarchy
 \par 
 \par \pard\li95\b0 Exception
 \par \pard\li95\tx355\tab |
-\par \strike EInstantError\strike0\{linkID=1350>main\}
+\par \cf2\strike EInstantError\cf3\strike0\{linkID=1350>main\}\cf1 
 \par \tab |
-\par \strike EInstantAccessError\strike0\{linkID=1000>main\}
+\par \cf2\strike EInstantAccessError\cf3\strike0\{linkID=1000>main\}\cf1 
 \par 
 \par }
 1040
@@ -1940,9 +1941,9 @@ Imported
 FALSE
 6
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\tx355\lang1040\b\f0\fs24 EInstantAccessError Fields\cf1\b0\fs16  
-\par \strike EInstantAccessError\strike0\{linkID=1000>main\}\{keepn\}
+\par \cf2\strike EInstantAccessError\cf3\strike0\{linkID=1000>main\}\{keepn\}\cf1 
 \par 
 \par }
 1050
@@ -1959,11 +1960,11 @@ Imported
 FALSE
 8
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\tx355\lang1040\b\f0\fs24 EInstantAccessError Properties \cf1\b0\fs16 
-\par \strike EInstantAccessError\strike0\{linkID=1000>main\}\tab\ul Legend\ulnone\{link=ID_13\}\cf2\{keepn\}\cf1 
+\par \cf2\strike EInstantAccessError\cf3\strike0\{linkID=1000>main\}\cf1\tab\cf2\ul Legend\cf3\ulnone\{link=ID_13\}\{keepn\}\cf1 
 \par \pard\sb55\sa55\tx355\b\fs18 EInstantError
-\par \pard\keep\li95\sb25\sa25\tx355\b0\{bmct bm0.BMP\}\{bmct bm1.BMP\} \strike OriginalException\strike0\{linkID=1450>main\}
+\par \pard\keep\li95\sb25\sa25\tx355\cf3\b0\{bmct bm0.BMP\}\{bmct bm1.BMP\}\cf1  \cf2\strike OriginalException\cf3\strike0\{linkID=1450>main\}\cf1 
 \par 
 \par }
 1060
@@ -1980,9 +1981,9 @@ Imported
 FALSE
 6
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 Legend
-\par \pard\li95\sb25\sa25\cf1\b0\fs18\{bmct bm1.BMP\} read only
+\par \pard\li95\sb25\sa25\cf1\b0\fs18\{bmct bm1.BMP\}\cf2  read only
 \par 
 \par }
 1070
@@ -1999,9 +2000,9 @@ Imported
 FALSE
 6
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 EInstantAccessError Events \cf1\b0\fs16 
-\par \strike EInstantAccessError\strike0\{linkID=1000>main\}\cf0\{keepn\}\cf1 
+\par \cf2\strike EInstantAccessError\cf3\strike0\{linkID=1000>main\}\{keepn\}\cf1 
 \par 
 \par }
 1080
@@ -2018,13 +2019,13 @@ Imported
 FALSE
 10
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\tx355\lang1040\b\f0\fs24 EInstantAccessError Methods \cf1\b0\fs16 
-\par \strike EInstantAccessError\strike0\{linkID=1000>main\}\tab\ul Legend\ulnone\{link=ID_19\}\{keepn\}
+\par \cf2\strike EInstantAccessError\cf3\strike0\{linkID=1000>main\}\cf1\tab\cf2\ul Legend\cf3\ulnone\{link=ID_19\}\{keepn\}\cf1 
 \par \pard\sb55\sa55\tx355\b\fs18 EInstantError
-\par \pard\keep\li95\sb25\sa25\tx355\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike CreateRes\strike0\{linkID=1460>main\}
-\par \{bmct bm0.BMP\}\{bmct bm0.BMP\} \strike CreateResFmt\strike0\{linkID=1470>main\}
-\par \{bmct bm0.BMP\}\{bmct bm2.BMP\} \strike Destroy\strike0\{linkID=1480>main\}
+\par \pard\keep\li95\sb25\sa25\tx355\cf3\b0\{bmct bm0.BMP\}\{bmct bm0.BMP\}\cf1  \cf2\strike CreateRes\cf3\strike0\{linkID=1460>main\}\cf1 
+\par \cf3\{bmct bm0.BMP\}\{bmct bm0.BMP\}\cf1  \cf2\strike CreateResFmt\cf3\strike0\{linkID=1470>main\}\cf1 
+\par \cf3\{bmct bm0.BMP\}\{bmct bm2.BMP\}\cf1  \cf2\strike Destroy\cf3\strike0\{linkID=1480>main\}\cf1 
 \par 
 \par }
 1090
@@ -2041,9 +2042,9 @@ Imported
 FALSE
 6
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 Legend
-\par \pard\li95\sb25\sa25\cf1\b0\fs18\{bmct bm2.BMP\} virtual
+\par \pard\li95\sb25\sa25\cf1\b0\fs18\{bmct bm2.BMP\}\cf2  virtual
 \par 
 \par }
 1100
@@ -2060,9 +2061,9 @@ Imported
 FALSE
 6
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fnil Arial;}}
-{\colortbl ;\red0\green0\blue0;\red128\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\tx355\lang1040\b\f0\fs24 EInstantAccessError Members \cf1\b0\fs16 
-\par \pard\sb25\strike EInstantAccessError\strike0\{linkID=1000>main\}\tab\ul Legend\ulnone\{linkID=1110\}\cf2\f1\{keepn\}\cf1\f0 
+\par \pard\sb25\cf2\strike EInstantAccessError\cf3\strike0\{linkID=1000>main\}\cf1\tab\cf2\ul Legend\cf3\ulnone\{linkID=1110\}\f1\{keepn\}\cf1\f0 
 \par \pard\sb25\tx355 
 \par }
 1110
@@ -2079,10 +2080,10 @@ Imported
 FALSE
 7
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\tx355\lang1040\b\f0\fs18 Legend
-\par \pard\li95\sb25\sa25\tx355\cf1\b0\{bmct bm2.BMP\} virtual
-\par \{bmct bm1.BMP\} read only
+\par \pard\li95\sb25\sa25\tx355\cf1\b0\{bmct bm2.BMP\}\cf2  virtual
+\par \cf1\{bmct bm1.BMP\}\cf2  read only
 \par 
 \par }
 1120
@@ -2099,11 +2100,11 @@ EInstantConflict;EInstantConflict_Object
 FALSE
 10
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantConflict\cf1\b0\fs16  
-\par \pard\sb25\tx1435\tx2875\ul Hierarchy\ulnone\{linkID=1140\}\tab\strike Example 1\strike0\{linkID=1130>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\}
+\par \pard\sb25\tx1435\tx2875\cf2\ul Hierarchy\cf3\ulnone\{linkID=1140\}\cf1\tab\cf2\strike Example 1\cf3\strike0\{linkID=1130>example\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=12930>main\}\{keepn\}\cf1 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 The exception class for conflict errors.
-\par \pard\sb25\sa25\tx1435\tx2875\f1 EInstantConflict = \b class\b0 (\strike EInstantError\strike0\{linkID=1350>main\})
+\par \pard\sb25\sa25\tx1435\tx2875\f1 EInstantConflict = \b class\b0 (\cf2\strike EInstantError\cf3\strike0\{linkID=1350>main\}\cf1 )
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
 \par \pard\sb25\sa25\tx1435\tx2875\b0 EInstantConflict is raised as a consequence of conflicting concurrent updates of an object. EInstantConflict occurs normally only in multi-user environments.
 \par 
@@ -2124,7 +2125,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
-\par \cf2\strike EInstantConflict\cf3\strike0\{linkID=1020>main\}\cf1\{keepn\}
+\par \cf2\strike EInstantConflict\cf3\strike0\{linkID=1020>main\}\{keepn\}\cf1 
 \par \fs18 
 \par \pard\tx3240\ul\b User 1\tab User 2\f1                                              \f0 
 \par \ulnone\b0 Retrieve Foo\tab Retrieve Foo
@@ -2335,7 +2336,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 The exception class for conversion errors.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 EInstantConversionError = \b class\b0 (\strike EInstantError\strike0\{linkID=1350>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
-\par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 EInstantConversionError is raised when a conversion is unsuccesful. Most commonly \strike EInstantAccessError\strike0\{linkID=1000>main\} is encountered when using the properties of a \strike TInstantAttribute\strike0\{linkID=2170>main\} descendant to access the data the attribute represents and the conversion of the data is unsuccesful.
+\par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 EInstantConversionError is raised when a conversion is unsuccessful. Most commonly \strike EInstantAccessError\strike0\{linkID=1000>main\} is encountered when using the properties of a \strike TInstantAttribute\strike0\{linkID=2170>main\} descendant to access the data the attribute represents and the conversion of the data is .
 \par 
 \par }
 1240
@@ -3736,7 +3737,7 @@ FALSE
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 TInstantConnector components are used to gain access to databases. The connector uses components that are specific to the database engine to establish the actual connection. Multiple objects and components can share the connection provided by a single TInstantConnector component.
 \par TInstantConnector introduces properties and methods that fall into the following categories:
-\par \pard\fi-295\li495\sb25\sa25\tx495\{bmct bm3.BMP\}\tab Connecting and disconnecting to a database
+\par \pard\fi-295\li495\sb25\sa25\tx495\{bmct bm3.BMP\}\tab Connecting to and disconnecting from a database
 \par \{bmct bm3.BMP\}\tab Transaction control
 \par \{bmct bm3.BMP\}\tab Information about the database
 \par \{bmct bm3.BMP\}\tab Initialization of a database specific persistence broker
@@ -4069,7 +4070,7 @@ FALSE
 \par \pard\sb25\sa85\fs18 Compacts a database.
 \par \pard\sb25\sa25\b\f1 procedure\b0  CompactDatabase;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 As you change data in a database, the database file can become fragmented and use more disk space than is necessary. Periodically, you can use the CompactDatabase method to defragment the database file. The compacted database is usually smaller and often runs faster. The function is only effective for the MicroSoft Jet OLEDB Provider.
+\par \pard\sb25\sa25\b0 As you change data in a database, the database file can become fragmented and use more disk space than is necessary. Periodically, you can use the CompactDatabase method to defragment the database file. The compacted database is usually smaller and often runs faster. The function is only effective for the Microsoft Jet OLEDB Provider.
 \par 
 \par }
 2040
@@ -4422,7 +4423,7 @@ FALSE
 \par \pard\fi-295\li495\sb25\sa25\tx495\{bmct bm3.BMP\}\tab Convert the value of the attribute to another data type.
 \par \{bmct bm3.BMP\}\tab Validate the value of the attribute.
 \par \{bmct bm3.BMP\}\tab Define how the value of the attribute is displayed or edited.
-\par \pard\sb25\sa25\tx495 Although no presumptions are made about the use of TInstantAttribute descendants, their main purpose is to serve as logical placeholders for attributes of classes descending from \strike TInstantObject\strike0\{linkID=7380>main\}. Attributes may have metadata. The metadata contains the definition of the attribute such as the attributes name, data type, and size. Furthermore the metadata may specify features of the attribute such as masks and default value. If the attribute is owned by an instance of a \strike TInstantObject\strike0\{linkID=7380>main\} descendant, it has been created on the basis of attribute metadata specified as part of the class of the owning instance. TInstantAttribute descendants allocate memory to hold the value of the attribute they represent.
+\par \pard\sb25\sa25\tx495 Although no presumptions are made about the use of TInstantAttribute descendants, their main purpose is to serve as logical place holders for attributes of classes descending from \strike TInstantObject\strike0\{linkID=7380>main\}. Attributes may have metadata. The metadata contains the definition of the attribute such as the attributes name, data type, and size. Furthermore the metadata may specify features of the attribute such as masks and default value. If the attribute is owned by an instance of a \strike TInstantObject\strike0\{linkID=7380>main\} descendant, it has been created on the basis of attribute metadata specified as part of the class of the owning instance. TInstantAttribute descendants allocate memory to hold the value of the attribute they represent.
 \par 
 \par TInstantAttribute is abstract; so do not create instances of this class. Instead refer to the following concrete descendant classes: 
 \par \pard 
@@ -5096,7 +5097,7 @@ FALSE
 \par \pard\sb25\sa85\fs18 Specifies the metadata object associated with the attribute
 \par \pard\sb25\sa25\b\f1 property\b0  Metadata: TInstantAttributeMetadata;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 Metadata specifies the metatadata object associated with the attribute. If the attribute has no metadata, Metadata returns nil. Caution should be given when setting the metadata object of an attribute since no validation is performed.
+\par \pard\sb25\sa25\b0 Metadata specifies the metadata object associated with the attribute. If the attribute has no metadata, Metadata returns nil. Caution should be given when setting the metadata object of an attribute since no validation is performed.
 \par 
 \par }
 2460
@@ -5978,7 +5979,7 @@ FALSE
 \par \pard\sb25\sa85\fs18 Discards all data associated with the blob attribute
 \par \pard\sb25\sa25\b\f1 procedure\b0  Clear;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 CallUse Clear to empty the memory buffer for the blob attribute.
+\par \pard\sb25\sa25\b0 Call Clear to empty the memory buffer for the blob attribute.
 \par 
 \par }
 2820
@@ -6837,7 +6838,7 @@ FALSE
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\b\f0 Description
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\b0 TInstantComplex is the ancestor of all the attribute classes that represents objects. TInstantComplex introduces common properties and methods to:
 \par \pard\sb25\sa25\tx280\lang1033\f2\tab\lang1040\f0\{bmct bm3.BMP\}\tab Validate objects.
-\par \lang1033\f2\tab\lang1040\f0\{bmct bm3.BMP\}\tab Specificy a connector for a database connection
+\par \lang1033\f2\tab\lang1040\f0\{bmct bm3.BMP\}\tab Specify a connector for a database connection
 \par \pard 
 \par TInstantComplex is abstract; so do not create instances of this class. Instead refer to the following concrete descendant classes:
 \par 
@@ -7257,7 +7258,7 @@ FALSE
 \par \strike TInstantElement\strike0\{linkID=6040>main\}\tab AObject is assigned as the attributes Value
 \par \strike TInstantContainer\strike0\{linkID=4300>main\}\tab AObject is added to the objects array
 \par \pard 
-\par \pard\sb25\sa25 If the object is succesfully attached, the function returns True. Otherwise the function returns False.
+\par \pard\sb25\sa25 If the object is successfully attached, the function returns True. Otherwise the function returns False.
 \par 
 \par \pard 
 \par }
@@ -7288,7 +7289,7 @@ FALSE
 \par \strike TInstantElement\strike0\{linkID=6040>main\}\tab if the attribute Value equals AObject, the Value is set to nil.
 \par \strike TInstantContainer\strike0\{linkID=4300>main\}\tab AObject is removed from the attributes array of objects.
 \par \pard 
-\par If the object is succesfully detached, the function returns True. Otherwise the function returns False.
+\par If the object is successfully detached, the function returns True. Otherwise the function returns False.
 \par 
 \par }
 3380
@@ -8670,7 +8671,7 @@ FALSE
 \par \pard\sb25\sa85\fs18 States the associated broker object.
 \par \pard\sb25\sa25\b\f1 property\b0  Broker: TInstantBroker;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 States the associated broker object. The broker is used by objectstores to manage objects persistently, and is database specific, like the connector object itself.
+\par \pard\sb25\sa25\b0 States the associated broker object. The broker is used by object stores to manage objects persistently, and is database specific, like the connector object itself.
 \par 
 \par }
 3960
@@ -9890,7 +9891,7 @@ FALSE
 \par TInstantElement\tab AObject is assigned as the attributes Value
 \par TInstantContainer\tab AObject is added to the objects array
 \par \pard\sb25\sa25\tx3120 
-\par If the object is succesfully attached, the function returns True. Otherwise the function returns False.
+\par If the object is successfully attached, the function returns True. Otherwise the function returns False.
 \par \pard 
 \par }
 4480
@@ -9986,7 +9987,7 @@ FALSE
 \par TInstantElement\tab if the attribute Value equals AObject, the Value is set to nil.
 \par TInstantContainer\tab AObject is removed from the attributes array of objects.
 \par \pard 
-\par If the object is succesfully detached, the function returns True. Otherwise the function returns False.
+\par If the object is successfully detached, the function returns True. Otherwise the function returns False.
 \par }
 4520
 ID_387
@@ -11250,7 +11251,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Specifies the class of objects being exposed.
 \par \pard\sb25\sa25\tx1435\b\f1 property\b0  ObjectClass: TClass;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 The exposer uses dataset fields to access properties of exposed objects. ObjectClass specifies the common base class of the objects being exposed. By default, the accessor created by the exposer to access the subject will determine the class from the attached subject. \strike TInstantCustomExposer\strike0\{linkID=4790>main\} therefore introduces the ObjectClass property as read-only, but descendants may reintroduce this property as writeable, allowing you to override the class determined by the accessor. \strike TInstantExposer\strike0\{linkID=6440>main\} is an example hereof.
+\par \pard\sb25\sa25\tx1435\b0 The exposer uses dataset fields to access properties of exposed objects. ObjectClass specifies the common base class of the objects being exposed. By default, the accessor created by the exposer to access the subject will determine the class from the attached subject. \strike TInstantCustomExposer\strike0\{linkID=4790>main\} therefore introduces the ObjectClass property as read-only, but descendants may reintroduce this property as writable, allowing you to override the class determined by the accessor. \strike TInstantExposer\strike0\{linkID=6440>main\} is an example hereof.
 \par 
 \par }
 5040
@@ -11420,7 +11421,7 @@ FALSE
 \par \pard\sb25\sa85\fs18 Specifies the options of the exposer.
 \par \pard\sb25\sa25\b\f1 property\b0  Options: \strike TInstantExposerOptions\strike0\{linkID=12320>main\};
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 Use \lang1033\f2 the \lang1040\f0 Options \lang1033\f2 property \lang1040\f0 to specify the options \lang1033\f2 to modify aspects of the \lang1040\f0 exposer\lang1033\f2 's behaviour\lang1040\f0 .
+\par \pard\sb25\sa25\b0 Use \lang1033\f2 the \lang1040\f0 Options \lang1033\f2 property \lang1040\f0 to specify the options \lang1033\f2 to modify aspects of the \lang1040\f0 exposer\lang1033\f2 's behavior\lang1040\f0 .
 \par \lang1033\f2 The default set of options is [\lang1040\f0 eoAutoApply\lang1033\f2 , \lang1040\f3 eoAutoRemember\lang1033\f2 ].\lang1040\f0 
 \par 
 \par }
@@ -11441,7 +11442,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCustomExposer.ReadOnly \cf1\b0\fs16 
 \par \cf2\strike TInstantCustomExposer\cf3\strike0\{linkID=4790>main\}\cf1\{keepn\} 
-\par \pard\sb25\sa85\fs18 Specifies whether the exposer is read-only or writeable.
+\par \pard\sb25\sa85\fs18 Specifies whether the exposer is read-only or writable.
 \par \pard\sb25\sa25\b\f1 property\b0  \b ReadOnly\b0 : Boolean;
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 ReadOnly determines whether the exposed objects can be modified through the exposer or not. If True, rows can be added or deleted and properties can be changed via their corresponding fields. If False, no changes can be made.
@@ -11714,7 +11715,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Deletes an object from the exposer.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  DeleteObject(\b Index\b0 : Integer);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 DeleteObject deletes the object at the position specified by the Index argument from the exposer whithout disposing the object persistently.
+\par \pard\sb25\sa25\tx1435\b0 DeleteObject deletes the object at the position specified by the Index argument from the exposer without disposing the object persistently.
 \par 
 \par }
 5250
@@ -11839,7 +11840,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCustomExposer.GetFieldStrings \cf1\b0\fs16 
 \par \cf2\strike TInstantCustomExposer\cf3\strike0\{linkID=4790>main\}\cf1\{keepn\} 
-\par \pard\sb25\sa85\fs18 Loads a stringlist with the possible values of the specified field.
+\par \pard\sb25\sa85\fs18 Loads a string list with the possible values of the specified field.
 \par \pard\sb25\sa25\b\f1 function\b0  GetFieldStrings(Field: TField; Strings: TStrings): Integer;
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Call this method to load all possible values of a given field into a pick list.
@@ -12189,7 +12190,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Removes an object from the exposer.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  RemoveObject(AObject: TObject): Integer;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 RemoveObject removes an object from the exposer whithout disposing the object persistently.
+\par \pard\sb25\sa25\tx1435\b0 RemoveObject removes an object from the exposer without disposing the object persistently.
 \par 
 \par }
 5460
@@ -13884,21 +13885,21 @@ main
 AttachObject;AttachObject_Method;TInstantElement_AttachObject
 FALSE
 16
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantElement.AttachObject \cf1\b0\fs16 
 \par \strike TInstantElement\strike0\{linkID=6040>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Attaches an object to the attribute.
-\par \pard\sb25\sa25\b\f2 function\b0  AttachObject(AObject: \strike TInstantObject\strike0\{linkID=7380>main\}): Boolean; \b override\b0 ;
+\par \pard\sb25\sa25\b\f1 function\b0  AttachObject(AObject: \strike TInstantObject\strike0\{linkID=7380>main\}): Boolean; \b override\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\b0 Attaches the object specified by the AObject argument to the attribute.
 \par For the descendant classes of TInstantComplex this implies: 
 \par 
-\par \pard\tx2340\ul\b Class\tab Action\f1                                                                          \f0 
+\par \pard\tx2340\ul\b Class\tab Action\f2                                                                          \f0 
 \par \ulnone\b0 TInstantElement\tab AObject is assigned as the attributes Value
 \par TInstantContainer\tab AObject is added to the objects array
 \par \pard 
-\par If the object is succesfully attached, the function returns True. Otherwise the function returns False.
+\par If the object is successfully attached, the function returns True. Otherwise the function returns False.
 \par }
 6160
 ID_551
@@ -13913,21 +13914,21 @@ main
 DetachObject;DetachObject_Method;TInstantElement_DetachObject
 FALSE
 16
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantElement.DetachObject \cf1\b0\fs16 
 \par \strike TInstantElement\strike0\{linkID=6040>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Detaches an object from the attribute.
-\par \pard\sb25\sa25\b\f2 function\b0  DetachObject(AObject: \strike TInstantObject\strike0\{linkID=7380>main\}): Boolean; \b override\b0 ;
+\par \pard\sb25\sa25\b\f1 function\b0  DetachObject(AObject: \strike TInstantObject\strike0\{linkID=7380>main\}): Boolean; \b override\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\b0 Detaches the object specified by the AObject argument from the attribute.
 \par For the descendant classes of TInstantComplex this implies: 
 \par 
-\par \pard\tx2220\ul\b Class\tab Action\f1                                                                                                 \ulnone\b0\f0 
+\par \pard\tx2220\ul\b Class\tab Action\f2                                                                                                 \ulnone\b0\f0 
 \par TInstantElement\tab if the attribute Value equals AObject, the Value is set to nil.
 \par TInstantContainer\tab AObject is removed from the attributes array of objects.
 \par \pard 
-\par If the object is succesfully detached, the function returns True. Otherwise the function returns False.
+\par If the object is successfully detached, the function returns True. Otherwise the function returns False.
 \par }
 6170
 ID_552
@@ -14056,7 +14057,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 Allows navigation of objects within a tree.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantExplorer = \b class\b0 (TCustomControl)
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
-\par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 The Explorer contains a treeview by which the user can navigate objects and their relations.
+\par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 The Explorer contains a tree view by which the user can navigate objects and their relations.
 \par 
 \par }
 6230
@@ -14972,7 +14973,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Specifies the class of objects being exposed.
 \par \pard\sb25\sa25\tx1435\b\f1 property\b0  ObjectClass;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 The exposer uses dataset fields to access properties of exposed objects. ObjectClass specifies the common base class of the objects being exposed. By default, the accessor created by the exposer to access the subject will determine the class from the attached subject. TInstantCustomExposer therefore introduces the ObjectClass property as read-only, but descendants may reintroduce this property as writeable, allowing you to override the class determined by the accessor. TInstantExposer is an example hereof.
+\par \pard\sb25\sa25\tx1435\b0 The exposer uses dataset fields to access properties of exposed objects. ObjectClass specifies the common base class of the objects being exposed. By default, the accessor created by the exposer to access the subject will determine the class from the attached subject. TInstantCustomExposer therefore introduces the ObjectClass property as read-only, but descendants may reintroduce this property as writable, allowing you to override the class determined by the accessor. TInstantExposer is an example hereof.
 \par 
 \par }
 6610
@@ -17432,7 +17433,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 The default container attribute for the instance.
 \par \pard\sb25\sa25\tx1435\b\f1 property\b0  DefaultContainer: \strike TInstantContainer\strike0\{linkID=4300>main\};
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 DefaultContainer returns the default container attribute for the instance. The name of the Default container is specified as part of the metadata for the class. The DefaultContainer enables a convenient way of accessing instances of \strike TInstantObject\strike0\{linkID=7380>main\} descendants that mainly serves as containers. \strike TInstantObject\strike0\{linkID=7380>main\} introduces several mehods that accesses the default container attribute.
+\par \pard\sb25\sa25\tx1435\b0 DefaultContainer returns the default container attribute for the instance. The name of the Default container is specified as part of the metadata for the class. The DefaultContainer enables a convenient way of accessing instances of \strike TInstantObject\strike0\{linkID=7380>main\} descendants that mainly serves as containers. \strike TInstantObject\strike0\{linkID=7380>main\} introduces several methods that accesses the default container attribute.
 \par 
 \par }
 7540
@@ -17492,8 +17493,8 @@ FALSE
 10
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.Id \cf1\b0\fs16\} 
-\par \pard\sb25\tx1435\strike TInstantObject\strike0\{linkID=7380>main\}\tab\ul See Also\ulnone\{linkID=7570\}\{keepn
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.Id \cf1\b0\fs16 
+\par \pard\sb25\tx1435\strike TInstantObject\strike0\{linkID=7380>main\}\tab\ul See Also\ulnone\{linkID=7570\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Specifies the unique Id of the instance.
 \par \pard\sb25\sa25\tx1435\b\f1 property\b0  Id: \b string\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -18121,7 +18122,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Abandons the object
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  Abandon;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 Call Abandon to set the instance in a state where it no longer attempts to store, dispose or refresh itself when the relevant mehods are used. Abandon is called automatically by the connector associated with the instance if the connector is destroyed prematurely.
+\par \pard\sb25\sa25\tx1435\b0 Call Abandon to set the instance in a state where it no longer attempts to store, dispose or refresh itself when the relevant methods are used. Abandon is called automatically by the connector associated with the instance if the connector is destroyed prematurely.
 \par 
 \par }
 7860
@@ -18678,7 +18679,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Copies the attributes of another object to the instance.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  Assign(Source: TPersistent); \b override\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 Call Assign to copy the attributes of the Source object to the instance. Immediatly before and after performing the assignment of the attributes, Assign calls the \strike BeforeAssign\strike0\{linkID=8170>main\} and \strike AfterAssign\strike0\{linkID=7930>main\} methods.
+\par \pard\sb25\sa25\tx1435\b0 Call Assign to copy the attributes of the Source object to the instance. Immediately before and after performing the assignment of the attributes, Assign calls the \strike BeforeAssign\strike0\{linkID=8170>main\} and \strike AfterAssign\strike0\{linkID=7930>main\} methods.
 \par 
 \par }
 8120
@@ -19173,7 +19174,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Determines if change notification and change of state is disabled for the instance.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  ChangesDisabled: Boolean;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 ChangesDisabled determines if the instance will recognize and notify occuring changes. If the value is True the instance is isolated, it neither recognizes nor notifies about changes.
+\par \pard\sb25\sa25\tx1435\b0 ChangesDisabled determines if the instance will recognize and notify occurring changes. If the value is True the instance is isolated, it neither recognizes nor notifies about changes.
 \par 
 \par }
 8350
@@ -19209,12 +19210,12 @@ main
 CheckId;CheckId_Method;TInstantObject_CheckId
 FALSE
 10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.CheckId \cf1\b0\fs16 
 \par \strike TInstantObject\strike0\{linkID=7380>main\}\{keepn\} 
-\par \pard\sb25\sa85\fs18 Valides if the instance has a valid \strike Id\strike0\{linkID=7560>main\}
-\par \pard\sb25\sa25\b\f2 procedure\b0  CheckId;
+\par \pard\sb25\sa85\fs18 Checks if the instance has a valid \strike Id\strike0\{linkID=7560>main\}
+\par \pard\sb25\sa25\b\f1 procedure\b0  CheckId;
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Call CheckId to verify that the instance has a valid \strike Id\strike0\{linkID=7560>main\}. If the instance does not initially have an \strike Id\strike0\{linkID=7560>main\} when calling CheckId, an \strike Id\strike0\{linkID=7560>main\} is generated by the \strike InstantGenerateId\strike0\{linkID=11510>main\} function. If the instance initially has an \strike Id\strike0\{linkID=7560>main\}, this \strike Id\strike0\{linkID=7560>main\} is validated by calling the \strike InstantIsValidObjectId\strike0\{linkID=11580>main\} function.
 \par 
@@ -19469,14 +19470,14 @@ main
 CreateInstance;CreateInstance_Method;TInstantObject_CreateInstance
 FALSE
 10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.CreateInstance \cf1\b0\fs16 
 \par \strike TInstantObject\strike0\{linkID=7380>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Creates an instance for streaming purposes.
-\par \pard\sb25\sa25\b\f2 class\b0  \b function\b0  CreateInstance(Arg: Pointer): \strike TInstantStreamable\strike0\{linkID=10820>main\}; \b override\b0 ;
+\par \pard\sb25\sa25\b\f1 class\b0  \b function\b0  CreateInstance(Arg: Pointer): \strike TInstantStreamable\strike0\{linkID=10820>main\}; \b override\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 CreateInstance is used by the streaming mechanism of IntantObjects to create instances of classes descending from \strike TInstantObject\strike0\{linkID=7380>main\}. If assigned, the Arg argument contains a reference to the connector to be used for the newly created instance.
+\par \pard\sb25\sa25\b0 CreateInstance is used by the streaming mechanism of InstantObjects to create instances of classes descending from \strike TInstantObject\strike0\{linkID=7380>main\}. If assigned, the Arg argument contains a reference to the connector to be used for the newly created instance.
 \par 
 \par }
 8490
@@ -19940,7 +19941,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Searches for a container by the its name.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  FindContainer(\b const\b0  ContainerName: \b string\b0 ): \strike TInstantContainer\strike0\{linkID=4300>main\};
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 Call FindContainer to search for a container by its name. FindContainer returns the \strike TInstantContainer\strike0\{linkID=4300>main\} object for the specified attribute name. It is only rarely necessary to call FindContainer since since fields for the containers are present in the class declaration. If the container does not exist, FindContainer returns nil.
+\par \pard\sb25\sa25\tx1435\b0 Call FindContainer to search for a container by its name. FindContainer returns the \strike TInstantContainer\strike0\{linkID=4300>main\} object for the specified attribute name. It is only rarely necessary to call FindContainer since fields for the containers are present in the class declaration. If the container does not exist, FindContainer returns nil.
 \par \pard\fi-195\li195\sb25\sa25\tx1435\b Note: \b0  An application should not access the attributes of objects directly. Instead the classes that hold the attributes should also introduce properties and methods through which the attributes can be manipulated. Using this approach, attributes and the logic accompanying them can be encapsulated in the classes to which they belong.
 \par 
 \par }
@@ -20346,7 +20347,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.Refresh \cf1\b0\fs16 
 \par \pard\sb25\tx1435\strike TInstantObject\strike0\{linkID=7380>main\}\tab\ul See Also\ulnone\{linkID=8890\}\{keepn\} 
-\par \pard\sb25\sa85\tx1435\fs18 Refereshes the attributes of the instance.
+\par \pard\sb25\sa85\tx1435\fs18 Refreshes the attributes of the instance.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  Refresh;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 Call Refresh to ensure that attributes of the instance has the latest values from the database. Immediately before and after performing the refresh of the instance, Refresh calls the \strike BeforeRefresh\strike0\{linkID=8250>main\} and \strike AfterRefresh\strike0\{linkID=8030>main\} methods. If the instance is longer in the database, Refresh raises an exception. If the instance is owned, the owner is requested to refresh itself.
@@ -20492,14 +20493,14 @@ main
 ResetAttributes;ResetAttributes_Method;TInstantObject_ResetAttributes
 FALSE
 10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.ResetAttributes \cf1\b0\fs16 
 \par \strike TInstantObject\strike0\{linkID=7380>main\}\{keepn\}
 \par \pard\sb25\sa85\fs18 Resets the values of the attributes to their default values.
-\par \pard\sb25\sa25\b\f2 procedure\b0  ResetAttributes;
+\par \pard\sb25\sa25\b\f1 procedure\b0  ResetAttributes;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 Use ResetAttribute to reset the values of all attributes of the instance to their default values.
+\par \pard\sb25\sa25\b0 Use ResetAttribute\lang1033\f2 s\lang1040\f0  to reset the values of all attributes of the instance to their default values.
 \par 
 \par }
 8960
@@ -21860,7 +21861,7 @@ FALSE
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\b0 TInstantReference represents a reference relationship to a single object. Although TInstantReference introduces properties and methods that can be used to reference objects, it mainly implements functionality that has been introduced by its abstract ancestors.
 \par TInstantReference takes its own reference to an object that is set as its Value. This means that an object that has been created independently of the reference attribute should also be destroyed independently of the reference attribute even though it has been set as its Value.
 \par The Value of a reference attribute may be unassigned.
-\par Reference relationships may be heterogeneous. This means that an object may reference objects that are stored in another database. The Connector property of TInstantReference is therefore writeable. To enable this distributed behavior the Connector property should simply be assigned to a Connector object that connects to the right database.
+\par Reference relationships may be heterogeneous. This means that an object may reference objects that are stored in another database. The Connector property of TInstantReference is therefore writable. To enable this distributed behavior the Connector property should simply be assigned to a Connector object that connects to the right database.
 \par Referenced objects are retrieved on demand. This means that the reference attribute will not retrieve the object it references until it is required. If a reference attribute references a non-existing object its Value property is nil.
 \par \pard\fi-195\li195\sb25\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\b Note: \b0  Referenced Objects should be considered as loosely coupled entities of other objects. No ownership is claimed by the object that defines the reference relationship. This implies that an object can participate in as many reference relationships, as it is required. Referenced objects are neither stored, disposed nor refreshed by the objects they are referenced by. If an object is owned, it cannot participate in a reference relationship.
 \par 
@@ -22521,7 +22522,7 @@ FALSE
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\b\f0 Description
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\b0 TInstantReferences represents a reference relationship to multiple objects. \strike TInstantReference\strike0\{linkID=9510>main\} mainly implements functionality that has been introduced by its abstract ancestors.
 \par TInstantReferences takes its own reference to an object that is added to its array of objects. This means that an object that has been created independently of the references attribute should also be destroyed independently of the references attribute even though it has been added to its array of objects.
-\par Reference relationships may be heterogeneous. This means that an object may reference objects that are stored in another database. The Connector property of TInstantReferences is therefore writeable. To enable this distributed behavior the Connector property should simply be assigned to a Connector object that connects to the right database.
+\par Reference relationships may be heterogeneous. This means that an object may reference objects that are stored in another database. The Connector property of TInstantReferences is therefore writable. To enable this distributed behavior the Connector property should simply be assigned to a Connector object that connects to the right database.
 \par Referenced objects are retrieved on demand. This means that the references attribute will not retrieve the objects it references until they are required individually. If a references attribute references a non-existing object, the position the object occupies in the attributes array of objects will be nil.
 \par \pard\fi-195\li195\sb25\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\b Note: \b0  Referenced Objects should be considered as loosely coupled entities of other objects. No ownership is claimed by the object that defines the reference relationship. This implies that an object can participate in as many reference relationships, as it is required. Referenced objects are neither stored, disposed nor refreshed by the objects they are referenced by. If an object is owned, it cannot participate in a reference relationship.
 \par 
@@ -23558,7 +23559,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 TInstantSelector provides dataset-based access to a selection of objects.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantSelector = \b class\b0 (\strike TInstantCustomExposer\strike0\{linkID=4790>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
-\par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 TInstantSelector exposes a selection of objects. The objects are selected by the means of a \strike Command\strike0\{linkID=10320>main\} statement. The selector is independent of the kind of database from which the selection is to be made. The syntax of the \strike Command\strike0\{linkID=10320>main\} statement is therefore also database independent. When peforming the selection, the \strike Command\strike0\{linkID=10320>main\} statement is parsed and translated to a statement that is understandable by the database to which the selector is connected through its \strike Connector\strike0\{linkID=10330>main\} property.
+\par \pard\sb25\sa25\tx1435\tx2875\tx4315\b0 TInstantSelector exposes a selection of objects. The objects are selected by the means of a \strike Command\strike0\{linkID=10320>main\} statement. The selector is independent of the kind of database from which the selection is to be made. The syntax of the \strike Command\strike0\{linkID=10320>main\} statement is therefore also database independent. When performing the selection, the \strike Command\strike0\{linkID=10320>main\} statement is parsed and translated to a statement that is understandable by the database to which the selector is connected through its \strike Connector\strike0\{linkID=10330>main\} property.
 \par The selection of objects may be modified by adding or removing objects to and from the selector components array of objects.
 \par 
 \par }
@@ -23974,7 +23975,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Specifies the class of objects being exposed.
 \par \pard\sb25\sa25\tx1435\b\f1 property\b0  ObjectClass;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 The exposer uses dataset fields to access properties of exposed objects. ObjectClass specifies the common base class of the objects being exposed. By default, the accessor created by the exposer to access the subject will determine the class from the attached subject. TInstantCustomExposer therefore introduces the ObjectClass property as read-only, but descendants may reintroduce this property as writeable, allowing you to override the class determined by the accessor. TInstantExposer is an example hereof.
+\par \pard\sb25\sa25\tx1435\b0 The exposer uses dataset fields to access properties of exposed objects. ObjectClass specifies the common base class of the objects being exposed. By default, the accessor created by the exposer to access the subject will determine the class from the attached subject. TInstantCustomExposer therefore introduces the ObjectClass property as read-only, but descendants may reintroduce this property as writable, allowing you to override the class determined by the accessor. TInstantExposer is an example hereof.
 \par 
 \par }
 10360
@@ -24074,14 +24075,14 @@ main
 Params;Params_Property;TInstantSelector_Params
 FALSE
 10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantSelector.Params \cf1\b0\fs16 
 \par \strike TInstantSelector\strike0\{linkID=10190>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Contains the parameters for the command.
-\par \pard\sb25\sa25\b\f2 property\b0  Params: TParams;
+\par \pard\sb25\sa25\b\f1 property\b0  Params: TParams;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 Use the Params property to specify parameter names, values, and data types at designtime or runtime for the command of the Selector. Params is a zero-based array of TParams parameter records. Index specifies the array element to access.
+\par \pard\sb25\sa25\b0 Use the Params property to specify parameter names, values, and data types at design time or runtime for the command of the Selector. Params is a zero-based array of TParams parameter records. Index specifies the array element to access.
 \par 
 \par }
 10410
@@ -24119,25 +24120,27 @@ main
 
 TInstantSimple;TInstantSimple_Object
 FALSE
-19
+21
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantSimple \cf1\b0\fs16  
-\par \pard\sb25\tx1435\tx2875\ul Hierarchy\ulnone\{linkID=10440\}\tab\ul See Also\ulnone\{linkID=10430\}\tab\strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantSimple \b0\fs16  
+\par \pard\sb25\tx1435\tx2875\cf1\ul Hierarchy\cf2\ulnone\{linkID=10440\}\cf1\tab\ul See Also\cf2\ulnone\{linkID=10430\}\tab\cf1\strike Unit: InstantPersistence\cf2\strike0\{linkID=12930>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 The ancestor of all the attribute classes that represent simple types.
-\par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantSimple = \b class\b0 (\strike TInstantAttribute\strike0\{linkID=2170>main\})
+\par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantSimple = \b class\b0 (\cf1\strike TInstantAttribute\cf2\strike0\{linkID=2170>main\}\cf0 )
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
 \par \pard\sb25\sa25\tx1435\tx2875\b0 TInstantSimple is the ancestor of all the attribute classes that represents simple types.
 \par TInstantSimple is abstract; so do not create instances of this class. Instead refer to the following concrete descendant classes: 
 \par 
-\par \ul\b Simple attribute classes\f2                                                       \ulnone\b0\f0 
-\par \strike TInstantInteger\strike0\{linkID=7060>main\}
-\par \strike TInstantFloat\strike0\{linkID=6830>main\}
-\par \strike TInstantBoolean\strike0\{linkID=2860>main\}
-\par \strike TInstantString\strike0\{linkID=10990>main\}
-\par \strike TInstantDateTime\strike0\{linkID=5660>main\}
-\par \strike TInstantBlob\strike0\{linkID=2680>main\}
-\par \strike TInstantMemo\strike0\{linkID=7180>main\}
+\par \ul\b Simple attribute classes\ulnone\b0 
+\par \cf1\strike TInstantBlob\cf2\strike0\{linkID=2680>main\}\cf0 
+\par \cf1\strike TInstantBoolean\cf2\strike0\{linkID=2860>main\}\cf0 
+\par \cf1\strike TInstant\lang1033\f2 Currency\cf2\lang3081\strike0\f0\{linkID=\lang1033\f2 4670\lang3081\f0 >main\}\cf0 
+\par \cf1\strike TInstantDateTime\cf2\strike0\{linkID=5660>main\}\cf0 
+\par \cf1\strike TInstantFloat\cf2\strike0\{linkID=6830>main\}\cf0 
+\par \cf1\strike TInstantInteger\cf2\strike0\{linkID=7060>main\}\cf0 
+\par \cf1\strike TInstantMemo\cf2\strike0\{linkID=7180>main\}\cf0 
+\par \cf1\strike TInstantString\cf2\strike0\{linkID=10990>main\}\cf0 
+\par 
 \par }
 10430
 ID_997
@@ -25254,7 +25257,7 @@ FALSE
 \par \pard\sb25\sa85\tx1435\fs18 Loads the object from a stream
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  LoadFromStream(Stream: TStream; ProcessEvent: \strike TInstantProcessObjectEvent\strike0\{linkID=12460>main\});
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 Call LoadFromStream to load the object from a stream specified by the Stream argument. The stream must contain an object in the binary stream format. By setting the ProccessEvent argument, information about the objects being processed can be obtained.
+\par \pard\sb25\sa25\tx1435\b0 Call LoadFromStream to load the object from a stream specified by the Stream argument. The stream must contain an object in the binary stream format. By setting the ProcessEvent argument, information about the objects being processed can be obtained.
 \par 
 \par }
 10930
@@ -25331,14 +25334,14 @@ main
 SaveToStream;SaveToStream_Method;TInstantStreamable_SaveToStream
 FALSE
 10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantStreamable.SaveToStream \cf1\b0\fs16 
 \par \strike TInstantStreamable\strike0\{linkID=10820>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Saves the object to a stream
-\par \pard\sb25\sa25\b\f2 procedure\b0  SaveToStream(Stream: TStream; ProcessEvent: \strike TInstantProcessObjectEvent\strike0\{linkID=12460>main\});
+\par \pard\sb25\sa25\b\f1 procedure\b0  SaveToStream(Stream: TStream; ProcessEvent: \strike TInstantProcessObjectEvent\strike0\{linkID=12460>main\});
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 Saves the object to a stream specified by the Stream argument. By setting the ProccessEvent argument, information about the objects being processed can be obtained.
+\par \pard\sb25\sa25\b0 Saves the object to a stream specified by the Stream argument. By setting the ProcessEvent argument, information about the objects being processed can be obtained.
 \par 
 \par }
 10970
@@ -25919,7 +25922,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantCharSetToStr \cf1\b0\fs16  
 \par \pard\sb25\tx1435\tx2875\ul See Also\ulnone\{linkID=11220\}\tab\strike Example 1\strike0\{linkID=11230>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13020>main\}\{keepn\}
-\par \pard\sb25\sa85\tx1435\tx2875\fs18 Coverts a set of char to a string.
+\par \pard\sb25\sa85\tx1435\tx2875\fs18 Converts a set of char to a string.
 \par \pard\sb25\sa25\tx1435\tx2875\b\f1 function\b0  InstantCharSetToStr(C: TChars): \b string\b0 ;
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
 \par \pard\sb25\sa25\tx1435\tx2875\b0 Use InstantCharSetToStr to convert a set of char to a string. The resulting string is condensed to be as short as possible using ".." to denote ranges.
@@ -26075,8 +26078,8 @@ FALSE
 \par }
 11290
 327SI8U
-InstantCompareObjects
-InstantCompareObjects;
+InstantCompareObjects 1
+InstantCompareObjects 1;
 
 
 functionsssymbol:000050
@@ -26085,48 +26088,50 @@ main
 
 
 FALSE
-15
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantCompareObjects \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13020>main\}\{keepn\} 
+16
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang3081\b\f0\fs24 InstantCompareObjects 1 \cf0\b0\fs16 
+\par \cf2\strike Unit: InstantUtils\cf3\strike0\{linkID=13020>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\fs18 Compares two objects by comparing a named published property.
-\par \pard\sb25\sa25\b\f2 function\b0  InstantCompareObjects(Obj1: TObject; Obj2: TObject; PropName: \b string\b0 ; Options: \strike TInstantCompareOptions\strike0\{linkID=12150>main\}): Integer;
+\par \pard\sb25\sa25\b\f1 function\b0  InstantCompareObjects(Obj1: TObject; Obj2: TObject; PropName: \b string\b0 ; Options: \cf2\strike TInstantCompareOptions\cf3\strike0\{linkID=12150>main\}\cf0 ): Integer;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 Use InstantCompareObjects a compare two objects by a single published property named as the PropName argument. The Options argument applies to string property comparisons and specifies if a case insensitive comparison should be performed and if a partial match is sufficient.
-\par \trowd\trleft-1\trqc\cellx939\cellx1439\pard\intbl The result of the comparison renders the following return values: \b Comparison\cell Return value\cell\row
-\b0\trowd\trleft-1\trqc\cellx939\cellx1439\intbl Obj1 < Obj2\cell -1\cell\row
-\intbl Obj1 = Obj2\cell 0\cell\row
-\intbl Obj1 > Obj2\cell 1\cell\row
-\pard 
+\par \pard\sb25\sa25\b0 Use InstantCompareObjects to compare two objects by a single published property named as the PropName argument. The Options argument applies to string property comparisons and specifies if a case insensitive comparison should be performed and if a partial match is sufficient.
+\par The result of the comparison renders the following return values:
+\par \fs10 
+\par \pard\sb25\sa25\tqc\tx2500\b\fs18 Comparison\tab Return value\b0 
+\par \pard\sb25\sa25\tqc\tx2500 Obj1 < Obj2\tab -1
+\par Obj1 = Obj2\tab 0
+\par Obj1 > Obj2\tab 1
 \par 
 \par }
 11300
 327SI8W
-InstantCompareObjects
-InstantCompareObjects;
+InstantCompareObjects 2
+InstantCompareObjects 2;
 
 
-
+functionsssymbol:000060
 Imported
 main
 
 
 FALSE
-15
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantCompareObjects \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13020>main\}\{keepn\} 
+16
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang3081\b\f0\fs24 InstantCompareObjects 2 \cf0\b0\fs16 
+\par \cf2\strike Unit: InstantUtils\cf3\strike0\{linkID=13020>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\fs18 Compares two objects by comparing mulpiple named published properties.
-\par \pard\sb25\sa25\b\f2 function\b0  \strike InstantCompareObjects\strike0\{linkID=11290>main\}(Obj1: TObject; Obj2: TObject; PropNames: TStrings; Options: \strike TInstantCompareOptions\strike0\{linkID=12150>main\}): Integer;
+\par \pard\sb25\sa25\b\f1 function\cf2\b0\strike InstantCompareObjects\cf3\strike0\{linkID=11290>main\}\cf0 (Obj1: TObject; Obj2: TObject; PropNames: TStrings; Options: \cf2\strike TInstantCompareOptions\cf3\strike0\{linkID=12150>main\}\cf0 ): Integer;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 Use \strike InstantCompareObjects\strike0\{linkID=11290>main\} a compare two objects by multiple published properties listed in the PropNames argument. The Options argument applies to string property comparisons and specifies if a case insensitive comparison should be performed and if a partial match is sufficient.
-\par \trowd\trleft-1\trqc\cellx939\cellx1439\pard\intbl The result of the comparison renders the following return values: \b Comparison\cell Return value\cell\row
-\b0\trowd\trleft-1\trqc\cellx939\cellx1439\intbl Obj1 < Obj2\cell -1\cell\row
-\intbl Obj1 = Obj2\cell 0\cell\row
-\intbl Obj1 > Obj2\cell 1\cell\row
-\pard 
+\par \pard\sb25\sa25\b0 Use \cf2\strike InstantCompareObjects\cf3\strike0\{linkID=11290>main\}\cf0  to compare two objects by multiple published properties listed in the PropNames argument. The Options argument applies to string property comparisons and specifies if a case insensitive comparison should be performed and if a partial match is sufficient.
+\par The result of the comparison renders the following return values:
+\par \fs10 
+\par \pard\sb25\sa25\tqc\tx2500\b\fs18 Comparison\tab Return value\b0 
+\par \pard\sb25\sa25\tqc\tx2500 Obj1 < Obj2\tab -1
+\par Obj1 = Obj2\tab 0
+\par Obj1 > Obj2\tab 1
 \par 
 \par }
 11310
@@ -26135,7 +26140,7 @@ InstantCompareText
 InstantCompareText;
 
 
-functionsssymbol:000060
+functionsssymbol:000070
 Imported
 main
 
@@ -26158,26 +26163,27 @@ InstantCompareValues
 InstantCompareValues;
 
 
-functionsssymbol:000070
+functionsssymbol:000080
 Imported
 main
 
 
 FALSE
-15
+16
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantCompareValues \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13020>main\}\{keepn\} 
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\b\f0\fs24 InstantCompareValues \cf0\b0\fs16 
+\par \cf2\strike Unit: InstantUtils\cf3\strike0\{linkID=13020>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\fs18 Compares the values of two variants.
-\par \pard\sb25\sa25\b\f2 function\b0  InstantCompareValues(V1: Variant; V2: Variant; Options: \strike TInstantCompareOptions\strike0\{linkID=12150>main\}): Integer;
+\par \pard\sb25\sa25\b\f2 function\b0  InstantCompareValues(V1: Variant; V2: Variant; Options: \cf2\strike TInstantCompareOptions\cf3\strike0\{linkID=12150>main\}\cf0): Integer;
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Use IntantCompareValues to compare the values of two variants. The Options argument applies to string value comparisons and specifies if a case insensitive comparison should be performed and if a partial match is sufficient.
-\par \trowd\trleft-1\trqc\cellx839\cellx1439\pard\intbl The result of the comparison renders the following return values \b Comparison\cell Return value\cell\row
-\b0\trowd\trleft-1\trqc\cellx839\cellx1439\intbl V1 < V2\cell -1\cell\row
-\intbl V1 = V2\cell 0\cell\row
-\intbl V1 > V2\cell 1\cell\row
-\pard 
+\par \pard\sb25\sa25 The result of the comparison renders the following return values:
+\par \fs10
+\par \pard\sb25\sa25\tqc\tx2500\b\f0\fs18 Comparison\tab Return value\b0 
+\par \pard\sb25\sa25\tqc\tx2500\f0\fs18 Obj1 < Obj2\tab -1
+\par Obj1 = Obj2\tab 0
+\par Obj1 > Obj2\tab 1
 \par 
 \par }
 11330
@@ -26186,7 +26192,7 @@ InstantConstArrayToVariant
 InstantConstArrayToVariant;
 
 
-functionsssymbol:000080
+functionsssymbol:000090
 Imported
 main
 
@@ -26209,7 +26215,7 @@ InstantDateTimeToStr
 InstantDateTimeToStr;
 
 
-functionsssymbol:000090
+functionsssymbol:000100
 Imported
 main
 
@@ -26251,7 +26257,7 @@ InstantDefaultConnector
 InstantDefaultConnector;
 
 
-functionsssymbol:000100
+functionsssymbol:000110
 Imported
 main
 
@@ -26274,7 +26280,7 @@ InstantDisableNotifiers
 InstantDisableNotifiers;
 
 
-functionsssymbol:000110
+functionsssymbol:000120
 Imported
 main
 
@@ -26316,7 +26322,7 @@ InstantEnableNotifiers
 InstantEnableNotifiers;
 
 
-functionsssymbol:000120
+functionsssymbol:000130
 Imported
 main
 
@@ -26358,7 +26364,7 @@ InstantExploreObject
 InstantExploreObject;
 
 
-functionsssymbol:000130
+functionsssymbol:000140
 Imported
 main
 
@@ -26400,7 +26406,7 @@ InstantFileVersion
 InstantFileVersion;
 
 
-functionsssymbol:000140
+functionsssymbol:000150
 Imported
 main
 
@@ -26442,7 +26448,7 @@ InstantFileVersionStr
 InstantFileVersionStr;
 
 
-functionsssymbol:000150
+functionsssymbol:000160
 Imported
 main
 
@@ -26484,7 +26490,7 @@ InstantFindAccessorClass
 InstantFindAccessorClass;
 
 
-functionsssymbol:000160
+functionsssymbol:000170
 Imported
 main
 
@@ -26528,7 +26534,7 @@ InstantFindClass
 InstantFindClass;
 
 
-functionsssymbol:000170
+functionsssymbol:000180
 Imported
 main
 
@@ -26572,7 +26578,7 @@ InstantGenerateId
 InstantGenerateId;
 
 
-functionsssymbol:000180
+functionsssymbol:000190
 Imported
 main
 
@@ -26595,7 +26601,7 @@ InstantGetAccessorClass
 InstantGetAccessorClass;
 
 
-functionsssymbol:000190
+functionsssymbol:000200
 Imported
 main
 
@@ -26638,7 +26644,7 @@ InstantGetClass
 InstantGetClass;
 
 
-functionsssymbol:000200
+functionsssymbol:000210
 Imported
 main
 
@@ -26681,7 +26687,7 @@ InstantGetClasses
 InstantGetClasses;
 
 
-functionsssymbol:000210
+functionsssymbol:000220
 Imported
 main
 
@@ -26704,7 +26710,7 @@ InstantIsIdentifier
 InstantIsIdentifier;
 
 
-functionsssymbol:000220
+functionsssymbol:000230
 Imported
 main
 
@@ -26727,7 +26733,7 @@ InstantIsValidObjectId
 InstantIsValidObjectId;
 
 
-functionsssymbol:000230
+functionsssymbol:000240
 Imported
 main
 
@@ -26750,7 +26756,7 @@ InstantMatchObject 1
 InstantMatchObject,1;
 
 
-functionsssymbol:000240
+functionsssymbol:000250
 Imported
 main
 
@@ -26792,7 +26798,7 @@ InstantMatchObject 2
 InstantMatchObject,2;
 
 
-functionsssymbol:000250
+functionsssymbol:000260
 Imported
 main
 
@@ -26834,7 +26840,7 @@ InstantNameToClassName
 InstantNameToClassName;
 
 
-functionsssymbol:000260
+functionsssymbol:000270
 Imported
 main
 
@@ -26876,7 +26882,7 @@ InstantObjectBinaryToText
 InstantObjectBinaryToText;
 
 
-functionsssymbol:000270
+functionsssymbol:000280
 Imported
 main
 
@@ -26919,7 +26925,7 @@ InstantObjectTextToBinary
 InstantObjectTextToBinary;
 
 
-functionsssymbol:000280
+functionsssymbol:000290
 Imported
 main
 
@@ -26962,7 +26968,7 @@ InstantPartStr
 InstantPartStr;
 
 
-functionsssymbol:000290
+functionsssymbol:000300
 Imported
 main
 
@@ -27006,7 +27012,7 @@ InstantReadObject
 InstantReadObject;
 
 
-functionsssymbol:000300
+functionsssymbol:000310
 Imported
 main
 
@@ -27049,7 +27055,7 @@ InstantReadObjects
 InstantReadObjects;
 
 
-functionsssymbol:000310
+functionsssymbol:000320
 Imported
 main
 
@@ -27092,7 +27098,7 @@ InstantRefreshObjects
 InstantRefreshObjects;
 
 
-functionsssymbol:000320
+functionsssymbol:000330
 Imported
 main
 
@@ -27135,7 +27141,7 @@ InstantRegisterAccessorClass
 InstantRegisterAccessorClass;
 
 
-functionsssymbol:000330
+functionsssymbol:000340
 Imported
 main
 
@@ -27177,7 +27183,7 @@ InstantRegisterClass
 InstantRegisterClass;
 
 
-functionsssymbol:000340
+functionsssymbol:000350
 Imported
 main
 
@@ -27221,7 +27227,7 @@ InstantRegisterClasses
 InstantRegisterClasses;
 
 
-functionsssymbol:000350
+functionsssymbol:000360
 Imported
 main
 
@@ -27265,7 +27271,7 @@ InstantRightPos
 InstantRightPos;
 
 
-functionsssymbol:000360
+functionsssymbol:000370
 Imported
 main
 
@@ -27313,7 +27319,7 @@ InstantStrToCharSet
 InstantStrToCharSet;
 
 
-functionsssymbol:000370
+functionsssymbol:000380
 Imported
 
 
@@ -27324,7 +27330,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 InstantStrToCharSet \b0\fs16  
 \par \pard\sb25\tx1435\tx2875\ul See Also\ulnone\{linkID=11860\}\tab\strike Example 1\strike0\{linkID=11870>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13020>main\}\{keepn\}
-\par \pard\sb25\sa85\tx1435\tx2875\fs18 Coverts a string to a set of char.
+\par \pard\sb25\sa85\tx1435\tx2875\fs18 Converts a string to a set of char.
 \par \pard\sb25\sa25\tx1435\tx2875\b\f1 function\b0  InstantStrToCharSet(\b const\b0  Str: \b string\b0 ): TChars;
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
 \par \pard\sb25\sa25\tx1435\tx2875\b0 Use InstantStrToCharSet to convert a string to a set of char. The string may be condensed using ".." to denote ranges.
@@ -27377,7 +27383,7 @@ InstantStrToDate
 InstantStrToDate;
 
 
-functionsssymbol:000380
+functionsssymbol:000390
 Imported
 main
 
@@ -27421,7 +27427,7 @@ InstantStrToDateTime
 InstantStrToDateTime;
 
 
-functionsssymbol:000390
+functionsssymbol:000400
 Imported
 main
 
@@ -27466,7 +27472,7 @@ InstantStrToList
 InstantStrToList;
 
 
-functionsssymbol:000400
+functionsssymbol:000410
 Imported
 main
 
@@ -27521,7 +27527,7 @@ InstantStrToTime
 InstantStrToTime;
 
 
-functionsssymbol:000410
+functionsssymbol:000420
 Imported
 main
 
@@ -27565,7 +27571,7 @@ InstantUnregisterAccessorClass
 InstantUnregisterAccessorClass;
 
 
-functionsssymbol:000420
+functionsssymbol:000430
 Imported
 main
 
@@ -27607,7 +27613,7 @@ InstantUnregisterClass
 InstantUnregisterClass;
 
 
-functionsssymbol:000430
+functionsssymbol:000440
 Imported
 main
 
@@ -27649,7 +27655,7 @@ InstantUnregisterClasses
 InstantUnregisterClasses;
 
 
-functionsssymbol:000440
+functionsssymbol:000450
 Imported
 main
 
@@ -27691,7 +27697,7 @@ InstantWriteObject
 InstantWriteObject;
 
 
-functionsssymbol:000450
+functionsssymbol:000460
 Imported
 main
 
@@ -27734,7 +27740,7 @@ InstantWriteObjects
 InstantWriteObjects;
 
 
-functionsssymbol:000460
+functionsssymbol:000470
 Imported
 main
 
@@ -27840,7 +27846,7 @@ FALSE
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\b0 Specifies how objects are accessed. Either the object itself or objects \lang1033\f1 referenced by its \lang1040\f0 containe\lang1033\f1 r attributes\lang1040\f0  can be accessed.
 \par 
-\par \pard\tx1980\b Value\lang1033\f1\tab Description\lang1040\f0 
+\par \pard\tx1980\b Value\lang1033\f1\tab Meaning\lang1040\f0 
 \par \b0 amObject\lang1033\f1\tab\lang1040\f0 The object itself is accessed.\b 
 \par \b0 amContent\lang1033\f1\tab\lang1040\f0 The contained objects are accessed.\b 
 \par \b0 
@@ -27858,20 +27864,20 @@ main
 
 FALSE
 18
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}{\f3\fnil Arial;}{\f4\fnil\fcharset0 Arial;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}{\f4\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantADOProviderType \cf1\b0\fs16 
 \par \strike Unit: InstantADO\strike0\{linkID=12640>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The ADO provider type
-\par \pard\sb25\sa25\f2 TInstantADOProviderType = (ptUnknown, ptMSJet, ptMSSQLServer, ptOracle, ptMySQL, ptIBMDB2);
+\par \pard\sb25\sa25\f1 TInstantADOProviderType = (ptUnknown, ptMSJet, ptMSSQLServer, ptOracle, ptMySQL, ptIBMDB2);
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\b0 TInstantADOProviderType enumerates the types of ADO providers recognized by InstantObjects\lang1033\f1 .\lang1040\f0  
+\par \pard\b0 TInstantADOProviderType enumerates the types of ADO providers recognized by InstantObjects\lang1033\f2 .\lang1040\f0  
 \par 
-\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Meaning\b0 
+\par \pard\tx1980\b Value\lang1033\f2\tab\lang1040\f0 Meaning\b0 
 \par \f3 ptUnknown\lang1033\tab\lang1040 The provider is not recognized
-\par \f0 ptJet\lang1033\f1\tab\lang1040\f0 Microsoft Jet OLE DB Provider
-\par ptMSSQLServer\lang1033\f1\tab\lang1040\f0 Microsoft OLE DB Provider for SQL Server
-\par ptOracle\lang1033\f1\tab\lang1040\f0 Oracle OLE DB Provider
+\par \f0 pt\lang1033\f2 MS\lang1040\f0 Jet\lang1033\f2\tab\lang1040\f0 Microsoft Jet OLE DB Provider
+\par ptMSSQLServer\lang1033\f2\tab\lang1040\f0 Microsoft OLE DB Provider for SQL Server
+\par ptOracle\lang1033\f2\tab\lang1040\f0 Oracle OLE DB Provider
 \par \f4 ptMySQL\lang1033\tab\lang1040 MySQL \f0 Provider
 \par \f4 ptIBMDB2\lang1033\tab\lang1040 IBM DB2 \f0 Provider\f4 
 \par \pard 
@@ -27911,29 +27917,30 @@ main
 
 
 FALSE
-24
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
+25
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantAttributeType \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\} 
+\par \cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=12930>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa85\fs18 Specifies the type of an attribute.
-\par \pard\sb25\sa25\f2 TInstantAttributeType = (atUnknown, atInteger, atFloat, atBoolean, atString, atDateTime, atBlob, atMemo, atPart, atReference, atParts, atReferences);
+\par \pard\sb25\sa25\f1 TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean, atString, atDateTime, atBlob, atMemo, atPart, atReference, atParts, atReferences);
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\b0 TInstantAttributeType specifies the type of an attribute. 
 \par 
-\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Description\b0 
-\par atUnknown\lang1033\f1\tab\lang1040\f0 Unknown or undetermined
-\par atInteger\lang1033\f1\tab\lang1040\f0 32-Bit integer attribute
-\par atFloat\lang1033\f1\tab\lang1040\f0 Floating-point numeric attribute
-\par atBoolean\lang1033\f1\tab\lang1040\f0 Boolean attribute
-\par atString\lang1033\f1\tab\lang1040\f0 Character or string attribute
-\par atDateTime\lang1033\f1\tab\lang1040\f0 Date and time attribute
-\par atBlob\lang1033\f1\tab\lang1040\f0 Binary Large Object attribute
-\par atMemo\lang1033\f1\tab\lang1040\f0 Text memo attribute
-\par atPart\lang1033\f1\tab\lang1040\f0 Single object embedding attribute
-\par atReference\lang1033\f1\tab\lang1040\f0 Single object reference attribute
-\par atParts\lang1033\f1\tab\lang1040\f0 Multiple objects embedding attribute
-\par atReferences\lang1033\f1\tab\lang1040\f0 Multiple objects reference attribute
+\par \pard\tx1980\b Value\lang1033\f2\tab\lang1040\f0 Meaning\b0 
+\par atUnknown\lang1033\f2\tab\lang1040\f0 Unknown or undetermined
+\par atInteger\lang1033\f2\tab\lang1040\f0 32-Bit integer attribute
+\par atFloat\lang1033\f2\tab\lang1040\f0 Floating-point numeric attribute
+\par at\lang1033\f2 Currency\tab Currency \lang1040\f0 attribute
+\par atBoolean\lang1033\f2\tab\lang1040\f0 Boolean attribute
+\par atString\lang1033\f2\tab\lang1040\f0 Character or string attribute
+\par atDateTime\lang1033\f2\tab\lang1040\f0 Date and time attribute
+\par atBlob\lang1033\f2\tab\lang1040\f0 Binary Large Object attribute
+\par atMemo\lang1033\f2\tab\lang1040\f0 Text memo attribute
+\par atPart\lang1033\f2\tab\lang1040\f0 Single object embedding attribute
+\par atReference\lang1033\f2\tab\lang1040\f0 Single object reference attribute
+\par atParts\lang1033\f2\tab\lang1040\f0 Multiple objects embedding attribute
+\par atReferences\lang1033\f2\tab\lang1040\f0 Multiple objects reference attribute
 \par \pard 
 \par }
 12120
@@ -28014,7 +28021,7 @@ FALSE
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 TInstantCompareOption specifies the options that apply to a comparison.
 \par \pard\fi-1980\li1980\tx1980 
-\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Description\b0 
+\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Meaning\b0 
 \par coCaseInsensitive\lang1033\f1\tab\lang1040\f0 A case insensitive comparison is performed.
 \par coPartial\lang1033\f1\tab\lang1040\f0 A partial match is sufficient.
 \par \pard 
@@ -28042,7 +28049,7 @@ FALSE
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 TInstantCompareOption specifies the options that apply to a comparison.
 \par \pard\fi-1980\li1980\tx1980 
-\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Description\b0 
+\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Meaning\b0 
 \par coCaseInsensitive\lang1033\f1\tab\lang1040\f0 A case insensitive comparison is performed.
 \par coPartial\lang1033\f1\tab\lang1040\f0 A partial match is sufficient.
 \par \pard 
@@ -28069,7 +28076,7 @@ FALSE
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\b0 TInstantConflictAction specifies how conflicting updates to an object should be handled. 
 \par 
-\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Description\b0 
+\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Meaning\b0 
 \par caIgnore\lang1033\f1\tab\lang1040\f0 Conflicts are ignored. The operation is forcefully executed.
 \par caFail\lang1033\f1\tab\lang1040\f0 Conflicts result in an error.
 \par \pard 
@@ -28097,7 +28104,7 @@ FALSE
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Defines the actions that can appear in a connection manager.
 \par \pard\fi-1980\li1980\tx1980 
-\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Description\b0 
+\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Meaning\b0 
 \par atNew\lang1033\f1\tab\lang1040\f0 Allow creating new connections\lang1033\f1 .\lang1040\f0 
 \par atEdit\lang1033\f1\tab\lang1040\f0 Allow editing existing connections.
 \par atDelete\lang1033\f1\tab\lang1040\f0 Allow deleting connections\lang1033\f1 .\lang1040\f0 
@@ -28131,7 +28138,7 @@ FALSE
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Defines the actions that can appear in a connection manager.
 \par \pard\fi-1980\li1980\tx1980 
-\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Description\b0 
+\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f0 Meaning\b0 
 \par atNew\lang1033\f1\tab\lang1040\f0 Allow creating new connections\lang1033\f1 .\lang1040\f0 
 \par atEdit\lang1033\f1\tab\lang1040\f0 Allow editing existing connections.
 \par atDelete\lang1033\f1\tab\lang1040\f0 Allow deleting connections\lang1033\f1 .\lang1040\f0 
@@ -28227,21 +28234,22 @@ main
 
 
 FALSE
-15
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantContentChangeType \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12230\}\tab\strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\}
+16
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantContentChangeType \cf0\b0\fs16  
+\par \pard\sb25\tx1435\cf2\ul See Also\cf3\ulnone\{linkID=12230\}\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=12930>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\tx1435\fs18 The types of possible changes that may occur to a container.
 \par \pard\sb25\sa25\tx1435\f1 TInstantContentChangeType = (ctAdd, ctRemove, ctReplace, ctClear);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\b0 TInstantContentChangeType specifies the possible change type that can occur to a container. 
-\par \b 
-\par \pard\tx1980 Value\lang1033\f2\tab\lang1040\f0 Meaning
-\par \b0 ctAdd\lang1033\f2\tab\lang1040\f0 An object has been added or inserted\b 
-\par \b0 ctRemove\lang1033\f2\tab\lang1040\f0 An object has been deleted or removed\b 
-\par \b0 ctClear\lang1033\f2\tab\lang1040\f0 The container was cleared\b 
-\par \pard\fi-1980\li1980\tx1980\b0 
+\par \fs10
+\par \pard\fs18\tx1980\b Value\f2\tab Meaning\b0
+\par ctAdd\tab An object has been added or inserted 
+\par ctRemove\tab An object has been deleted or removed
+\par ctReplace\tab An object has been replaced
+\par ctClear\tab The container was cleared 
+\par  
 \par }
 12230
 75DE_B6
@@ -28298,12 +28306,12 @@ main
 
 FALSE
 10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantDataType \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\} 
+\par \cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=12930>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa85\fs18 Specifies the datatype of fields in tables
-\par \pard\sb25\sa25\f2 TInstantDataType = (dtInteger, dtFloat, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob);
+\par \pard\sb25\sa25\f1 TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob);
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 TInstantDataType specifies the datatype of fields in tables.
 \par 
@@ -28322,9 +28330,9 @@ main
 FALSE
 19
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}}
-{\colortbl ;\red0\green0\blue0;}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantErrorAction \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12270\}\tab\strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\} 
+\par \pard\sb25\tx1435\cf2\ul See Also\cf3\ulnone\{linkID=12270\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=12930>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa85\tx1435\fs18 Defines actions used in error handlers.
 \par \pard\sb25\sa25\tx1435\f1 TInstantErrorAction = (eaRetry, eaIgnore, eaError, eaRevert, eaCancel);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -28332,7 +28340,7 @@ FALSE
 \par 
 \par \lang1040\f0 Although the exact interpretation of the value depends on what kind of operation is performed, their general meaning is described in the following table: 
 \par 
-\par \pard\tx1980\b Value\lang1033\f2\tab\lang1040\f0 Description\b0\f3 
+\par \pard\tx1980\b Value\lang1033\f2\tab Meaning\lang1040\b0\f3 
 \par \f0 eaRetry\lang1033\f2\tab\lang1040\f0 Retry the operation.\f3 
 \par \f0 eaIgnore\lang1033\f2\tab\lang1040\f0 Retry the operation and ignore errors.\f3 
 \par \f0 eaError\lang1033\f2\tab\lang1040\f0 Fail.\f3 
@@ -28395,21 +28403,22 @@ main
 
 
 FALSE
-15
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}{\f3\fnil Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantExplorerLayout \cf1\b0\fs16 
-\par \strike Unit: InstantExplorer\strike0\{linkID=12850>main\}\{keepn\} 
+16
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantExplorerLayout \b0\fs16 
+\par \cf1\strike Unit: InstantExplorer\cf2\strike0\{linkID=12850>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\fs18 Determines the layout of the explorer.
-\par \pard\sb25\sa25\f2 TInstantExplorerLayout = (loTreeOnly, loDetailOnly, loVertical, loHorizontal);
+\par \pard\sb25\sa25\f1 TInstantExplorerLayout = (loTreeOnly, loDetailOnly, loVertical, loHorizontal);
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Layout is used to specify the extent and arrangement of the explorer.
-\par \pard\fi-1980\li1980\tx1980 
-\par \pard\tx1980\b Value\lang1033\f1\tab\lang1040\f3 Meaning\b0 
-\par \f0 loTreeOnly\lang1033\f1\tab\lang1040\f0 Show tree only\f3 
-\par \f0 loVertical\lang1033\f1\tab\lang1040\f0 Show tree on top of details\f3 
-\par \f0 loHorizontal\lang1033\f1\tab\lang1040\f0 Show tree left to details\f3 
-\par \pard\fi-1980\li1980\tx1980\f0 
+\par \fs10 
+\par \pard\tx1980\b\fs18 Value\f2\tab Meaning\b0 
+\par loTreeOnly\tab Show tree only
+\par loDetailOnly\tab Show detail only
+\par loVertical\tab Show tree on top of details
+\par loHorizontal\tab Show tree left to details 
+\par  
 \par }
 12300
 75DE_BZ
@@ -28485,23 +28494,23 @@ main
 
 TRUE
 18
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fmodern\fcharset0 Courier New;}{\f3\fswiss\fcharset0 Arial;}{\f4\fnil Arial;}{\f5\fnil\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantExposerOptions\cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12330\}\tab\strike Unit: InstantPresentation\strike0\{linkID=12980>main\}\cf0\b  \cf1\b0\{keepn\} 
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fnil Arial;}{\f3\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantExposerOptions\b0\fs16 
+\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12330\}\tab\cf1\strike Unit: InstantPresentation\cf2\strike0\{linkID=12980>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\tx1435\fs18 Specifies options for an exposer.
-\par \pard\fi-2620\li2620\sb25\sa25\f1 TInstantExposerOption\lang1033\f2  \lang1040\f1 = (eoAutoApply, eoAutoRemember, eoNotDisposeReferences,\lang1033\f2  \lang1040\f1 eoDeferInsert, eoSyncEdit);
+\par \pard\fi-2620\li2620\sb25\sa25\f1 TInstantExposerOption = (eoAutoApply, eoAutoRemember, eoNotDisposeReferences, eoDeferInsert, eoSyncEdit);
 \par \pard\sb25\sa25\tx1435 TInstantExposerOptions = \b set\b0  \b of\b0  TInstantExposerOption;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 TInstantExposerOption\lang1033\f3 s\lang1040\f0  specifies \lang1033\f3 a set of \lang1040\f0 options\lang1033\f3  for an \lang1040\f0 exposer\lang1033\f3  that modifies its behaviour\lang1040\f0 .
-\par \pard\sb25\sa25\f4\fs10 
-\par \pard\sb25\sa25\tx2400\b\fs18 Value\lang1033\f5  - \lang1040\f4 Description\tab 
-\par \i eoAutoApply\lang1033\i0\f5  \b0 - \lang1040\f4 Changes \f0 made to the \lang1033\f3 exposer's \lang1040\strike\f0 Subject\strike0\{linkID=5150>main\} or objects contained in the \strike Subject\strike0\{linkID=5150>main\} should be applied automatically. For \strike TInstantObject\strike0\{linkID=7380>main\} descendants this means that the persistent storage is updated for each changed object. Deleted objects will be disposed from the persistent storage and new objects will be added\lang1033\f3 .\lang1040\f4 
-\par \b\i eoAutoRemember\lang1033\b0\i0\f5  - \f3 A\lang1040\f0 utomatically\lang1033\f5  applies \strike Remember\lang1040\strike0\f0\{linkID=5430>main\}\lang1033\f5  and \lang1040\strike\f0 Revert\strike0\{linkID=5480>main\}\lang1033\f5  functionality to the \f3 exposer's \lang1040\strike\f0 Subject\strike0\{linkID=5150>main\}\lang1033\f5 .\lang1040\f4 
-\par \lang3081\b\i eoNotDisposeReferences\lang1033\b0\i0\f5  - Do not \strike Dispose\lang1040\strike0\f0\{linkID=8560>main\}\lang1033\f5  referenced objects of References attributes when deleting the \strike CurrentObject\lang1040\strike0\f0\{linkID=4920>main\}\lang1033\f5  of the exposer. \lang1040\f0 This option is only effective when the exposer is in amContent \strike Mode\strike0\{linkID=5020>main\}\lang1033\f3  and its \lang1040\strike\f0 Subject\strike0\{linkID=5150>main\}\lang1033\f3  is a \f5 References attribute\f3 .\lang1040\f4 
-\par \b\i eoDeferInsert\lang1033\b0\i0\f5  - \lang1040\f4 Insertion of the object in the of the container of the Subject is defe\lang1033\f5 r\lang1040\f4 red.\lang1033\f5  It s\lang1040\f0 pecif\lang1033\f3 ies\lang1040\f0  that objects that are appended or \lang1033\f3 i\lang1040\f0 nserted are not applied to the container of the \strike Subject\strike0\{linkID=5150>main\} until a row is posted. This option is only effective when the exposer is in amContent \lang1033\strike\f3 Mode\lang1040\strike0\f0\{linkID=5020>main\}\lang1033\f3 .\lang1040\f4 
-\par \b\i\f5 eoSyncEdi\i0 t\b0  - Allows a buffer update if \f0 the \lang1033\f3 exposer's \lang1040\strike\f0 Subject\strike0\{linkID=5150>main\} \f5 is changed or refreshed and the exposer is in Edit mode.\f4 
-\par \pard\f0 
+\par \pard\sb25\sa25\tx1435\b0 TInstantExposerOptions specifies a set of options for an exposer that modifies its behavior.
+\par \pard\sb25\sa25\f2\fs10 
+\par \pard\fi-2440\li2440\sb25\sa25\tx2440\b\fs18 Value\tab Description\tab\b0 
+\par eoAutoApply\tab Changes \f0 made to the exposer's \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  or objects contained in the \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  should be applied automatically. For \cf1\strike TInstantObject\cf2\strike0\{linkID=7380>main\}\cf0  descendants this means that the persistent storage is updated for each changed object. Deleted objects will be disposed from the persistent storage and new objects will be added.
+\par eoAutoRemember\tab Automatically applies \cf1\strike Remember\cf2\strike0\{linkID=5430>main\}\cf0  and \cf1\strike Revert\cf2\strike0\{linkID=5480>main\}\cf0  functionality to the \f3 exposer's \cf1\strike\f0 Subject\cf2\strike0\{linkID=5150>main\}\cf0 .
+\par eoNotDisposeReferences\tab Do not \cf1\strike Dispose\cf2\strike0\{linkID=8560>main\}\cf0  referenced objects of References attributes when deleting the \cf1\strike CurrentObject\cf2\strike0\{linkID=4920>main\}\cf0  of the exposer. This option is only effective when the exposer is in amContent \cf1\strike Mode\cf2\strike0\{linkID=5020>main\}\cf0  and its \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  is a References attribute.
+\par eoDeferInsert\tab Insertion of the object in the of the container of the Subject is deferred. It specifies that objects that are appended or inserted are not applied to the container of the \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  until a row is posted. This option is only effective when the exposer is in amContent \cf1\strike\f3 Mode\cf2\strike0\f0\{linkID=5020>main\}\cf0 .
+\par eoSyncEdit\tab Allows a buffer update if the exposer's \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  is changed or refreshed and the exposer is in Edit mode.\f2 
+\par \f0 
 \par }
 12330
 75DE_C2
@@ -28711,14 +28720,14 @@ main
 
 FALSE
 10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantLimitObjectsEvent \cf1\b0\fs16 
 \par \strike Unit: InstantPresentation\strike0\{linkID=12980>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for object limitation events.
-\par \pard\sb25\sa25\f2 TInstantLimitObjectsEvent = \b procedure\b0  (Sender: TObject; AObject: TObject; \b var\b0  Accept: Boolean) \b of\b0  \b object\b0 ;
+\par \pard\sb25\sa25\f1 TInstantLimitObjectsEvent = \b procedure\b0  (Sender: TObject; AObject: TObject; \b var\b0  Accept: Boolean) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 TInstantLimitObjectsEvent is the event type for object limitation events. The Sender argument specifies the obejct for which it should be determined whether it should accept or reject the object specified by the AObject argument. If It is to be accepted, set the Accept argument to True. Otherwise set the Accept argument to False.
+\par \pard\sb25\sa25\b0 TInstantLimitObjectsEvent is the event type for object limitation events. The Sender argument specifies the object for which it should be determined whether it should accept or reject the object specified by the AObject argument. If It is to be accepted, set the Accept argument to True. Otherwise set the Accept argument to False.
 \par 
 \par }
 12430
@@ -28835,14 +28844,14 @@ main
 
 FALSE
 10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantProgressEvent \cf1\b0\fs16 
 \par \strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for progress events.
-\par \pard\sb25\sa25\f2 TInstantProgressEvent = \b procedure\b0  (Sender: TObject; Count: Integer; \b var\b0  Continue: Boolean) \b of\b0  \b object\b0 ;
+\par \pard\sb25\sa25\f1 TInstantProgressEvent = \b procedure\b0  (Sender: TObject; Count: Integer; \b var\b0  Continue: Boolean) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 TInstantProgressEvent is the event type for progress events. The Sender argument specifies the obejct to which the progress occurs. The Count argument specifies the progress in percent. Use the Continue argument to specify if the process triggering the event should continue.
+\par \pard\sb25\sa25\b0 TInstantProgressEvent is the event type for progress events. The Sender argument specifies the object to which the progress occurs. The Count argument specifies the progress in percent. Use the Continue argument to specify if the process triggering the event should continue.
 \par 
 \par }
 12480
@@ -28969,23 +28978,23 @@ main
 
 FALSE
 18
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantVerificationResult \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12540\}\tab\strike Unit: InstantPersistence\strike0\{linkID=12930>main\}\{keepn\}
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\b\f0\fs24 TInstantVerificationResult \cf0\b0\fs16  
+\par \pard\sb25\tx1435\cf2\ul See Also\cf3\ulnone\{linkID=12540\}\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=12930>main\}\{keepn\}\cf0
 \par \pard\sb25\sa85\tx1435\fs18 Defines result of a verification operation.
 \par \pard\sb25\sa25\tx1435\f1 TInstantVerificationResult = (vrOk, vrCancel, vrAbort, vrError);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 The TInstantVerificationResult type defines the possible values for verification of operations.
-\par \pard\b\tab\tab 
-\par \b0 Although the exact interpretation of the value depends on what kind of operation is performed, their general meaning is described in the following table: 
 \par 
-\par \pard\tx1980\b Value\lang1033\f2\tab\lang1040\f0 Description\b0\f3 
-\par \f0 vrOk\lang1033\f2\tab\lang1040\f0 The operation may be performed
-\par vrCancel\lang1033\f2\tab\lang1040\f0 The operation must be canceled
-\par vrAbort\lang1033\f2\tab\lang1040\f0 The operation must be aborted
-\par vrError\lang1033\f2\tab\lang1040\f0 The operation must be terminated with an exception
-\par \pard\fi-1980\li1980\tx1980\f3 
+\par \pard Although the exact interpretation of the value depends on what kind of operation is performed, their general meaning is described in the following table: 
+\par \fs10
+\par \pard\fs18\tx1980\b Value\f2\tab Meaning\b0
+\par vrOk\f2\tab The operation may be performed
+\par vrCancel\f2\tab The operation must be canceled
+\par vrAbort\f2\tab The operation must be aborted
+\par vrError\f2\tab The operation must be terminated with an exception
+\par 
 \par }
 12540
 75DE_D8
@@ -29569,11 +29578,11 @@ main
 
 FALSE
 7
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantConsts.pas \cf1\b0\fs16 
-\par \strike Constants\strike0\{linkID=12800>nav\}\{keepn\} 
-\par \pard\sb25\sa25\fs18 InstantObjects Constants.
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\b\f0\fs24 InstantConsts.pas \b0\fs16 
+\par \cf1\strike Constants\cf2\strike0\{linkID=12800>nav\}\{keepn\}\cf0 
+\par \pard\sb25\sa25\fs18 InstantObjects constants and resource strings.
 \par 
 \par }
 12800
@@ -30246,15 +30255,15 @@ Imported
 
 FALSE
 47
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
 \par \strike InstantUtils\strike0\{linkID=13020>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Functions in Unit InstantUtils
 \par \pard\keep\li95\sb25\sa25\b0\strike InstantCharSetToStr\strike0\{linkID=11210>main\}
-\par \pard\li195\sb15\sa25\fs16 Coverts a set of char to a string.
+\par \pard\li195\sb15\sa25\fs16 Co\lang1033\f1 n\lang1040\f0 verts a set of char to a string.
 \par \pard\keep\li95\sb25\sa25\strike\fs18 function InstantCompareObjects(Obj1: TObject; Obj2: TObject; PropNames: TStrings; Options: TInstantCompareOptions): Integer;\strike0\{linkID=11300>main\}
-\par \pard\li195\sb15\sa25\fs16 Compares two objects by comparing mulpiple named published properties.
+\par \pard\li195\sb15\sa25\fs16 Compares two objects by comparing multiple named published properties.
 \par \pard\keep\li95\sb25\sa25\strike\fs18 function InstantCompareObjects(Obj1: TObject; Obj2: TObject; PropName: string; Options: TInstantCompareOptions): Integer;\strike0\{linkID=11290>main\}
 \par \pard\li195\sb15\sa25\fs16 Compares two objects by comparing a named published property.
 \par \pard\keep\li95\sb25\sa25\strike\fs18 InstantCompareText\strike0\{linkID=11310>main\}
@@ -30282,7 +30291,7 @@ FALSE
 \par \pard\keep\li95\sb25\sa25\strike\fs18 InstantRightPos\strike0\{linkID=11830>main\}
 \par \pard\li195\sb15\sa25\fs16 Returns the starting position of the last occurrence of a substring in a given string.
 \par \pard\keep\li95\sb25\sa25\strike\fs18 InstantStrToCharSet\strike0\{linkID=11850>main\}
-\par \pard\li195\sb15\sa25\fs16 Coverts a string to a set of char.
+\par \pard\li195\sb15\sa25\fs16 Converts a string to a set of char.
 \par \pard\keep\li95\sb25\sa25\strike\fs18 InstantStrToDate\strike0\{linkID=11880>main\}
 \par \pard\li195\sb15\sa25\fs16 Converts a string to a TDateTime value.
 \par \pard\keep\li95\sb25\sa25\strike\fs18 InstantStrToDateTime\strike0\{linkID=11900>main\}
@@ -30421,7 +30430,7 @@ nav="InstantObjects Guide",(200,410,220,503),0,(255,255,255),(255,255,255),0
 2 Functions
 3 InstantCharSetToStr=327SI7S>MAIN
 3 InstantCheckConnection=327SI7X>MAIN
-3 InstantCheckConnector=327SI7X>MAIN
+3 InstantCheckConnector=327SI8Y>MAIN
 3 InstantClassNameToName=327SI8R>MAIN
 3 InstantCompareObjects=327SI8U>MAIN
 3 InstantCompareText=327SI8X>MAIN
@@ -30525,7 +30534,7 @@ nav="InstantObjects Guide",(200,410,220,503),0,(255,255,255),(255,255,255),0
 3 InstantPersistence.pas=id_5>MAIN
 3 InstantPresentation.pas=id_413>MAIN
 3 InstantUtils.pas=327SI7V>MAIN
-14
+21
 *InternetLink
 16711680
 Courier New
@@ -30598,6 +30607,97 @@ Arial
 12
 1
 B...
+0
+0
+0
+0
+0
+0
+__C++SourceCode
+0
+Courier New
+0
+10
+0
+....
+0
+0
+0
+0
+0
+0
+__DFMCode
+0
+Courier New
+0
+10
+0
+....
+0
+0
+0
+0
+0
+0
+__JScriptCode
+0
+Courier New
+0
+10
+0
+....
+0
+0
+0
+0
+0
+0
+__SQLCode
+0
+Courier New
+0
+10
+0
+....
+0
+0
+0
+0
+0
+0
+__VBCode
+0
+Courier New
+0
+10
+0
+....
+0
+0
+0
+0
+0
+0
+__VBScriptCode
+0
+Courier New
+0
+10
+0
+....
+0
+0
+0
+0
+0
+0
+__XMLCode
+0
+Courier New
+0
+10
+0
+....
 0
 0
 0

@@ -100,7 +100,7 @@
 2 Functions
 3 InstantCharSetToStr=327SI7S>MAIN
 3 InstantCheckConnection=327SI7X>MAIN
-3 InstantCheckConnector=327SI7X>MAIN
+3 InstantCheckConnector=327SI8Y>MAIN
 3 InstantClassNameToName=327SI8R>MAIN
 3 InstantCompareObjects=327SI8U>MAIN
 3 InstantCompareText=327SI8X>MAIN
