@@ -47,6 +47,7 @@ type
     procedure TearDown; override;
   published
     procedure TestAdd;
+    procedure TestAddReference;
     procedure TestAssign;
     procedure TestAttachObject;
     procedure TestClear;
@@ -77,6 +78,7 @@ type
     procedure TearDown; override;
   published
     procedure TestAdd;
+    procedure TestAddReference;
     procedure TestAssign;
     procedure TestAttachObject;
     procedure TestClear;
@@ -98,7 +100,7 @@ type
 
 implementation
 
-uses SysUtils, Classes, testregistry;
+uses SysUtils, Classes, testregistry, InstantClasses;
 
 function TestTInstantEmbReferences.RefsEmbeddedCompare(Holder, Obj1, Obj2:
     TInstantObject): Integer;
@@ -157,6 +159,18 @@ begin
     AssertEquals(4, FInstantReferences.Count);
   finally
     vPerson.Free;
+  end;
+end;
+
+procedure TestTInstantEmbReferences.TestAddReference;
+begin
+  try
+    FInstantReferences.AddReference('TPerson', 'NewPersonId');
+    Fail('Should never get here!!');
+  except
+    on E: EInstantError do ; // do nothing as this is expected
+    else
+      raise;
   end;
 end;
 
@@ -457,6 +471,18 @@ begin
   finally
     vProject.Free;
   end;
+end;
+
+procedure TestTInstantExtReferences.TestAddReference;
+var
+  vReturnValue: Integer;
+begin
+  FInstantReferences.Unchanged;
+  AssertFalse(FInstantReferences.IsChanged);
+  vReturnValue := FInstantReferences.AddReference('TProject', 'NewProjectId');
+  AssertTrue(vReturnValue <> -1);
+  AssertTrue(FInstantReferences.IsChanged);
+  AssertEquals(4, FInstantReferences.Count);
 end;
 
 procedure TestTInstantExtReferences.TestAssign;
