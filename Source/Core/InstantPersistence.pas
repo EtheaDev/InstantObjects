@@ -999,7 +999,7 @@ type
   end;
 
   TInstantSortCompare = function(Holder, Obj1, Obj2: TInstantObject): Integer of object;
-  TInstantContentChangeType = (ctAdd, ctRemove, ctReplace, ctClear);
+  TInstantContentChangeType = (ctAdd, ctAddRef, ctRemove, ctReplace, ctClear);
 
   TInstantContainer = class(TInstantComplex)
   private
@@ -1017,6 +1017,8 @@ type
     function GetInstances(Index: Integer): TInstantObject; virtual;
     function GetIsDefault: Boolean; override;
     function InternalAdd(AObject: TInstantObject): Integer; virtual; abstract;
+    function InternalAddReference(const AObjectClassName, AObjectId: string):
+        Integer; virtual; abstract;
     procedure InternalClear; virtual; abstract;
     procedure InternalDelete(Index: Integer); virtual; abstract;
     function InternalGetItems(Index: Integer): TInstantObject; virtual; abstract;
@@ -1030,6 +1032,7 @@ type
     property Instances[Index: Integer]: TInstantObject read GetInstances;
   public
     function Add(AObject: TInstantObject): Integer;
+    function AddReference(const AObjectClassName, AObjectId: string): Integer;
     function AttachObject(AObject: TInstantObject): Boolean; override;
     procedure Clear;
     procedure Delete(Index: Integer);
@@ -1072,6 +1075,8 @@ type
     function GetIsChanged: Boolean; override;
     function GetInstances(Index: Integer): TInstantObject; override;
     function InternalAdd(AObject: TInstantObject): Integer; override;
+    function InternalAddReference(const AObjectClassName, AObjectId: string):
+        Integer; override;
     procedure InternalClear; override;
     procedure InternalDelete(Index: Integer); override;
     function InternalGetItems(Index: Integer): TInstantObject; override;
@@ -1108,6 +1113,8 @@ type
     function GetCount: Integer; override;
     function GetInstances(Index: Integer): TInstantObject; override;
     function InternalAdd(AObject: TInstantObject): Integer; override;
+    function InternalAddReference(const AObjectClassName, AObjectId: string):
+        Integer; override;
     procedure InternalClear; override;
     procedure InternalDelete(Index: Integer); override;
     function InternalGetItems(Index: Integer): TInstantObject; override;
@@ -1362,6 +1369,7 @@ type
     property ObjectClass: TInstantObjectClass read GetObjectClass;
     property ObjectCount: Integer read GetObjectCount;
     property Id: string read GetId write SetId;
+    property InUpdate: Boolean read FInUpdate write FInUpdate;
     property Objects[Index: Integer]: TInstantObject read GetObjects write SetObjects;
     property Owner: TInstantObject read FOwner;
     property OwnerAttribute: TInstantComplex read FOwnerAttribute;
@@ -1980,6 +1988,9 @@ type
   end;
 
   TInstantCustomResolver = class;
+  TInstantLinkResolver = class;
+  TInstantNavigationalLinkResolver = class;
+  TInstantSQLLinkResolver = class;
 
   TInstantBrokerOperation = procedure(AObject: TInstantObject; const AObjectId: string;
     Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction = caFail; Info: PInstantOperationInfo = nil) of object;
@@ -2150,6 +2161,7 @@ type
   private
     FDataSet: TDataSet;
     FFreeDataSet: Boolean;
+    FNavigationalLinkResolvers: TObjectList;
     FTableName: string;
     function CheckConflict(AObject: TInstantObject; const AObjectId: string;
       ConflictAction: TInstantConflictAction): Boolean;
@@ -2159,6 +2171,9 @@ type
     procedure FreeDataSet;
     function GetBroker: TInstantNavigationalBroker;
     function GetDataSet: TDataSet;
+    function GetNavigationalLinkResolvers: TObjectList;
+    function GetObjectClassName: string;
+    function GetObjectId: string;
     procedure PerformOperation(AObject: TInstantObject;
       Map: TInstantAttributeMap; Operation: TInstantNavigationalResolverOperation);
     procedure ReadAttribute(AObject: TInstantObject;
@@ -2185,17 +2200,24 @@ type
     procedure ClearString(Attribute: TInstantString); virtual;
     procedure Close; virtual;
     function CreateDataSet: TDataSet; virtual; abstract;
+    function CreateNavigationalLinkResolver(const ATableName: string):
+        TInstantNavigationalLinkResolver; virtual; abstract;
     function CreateLocateVarArray(const AObjectClassName, AObjectId: string): Variant;
     procedure Delete; virtual;
     procedure Edit; virtual;
+    function GetLinkDatasetResolver(const ATableName: string):
+        TInstantNavigationalLinkResolver;
     function FieldHasObjects(Field: TField): Boolean; virtual;
+    function FindLinkDatasetResolver(const ATableName: string):
+        TInstantNavigationalLinkResolver;
     procedure InternalDisposeMap(AObject: TInstantObject; Map: TInstantAttributeMap;
       ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
     procedure InternalRetrieveMap(AObject: TInstantObject; const AObjectId: string;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
     procedure InternalStoreMap(AObject: TInstantObject; Map: TInstantAttributeMap;
       ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    function Locate(const AObjectClassName, AObjectId: string): Boolean; virtual; abstract;
+    function Locate(const AObjectClassName, AObjectId: string): Boolean; virtual;
+        abstract;
     procedure Open; virtual;
     procedure Post; virtual;
     procedure ReadBlob(Attribute: TInstantBlob); virtual;
@@ -2226,11 +2248,15 @@ type
     procedure WriteReferences(Attribute: TInstantReferences); virtual;
     procedure WriteString(Attribute: TInstantString); virtual;
     property DataSet: TDataset read GetDataSet write SetDataSet;
+    property NavigationalLinkResolvers: TObjectList read
+        GetNavigationalLinkResolvers;
   public
     constructor Create(ABroker: TInstantNavigationalBroker;
       const ATableName: string);
     destructor Destroy; override;
     property Broker: TInstantNavigationalBroker read GetBroker;
+    property ObjectClassName: string read GetObjectClassName;
+    property ObjectId: string read GetObjectId;
     property TableName: string read FTableName;
   end;
 
@@ -2636,6 +2662,7 @@ type
     procedure Exchange(Index1, Index2: Integer);
     function IndexOf(Item: TInstantObject; NeedInstance: Boolean = False): Integer;
     function IndexOfInstance(Item: TInstantObject): Integer;
+    function IndexOfReference(AObjectReference: TInstantObjectReference): Integer;
     procedure Insert(Index: Integer; Item: TInstantObject);
     procedure Move(CurIndex, NewIndex: Integer);
     function Remove(Item: TInstantObject): Integer;
@@ -2644,6 +2671,103 @@ type
     property Items[Index: Integer]: TInstantObject read GetItems write SetItems;
         default;
     property RefItems[Index: Integer]: TInstantObjectReference read GetRefItems;
+  end;
+
+  // TInstantLinkResolver class defines common interface for handling
+  // access to container attributes with external storage
+  TInstantLinkResolver = class(TInstantStreamable)
+  private
+    FResolver: TInstantCustomResolver;
+    function GetBroker: TInstantCustomRelationalBroker;
+    function GetResolver: TInstantCustomResolver;
+  protected
+    procedure InternalStoreAttributeObjects(Attribute: TInstantContainer); virtual;
+    procedure InternalClearAttributeLinkRecords; virtual;
+    procedure InternalDisposeDeletedAttributeObjects(Attribute: TInstantContainer);
+        virtual;
+    procedure InternalReadAttributeObjects(Attribute: TInstantContainer; const
+        AObjectId: string); virtual;
+  public
+    constructor Create(AResolver: TInstantCustomResolver);
+    procedure StoreAttributeObjects(Attribute: TInstantContainer);
+    procedure ClearAttributeLinkRecords;
+    procedure DisposeDeletedAttributeObjects(Attribute: TInstantContainer);
+    procedure ReadAttributeObjects(Attribute: TInstantContainer; const AObjectId:
+        string);
+    property Broker: TInstantCustomRelationalBroker read GetBroker;
+    property Resolver: TInstantCustomResolver read GetResolver;
+  end;
+
+  // TInstantNavigationalLinkResolver is an abstract class that
+  // defines the interface for handling access to container attributes
+  // with external storage for navigational brokers.
+  // Each navigational broker needs to provide a concrete class descendent.
+  // See the BDE broker as an example.
+  TInstantNavigationalLinkResolver = class(TInstantLinkResolver)
+  private
+    FDataSet: TDataSet;
+    FFreeDataSet: Boolean;
+    FTableName: string;
+    function FieldByName(const FieldName: string): TField;
+    procedure FreeDataSet;
+    function GetBroker: TInstantNavigationalBroker;
+    function GetDataSet: TDataSet;
+    function GetResolver: TInstantNavigationalResolver;
+    procedure SetDataSet(Value: TDataset);
+  protected
+    procedure Append; virtual;
+    procedure Cancel; virtual;
+    procedure Close; virtual;
+    function CreateDataSet: TDataSet; virtual; abstract;
+    procedure Delete; virtual;
+    procedure Edit; virtual;
+    function Eof: Boolean; virtual;
+    procedure First; virtual;
+    procedure InternalStoreAttributeObjects(Attribute: TInstantContainer); override;
+    procedure InternalClearAttributeLinkRecords; override;
+    procedure InternalDisposeDeletedAttributeObjects(Attribute: TInstantContainer);
+        override;
+    procedure InternalReadAttributeObjects(Attribute: TInstantContainer; const
+        AObjectId: string); override;
+    procedure Next; virtual;
+    procedure Open; virtual;
+    procedure Post; virtual;
+    procedure SetDatasetParentRange(const AParentClass, AParentId: string);
+        virtual; abstract;
+    property DataSet: TDataset read GetDataSet write SetDataSet;
+  public
+    constructor Create(AResolver: TInstantNavigationalResolver; const ATableName:
+        string);
+    destructor Destroy; override;
+    property Broker: TInstantNavigationalBroker read GetBroker;
+    property Resolver: TInstantNavigationalResolver read GetResolver;
+    property TableName: string read FTableName;
+  end;
+
+  // TInstantSQLLinkResolver class defines interface for handling
+  // access to container attributes with external storage for
+  // SQL brokers. Due to the generic nature of SQL this class is used
+  // directly and no descendant classes are needed for SQL brokers.
+  TInstantSQLLinkResolver = class(TInstantLinkResolver)
+  private
+    FAttributeOwner: TInstantObject;
+    FTableName: string;
+    function GetBroker: TInstantSQLBroker;
+    function GetResolver: TInstantSQLResolver;
+    property TableName: string read FTableName;
+  protected
+    procedure InternalStoreAttributeObjects(Attribute: TInstantContainer); override;
+    procedure InternalClearAttributeLinkRecords; override;
+    procedure InternalDisposeDeletedAttributeObjects(Attribute: TInstantContainer);
+        override;
+    procedure InternalReadAttributeObjects(Attribute: TInstantContainer; const
+        AObjectId: string); override;
+  public
+    constructor Create(AResolver: TInstantSQLResolver; const ATableName: string;
+        AObject: TInstantObject);
+    property AttributeOwner: TInstantObject read FAttributeOwner;
+    property Broker: TInstantSQLBroker read GetBroker;
+    property Resolver: TInstantSQLResolver read GetResolver;
   end;
 
 procedure AssignInstantStreamFormat(Strings: TStrings);
@@ -6560,6 +6684,21 @@ begin
   AfterContentChange(ctAdd, Result, AObject);
 end;
 
+function TInstantContainer.AddReference(const AObjectClassName, AObjectId:
+    string): Integer;
+begin
+  if Assigned(Metadata) and (Metadata.StorageKind = skEmbedded) then
+    raise EInstantError.CreateFmt(SUnsupportedAttributeOperation,
+        ['AddReference', ClassName, Name, 'StorageKind = skEmbedded']);
+  if RequiredClassName <> AObjectClassName then
+    raise EInstantValidationError.CreateFmt(SInvalidObjectClass,
+        [AObjectClassName, ClassName, Name, RequiredClass.ClassName]);
+
+  BeforeContentChange(ctAddRef, -1, nil);
+  Result := InternalAddReference(AObjectClassName, AObjectId);
+  AfterContentChange(ctAddRef, Result, nil);
+end;
+
 procedure TInstantContainer.AfterContentChange(
   ChangeType: TInstantContentChangeType; Index: Integer;
   AObject: TInstantObject);
@@ -6993,6 +7132,25 @@ begin
   end;
 end;
 
+function TInstantParts.InternalAddReference(const AObjectClassName, AObjectId:
+    string): Integer;
+var
+  Ref: TInstantObjectReference;
+begin
+  Result := -1;
+
+  if Metadata.StorageKind = skExternal then
+  begin
+    Ref := CreateObjectReference(nil);
+    try
+      Ref.ReferenceObject(AObjectClassName, AObjectId);
+      Result := ObjectReferenceList.Add(Ref);
+    except
+      Ref.Free;
+    end;
+  end;
+end;
+
 procedure TInstantParts.InternalClear;
 var
   I: Integer;
@@ -7294,6 +7452,25 @@ end;
 function TInstantReferences.InternalAdd(AObject: TInstantObject): Integer;
 begin
   Result := ObjectReferenceList.Add(AObject);
+end;
+
+function TInstantReferences.InternalAddReference(const AObjectClassName,
+    AObjectId: string): Integer;
+var
+  Ref: TInstantObjectReference;
+begin
+  Result := -1;
+
+  if Metadata.StorageKind = skExternal then
+  begin
+    Ref := ObjectReferenceList.Add;
+    try
+      Ref.ReferenceObject(AObjectClassName, AObjectId);
+      Result := ObjectReferenceList.IndexOfReference(Ref);
+    except
+      Ref.Free;
+    end;
+  end;
 end;
 
 procedure TInstantReferences.InternalClear;
@@ -8388,7 +8565,7 @@ var
           if Result then
             Exit;
         end;
-      end;
+    end;
   end;
 
 var
@@ -10161,7 +10338,7 @@ begin
   if not (Assigned(AObject) and AObject.Metadata.IsStored) then
     Exit;
   CheckBroker(Broker);
-  AObject.FInUpdate := True;
+  AObject.InUpdate := True;
   try
     try
       if Broker.StoreObject(AObject, ConflictAction) then
@@ -10186,7 +10363,7 @@ begin
             [AObject.ClassName, AObject.Id, E.Message], E);
     end;
   finally
-    AObject.FInUpdate := False;
+    AObject.InUpdate := False;
   end;
 end;
 
@@ -11739,7 +11916,7 @@ begin
     // Remove references from the BusyList for objects destroyed
     // when the query was closed.
     RemoveRefsOfDeletedObjectsFromList;
-        
+
     Open;
 
     // Refresh objects in the BusyList that were not destroyed
@@ -12059,10 +12236,23 @@ end;
 
 procedure TInstantNavigationalResolver.ClearPart(Attribute: TInstantPart);
 begin
+  if Attribute.Metadata.StorageKind = skExternal then
+    Attribute.Value.ObjectStore.DisposeObject(Attribute.Value, caIgnore);
 end;
 
 procedure TInstantNavigationalResolver.ClearParts(Attribute: TInstantParts);
+var
+  I: Integer;
+  LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
+  if Attribute.Metadata.StorageKind = skExternal then
+  begin
+    for I := 0 to Pred(Attribute.Count) do
+      Attribute.Items[I].ObjectStore.DisposeObject(Attribute.Items[I], caIgnore);
+    LinkDatasetResolver :=
+        GetLinkDatasetResolver(Attribute.Metadata.ExternalStorageName);
+    LinkDatasetResolver.ClearAttributeLinkRecords;
+  end;
 end;
 
 procedure TInstantNavigationalResolver.ClearReference(
@@ -12072,7 +12262,15 @@ end;
 
 procedure TInstantNavigationalResolver.ClearReferences(
   Attribute: TInstantReferences);
+var
+  LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
+  if Attribute.Metadata.StorageKind = skExternal then
+  begin
+    LinkDatasetResolver :=
+        GetLinkDatasetResolver(Attribute.Metadata.ExternalStorageName);
+    LinkDatasetResolver.ClearAttributeLinkRecords;
+  end;
 end;
 
 procedure TInstantNavigationalResolver.ClearString(Attribute: TInstantString);
@@ -12105,13 +12303,29 @@ end;
 
 destructor TInstantNavigationalResolver.Destroy;
 begin
+  FreeAndNil(FNavigationalLinkResolvers);
   FreeDataSet;
   inherited;
+end;
+
+procedure TInstantNavigationalResolver.ClearEnum(Attribute: TInstantEnum);
+begin
 end;
 
 procedure TInstantNavigationalResolver.Edit;
 begin
   DataSet.Edit;
+end;
+
+function TInstantNavigationalResolver.GetLinkDatasetResolver(const ATableName:
+    string): TInstantNavigationalLinkResolver;
+begin
+  Result := FindLinkDatasetResolver(ATableName);
+  if not Assigned(Result) then
+  begin
+    Result := CreateNavigationalLinkResolver(ATableName);
+    NavigationalLinkResolvers.Add(Result);
+  end;
 end;
 
 function TInstantNavigationalResolver.FieldByName(
@@ -12123,6 +12337,20 @@ end;
 function TInstantNavigationalResolver.FieldHasObjects(Field: TField): Boolean;
 begin
   Result := Length(Field.AsString) > 1;
+end;
+
+function TInstantNavigationalResolver.FindLinkDatasetResolver(const ATableName:
+    string): TInstantNavigationalLinkResolver;
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(NavigationalLinkResolvers.Count) do
+  begin
+    Result := NavigationalLinkResolvers[I] as TInstantNavigationalLinkResolver;
+    if SameText(ATableName, Result.TableName) then
+      Exit;
+  end;
+  Result := nil;
 end;
 
 procedure TInstantNavigationalResolver.FreeDataSet;
@@ -12149,6 +12377,23 @@ begin
     Broker.Connector.DoInitDataSet(TableName, FDataSet);
   end;
   Result := FDataSet;
+end;
+
+function TInstantNavigationalResolver.GetNavigationalLinkResolvers: TObjectList;
+begin
+  if not Assigned(FNavigationalLinkResolvers) then
+    FNavigationalLinkResolvers := TObjectList.Create;
+  Result := FNavigationalLinkResolvers;
+end;
+
+function TInstantNavigationalResolver.GetObjectClassName: string;
+begin
+  Result := FieldByName(InstantClassFieldName).AsString;
+end;
+
+function TInstantNavigationalResolver.GetObjectId: string;
+begin
+  Result := FieldByName(InstantIdFieldName).AsString;
 end;
 
 procedure TInstantNavigationalResolver.InternalDisposeMap(
@@ -12388,17 +12633,38 @@ procedure TInstantNavigationalResolver.ReadPart(Attribute: TInstantPart);
 var
   Field: TField;
   Stream: TInstantStringStream;
+  PartClassName: string;
+  ObjID: string;
 begin
   with Attribute do
   begin
-    Field := FieldByName(Metadata.FieldName);
-    if not FieldHasObjects(Field) then
-      Exit;
-    Stream := TInstantStringStream.Create(Field.AsString);
-    try
-      LoadObjectFromStream(Stream);
-    finally
-      Stream.Free;
+    if Metadata.StorageKind = skExternal then
+    begin
+      // Must clear Value first to avoid leak for Refresh operation
+      // as OldValue = NewValue.
+      Value := nil;
+      PartClassName := FieldByName(Metadata.FieldName +
+          InstantClassFieldName).AsString;
+      ObjID := FieldByName(Metadata.FieldName + InstantIdFieldName).AsString;
+      // PartClassName and ObjID will be empty if the attribute was
+      // added to a class with existing instances in the database.
+      if (PartClassName = '') and (ObjID = '') then
+        Attribute.Reset
+      else
+        Value := InstantFindClass(PartClassName).Retrieve(
+            ObjID, False, False, Connector);
+    end
+    else
+    begin
+      Field := FieldByName(Metadata.FieldName);
+      if not FieldHasObjects(Field) then
+        Exit;
+      Stream := TInstantStringStream.Create(Field.AsString);
+      try
+        LoadObjectFromStream(Stream);
+      finally
+        Stream.Free;
+      end;
     end;
   end;
 end;
@@ -12407,17 +12673,28 @@ procedure TInstantNavigationalResolver.ReadParts(Attribute: TInstantParts);
 var
   Field: TField;
   Stream: TInstantStringStream;
+  LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
   begin
-    Field := FieldByName(Metadata.FieldName);
-    if not FieldHasObjects(Field) then
-      Exit;
-    Stream := TInstantStringStream.Create(Field.AsString);
-    try
-      LoadObjectsFromStream(Stream);
-    finally
-      Stream.Free;
+    if Metadata.StorageKind = skExternal then
+    begin
+      Clear;
+      LinkDatasetResolver :=
+          GetLinkDatasetResolver(Metadata.ExternalStorageName);
+      LinkDatasetResolver.ReadAttributeObjects(Attribute, ObjectId);
+    end
+    else
+    begin
+      Field := FieldByName(Metadata.FieldName);
+      if not FieldHasObjects(Field) then
+        Exit;
+      Stream := TInstantStringStream.Create(Field.AsString);
+      try
+        LoadObjectsFromStream(Stream);
+      finally
+        Stream.Free;
+      end;
     end;
   end;
 end;
@@ -12440,17 +12717,28 @@ procedure TInstantNavigationalResolver.ReadReferences(
 var
   Field: TField;
   Stream: TInstantStringStream;
+  LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
   begin
-    Field := FieldByName(Metadata.FieldName);
-    if not FieldHasObjects(Field) then
-      Exit;
-    Stream := TInstantStringStream.Create(Field.AsString);
-    try
-      LoadReferencesFromStream(Stream);
-    finally
-      Stream.Free;
+    if Metadata.StorageKind = skExternal then
+    begin
+      Clear;
+      LinkDatasetResolver :=
+          GetLinkDatasetResolver(Metadata.ExternalStorageName);
+      LinkDatasetResolver.ReadAttributeObjects(Attribute, ObjectId);
+    end
+    else
+    begin
+      Field := FieldByName(Metadata.FieldName);
+      if not FieldHasObjects(Field) then
+        Exit;
+      Stream := TInstantStringStream.Create(Field.AsString);
+      try
+        LoadReferencesFromStream(Stream);
+      finally
+        Stream.Free;
+      end;
     end;
   end;
 end;
@@ -12502,6 +12790,8 @@ begin
   with AttributeMetadata do
   begin
     Attribute := AObject.AttributeByName(Name);
+    if not Attribute.IsChanged then
+      Exit;
     case AttributeType of
       atInteger:
         WriteInteger(Attribute as TInstantInteger);
@@ -12586,13 +12876,25 @@ var
 begin
   with Attribute do
   begin
-    Field := FieldByName(Metadata.FieldName);
-    Stream := TInstantStringStream.Create('');
-    try
-      SaveObjectToStream(Stream);
-      Field.AsString := Stream.DataString;
-    finally
-      Stream.Free;
+    if Metadata.StorageKind = skExternal then
+    begin
+      Value.CheckId;
+      FieldByName(Metadata.FieldName + InstantClassFieldName).AsString :=
+          Value.ClassName;
+      FieldByName(Metadata.FieldName + InstantIdFieldName).AsString :=
+          Value.Id;
+      Value.ObjectStore.StoreObject(Value, caIgnore);
+    end
+    else
+    begin
+      Field := FieldByName(Metadata.FieldName);
+      Stream := TInstantStringStream.Create('');
+      try
+        SaveObjectToStream(Stream);
+        Field.AsString := Stream.DataString;
+      finally
+        Stream.Free;
+      end;
     end;
   end;
 end;
@@ -12601,16 +12903,33 @@ procedure TInstantNavigationalResolver.WriteParts(Attribute: TInstantParts);
 var
   Field: TField;
   Stream: TInstantStringStream;
+  LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
   begin
-    Field := FieldByName(Metadata.FieldName);
-    Stream := TInstantStringStream.Create('');
-    try
-      Attribute.SaveObjectsToStream(Stream);
-      Field.AsString := Stream.DataString;
-    finally
-      Stream.Free;
+    if Metadata.StorageKind = skExternal then
+    begin
+      LinkDatasetResolver :=
+          GetLinkDatasetResolver(Metadata.ExternalStorageName);
+      LinkDatasetResolver.Open;
+      try
+        LinkDatasetResolver.DisposeDeletedAttributeObjects(Attribute);
+        LinkDatasetResolver.ClearAttributeLinkRecords;
+        LinkDatasetResolver.StoreAttributeObjects(Attribute);
+      finally
+        LinkDatasetResolver.Close;
+      end;
+    end
+    else
+    begin
+      Field := FieldByName(Metadata.FieldName);
+      Stream := TInstantStringStream.Create('');
+      try
+        SaveObjectsToStream(Stream);
+        Field.AsString := Stream.DataString;
+      finally
+        Stream.Free;
+      end;
     end;
   end;
 end;
@@ -12631,16 +12950,32 @@ procedure TInstantNavigationalResolver.WriteReferences(
 var
   Field: TField;
   Stream: TInstantStringStream;
+  LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
   begin
-    Field := FieldByName(Metadata.FieldName);
-    Stream := TInstantStringStream.Create('');
-    try
-      SaveReferencesToStream(Stream);
-      Field.AsString := Stream.DataString;
-    finally
-      Stream.Free;
+    if Metadata.StorageKind = skExternal then
+    begin
+      LinkDatasetResolver :=
+          GetLinkDatasetResolver(Metadata.ExternalStorageName);
+      LinkDatasetResolver.Open;
+      try
+        LinkDatasetResolver.ClearAttributeLinkRecords;
+        LinkDatasetResolver.StoreAttributeObjects(Attribute);
+      finally
+        LinkDatasetResolver.Close;
+      end;
+    end
+    else
+    begin
+      Field := FieldByName(Metadata.FieldName);
+      Stream := TInstantStringStream.Create('');
+      try
+        SaveReferencesToStream(Stream);
+        Field.AsString := Stream.DataString;
+      finally
+        Stream.Free;
+      end;
     end;
   end;
 end;
@@ -12793,7 +13128,7 @@ var
   I: Integer;
 begin
   for I := 0 to Pred(ObjectRowCount) do
-    if (ObjectRows[I]^.Instance is TInstantObject) then
+    if ObjectFetched(I) and (ObjectRows[I]^.Instance is TInstantObject) then
       List.Add(TInstantObject(ObjectRows[I]^.Instance));
 end;
 
@@ -13967,143 +14302,83 @@ var
     for i := 0 to Pred(Map.Count) do
     begin
       AttributeMetadata := Map[i];
-      if Map[i].AttributeType = atPart then
+      if (AttributeMetadata.AttributeType = atPart) and
+          (AttributeMetadata.StorageKind = skExternal) then
       begin
-        if Map[i].StorageKind = skExternal then
-        begin
-          // Dispose object
-          SelectParams := TParams.Create;
+        // Dispose object
+        SelectParams := TParams.Create;
+        try
+          SelectStatement := Format(SelectExternalPartSQL,
+            [AttributeMetadata.FieldName + InstantClassFieldName,
+             AttributeMetadata.FieldName + InstantIdFieldName,
+             AttributeMetadata.ClassMetadata.TableName]);
+          AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
+          AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
+          DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
           try
-            SelectStatement := Format(SelectExternalPartSQL,
-              [AttributeMetadata.FieldName + InstantClassFieldName,
-               AttributeMetadata.FieldName + InstantIdFieldName,
-               AttributeMetadata.ClassMetadata.TableName]);
-            AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-            AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
+            DataSet.Open;
             try
-              DataSet.Open;
-              try
-                if not DataSet.IsEmpty then
-                begin
-                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(PartObject) then
-                      PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                  finally
-                    PartObject.Free;
-                  end;
+              if not DataSet.IsEmpty then
+              begin
+                PartObject := AttributeMetadata.ObjectClass.Retrieve(
+                  DataSet.Fields[1].AsString, False, False, AObject.Connector);
+                try
+                  if Assigned(PartObject) then
+                    PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
+                finally
+                  PartObject.Free;
                 end;
-              finally
-                DataSet.Close;
               end;
             finally
-              Broker.ReleaseDataSet(DataSet);
+              DataSet.Close;
             end;
           finally
-            SelectParams.Free;
+            Broker.ReleaseDataSet(DataSet);
           end;
-
+        finally
+          SelectParams.Free;
         end;
       end;
     end;
   end;
 
-  procedure DeleteExternalPartsMap;
+  procedure DeleteAllExternalLinks(Index: Integer);
   var
-    i: Integer;
-    PartObject: TInstantObject;
-    SelectParams, DeleteParams: TParams;
-    SelectStatement, DeleteStatement: string;
-    AttributeMetadata: TInstantAttributeMetadata;
-    DataSet: TDataSet;
+    LinkResolver: TInstantSQLLinkResolver;
   begin
-    for i := 0 to Pred(Map.Count) do
-    begin
-      AttributeMetadata := Map[i];
-      if Map[i].AttributeType = atParts then
-      begin
-        if Map[i].StorageKind = skExternal then
-        begin
-          // dispose all objects
-          SelectParams := TParams.Create;
-          try
-            SelectStatement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
-            AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
-            AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
-            AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-            DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-            try
-              DataSet.Open;
-              try
-                while not DataSet.Eof do
-                begin
-                  PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                    DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                  try
-                    if Assigned(PartObject) then
-                      PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                  finally
-                    PartObject.Free;
-                  end;
-                  DataSet.Next;
-                end;
-              finally
-                DataSet.Close;
-              end;
-            finally
-              Broker.ReleaseDataSet(DataSet);
-            end;
-          finally
-            SelectParams.Free;
-          end;
-
-          // Delete all links
-          DeleteParams := TParams.Create;
-          try
-            DeleteStatement := Format(DeleteExternalSQL,
-              [AttributeMetadata.ExternalStorageName,
-              InstantParentClassFieldName,
-              InstantParentIdFieldName]);
-            AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-            Broker.Execute(DeleteStatement, DeleteParams);
-          finally
-            DeleteParams.Free;
-          end;
-        end;
-      end;
+    LinkResolver := TInstantSQLLinkResolver.Create(Self,
+        Map[Index].ExternalStorageName, AObject);
+    try
+      LinkResolver.ClearAttributeLinkRecords;
+    finally
+      LinkResolver.Free;
     end;
   end;
 
-  procedure DeleteExternalReferencesMap;
+  procedure DeleteExternalContainerMaps;
   var
     i: Integer;
-    DeleteParams: TParams;
-    DeleteStatement: string;
+    j: Integer;
     AttributeMetadata: TInstantAttributeMetadata;
+    Attribute: TInstantContainer;
   begin
     for i := 0 to Pred(Map.Count) do
     begin
       AttributeMetadata := Map[i];
-      if AttributeMetadata.AttributeType = atReferences then
+      if (AttributeMetadata.AttributeType in [atParts, atReferences]) and
+              (AttributeMetadata.StorageKind = skExternal) then
       begin
-        if AttributeMetadata.StorageKind = skExternal then
+        if AttributeMetadata.AttributeType = atParts then
         begin
-          // Delete all links
-          DeleteParams := TParams.Create;
-          try
-            DeleteStatement := Format(DeleteExternalSQL,
-              [AttributeMetadata.ExternalStorageName,
-              InstantParentClassFieldName]);
-            AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-            AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-            Broker.Execute(DeleteStatement, DeleteParams);
-          finally
-            DeleteParams.Free;
-          end;
+          // Dispose all contained objects
+          Attribute := TInstantContainer(AObject.AttributeByName(
+              AttributeMetadata.Name));
+          for j := 0 to Pred(Attribute.Count) do
+            Attribute.Items[j].ObjectStore.DisposeObject(
+                Attribute.Items[j], caIgnore);
         end;
+
+        DeleteAllExternalLinks(i);
       end;
     end;
   end;
@@ -14112,8 +14387,7 @@ begin
   if not Assigned(Info) then
     Info := @AInfo;
   DeleteExternalPartMap;
-  DeleteExternalPartsMap;
-  DeleteExternalReferencesMap;
+  DeleteExternalContainerMaps;
   Params := TParams.Create;
   try
     AddBaseParams(Params, AObject.ClassName, AObject.PersistentId);
@@ -14277,167 +14551,32 @@ var
     end;
   end;
 
-  procedure UpdateExternalPartsMap;
+  procedure UpdateExternalContainerMaps;
   var
-    i, ii: Integer;
-    PartObject: TInstantObject;
-    PartsAttribute: TInstantParts;
+    I: Integer;
     AttributeMetadata: TInstantAttributeMetadata;
-    SelectParams, DeleteParams, InsertParams: TParams;
-    SelectStatement, DeleteStatement, InsertStatement: string;
-    DataSet: TDataSet;
+    LinkResolver: TInstantSQLLinkResolver;
+    Attribute: TInstantContainer;
   begin
-    for i := 0 to Pred(Map.Count) do
+    for I := 0 to Pred(Map.Count) do
     begin
-      AttributeMetadata := Map[i];
-      if AttributeMetadata.AttributeType = atParts then
+      AttributeMetadata := Map[I];
+      if AttributeMetadata.AttributeType in [atParts, atReferences] then
       begin
-        PartsAttribute := TInstantParts(AObject.AttributeByName(AttributeMetadata.Name));
-        if PartsAttribute.IsChanged then
+        Attribute := TInstantContainer(AObject.AttributeByName(
+            AttributeMetadata.Name));
+        if Attribute.IsChanged and
+            (AttributeMetadata.StorageKind = skExternal) then
         begin
-          if Map[i].StorageKind = skExternal then
-          begin
-            // Make sure that all the items are in memory because they will be
-            // accessed later, after the database records have been deleted.
-            for ii := 0 to Pred(PartsAttribute.Count) do
-              PartsAttribute.Items[ii];
-            // Delete all objects
-            SelectParams := TParams.Create;
-            try
-              SelectStatement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
-              AddIdParam(SelectParams, InstantParentIdFieldName, AObject.Id);
-              AddStringParam(SelectParams, InstantParentClassFieldName, AObject.ClassName);
-              AddStringParam(SelectParams, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-              try
-                DataSet.Open;
-                try
-                  while not DataSet.Eof do
-                  begin
-                    PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                    try
-                      if Assigned(PartObject) and
-                          (PartsAttribute.IndexOf(PartObject) = -1) then
-                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                    finally
-                      PartObject.Free;
-                    end;
-                    DataSet.Next;
-                  end;
-                finally
-                  DataSet.Close;
-                end;
-              finally
-                Broker.ReleaseDataSet(DataSet);
-              end;
-            finally
-              SelectParams.Free;
-            end;
-
-            // Delete all links
-            DeleteParams := TParams.Create;
-            try
-              DeleteStatement := Format(DeleteExternalSQL,
-                [AttributeMetadata.ExternalStorageName,
-                InstantParentClassFieldName]);
-              AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-              AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-              Broker.Execute(DeleteStatement, DeleteParams);
-            finally
-              DeleteParams.Free;
-            end;
-
-            // Store all objects and links
-            for ii := 0 to Pred(PartsAttribute.Count) do
-            begin
-              // Store object
-              PartObject := PartsAttribute.Items[ii];
-              PartObject.CheckId;
-              PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-
-              // Insert link
-              InsertParams := TParams.Create;
-              try
-                InsertStatement := Format(InsertExternalSQL,
-                  [AttributeMetadata.ExternalStorageName]);
-                AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
-                AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
-                AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-                AddStringParam(InsertParams, InstantChildClassFieldName,
-                  PartsAttribute.Items[ii].ClassName);
-                AddIdParam(InsertParams, InstantChildIdFieldName,
-                  PartsAttribute.Items[ii].Id);
-                AddIntegerParam(InsertParams, InstantSequenceNoFieldName, Succ(ii));
-                Broker.Execute(InsertStatement, InsertParams);
-              finally
-                InsertParams.Free;
-              end;
-            end;
-          end;
-        end;
-      end;
-    end;
-  end;
-
-  procedure UpdateExternalReferencesMap;
-  var
-    i, ii: integer;
-    AttributeMetadata: TInstantAttributeMetadata;
-    ReferenceObject: TInstantObject;
-    ReferencesAttribute: TInstantReferences;
-    DeleteParams, InsertParams: TParams;
-    DeleteStatement, InsertStatement: string;
-  begin
-    for i := 0 to Pred(Map.Count) do
-    begin
-      AttributeMetadata := Map[i];
-      if AttributeMetadata.AttributeType = atReferences then
-      begin
-        ReferencesAttribute := TInstantReferences(AObject.AttributeByName(AttributeMetadata.Name));
-        if ReferencesAttribute.IsChanged then
-        begin
-          if AttributeMetadata.StorageKind = skExternal then
-          begin
-            // Delete all links
-            DeleteParams := TParams.Create;
-            try
-              DeleteStatement := Format(DeleteExternalSQL,
-                [AttributeMetadata.ExternalStorageName,
-                InstantParentClassFieldName,
-                InstantParentIdFieldName]);
-              AddStringParam(DeleteParams, InstantParentClassFieldName, AObject.ClassName);
-              AddIdParam(DeleteParams, InstantParentIdFieldName, AObject.Id);
-              Broker.Execute(DeleteStatement, DeleteParams);
-            finally
-              DeleteParams.Free;
-            end;
-            // Store all links
-            for ii := 0 to Pred(ReferencesAttribute.Count) do
-            begin
-              ReferenceObject := ReferencesAttribute.Items[ii];
-              if ReferenceObject.FInUpdate then     // prevent recursion
-                Continue;
-              ReferenceObject.CheckId;
-              ReferenceObject.ObjectStore.StoreObject(ReferenceObject, caIgnore);
-
-              InsertParams := TParams.Create;
-              try
-                InsertStatement := Format(InsertExternalSQL,
-                  [AttributeMetadata.ExternalStorageName]);
-                AddIdParam(InsertParams, InstantIdFieldName, AObject.GenerateId);
-                AddStringParam(InsertParams, InstantParentClassFieldName, AObject.ClassName);
-                AddIdParam(InsertParams, InstantParentIdFieldName, AObject.Id);
-                AddStringParam(InsertParams, InstantChildClassFieldName,
-                  ReferencesAttribute.Items[ii].ClassName);
-                AddIdParam(InsertParams, InstantChildIdFieldName,
-                  ReferencesAttribute.Items[ii].Id);
-                AddIntegerParam(InsertParams, InstantSequenceNoFieldName, Succ(ii));
-                Broker.Execute(InsertStatement, InsertParams);
-              finally
-                InsertParams.Free;
-              end;
-            end;
+          LinkResolver := TInstantSQLLinkResolver.Create(Self,
+              AttributeMetadata.ExternalStorageName, AObject);
+          try
+            if AttributeMetadata.AttributeType = atParts then
+              LinkResolver.DisposeDeletedAttributeObjects(Attribute);
+            LinkResolver.ClearAttributeLinkRecords;
+            LinkResolver.StoreAttributeObjects(Attribute);
+          finally
+            LinkResolver.Free;
           end;
         end;
       end;
@@ -14470,8 +14609,7 @@ begin
     if Map.IsRootMap then
       Broker.SetObjectUpdateCount(AObject, NewUpdateCount);
 
-    UpdateExternalPartsMap;
-    UpdateExternalReferencesMap;
+    UpdateExternalContainerMaps;
   finally
     Params.Free;
   end;
@@ -14565,49 +14703,22 @@ var
 
   procedure ReadPartsAttribute;
   var
-    //PartObject: TInstantObject;
-    Statement: string;
-    Params: TParams;
     Stream: TInstantStringStream;
-    RefObject:TInstantObjectReference;
+    LinkResolver: TInstantSQLLinkResolver;
   begin
     if AttributeMetadata.StorageKind = skExternal then
     begin
       with (Attribute as TInstantParts) do
       begin
         Clear;
-        Params := TParams.Create;
+        LinkResolver := TInstantSQLLinkResolver.Create(Self,
+            AttributeMetadata.ExternalStorageName, AObject);
         try
-          Statement := Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
-          AddIdParam(Params, InstantParentIdFieldName, AObjectId);
-          AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
-          AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-          DataSet := Broker.AcquireDataSet(Statement, Params);
-          try
-            DataSet.Open;
-            try
-              while not DataSet.Eof do
-              begin
-                RefObject := TInstantObjectReference.Create(nil, True);
-                RefObject.ReferenceObject(DataSet.Fields[0].AsString, DataSet.Fields[1].AsString);
-                (Attribute as TInstantParts).ObjectReferenceList.Add(RefObject);
-                {PartObject := AttributeMetadata.ObjectClass.Retrieve(Fields[1].AsString, False, False, AObject.Connector);
-                if Assigned(PartObject) then
-                  Add(PartObject)
-                else
-                  PartObject.Free;}
-                DataSet.Next;
-              end;
-            finally
-              DataSet.Close;
-            end;
-          finally
-            Broker.ReleaseDataSet(DataSet);
-          end;
+          LinkResolver.ReadAttributeObjects(TInstantParts(Attribute),
+              AObjectId);
         finally
-          Params.Free;
+          LinkResolver.Free;
         end;
-        //Changed;
       end;
     end
     else
@@ -14633,41 +14744,21 @@ var
 
   procedure ReadReferencesAttribute;
   var
-    RefObject:TInstantObjectReference;
     Stream: TInstantStringStream;
-    Statement: string;
-    Params: TParams;
+    LinkResolver: TInstantSQLLinkResolver;
   begin
     if AttributeMetadata.StorageKind = skExternal then
     begin
       with (Attribute as TInstantReferences) do
       begin
         Clear;
-        Params := TParams.Create;
+        LinkResolver := TInstantSQLLinkResolver.Create(Self,
+            AttributeMetadata.ExternalStorageName, AObject);
         try
-          Statement:=Format(SelectExternalSQL, [AttributeMetadata.ExternalStorageName]);
-          AddIdParam(Params, InstantParentIdFieldName, AObjectId);
-          AddStringParam(Params, InstantParentClassFieldName, AObject.ClassName);
-          AddStringParam(Params, InstantChildClassFieldName, AttributeMetadata.ObjectClassName);
-          DataSet := Broker.AcquireDataSet(Statement, Params);
-          try
-            DataSet.Open;
-            try
-              while not DataSet.Eof do
-              begin
-                RefObject :=
-                    (Attribute as TInstantReferences).ObjectReferenceList.Add;
-                RefObject.ReferenceObject(Metadata.ObjectClass, DataSet.Fields[1].AsString);
-                DataSet.Next;
-              end;
-            finally
-              DataSet.Close;
-            end;
-          finally
-            Broker.ReleaseDataSet(DataSet);
-          end;
+          LinkResolver.ReadAttributeObjects(TInstantReferences(Attribute),
+              AObjectId);
         finally
-          Params.Free;
+          LinkResolver.Free;
         end;
       end;
     end
@@ -15808,6 +15899,12 @@ end;
 function TInstantObjectReferenceList.IndexOfInstance(Item: TInstantObject): Integer;
 begin
   Result := IndexOf(Item, True);
+end;
+
+function TInstantObjectReferenceList.IndexOfReference(AObjectReference:
+    TInstantObjectReference): Integer;
+begin
+  Result := FList.IndexOf(AObjectReference);
 end;
 
 procedure TInstantObjectReferenceList.Insert(Index: Integer; Item: TInstantObject);

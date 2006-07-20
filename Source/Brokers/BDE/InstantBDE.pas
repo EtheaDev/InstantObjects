@@ -112,11 +112,13 @@ type
     function GetDataSet: TTable;
   protected
     function CreateDataSet: TDataSet; override;
-    function FormatTableName(const ATableName: string): string; virtual;
+    function CreateNavigationalLinkResolver(const ATableName: string):
+        TInstantNavigationalLinkResolver; override;
     function Locate(const AClassName, AObjectId: string): Boolean; override;
     function TranslateError(AObject: TInstantObject;
       E: Exception): Exception; override;
   public
+    function FormatTableName(const ATableName: string): string; virtual;
     property Broker: TInstantBDEBroker read GetBroker;
     property DataSet: TTable read GetDataSet;
   end;
@@ -211,6 +213,24 @@ type
     procedure InternalExecute; override;
   public
     property IndexMetadata: TInstantIndexMetadata read GetIndexMetadata;
+  end;
+
+type
+  TInstantBDELinkResolver = class(TInstantNavigationalLinkResolver)
+  private
+    function GetBroker: TInstantBDEBroker;
+    function GetDataSet: TTable;
+    function GetResolver: TInstantBDEResolver;
+  protected
+    function CreateDataSet: TDataSet; override;
+    procedure SetDatasetParentRange(const AParentClass, AParentId: string);
+        override;
+  public
+    constructor Create(AResolver: TInstantNavigationalResolver; const ATableName:
+        string);
+    property Broker: TInstantBDEBroker read GetBroker;
+    property DataSet: TTable read GetDataSet;
+    property Resolver: TInstantBDEResolver read GetResolver;
   end;
 
 procedure Register;
@@ -504,13 +524,18 @@ begin
   end;
 end;
 
-function TInstantBDEResolver.FormatTableName(
-  const ATableName: string): string;
+function TInstantBDEResolver.CreateNavigationalLinkResolver(const ATableName:
+    string): TInstantNavigationalLinkResolver;
+begin
+  Result := TInstantBDELinkResolver.Create(Self, ATableName);
+end;
+
+function TInstantBDEResolver.FormatTableName(const ATableName: string): string;
 begin
   if Broker.Connector.DriverType = dtOracle then
     Result := UpperCase(ATableName)
   else
-    Result := TableName;
+    Result := ATableName;
 end;
 
 function TInstantBDEResolver.GetBroker: TInstantBDEBroker;
@@ -523,14 +548,14 @@ begin
   Result := inherited DataSet as TTable;
 end;
 
-function TInstantBDEResolver.Locate(const AClassName,
-  AObjectId: string): Boolean;
+function TInstantBDEResolver.Locate(const AClassName, AObjectId: string):
+    Boolean;
 begin
   Result := DataSet.FindKey([AClassName, AObjectId]);
 end;
 
 function TInstantBDEResolver.TranslateError(
-  AObject: TInstantObject; E: Exception): Exception; 
+  AObject: TInstantObject; E: Exception): Exception;
 var
   Error: TDBError;
 begin
@@ -861,6 +886,50 @@ begin
   finally
     Table.Free;
   end;
+end;
+
+constructor TInstantBDELinkResolver.Create(AResolver:
+    TInstantNavigationalResolver; const ATableName: string);
+begin
+  inherited Create(AResolver, ATableName);
+end;
+
+function TInstantBDELinkResolver.CreateDataSet: TDataSet;
+begin
+  Result:= TTable.Create(nil);
+  with TTable(Result) do
+  try
+    DatabaseName := Broker.Connector.Connection.DatabaseName;
+    TableName := Resolver.FormatTableName(Self.TableName);
+    IndexFieldNames := InstantParentClassFieldName + ';' +
+        InstantParentIdFieldName;
+    CacheBlobs := False;
+    UpdateMode := upWhereKeyOnly;
+  except
+    Result.Free;
+    raise;
+  end;
+end;
+
+function TInstantBDELinkResolver.GetBroker: TInstantBDEBroker;
+begin
+  Result := inherited Broker as TInstantBDEBroker;
+end;
+
+function TInstantBDELinkResolver.GetDataSet: TTable;
+begin
+  Result := inherited DataSet as TTable;
+end;
+
+function TInstantBDELinkResolver.GetResolver: TInstantBDEResolver;
+begin
+  Result := inherited Resolver as TInstantBDEResolver;
+end;
+
+procedure TInstantBDELinkResolver.SetDatasetParentRange(const
+    AParentClass, AParentId: string);
+begin
+  Dataset.SetRange([AParentClass, AParentId], [AParentClass, AParentId]);
 end;
 
 
