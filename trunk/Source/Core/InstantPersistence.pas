@@ -12312,10 +12312,6 @@ begin
   inherited;
 end;
 
-procedure TInstantNavigationalResolver.ClearEnum(Attribute: TInstantEnum);
-begin
-end;
-
 procedure TInstantNavigationalResolver.Edit;
 begin
   DataSet.Edit;
