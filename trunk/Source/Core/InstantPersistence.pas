@@ -10658,6 +10658,10 @@ end;
 function TInstantQuery.GetObjects(Index: Integer): TObject;
 begin
   Result := InternalGetObjects(Index);
+  if not Assigned(Result) then
+    raise EInstantAccessError.CreateFmt(SErrorRetrievingObject,
+      [ObjectClassName, 'Query.Object[' + IntToStr(Index) + ']',
+      SObjectNotAvailable]);
 end;
 
 function TInstantQuery.GetParams: TParams;
