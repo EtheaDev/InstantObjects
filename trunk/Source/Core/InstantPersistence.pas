@@ -15951,6 +15951,463 @@ begin
   end;
 end;
 
+constructor TInstantNavigationalLinkResolver.Create(AResolver:
+    TInstantNavigationalResolver; const ATableName: string);
+begin
+  inherited Create(AResolver);
+  FTableName := ATableName;
+end;
+
+destructor TInstantNavigationalLinkResolver.Destroy;
+begin
+  FreeDataSet;
+  inherited;
+end;
+
+procedure TInstantNavigationalLinkResolver.Append;
+begin
+  DataSet.Append;
+end;
+
+procedure TInstantNavigationalLinkResolver.Cancel;
+begin
+  DataSet.Cancel;
+end;
+
+procedure TInstantNavigationalLinkResolver.Close;
+begin
+  DataSet.Close;
+end;
+
+procedure TInstantNavigationalLinkResolver.Delete;
+begin
+  DataSet.Delete;
+end;
+
+procedure TInstantNavigationalLinkResolver.Edit;
+begin
+  DataSet.Edit;
+end;
+
+function TInstantNavigationalLinkResolver.Eof: Boolean;
+begin
+  Result := DataSet.Eof;
+end;
+
+function TInstantNavigationalLinkResolver.FieldByName(const FieldName: string):
+    TField;
+begin
+  Result := DataSet.FieldByName(FieldName);
+end;
+
+procedure TInstantNavigationalLinkResolver.First;
+begin
+  Dataset.First;
+end;
+
+procedure TInstantNavigationalLinkResolver.FreeDataSet;
+begin
+  if FFreeDataSet then
+    FreeAndNil(FDataSet);
+end;
+
+function TInstantNavigationalLinkResolver.GetBroker: TInstantNavigationalBroker;
+begin
+  Result := Resolver.Broker;
+end;
+
+function TInstantNavigationalLinkResolver.GetDataSet: TDataSet;
+begin
+  if not Assigned(FDataSet) then
+  begin
+    Broker.Connector.DoGetDataSet(TableName, FDataSet);
+    if not Assigned(FDataSet) then
+    begin
+      FDataSet := CreateDataSet;
+      FFreeDataSet := True;
+    end;
+    Broker.Connector.DoInitDataSet(TableName, FDataSet);
+  end;
+  Result := FDataSet;
+end;
+
+function TInstantNavigationalLinkResolver.GetResolver:
+    TInstantNavigationalResolver;
+begin
+  Result := inherited Resolver as TInstantNavigationalResolver;
+end;
+
+procedure TInstantNavigationalLinkResolver.InternalStoreAttributeObjects(
+    Attribute: TInstantContainer);
+var
+  I: Integer;
+  Obj: TInstantObject;
+  WasOpen: Boolean;
+begin
+  WasOpen := Dataset.Active;
+
+  if not WasOpen then
+    Open;
+  try
+    for I := 0 to Pred(Attribute.Count) do
+    begin
+      Obj := Attribute.Items[I];
+      if Obj.InUpdate then     // prevent recursion
+        Continue;
+      Obj.CheckId;
+      Append;
+      try
+        FieldByName(InstantIdFieldName).AsString := Obj.GenerateId;
+        FieldByName(InstantParentClassFieldName).AsString :=
+            Attribute.Owner.ClassName;
+        FieldByName(InstantParentIdFieldName).AsString := Attribute.Owner.Id;
+        FieldByName(InstantChildClassFieldName).AsString := Obj.ClassName;
+        FieldByName(InstantChildIdFieldName).AsString := Obj.Id;
+        FieldByName(InstantSequenceNoFieldName).AsInteger := Succ(I);
+        Post;
+      except
+        Cancel;
+      end;
+      Obj.ObjectStore.StoreObject(Obj, caIgnore);
+    end;
+  finally
+    if not WasOpen then
+      Close;
+  end;
+end;
+
+procedure TInstantNavigationalLinkResolver.InternalClearAttributeLinkRecords;
+var
+  WasOpen: Boolean;
+begin
+  WasOpen := Dataset.Active;
+
+  if not WasOpen then
+    Open;
+  try
+    SetDatasetParentRange(Resolver.ObjectClassname, Resolver.ObjectId);
+    First;
+    while not Eof do
+      Delete;
+  finally
+    if not WasOpen then
+      Close;
+  end;
+end;
+
+procedure TInstantNavigationalLinkResolver.InternalDisposeDeletedAttributeObjects(
+    Attribute: TInstantContainer);
+var
+//    I: Integer;
+  Obj: TInstantObject;
+  AttributeMetadata: TInstantAttributeMetadata;
+  ObjDisposed: Boolean;
+  WasOpen: Boolean;
+begin
+  WasOpen := Dataset.Active;
+
+  if not WasOpen then
+    Open;
+  try
+    SetDatasetParentRange(Attribute.Owner.ClassName, Attribute.Owner.Id);
+    First;
+    AttributeMetadata := Attribute.Metadata;
+    while not Eof do
+    begin
+      ObjDisposed := False;
+      Obj := AttributeMetadata.ObjectClass.Retrieve(
+          FieldByName(InstantChildIdFieldName).AsString,
+          False, False, Attribute.Connector);
+      try
+        if Assigned(Obj) and
+            (Attribute.IndexOf(Obj) = -1) then
+        begin
+          Obj.ObjectStore.DisposeObject(Obj, caIgnore);
+          Delete;
+          ObjDisposed := True;
+        end;
+      finally
+        Obj.Free;
+      end;
+      if not ObjDisposed then
+        Next;
+    end;
+  finally
+    if not WasOpen then
+      Close;
+  end;
+end;
+
+procedure TInstantNavigationalLinkResolver.InternalReadAttributeObjects(
+    Attribute: TInstantContainer; const AObjectId: string);
+var
+  WasOpen: Boolean;
+begin
+  WasOpen := Dataset.Active;
+
+  if not WasOpen then
+    Open;
+  try
+    // Attribute.Owner.Id can be '', so do not use here.
+    SetDatasetParentRange(Attribute.Owner.Classname, AObjectId);
+    First;
+    while not Eof do
+    begin
+      Attribute.AddReference(
+          FieldByName(InstantChildClassFieldName).AsString,
+          FieldByName(InstantChildIdFieldName).AsString);
+      Next;
+    end;
+  finally
+    if not WasOpen then
+      Close;
+  end;
+end;
+
+procedure TInstantNavigationalLinkResolver.Next;
+begin
+  DataSet.Next;
+end;
+
+procedure TInstantNavigationalLinkResolver.Open;
+begin
+  DataSet.Open;
+end;
+
+procedure TInstantNavigationalLinkResolver.Post;
+begin
+  DataSet.Post;
+end;
+
+procedure TInstantNavigationalLinkResolver.SetDataSet(Value: TDataset);
+begin
+  if Value <> FDataSet then
+  begin
+    FreeDataSet;
+    FDataSet := Value;
+  end;
+end;
+
+constructor TInstantLinkResolver.Create(AResolver: TInstantCustomResolver);
+begin
+  inherited Create;
+  FResolver := AResolver;
+end;
+
+procedure TInstantLinkResolver.StoreAttributeObjects(Attribute:
+    TInstantContainer);
+begin
+  InternalStoreAttributeObjects(Attribute);
+end;
+
+procedure TInstantLinkResolver.ClearAttributeLinkRecords;
+begin
+  InternalClearAttributeLinkRecords;
+end;
+
+procedure TInstantLinkResolver.DisposeDeletedAttributeObjects(Attribute:
+    TInstantContainer);
+begin
+  InternalDisposeDeletedAttributeObjects(Attribute);
+end;
+
+function TInstantLinkResolver.GetBroker: TInstantCustomRelationalBroker;
+begin
+  Result := Resolver.Broker;
+end;
+
+function TInstantLinkResolver.GetResolver: TInstantCustomResolver;
+begin
+  Result := FResolver;
+end;
+
+procedure TInstantLinkResolver.InternalStoreAttributeObjects(Attribute:
+    TInstantContainer);
+begin
+end;
+
+procedure TInstantLinkResolver.InternalClearAttributeLinkRecords;
+begin
+end;
+
+procedure TInstantLinkResolver.InternalDisposeDeletedAttributeObjects(
+    Attribute: TInstantContainer);
+begin
+end;
+
+procedure TInstantLinkResolver.InternalReadAttributeObjects(Attribute:
+    TInstantContainer; const AObjectId: string);
+begin
+end;
+
+procedure TInstantLinkResolver.ReadAttributeObjects(Attribute:
+    TInstantContainer; const AObjectId: string);
+begin
+  InternalReadAttributeObjects(Attribute, AObjectId);
+end;
+
+constructor TInstantSQLLinkResolver.Create(AResolver: TInstantSQLResolver;
+    const ATableName: string; AObject: TInstantObject);
+begin
+  inherited Create(AResolver);
+  FTableName := ATableName;
+  FAttributeOwner := AObject;
+end;
+
+function TInstantSQLLinkResolver.GetBroker: TInstantSQLBroker;
+begin
+  Result := Resolver.Broker;
+end;
+
+function TInstantSQLLinkResolver.GetResolver: TInstantSQLResolver;
+begin
+  Result := FResolver as TInstantSQLResolver;
+end;
+
+procedure TInstantSQLLinkResolver.InternalStoreAttributeObjects(Attribute:
+    TInstantContainer);
+var
+  Params: TParams;
+  Statement: string;
+  Obj: TInstantObject;
+  I: Integer;
+begin
+  // Store all objects and links
+  for I := 0 to Pred(Attribute.Count) do
+  begin
+    // Store object
+    Obj := Attribute.Items[I];
+    Obj.CheckId;
+    Obj.ObjectStore.StoreObject(Obj, caIgnore);
+
+    // Insert link
+    Params := TParams.Create;
+    try
+      Statement := Format(Resolver.InsertExternalSQL,
+          [TableName]);
+      Resolver.AddIdParam(Params, InstantIdFieldName, AttributeOwner.GenerateId);
+      Resolver.AddStringParam(Params, InstantParentClassFieldName,
+          AttributeOwner.ClassName);
+      Resolver.AddIdParam(Params, InstantParentIdFieldName,
+          AttributeOwner.Id);
+      Resolver.AddStringParam(Params, InstantChildClassFieldName,
+          Obj.ClassName);
+      Resolver.AddIdParam(Params, InstantChildIdFieldName,
+          Obj.Id);
+      Resolver.AddIntegerParam(Params, InstantSequenceNoFieldName, Succ(I));
+      Broker.Execute(Statement, Params);
+    finally
+      Params.Free;
+    end;
+  end;
+end;
+
+procedure TInstantSQLLinkResolver.InternalClearAttributeLinkRecords;
+var
+  Params: TParams;
+  Statement: string;
+begin
+  Params := TParams.Create;
+  try
+    Statement := Format(Resolver.DeleteExternalSQL,
+      [TableName,
+      InstantParentClassFieldName,
+      InstantParentIdFieldName]);
+    Resolver.AddStringParam(Params, InstantParentClassFieldName,
+        AttributeOwner.ClassName);
+    Resolver.AddIdParam(Params, InstantParentIdFieldName,
+        AttributeOwner.Id);
+    Broker.Execute(Statement, Params);
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure TInstantSQLLinkResolver.InternalDisposeDeletedAttributeObjects(
+    Attribute: TInstantContainer);
+var
+  Statement: string;
+  Params: TParams;
+  Dataset: TDataset;
+  Obj: TInstantObject;
+begin
+  // Delete all objects
+  Params := TParams.Create;
+  try
+    Statement := Format(Resolver.SelectExternalSQL, [TableName]);
+    Resolver.AddIdParam(Params, InstantParentIdFieldName, AttributeOwner.Id);
+    Resolver.AddStringParam(Params, InstantParentClassFieldName,
+        AttributeOwner.ClassName);
+    Resolver.AddStringParam(Params, InstantChildClassFieldName,
+        Attribute.Metadata.ObjectClassName);
+    DataSet := Broker.AcquireDataSet(Statement, Params);
+    try
+      DataSet.Open;
+      try
+        while not DataSet.Eof do
+        begin
+          Obj := Attribute.Metadata.ObjectClass.Retrieve(
+              DataSet.FieldByName(InstantChildIdFieldName).AsString,
+              False, False, Attribute.Connector);
+          try
+            if Assigned(Obj) and
+                (Attribute.IndexOf(Obj) = -1) then
+              Obj.ObjectStore.DisposeObject(Obj,
+                  caIgnore);
+          finally
+            Obj.Free;
+          end;
+          DataSet.Next;
+        end;
+      finally
+        DataSet.Close;
+      end;
+    finally
+      Broker.ReleaseDataSet(DataSet);
+    end;
+  finally
+    Params.Free;
+  end;
+end;
+
+procedure TInstantSQLLinkResolver.InternalReadAttributeObjects(Attribute:
+    TInstantContainer; const AObjectId: string);
+var
+  Statement: string;
+  Params: TParams;
+  Dataset: TDataset;
+begin
+  Params := TParams.Create;
+  try
+    Statement := Format(Resolver.SelectExternalSQL, [TableName]);
+    Resolver.AddIdParam(Params, InstantParentIdFieldName, AObjectId);
+    Resolver.AddStringParam(Params, InstantParentClassFieldName,
+        AttributeOwner.ClassName);
+    Resolver.AddStringParam(Params, InstantChildClassFieldName,
+        Attribute.Metadata.ObjectClassName);
+    DataSet := Broker.AcquireDataSet(Statement, Params);
+    try
+      DataSet.Open;
+      try
+        while not DataSet.Eof do
+        begin
+          Attribute.AddReference(
+              DataSet.FieldByName(InstantChildClassFieldName).AsString,
+              DataSet.FieldByName(InstantChildIdFieldName).AsString);
+          DataSet.Next;
+        end;
+      finally
+        DataSet.Close;
+      end;
+    finally
+      Broker.ReleaseDataSet(DataSet);
+    end;
+  finally
+    Params.Free;
+  end;
+end;
+
+
 initialization
   RegisterClasses([TInstantClassMetadatas, TInstantClassMetadata,
     TInstantAttributeMetadatas, TInstantAttributeMetadata,
