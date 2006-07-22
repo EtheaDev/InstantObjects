@@ -148,6 +148,7 @@ resourcestring
   SObjectClassUndefined = 'ObjectClass undefined';
   SObjectError = 'Error for object of class %s: "%s"';
   SObjectIsOwned = 'Object %s(''%s'') is owned.';
+  SObjectNotAvailable = 'Object is not available!';
   SOwnershipRecursion = 'Ownership Recursion for object %s(''%s'')';
   SPersistentObjectNotAllowed = 'Persistent object %s(''%s'') not allowed.';
   SProtocolNotSupported = 'Protocol ''%s'' not supported';
