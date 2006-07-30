@@ -24,6 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
+ * Joao Morais
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -219,13 +220,12 @@ begin
     stString,
       stUnicodeString: DataType := dtString;
     stBoolean: DataType := dtBoolean;
-    stShort:
+    stShort, stByte:
       begin
         DataType := dtBoolean;
         Include(AlternateDataTypes, dtInteger);
       end;
-    stByte,
-      stInteger,
+    stInteger,
       stLong: DataType := dtInteger;
     stFloat,
       stDouble:

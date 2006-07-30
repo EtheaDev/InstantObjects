@@ -1122,7 +1122,7 @@ end;
 
 function TInstantZeosDBOMySQLBroker.UseBooleanFields: Boolean;
 begin
-  Result := True;
+  Result := False;
 end;
 {$ENDIF}
 
