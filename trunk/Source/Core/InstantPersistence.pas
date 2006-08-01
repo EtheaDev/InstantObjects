@@ -1496,7 +1496,7 @@ type
     function InternalCreateQuery: TInstantQuery; virtual;
     function InternalCreateScheme(Model: TInstantModel): TInstantScheme; virtual; abstract;
     procedure InternalDisconnect; virtual; abstract;
-    function InternalGenerateId(const AObject: TInstantObject = nil): string; virtual;
+    function InternalGenerateId(const AObject: TInstantObject): string; virtual;
     procedure InternalRollbackTransaction; virtual;
     procedure InternalStartTransaction; virtual;
     function RemoveTransactedObject(AObject: TInstantObject): Integer;
@@ -1516,7 +1516,7 @@ type
     function CreateQuery: TInstantQuery;
     procedure Disconnect;
     function EnsureObjectStore(AClass: TInstantObjectClass): TInstantObjectStore;
-    function GenerateId(const AObject: TInstantObject = nil): string;
+    function GenerateId(const AObject: TInstantObject): string;
     class procedure RegisterClass;
     procedure RegisterClient(Client: TObject);
     procedure RollbackTransaction;
@@ -8605,7 +8605,7 @@ begin
   if IsAbandoned then
     Result := InstantGenerateId
   else
-    Result := Connector.GenerateId;
+    Result := Connector.GenerateId(Self);
 end;
 
 function TInstantObject.GetCaption: string;
@@ -9459,7 +9459,7 @@ begin
   end;
 end;
 
-function TInstantConnector.GenerateId(const AObject: TInstantObject = nil): string;
+function TInstantConnector.GenerateId(const AObject: TInstantObject): string;
 begin
   Result := InternalGenerateId(AObject);
 end;
@@ -9600,7 +9600,7 @@ begin
   Result := Broker.CreateQuery;
 end;
 
-function TInstantConnector.InternalGenerateId(const AObject: TInstantObject = nil): string;
+function TInstantConnector.InternalGenerateId(const AObject: TInstantObject): string;
 begin
   if Assigned(FOnGenerateId) then
   begin
