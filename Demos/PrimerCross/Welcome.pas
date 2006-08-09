@@ -1,9 +1,11 @@
 unit Welcome;
 
 interface
-{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
-{$IFDEF VER150}
-{$WARN UNSAFE_TYPE OFF}
+
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
 {$ENDIF}
 
 uses

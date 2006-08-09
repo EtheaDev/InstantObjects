@@ -38,7 +38,7 @@ unit InstantMSSqlCatalog;
 interface
 
 uses
-  InstantPersistence;
+  InstantPersistence, InstantBrokers, InstantMetadata, InstantTypes;
 
 type
   // A TInstantCatalog that reads catalog information from an MS-SQL server database.

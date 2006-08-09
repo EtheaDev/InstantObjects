@@ -2,7 +2,11 @@ unit Stopwatch;
 
 interface
 
-{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
 
 uses
   SysUtils,

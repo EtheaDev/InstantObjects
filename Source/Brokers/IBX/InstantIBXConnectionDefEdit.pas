@@ -89,7 +89,7 @@ implementation
 {$R *.DFM}
 
 uses
-  IB, InstantPersistence, InstantClasses, InstantConsts;
+  IB, InstantPersistence, InstantClasses, InstantTypes, InstantConsts;
 
 { TInstantIBXConnectionDefEditForm }
 

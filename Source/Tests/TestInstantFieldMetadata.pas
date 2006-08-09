@@ -32,7 +32,7 @@ unit TestInstantFieldMetadata;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantMetadata;
 
 type
   // Test methods for class TInstantFieldMetadata
@@ -69,7 +69,7 @@ type
 
 implementation
 
-uses SysUtils, TypInfo, testregistry;
+uses SysUtils, TypInfo, testregistry, InstantTypes;
 
 procedure TestTInstantFieldMetadata.SetUp;
 begin

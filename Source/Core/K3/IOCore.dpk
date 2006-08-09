@@ -56,6 +56,9 @@ contains
   InstantDBEvolution in '../InstantDBEvolution.pas',
   InstantCustomDBEvolverFormUnit in '../InstantCustomDBEvolverFormUnit.pas' {InstantCustomDBEvolverForm},
   InstantDBEvolverFormUnit in '../InstantDBEvolverFormUnit.pas' {InstantDBEvolverForm},
-  InstantDBBuilderFormUnit in '../InstantDBBuilderFormUnit.pas' {InstantDBBuilderForm};
+  InstantDBBuilderFormUnit in '../InstantDBBuilderFormUnit.pas' {InstantDBBuilderForm},
+  InstantTypes in '../InstantTypes.pas',
+  InstantBrokers in '../InstantBrokers.pas',
+  InstantMetadata in '../InstantMetadata.pas';
 
 end.

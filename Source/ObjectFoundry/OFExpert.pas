@@ -93,7 +93,7 @@ implementation
 uses
   Contnrs, OFClasses, OFUtils, OFCritic, InstantAttributeEditor,
   InstantPersistence, InstantCode, Forms, Controls, Menus, MMEngineDefs,
-  OFClassRegWizard, InstantDesignUtils;
+  OFClassRegWizard, InstantDesignUtils, InstantTypes;
 
 const
   SObjectFoundry = 'ObjectFoundry';

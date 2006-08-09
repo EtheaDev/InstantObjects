@@ -45,7 +45,8 @@ uses
 {$IFDEF LINUX}
   QControls,
 {$ENDIF}
-  Classes, DB, DBXpress, SqlExpr, InstantPersistence, InstantCommand;
+  Classes, DB, DBXpress, SqlExpr, InstantPersistence, InstantCommand,
+  InstantBrokers, InstantMetadata, InstantTypes;
 
 type
   TInstantDBXConnectionDef = class(TInstantConnectionBasedConnectionDef)

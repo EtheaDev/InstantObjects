@@ -31,7 +31,12 @@
 
 program PrimerExternal;
 
-{$I '../../InstantDefines.inc'}
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
+
 
 uses
   Forms,

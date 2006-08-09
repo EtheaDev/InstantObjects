@@ -46,7 +46,7 @@ uses
 {$IFDEF LINUX}
   QTypes, 
 {$ENDIF}
-  InstantClasses, InstantPersistence;
+  InstantClasses, InstantPersistence, InstantMetadata;
 
 type
   TInstantConnectionManagerActionType = (atNew, atEdit, atDelete, atRename,

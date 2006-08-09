@@ -50,488 +50,53 @@ uses
 {$IFDEF FPC}
   InstantFpcUtils,
 {$ENDIF}
-  Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand, InstantConsts;
+  Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand, InstantConsts,
+  InstantMetadata, InstantTypes;
 
 type
-  TInstantWarningEvent = procedure (const Sender: TObject;
-    const AWarningText: string) of object;
-
-  TInstantMetadatas = class;
-
-  TInstantMetadata = class(TInstantCollectionItem)
-  private
-    function GetCollection: TInstantMetadatas;
-    procedure SetCollection(Value: TInstantMetadatas); {$IFDEF D6+}reintroduce;{$ENDIF}
-  protected
-    function InternalEquals(const Other: TInstantMetadata): Boolean; virtual;
-  public
-    function Equals(const Other: TInstantMetadata): Boolean;
-    property Collection: TInstantMetadatas read GetCollection write SetCollection;
-  end;
-
-  TInstantMetadatas = class(TInstantOwnedCollection)
-  private
-    function GetItems(Index: Integer): TInstantMetadata;
-    procedure SetItems(Index: Integer; const Value: TInstantMetadata);
-  public
-    function Find(const AName: string): TInstantMetadata;
-    property Items[Index: Integer]: TInstantMetadata read GetItems write SetItems; default;
-  end;
-
-  TInstantClassMetadata = class;
-  TInstantAttributeMetadatas = class;
-  TInstantObject = class;
-  TInstantObjectClass = class of TInstantObject;
   TInstantAttribute = class;
   TInstantAttributeClass = class of TInstantAttribute;
-  TInstantObjectReferenceList = class;
-
-  TInstantStorageKind = (skEmbedded, skExternal);
-  TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean, atString,
-    atDateTime, atBlob, atMemo, atGraphic, atPart, atReference, atParts, atReferences);
-  TInstantAttributeCategory = (acUnknown, acSimple, acElement, acContainer);
-
-  TInstantGraphicFileFormat = (gffUnknown, gffBmp, gffTiff, gffJpeg, gffPng,
-    gffDcx, gffPcx, gffEmf, gffGif);
-
-  TInstantAttributeMetadata = class(TInstantMetadata)
-  private
-    FAttributeType: TInstantAttributeType;
-    FDefaultValue: string;
-    FDisplayWidth: Integer;
-    FEditMask: string;
-    FIsIndexed: Boolean;
-    FIsRequired: Boolean;
-    FObjectClassName: string;
-    FSize: Integer;
-    FStorageName: string;
-    FValidChars: TChars;
-    FStorageKind: TInstantStorageKind;
-    FExternalStorageName: string;
-    function GetAttributeClass: TInstantAttributeClass;
-    function GetAttributeClassName: string;
-    function GetAttributeTypeName: string;
-    function GetCategory: TInstantAttributeCategory;
-    function GetClassMetadata: TInstantClassMetadata;
-    function GetClassMetadataName: string;
-    function GetCollection: TInstantAttributeMetadatas;
-    function GetFieldName: string;
-    function GetHasValidChars: Boolean;
-    function GetIsDefault: Boolean;
-    function GetObjectClass: TInstantObjectClass;
-    function GetObjectClassMetadata: TInstantClassMetadata;
-    function GetTableName: string;
-    function GetValidChars: TChars;
-    function GetValidCharsString: string;
-    procedure SetAttributeClass(AClass: TInstantAttributeClass);
-    procedure SetAttributeClassName(const Value: string);
-    procedure SetAttributeTypeName(const Value: string);
-    procedure SetCollection(Value: TInstantAttributeMetadatas);
-    procedure SetFieldName(const Value: string);
-    procedure SetIsDefault(const Value: Boolean);
-    procedure SetValidCharsString(const Value: string);
-  public
-    function CreateAttribute(AObject: TInstantObject): TInstantAttribute;
-    procedure Assign(Source: TPersistent); override;
-    procedure CheckAttributeClass(AClass: TInstantAttributeClass);
-    procedure CheckCategory(ACategory: TInstantAttributeCategory);
-    procedure CheckIsIndexed;
-    function IsAttributeClass(AClass: TInstantAttributeClass): Boolean;
-    property AttributeClass: TInstantAttributeClass read GetAttributeClass write SetAttributeClass;
-    property AttributeClassName: string read GetAttributeClassName write SetAttributeClassName;
-    property Category: TInstantAttributeCategory read GetCategory;
-    property ClassMetadataName: string read GetClassMetadataName;
-    property Collection: TInstantAttributeMetadatas read GetCollection write SetCollection;
-    property IsDefault: Boolean read GetIsDefault write SetIsDefault;
-    property ObjectClass: TInstantObjectClass read GetObjectClass;
-    property ObjectClassMetadata: TInstantClassMetadata read GetObjectClassMetadata;
-    property FieldName: string read GetFieldName write SetFieldName;
-    property HasValidChars: Boolean read GetHasValidChars;
-    property TableName: string read GetTableName;
-    property ValidChars: TChars read GetValidChars write FValidChars;
-  published
-    property AttributeType: TInstantAttributeType read FAttributeType write FAttributeType default atUnknown;
-    property AttributeTypeName: string read GetAttributeTypeName write SetAttributeTypeName stored False;
-    property ClassMetadata: TInstantClassMetadata read GetClassMetadata;
-    property DefaultValue: string read FDefaultValue write FDefaultValue;
-    property DisplayWidth: Integer read FDisplayWidth write FDisplayWidth default 0;
-    property EditMask: string read FEditMask write FEditMask;
-    property ExternalStorageName: string read FExternalStorageName write FExternalStorageName;
-    property StorageKind: TInstantStorageKind read FStorageKind write FStorageKind default skEmbedded;
-    property IsIndexed: Boolean read FIsIndexed write FIsIndexed;
-    property IsRequired: Boolean read FIsRequired write FIsRequired;
-    property ObjectClassName: string read FObjectClassName write FObjectClassName;
-    property Size: Integer read FSize write FSize default 0;
-    property StorageName: string read FStorageName write FStorageName;
-    property ValidCharsString: string read GetValidCharsString write SetValidCharsString;
-  end;
-
-  TInstantAttributeMetadatas = class(TInstantMetadatas)
-  private
-    function GetItems(Index: Integer): TInstantAttributeMetadata;
-    procedure SetItems(Index: Integer; Value: TInstantAttributeMetadata);
-  protected
-    procedure Changed;
-  public
-    constructor Create(AOwner: TInstantClassMetadata);
-    function Add: TInstantAttributeMetadata;
-    procedure Clear;
-    function Find(const AName: string): TInstantAttributeMetadata;
-    procedure Remove(Item: TInstantAttributeMetadata);
-    property Items[Index: Integer]: TInstantAttributeMetadata read GetItems write SetItems; default;
-    function Owner: TInstantClassMetadata;
-  end;
-
-  TInstantClassMetadatas = class;
-  TInstantAttributeMap = class;
-  TInstantAttributeMaps = class;
-
-  TInstantPersistence = (peEmbedded, peStored);
-
-  TInstantClassMetadata = class(TInstantMetadata)
-  private
-    FAttributeMetadatas: TInstantAttributeMetadatas;
-    FDefaultContainerName: string;
-    FMemberMap: TInstantAttributeMap;
-    FParent: TInstantClassMetadata;
-    FParentName: string;
-    FPersistence: TInstantPersistence;
-    FStorageMap: TInstantAttributeMap;
-    FStorageMaps: TInstantAttributeMaps;
-    FStorageName: string;
-    procedure BuildAttributeMap(Map: TInstantAttributeMap; Complete: Boolean);
-    procedure BuildStorageMaps(Maps: TInstantAttributeMaps);
-    procedure DestroyAttributeViews;
-    function GetAttributeMetadatas: TInstantAttributeMetadatas;
-    function GetCollection: TInstantClassMetadatas;
-    procedure GetDistinctAttributeMetadatas(Map: TInstantAttributeMap);
-    function GetIsEmpty: Boolean;
-    function GetIsStored: Boolean;
-    function GetMemberMap: TInstantAttributeMap;
-    function GetParent: TInstantClassMetadata;
-    function GetParentName: string;
-    function GetStorageMap: TInstantAttributeMap;
-    function GetStorageMaps: TInstantAttributeMaps;
-    function GetTableName: string;
-    procedure SetCollection(Value: TInstantClassMetadatas);
-    procedure SetParent(Value: TInstantClassMetadata);
-    procedure SetParentName(const Value: string);
-    procedure SetTableName(const Value: string);
-  protected
-    procedure ClearParent;
-    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter); override;
-    class procedure ConvertToText(Converter: TInstantBinaryToTextConverter); override;
-    procedure ReadObject(Reader: TInstantReader); override;
-    procedure WriteObject(Writer: TInstantWriter); override;
-  public
-    destructor Destroy; override;
-    procedure Assign(Source: TPersistent); override;
-    property AttributeMetadatas: TInstantAttributeMetadatas read GetAttributeMetadatas;
-    property Collection: TInstantClassMetadatas read GetCollection write SetCollection;
-    property IsEmpty: Boolean read GetIsEmpty;
-    property IsStored: Boolean read GetIsStored;
-    property MemberMap: TInstantAttributeMap read GetMemberMap;
-    property Parent: TInstantClassMetadata read GetParent write SetParent;
-    property StorageMap: TInstantAttributeMap read GetStorageMap;
-    property StorageMaps: TInstantAttributeMaps read GetStorageMaps;
-    property TableName: string read GetTableName write SetTableName;
-  published
-    property DefaultContainerName: string read FDefaultContainerName write FDefaultContainerName;
-    property ParentName: string read GetParentName write SetParentName;
-    property Persistence: TInstantPersistence read FPersistence write FPersistence;
-    property StorageName: string read FStorageName write FStorageName;
-  end;
-
-  TInstantClassMetadatas = class(TInstantMetadatas)
-  private
-    function GetItems(Index: Integer): TInstantClassMetadata;
-    procedure SetItems(Index: Integer; Value: TInstantClassMetadata);
-  protected
-    class function CreateInstance(Arg: Pointer = nil): TInstantCollection; override;
-  public
-    constructor Create(AOwner: TPersistent);
-    function Add: TInstantClassMetadata;
-    function Find(const AName: string): TInstantClassMetadata;
-    property Items[Index: Integer]: TInstantClassMetadata read GetItems write SetItems; default;
-  end;
-
-  TInstantModel = class(TPersistent)
-  private
-    FClassMetadatas: TInstantClassMetadatas;
-    function GetClassMetadatas: TInstantClassMetadatas;
-  protected
-    procedure DestroyClassMetadatas;
-  public
-    destructor Destroy; override;
-    procedure LoadFromFile(const FileName: string);
-    procedure LoadFromResFile(const FileName: string);
-    procedure SaveToFile(const FileName: string);
-    procedure SaveToResFile(const FileName: string);
-    property ClassMetadatas: TInstantClassMetadatas read GetClassMetadatas;
-  end;
-
-  TInstantTableMetadata = class;
-  TInstantFieldMetadatas = class;
-
-  TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob);
-  TInstantDataTypes = set of TInstantDataType;
-  TInstantFieldOption = (foRequired, foIndexed);
-  TInstantFieldOptions = set of TInstantFieldOption;
-
-  TInstantFieldMetadata = class(TInstantMetadata)
-  private
-    FDataType: TInstantDataType;
-    FOptions: TInstantFieldOptions;
-    FSize: Integer;
-    FAlternateDataTypes: TInstantDataTypes;
-    function GetCollection: TInstantFieldMetadatas;
-    function GetTableMetadata: TInstantTableMetadata;
-  protected
-    function InternalEquals(const Other: TInstantMetadata): Boolean; override;
-  public
-    constructor Create(ACollection: TInstantFieldMetadatas); reintroduce;
-    procedure Assign(Source: TPersistent); override;
-    // Returns True if one of the data types of Other (Other.DataType and
-    // Other.AlternateDataTypes) equals one of the data types of Self.
-    function DataTypesEqual(const Other: TInstantFieldMetadata): Boolean;
-    property Collection: TInstantFieldMetadatas read GetCollection;
-    property DataType: TInstantDataType read FDataType write FDataType;
-    // When field metadata is gathered from a database, there might be more
-    // TInstantDataType values that apply (for example when the database
-    // represents dtBoolean and dtInteger attributes with the same column type).
-    // In that case, a datatype is chosen as the value of the DataType
-    // property, and the others are put in AlternateDataTypes. The
-    // DataTypesEqual method considers both DataType and AlternateDataTypes when
-    // deciding upon data type "equality".
-    property AlternateDataTypes: TInstantDataTypes
-      read FAlternateDataTypes write FAlternateDataTypes;
-    property Options: TInstantFieldOptions read FOptions write FOptions;
-    property Size: Integer read FSize write FSize;
-    property TableMetadata: TInstantTableMetadata read GetTableMetadata;
-  end;
-
-  TInstantFieldMetadatas = class(TInstantMetadatas)
-  private
-    function GetItems(Index: Integer): TInstantFieldMetadata;
-    procedure SetItems(Index: Integer; Value: TInstantFieldMetadata);
-  public
-    constructor Create(AOwner: TInstantTableMetadata);
-    procedure AddFieldMetadata(const AName: string; ADataType: TInstantDataType;
-      ASize: Integer; AOptions: TInstantFieldOptions = []);
-    function Add: TInstantFieldMetadata;
-    function Find(const AName: string): TInstantFieldMetadata;
-    property Items[Index: Integer]: TInstantFieldMetadata read GetItems write SetItems; default;
-    function Owner: TInstantTableMetadata;
-  end;
-
-  TInstantIndexMetadatas = class;
-
-  TInstantIndexMetadata = class(TInstantMetadata)
-  private
-    FFields: string;
-    FOptions: TIndexOptions;
-    function GetCollection: TInstantIndexMetadatas;
-    function GetTableMetadata: TInstantTableMetadata;
-  protected
-    function InternalEquals(const Other: TInstantMetadata): Boolean; override;
-  public
-    constructor Create(ACollection: TInstantMetadatas); reintroduce;
-    procedure Assign(Source: TPersistent); override;
-    property Collection: TInstantIndexMetadatas read GetCollection;
-    // Returns True if the field identified by AFieldMetadata is part of this
-    // index.
-    function IsFieldIndexed(const AFieldMetadata: TInstantFieldMetadata): Boolean;
-    property TableMetadata: TInstantTableMetadata read GetTableMetadata;
-  published
-    property Fields: string read FFields write FFields;
-    property Options: TIndexOptions read FOptions write FOptions;
-  end;
-
-  TInstantIndexMetadatas = class(TInstantMetadatas)
-  private
-    function GetItems(Index: Integer): TInstantIndexMetadata;
-    procedure SetItems(Index: Integer; Value: TInstantIndexMetadata);
-  public
-    constructor Create(AOwner: TInstantTableMetadata);
-    procedure AddIndexMetadata(const AName, AFields: string;
-      AOptions: TIndexOptions);
-    function Add: TInstantIndexMetadata;
-    function Find(const AName: string): TInstantIndexMetadata;
-    // Returns True if the field identified by AFieldMetadata is part of a
-    // defined index.
-    function IsFieldIndexed(const AFieldMetadata: TInstantFieldMetadata): Boolean;
-    property Items[Index: Integer]: TInstantIndexMetadata read GetItems write SetItems; default;
-    function Owner: TInstantTableMetadata;
-  end;
-
-  TInstantScheme = class;
-
-  TInstantTableMetadata = class(TInstantMetadata)
-  private
-    FFieldMetadatas: TInstantFieldMetadatas;
-    FIndexMetadatas: TInstantIndexMetadatas;
-    function GetFieldMetadatas: TInstantFieldMetadatas;
-    function GetIndexMetadatas: TInstantIndexMetadatas;
-    function GetScheme: TInstantScheme;
-    function GetFieldMetadataCount: Integer;
-    function GetIndexMetadataCount: Integer;
-  public
-    destructor Destroy; override;
-    procedure Assign(Source: TPersistent); override;
-    property Scheme: TInstantScheme read GetScheme;
-  published
-    property FieldMetadataCount: Integer read GetFieldMetadataCount;
-    property FieldMetadatas: TInstantFieldMetadatas read GetFieldMetadatas;
-    function FindFieldMetadata(const AName: string): TInstantFieldMetadata;
-    function FindIndexMetadata(const AName: string): TInstantIndexMetadata;
-    property IndexMetadataCount: Integer read GetIndexMetadataCount;
-    property IndexMetadatas: TInstantIndexMetadatas read GetIndexMetadatas;
-  end;
-
-  TInstantTableMetadatas = class(TInstantMetadatas)
-  private
-    function GetItems(Index: Integer): TInstantTableMetadata;
-  public
-    constructor Create(AOwner: TPersistent);
-    function Add: TInstantTableMetadata;
-    function Find(const AName: string): TInstantTableMetadata;
-    property Items[Index: Integer]: TInstantTableMetadata read GetItems; default;
-  end;
-
-  TInstantCatalogFeature = (cfReadTableInfo, cfReadColumnInfo, cfReadIndexInfo);
-  TInstantCatalogFeatures = set of TInstantCatalogFeature;
-  // An object that provides the metadata info used by a TInstantScheme object
-  // to build itself. It abstracts the way the information is fetched and its
-  // source. It always works with a TInstantScheme. It is usually created
-  // together with a TInstantScheme object:
-  //   Scheme := TInstantScheme.Create;
-  //   Scheme.Catalog := Broker.CreateCatalog(Scheme);
-  // and the object ownership is transferred to Scheme, which is then
-  // responsible for destroying the catalog object.
-  TInstantCatalog = class
-  private
-    FScheme: TInstantScheme;
-    FOnWarning: TInstantWarningEvent;
-  protected
-    function GetFeatures: TInstantCatalogFeatures; virtual;
-    procedure DoWarning(const WarningText: string);
-  public
-    // Creates an instance and binds it to the specified TInstantScheme object.
-    constructor Create(const AScheme: TInstantScheme);
-    // A reference to the TInstantScheme object to which the current object is
-    // bound, assigned on creation. The TInstantScheme object is responsible for
-    // the current object's lifetime.
-    property Scheme: TInstantScheme read FScheme;
-    // Initializes ATableMetadatas from the catalog.
-    procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas);
-      virtual; abstract;
-    // Returns a set of supported features. The predefined implementation
-    // says that the catalog support everything; derived classes might not
-    // support all features.
-    property Features: TInstantCatalogFeatures read GetFeatures;
-    // Triggered when the catalog has something to report about its activity,
-    // typically during InitTableMetadatas, which is not a fatal error.
-    property OnWarning: TInstantWarningEvent
-      read FOnWarning write FOnWarning;
-  end;
-
-  // A TInstantCatalog that gathers its info from a TInstantModel.
-  TInstantModelCatalog = class(TInstantCatalog)
-  private
-    FModel: TInstantModel;
-  public
-    // Creates an instance and binds it to the specified TInstantScheme object.
-    // AModel is written to the Model property.
-    constructor Create(const AScheme: TInstantScheme;
-      const AModel: TInstantModel);
-    // Initializes ATableMetadatas reading maps from the model.
-    procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas);
-      override;
-    // A reference to the TInstantModel from which the catalog reads metadata
-    // info.
-    property Model: TInstantModel read FModel;
-  end;
-
-  TInstantScheme = class(TInstantStreamable)
-  private
-    FOnWarning: TInstantWarningEvent;
-    FCatalog: TInstantCatalog;
-    FTableMetadataCollection: TInstantTableMetadatas;
-    FBlobStreamFormat: TInstantStreamFormat;
-    FIdSize: Integer;
-    FIdDataType: TInstantDataType;
-    function GetTableMetadataCollection: TInstantTableMetadatas;
-    function GetTableMetadatas(Index: Integer): TInstantTableMetadata;
-    function GetTableMetadataCount: Integer;
-    procedure SetCatalog(const Value: TInstantCatalog);
-    procedure CatalogWarningEventHandler(const Sender: TObject;
-      const AWarningText: string);
-  protected
-    procedure DoWarning(const AWarningText: string);
-    function AttributeTypeToDataType(
-      AttributeType: TInstantAttributeType): TInstantDataType; virtual;
-    property TableMetadataCollection: TInstantTableMetadatas read GetTableMetadataCollection;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    property Catalog: TInstantCatalog read FCatalog write SetCatalog;
-    function FindTableMetadata(const AName: string): TInstantTableMetadata;
-    property TableMetadataCount: Integer read GetTableMetadataCount;
-    property TableMetadatas[Index: Integer]: TInstantTableMetadata read GetTableMetadatas;
-    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
-    property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
-    property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
-    // Triggered when the scheme has something to report about its activity,
-    // typically during database building/evolution, which is not a fatal error.
-    property OnWarning: TInstantWarningEvent read FOnWarning write FOnWarning;
-  end;
-
-  TInstantAttributeMap = class(TInstantNamedList)
-  private
-    FClassMetadata: TInstantClassMetadata;
-    FName: string;
-    function GetItems(Index: Integer): TInstantAttributeMetadata;
-    procedure SetItems(Index: Integer; Value: TInstantAttributeMetadata);
-    function GetIsRootMap: Boolean;
-  protected
-    function GetName: string; override;
-    procedure SetName(const Value: string); override;
-  public
-    constructor Create(AClassMetadata: TInstantClassMetadata);
-    function Add(Item: TInstantAttributeMetadata): Integer;
-    function AddUnique(Item: TInstantAttributeMetadata): Integer;
-    function Find(const AName: string): TInstantAttributeMetadata;
-    function IndexOf(Item: TInstantAttributeMetadata): Integer;
-    procedure Insert(Index: Integer; Item: TInstantAttributeMetadata);
-    function Remove(Item: TInstantAttributeMetadata): Integer;
-    property ClassMetadata: TInstantClassMetadata read FClassMetadata;
-    property IsRootMap: Boolean read GetIsRootMap;
-    property Items[Index: Integer]: TInstantAttributeMetadata read GetItems write SetItems; default;
-  end;
-
-  TInstantAttributeMaps = class(TObjectList)
-  private
-    FClassMetadata: TInstantClassMetadata;
-    function GetItems(Index: Integer): TInstantAttributeMap;
-    function GetRootMap: TInstantAttributeMap;
-    procedure SetItems(Index: Integer; Value: TInstantAttributeMap);
-  public
-    constructor Create(AClassMetadata: TInstantClassMetadata);
-    function Add: TInstantAttributeMap; overload;
-    function Add(Item: TInstantAttributeMap): Integer; overload;
-    function Find(const AName: string): TInstantAttributeMap;
-    function FindMap(const AttributeName: string): TInstantAttributeMap;
-    function EnsureMap(const AName: string): TInstantAttributeMap;
-    function IndexOf(Item: TInstantAttributeMap): Integer;
-    procedure Insert(Index: Integer; Item: TInstantAttributeMap);
-    function Remove(Item: TInstantAttributeMap): Integer;
-    property ClassMetadata: TInstantClassMetadata read FClassMetadata;
-    property RootMap: TInstantAttributeMap read GetRootMap;
-    property Items[Index: Integer]: TInstantAttributeMap read GetItems write SetItems; default;
-  end;
-
-  TInstantConnector = class;
+  TInstantBroker = class;
   TInstantComplex = class;
+  TInstantConnectionDef = class;
+  TInstantConnectionDefClass = class of TInstantConnectionDef;
+  TInstantConnector = class;
+  TInstantConnectorClass = class of TInstantConnector;
+  TInstantContainer = class;
+  TInstantObject = class;
+  TInstantObjectClass = class of TInstantObject;
+  TInstantObjectNotifiers = class;
+  TInstantObjectReferenceList = class;
+  TInstantObjectStore = class;
+  TInstantObjectStores = class;
+  TInstantQuery = class;
+
+  TInstantAttributeChangeEvent = procedure(Sender: TInstantObject; Attribute:
+    TInstantAttribute) of object;
+  TInstantConnectorEvent = procedure(Sender: TObject;
+    Connector: TInstantConnector) of object;
+  TInstantContentChangeEvent = procedure(Sender: TInstantObject;
+    Container: TInstantContainer; ChangeType: TInstantContentChangeType;
+    Index: Integer; AObject: TInstantObject) of object;
+  TInstantErrorEvent = procedure(Sender: TObject;
+    OperationType: TInstantOperationType; E: Exception;
+    var Action: TInstantErrorAction) of object;
+  TInstantInvokableMethod = function(Params: TParams): string of object;
+  TInstantNotifyEvent = procedure(Sender: TInstantObject) of object;
+  TInstantObjectNotifyEvent = procedure(Sender: TInstantObject;
+    Notification: TInstantObjectNotification) of object;
+  TInstantObjectProc = procedure(AObject: TInstantOBject) of object;
+  TInstantProgressEvent = procedure(Sender: TObject; Count: Integer;
+    var Continue: Boolean) of object;
+  TInstantSortCompare = function(Holder, Obj1, Obj2: TInstantObject):
+    Integer of object;
+  TInstantStringFunc = function(const S: string): string of object;
+  TInstantSchemeEvent = procedure(Sender: TObject; Scheme: TInstantScheme)
+    of object;
+  TInstantGenerateIdEvent = procedure(Sender: TObject;
+    const AObject: TInstantObject; var Id: string) of object;
+  TInstantUpdateOperation = procedure(ConflictAction: TInstantConflictAction)
+    of object;
 
   TInstantObjectReference = class(TInstantStreamable)
   private
@@ -587,17 +152,15 @@ type
   EInstantAccessError = class(EInstantError)
   end;
 
-  TInstantAttribute = class(TInstantStreamable)
+  TInstantAttribute = class(TInstantAbstractAttribute)
   private
     FIsChanged: Boolean;
-    FMetadata: TInstantAttributeMetadata;
-    FOwner: TInstantObject;
     function GetIsIndexed: Boolean;
     function GetIsRequired: Boolean;
+    function GetMetadata: TInstantAttributeMetadata;
     function GetName: string;
     function GetValue: Variant;
     procedure SetMetadata(Value: TInstantAttributeMetadata);
-    procedure SetOwner(AOwner: TInstantObject);
     procedure SetValue(AValue: Variant);
   protected
     function AccessError(const TypeName: string): EInstantAccessError;
@@ -615,8 +178,8 @@ type
     function GetIsChanged: Boolean; virtual;
     function GetIsDefault: Boolean; virtual;
     function GetIsMandatory: Boolean; virtual;
-    function GetOwner: TPersistent; override;
-    procedure Initialize; virtual;
+    function GetOwner: TInstantObject; reintroduce; virtual;
+    procedure Initialize; override;
     procedure ReadName(Reader: TInstantReader);
     procedure SetAsBoolean(AValue: Boolean); virtual;
     procedure SetAsCurrency(AValue: Currency); virtual;
@@ -627,11 +190,12 @@ type
     procedure SetAsString(const AValue: string); virtual;
     procedure SetAsVariant(AValue: Variant); virtual;
     procedure SetIsChanged(Value: Boolean);
+    procedure SetOwner(AOwner: TInstantObject); virtual;
     procedure StringValidationError(InvalidChar: Char);
     procedure WriteName(Writer: TInstantWriter);
   public
-    constructor Create(AOwner: TInstantObject = nil;
-      AMetadata: TInstantAttributeMetadata = nil); virtual;
+    constructor Create(AOwner: TInstantAbstractObject = nil; AMetadata:
+      TInstantCollectionItem = nil); override;
     procedure Changed;
     procedure CheckHasMetadata;
     procedure Reset; virtual;
@@ -651,8 +215,8 @@ type
     property IsMandatory: Boolean read GetIsMandatory;
     property IsRequired: Boolean read GetIsRequired;
     property Name: string read GetName;
-    property Metadata: TInstantAttributeMetadata read FMetadata write SetMetadata;
-    property Owner: TInstantObject read FOwner;
+    property Metadata: TInstantAttributeMetadata read GetMetadata write SetMetadata;
+    property Owner: TInstantObject read GetOwner;
     property Value: Variant read GetValue write SetValue;
   end;
 
@@ -998,9 +562,6 @@ type
     property ObjectId: string read GetObjectId;
   end;
 
-  TInstantSortCompare = function(Holder, Obj1, Obj2: TInstantObject): Integer of object;
-  TInstantContentChangeType = (ctAdd, ctAddRef, ctRemove, ctReplace, ctClear);
-
   TInstantContainer = class(TInstantComplex)
   private
     function GetItems(Index: Integer): TInstantObject;
@@ -1155,29 +716,11 @@ type
     property UpdateCount: Integer read FUpdateCount write FUpdateCount;
   end;
 
-  TInstantOperationType = (otNone, otCreate, otStore, otRetrieve, otRefresh, otDispose);
-  TInstantErrorAction = (eaRetry, eaIgnore, eaError, eaRevert, eaCancel);
-  TInstantVerificationResult = (vrOk, vrCancel, vrAbort, vrError);
-  TInstantConflictAction = (caIgnore, caFail);
-
-  TInstantAttributeChangeEvent = procedure(Sender: TInstantObject; Attribute: TInstantAttribute) of object;
-  TInstantContentChangeEvent = procedure(Sender: TInstantObject; Container: TInstantContainer;
-    ChangeType: TInstantContentChangeType; Index: Integer; AObject: TInstantObject) of object;
-  TInstantErrorEvent = procedure(Sender: TObject; OperationType: TInstantOperationType; E: Exception;
-    var Action: TInstantErrorAction) of object;
-  TInstantNotifyEvent = procedure(Sender: TInstantObject) of object;
-  TInstantProgressEvent = procedure(Sender: TObject; Count: Integer; var Continue: Boolean) of object;
-  TInstantUpdateOperation = procedure(ConflictAction: TInstantConflictAction) of object;
-  TInstantInvokableMethod = function(Params: TParams): string of object;
-
-  TInstantObjectStore = class;
-
-  TInstantObject = class(TInstantStreamable, IUnknown)
+  TInstantObject = class(TInstantAbstractObject, IUnknown)
   private
     FDefaultContainer: TInstantContainer;
     FChangeCount: Integer;
     FChangesDisabledCount: Integer;
-    FConnector: TInstantConnector;
     FId: string;
     FInUpdate: Boolean;
     FObjectStore: TInstantObjectStore;
@@ -1244,10 +787,10 @@ type
     function GetUpdateCount: Integer;
     procedure Init;
     procedure Finit;
+    function GetConnector: TInstantConnector;
     procedure PerformUpdate(Operation: TInstantUpdateOperation; OperationType: TInstantOperationType;
       ConflictAction: TInstantConflictAction);
     procedure ReadAttributes(Reader: TInstantReader);
-    procedure SetConnector(AConnector: TInstantConnector);
     procedure SetIsChanged(Value: Boolean);
     procedure SetObjects(Index: Integer; Value: TInstantObject);
     procedure SetOwnerContext(AOwner: TInstantObject; Attribute: TInstantComplex);
@@ -1290,7 +833,7 @@ type
     function GenerateId: string; virtual;
     function GetCaption: string; virtual;
     function GetId: string; virtual;
-    function GetObjectClass: TInstantObjectClass; virtual;
+    function GetObjectClass: TInstantAbstractObjectClass; virtual;
     function GetOwner: TPersistent; override;
     procedure HandleError(OperationType: TInstantOperationType; E: Exception;
       var Action: TInstantErrorAction); virtual;
@@ -1301,6 +844,7 @@ type
     procedure ReadObject(Reader: TInstantReader); override;
     procedure RestoreState; virtual;
     procedure SaveState; virtual;
+    procedure SetConnector(AConnector: TInstantConnector); virtual;
     procedure SetId(const Value: string); virtual;
     function VerifyOperation(OperationType: TInstantOperationType): TInstantVerificationResult; virtual;
     procedure WriteObject(Writer: TInstantWriter); override;
@@ -1311,9 +855,9 @@ type
   public
     constructor Clone(Source: TInstantObject;
       AConnector: TInstantConnector = nil); overload; virtual;
-    constructor Create(AConnector: TInstantConnector = nil);
+    constructor Create(AConnector: TInstantConnector = nil); virtual;
     constructor Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
-      Refresh: Boolean = False; AConnector: TInstantConnector = nil);
+        Refresh: Boolean = False; AConnector: TComponent = nil); override;
     function AddObject(AObject: TInstantObject): Integer; overload;
     function AddRef: Integer;
     procedure Assign(Source: TPersistent); override;
@@ -1349,7 +893,8 @@ type
     class function Metadata: TInstantClassMetadata; virtual;
     class function NewInstance: TObject; override;
     procedure Refresh;
-    class procedure RefreshAll(AConnector: TInstantConnector = nil; Progress: TInstantProgressEvent = nil);
+    class procedure RefreshAll(AConnector: TInstantConnector = nil;
+      Progress: TInstantProgressEvent = nil);
     function Release: Integer;
     function RemoveObject(AObject: TInstantObject): Integer;
     procedure ResetAttributes;
@@ -1357,7 +902,7 @@ type
     procedure Unchanged;
     property Caption: string read GetCaption;
     property ClassId: string read GetClassId;
-    property Connector: TInstantConnector read FConnector;
+    property Connector: TInstantConnector read GetConnector;
     property HasDefaultContainer: Boolean read GetHasDefaultContainer;
     property IsChanged: Boolean read GetIsChanged write SetIsChanged;
     property IsDefault: Boolean read GetIsDefault;
@@ -1366,11 +911,12 @@ type
     property IsOwned: Boolean read GetIsOwned;
     property IsPersistent: Boolean read GetIsPersistent;
     property ObjectChangeCount: Integer read GetObjectChangeCount;
-    property ObjectClass: TInstantObjectClass read GetObjectClass;
+    property ObjectClass: TInstantAbstractObjectClass read GetObjectClass;
     property ObjectCount: Integer read GetObjectCount;
     property Id: string read GetId write SetId;
     property InUpdate: Boolean read FInUpdate write FInUpdate;
-    property Objects[Index: Integer]: TInstantObject read GetObjects write SetObjects;
+    property Objects[Index: Integer]: TInstantObject read GetObjects
+      write SetObjects;
     property Owner: TInstantObject read FOwner;
     property OwnerAttribute: TInstantComplex read FOwnerAttribute;
     property PersistentId: string read GetPersistentId;
@@ -1378,177 +924,15 @@ type
     property RefBy[Index: Integer]: TInstantComplex read GetRefBy;
     property RefByCount: Integer read GetRefByCount;
     property UpdateCount: Integer read GetUpdateCount;
-    property OnAfterContentChange: TInstantContentChangeEvent read FOnAfterContentChange write FOnAfterContentChange;
-    property OnAttributeChanged: TInstantAttributeChangeEvent read FOnAttributeChanged write FOnAttributeChanged;
-    property OnBeforeContentChange: TInstantContentChangeEvent read FOnBeforeContentChange write FOnBeforeContentChange;
+    property OnAfterContentChange: TInstantContentChangeEvent
+      read FOnAfterContentChange write FOnAfterContentChange;
+    property OnAttributeChanged: TInstantAttributeChangeEvent
+      read FOnAttributeChanged write FOnAttributeChanged;
+    property OnBeforeContentChange: TInstantContentChangeEvent
+      read FOnBeforeContentChange write FOnBeforeContentChange;
     property OnChange: TInstantNotifyEvent read FOnChange write FOnChange;
     property OnError: TInstantErrorEvent read FOnError write FOnError;
   end;
-
-  TInstantConnectorClass = class of TInstantConnector;
-
-  TInstantConnectionDefClass = class of TInstantConnectionDef;
-
-  TInstantConnectionDef = class(TInstantCollectionItem)
-  private
-    FIsBuilt: Boolean;
-    FBlobStreamFormat: TInstantStreamFormat;
-    FIdSize: Integer;
-    FIdDataType: TInstantDataType;
-  protected
-    function GetCaption: string; virtual;
-    procedure InitConnector(Connector: TInstantConnector); virtual;
-  public
-    constructor Create(Collection: TCollection); override;
-    class function ConnectionTypeName: string; virtual; abstract;
-    class function ConnectorClass: TInstantConnectorClass; virtual; abstract;
-    function CreateConnector(AOwner: TComponent): TInstantConnector;
-    function Edit: Boolean; virtual; abstract;
-    property Caption: string read GetCaption;
-  published
-    property IsBuilt: Boolean read FIsBuilt write FIsBuilt;
-    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
-    property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
-    property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
-  end;
-
-  TInstantConnectionDefs = class(TInstantCollection)
-  private
-    function GetItems(Index: Integer): TInstantConnectionDef;
-    procedure SetItems(Index: Integer; const Value: TInstantConnectionDef);
-  public
-    constructor Create;
-    property Items[Index: Integer]: TInstantConnectionDef read GetItems write SetItems; default;
-  end;
-
-  TInstantBroker = class;
-
-  // A TInstantCatalog that gathers its info from an existing database (through
-  // a TInstantBroker). The broker knows how to read the metadata information
-  // depending on which particular database is used as back-end. This is an
-  // abstract class. A concrete derived class for each supported back-end
-  // must be developed.
-  TInstantBrokerCatalog = class(TInstantCatalog)
-  private
-    FBroker: TInstantBroker;
-    function GetBroker: TInstantBroker;
-  public
-    // Creates an instance and binds it to the specified TInstantScheme object.
-    // ABroker is written to the Broker property.
-    constructor Create(const AScheme: TInstantScheme;
-      const ABroker: TInstantBroker); virtual;
-    // A reference to the broker through which the metadata info is read.
-    property Broker: TInstantBroker read GetBroker;
-  end;
-
-  TInstantObjectStores = class;
-  TInstantQuery = class;
-
-  TInstantSchemeEvent = procedure(Sender: TObject; Scheme: TInstantScheme) of object;
-  TInstantGenerateIdEvent = procedure(Sender: TObject; const AObject: TInstantObject;
-    var Id: string) of object;
-
-  TInstantConnector = class(TComponent)
-  private
-    FBroker: TInstantBroker;
-    FClientList: TList;
-    FObjectStores: TInstantObjectStores;
-    FTransactionLevel: Integer;
-    FTransactedObjectList: TList;
-    FUseTransactions: Boolean;
-    FBeforeBuildDatabase: TInstantSchemeEvent;
-    FBlobStreamFormat: TInstantStreamFormat;
-    FOnGenerateId: TInstantGenerateIdEvent;
-    FIdSize: Integer;
-    FIdDataType: TInstantDataType;
-    procedure AbandonObjects;
-    procedure ApplyTransactedObjectStates;
-    procedure ClearTransactedObjects;
-    procedure DoBeforeBuildDatabase(Scheme: TInstantScheme);
-    function GetBroker: TInstantBroker;
-    function GetClient(Index: Integer): TObject;
-    function GetClientCount: Integer;
-    function GetClientList: TList;
-    function GetInTransaction: Boolean;
-    function GetInUse: Boolean;
-    function GetIsDefault: Boolean;
-    function GetObjectCount: Integer;
-    function GetObjects(Index: Integer): TInstantObject;
-    function GetObjectStores: TInstantObjectStores;
-    function GetTransactedObjectCount: Integer;
-    function GetTransactedObjectList: TList;
-    function GetTransactedObjects(Index: Integer): TInstantObject;
-    procedure RestoreTransactedObjectStates;
-    procedure SetConnected(Value: Boolean);
-    procedure SetIsDefault(const Value: Boolean);
-    property TransactedObjectList: TList read GetTransactedObjectList;
-  protected
-    function AddTransactedObject(AObject: TInstantObject): Integer;
-    function CreateBroker: TInstantBroker; virtual; abstract;
-    function GetConnected: Boolean; virtual;
-    function GetDatabaseExists: Boolean; virtual;
-    function GetDatabaseName: string; virtual;
-    function GetDDLTransactionSupported: Boolean; virtual;
-    procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
-    procedure InternalConnect; virtual; abstract;
-    procedure InternalCommitTransaction; virtual;
-    procedure InternalCreateDatabase; virtual;
-    function InternalCreateQuery: TInstantQuery; virtual;
-    function InternalCreateScheme(Model: TInstantModel): TInstantScheme; virtual; abstract;
-    procedure InternalDisconnect; virtual; abstract;
-    function InternalGenerateId(const AObject: TInstantObject): string; virtual;
-    procedure InternalRollbackTransaction; virtual;
-    procedure InternalStartTransaction; virtual;
-    function RemoveTransactedObject(AObject: TInstantObject): Integer;
-    property ClientList: TList read GetClientList;
-    property TransactedObjectCount: Integer read GetTransactedObjectCount;
-    property TransactedObjects[Index: Integer]: TInstantObject read GetTransactedObjects;
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
-    procedure BuildDatabase(Model: TInstantModel = nil); overload;
-    procedure BuildDatabase(AClasses: array of TInstantObjectClass); overload;
-    procedure CommitTransaction;
-    procedure Connect;
-    class function ConnectionDefClass: TInstantConnectionDefClass; virtual; abstract;
-    procedure CreateDatabase;
-    function CreateScheme(Model: TInstantModel = nil): TInstantScheme;
-    function CreateQuery: TInstantQuery;
-    procedure Disconnect;
-    function EnsureObjectStore(AClass: TInstantObjectClass): TInstantObjectStore;
-    function GenerateId(const AObject: TInstantObject): string;
-    class procedure RegisterClass;
-    procedure RegisterClient(Client: TObject);
-    procedure RollbackTransaction;
-    procedure StartTransaction;
-    class procedure UnregisterClass;
-    procedure UnregisterClient(Client: TObject);
-    property Broker: TInstantBroker read GetBroker;
-    property ClientCount: Integer read GetClientCount;
-    property Clients[Index: Integer]: TObject read GetClient;
-    property DatabaseExists: Boolean read GetDatabaseExists;
-    property DatabaseName: string read GetDatabaseName;
-    property DDLTransactionSupported: Boolean read GetDDLTransactionSupported;
-    property InTransaction: Boolean read GetInTransaction;
-    property InUse: Boolean read GetInUse;
-    property ObjectCount: Integer read GetObjectCount;
-    property Objects[Index: Integer]: TInstantObject read GetObjects;
-    property ObjectStores: TInstantObjectStores read GetObjectStores;
-  published
-    property Connected: Boolean read GetConnected write SetConnected stored False;
-    property IsDefault: Boolean read GetIsDefault write SetIsDefault default False;
-    property UseTransactions: Boolean read FUseTransactions write FUseTransactions default True;
-    property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase write FBeforeBuildDatabase;
-    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
-    property OnGenerateId: TInstantGenerateIdEvent read FOnGenerateId write FOnGenerateId;
-    property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
-    property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
-  end;
-
-  TInstantConnectorEvent = procedure(Sender: TObject;
-    Connector: TInstantConnector) of object;
-
-  TInstantCacheNodeColor = (ncRed, ncBlack);
 
   TInstantCacheNode = class(TObject)
   private
@@ -1573,8 +957,6 @@ type
     function IsRightChild: Boolean;
     property Sibling: TInstantCacheNode read GetSibling;
   end;
-
-  TInstantObjectProc = procedure(AObject: TInstantOBject) of object;
 
   TInstantCache = class(TObject)
   private
@@ -1639,14 +1021,18 @@ type
     constructor Create(Collection: TCollection); override;
     destructor Destroy; override;
     procedure AbandonObjects;
-    procedure DisposeObject(AObject: TInstantObject; ConflictAction: TInstantConflictAction);
+    procedure DisposeObject(AObject: TInstantObject;
+      ConflictAction: TInstantConflictAction);
     function Find(const AObjectId: string): TInstantObject;
     procedure ObjectDestroyed(AObject: TInstantObject);
     procedure RefreshObject(AObject: TInstantObject);
-    function RetrieveObject(const AObjectId: string; AObject: TInstantObject): Boolean;
-    procedure StoreObject(AObject: TInstantObject; ConflictAction: TInstantConflictAction);
+    function RetrieveObject(const AObjectId: string; AObject: TInstantObject):
+      Boolean;
+    procedure StoreObject(AObject: TInstantObject;
+      ConflictAction: TInstantConflictAction);
     property Connector: TInstantConnector read FConnector write FConnector;
-    property ObjectClass: TInstantObjectClass read FObjectClass write FObjectClass;
+    property ObjectClass: TInstantObjectClass read FObjectClass
+      write FObjectClass;
     property Count: Integer read GetCount;
     property Items[Index: Integer]: TInstantObject read GetItems;
   end;
@@ -1659,33 +1045,9 @@ type
     constructor Create;
     function AddObjectStore: TInstantObjectStore;
     function FindObjectStore(AClass: TInstantObjectClass): TInstantObjectStore;
-    property Items[Index: Integer]: TInstantObjectStore read GetItems write SetItems; default;
+    property Items[Index: Integer]: TInstantObjectStore read GetItems
+      write SetItems; default;
   end;
-
-  TInstantQueryCommand = class(TInstantIQLCommand)
-  private
-    function FindAttributeMetadata(const PathText: string): TInstantAttributeMetadata;
-    function GetObjectClassMetadata: TInstantClassMetadata;
-  protected
-    function GetResultClassName: string; override;
-  public
-    property ObjectClassMetadata: TInstantClassMetadata read GetObjectClassMetadata;
-  end;
-
-  TInstantQueryTranslator = class(TInstantIQLTranslator)
-  private
-    FQuery: TInstantQuery;
-    function GetQuery: TInstantQuery;
-  protected
-    function CreateCommand: TInstantIQLCommand; override;
-    function GetResultClassName: string; override;
-  public
-    constructor Create(AQuery: TInstantQuery);
-    property Query: TInstantQuery read GetQuery;
-  end;
-
-  TInstantDBBuildCommandType = (ctAddTable, ctDropTable, ctAddField, ctAlterField,
-    ctDropField, ctAddIndex, ctAlterIndex, ctDropIndex);
 
   EInstantDBBuildError = class(EInstantError);
 
@@ -1730,64 +1092,6 @@ type
   TInstantUnsupportedDBBuildCommand = class(TInstantDBBuildCommand)
   protected
     procedure InternalExecute; override;
-  end;
-
-  TInstantBroker = class(TInstantStreamable)
-  private
-    FConnector: TInstantConnector;
-    function GetConnector: TInstantConnector;
-  protected
-    // Creates an instance of TInstantCatalog suited for the broker and
-    // back-end database engine. Must be overridden in derived classes that
-    // intend to support catalog-based functionality, like database structure
-    // evolution. The predefined implementation just returns nil. Call
-    // IsCatalogSupported to know if CreateCatalog will return an instance of
-    // the catalog object or nil.
-    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; virtual;
-    function GetDatabaseName: string; virtual;
-    procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
-    function InternalCreateQuery: TInstantQuery; virtual;
-    function InternalDisposeObject(AObject: TInstantObject;
-      ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
-    function InternalRetrieveObject(AObject: TInstantObject; const AObjectId: string;
-      ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
-    function InternalStoreObject(AObject: TInstantObject;
-      ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
-  public
-    constructor Create(AConnector: TInstantConnector); virtual;
-    destructor Destroy; override;
-    // Legacy database building code, to be removed when all brokers will have
-    // catalogs.
-    procedure BuildDatabase(Scheme: TInstantScheme);
-    // Creates a database build command object that can perform the build
-    // operation represented by CommandType. The predefined implementation
-    // creates an instance of TInstantUnsupportedDBBuildCommand, which just raises
-    // an exception when executed. Derived classes should create and return
-    // instances of specific TInstantDBBuildCommand and fall back to inherited
-    // for unsupported values of CommandType.
-    function CreateDBBuildCommand(
-      const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; virtual;
-    function CreateQuery: TInstantQuery;
-    function DisposeObject(AObject: TInstantObject;
-      ConflictAction: TInstantConflictAction): Boolean;
-    // Creates and returns a TInstantScheme object that represents the current
-    // database scheme (which may differ from the model-derived scheme).
-    // If the broker doesn't have a catalog, calling this method will raise
-    // an exception. Call IsCatalogSupported if you need to know in advance
-    // whether you can safely call ReadDatabaseScheme or not.
-    function ReadDatabaseScheme(
-      const AWarningEventHandler: TInstantWarningEvent): TInstantScheme; virtual;
-    // Returns True if the broker supports creating a valid catalog. If this
-    // method returns False, it means that calling CreateCatalog will yield nil,
-    // and calling ReadDatabaseSchema will raise an exception.
-    function IsCatalogSupported: Boolean;
-    function RetrieveObject(AObject: TInstantObject; const AObjectId: string;
-      ConflictAction: TInstantConflictAction): Boolean;
-    procedure SetObjectUpdateCount(AObject: TInstantObject; Value: Integer);
-    function StoreObject(AObject: TInstantObject;
-      ConflictAction: TInstantConflictAction): Boolean;
-    property Connector: TInstantConnector read GetConnector;
-    property DatabaseName: string read GetDatabaseName;
   end;
 
   TInstantQuery = class(TPersistent)
@@ -1844,702 +1148,11 @@ type
     property Params: TParams read GetParams write SetParams;
   end;
 
-  TInstantCustomRelationalBroker = class;
-
-  TInstantGetDataSetEvent = procedure(Sender: TObject; const CommandText: string; var DataSet: TDataset) of object;
-  TInstantInitDataSetEvent = procedure(Sender: TObject; const CommandText: string; DataSet: TDataSet) of object;
-
-  TInstantRelationalConnector = class(TInstantConnector)
-  private
-    FOnGetDataSet: TInstantGetDataSetEvent;
-    FOnInitDataSet: TInstantInitDataSetEvent;
-  protected
-    procedure DoGetDataSet(const CommandText: string; var DataSet: TDataSet);
-    procedure DoInitDataSet(const CommandText: string; DataSet: TDataSet);
-    function GetBroker: TInstantCustomRelationalBroker;
-    procedure GetDataSet(const CommandText: string; var DataSet: TDataSet); virtual;
-    function GetDBMSName: string; virtual;
-    procedure InitDataSet(const CommandText: string; DataSet: TDataSet); virtual;
-    function InternalCreateScheme(Model: TInstantModel): TInstantScheme; override;
-  public
-    property Broker: TInstantCustomRelationalBroker read GetBroker;
-    property DBMSName: string read GetDBMSName;
-  published
-    property OnGetDataSet: TInstantGetDataSetEvent read FOnGetDataSet write FOnGetDataSet;
-    property OnInitDataSet: TInstantInitDataSetEvent read FOnInitDataSet write FOnInitDataSet;
-  end;
-
-  TInstantCustomRelationalQuery = class;
-
-  TInstantRelationalTranslatorClass = class of TInstantRelationalTranslator;
-
-  TInstantRelationalTranslator = class(TInstantQueryTranslator)
-  private
-    FCriteriaList: TStringList;
-    FTablePathList: TStringList;
-    procedure AddJoin(const FromPath, FromField, ToPath, ToField: string);
-    function ConcatPath(const APathText, AttribName: string): string;
-    procedure DestroyCriteriaList;
-    procedure DestroyTablePathList;
-    function ExtractTarget(const PathStr: string): string;
-    function RootAttribToFieldName(const AttribName: string): string;
-    function GetClassTablePath: string;
-    function GetCriteriaCount: Integer;
-    function GetCriteriaList: TStringList;
-    function GetCriterias(Index: Integer): string;
-    function GetObjectClassMetadata: TInstantClassMetadata;
-    function GetQuery: TInstantCustomRelationalQuery;
-    function GetTablePathAliases(Index: Integer): string;
-    function GetTablePathCount: Integer;
-    function GetTablePathList: TStringList;
-    function GetTablePaths(Index: Integer): string;
-    function PathToTablePath(const PathText: string): string;
-    function PathToTarget(const PathText: string;
-      out TablePath, FieldName: string): TInstantAttributeMetadata;
-    function Qualify(const TablePath, FieldName: string): string;
-    function QualifyPath(const PathText: string): string;
-    function ReplaceWildcard(const Str: string): string;
-    function TablePathToAlias(const TablePath: string): string;
-    procedure WriteAnd(Writer: TInstantIQLWriter);
-    function WriteCriterias(Writer: TInstantIQLWriter; IncludeWhere: Boolean): Boolean;
-    procedure WriteTables(Writer: TInstantIQLWriter);
-    property CriteriaList: TStringList read GetCriteriaList;
-    property TablePathList: TStringList read GetTablePathList;
-    function GetConnector: TInstantRelationalConnector;
-  protected
-    function AddCriteria(const Criteria: string): Integer;
-    function AddTablePath(const TablePath: string): Integer;
-    procedure BeforeTranslate; override;
-    procedure Clear; override;
-    procedure CollectObjects(AObject: TInstantIQLObject;
-      AClassType: TInstantIQLObjectClass; AList: TList);
-    procedure CollectPaths(AObject: TInstantIQLObject; APathList: TList);
-    function GetDelimiters: string; virtual;
-    function GetQuote: Char; virtual;
-    function GetWildcard: string; virtual;
-    function HasConnector: Boolean;
-    function IncludeOrderFields: Boolean; virtual;
-    function IndexOfCriteria(const Criteria: string): Integer;
-    function IndexOfTablePath(const TablePath: string): Integer;
-    function InternalGetObjectClassMetadata: TInstantClassMetadata; virtual;
-    function IsRootAttribute(const AttributeName: string): Boolean;
-    function IsPrimary(AObject: TInstantIQLObject): Boolean;
-    procedure MakeJoins(Path: TInstantIQLPath);
-    procedure MakeTablePaths(Path: TInstantIQLPath);
-    function TranslateClassRef(ClassRef: TInstantIQLClassRef; Writer: TInstantIQLWriter): Boolean; virtual;
-    function TranslateClause(Clause: TInstantIQLClause; Writer: TInstantIQLWriter): Boolean; virtual;
-    function TranslateConstant(Constant: TInstantIQLConstant; Writer: TInstantIQLWriter): Boolean; virtual;
-    function TranslateFunction(AFunction: TInstantIQLFunction; Writer: TInstantIQLWriter): Boolean; virtual;
-    function TranslateFunctionName(const FunctionName: string; Writer: TInstantIQLWriter): Boolean; virtual;
-    function TranslateKeyword(const Keyword: string; Writer: TInstantIQLWriter): Boolean; override;
-    function TranslateObject(AObject: TInstantIQLObject; Writer: TInstantIQLWriter): Boolean; override;
-    function TranslatePath(Path: TInstantIQLPath; Writer: TInstantIQLWriter): Boolean; virtual;
-    function TranslateSpecifier(Specifier: TInstantIQLSpecifier; Writer: TInstantIQLWriter): Boolean; virtual;
-    property ClassTablePath: string read GetClassTablePath;
-    property Connector: TInstantRelationalConnector read GetConnector;
-    property CriteriaCount: Integer read GetCriteriaCount;
-    property Criterias[Index: Integer]: string read GetCriterias;
-    property Delimiters: string read GetDelimiters;
-    property ObjectClassMetadata: TInstantClassMetadata read GetObjectClassMetadata;
-    property Quote: Char read GetQuote;
-    property TablePathAliases[Index: Integer]: string read GetTablePathAliases;
-    property TablePathCount: Integer read GetTablePathCount;
-    property TablePaths[Index: Integer]: string read GetTablePaths;
-    property Wildcard: string read GetWildcard;
-  public
-    destructor Destroy; override;
-    function QuoteString(const Str: string): string;
-    property Query: TInstantCustomRelationalQuery read GetQuery;
-  end;
-
-  PInstantOperationInfo = ^TInstantOperationInfo;
-  TInstantOperationInfo = record
-    Success: Boolean;
-    Conflict: Boolean;
-  end;
-
-  TInstantStatement = class
-  private
-    FStatementImplementation: TComponent;
-  public
-    constructor Create(const AStatementImplementation: TComponent);
-    destructor Destroy; override;
-    property StatementImplementation: TComponent read FStatementImplementation;
-  end;
-
-  TInstantStatementCache = class(TComponent)
-  private
-    FStatements: TStringList;
-    FCapacity: Integer;
-    procedure DeleteStatement(const Index: Integer);
-    procedure DeleteAllStatements;
-    procedure Shrink;
-    procedure SetCapacity(const Value: Integer);
-  protected
-    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-  public
-    constructor Create(AOwner: TComponent); override;
-    property Capacity: Integer read FCapacity write SetCapacity;
-    destructor Destroy; override;
-    function GetStatement(const StatementText: string): TInstantStatement;
-    function AddStatement(const StatementText: string;
-      const StatementImplementation: TComponent): Integer;
-    function RemoveStatement(const StatementText: string): Boolean;
-  end;
-
-  TInstantCustomResolver = class;
-  TInstantLinkResolver = class;
-  TInstantNavigationalLinkResolver = class;
-  TInstantSQLLinkResolver = class;
-
-  TInstantBrokerOperation = procedure(AObject: TInstantObject; const AObjectId: string;
-    Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction = caFail; Info: PInstantOperationInfo = nil) of object;
-
-  TInstantCustomRelationalBroker = class(TInstantBroker)
-  private
-    FStatementCache: TInstantStatementCache;
-    FStatementCacheCapacity: Integer;
-    procedure DisposeMap(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-    function GetConnector: TInstantRelationalConnector;
-    function PerformOperation(AObject: TInstantObject; const AObjectId: string;
-      OperationType: TInstantOperationType; Operation: TInstantBrokerOperation;
-      ConflictAction: TInstantConflictAction): Boolean;
-    procedure RetrieveMap(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-    procedure StoreMap(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-    function GetStatementCache: TInstantStatementCache;
-    procedure SetStatementCacheCapacity(const Value: Integer);
-  protected
-    property StatementCache: TInstantStatementCache read GetStatementCache;
-    function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver; virtual; abstract;
-    function GetDBMSName: string; virtual;
-    function GetSQLDelimiters: string; virtual;
-    function GetSQLQuote: Char; virtual;
-    function GetSQLWildcard: string; virtual;
-    function InternalDisposeObject(AObject: TInstantObject;
-      ConflictAction: TInstantConflictAction): Boolean; override;
-    function InternalRetrieveObject(AObject: TInstantObject; const AObjectId: string;
-      ConflictAction: TInstantConflictAction): Boolean; override;
-    function InternalStoreObject(AObject: TInstantObject;
-      ConflictAction: TInstantConflictAction): Boolean; override;
-  public
-    constructor Create(AConnector: TInstantConnector); override;
-    destructor Destroy; override;
-    function Execute(const AStatement: string; AParams: TParams = nil): Integer; virtual;
-    property Connector: TInstantRelationalConnector read GetConnector;
-    property DBMSName: string read GetDBMSName;
-    property SQLDelimiters: string read GetSQLDelimiters;
-    property SQLQuote: Char read GetSQLQuote;
-    property SQLWildcard: string read GetSQLWildCard;
-    property StatementCacheCapacity: Integer read FStatementCacheCapacity
-      write SetStatementCacheCapacity;
-  end;
-
   EInstantConflict = class(EInstantError)
   end;
 
   EInstantKeyViolation = class(EInstantConflict)
   end;
-
-  TInstantCustomResolver = class(TInstantStreamable)
-  private
-    FBroker: TInstantCustomRelationalBroker;
-  protected
-    function KeyViolation(AObject: TInstantObject; const AObjectId: string; E: Exception): EInstantKeyViolation;
-    procedure InternalDisposeMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); virtual;
-    procedure InternalRetrieveMap(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); virtual;
-    procedure InternalStoreMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); virtual;
-  public
-    constructor Create(ABroker: TInstantCustomRelationalBroker);
-    procedure DisposeMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction;Info: PInstantOperationInfo);
-    procedure RetrieveMap(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-    procedure StoreMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-    property Broker: TInstantCustomRelationalBroker read FBroker;
-  end;
-
-  TInstantCustomRelationalQueryClass = class of TInstantCustomRelationalQuery;
-
-  TInstantCustomRelationalQuery = class(TInstantQuery)
-  private
-    function GetConnector: TInstantRelationalConnector;
-  protected
-    function GetStatement: string; virtual;
-    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList); virtual;
-    procedure InternalRefreshObjects; override;
-    procedure SetStatement(const Value: string); virtual;
-    procedure TranslateCommand; override;
-    class function TranslatorClass: TInstantRelationalTranslatorClass; virtual;
-  public
-    function CreateTranslator: TInstantRelationalTranslator;
-    property Statement: string read GetStatement write SetStatement;
-    property Connector: TInstantRelationalConnector read GetConnector;
-  end;
-
-  TInstantRelationalConnectionDef = class(TInstantConnectionDef)
-  end;
-
-  TInstantConnectionBasedConnector = class(TInstantRelationalConnector)
-  private
-    FConnection: TCustomConnection;
-    FLoginPrompt: Boolean;
-    procedure DoAfterConnectionChange;
-    procedure DoBeforeConnectionChange;
-    function GetConnection: TCustomConnection;
-    function GetLoginPrompt: Boolean;
-    procedure SetConnection(Value: TCustomConnection);
-    procedure SetLoginPrompt(const Value: Boolean);
-  protected
-    procedure AssignLoginOptions; virtual;
-    procedure AfterConnectionChange; virtual;
-    procedure BeforeConnectionChange; virtual;
-    procedure CheckConnection;
-    function GetConnected: Boolean; override;
-    procedure InternalConnect; override;
-    procedure InternalDisconnect; override;
-    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-  public
-    property Connection: TCustomConnection read GetConnection write SetConnection;
-    function HasConnection: Boolean;
-    constructor Create(AOwner: TComponent); override;
-  published
-    property LoginPrompt: Boolean read GetLoginPrompt write SetLoginPrompt default True;
-  end;
-
-  TInstantConnectionBasedConnectionDef = class(TInstantRelationalConnectionDef)
-  private
-    FLoginPrompt: Boolean;
-  protected
-    function CreateConnection(AOwner: TComponent): TCustomConnection; virtual; abstract;
-    procedure InitConnector(Connector: TInstantConnector); override;
-  public
-    constructor Create(Collection: TCollection); override;
-  published
-    property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt default True;
-  end;
-
-  TInstantNavigationalResolver = class;
-  
-  TInstantNavigationalBroker = class(TInstantCustomRelationalBroker)
-  private
-    FResolverList: TObjectList;
-    function GetResolverCount: Integer;
-    function GetResolverList: TObjectList;
-    function GetResolvers(Index: Integer): TInstantnavigationalResolver;
-    property ResolverList: TObjectList read GetResolverList;
-  protected
-    function CreateResolver(const TableName: string): TInstantNavigationalResolver; virtual; abstract;
-    function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver; override;
-    function FindResolver(const TableName: string): TInstantNavigationalResolver;
-    property ResolverCount: Integer read GetResolverCount;
-    property Resolvers[Index: Integer]: TInstantNavigationalResolver read GetResolvers;
-  public
-    destructor Destroy; override;
-  end;
-
-  //Backwards compatibility
-  TInstantRelationalBroker = TInstantNavigationalBroker;
-
-  TInstantNavigationalResolverOperation = procedure(AObject: TInstantObject; AttributeMetadata: TInstantAttributeMetadata) of object;
-
-  PObjectRow = ^TObjectRow;
-  TObjectRow = record
-    Row: Integer;
-    Instance: TObject;
-  end;
-
-  TInstantNavigationalResolverClass = class of TInstantNavigationalResolver;
-
-  TInstantNavigationalResolver = class(TInstantCustomResolver)
-  private
-    FDataSet: TDataSet;
-    FFreeDataSet: Boolean;
-    FNavigationalLinkResolvers: TObjectList;
-    FTableName: string;
-    function CheckConflict(AObject: TInstantObject; const AObjectId: string;
-      ConflictAction: TInstantConflictAction): Boolean;
-    procedure ClearAttribute(AObject: TInstantObject;
-      AttributeMetadata: TInstantAttributeMetadata);
-    function FieldByName(const FieldName: string): TField;
-    procedure FreeDataSet;
-    function GetBroker: TInstantNavigationalBroker;
-    function GetDataSet: TDataSet;
-    function GetNavigationalLinkResolvers: TObjectList;
-    function GetObjectClassName: string;
-    function GetObjectId: string;
-    procedure PerformOperation(AObject: TInstantObject;
-      Map: TInstantAttributeMap; Operation: TInstantNavigationalResolverOperation);
-    procedure ReadAttribute(AObject: TInstantObject;
-      AttributeMetadata: TInstantAttributeMetadata);
-    procedure ResetAttribute(AObject: TInstantObject;
-      AttributeMetadata: TInstantAttributeMetadata);
-    procedure SetDataSet(Value: TDataset);
-    procedure WriteAttribute(AObject: TInstantObject;
-      AttributeMetadata: TInstantAttributeMetadata);
-  protected
-    procedure Append; virtual;
-    procedure Cancel; virtual;
-    procedure ClearBlob(Attribute: TInstantBlob); virtual;
-    procedure ClearBoolean(Attribute: TInstantBoolean); virtual;
-    procedure ClearDateTime(Attribute: TInstantDateTime); virtual;
-    procedure ClearInteger(Attribute: TInstantInteger); virtual;
-    procedure ClearFloat(Attribute: TInstantFloat); virtual;
-    procedure ClearCurrency(Attribute: TInstantCurrency); virtual;
-    procedure ClearMemo(Attribute: TInstantMemo); virtual;
-    procedure ClearPart(Attribute: TInstantPart); virtual;
-    procedure ClearParts(Attribute: TInstantParts); virtual;
-    procedure ClearReference(Attribute: TInstantReference); virtual;
-    procedure ClearReferences(Attribute: TInstantReferences); virtual;
-    procedure ClearString(Attribute: TInstantString); virtual;
-    procedure Close; virtual;
-    function CreateDataSet: TDataSet; virtual; abstract;
-    function CreateNavigationalLinkResolver(const ATableName: string):
-        TInstantNavigationalLinkResolver; virtual; abstract;
-    function CreateLocateVarArray(const AObjectClassName, AObjectId: string): Variant;
-    procedure Delete; virtual;
-    procedure Edit; virtual;
-    function GetLinkDatasetResolver(const ATableName: string):
-        TInstantNavigationalLinkResolver;
-    function FieldHasObjects(Field: TField): Boolean; virtual;
-    function FindLinkDatasetResolver(const ATableName: string):
-        TInstantNavigationalLinkResolver;
-    procedure InternalDisposeMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    procedure InternalRetrieveMap(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    procedure InternalStoreMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    function Locate(const AObjectClassName, AObjectId: string): Boolean; virtual;
-        abstract;
-    procedure Open; virtual;
-    procedure Post; virtual;
-    procedure ReadBlob(Attribute: TInstantBlob); virtual;
-    procedure ReadBoolean(Attribute: TInstantBoolean); virtual;
-    procedure ReadDateTime(Attribute: TInstantDateTime); virtual;
-    procedure ReadInteger(Attribute: TInstantInteger); virtual;
-    procedure ReadFloat(Attribute: TInstantFloat); virtual;
-    procedure ReadCurrency(Attribute: TInstantCurrency); virtual;
-    procedure ReadMemo(Attribute: TInstantMemo); virtual;
-    procedure ReadPart(Attribute: TInstantPart); virtual;
-    procedure ReadParts(Attribute: TInstantParts); virtual;
-    procedure ReadReference(Attribute: TInstantReference); virtual;
-    procedure ReadReferences(Attribute: TInstantReferences); virtual;
-    procedure ReadString(Attribute: TInstantString); virtual;
-    procedure ResetAttributes(AObject: TInstantObject; Map: TInstantAttributeMap);
-    procedure SetObjectUpdateCount(AObject: TInstantObject; Value: Integer);
-    function TranslateError(AObject: TInstantObject; E: Exception): Exception; virtual;
-    procedure WriteBlob(Attribute: TInstantBlob); virtual;
-    procedure WriteBoolean(Attribute: TInstantBoolean); virtual;
-    procedure WriteDateTime(Attribute: TInstantDateTime); virtual;
-    procedure WriteFloat(Attribute: TInstantFloat); virtual;
-    procedure WriteCurrency(Attribute: TInstantCurrency); virtual;
-    procedure WriteInteger(Attribute: TInstantInteger); virtual;
-    procedure WriteMemo(Attribute: TInstantMemo); virtual;
-    procedure WritePart(Attribute: TInstantPart); virtual;
-    procedure WriteParts(Attribute: TInstantParts); virtual;
-    procedure WriteReference(Attribute: TInstantReference); virtual;
-    procedure WriteReferences(Attribute: TInstantReferences); virtual;
-    procedure WriteString(Attribute: TInstantString); virtual;
-    property DataSet: TDataset read GetDataSet write SetDataSet;
-    property NavigationalLinkResolvers: TObjectList read
-        GetNavigationalLinkResolvers;
-  public
-    constructor Create(ABroker: TInstantNavigationalBroker;
-      const ATableName: string);
-    destructor Destroy; override;
-    property Broker: TInstantNavigationalBroker read GetBroker;
-    property ObjectClassName: string read GetObjectClassName;
-    property ObjectId: string read GetObjectId;
-    property TableName: string read FTableName;
-  end;
-
-  //Backwards compatibility
-  TInstantResolver = TInstantNavigationalResolver;
-
-  TInstantNavigationalQuery = class(TInstantCustomRelationalQuery)
-  private
-    FObjectRowList: TList;
-    function CreateObject(Row: Integer): TObject;
-    procedure DestroyObjectRowList;
-    function GetObjectRowList: TList;
-    function GetObjectRowCount: Integer;
-    function GetObjectRows(Index: Integer): PObjectRow;
-    procedure InitObjectRows(List: TList; FromIndex, ToIndex: Integer);
-    property ObjectRowList: TList read GetObjectRowList;
-  protected
-    function GetActive: Boolean; override;
-    function GetDataSet: TDataSet; virtual;
-    function GetRowCount: Integer; virtual;
-    function GetRowNumber: Integer; virtual;
-    function InternalAddObject(AObject: TObject): Integer; override;
-    procedure InternalClose; override;
-    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList); override;
-    function InternalGetObjectCount: Integer; override;
-    function InternalGetObjects(Index: Integer): TObject; override;
-    function InternalIndexOfObject(AObject: TObject): Integer; override;
-    procedure InternalInsertObject(Index: Integer; AObject: TObject); override;
-    procedure InternalOpen; override;
-    procedure InternalRefreshObjects; override;
-    procedure InternalReleaseObject(AObject: TObject); override;
-    function InternalRemoveObject(AObject: TObject): Integer; override;
-    function IsSequenced: Boolean; virtual;
-    function ObjectFetched(Index: Integer): Boolean; override;
-    function RecNoOfObject(AObject: TInstantObject): Integer; virtual;
-    procedure SetRowNumber(Value: Integer); virtual;
-    property DataSet: TDataSet read GetDataSet;
-    property ObjectRowCount: Integer read GetObjectRowCount;
-    property ObjectRows[Index: Integer]: PObjectRow read GetObjectRows;
-  public
-    destructor Destroy; override;
-    property RowCount: Integer read GetRowCount;
-    property RowNumber: Integer read GetRowNumber write SetRowNumber;
-  end;
-
-  //Backwards compatibility
-  TInstantRelationalQuery = TInstantNavigationalQuery;
-
-  TInstantSQLBroker = class;
-
-  // A TInstantBrokerCatalog that works with a SQL broker only.
-  TInstantSQLBrokerCatalog = class(TInstantBrokerCatalog)
-  private
-    function GetBroker: TInstantSQLBroker;
-  public
-    property Broker: TInstantSQLBroker read GetBroker;
-  end;
-
-  TInstantStringFunc = function(const S: string): string of object;
-
-  TInstantSQLGeneratorClass = class of TInstantSQLGenerator;
-
-  TInstantSQLGenerator = class(TObject)
-  private
-    FBroker: TInstantSQLBroker;
-  protected
-    function BuildList(Map: TInstantAttributeMap; Additional: array of string;
-      StringFunc: TInstantStringFunc = nil; const Delimiter: string = ','): string;
-    function BuildAssignment(const AName: string): string;
-    function BuildAssignmentList(Map: TInstantAttributeMap;
-      Additional: array of string): string;
-    function BuildConcurrencyCriteria: string;
-    function BuildPersistentIdCriteria: string;
-    function BuildFieldList(Map: TInstantAttributeMap;
-      Additional: array of string): string; overload;
-    function BuildFieldList(const S: string): string; overload;
-    function BuildParam(const AName: string): string; virtual;
-    function BuildParamList(Map: TInstantAttributeMap;
-      Additional: array of string): string;
-    function BuildWhereStr(Fields: array of string): string;
-    function EmbraceField(const FieldName: string): string; virtual;
-    function EmbraceTable(const TableName: string): string; virtual;
-    function GetDelimiters: string; virtual;
-    function InternalGenerateAddFieldSQL(Metadata: TInstantFieldMetadata): string; virtual;
-    function InternalGenerateAlterFieldSQL(OldMetadata, NewMetadata: TInstantFieldMetadata): string; virtual;
-    function InternalGenerateCreateIndexSQL(Metadata: TInstantIndexMetadata): string; virtual;
-    function InternalGenerateCreateTableSQL(Metadata: TInstantTableMetadata): string; virtual;
-    function InternalGenerateDeleteConcurrentSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateDeleteSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateDeleteExternalSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateDropFieldSQL(Metadata: TInstantFieldMetadata): string; virtual;
-    function InternalGenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string; virtual;
-    function InternalGenerateDropTableSQL(Metadata: TInstantTableMetadata): string; virtual;
-    function InternalGenerateInsertSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateInsertExternalSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateSelectSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateSelectExternalSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateSelectTablesSQL: string; virtual;
-    function InternalGenerateUpdateConcurrentSQL(Map: TInstantAttributeMap): string; virtual;
-    function InternalGenerateUpdateFieldCopySQL(OldMetadata, NewMetadata:
-        TInstantFieldMetadata): string; virtual;
-    function InternalGenerateUpdateSQL(Map: TInstantAttributeMap): string; virtual;
-    property Delimiters: string read GetDelimiters;
-    property Broker: TInstantSQLBroker read FBroker;
-  public
-    constructor Create(ABroker: TInstantSQLBroker);
-    function GenerateAddFieldSQL(Metadata: TInstantFieldMetadata): string;
-    function GenerateAlterFieldSQL(OldMetadata, NewMetadata: TInstantFieldMetadata): string;
-    function GenerateCreateIndexSQL(Metadata: TInstantIndexMetadata): string;
-    function GenerateCreateTableSQL(Metadata: TInstantTableMetadata): string;
-    function GenerateDeleteConcurrentSQL(Map: TInstantAttributeMap): string;
-    function GenerateDeleteSQL(Map: TInstantAttributeMap): string;
-    function GenerateDeleteExternalSQL(Map: TInstantAttributeMap): string;
-    function GenerateDropFieldSQL(Metadata: TInstantFieldMetadata): string;
-    function GenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string;
-    function GenerateDropTableSQL(Metadata: TInstantTableMetadata): string;
-    function GenerateInsertSQL(Map: TInstantAttributeMap): string;
-    function GenerateInsertExternalSQL(Map: TInstantAttributeMap): string;
-    function GenerateSelectSQL(Map: TInstantAttributeMap): string;
-    function GenerateSelectExternalSQL(Map: TInstantAttributeMap): string;
-    function GenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string;
-    function GenerateSelectTablesSQL: string;
-    function GenerateUpdateConcurrentSQL(Map: TInstantAttributeMap): string;
-    function GenerateUpdateFieldCopySQL(OldMetadata, NewMetadata:
-        TInstantFieldMetadata): string;
-    function GenerateUpdateSQL(Map: TInstantAttributeMap): string;
-  end;
-
-  TInstantSQLResolver = class;
-
-  TInstantSQLBroker = class(TInstantCustomRelationalBroker)
-  private
-    FGenerator: TInstantSQLGenerator;
-    FResolverList: TObjectList;
-    function GetResolverList: TObjectList;
-    function GetResolverCount: Integer;
-    function GetResolvers(Index: Integer): TInstantSQLResolver;
-    function GetGenerator: TInstantSQLGenerator;
-  protected
-    function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; virtual; abstract;
-    function EnsureResolver(AMap: TInstantAttributeMap): TInstantCustomResolver; override;
-    procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
-    property ResolverList: TObjectList read GetResolverList;
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); virtual;
-    function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual; abstract;
-  public
-    destructor Destroy; override;
-    function AcquireDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; virtual;
-    procedure ReleaseDataSet(const ADataSet: TDataSet); virtual;
-    function DataTypeToColumnType(DataType: TInstantDataType;
-      Size: Integer): string; virtual; abstract;
-    function FindResolver(AMap: TInstantAttributeMap): TInstantSQLResolver;
-    class function GeneratorClass: TInstantSQLGeneratorClass; virtual;
-    property Generator: TInstantSQLGenerator read GetGenerator;
-    property ResolverCount: Integer read GetResolverCount;
-    property Resolvers[Index: Integer]: TInstantSQLResolver read GetResolvers;
-  end;
-
-  TInstantSQLResolver = class(TInstantCustomResolver)
-  private
-    FMap: TInstantAttributeMap;
-    FDeleteSQL: string;
-    FDeleteConcurrentSQL: string;
-    FInsertSQL: string;
-    FSelectSQL: string;
-    FUpdateSQL: string;
-    FUpdateConcurrentSQL: string;
-    FSelectExternalSQL: string;
-    FSelectExternalPartSQL: string;
-    FDeleteExternalSQL: string;
-    FInsertExternalSQL: string;
-    procedure AddIntegerParam(Params: TParams; const ParamName: string; Value: Integer);
-    procedure AddStringParam(Params: TParams; const ParamName, Value: string);
-    // Adds an "Id" param, whose data type and size depends on connector settings.
-    procedure AddIdParam(Params: TParams; const ParamName, Value: string);
-    procedure CheckConflict(Info: PInstantOperationInfo; AObject: TInstantObject);
-    function ExecuteStatement(const AStatement: string; AParams: TParams;
-      Info: PInstantOperationInfo; ConflictAction: TInstantConflictAction;
-      AObject: TInstantObject): Integer;
-    function GetDeleteConcurrentSQL: string;
-    function GetDeleteSQL: string;
-    function GetInsertSQL: string;
-    function GetSelectSQL: string;
-    function GetUpdateConcurrentSQL: string;
-    function GetUpdateSQL: string;
-    function GetBroker: TInstantSQLBroker;
-    function GetSelectExternalSQL: string;
-    function GetSelectExternalPartSQL: string;
-    function GetDeleteExternalSQL: string;
-    function GetInsertExternalSQL: string;
-  protected
-    procedure AddAttributeParam(Attribute: TInstantAttribute;
-      Params: TParams); virtual;
-    procedure AddAttributeParams(Params: TParams; AObject: TInstantObject;
-      Map: TInstantAttributeMap);
-    procedure AddBaseParams(Params: TParams; AClassName, AObjectId: string;
-      AUpdateCount: Integer = -1);
-    procedure AddConcurrencyParam(Params: TParams; AUpdateCount: Integer);
-    function AddParam(Params: TParams; const ParamName: string;
-      ADataType: TFieldType): TParam;
-    procedure AddPersistentIdParam(Params: TParams; APersistentId: string);
-    procedure InternalDisposeMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    procedure InternalRetrieveMap(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    procedure InternalStoreMap(AObject: TInstantObject; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo); override;
-    procedure ReadAttribute(AObject: TInstantObject; const AObjectId: string;
-      AttributeMetadata: TInstantAttributeMetadata; DataSet: TDataSet); virtual;
-    procedure ReadAttributes(AObject: TInstantObject; const AObjectId: string;
-      Map: TInstantAttributeMap; DataSet: TDataSet);
-    function ReadBlobField(DataSet: TDataSet; const FieldName: string): string; virtual;
-    function ReadBooleanField(DataSet: TDataSet; const FieldName: string): Boolean; virtual;
-    function ReadDateTimeField(DataSet: TDataSet; const FieldName: string): TDateTime; virtual;
-    function ReadFloatField(DataSet: TDataSet; const FieldName: string): Double; virtual;
-    function ReadCurrencyField(DataSet: TDataSet; const FieldName: string): Currency; virtual;
-    function ReadIntegerField(DataSet: TDataSet; const FieldName: string): Integer; virtual;
-    function ReadMemoField(DataSet: TDataSet; const FieldName: string): string; virtual;
-    function ReadStringField(DataSet: TDataSet; const FieldName: string): string; virtual;
-    procedure RemoveConcurrencyParam(Params: TParams);
-    procedure RemovePersistentIdParam(Params: TParams);
-    function TranslateError(AObject: TInstantObject;
-      E: Exception): Exception; virtual;
-  public
-    constructor Create(ABroker: TInstantSQLBroker; AMap: TInstantAttributeMap);
-    property Broker: TInstantSQLBroker read GetBroker;
-    property DeleteConcurrentSQL: string read GetDeleteConcurrentSQL write FDeleteConcurrentSQL;
-    property DeleteSQL: string read GetDeleteSQL write FDeleteSQL;
-    property DeleteExternalSQL: string read GetDeleteExternalSQL write FDeleteExternalSQL;
-    property InsertSQL: string read GetInsertSQL write FInsertSQL;
-    property InsertExternalSQL: string read GetInsertExternalSQL write FInsertExternalSQL;
-    property Map: TInstantAttributeMap read FMap;
-    property SelectSQL: string read GetSelectSQL write FSelectSQL;
-    property SelectExternalSQL: string read GetSelectExternalSQL write FSelectExternalSQL;
-    property SelectExternalPartSQL: string read GetSelectExternalPartSQL write FSelectExternalPartSQL;
-    property UpdateConcurrentSQL: string read GetUpdateConcurrentSQL write FUpdateConcurrentSQL;
-    property UpdateSQL: string read GetUpdateSQL write FUpdateSQL;
-  end;
-
-  TInstantSQLQuery = class(TInstantCustomRelationalQuery)
-  private
-    FObjectReferenceList: TInstantObjectReferenceList;
-    FParamsObject: TParams;
-    FStatement: string;
-    procedure DestroyObjectReferenceList;
-    function GetObjectReferenceCount: Integer;
-    function GetObjectReferenceList: TInstantObjectReferenceList;
-    function GetParamsObject: TParams;
-    procedure InitObjectReferences(DataSet: TDataSet);
-  protected
-    function GetActive: Boolean; override;
-    function AcquireDataSet(const AStatement: string; AParams: TParams): TDataSet; virtual;
-    procedure ReleaseDataSet(const DataSet: TDataSet);
-    function GetParams: TParams; override;
-    function GetStatement: string; override;
-    function InternalAddObject(AObject: TObject): Integer; override;
-    procedure InternalClose; override;
-    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList); override;
-    function InternalGetObjectCount: Integer; override;
-    function InternalGetObjects(Index: Integer): TObject; override;
-    function InternalIndexOfObject(AObject: TObject): Integer; override;
-    procedure InternalInsertObject(Index: Integer; AObject: TObject); override;
-    procedure InternalOpen; override;
-    procedure InternalReleaseObject(AObject: TObject); override;
-    function InternalRemoveObject(AObject: TObject): Integer; override;
-    procedure SetParams(Value: TParams); override;
-    function ObjectFetched(Index: Integer): Boolean; override;
-    procedure SetStatement(const Value: string); override;
-    property ObjectReferenceCount: Integer read GetObjectReferenceCount;
-    property ObjectReferenceList: TInstantObjectReferenceList read
-        GetObjectReferenceList;
-    property ParamsObject: TParams read GetParamsObject;
-  public
-    destructor Destroy; override;
-  end;
-
-  TInstantObjectNotification = (onChanged, onCreated, onDisposed, onRefreshed, onRetrieved, onStored);
-
-  TInstantObjectNotifyEvent = procedure(Sender: TInstantObject;
-    Notification: TInstantObjectNotification) of object;
-
-  TInstantObjectNotifiers = class;
 
   TInstantObjectNotifier = class(TObject)
   private
@@ -2582,12 +1195,18 @@ type
     property IncludeOwned: Boolean read FIncludeOwned write FIncludeOwned;
     property ObjectClass: TInstantObjectClass read GetObjectClass;
     property Owner: TInstantObjectNotifiers read GetOwner;
-    property OnObjectChanged: TInstantNotifyEvent read FOnObjectChanged write FOnObjectChanged;
-    property OnObjectCreated: TInstantNotifyEvent read FOnObjectCreated write FOnObjectCreated;
-    property OnObjectDisposed: TInstantNotifyEvent read FOnObjectDisposed write FOnObjectDisposed;
-    property OnObjectRefreshed: TInstantNotifyEvent read FOnObjectRefreshed write FOnObjectRefreshed;
-    property OnObjectRetrieved: TInstantNotifyEvent read FOnObjectRetrieved write FOnObjectRetrieved;
-    property OnObjectStored: TInstantNotifyEvent read FOnObjectStored write FOnObjectStored;
+    property OnObjectChanged: TInstantNotifyEvent read FOnObjectChanged
+      write FOnObjectChanged;
+    property OnObjectCreated: TInstantNotifyEvent read FOnObjectCreated
+      write FOnObjectCreated;
+    property OnObjectDisposed: TInstantNotifyEvent read FOnObjectDisposed
+      write FOnObjectDisposed;
+    property OnObjectRefreshed: TInstantNotifyEvent read FOnObjectRefreshed
+      write FOnObjectRefreshed;
+    property OnObjectRetrieved: TInstantNotifyEvent read FOnObjectRetrieved
+      write FOnObjectRetrieved;
+    property OnObjectStored: TInstantNotifyEvent read FOnObjectStored
+      write FOnObjectStored;
     property OnNotify: TInstantObjectNotifyEvent read FOnNotify write FOnNotify;
   end;
 
@@ -2620,7 +1239,8 @@ type
       Notification: TInstantObjectNotification);
     function Remove(Item: TInstantObjectNotifier): Integer;
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: TInstantObjectNotifier read GetItems; default;
+    property Items[Index: Integer]: TInstantObjectNotifier read GetItems;
+      default;
     property ObjectClass: TInstantObjectClass read GetObjectClass;
   end;
 
@@ -2652,17 +1272,19 @@ type
     procedure SetCapacity(Value: Integer);
     procedure SetItems(Index: Integer; const Value: TInstantObject);
   public
-    constructor Create(ARefOwnsInstance: Boolean; AConnector: TInstantConnector =
-        nil; ARefOwner: TInstantComplex = nil);
+    constructor Create(ARefOwnsInstance: Boolean;
+      AConnector: TInstantConnector = nil; ARefOwner: TInstantComplex = nil);
     destructor Destroy; override;
     function Add: TInstantObjectReference; overload;
     function Add(Item: TInstantObject): Integer; overload;
     procedure Clear;
     procedure Delete(Index: Integer);
     procedure Exchange(Index1, Index2: Integer);
-    function IndexOf(Item: TInstantObject; NeedInstance: Boolean = False): Integer;
+    function IndexOf(Item: TInstantObject; NeedInstance: Boolean = False):
+      Integer;
     function IndexOfInstance(Item: TInstantObject): Integer;
-    function IndexOfReference(AObjectReference: TInstantObjectReference): Integer;
+    function IndexOfReference(AObjectReference: TInstantObjectReference):
+      Integer;
     procedure Insert(Index: Integer; Item: TInstantObject);
     procedure Move(CurIndex, NewIndex: Integer);
     function Remove(Item: TInstantObject): Integer;
@@ -2673,101 +1295,211 @@ type
     property RefItems[Index: Integer]: TInstantObjectReference read GetRefItems;
   end;
 
-  // TInstantLinkResolver class defines common interface for handling
-  // access to container attributes with external storage
-  TInstantLinkResolver = class(TInstantStreamable)
+  TInstantBroker = class(TInstantStreamable)
   private
-    FResolver: TInstantCustomResolver;
-    function GetBroker: TInstantCustomRelationalBroker;
-    function GetResolver: TInstantCustomResolver;
+    FConnector: TInstantConnector;
+    function GetConnector: TInstantConnector;
   protected
-    procedure InternalStoreAttributeObjects(Attribute: TInstantContainer); virtual;
-    procedure InternalClearAttributeLinkRecords; virtual;
-    procedure InternalDisposeDeletedAttributeObjects(Attribute: TInstantContainer);
-        virtual;
-    procedure InternalReadAttributeObjects(Attribute: TInstantContainer; const
-        AObjectId: string); virtual;
+    // Creates an instance of TInstantCatalog suited for the broker and
+    // back-end database engine. Must be overridden in derived classes that
+    // intend to support catalog-based functionality, like database structure
+    // evolution. The predefined implementation just returns nil. Call
+    // IsCatalogSupported to know if CreateCatalog will return an instance of
+    // the catalog object or nil.
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
+      virtual;
+    function GetDatabaseName: string; virtual;
+    procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
+    function InternalCreateQuery: TInstantQuery; virtual;
+    function InternalDisposeObject(AObject: TInstantObject;
+      ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
+    function InternalRetrieveObject(AObject: TInstantObject;
+      const AObjectId: string; ConflictAction: TInstantConflictAction):
+      Boolean; virtual; abstract;
+    function InternalStoreObject(AObject: TInstantObject;
+      ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
   public
-    constructor Create(AResolver: TInstantCustomResolver);
-    procedure StoreAttributeObjects(Attribute: TInstantContainer);
-    procedure ClearAttributeLinkRecords;
-    procedure DisposeDeletedAttributeObjects(Attribute: TInstantContainer);
-    procedure ReadAttributeObjects(Attribute: TInstantContainer; const AObjectId:
-        string);
-    property Broker: TInstantCustomRelationalBroker read GetBroker;
-    property Resolver: TInstantCustomResolver read GetResolver;
-  end;
-
-  // TInstantNavigationalLinkResolver is an abstract class that
-  // defines the interface for handling access to container attributes
-  // with external storage for navigational brokers.
-  // Each navigational broker needs to provide a concrete class descendent.
-  // See the BDE broker as an example.
-  TInstantNavigationalLinkResolver = class(TInstantLinkResolver)
-  private
-    FDataSet: TDataSet;
-    FFreeDataSet: Boolean;
-    FTableName: string;
-    function FieldByName(const FieldName: string): TField;
-    procedure FreeDataSet;
-    function GetBroker: TInstantNavigationalBroker;
-    function GetDataSet: TDataSet;
-    function GetResolver: TInstantNavigationalResolver;
-    procedure SetDataSet(Value: TDataset);
-  protected
-    procedure Append; virtual;
-    procedure Cancel; virtual;
-    procedure Close; virtual;
-    function CreateDataSet: TDataSet; virtual; abstract;
-    procedure Delete; virtual;
-    procedure Edit; virtual;
-    function Eof: Boolean; virtual;
-    procedure First; virtual;
-    procedure InternalStoreAttributeObjects(Attribute: TInstantContainer); override;
-    procedure InternalClearAttributeLinkRecords; override;
-    procedure InternalDisposeDeletedAttributeObjects(Attribute: TInstantContainer);
-        override;
-    procedure InternalReadAttributeObjects(Attribute: TInstantContainer; const
-        AObjectId: string); override;
-    procedure Next; virtual;
-    procedure Open; virtual;
-    procedure Post; virtual;
-    procedure SetDatasetParentRange(const AParentClass, AParentId: string);
-        virtual; abstract;
-    property DataSet: TDataset read GetDataSet write SetDataSet;
-  public
-    constructor Create(AResolver: TInstantNavigationalResolver; const ATableName:
-        string);
+    constructor Create(AConnector: TInstantConnector); virtual;
     destructor Destroy; override;
-    property Broker: TInstantNavigationalBroker read GetBroker;
-    property Resolver: TInstantNavigationalResolver read GetResolver;
-    property TableName: string read FTableName;
+    // Legacy database building code, to be removed when all brokers will have
+    // catalogs.
+    procedure BuildDatabase(Scheme: TInstantScheme);
+    // Creates a database build command object that can perform the build
+    // operation represented by CommandType. The predefined implementation
+    // creates an instance of TInstantUnsupportedDBBuildCommand, which just 
+    // raises an exception when executed. Derived classes should create and 
+    // return instances of specific TInstantDBBuildCommand and fall back to 
+    // inherited for unsupported values of CommandType.
+    function CreateDBBuildCommand(const CommandType: TInstantDBBuildCommandType)
+      : TInstantDBBuildCommand; virtual;
+    function CreateQuery: TInstantQuery;
+    function DisposeObject(AObject: TInstantObject;
+      ConflictAction: TInstantConflictAction): Boolean;
+    // Creates and returns a TInstantScheme object that represents the current
+    // database scheme (which may differ from the model-derived scheme).
+    // If the broker doesn't have a catalog, calling this method will raise
+    // an exception. Call IsCatalogSupported if you need to know in advance
+    // whether you can safely call ReadDatabaseScheme or not.
+    function ReadDatabaseScheme(
+      const AWarningEventHandler: TInstantWarningEvent): TInstantScheme;
+        virtual;
+    // Returns True if the broker supports creating a valid catalog. If this
+    // method returns False, it means that calling CreateCatalog will yield nil,
+    // and calling ReadDatabaseSchema will raise an exception.
+    function IsCatalogSupported: Boolean;
+    function RetrieveObject(AObject: TInstantObject; const AObjectId: string;
+      ConflictAction: TInstantConflictAction): Boolean;
+    procedure SetObjectUpdateCount(AObject: TInstantObject; Value: Integer);
+    function StoreObject(AObject: TInstantObject;
+      ConflictAction: TInstantConflictAction): Boolean;
+    property Connector: TInstantConnector read GetConnector;
+    property DatabaseName: string read GetDatabaseName;
   end;
 
-  // TInstantSQLLinkResolver class defines interface for handling
-  // access to container attributes with external storage for
-  // SQL brokers. Due to the generic nature of SQL this class is used
-  // directly and no descendant classes are needed for SQL brokers.
-  TInstantSQLLinkResolver = class(TInstantLinkResolver)
+  TInstantConnector = class(TComponent)
   private
-    FAttributeOwner: TInstantObject;
-    FTableName: string;
-    function GetBroker: TInstantSQLBroker;
-    function GetResolver: TInstantSQLResolver;
-    property TableName: string read FTableName;
+    FBroker: TInstantBroker;
+    FClientList: TList;
+    FObjectStores: TInstantObjectStores;
+    FTransactionLevel: Integer;
+    FTransactedObjectList: TList;
+    FUseTransactions: Boolean;
+    FBeforeBuildDatabase: TInstantSchemeEvent;
+    FBlobStreamFormat: TInstantStreamFormat;
+    FOnGenerateId: TInstantGenerateIdEvent;
+    FIdSize: Integer;
+    FIdDataType: TInstantDataType;
+    procedure AbandonObjects;
+    procedure ApplyTransactedObjectStates;
+    procedure ClearTransactedObjects;
+    procedure DoBeforeBuildDatabase(Scheme: TInstantScheme);
+    function GetBroker: TInstantBroker;
+    function GetClient(Index: Integer): TObject;
+    function GetClientCount: Integer;
+    function GetClientList: TList;
+    function GetInTransaction: Boolean;
+    function GetInUse: Boolean;
+    function GetIsDefault: Boolean;
+    function GetObjectCount: Integer;
+    function GetObjects(Index: Integer): TInstantObject;
+    function GetObjectStores: TInstantObjectStores;
+    function GetTransactedObjectCount: Integer;
+    function GetTransactedObjectList: TList;
+    function GetTransactedObjects(Index: Integer): TInstantObject;
+    procedure RestoreTransactedObjectStates;
+    procedure SetConnected(Value: Boolean);
+    procedure SetIsDefault(const Value: Boolean);
+    property TransactedObjectList: TList read GetTransactedObjectList;
   protected
-    procedure InternalStoreAttributeObjects(Attribute: TInstantContainer); override;
-    procedure InternalClearAttributeLinkRecords; override;
-    procedure InternalDisposeDeletedAttributeObjects(Attribute: TInstantContainer);
-        override;
-    procedure InternalReadAttributeObjects(Attribute: TInstantContainer; const
-        AObjectId: string); override;
+    function AddTransactedObject(AObject: TInstantObject): Integer;
+    function CreateBroker: TInstantBroker; virtual; abstract;
+    function GetConnected: Boolean; virtual;
+    function GetDatabaseExists: Boolean; virtual;
+    function GetDatabaseName: string; virtual;
+    function GetDDLTransactionSupported: Boolean; virtual;
+    procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
+    procedure InternalConnect; virtual; abstract;
+    procedure InternalCommitTransaction; virtual;
+    procedure InternalCreateDatabase; virtual;
+    function InternalCreateQuery: TInstantQuery; virtual;
+    function InternalCreateScheme(Model: TInstantModel): TInstantScheme;
+      virtual; abstract;
+    procedure InternalDisconnect; virtual; abstract;
+    function InternalGenerateId(const AObject: TInstantObject = nil): string;
+      virtual;
+    procedure InternalRollbackTransaction; virtual;
+    procedure InternalStartTransaction; virtual;
+    function RemoveTransactedObject(AObject: TInstantObject): Integer;
+    property ClientList: TList read GetClientList;
+    property TransactedObjectCount: Integer read GetTransactedObjectCount;
+    property TransactedObjects[Index: Integer]: TInstantObject
+      read GetTransactedObjects;
   public
-    constructor Create(AResolver: TInstantSQLResolver; const ATableName: string;
-        AObject: TInstantObject);
-    property AttributeOwner: TInstantObject read FAttributeOwner;
-    property Broker: TInstantSQLBroker read GetBroker;
-    property Resolver: TInstantSQLResolver read GetResolver;
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure BuildDatabase(Model: TInstantModel = nil); overload;
+    procedure BuildDatabase(AClasses: array of TInstantObjectClass); overload;
+    procedure CommitTransaction;
+    procedure Connect;
+    class function ConnectionDefClass: TInstantConnectionDefClass; virtual;
+      abstract;
+    procedure CreateDatabase;
+    function CreateScheme(Model: TInstantModel = nil): TInstantScheme;
+    function CreateQuery: TInstantQuery;
+    procedure Disconnect;
+    function EnsureObjectStore(AClass: TInstantObjectClass):
+      TInstantObjectStore;
+    function GenerateId(const AObject: TInstantObject = nil): string;
+    class procedure RegisterClass;
+    procedure RegisterClient(Client: TObject);
+    procedure RollbackTransaction;
+    procedure StartTransaction;
+    class procedure UnregisterClass;
+    procedure UnregisterClient(Client: TObject);
+    property Broker: TInstantBroker read GetBroker;
+    property ClientCount: Integer read GetClientCount;
+    property Clients[Index: Integer]: TObject read GetClient;
+    property DatabaseExists: Boolean read GetDatabaseExists;
+    property DatabaseName: string read GetDatabaseName;
+    property DDLTransactionSupported: Boolean read GetDDLTransactionSupported;
+    property InTransaction: Boolean read GetInTransaction;
+    property InUse: Boolean read GetInUse;
+    property ObjectCount: Integer read GetObjectCount;
+    property Objects[Index: Integer]: TInstantObject read GetObjects;
+    property ObjectStores: TInstantObjectStores read GetObjectStores;
+  published
+    property Connected: Boolean read GetConnected write SetConnected
+      stored False;
+    property IsDefault: Boolean read GetIsDefault write SetIsDefault
+      default False;
+    property UseTransactions: Boolean read FUseTransactions
+      write FUseTransactions default True;
+    property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase
+      write FBeforeBuildDatabase;
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat
+      write FBlobStreamFormat default sfBinary;
+    property OnGenerateId: TInstantGenerateIdEvent read FOnGenerateId
+      write FOnGenerateId;
+    property IdDataType: TInstantDataType read FIdDataType write FIdDataType
+      default dtString;
+    property IdSize: Integer read FIdSize write FIdSize
+      default InstantDefaultFieldSize;
+  end;
+
+  TInstantConnectionDef = class(TInstantCollectionItem)
+  private
+    FIsBuilt: Boolean;
+    FBlobStreamFormat: TInstantStreamFormat;
+    FIdSize: Integer;
+    FIdDataType: TInstantDataType;
+  protected
+    function GetCaption: string; virtual;
+    procedure InitConnector(Connector: TInstantConnector); virtual;
+  public
+    constructor Create(Collection: TCollection); override;
+    class function ConnectionTypeName: string; virtual; abstract;
+    class function ConnectorClass: TInstantConnectorClass; virtual; abstract;
+    function CreateConnector(AOwner: TComponent): TInstantConnector;
+    function Edit: Boolean; virtual; abstract;
+    property Caption: string read GetCaption;
+  published
+    property IsBuilt: Boolean read FIsBuilt write FIsBuilt;
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat
+      write FBlobStreamFormat default sfBinary;
+    property IdDataType: TInstantDataType read FIdDataType write FIdDataType
+      default dtString;
+    property IdSize: Integer read FIdSize write FIdSize
+      default InstantDefaultFieldSize;
+  end;
+
+  TInstantConnectionDefs = class(TInstantCollection)
+  private
+    function GetItems(Index: Integer): TInstantConnectionDef;
+    procedure SetItems(Index: Integer; const Value: TInstantConnectionDef);
+  public
+    constructor Create;
+    property Items[Index: Integer]: TInstantConnectionDef read GetItems
+      write SetItems; default;
   end;
 
 procedure AssignInstantStreamFormat(Strings: TStrings);
@@ -2836,15 +1568,7 @@ uses
 {$ELSE}
   Mask,
 {$ENDIF}
-  InstantUtils, InstantRtti, InstantDesignHook, InstantCode;
-
-const
-  AttributeClasses: array[TInstantAttributeType] of TInstantAttributeClass = (
-    nil, TInstantInteger, TInstantFloat, TInstantCurrency, TInstantBoolean, TInstantString,
-    TInstantDateTime, TInstantBlob, TInstantMemo, TInstantGraphic, TInstantPart,
-    TInstantReference, TInstantParts, TInstantReferences);
-  ConcurrencyParamName = 'IO_Concur';
-  PersistentIdParamName = 'IO_PersId';
+  InstantUtils, {InstantRtti, }InstantDesignHook, InstantCode;
 
 var
   ConnectorClasses: TList;
@@ -2855,29 +1579,6 @@ var
   DefaultConnector: TInstantConnector;
 
 { Local Routines }
-
-{$IFDEF IO_STATEMENT_LOGGING}
-procedure InstantLogStatement(const Caption, AStatement: string; AParams: TParams = nil);
-var
-  S: string;
-  g: Integer;
-begin
-  S := Caption + AStatement;
-  if Assigned(AParams) then
-  begin
-    for g := 0 to AParams.Count - 1 do begin
-      S := S + sLineBreak + '  ' +
-      AParams[g].Name + ': ' + GetEnumName(TypeInfo(TFieldType), Ord(AParams[g].DataType)) +
-      ' = ' + AParams[g].AsString;
-    end;
-  end;
-{$IFDEF MSWINDOWS}
-  OutputDebugString(PChar(S));
-{$ENDIF}
-  if Assigned(InstantLogProc) then
-    InstantLogProc(S);
-end;
-{$ENDIF}
 
 function ValidateChars(Buffer: PChar; BufferLength: Integer;
   ValidChars: TChars; var InvalidChar: Char): Boolean;
@@ -2892,25 +1593,6 @@ begin
       InvalidChar := Buffer[I];
       Break;
     end;
-end;
-
-function CreateObjectFromDataSet(AClass: TClass; DataSet: TDataSet): TObject;
-var
-  I: Integer;
-  FieldName: string;
-begin
-  if AClass = nil then
-    raise Exception.Create(SUnassignedClass)
-  else if AClass.InheritsFrom(TInstantObject) then
-    Result := TInstantObjectClass(AClass).Create
-  else
-    Result := AClass.Create;
-  for I := 0 to Pred(DataSet.FieldCount) do
-  begin
-    FieldName := StringReplace(
-      DataSet.Fields[I].FieldName, '_', '.', [rfReplaceAll]);
-    InstantSetProperty(Result, FieldName, DataSet.Fields[I].Value);
-  end;
 end;
 
 { Global routines }
@@ -3294,1241 +1976,6 @@ begin
   Result := GraphicClassList[InstantGraphicFileFormat];
 end;
 
-{ TInstantMetadata }
-
-function TInstantMetadata.Equals(const Other: TInstantMetadata): Boolean;
-begin
-  Result := InternalEquals(Other);
-end;
-
-function TInstantMetadata.GetCollection: TInstantMetadatas;
-begin
-  Result := inherited Collection as TInstantMetadatas;
-end;
-
-function TInstantMetadata.InternalEquals(
-  const Other: TInstantMetadata): Boolean;
-begin
-  { TODO : This only works for case-insensitive object names! }
-  Result := SameText(Other.Name, Name);
-end;
-
-procedure TInstantMetadata.SetCollection(Value: TInstantMetadatas);
-begin
-  inherited Collection := Value;
-end;
-
-{ TInstantMetadatas }
-
-function TInstantMetadatas.Find(const AName: string): TInstantMetadata;
-begin
-  Result := TInstantMetadata(inherited Find(AName));
-end;
-
-function TInstantMetadatas.GetItems(Index: Integer): TInstantMetadata;
-begin
-  Result := inherited Items[Index] as TInstantMetadata;
-end;
-
-procedure TInstantMetadatas.SetItems(Index: Integer;
-  const Value: TInstantMetadata);
-begin
-  inherited Items[Index] := Value;
-end;
-
-{ TInstantAttributeMetadata }
-
-procedure TInstantAttributeMetadata.Assign(Source: TPersistent);
-begin
-  inherited;
-  if Source is TInstantAttributeMetadata then
-    with TInstantAttributeMetadata(Source) do
-    begin
-      Self.FAttributeType := FAttributeType;
-      Self.FDefaultValue := FDefaultValue;
-      Self.FDisplayWidth := FDisplayWidth;
-      Self.FEditMask := FEditMask;
-      Self.FIsIndexed := FIsIndexed;
-      Self.FIsRequired := FIsRequired;
-      Self.FObjectClassName := FObjectClassName;
-      Self.FSize := FSize;
-      Self.FStorageName := FStorageName;
-      Self.FStorageKind := FStorageKind;
-      Self.FExternalStorageName := FExternalStorageName;
-      Self.FValidChars := FValidChars;
-    end;
-end;
-
-procedure TInstantAttributeMetadata.CheckAttributeClass(
-  AClass: TInstantAttributeClass);
-begin
-  if Assigned(AClass) and not IsAttributeClass(AClass) then
-    raise EInstantError.CreateFmt(SUnexpectedAttributeClass,
-      [AttributeClassName, Name, ClassMetadataName, AClass.ClassName]);
-end;
-
-procedure TInstantAttributeMetadata.CheckCategory(
-  ACategory: TInstantAttributeCategory);
-
-  function CategoryName(Cat: TInstantAttributeCategory): string;
-  begin
-    Result := GetEnumName(TypeInfo(TInstantAttributeCategory), Ord(Cat));
-  end;
-
-begin
-  if Category <> ACategory then
-    raise EInstantError.CreateFmt(SUnexpectedAttributeCategory,
-      [CategoryName(Category), AttributeClassName, Name,
-      ClassMetadataName, CategoryName(ACategory)]);
-end;
-
-procedure TInstantAttributeMetadata.CheckIsIndexed;
-begin
-  if not IsIndexed then
-    raise EInstantError.CreateFmt(SAttributeNotIndexed,
-      [AttributeClassName, Name, ClassMetadataName]);
-end;
-
-function TInstantAttributeMetadata.CreateAttribute(
-  AObject: TInstantObject): TInstantAttribute;
-var
-  AClass: TInstantAttributeClass;
-begin
-  AClass := AttributeClass;
-  if not Assigned(AClass) then
-    raise EInstantError.CreateFmt(SUnsupportedType, [AttributeTypeName]);
-  Result := AClass.Create(AObject, Self);
-end;
-
-function TInstantAttributeMetadata.GetAttributeClass: TInstantAttributeClass;
-begin
-  Result := AttributeClasses[AttributeType];
-end;
-
-function TInstantAttributeMetadata.GetAttributeClassName: string;
-begin
-  if Assigned(AttributeClass) then
-    Result := AttributeClass.ClassName
-  else
-    Result := '';
-end;
-
-function TInstantAttributeMetadata.GetAttributeTypeName: string;
-begin
-  Result := GetEnumName(TypeInfo(TInstantAttributeType),
-    Ord(AttributeType));
-  Result := Copy(Result, 3, Length(Result) - 2);
-end;
-
-function TInstantAttributeMetadata.GetCategory: TInstantAttributeCategory;
-begin
-  if Assigned(AttributeClass) then
-  begin
-    if AttributeClass.InheritsFrom(TInstantElement) then
-      Result := acElement
-    else if AttributeClass.InheritsFrom(TInstantContainer) then
-      Result := acContainer
-    else
-      Result := acSimple;
-  end else
-    Result := acUnknown;
-end;
-
-function TInstantAttributeMetadata.GetClassMetadata: TInstantClassMetadata;
-begin
-  if Assigned(Collection) then
-    Result := Collection.Owner
-  else
-    Result := nil;
-end;
-
-function TInstantAttributeMetadata.GetClassMetadataName: string;
-begin
-  if Assigned(ClassMetadata) then
-    Result := ClassMetadata.Name
-  else
-    Result := SUnassigned;
-end;
-
-function TInstantAttributeMetadata.GetCollection: TInstantAttributeMetadatas;
-begin
-  Result := inherited Collection as TInstantAttributeMetadatas;
-end;
-
-function TInstantAttributeMetadata.GetFieldName: string;
-begin
-  if FStorageName = '' then
-    Result := Name
-  else
-    Result := FStorageName;
-end;
-
-function TInstantAttributeMetadata.GetHasValidChars: Boolean;
-begin
-  Result := FValidChars <> [];
-end;
-
-function TInstantAttributeMetadata.GetIsDefault: Boolean;
-begin
-  Result := Assigned(ClassMetadata) and
-    (ClassMetadata.DefaultContainerName <> '') and
-    (ClassMetadata.DefaultContainerName = Name);
-end;
-
-function TInstantAttributeMetadata.GetObjectClass: TInstantObjectClass;
-begin
-  if ObjectClassName = '' then
-    Result := TInstantObject
-  else
-    Result := InstantFindClass(ObjectClassName);
-end;
-
-function TInstantAttributeMetadata.GetObjectClassMetadata: TInstantClassMetadata;
-begin
-  Result := InstantGetClassMetadata(ObjectClassName);
-end;
-
-function TInstantAttributeMetadata.GetTableName: string;
-begin
-  if Assigned(ClassMetadata) then
-    Result := ClassMetadata.TableName
-  else
-    Result := '';
-end;
-
-function TInstantAttributeMetadata.GetValidChars: TChars;
-begin
-  if FValidChars = [] then
-    Result := [#0..#255]
-  else
-    Result := FValidChars;
-end;
-
-function TInstantAttributeMetadata.GetValidCharsString: string;
-begin
-  Result := InstantCharSetToStr(FValidChars);
-end;
-
-function TInstantAttributeMetadata.IsAttributeClass(
-  AClass: TInstantAttributeClass): Boolean;
-begin
-  Result := Assigned(AttributeClass) and AttributeClass.InheritsFrom(AClass);
-end;
-
-procedure TInstantAttributeMetadata.SetAttributeClass(
-  AClass: TInstantAttributeClass);
-var
-  AttribType: TInstantAttributeType;
-begin
-  for AttribType := Low(AttribType) to High(AttribType) do
-    if AttributeClasses[AttribType] = AClass then
-    begin
-      AttributeType := AttribType;
-      Exit;
-    end;
-  AttributeType := atUnknown;
-end;
-
-procedure TInstantAttributeMetadata.SetAttributeClassName(const Value: string);
-var
-  AttribType: TInstantAttributeType;
-  AClass: TInstantAttributeClass;
-begin
-  for AttribType := Low(AttribType) to High(AttribType) do
-  begin
-    AClass := AttributeClasses[AttribType];
-    if Assigned(AClass) and SameText(AClass.ClassName, Value) then
-    begin
-      AttributeType := AttribType;
-      Exit;
-    end;
-  end;
-  AttributeType := atUnknown;
-end;
-
-procedure TInstantAttributeMetadata.SetAttributeTypeName(const Value: string);
-var
-  I: Integer;
-begin
-  if Value = '' then
-    Exit;
-  I := GetEnumValue(TypeInfo(TInstantAttributeType), 'at' + Value);
-  if I <> -1 then
-    AttributeType := TInstantAttributeType(I)
-  else
-    raise EInstantError.CreateFmt(SUnsupportedType, [Value]);
-end;
-
-procedure TInstantAttributeMetadata.SetCollection(
-  Value: TInstantAttributeMetadatas);
-begin
-  inherited Collection := Value;
-end;
-
-procedure TInstantAttributeMetadata.SetFieldName(const Value: string);
-begin
-  if Value = Name then
-    FStorageName := ''
-  else
-    FStorageName := Value;
-end;
-
-procedure TInstantAttributeMetadata.SetIsDefault(const Value: Boolean);
-begin
-  if (Value <> IsDefault) and Assigned(ClassMetadata) then
-  begin
-    if Value then
-      ClassMetadata.DefaultContainerName := Name
-    else
-      ClassMetadata.DefaultContainerName := '';
-  end;
-end;
-
-procedure TInstantAttributeMetadata.SetValidCharsString(const Value: string);
-begin
-  FValidChars := InstantStrToCharSet(Value);
-end;
-
-{ TInstantAttributeMetadatas }
-
-function TInstantAttributeMetadatas.Add: TInstantAttributeMetadata;
-begin
-  Result := TInstantAttributeMetadata(inherited Add);
-  Changed;
-end;
-
-procedure TInstantAttributeMetadatas.Changed;
-begin
-  if Owner <> nil then
-    Owner.DestroyAttributeViews;
-end;
-
-procedure TInstantAttributeMetadatas.Clear;
-begin
-  inherited Clear;
-  Changed;
-end;
-
-constructor TInstantAttributeMetadatas.Create(AOwner: TInstantClassMetadata);
-begin
-  inherited Create(AOwner, TInstantAttributeMetadata);
-end;
-
-function TInstantAttributeMetadatas.Find(
-  const AName: string): TInstantAttributeMetadata;
-begin
-  Result := TInstantAttributeMetadata(inherited Find(AName));
-end;
-
-function TInstantAttributeMetadatas.GetItems(
-  Index: Integer): TInstantAttributeMetadata;
-begin
-  Result := TInstantAttributeMetadata(inherited Items[Index]);
-end;
-
-function TInstantAttributeMetadatas.Owner: TInstantClassMetadata;
-begin
-  Result := inherited Owner as TInstantClassMetadata;
-end;
-
-procedure TInstantAttributeMetadatas.Remove(Item: TInstantAttributeMetadata);
-begin
-  inherited Remove(Item);
-  Changed;
-end;
-
-procedure TInstantAttributeMetadatas.SetItems(Index: Integer;
-  Value: TInstantAttributeMetadata);
-begin
-  inherited Items[Index] := Value;
-end;
-
-{ TInstantClassMetadata }
-
-procedure TInstantClassMetadata.Assign(Source: TPersistent);
-begin
-  inherited;
-  if Source is TInstantClassMetadata then
-    with TInstantClassMetadata(Source) do
-    begin
-      Self.FDefaultContainerName := FDefaultContainerName;
-      Self.FStorageName := FStorageName;
-      Self.FPersistence := FPersistence;
-    end;
-end;
-
-procedure TInstantClassMetadata.BuildAttributeMap(Map: TInstantAttributeMap;
-  Complete: Boolean);
-begin
-  GetDistinctAttributeMetadatas(Map);
-  if Assigned(Parent) and (Complete or not Parent.IsStored) then
-    Parent.BuildAttributeMap(Map, Complete);
-end;
-
-procedure TInstantClassMetadata.BuildStorageMaps(Maps: TInstantAttributeMaps);
-var
-  I: Integer;
-  Map: TInstantAttributeMap;
-begin
-  if IsStored then
-  begin
-    Map := Maps.EnsureMap(TableName);
-    for I := 0 to Pred(StorageMap.Count) do
-      Map.AddUnique(StorageMap[I]);
-  end;
-  if Assigned(Parent) then
-    Parent.BuildStorageMaps(Maps)
-end;
-
-procedure TInstantClassMetadata.ClearParent;
-begin
-  FParent := nil;
-end;
-
-class procedure TInstantClassMetadata.ConvertToBinary(
-  Converter: TInstantTextToBinaryConverter);
-begin
-  with Converter do
-  begin
-    ConvertProperties(InstantBuildStartTag(InstantAttributeMetadatasTagName));
-    Processor.ReadTag;
-    if (Processor.Token = xtTag) and not SameText(Processor.PeekTag,
-      InstantBuildEndTag(InstantAttributeMetadatasTagName)) then
-      Convert;
-    Processor.ReadTag;
-  end;
-end;
-
-class procedure TInstantClassMetadata.ConvertToText(
-  Converter: TInstantBinaryToTextConverter);
-begin
-  inherited;
-  with Converter do
-  begin
-    Producer.WriteStartTag(InstantAttributeMetadatasTagName);
-    if not Reader.EndOfList then
-      Convert;
-    Producer.WriteEndTag;
-  end;
-end;
-
-destructor TInstantClassMetadata.Destroy;
-begin
-  FAttributeMetadatas.Free;
-  DestroyAttributeViews;
-  inherited;
-end;
-
-procedure TInstantClassMetadata.DestroyAttributeViews;
-begin
-  FreeAndNil(FStorageMap);
-  FreeAndNil(FStorageMaps);
-  FreeAndNil(FMemberMap);
-end;
-
-function TInstantClassMetadata.GetAttributeMetadatas: TInstantAttributeMetadatas;
-begin
-  if not Assigned(FAttributeMetadatas) then
-    FAttributeMetadatas := TInstantAttributeMetadatas.Create(Self);
-  Result := FAttributeMetadatas;
-end;
-
-function TInstantClassMetadata.GetCollection: TInstantClassMetadatas;
-begin
-  Result := inherited Collection as TInstantClassMetadatas;
-end;
-
-procedure TInstantClassMetadata.GetDistinctAttributeMetadatas(
-  Map: TInstantAttributeMap);
-var
-  I: Integer;
-  AttribMeta: TInstantAttributeMetadata;
-begin
-  with AttributeMetadatas do
-    for I := 0 to Pred(Count) do
-    begin
-      AttribMeta := Items[I];
-      if not Assigned(Map.Find(AttribMeta.Name)) then
-        Map.Add(AttribMeta);
-    end;
-end;
-
-function TInstantClassMetadata.GetIsEmpty: Boolean;
-begin
-  Result := (Persistence = peEmbedded) and (AttributeMetadatas.Count = 0)
-    and (StorageName = '');
-end;
-
-function TInstantClassMetadata.GetIsStored: Boolean;
-begin
-  Result := Persistence = peStored;
-end;
-
-function TInstantClassMetadata.GetMemberMap: TInstantAttributeMap;
-begin
-  if not Assigned(FMemberMap) then
-  begin
-    FMemberMap := TInstantAttributeMap.Create(Self);
-    BuildAttributeMap(FMemberMap, True);
-  end;
-  Result := FMemberMap;
-end;
-
-function TInstantClassMetadata.GetParent: TInstantClassMetadata;
-begin
-  if not Assigned(FParent) then
-    FParent := Collection.Find(FParentName);
-  Result := FParent;
-end;
-
-function TInstantClassMetadata.GetParentName: string;
-begin
-  if Assigned(FParent) then
-    Result := FParent.Name
-  else
-    Result := FParentName;
-end;
-
-function TInstantClassMetadata.GetStorageMap: TInstantAttributeMap;
-begin
-  if not Assigned(FStorageMap) and IsStored then
-  begin
-    FStorageMap := TInstantAttributeMap.Create(Self);
-    BuildAttributeMap(FStorageMap, False);
-  end;
-  Result := FStorageMap;
-end;
-
-function TInstantClassMetadata.GetStorageMaps: TInstantAttributeMaps;
-begin
-  if not Assigned(FStorageMaps) and IsStored then
-  begin
-    FStorageMaps := TInstantAttributeMaps.Create(Self);
-    BuildStorageMaps(FStorageMaps);
-  end;
-  Result := FStorageMaps;
-end;
-
-function TInstantClassMetadata.GetTableName: string;
-begin
-  if FStorageName = '' then
-    Result := InstantClassNameToName(Name)
-  else
-    Result := FStorageName;
-end;
-
-procedure TInstantClassMetadata.ReadObject(Reader: TInstantReader);
-begin
-  inherited;
-  if not Reader.EndOfList then
-    Reader.ReadObject(AttributeMetadatas);
-end;
-
-procedure TInstantClassMetadata.SetCollection(Value: TInstantClassMetadatas);
-begin
-  if Value <> Collection then
-  begin
-    ClearParent;
-    inherited Collection := Value;
-  end;
-end;
-
-procedure TInstantClassMetadata.SetParent(Value: TInstantClassMetadata);
-begin
-  if Value <> FParent then
-  begin
-    FParent := Value;
-    FParentName := '';
-  end;
-end;
-
-procedure TInstantClassMetadata.SetParentName(const Value: string);
-begin
-  if Value <> ParentName then
-  begin
-    ClearParent;
-    FParentName := Value;
-  end;
-end;
-
-procedure TInstantClassMetadata.SetTableName(const Value: string);
-begin
-  if InstantNameToClassName(Value) = Name then
-    StorageName := ''
-  else
-    StorageName := Value;
-end;
-
-procedure TInstantClassMetadata.WriteObject(Writer: TInstantWriter);
-begin
-  inherited;
-  if AttributeMetadatas.Count > 0 then
-    Writer.WriteObject(AttributeMetadatas);
-end;
-
-{ TInstantClassMetadatas }
-
-function TInstantClassMetadatas.Add: TInstantClassMetadata;
-begin
-  Result := TInstantClassMetadata(inherited Add);
-end;
-
-constructor TInstantClassMetadatas.Create(AOwner: TPersistent);
-begin
-  inherited Create(AOwner, TInstantClassMetadata);
-end;
-
-class function TInstantClassMetadatas.CreateInstance(
-  Arg: Pointer): TInstantCollection;
-begin
-  Result := Create(Arg);
-end;
-
-function TInstantClassMetadatas.Find(
-  const AName: string): TInstantClassMetadata;
-begin
-  Result := TInstantClassMetadata(inherited Find(AName));
-end;
-
-function TInstantClassMetadatas.GetItems(Index: Integer): TInstantClassMetadata;
-begin
-  Result := TInstantClassMetadata(inherited Items[Index]);
-end;
-
-procedure TInstantClassMetadatas.SetItems(Index: Integer;
-  Value: TInstantClassMetadata);
-begin
-  inherited Items[Index] := Value;
-end;
-
-{ TInstantModel }
-
-destructor TInstantModel.Destroy;
-begin
-  DestroyClassMetadatas;
-  inherited;
-end;
-
-procedure TInstantModel.DestroyClassMetadatas;
-begin
-  FreeAndNil(FClassMetadatas);
-end;
-
-function TInstantModel.GetClassMetadatas: TInstantClassMetadatas;
-begin
-  if not Assigned(FClassMetadatas) then
-    FClassMetadatas := TInstantClassMetadatas.Create(nil);
-  Result := FClassMetadatas;
-end;
-
-procedure TInstantModel.LoadFromFile(const FileName: string);
-var
-  Stream: TInstantFileStream;
-begin
-  Stream := TInstantFileStream.Create(FileName, fmOpenRead);
-  try
-    InstantReadObject(Stream, sfXML, ClassMetadatas);
-  finally
-    Stream.Free;
-  end;
-end;
-
-procedure TInstantModel.LoadFromResFile(const FileName: string);
-var
-  Stream: TInstantFileStream;
-begin
-  Stream := TInstantFileStream.Create(FileName, fmOpenRead);
-  try
-    Stream.ReadResourceFileHeader;
-    Stream.ReadObjectRes(ClassMetadatas);
-  finally
-    Stream.Free;
-  end;
-end;
-
-procedure TInstantModel.SaveToFile(const FileName: string);
-var
-  Stream: TInstantFileStream;
-begin
-  Stream := TInstantFileStream.Create(FileName, fmCreate);
-  try
-    InstantWriteObject(Stream, sfXML, ClassMetadatas);
-  finally
-    Stream.Free;
-  end;
-end;
-
-procedure TInstantModel.SaveToResFile(const FileName: string);
-var
-  Stream: TInstantFileStream;
-begin
-  Stream := TInstantFileStream.Create(FileName, fmCreate);
-  try
-    Stream.WriteResourceFileHeader;
-    Stream.WriteObjectRes(InstantModelResourceName, ClassMetadatas);
-    Stream.AlignStream;
-  finally
-    Stream.Free;
-  end;
-end;
-
-{ TInstantFieldMetadata }
-
-procedure TInstantFieldMetadata.Assign(Source: TPersistent);
-begin
-  inherited;
-  if Source is TInstantFieldMetadata then
-    with TInstantFieldMetadata(Source) do
-    begin
-      Self.FDataType := FDataType;
-      Self.FAlternateDataTypes := FAlternateDataTypes;
-      Self.FOptions := FOptions;
-      Self.FSize := FSize;
-    end;
-end;
-
-constructor TInstantFieldMetadata.Create(ACollection: TInstantFieldMetadatas);
-begin
-  inherited Create(ACollection);
-end;
-
-function TInstantFieldMetadata.DataTypesEqual(
-  const Other: TInstantFieldMetadata): Boolean;
-begin
-  Result := (DataType = Other.DataType) or
-    (DataType in Other.AlternateDataTypes) or
-    (Other.DataType in AlternateDataTypes);
-end;
-
-function TInstantFieldMetadata.GetCollection: TInstantFieldMetadatas;
-begin
-  Result := inherited Collection as TInstantFieldMetadatas;
-end;
-
-function TInstantFieldMetadata.GetTableMetadata: TInstantTableMetadata;
-begin
-  Result := Collection.Owner;
-end;
-
-function TInstantFieldMetadata.InternalEquals(
-  const Other: TInstantMetadata): Boolean;
-begin
-  Result := inherited InternalEquals(Other);
-  if Result then
-    Result := (Other is TInstantFieldMetadata) and
-      (DataTypesEqual(TInstantFieldMetadata(Other)));
-  if DataType = dtString then
-    Result := Result and (Size = TInstantFieldMetadata(Other).Size);
-end;
-
-{ TInstantFieldMetadatas }
-
-function TInstantFieldMetadatas.Add: TInstantFieldMetadata;
-begin
-  Result := TInstantFieldMetadata(inherited Add);
-end;
-
-procedure TInstantFieldMetadatas.AddFieldMetadata(const AName: string;
-  ADataType: TInstantDataType; ASize: Integer;
-  AOptions: TInstantFieldOptions = []);
-begin
-  with Add do
-  begin
-    Name := AName;
-    DataType := ADataType;
-    Size := ASize;
-    Options := AOptions;
-  end;
-end;
-
-constructor TInstantFieldMetadatas.Create(AOwner: TInstantTableMetadata);
-begin
-  inherited Create(AOwner, TInstantFieldMetadata);
-end;
-
-function TInstantFieldMetadatas.Find(
-  const AName: string): TInstantFieldMetadata;
-begin
-  Result := inherited Find(AName) as TInstantFieldMetadata;
-end;
-
-function TInstantFieldMetadatas.GetItems(Index: Integer): TInstantFieldMetadata;
-begin
-  Result := TInstantFieldMetadata(inherited Items[Index]);
-end;
-
-function TInstantFieldMetadatas.Owner: TInstantTableMetadata;
-begin
-  Result := inherited Owner as TInstantTableMetadata;
-end;
-
-procedure TInstantFieldMetadatas.SetItems(Index: Integer;
-  Value: TInstantFieldMetadata);
-begin
-  inherited Items[Index] := Value;
-end;
-
-{ TInstantIndexMetadata }
-
-procedure TInstantIndexMetadata.Assign(Source: TPersistent);
-begin
-  inherited;
-  if Source is TInstantIndexMetadata then
-    with TInstantIndexMetadata(Source) do
-    begin
-      Self.FFields := FFields;
-      Self.FOptions := FOptions;
-    end;
-end;
-
-constructor TInstantIndexMetadata.Create(ACollection: TInstantMetadatas);
-begin
-  inherited Create(ACollection);
-end;
-
-function TInstantIndexMetadata.GetCollection: TInstantIndexMetadatas;
-begin
-  Result := inherited Collection as TInstantIndexMetadatas;
-end;
-
-function TInstantIndexMetadata.GetTableMetadata: TInstantTableMetadata;
-begin
-  Result := Collection.Owner;
-end;
-
-function TInstantIndexMetadata.InternalEquals(
-  const Other: TInstantMetadata): Boolean;
-begin
-  Result := inherited InternalEquals(Other);
-  if Result then
-    Result := (Other is TInstantIndexMetadata) and
-      (TInstantIndexMetadata(Other).Options = Options) and
-      { TODO : This only works for case-insensitive field names! }
-      SameText(TInstantIndexMetadata(Other).Fields, Fields);
-end;
-
-function TInstantIndexMetadata.IsFieldIndexed(
-  const AFieldMetadata: TInstantFieldMetadata): Boolean;
-var
-  I: Integer;
-  List: TStringList;
-begin
-  List := TStringList.Create;
-  try
-    InstantStrToList(Fields, List, [';']);
-    Result := False;
-    for I := 0 to Pred(List.Count) do
-    begin
-      { TODO : This only works for case-insensitive field names! }
-      Result := SameText(List[I], AFieldMetadata.Name);
-      if Result then
-        Break;
-    end;
-  finally
-    List.Free;
-  end;
-end;
-
-{ TInstantIndexMetadatas }
-
-function TInstantIndexMetadatas.Add: TInstantIndexMetadata;
-begin
-  Result := TInstantIndexMetadata(inherited Add);
-end;
-
-procedure TInstantIndexMetadatas.AddIndexMetadata(const AName, AFields: string;
-  AOptions: TIndexOptions);
-begin
-  with Add do
-  begin
-    Name := AName;
-    Fields := AFields;
-    Options := AOptions;
-  end;
-end;
-
-constructor TInstantIndexMetadatas.Create(AOwner: TInstantTableMetadata);
-begin
-  inherited Create(AOwner, TInstantIndexMetadata);
-end;
-
-function TInstantIndexMetadatas.Find(
-  const AName: string): TInstantIndexMetadata;
-begin
-  Result := inherited Find(AName) as TInstantIndexMetadata;
-end;
-
-function TInstantIndexMetadatas.GetItems(Index: Integer): TInstantIndexMetadata;
-begin
-  Result := TInstantIndexMetadata(inherited Items[Index]);
-end;
-
-function TInstantIndexMetadatas.IsFieldIndexed(
-  const AFieldMetadata: TInstantFieldMetadata): Boolean;
-var
-  I: Integer;
-begin
-  Result := False;
-  for I := 0 to Pred(Count) do
-  begin
-    Result := Items[I].IsFieldIndexed(AFieldMetadata);
-    if Result then
-      Break;
-  end;
-end;
-
-function TInstantIndexMetadatas.Owner: TInstantTableMetadata;
-begin
-  Result := inherited Owner as TInstantTableMetadata;
-end;
-
-procedure TInstantIndexMetadatas.SetItems(Index: Integer;
-  Value: TInstantIndexMetadata);
-begin
-  inherited Items[Index] := Value
-end;
-
-{ TInstantTableMetadata }
-
-procedure TInstantTableMetadata.Assign(Source: TPersistent);
-begin
-  inherited;
-  if Source is TInstantTableMetadata then
-    with TInstantTableMetadata(Source) do
-    begin
-      Self.FieldMetadatas.Assign(FieldMetadatas);
-      Self.IndexMetadatas.Assign(IndexMetadatas);
-    end;
-end;
-
-destructor TInstantTableMetadata.Destroy;
-begin
-  FFieldMetadatas.Free;
-  FIndexMetadatas.Free;
-  inherited;
-end;
-
-function TInstantTableMetadata.FindFieldMetadata(
-  const AName: string): TInstantFieldMetadata;
-begin
-  Result := FieldMetadatas.Find(AName);
-end;
-
-function TInstantTableMetadata.FindIndexMetadata(
-  const AName: string): TInstantIndexMetadata;
-begin
-  Result := IndexMetadatas.Find(AName);
-end;
-
-function TInstantTableMetadata.GetFieldMetadataCount: Integer;
-begin
-  Result := FieldMetadatas.Count;
-end;
-
-function TInstantTableMetadata.GetFieldMetadatas: TInstantFieldMetadatas;
-begin
-  if not Assigned(FFieldMetadatas) then
-    FFieldMetadatas := TInstantFieldMetadatas.Create(Self);
-  Result := FFieldMetadatas;
-end;
-
-function TInstantTableMetadata.GetIndexMetadataCount: Integer;
-begin
-  Result := IndexMetadatas.Count;
-end;
-
-function TInstantTableMetadata.GetIndexMetadatas: TInstantIndexMetadatas;
-begin
-  if not Assigned(FIndexMetadatas) then
-    FIndexMetadatas := TInstantIndexMetadatas.Create(Self);
-  Result := FIndexMetadatas;
-end;
-
-function TInstantTableMetadata.GetScheme: TInstantScheme;
-begin
-  if Assigned(Collection) and (Collection.Owner is TInstantScheme) then
-    Result := TInstantScheme(Collection.Owner)
-  else
-    Result := nil;
-end;
-
-{ TInstantTableMetadatas }
-
-function TInstantTableMetadatas.Add: TInstantTableMetadata;
-begin
-  Result := inherited Add as TInstantTableMetadata;
-end;
-
-constructor TInstantTableMetadatas.Create(AOwner: TPersistent);
-begin
-  inherited Create(AOwner, TInstantTableMetadata);
-end;
-
-function TInstantTableMetadatas.Find(
-  const AName: string): TInstantTableMetadata;
-begin
-  Result := inherited Find(AName) as TInstantTableMetadata;
-end;
-
-function TInstantTableMetadatas.GetItems(Index: Integer): TInstantTableMetadata;
-begin
-  Result := inherited Items[Index] as TInstantTableMetadata;
-end;
-
-{ TInstantScheme }
-
-function TInstantScheme.AttributeTypeToDataType(
-  AttributeType: TInstantAttributeType): TInstantDataType;
-begin
-  Result := InstantAttributeTypeToDataType(AttributeType, BlobStreamFormat);
-end;
-
-procedure TInstantScheme.CatalogWarningEventHandler(const Sender: TObject;
-  const AWarningText: string);
-begin
-  DoWarning(AWarningText);
-end;
-
-constructor TInstantScheme.Create;
-begin
-  inherited Create;
-  FBlobStreamFormat := sfBinary;
-  FIdDataType := dtString;
-  FIdSize := InstantDefaultFieldSize; 
-end;
-
-destructor TInstantScheme.Destroy;
-begin
-  FCatalog.Free;
-  FTableMetadataCollection.Free;
-  inherited;
-end;
-
-procedure TInstantScheme.DoWarning(const AWarningText: string);
-begin
-  if Assigned(FOnWarning) then
-    FOnWarning(Self, AWarningText);
-end;
-
-function TInstantScheme.FindTableMetadata(
-  const AName: string): TInstantTableMetadata;
-begin
-  Result := TableMetadataCollection.Find(AName);
-end;
-
-function TInstantScheme.GetTableMetadataCollection: TInstantTableMetadatas;
-begin
-  if not Assigned(FTableMetadataCollection) then
-    FTableMetadataCollection := TInstantTableMetadatas.Create(Self);
-  Result := FTableMetadataCollection;
-end;
-
-function TInstantScheme.GetTableMetadataCount: Integer;
-begin
-  Result := TableMetadataCollection.Count;
-end;
-
-function TInstantScheme.GetTableMetadatas(
-  Index: Integer): TInstantTableMetadata;
-begin
-  Result := TableMetadataCollection[Index];
-end;
-
-procedure TInstantScheme.SetCatalog(const Value: TInstantCatalog);
-begin
-  FreeAndNil(FCatalog);
-  FCatalog := Value;
-  if Assigned(FCatalog) then
-  begin
-    FCatalog.OnWarning := CatalogWarningEventHandler;
-    FCatalog.InitTableMetadatas(TableMetadataCollection);
-  end;
-end;
-
-{ TInstantAttributeMap }
-
-function TInstantAttributeMap.Add(Item: TInstantAttributeMetadata): Integer;
-begin
-  Result := inherited Add(Item);
-end;
-
-function TInstantAttributeMap.AddUnique(
-  Item: TInstantAttributeMetadata): Integer;
-begin
-  if not Assigned(Find(Item.Name)) then
-    Result := Add(Item)
-  else
-    Result := -1;
-end;
-
-constructor TInstantAttributeMap.Create(
-  AClassMetadata: TInstantClassMetadata);
-begin
-  inherited Create;
-  FClassMetadata := AClassMetadata;
-end;
-
-function TInstantAttributeMap.Find(
-  const AName: string): TInstantAttributeMetadata;
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(Count) do
-  begin
-    Result := Items[I];
-    if SameText(Result.Name, AName) then
-      Exit;
-  end;
-  Result := nil;
-end;
-
-function TInstantAttributeMap.GetIsRootMap: Boolean;
-begin
-  Result := Assigned(ClassMetadata) and (Name = ClassMetadata.TableName);
-end;
-
-function TInstantAttributeMap.GetItems(
-  Index: Integer): TInstantAttributeMetadata;
-begin
-  Result := inherited Items[Index];
-end;
-
-function TInstantAttributeMap.GetName: string;
-begin
-  Result := FName;
-end;
-
-function TInstantAttributeMap.IndexOf(Item: TInstantAttributeMetadata): Integer;
-begin
-  Result := inherited IndexOf(Item);
-end;
-
-procedure TInstantAttributeMap.Insert(Index: Integer;
-  Item: TInstantAttributeMetadata);
-begin
-  inherited Insert(Index, Item);
-end;
-
-function TInstantAttributeMap.Remove(Item: TInstantAttributeMetadata): Integer;
-begin
-  Result := inherited Remove(Item);
-end;
-
-procedure TInstantAttributeMap.SetItems(Index: Integer;
-  Value: TInstantAttributeMetadata);
-begin
-  inherited Items[Index] := Value;
-end;
-
-procedure TInstantAttributeMap.SetName(const Value: string);
-begin
-  FName := Value;
-end;
-
-{ TInstantAttributeMaps }
-
-function TInstantAttributeMaps.Add: TInstantAttributeMap;
-begin
-  Result := TInstantAttributeMap.Create(ClassMetadata);
-  try
-    Add(Result);
-  except
-    Result.Free;
-    raise;
-  end;
-end;
-
-function TInstantAttributeMaps.Add(Item: TInstantAttributeMap): Integer;
-begin
-  Result := inherited Add(Item)
-end;
-
-constructor TInstantAttributeMaps.Create(
-  AClassMetadata: TInstantClassMetadata);
-begin
-  inherited Create;
-  FClassMetadata := AClassMetadata;
-end;
-
-function TInstantAttributeMaps.EnsureMap(
-  const AName: string): TInstantAttributeMap;
-begin
-  Result := Find(AName);
-  if not Assigned(Result) then
-  begin
-    Result := Add;
-    Result.Name := AName;
-  end
-end;
-
-function TInstantAttributeMaps.Find(const AName: string): TInstantAttributeMap;
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(Count) do
-  begin
-    Result := Items[I];
-    if SameText(Result.Name, AName) then
-      Exit;
-  end;
-  Result := nil;
-end;
-
-function TInstantAttributeMaps.FindMap(
-  const AttributeName: string): TInstantAttributeMap;
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(Count) do
-  begin
-    Result := Items[I];
-    if Assigned(Result.Find(AttributeName)) then
-      Exit;
-  end;
-  Result := nil;
-end;
-
-function TInstantAttributeMaps.GetItems(Index: Integer): TInstantAttributeMap;
-begin
-  Result := inherited Items[Index] as TInstantAttributeMap;
-end;
-
-function TInstantAttributeMaps.GetRootMap: TInstantAttributeMap;
-var
-  I: Integer;
-begin
-  if Assigned(ClassMetadata) then
-    for I := 0 to Pred(Count) do
-    begin
-      Result := Items[I];
-      if Result.Name = ClassMetadata.TableName then
-        Exit;
-    end;
-  Result := nil
-end;
-
-function TInstantAttributeMaps.IndexOf(Item: TInstantAttributeMap): Integer;
-begin
-  Result := inherited IndexOf(Item);
-end;
-
-procedure TInstantAttributeMaps.Insert(Index: Integer;
-  Item: TInstantAttributeMap);
-begin
-  inherited Insert(Index, Item);
-end;
-
-function TInstantAttributeMaps.Remove(Item: TInstantAttributeMap): Integer;
-begin
-  Result := inherited Remove(Item);
-end;
-
-procedure TInstantAttributeMaps.SetItems(Index: Integer;
-  Value: TInstantAttributeMap);
-begin
-  inherited Items[Index] := Value;
-end;
-
 { TInstantObjectReference }
 
 procedure TInstantObjectReference.Assign(Source: TPersistent);
@@ -4818,13 +2265,12 @@ begin
     [ClassName, Name, E.Message], E);
 end;
 
-constructor TInstantAttribute.Create(AOwner: TInstantObject;
-  AMetadata: TInstantAttributeMetadata);
+constructor TInstantAttribute.Create(AOwner: TInstantAbstractObject = nil;
+  AMetadata: TInstantCollectionItem = nil);
 begin
-  inherited Create;
-  FOwner := AOwner;
-  FMetadata := AMetadata;
-  Initialize;
+  Assert((AOwner = nil) or (AOwner is TInstantObject));
+  Assert((AMetadata = nil) or (AMetadata is TInstantAttributeMetadata));
+  inherited Create(AOwner, AMetadata);
 end;
 
 function TInstantAttribute.GetAsBoolean: Boolean;
@@ -4916,6 +2362,11 @@ begin
   Result := Assigned(Metadata) and Metadata.IsRequired;
 end;
 
+function TInstantAttribute.GetMetadata: TInstantAttributeMetadata;
+begin
+  Result := inherited GetMetadata as TInstantAttributeMetadata;
+end;
+
 function TInstantAttribute.GetName: string;
 begin
   if Assigned(Metadata) then
@@ -4924,9 +2375,9 @@ begin
     Result := '';
 end;
 
-function TInstantAttribute.GetOwner: TPersistent;
+function TInstantAttribute.GetOwner: TInstantObject;
 begin
-  Result := FOwner;
+  Result := inherited GetOwner as TInstantObject;
 end;
 
 function TInstantAttribute.GetValue: Variant;
@@ -4989,11 +2440,11 @@ end;
 
 procedure TInstantAttribute.SetIsChanged(Value: Boolean);
 begin
-  if Assigned(FOwner) and Value then
-    if FOwner.ChangesDisabled then
+  if Assigned(Owner) and Value then
+    if Owner.ChangesDisabled then
       Exit
     else
-      FOwner.DoAttributeChanged(Self);
+      Owner.DoAttributeChanged(Self);
   FIsChanged := Value;
 end;
 
@@ -5001,13 +2452,12 @@ procedure TInstantAttribute.SetMetadata(Value: TInstantAttributeMetadata);
 begin
   if Assigned(Value) and (Value.AttributeType <> AttributeType) then
     raise EInstantError.CreateFmt(SMetadataMismatch, [ClassName, Name]);
-  FMetadata := Value;
-  Initialize;
+  inherited SetMetadata(Value);
 end;
 
 procedure TInstantAttribute.SetOwner(AOwner: TInstantObject);
 begin
-  FOwner := AOwner;
+  inherited SetOwner(AOwner);
 end;
 
 procedure TInstantAttribute.SetValue(AValue: Variant);
@@ -6141,7 +3591,7 @@ end;
 function TInstantComplex.GetRequiredClass: TInstantObjectClass;
 begin
   if Assigned(Metadata) then
-    Result := Metadata.ObjectClass
+    Result := TInstantObjectClass(Metadata.ObjectClass)
   else
     Result := TInstantObject;
 end;
@@ -6183,7 +3633,7 @@ end;
 
 function TInstantElement.CreateObject: TInstantObject;
 begin
-  Result := RequiredClass.Create(Connector);
+  Result := RequiredClass.Create(Connector) as TInstantObject;
 end;
 
 function TInstantElement.DetachObject(AObject: TInstantObject): Boolean;
@@ -6439,7 +3889,7 @@ function TInstantReference.CreateObject: TInstantObject;
 begin
   if Assigned(Metadata) and (Metadata.DefaultValue <> '') then
     Result := RequiredClass.Retrieve(Metadata.Defaultvalue, False, False,
-      Connector)
+      Connector) as TInstantObject
   else
     Result := nil;
 end;
@@ -6704,7 +4154,7 @@ procedure TInstantContainer.AfterContentChange(
   AObject: TInstantObject);
 begin
   Changed;
-  if Assigned(FOwner) then
+  if Assigned(Owner) then
     Owner.DoAfterContentChange(Self, ChangeType, Index, AObject);
 end;
 
@@ -6717,7 +4167,7 @@ procedure TInstantContainer.BeforeContentChange(
   ChangeType: TInstantContentChangeType; Index: Integer;
   AObject: TInstantObject);
 begin
-  if Assigned(FOwner) then
+  if Assigned(Owner) then
     Owner.DoBeforeContentChange(Self, ChangeType, Index, AObject);
 end;
 
@@ -8120,7 +5570,7 @@ begin
   ConvertAttributes;
 end;
 
-constructor TInstantObject.Create(AConnector: TInstantConnector);
+constructor TInstantObject.Create(AConnector: TInstantConnector = nil);
 begin
   inherited Create;
   InstantCheckConnector(AConnector);
@@ -8148,7 +5598,7 @@ begin
           if not Assigned(AttribPtr^.Owner) then
             AttribPtr^.SetOwner(Self);
         end else
-          AttribPtr^ := AttribMeta.CreateAttribute(Self);
+          AttribPtr^ := AttribMeta.CreateAttribute(Self) as TInstantAttribute;
     end;
 end;
 
@@ -8605,7 +6055,7 @@ begin
   if IsAbandoned then
     Result := InstantGenerateId
   else
-    Result := Connector.GenerateId(Self);
+    Result := Connector.GenerateId;
 end;
 
 function TInstantObject.GetCaption: string;
@@ -8687,7 +6137,7 @@ begin
   Result := DefaultContainer.ChangeCount;
 end;
 
-function TInstantObject.GetObjectClass: TInstantObjectClass;
+function TInstantObject.GetObjectClass: TInstantAbstractObjectClass;
 begin
   Result := DefaultContainer.RequiredClass;
 end;
@@ -9049,8 +6499,8 @@ begin
 end;
 
 {$O-}
-constructor TInstantObject.Retrieve(const AObjectId: string;
-  CreateIfMissing: Boolean; Refresh: Boolean; AConnector: TInstantConnector);
+constructor TInstantObject.Retrieve(const AObjectId: string; CreateIfMissing:
+    Boolean = False; Refresh: Boolean = False; AConnector: TComponent = nil);
 
   procedure RetrieveDenied;
   begin
@@ -9063,8 +6513,8 @@ var
   VerificationResult: TInstantVerificationResult;
 begin
   inherited Create;
-  InstantCheckConnector(AConnector);
-  SetConnector(AConnector);
+  InstantCheckConnector(TInstantConnector(AConnector));
+  SetConnector(TInstantConnector(AConnector));
   Instance := ObjectStore.Find(AObjectId);
   if Assigned(Instance) then
   begin
@@ -9104,6 +6554,11 @@ begin
 end;
 {$O+}
 
+function TInstantObject.GetConnector: TInstantConnector;
+begin
+  Result := inherited GetConnector as TInstantConnector;
+end;
+
 procedure TInstantObject.SaveState;
 begin
   if State.PersistentId = '' then
@@ -9125,7 +6580,7 @@ end;
 
 procedure TInstantObject.SetConnector(AConnector: TInstantConnector);
 begin
-  FConnector := AConnector;
+  inherited SetConnector(AConnector);
   FObjectStore := nil;
 end;
 
@@ -9238,466 +6693,6 @@ begin
     finally
       inherited FreeInstance;
     end;
-end;
-
-{ TInstantConnectionDef }
-
-constructor TInstantConnectionDef.Create(Collection: TCollection);
-begin
-  inherited Create(Collection);
-  FBlobStreamFormat := sfBinary;
-  FIdDataType := dtString;
-  FIdSize := InstantDefaultFieldSize;
-end;
-
-function TInstantConnectionDef.CreateConnector(AOwner: TComponent): TInstantConnector;
-begin
-  Result := ConnectorClass.Create(AOwner);
-  try
-    InitConnector(Result);
-  except
-    Result.Free;
-    raise;
-  end;
-end;
-
-function TInstantConnectionDef.GetCaption: string;
-var
-  Connector: TInstantConnector;
-begin
-  Connector := CreateConnector(nil);
-  try
-    if Assigned(Connector) then
-      Result := Connector.DatabaseName
-    else
-      Result := ''
-  finally
-    Connector.Free;
-  end;
-end;
-
-procedure TInstantConnectionDef.InitConnector(Connector: TInstantConnector);
-begin
-  Connector.BlobStreamFormat := BlobStreamFormat;
-  Connector.IdDataType := IdDataType;
-  Connector.IdSize := IdSize;
-end;
-
-{ TInstantConnectionDefs }
-
-constructor TInstantConnectionDefs.Create;
-begin
-  inherited Create(TInstantConnectionDef);
-end;
-
-function TInstantConnectionDefs.GetItems(Index: Integer): TInstantConnectionDef;
-begin
-  Result := inherited Items[Index] as TInstantConnectionDef;
-end;
-
-procedure TInstantConnectionDefs.SetItems(Index: Integer;
-  const Value: TInstantConnectionDef);
-begin
-  inherited Items[Index] := Value;
-end;
-
-{ TInstantConnector }
-
-procedure TInstantConnector.AbandonObjects;
-var
-  I: Integer;
-  Obj: TObject;
-begin
-  for I := 0 to Pred(ClientCount) do
-  begin
-    Obj := Clients[I];
-    if Obj is TInstantObjectStore then
-      TInstantObjectStore(Obj).AbandonObjects;
-  end;
-end;
-
-function TInstantConnector.AddTransactedObject(
-  AObject: TInstantObject): Integer;
-begin
-  if Assigned(AObject) then
-    Result := TransactedObjectList.Add(AObject)
-  else
-    Result := -1;
-end;
-
-procedure TInstantConnector.ApplyTransactedObjectStates;
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(TransactedObjectCount) do
-    TransactedObjects[I].ApplyState;
-end;
-
-procedure TInstantConnector.BuildDatabase(Model: TInstantModel);
-var
-  Scheme: TInstantScheme;
-begin
-  CreateDatabase;
-  Connect;
-  try
-    if Model = nil then
-      Model := InstantModel;
-    Scheme := CreateScheme(Model);
-    try
-      DoBeforeBuildDatabase(Scheme);
-      InternalBuildDatabase(Scheme);
-    finally
-      Scheme.Free;
-    end;
-  finally
-    Disconnect;
-  end;
-end;
-
-procedure TInstantConnector.BuildDatabase(
-  AClasses: array of TInstantObjectClass);
-var
-  I: Integer;
-  Model: TInstantModel;
-begin
-  Model := TInstantModel.Create;
-  try
-    for I := Low(AClasses) to High(AClasses) do
-      if Assigned(AClasses[I]) then
-        Model.ClassMetadatas.Add.Assign(AClasses[I].Metadata);
-    BuildDatabase(Model);
-  finally
-    Model.Free;
-  end;
-end;
-
-procedure TInstantConnector.ClearTransactedObjects;
-begin
-  TransactedObjectList.Clear;
-end;
-
-procedure TInstantConnector.CommitTransaction;
-begin
-  if not InTransaction then
-    Exit;
-  Dec(FTransactionLevel);
-  if FTransactionLevel = 0 then
-    try
-      InternalCommitTransaction;
-      ApplyTransactedObjectStates;
-    finally
-      ClearTransactedObjects;
-    end;
-end;
-
-procedure TInstantConnector.Connect;
-begin
-  InternalConnect;
-end;
-
-constructor TInstantConnector.Create(AOwner: TComponent);
-begin
-  inherited;
-  FUseTransactions := True;
-  FIdDataType := dtString;
-  FIdSize := InstantDefaultFieldSize;
-end;
-
-procedure TInstantConnector.CreateDatabase;
-begin
-  if Connected or DatabaseExists then
-    Exit;
-  InternalCreateDatabase;
-end;
-
-function TInstantConnector.CreateQuery: TInstantQuery;
-begin
-  Result := InternalCreateQuery;
-  if not Assigned(Result) then
-    raise EInstantError.Create(SCapabilityNotSuppported);
-end;
-
-function TInstantConnector.CreateScheme(Model: TInstantModel): TInstantScheme;
-begin
-  Result := InternalCreateScheme(Model);
-end;
-
-destructor TInstantConnector.Destroy;
-begin
-  AbandonObjects;
-  IsDefault := False;
-  FClientList.Free;
-  FBroker.Free;
-  FObjectStores.Free;
-  FTransactedObjectList.Free;
-  inherited;
-end;
-
-procedure TInstantConnector.Disconnect;
-begin
-  InternalDisconnect;
-end;
-
-procedure TInstantConnector.DoBeforeBuildDatabase(Scheme: TInstantScheme);
-begin
-  if Assigned(FBeforeBuildDatabase) then
-    FBeforeBuildDatabase(Self, Scheme);
-end;
-
-function TInstantConnector.EnsureObjectStore(
-  AClass: TInstantObjectClass): TInstantObjectStore;
-begin
-  Result := ObjectStores.FindObjectStore(AClass);
-  if not Assigned(Result) then
-  begin
-    Result := ObjectStores.AddObjectStore;
-    with Result do
-    begin
-      Connector := Self;
-      ObjectClass := AClass;
-    end;
-  end;
-end;
-
-function TInstantConnector.GenerateId(const AObject: TInstantObject): string;
-begin
-  Result := InternalGenerateId(AObject);
-end;
-
-function TInstantConnector.GetBroker: TInstantBroker;
-begin
-  if not Assigned(FBroker) then
-    FBroker := CreateBroker;
-  Result := FBroker;
-end;
-
-function TInstantConnector.GetClient(Index: Integer): TObject;
-begin
-  Result := ClientList[Index];
-end;
-
-function TInstantConnector.GetClientCount: Integer;
-begin
-  Result := ClientList.Count;
-end;
-
-function TInstantConnector.GetClientList: TList;
-begin
-  if not Assigned(FClientList) then
-    FClientList := TList.Create;
-  Result := FClientList;
-end;
-
-function TInstantConnector.GetConnected: Boolean;
-begin
-  Result := False;
-end;
-
-function TInstantConnector.GetDatabaseExists: Boolean;
-begin
-  Result := True;
-end;
-
-function TInstantConnector.GetDatabaseName: string;
-begin
-  Result := Broker.DatabaseName;
-end;
-
-function TInstantConnector.GetDDLTransactionSupported: Boolean;
-begin
-  Result := True;
-end;
-
-function TInstantConnector.GetInTransaction: Boolean;
-begin
-  Result := FTransactionLevel > 0;
-end;
-
-function TInstantConnector.GetInUse: Boolean;
-begin
-  Result := ClientCount > 0;
-end;
-
-function TInstantConnector.GetIsDefault: Boolean;
-begin
-  Result := Self = DefaultConnector;
-end;
-
-function TInstantConnector.GetObjectCount: Integer;
-var
-  I: Integer;
-begin
-  Result := 0;
-  for I := 0 to Pred(ObjectStores.Count) do
-    Inc(Result, ObjectStores[I].Count);
-end;
-
-function TInstantConnector.GetObjects(Index: Integer): TInstantObject;
-var
-  I, EndIndex, Count: Integer;
-  ObjectStore: TInstantObjectStore;
-begin
-  EndIndex := -1;
-  for I := 0 to Pred(ObjectStores.Count) do
-  begin
-    ObjectStore := ObjectStores[I];
-    Count := ObjectStore.Count;
-    EndIndex := EndIndex + Count;
-    if Index <= EndIndex then
-    begin
-      Result := ObjectStore.Items[Pred(Count - (EndIndex - Index))];
-      Exit;
-    end;
-  end;
-  raise EInstantError.CreateFmt(SIndexOutOfBounds, [Index]);
-end;
-
-function TInstantConnector.GetObjectStores: TInstantObjectStores;
-begin
-  if not Assigned(FObjectStores) then
-    FObjectStores := TInstantObjectStores.Create;
-  Result := FObjectStores;
-end;
-
-function TInstantConnector.GetTransactedObjectCount: Integer;
-begin
-  Result := TransactedObjectList.Count;
-end;
-
-function TInstantConnector.GetTransactedObjectList: TList;
-begin
-  if not Assigned(FTransactedObjectList) then
-    FTransactedObjectList := TList.Create;
-  Result := FTransactedObjectList;
-end;
-
-function TInstantConnector.GetTransactedObjects(Index: Integer): TInstantObject;
-begin
-  Result := TransactedObjectList[Index];
-end;
-
-procedure TInstantConnector.InternalBuildDatabase(Scheme: TInstantScheme);
-begin
-  if Assigned(Scheme) then
-  begin
-    Scheme.BlobStreamFormat := BlobStreamFormat;
-    Scheme.IdDataType := IdDataType;
-    Scheme.IdSize := IdSize;
-  end;
-  Broker.BuildDatabase(Scheme);
-end;
-
-procedure TInstantConnector.InternalCommitTransaction;
-begin
-end;
-
-procedure TInstantConnector.InternalCreateDatabase;
-begin
-end;
-
-function TInstantConnector.InternalCreateQuery: TInstantQuery;
-begin
-  Result := Broker.CreateQuery;
-end;
-
-function TInstantConnector.InternalGenerateId(const AObject: TInstantObject): string;
-begin
-  if Assigned(FOnGenerateId) then
-  begin
-    Result := '';
-    FOnGenerateId(Self, AObject, Result);
-  end
-  else
-    Result := InstantGenerateId;
-end;
-
-procedure TInstantConnector.InternalRollbackTransaction;
-begin
-end;
-
-procedure TInstantConnector.InternalStartTransaction;
-begin
-end;
-
-class procedure TInstantConnector.RegisterClass;
-begin
-  ConnectorClasses.Add(Self);
-end;
-
-procedure TInstantConnector.RegisterClient(Client: TObject);
-begin
-  if not Assigned(Client) then
-    Exit;
-  ClientList.Add(Client);
-end;
-
-function TInstantConnector.RemoveTransactedObject(
-  AObject: TInstantObject): Integer;
-begin
-  if Assigned(AObject) then
-    Result := TransactedObjectList.Remove(AObject)
-  else
-    Result := -1
-end;
-
-procedure TInstantConnector.RestoreTransactedObjectStates;
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(TransactedObjectCount) do
-    TransactedObjects[I].RestoreState;
-end;
-
-procedure TInstantConnector.RollbackTransaction;
-begin
-  if not InTransaction then
-    Exit;
-  Dec(FTransactionLevel);
-  if FTransactionLevel = 0 then
-    try
-      InternalRollbackTransaction;
-      RestoreTransactedObjectStates;
-    finally
-      ClearTransactedObjects;
-    end;
-end;
-
-procedure TInstantConnector.SetConnected(Value: Boolean);
-begin
-  if Value then
-    Connect
-  else
-    Disconnect;
-end;
-
-procedure TInstantConnector.SetIsDefault(const Value: Boolean);
-begin
-  if Value <> IsDefault then
-    if Value then
-      DefaultConnector := Self
-    else
-      DefaultConnector := nil;
-end;
-
-procedure TInstantConnector.StartTransaction;
-begin
-  if not UseTransactions then
-    Exit;
-  Inc(FTransactionLevel);
-  if FTransactionLevel = 1 then
-    InternalStartTransaction;
-end;
-
-class procedure TInstantConnector.UnregisterClass;
-begin
-  ConnectorClasses.Remove(Self);
-end;
-
-procedure TInstantConnector.UnregisterClient(Client: TObject);
-begin
-  if not Assigned(Client) then
-    Exit;
-  ClientList.Remove(Client);
 end;
 
 { TInstantCacheNode }
@@ -10404,190 +7399,6 @@ begin
   Items[Index] := Value;
 end;
 
-{ TInstantQueryCommand }
-
-function TInstantQueryCommand.FindAttributeMetadata(
-  const PathText: string): TInstantAttributeMetadata;
-var
-  I: Integer;
-  AClassMetadata: TInstantClassMetadata;
-  List: TStringList;
-  AttribName: string;
-begin
-  List := TStringList.Create;
-  try
-    AClassMetadata := ObjectClassMetadata;
-    Result := nil;
-    InstantStrToList(PathText, List, [InstantDot]);
-    for I := 0 to Pred(List.Count) do
-    begin
-      AttribName := List[I];
-      Result := AClassMetadata.MemberMap.Find(AttribName);
-      if not Assigned(Result) then
-        raise EInstantError.CreateFmt(SAttributeNotFound,
-          [AttribName, AClassMetadata.Name]);
-      if Result.Category = acElement then
-        AClassMetadata := Result.ObjectClassMetadata;
-    end;
-  finally
-    List.Free;
-  end;
-end;
-
-function TInstantQueryCommand.GetObjectClassMetadata: TInstantClassMetadata;
-begin
-  Result := InstantFindClassMetadata(ObjectClassName);
-end;
-
-function TInstantQueryCommand.GetResultClassName: string;
-var
-  AttribMeta: TInstantAttributeMetadata;
-begin
-  if Assigned(Specifier) and Specifier.IsPath then
-  begin
-    AttribMeta := FindAttributeMetadata(Specifier.Text);
-    if Assigned(AttribMeta) and (AttribMeta.Category = acElement) then
-    begin
-      Result := AttribMeta.ObjectClassName;
-      Exit;
-    end;
-  end;
-  Result := inherited GetResultClassName;
-end;
-
-{ TInstantQueryTranslator }
-
-constructor TInstantQueryTranslator.Create(AQuery: TInstantQuery);
-begin
-  inherited Create;
-  FQuery := AQuery;
-end;
-
-function TInstantQueryTranslator.CreateCommand: TInstantIQLCommand;
-begin
-  Result := TInstantQueryCommand.Create(nil);
-end;
-
-function TInstantQueryTranslator.GetQuery: TInstantQuery;
-begin
-  Result := FQuery;
-  if not Assigned(Result) then
-    raise EInstantError.Create(SUnassignedQuery);
-end;
-
-function TInstantQueryTranslator.GetResultClassName: string;
-begin
-  Result := (Command as TInstantQueryCommand).ResultClassName;
-end;
-
-{ TInstantBroker }
-
-procedure TInstantBroker.BuildDatabase(Scheme: TInstantScheme);
-begin
-  InternalBuildDatabase(Scheme);
-end;
-
-constructor TInstantBroker.Create(AConnector: TInstantConnector);
-begin
-  inherited Create;
-  FConnector := AConnector;
-end;
-
-function TInstantBroker.CreateDBBuildCommand(
-  const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
-begin
-  Result := TInstantUnsupportedDBBuildCommand.Create(CommandType,
-    Connector);
-end;
-
-function TInstantBroker.CreateQuery: TInstantQuery;
-begin
-  Result := InternalCreateQuery;
-end;
-
-destructor TInstantBroker.Destroy;
-begin
-  inherited;
-end;
-
-function TInstantBroker.DisposeObject(AObject: TInstantObject;
-  ConflictAction: TInstantConflictAction): Boolean;
-begin
-  Result := InternalDisposeObject(AObject, ConflictAction);
-end;
-
-function TInstantBroker.GetConnector: TInstantConnector;
-begin
-  Result := FConnector;
-  if not Assigned(Result) then
-    raise EInstantError.Create(SUnassignedConnector);
-end;
-
-function TInstantBroker.GetDatabaseName: string;
-begin
-  Result := '';
-end;
-
-function TInstantBroker.CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
-begin
-  Result := nil;
-end;
-
-procedure TInstantBroker.InternalBuildDatabase(Scheme: TInstantScheme);
-begin
-end;
-
-function TInstantBroker.InternalCreateQuery: TInstantQuery;
-begin
-  Result := TInstantQuery.Create(Connector);
-end;
-
-function TInstantBroker.ReadDatabaseScheme(
-  const AWarningEventHandler: TInstantWarningEvent): TInstantScheme;
-begin
-  Result := TInstantScheme.Create;
-  try
-    Result.OnWarning := AWarningEventHandler;
-    Result.Catalog := CreateCatalog(Result);
-    if Result.Catalog = nil then
-      raise Exception.CreateFmt(SUndefinedCatalog, [ClassName]);
-  except
-    Result.Free;
-    raise;
-  end;
-end;
-
-function TInstantBroker.RetrieveObject(AObject: TInstantObject;
-  const AObjectId: string; ConflictAction: TInstantConflictAction): Boolean;
-begin
-  Result := InternalRetrieveObject(AObject, AObjectId, ConflictAction);
-end;
-
-procedure TInstantBroker.SetObjectUpdateCount(AObject: TInstantObject;
-  Value: Integer);
-begin
-  if Assigned(AObject) then
-    AObject.SetUpdateCount(Value);
-end;
-
-function TInstantBroker.StoreObject(AObject: TInstantObject;
-  ConflictAction: TInstantConflictAction): Boolean;
-begin
-  Result := InternalStoreObject(AObject, ConflictAction);
-end;
-
-function TInstantBroker.IsCatalogSupported: Boolean;
-var
-  vCatalog: TInstantCatalog;
-begin
-  vCatalog := CreateCatalog(nil);
-  try
-    Result := Assigned(vCatalog);
-  finally
-    vCatalog.Free;
-  end;
-end;
-
 { TInstantQuery }
 
 function TInstantQuery.AddObject(AObject: TObject): Integer;
@@ -10841,4240 +7652,6 @@ end;
 
 procedure TInstantQuery.TranslateCommand;
 begin
-end;
-
-{ TInstantRelationalConnector }
-
-procedure TInstantRelationalConnector.DoGetDataSet(const CommandText: string;
-  var DataSet: TDataSet);
-begin
-  if Assigned(FOnGetDataSet) then
-    FOnGetDataSet(Self, CommandText, DataSet)
-  else
-    GetDataSet(CommandText, DataSet);
-end;
-
-procedure TInstantRelationalConnector.DoInitDataSet(
-  const CommandText: string; DataSet: TDataSet);
-begin
-  if Assigned(FOnInitDataSet) then
-    FOnInitDataSet(Self, CommandText, DataSet)
-  else
-    InitDataSet(CommandText, DataSet);
-end;
-
-function TInstantRelationalConnector.GetBroker: TInstantCustomRelationalBroker;
-begin
-  Result := inherited Broker as TInstantCustomRelationalBroker;
-end;
-
-procedure TInstantRelationalConnector.GetDataSet(const CommandText: string;
-  var DataSet: TDataSet);
-begin
-end;
-
-function TInstantRelationalConnector.GetDBMSName: string;
-begin
-  Result := Broker.DBMSName;
-end;
-
-procedure TInstantRelationalConnector.InitDataSet(const CommandText: string;
-  DataSet: TDataSet);
-begin
-end;
-
-function TInstantRelationalConnector.InternalCreateScheme(
-  Model: TInstantModel): TInstantScheme;
-begin
-  Result := TInstantScheme.Create;
-  Result.IdDataType := IdDataType;
-  Result.IdSize     := IdSize;      
-  Result.Catalog := TInstantModelCatalog.Create(Result, Model);
-end;
-
-{ TInstantRelationalTranslator }
-
-function TInstantRelationalTranslator.AddCriteria(
-  const Criteria: string): Integer;
-begin
-  if IndexOfCriteria(Criteria) = -1 then
-    Result := CriteriaList.Add(Criteria)
-  else
-    Result := -1;
-end;
-
-procedure TInstantRelationalTranslator.AddJoin(const FromPath, FromField,
-  ToPath, ToField: string);
-begin
-  AddCriteria(Format('%s = %s', [Qualify(FromPath, FromField),
-    Qualify(ToPath, ToField)]));
-end;
-
-function TInstantRelationalTranslator.AddTablePath(
-  const TablePath: string): Integer;
-begin
-  if IndexOfTablePath(TablePath) = -1 then
-    Result := TablePathList.Add(TablePath)
-  else
-    Result := -1;
-end;
-
-procedure TInstantRelationalTranslator.BeforeTranslate;
-
-  procedure InitClassTablePath(List: TList);
-
-    function FindAttributePath: TInstantIQLPath;
-    var
-     I: Integer;
-    begin
-      for I := 0 to Pred(List.Count) do
-      begin
-        Result := List[I];
-        if not IsRootAttribute(Result.Text) then
-          Exit;
-      end;
-      Result := nil;
-    end;
-
-  var
-   TablePath: string;
-   Path: TInstantIQLPath;
-  begin
-    if Command.ClassRef.Any then
-      TablePath := ObjectClassMetadata.TableName
-    else begin
-      Path := FindAttributePath;
-      if Assigned(Path) then
-        TablePath := PathToTablePath(Path.Attributes[0])
-      else
-        TablePath := ObjectClassMetadata.TableName;
-    end;
-    AddTablePath(TablePath);
-  end;
-
-  procedure InitCommandCriterias;
-  begin
-    if not Command.ClassRef.Any then
-      AddCriteria(Format('%s = %s',
-        [Qualify(ClassTablePath, InstantClassFieldName),
-        QuoteString(Command.ClassRef.ObjectClassName)]));
-    if Command.Specifier.IsPath then
-      AddCriteria(Format('%s <> %s%s',
-        [QualifyPath(ConcatPath(Command.Specifier.Text, InstantIdFieldName)),
-          Quote, Quote]));
-  end;
-
-var
-  I: Integer;
-  PathList: TList;
-begin
-  if not Assigned(Command.ClassRef) then
-    Exit;
-  PathList := TList.Create;
-  try
-    CollectPaths(Command, PathList);
-    InitClassTablePath(PathList);
-    for I := 0 to Pred(PathList.Count) do
-    begin
-      MakeTablePaths(PathList[I]);
-      MakeJoins(PathList[I]);
-    end;
-    InitCommandCriterias;
-  finally
-    PathList.Free;
-  end;
-end;
-
-procedure TInstantRelationalTranslator.Clear;
-begin
-  inherited;
-  DestroyTablePathList;
-  DestroyCriteriaList;
-end;
-
-procedure TInstantRelationalTranslator.CollectObjects(
-  AObject: TInstantIQLObject; AClassType: TInstantIQLObjectClass; AList: TList);
-var
-  I: Integer;
-  Obj: TInstantIQLObject;
-begin
-  if not (Assigned(AObject) and Assigned(AList)) then
-    Exit;
-  for I := 0 to Pred(AObject.ObjectCount) do
-  begin
-    Obj := AObject[I];
-    if Obj is AClassType then
-      AList.Add(Obj);
-    CollectObjects(Obj, AClassType, AList)
-  end;
-end;
-
-procedure TInstantRelationalTranslator.CollectPaths(
-  AObject: TInstantIQLObject; APathList: TList);
-begin
-  CollectObjects(AObject, TInstantIQLPath, APathList);
-end;
-
-function TInstantRelationalTranslator.ConcatPath(const APathText,
-  AttribName: string): string;
-begin
-  Result := Format('%s%s%s', [APathText, InstantDot, AttribName]);
-end;
-
-destructor TInstantRelationalTranslator.Destroy;
-begin
-  DestroyTablePathList;
-  DestroyCriteriaList;
-  inherited;
-end;
-
-procedure TInstantRelationalTranslator.DestroyCriteriaList;
-begin
-  FreeAndNil(FCriteriaList);
-end;
-
-procedure TInstantRelationalTranslator.DestroyTablePathList;
-begin
-  FreeAndNil(FTablePathList)
-end;
-
-function TInstantRelationalTranslator.ExtractTarget(
-  const PathStr: string): string;
-var
-  I: Integer;
-begin
-  I := InstantRightPos(InstantDot, PathStr);
-  Result := Copy(PathStr, I + 1, Length(PathStr) - I)
-end;
-
-function TInstantRelationalTranslator.GetClassTablePath: string;
-begin
-  Result := TablePaths[0];
-end;
-
-function TInstantRelationalTranslator.GetConnector: TInstantRelationalConnector;
-begin
-  if HasConnector then
-    Result := Query.Connector
-  else
-    Result := nil;
-end;
-
-function TInstantRelationalTranslator.GetCriteriaCount: Integer;
-begin
-  Result := CriteriaList.Count;
-end;
-
-function TInstantRelationalTranslator.GetCriteriaList: TStringList;
-begin
-  if not Assigned(FCriteriaList) then
-    FCriteriaList := TStringList.Create;
-  Result := FCriteriaList;
-end;
-
-function TInstantRelationalTranslator.GetCriterias(Index: Integer): string;
-begin
-  Result := CriteriaList.Strings[Index];
-end;
-
-function TInstantRelationalTranslator.GetDelimiters: string;
-begin
-  if HasConnector then
-    Result := Connector.Broker.SQLDelimiters
-  else
-    Result := '';
-end;
-
-function TInstantRelationalTranslator.GetObjectClassMetadata: TInstantClassMetadata;
-begin
-  Result := InternalGetObjectClassMetadata;
-  if not Assigned(Result) then
-    raise EInstantError.CreateFmt(SUnassignedClassMetadata,
-     [Command.ObjectClassName]);
-end;
-
-function TInstantRelationalTranslator.GetQuery: TInstantCustomRelationalQuery;
-begin
-  Result := inherited Query as TInstantCustomRelationalQuery;
-end;
-
-function TInstantRelationalTranslator.GetQuote: Char;
-begin
-  if HasConnector then
-    Result := Connector.Broker.SQLQuote
-  else
-    Result := '"';
-end;
-
-function TInstantRelationalTranslator.GetTablePathAliases(
-  Index: Integer): string;
-begin
-  if Index < TablePathList.Count then
-    Result := Format('t%d', [Succ(Index)])
-  else
-    Result := '';
-end;
-
-function TInstantRelationalTranslator.GetTablePathCount: Integer;
-begin
-  Result := TablePathList.Count;
-end;
-
-function TInstantRelationalTranslator.GetTablePathList: TStringList;
-begin
-  if not Assigned(FTablePathList) then
-    FTablePathList := TStringList.Create;
-  Result := FTablePathList;
-end;
-
-function TInstantRelationalTranslator.GetTablePaths(
-  Index: Integer): string;
-begin
-  Result := TablePathList[Index];
-end;
-
-function TInstantRelationalTranslator.GetWildcard: string;
-begin
-  if HasConnector then
-    Result := Connector.Broker.SQLWildcard
-  else
-    Result := '%';
-end;
-
-function TInstantRelationalTranslator.HasConnector: Boolean;
-begin
-  Result := Assigned(Query) and Assigned(Query.Connector);
-end;
-
-function TInstantRelationalTranslator.IncludeOrderFields: Boolean;
-begin
-  Result := False;
-end;
-
-function TInstantRelationalTranslator.IndexOfCriteria(
-  const Criteria: string): Integer;
-begin
-  Result := CriteriaList.IndexOf(Criteria);
-end;
-
-function TInstantRelationalTranslator.IndexOfTablePath(
-  const TablePath: string): Integer;
-begin
-  Result := TablePathList.IndexOf(TablePath);
-end;
-
-function TInstantRelationalTranslator.InternalGetObjectClassMetadata: TInstantClassMetadata;
-begin
-  if Command is TInstantQueryCommand then
-    Result := TInstantQueryCommand(Command).ObjectClassMetadata
-  else
-    Result := nil;
-end;
-
-function TInstantRelationalTranslator.IsPrimary(
-  AObject: TInstantIQLObject): Boolean;
-begin
-  Result := Assigned(AObject) and Assigned(Command) and
-    ((AObject = Command) or (AObject.Owner = Command));
-end;
-
-function TInstantRelationalTranslator.IsRootAttribute(
-  const AttributeName: string): Boolean;
-begin
-  Result := SameText(AttributeName, InstantClassFieldName) or
-    SameText(AttributeName, InstantIdFieldName);
-end;
-
-procedure TInstantRelationalTranslator.MakeJoins(Path: TInstantIQLPath);
-
-  procedure MakePathJoins(Path: TInstantIQLPath);
-  var
-    I: Integer;
-    PathText, FromPath, ToPath, FromField, ToField: string;
-  begin
-    if Path.AttributeCount > 1 then
-    begin
-      PathToTarget(Path.SubPath[0], FromPath, FromField);
-      for I := 1 to Pred(Path.AttributeCount) do
-      begin
-        PathText := Path.SubPath[I];
-        if not IsRootAttribute(ExtractTarget(PathText)) then
-        begin
-          PathToTarget(PathText, ToPath, ToField);
-          AddJoin(FromPath, FromField + InstantClassFieldName, ToPath,
-            InstantClassFieldName);
-          AddJoin(FromPath, FromField + InstantIdFieldName, ToPath,
-            InstantIdFieldName);
-          FromPath := ToPath;
-          FromField := ToField;
-        end;
-      end;
-    end;
-  end;
-
-  procedure MakeClassJoin(Path: TInstantIQLPath);
-  var
-    TablePath: string;
-  begin
-    if Path.HasAttributes then
-    begin
-      TablePath := PathToTablePath(Path.SubPath[0]);
-      if TablePath <> ClassTablePath then
-      begin
-        AddJoin(ClassTablePath, InstantClassFieldName,
-          TablePath, InstantClassFieldName);
-        AddJoin(ClassTablePath, InstantIdFieldName,
-          TablePath, InstantIdFieldName);
-      end;
-    end;
-  end;
-
-begin
-  if not Assigned(Path) then
-    Exit;
-  MakeClassJoin(Path);
-  MakePathJoins(Path);
-end;
-
-procedure TInstantRelationalTranslator.MakeTablePaths(Path: TInstantIQLPath);
-var
-  I: Integer;
-  TablePath: string;
-begin
-  if not Assigned(Path) or IsRootAttribute(Path.Text) then
-    Exit;
-  for I := 0 to Pred(Path.AttributeCount) do
-  begin
-    TablePath := PathToTablePath(Path.SubPath[I]);
-    if IndexOfTablePath(TablePath) = -1 then
-      AddTablePath(TablePath);
-  end;
-end;
-
-function TInstantRelationalTranslator.PathToTablePath(
-  const PathText: string): string;
-var
-  FieldName: string;
-begin
-  PathToTarget(Pathtext, Result, FieldName);
-end;
-
-function TInstantRelationalTranslator.PathToTarget(const PathText: string;
-  out TablePath, FieldName: string): TInstantAttributeMetadata;
-var
-  I: Integer;
-  AttribList: TStringList;
-  ClassMeta: TInstantClassMetadata;
-  AttribName: string;
-  Map: TInstantAttributeMap;
-begin
-  Result := nil;
-  if IsRootAttribute(PathText) then
-  begin
-    TablePath := ClassTablePath;
-    FieldName := RootAttribToFieldName(PathText);
-  end else
-  begin
-    ClassMeta := ObjectClassMetadata;
-    AttribList := TStringList.Create;
-    try
-      InstantStrToList(PathText, AttribList, [InstantDot]);
-      for I := 0 to Pred(AttribList.Count) do
-      begin
-        AttribName := AttribList[I];
-        if IsRootAttribute(AttribName) then
-        begin
-          if Assigned(Result) and
-            not Result.IsAttributeClass(TInstantReference) then
-            raise EInstantError.CreateFmt(SUnableToQueryAttribute,
-              [Result.ClassMetadataName, Result.Name]);
-          FieldName := FieldName + RootAttribToFieldName(AttribName);
-        end else
-        begin
-          Result := ClassMeta.MemberMap.Find(AttribName);
-          if Assigned(Result) then
-          begin
-            while Assigned(ClassMeta) and not ClassMeta.IsStored do
-              ClassMeta := ClassMeta.Parent;
-            if Assigned(ClassMeta) then
-            begin
-              Map := ClassMeta.StorageMaps.FindMap(AttribName);
-              if Assigned(Map) then
-              begin
-                if I > 0 then
-                  TablePath := TablePath + InstantDot;
-                TablePath := TablePath + Map.Name;
-                FieldName := Result.FieldName;
-                ClassMeta := Result.ObjectClassMetadata;
-              end else
-                raise EInstantError.CreateFmt(SAttributeNotQueryable,
-                  [Result.ClassName, Result.Name, Result.ClassMetadataName]);
-            end else
-              raise EInstantError.CreateFmt(SClassNotQueryable,
-                [Result.ClassMetadataName]);
-          end else
-            raise EInstantError.CreateFmt(SAttributeNotFound,
-              [AttribName, ClassMeta.Name]);
-        end;
-      end;
-    finally
-      AttribList.Free;
-    end;
-  end;
-end;
-
-function TInstantRelationalTranslator.Qualify(const TablePath,
-  FieldName: string): string;
-begin
-  Result := Format('%s.%s', [TablePathToAlias(TablePath),
-    InstantEmbrace(FieldName, Delimiters)]);
-end;
-
-function TInstantRelationalTranslator.QualifyPath(const
-  PathText: string): string;
-var
-  TablePath, FieldName: string;
-begin
-  PathToTarget(PathText, TablePath, FieldName);
-  Result := Qualify(TablePath, FieldName);
-end;
-
-function TInstantRelationalTranslator.QuoteString(const Str: string): string;
-begin
-  Result := InstantQuote(Str, Quote);
-end;
-
-function TInstantRelationalTranslator.ReplaceWildcard(
-  const Str: string): string;
-var
-  S: string;
-begin
-  if Wildcard <> '%' then
-  begin
-    S := StringReplace(Str, '%%', #1, [rfReplaceAll]);
-    S := StringReplace(S, '%', WildCard, [rfReplaceAll]);
-    Result := StringReplace(S, #1, '%', [rfReplaceAll]);
-  end else
-    Result := Str;
-end;
-
-function TInstantRelationalTranslator.RootAttribToFieldName(
-  const AttribName: string): string;
-begin
-  if SameText(AttribName, InstantClassFieldName) then
-    Result := InstantClassFieldName
-  else if SameText(AttribName, InstantIdFieldName) then
-    Result := InstantIdFieldName;
-end;
-
-function TInstantRelationalTranslator.TablePathToAlias(
-  const TablePath: string): string;
-begin
-  Result := TablePathAliases[IndexOfTablePath(TablePath)];
-end;
-
-function TInstantRelationalTranslator.TranslateClassRef(
-  ClassRef: TInstantIQLClassRef; Writer: TInstantIQLWriter): Boolean;
-begin
-  Result := Assigned(ClassRef) and IsPrimary(ClassRef) and Assigned(Writer);
-  if Result then
-  begin
-    WriteTables(Writer);
-    if not Assigned(Command.Clause) then
-      WriteCriterias(Writer, True);
-  end;
-end;
-
-function TInstantRelationalTranslator.TranslateClause(
-  Clause: TInstantIQLClause; Writer: TInstantIQLWriter): Boolean;
-begin
-  Result := Assigned(Clause) and IsPrimary(Clause) and Assigned(Writer);
-  if Result then
-  begin
-    if WriteCriterias(Writer, False) then
-      WriteAnd(Writer);
-    Writer.WriteString('(');
-    WriteObject(Clause, Writer);
-    Writer.WriteString(')');
-  end
-end;
-
-function TInstantRelationalTranslator.TranslateConstant(
-  Constant: TInstantIQLConstant; Writer: TInstantIQLWriter): Boolean;
-var
-  S: string;
-begin
-  if Assigned(Constant) and Assigned(Writer) then
-  begin
-    S := Constant.Value;
-    if SameText(S, 'NIL') then
-    begin
-      Writer.WriteString('NULL');
-      Result := True;
-    end else if SameText(S, 'SELF') then
-    begin
-      Writer.WriteString(Qualify(ClassTablePath, InstantIdFieldName));
-      Result := True;
-    end else if (Length(S) > 0) and (S[1] = '"') then
-    begin
-      S := InstantUnquote(S, S[1]);
-      S := ReplaceWildCard(S);
-      Writer.WriteString(QuoteString(S));
-      Result := True;
-    end else
-      Result := False;
-  end else
-    Result := False;
-end;
-
-function TInstantRelationalTranslator.TranslateFunction(
-  AFunction: TInstantIQLFunction; Writer: TInstantIQLWriter): Boolean;
-begin
-  Result := TranslateFunctionName(AFunction.FunctionName, Writer);
-  if Result then
-  begin
-    Writer.WriteChar('(');
-    AFunction.Parameters.Write(Writer);
-    Writer.WriteChar(')');
-  end;
-end;
-
-function TInstantRelationalTranslator.TranslateFunctionName(
-  const FunctionName: string; Writer: TInstantIQLWriter): Boolean;
-begin
-  Result := False;
-end;
-
-function TInstantRelationalTranslator.TranslateKeyword(
-  const Keyword: string; Writer: TInstantIQLWriter): Boolean;
-begin
-  if SameText(Keyword, 'ANY') then
-    Result := True
-  else
-    Result := inherited TranslateKeyword(Keyword, Writer);
-end;
-
-function TInstantRelationalTranslator.TranslateObject(
-  AObject: TInstantIQLObject; Writer: TInstantIQLWriter): Boolean;
-begin
-  if AObject is TInstantIQLSpecifier then
-    Result := TranslateSpecifier(TInstantIQLSpecifier(AObject), Writer)
-  else if AObject is TInstantIQLClassRef then
-    Result := TranslateClassRef(TInstantIQLClassRef(AObject), Writer)
-  else if AObject is TInstantIQLClause then
-    Result := TranslateClause(TInstantIQLClause(AObject), Writer)
-  else if AObject is TInstantIQLPath then
-    Result := TranslatePath(TInstantIQLPath(AObject), Writer)
-  else if AObject is TInstantIQLConstant then
-    Result := TranslateConstant(TInstantIQLConstant(AObject), Writer)
-  else if AObject is TInstantIQLFunction then
-    Result := TranslateFunction(TInstantIQLFunction(AObject), Writer)
-  else
-    Result := inherited TranslateObject(AObject, Writer);
-end;
-
-function TInstantRelationalTranslator.TranslatePath(Path: TInstantIQLPath;
-  Writer: TInstantIQLWriter): Boolean;
-var
-  PathText, TablePath, FieldName: string;
-  AttribMeta: TInstantAttributeMetadata;
-begin
-  Result := Assigned(Path) and Assigned(Writer);
-  if Result then
-  begin
-    PathText := Path.Text;
-    AttribMeta := PathToTarget(PathText, TablePath, FieldName);
-    if Assigned(AttribMeta) and (AttribMeta.Category = acElement) and
-      not IsRootAttribute(ExtractTarget(PathText)) then
-      FieldName := FieldName + InstantIdFieldName;
-    Writer.WriteString(Qualify(TablePath, FieldName));
-  end;
-end;
-
-function TInstantRelationalTranslator.TranslateSpecifier(
-  Specifier: TInstantIQLSpecifier; Writer: TInstantIQLWriter): Boolean;
-
-  function IncludeOperand(Operand: TInstantIQLOperand): Boolean;
-  begin
-    if Operand is TInstantIQLPath then
-      if Specifier.IsPath then
-        Result := not SameText(Specifier.Text, Operand.Text)
-      else
-        Result := not IsRootAttribute(Operand.Text)
-    else if Operand is TInstantIQLConstant then
-      Result := not TInstantIQLConstant(Operand).IsSelf and not
-        Specifier.IsPath
-    else
-      Result := False;
-  end;
-
-  procedure WriteOrderFields(Writer: TInstantIQLWriter);
-  var
-    I: Integer;
-    PathList: TList;
-    Operand: TInstantIQLOperand;
-  begin
-    PathList := TList.Create;
-    try
-      CollectObjects(Command.Order, TInstantIQLOperand, PathList);
-      for I := 0 to Pred(PathList.Count) do
-      begin
-        Operand := PathList[I];
-        if IncludeOperand(Operand) then
-        begin
-          Writer.WriteString(', ');
-          if Operand is TInstantIQLPath then
-            TranslatePath(TInstantIQLPath(Operand), Writer)
-          else if Operand is TInstantIQLConstant then
-            TranslateConstant(TInstantIQLConstant(Operand), Writer);
-        end;
-      end;
-    finally
-      PathList.Free;
-    end;
-  end;
-
-var
-  ClassQual, IdQual, PathText: string;
-begin
-  Result := Assigned(Specifier) and IsPrimary(Specifier) and Assigned(Writer);
-  if Result then
-  begin
-    if Specifier.Operand is TInstantIQLPath then
-    begin
-      PathText := TInstantIQLPath(Specifier.Operand).Text;
-      ClassQual := QualifyPath(ConcatPath(PathText, InstantClassFieldName));
-      IdQual := QualifyPath(ConcatPath(PathText, InstantIdFieldName));
-    end else
-    begin
-      ClassQual := QualifyPath(InstantClassFieldName);
-      IdQual := QualifyPath(InstantIdFieldName);
-    end;
-    Writer.WriteString(Format('%s AS %s, %s AS %s', [ClassQual,
-      InstantClassFieldName, IdQual, InstantIdFieldName]));
-    if IncludeOrderFields then
-      WriteOrderFields(Writer);
-  end;
-end;
-
-procedure TInstantRelationalTranslator.WriteAnd(Writer: TInstantIQLWriter);
-begin
-  Writer.WriteString(' AND ');
-end;
-
-function TInstantRelationalTranslator.WriteCriterias(
-  Writer: TInstantIQLWriter; IncludeWhere: Boolean): Boolean;
-var
-  I: Integer;
-begin
-  Result := CriteriaCount > 0;
-  if Result then
-  begin
-    if IncludeWhere then
-      Writer.WriteString(' WHERE ');
-    Writer.WriteChar('(');
-    for I := 0 to Pred(CriteriaCount) do
-    begin
-      if I > 0 then
-        WriteAnd(Writer);
-      Writer.WriteString(Criterias[I]);
-    end;
-    Writer.WriteChar(')');
-  end;
-end;
-
-procedure TInstantRelationalTranslator.WriteTables(
-  Writer: TInstantIQLWriter);
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(TablePathCount) do
-  begin
-    if I > 0 then
-      Writer.WriteString(', ');
-    Writer.WriteString(Format('%s %s',[InstantEmbrace(
-      ExtractTarget(TablePaths[I]), Delimiters), TablePathAliases[I]]));
-  end;
-end;
-
-{ TInstantCustomRelationalBroker }
-
-constructor TInstantCustomRelationalBroker.Create(AConnector: TInstantConnector);
-begin
-  inherited;
-  FStatementCacheCapacity := 0;
-end;
-
-destructor TInstantCustomRelationalBroker.Destroy;
-begin
-  FreeAndNil(FStatementCache);
-  inherited;
-end;
-
-procedure TInstantCustomRelationalBroker.DisposeMap(AObject: TInstantObject;
-  const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-begin
-  EnsureResolver(Map).DisposeMap(AObject, Map, ConflictAction, Info);
-end;
-
-function TInstantCustomRelationalBroker.Execute(const AStatement: string;
-  AParams: TParams): Integer;
-begin
-  Result := 0;
-end;
-
-function TInstantCustomRelationalBroker.GetConnector: TInstantRelationalConnector;
-begin
-  Result := inherited Connector as TInstantRelationalConnector;
-end;
-
-function TInstantCustomRelationalBroker.GetDBMSName: string;
-begin
-  Result := '';
-end;
-
-function TInstantCustomRelationalBroker.GetSQLDelimiters: string;
-begin
-  Result := '';
-end;
-
-function TInstantCustomRelationalBroker.GetSQLQuote: Char;
-begin
-  Result := '"';
-end;
-
-function TInstantCustomRelationalBroker.GetSQLWildcard: string;
-begin
-  Result := '%';
-end;
-
-function TInstantCustomRelationalBroker.GetStatementCache: TInstantStatementCache;
-begin
-  if not Assigned(FStatementCache) then
-  begin
-    FStatementCache := TInstantStatementCache.Create(nil);
-    FStatementCache.Capacity := FStatementCacheCapacity;
-  end;
-  Result := FStatementCache;
-end;
-
-function TInstantCustomRelationalBroker.InternalDisposeObject(
-  AObject: TInstantObject; ConflictAction: TInstantConflictAction): Boolean;
-begin
-  Result := PerformOperation(AObject, AObject.Id, otDispose, DisposeMap,
-    ConflictAction);
-end;
-
-function TInstantCustomRelationalBroker.InternalRetrieveObject(
-  AObject: TInstantObject; const AObjectId: string;
-  ConflictAction: TInstantConflictAction): Boolean;
-begin
-  Result := PerformOperation(AObject, AObjectId, otRetrieve, RetrieveMap,
-    ConflictAction);
-end;
-
-function TInstantCustomRelationalBroker.InternalStoreObject(
-  AObject: TInstantObject; ConflictAction: TInstantConflictAction): Boolean;
-begin
-  Result := PerformOperation(AObject, AObject.Id, otStore, StoreMap,
-    ConflictAction);
-end;
-
-function TInstantCustomRelationalBroker.PerformOperation(
-  AObject: TInstantObject; const AObjectId: string;
-  OperationType: TInstantOperationType; Operation: TInstantBrokerOperation;
-  ConflictAction: TInstantConflictAction): Boolean;
-
-  function OperationRequired(Map: TInstantAttributeMap): Boolean;
-  var
-    I: Integer;
-    Attrib: TInstantAttribute;
-  begin
-    case OperationType of
-      otStore:
-        begin
-          Result := not AObject.IsPersistent;
-          if not Result then
-            for I := 0 to Pred(Map.Count) do
-            begin
-              Attrib := AObject.AttributeByName(Map[I].Name);
-              Result := Attrib.IsMandatory or Attrib.IsChanged;
-              if Result then
-                Exit;
-            end;
-        end;
-      otRetrieve, otDispose:
-        Result := True;
-    else
-      Result := False;
-    end;
-  end;
-
-var
-  I: Integer;
-  RootMap, Map: TInstantAttributeMap;
-  Info: TInstantOperationInfo;
-begin
-  with Info do
-  begin
-    Success := False;
-    Conflict := False;
-  end;
-  with AObject.Metadata do
-  begin
-    RootMap := StorageMaps.RootMap;
-    Operation(AObject, AObjectId, RootMap, ConflictAction, @Info);
-    Result := Info.Success;
-    if Result then
-      for I := 0 to Pred(StorageMaps.Count) do
-      begin
-        Map := StorageMaps[I];
-        if (Map <> RootMap) and (Info.Conflict or OperationRequired(Map)) then
-          Operation(AObject, AObjectId, Map);
-      end;
-  end;
-end;
-
-procedure TInstantCustomRelationalBroker.RetrieveMap(AObject: TInstantObject;
-  const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-begin
-  EnsureResolver(Map).RetrieveMap(AObject, AObjectId, Map, ConflictAction, Info);
-end;
-
-procedure TInstantCustomRelationalBroker.SetStatementCacheCapacity(const Value: Integer);
-begin
-  FStatementCacheCapacity := Value;
-  if FStatementCacheCapacity = 0 then
-    FreeAndNil(FStatementCache)
-  else if Assigned(FStatementCache) then
-    FStatementCache.Capacity := FStatementCacheCapacity;
-end;
-
-procedure TInstantCustomRelationalBroker.StoreMap(AObject: TInstantObject;
-  const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-
-  // Always storing fixes #880713
-  {function MustStoreMap: Boolean;
-  var
-    I: Integer;
-    Attrib: TInstantAttribute;
-  begin
-    Result := Map.IsRootMap;
-    if Result then
-      Exit;
-    for I := 0 to Pred(Map.Count) do
-    begin
-      Attrib := AObject.AttributeByName(Map[I].Name);
-      Result := Attrib.IsMandatory or not Attrib.IsDefault;
-      if Result then
-        Exit;
-    end;
-    Result := False;
-  end;}
-
-var
-  Resolver: TInstantCustomResolver;
-  {MustStore: Boolean;}
-begin
-  {MustStore := MustStoreMap;}
-  {if MustStore or AObject.IsPersistent then
-  begin}
-    Resolver := EnsureResolver(Map);
-    {if MustStore then}
-      Resolver.StoreMap(AObject, Map, ConflictAction, Info)
-    {else if AObject.IsPersistent then
-      Resolver.DisposeMap(AObject, Map, ConflictAction, Info);
-  end;}
-end;
-
-{ TInstantCustomResolver }
-
-constructor TInstantCustomResolver.Create(
-  ABroker: TInstantCustomRelationalBroker);
-begin
-  if not Assigned(ABroker) then
-    raise EInstantError.Create(SUnassignedBroker);
-  inherited Create;
-  FBroker := ABroker;
-end;
-
-procedure TInstantCustomResolver.DisposeMap(AObject: TInstantObject;
-  Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
-  Info: PInstantOperationInfo);
-begin
-  InternalDisposeMap(AObject, Map, ConflictAction, Info);
-end;
-
-procedure TInstantCustomResolver.InternalDisposeMap(
-  AObject: TInstantObject; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-begin
-end;
-
-procedure TInstantCustomResolver.InternalRetrieveMap(
-  AObject: TInstantObject; const AObjectId: string;
-  Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
-  Info: PInstantOperationInfo);
-begin
-end;
-
-procedure TInstantCustomResolver.InternalStoreMap(AObject: TInstantObject;
-  Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
-  Info: PInstantOperationInfo);
-begin
-end;
-
-function TInstantCustomResolver.KeyViolation(AObject: TInstantObject;
-  const AObjectId: string; E: Exception): EInstantKeyViolation;
-var
-  ObjectClassName: string;
-begin
-  if Assigned(AObject) then
-    ObjectClassName := AObject.ClassName
-  else
-    ObjectClassName := '';
-  Result := EInstantKeyViolation.CreateFmt(SKeyViolation,
-    [ObjectClassName, AObjectId], E);
-end;
-
-procedure TInstantCustomResolver.RetrieveMap(AObject: TInstantObject;
-  const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-begin
-  InternalRetrieveMap(AObject, AObjectId, Map, ConflictAction, Info);
-end;
-
-procedure TInstantCustomResolver.StoreMap(AObject: TInstantObject;
-  Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
-  Info: PInstantOperationInfo);
-begin
-  InternalStoreMap(AObject, Map, ConflictAction, Info);
-end;
-
-{ TInstantCustomRelationalQuery }
-
-function TInstantCustomRelationalQuery.CreateTranslator: TInstantRelationalTranslator;
-begin
-  Result := TranslatorClass.Create(Self);
-end;
-
-function TInstantCustomRelationalQuery.GetConnector: TInstantRelationalConnector;
-begin
-  Result := inherited Connector as TInstantRelationalConnector;
-end;
-
-function TInstantCustomRelationalQuery.GetStatement: string;
-begin
-  Result := '';
-end;
-
-procedure TInstantCustomRelationalQuery.InternalGetInstantObjectRefs(List:
-    TInstantObjectReferenceList);
-begin
-end;
-
-procedure TInstantCustomRelationalQuery.InternalRefreshObjects;
-var
-  BusyObjectRefs: TInstantObjectReferenceList;
-  Obj: TInstantObject;
-  ObjStore: TInstantObjectStore;
-
-  procedure RemoveRefsOfDeletedObjectsFromList;
-  var
-    I: Integer;
-  begin
-    for I := Pred(BusyObjectRefs.Count) downto 0 do
-      with BusyObjectRefs.RefItems[I] do
-      begin
-        ObjStore := Connector.ObjectStores.FindObjectStore(ObjectClass);
-        if not (Assigned(ObjStore) and Assigned(ObjStore.Find(ObjectId))) then
-          BusyObjectRefs.Delete(I);
-      end;
-  end;
-
-  procedure RefreshObjectsInList;
-  var
-    I: Integer;
-  begin
-    for I := 0 to Pred(BusyObjectRefs.Count) do
-    begin
-      Obj := BusyObjectRefs[I];
-      if Assigned(Obj) then
-        Obj.Refresh;
-    end;
-  end;
-
-begin
-  BusyObjectRefs := TInstantObjectReferenceList.Create(False, Connector);
-  try
-    // Collect a reference to all InstantObjects in query.
-    // Note: In this list of TInstantObjectReferences
-    // OwnsInstance is false.
-    InternalGetInstantObjectRefs(BusyObjectRefs);
-
-    Close;
-
-    // Remove references from the BusyList for objects destroyed
-    // when the query was closed.
-    RemoveRefsOfDeletedObjectsFromList;
-
-    Open;
-
-    // Refresh objects in the BusyList that were not destroyed
-    // when the query was closed.
-    RefreshObjectsInList;
-  finally
-    BusyObjectRefs.Free;
-  end;
-end;
-
-procedure TInstantCustomRelationalQuery.SetStatement(const Value: string);
-begin
-end;
-
-procedure TInstantCustomRelationalQuery.TranslateCommand;
-begin
-  if TranslatorClass <> nil then
-    with TranslatorClass.Create(Self) do
-    try
-      CommandText := Self.Command;
-      Statement := StatementText;
-    finally
-      Free;
-    end;
-end;
-
-class function TInstantCustomRelationalQuery.TranslatorClass: TInstantRelationalTranslatorClass;
-begin
-  Result := TInstantRelationalTranslator;
-end;
-
-{ TInstantConnectionBasedConnector }
-
-procedure TInstantConnectionBasedConnector.AfterConnectionChange;
-begin
-end;
-
-procedure TInstantConnectionBasedConnector.BeforeConnectionChange;
-begin
-end;
-
-procedure TInstantConnectionBasedConnector.CheckConnection;
-begin
-  InstantCheckConnection(FConnection);
-end;
-
-procedure TInstantConnectionBasedConnector.DoAfterConnectionChange;
-begin
-  if Assigned(FConnection) then
-    FConnection.FreeNotification(Self);
-  AfterConnectionChange;
-end;
-
-procedure TInstantConnectionBasedConnector.DoBeforeConnectionChange;
-begin
-  try
-    BeforeConnectionChange;
-  finally
-    if Assigned(FConnection) then
-      FConnection.RemoveFreeNotification(Self);
-  end;
-end;
-
-function TInstantConnectionBasedConnector.GetConnected: Boolean;
-begin
-  if HasConnection then
-    Result := Connection.Connected
-  else
-    Result := inherited GetConnected;
-end;
-
-function TInstantConnectionBasedConnector.GetConnection: TCustomConnection;
-begin
-  if not (csDesigning in ComponentState) then
-    CheckConnection;
-  AssignLoginOptions;
-  Result := FConnection;
-end;
-
-function TInstantConnectionBasedConnector.HasConnection: Boolean;
-begin
-  Result := Assigned(FConnection);
-end;
-
-procedure TInstantConnectionBasedConnector.InternalConnect;
-begin
-  CheckConnection;
-  Connection.Open;
-end;
-
-procedure TInstantConnectionBasedConnector.InternalDisconnect;
-begin
-  if HasConnection then
-    Connection.Close;
-end;
-
-procedure TInstantConnectionBasedConnector.Notification(
-  AComponent: TComponent; Operation: TOperation);
-begin
-  inherited;
-  if (AComponent = FConnection) and (Operation = opRemove) then
-  begin
-    Disconnect;
-    FConnection := nil;
-  end;
-end;
-
-procedure TInstantConnectionBasedConnector.SetConnection(
-  Value: TCustomConnection);
-begin
-  if Value <> FConnection then
-  begin
-    Disconnect;
-    DoBeforeConnectionChange;
-    FConnection := Value;
-    AssignLoginOptions;
-    DoAfterConnectionChange;
-  end;
-end;
-
-procedure TInstantConnectionBasedConnector.AssignLoginOptions;
-begin
-  if HasConnection then
-  begin
-    FConnection.LoginPrompt := FLoginPrompt;
-  end;
-end;
-
-function TInstantConnectionBasedConnector.GetLoginPrompt: Boolean;
-begin
-  if HasConnection then
-    FLoginPrompt := FConnection.LoginPrompt;
-  Result := FLoginPrompt;
-end;
-
-procedure TInstantConnectionBasedConnector.SetLoginPrompt(
-  const Value: Boolean);
-begin
-  FLoginPrompt := Value;
-  AssignLoginOptions;
-end;
-
-constructor TInstantConnectionBasedConnector.Create(AOwner: TComponent);
-begin
-  inherited;
-  FLoginPrompt := True;
-end;
-
-{ TInstantConnectionBasedConnectionDef }
-
-constructor TInstantConnectionBasedConnectionDef.Create(
-  Collection: TCollection);
-begin
-  inherited;
-  FLoginPrompt := True;
-end;
-
-procedure TInstantConnectionBasedConnectionDef.InitConnector(Connector: TInstantConnector);
-var
-  Connection: TCustomConnection;
-begin
-  inherited;
-  Connection := CreateConnection(Connector);
-  try
-    (Connector as TInstantConnectionBasedConnector).Connection := Connection;
-    (Connector as TInstantConnectionBasedConnector).LoginPrompt := LoginPrompt;
-  except
-    Connection.Free;
-    raise;
-  end;
-end;
-
-{ TInstantNavigationalBroker }
-
-destructor TInstantNavigationalBroker.Destroy;
-begin
-  FResolverList.Free;
-  inherited;
-end;
-
-function TInstantNavigationalBroker.EnsureResolver(
-  Map: TInstantAttributeMap): TInstantCustomResolver;
-var
-  TableName: string;
-begin
-  TableName := Map.Name;
-  Result := FindResolver(TableName);
-  if not Assigned(Result) then
-  begin
-    Result := CreateResolver(TableName);
-    ResolverList.Add(Result);
-  end;
-end;
-
-function TInstantNavigationalBroker.FindResolver(
-  const TableName: string): TInstantNavigationalResolver;
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(ResolverCount) do
-  begin
-    Result := Resolvers[I];
-    if SameText(TableName, Result.TableName) then
-      Exit;
-  end;
-  Result := nil;
-end;
-
-function TInstantNavigationalBroker.GetResolverCount: Integer;
-begin
- Result := ResolverList.Count;
-end;
-
-function TInstantNavigationalBroker.GetResolverList: TObjectList;
-begin
-  if not Assigned(FResolverList) then
-    FResolverList := TObjectList.Create;
-  Result := FResolverList;
-end;
-
-function TInstantNavigationalBroker.GetResolvers(
-  Index: Integer): TInstantNavigationalResolver;
-begin
-  Result := ResolverList[Index] as TInstantNavigationalResolver;
-end;
-
-{ TInstantNavigationalResolver }
-
-procedure TInstantNavigationalResolver.Append;
-begin
-  DataSet.Append;
-end;
-
-procedure TInstantNavigationalResolver.Cancel;
-begin
-  DataSet.Cancel;
-end;
-
-function TInstantNavigationalResolver.CheckConflict(AObject: TInstantObject;
-  const AObjectId: string; ConflictAction: TInstantConflictAction): Boolean;
-var
-  Field: TField;
-begin
-  Field := FieldByName(InstantUpdateCountFieldName);
-  Result := Field.AsInteger <> AObject.UpdateCount;
-  if Result and (ConflictAction = caFail) then
-    raise EInstantConflict.CreateFmt(SUpdateConflict,
-      [AObject.ClassName, AObjectId]);
-end;
-
-procedure TInstantNavigationalResolver.ClearAttribute(AObject: TInstantObject;
-  AttributeMetadata: TInstantAttributeMetadata);
-var
-  Attribute: TInstantAttribute;
-begin
-  with AttributeMetadata do
-  begin
-    Attribute := AObject.AttributeByName(Name);
-    case AttributeType of
-      atInteger:
-        ClearInteger(Attribute as TInstantInteger);
-      atFloat:
-        ClearFloat(Attribute as TInstantFloat);
-      atCurrency:
-        ClearCurrency(Attribute as TInstantCurrency);
-      atBoolean:
-        ClearBoolean(Attribute as TInstantBoolean);
-      atString:
-        ClearString(Attribute as TInstantString);
-      atDateTime:
-        ClearDateTime(Attribute as TInstantDateTime);
-      atBlob:
-        ClearBlob(Attribute as TInstantBlob);
-      atGraphic:
-        ClearBlob(Attribute as TInstantGraphic);
-      atMemo:
-        ClearMemo(Attribute as TInstantMemo);
-      atPart:
-        ClearPart(Attribute as TInstantPart);
-      atReference:
-        ClearReference(Attribute as TInstantReference);
-      atParts:
-        ClearParts(Attribute as TInstantParts);
-      atReferences:
-        ClearReferences(Attribute as TInstantReferences);
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.ClearBlob(Attribute: TInstantBlob);
-begin
-end;
-
-procedure TInstantNavigationalResolver.ClearBoolean(Attribute: TInstantBoolean);
-begin
-end;
-
-procedure TInstantNavigationalResolver.ClearDateTime(Attribute: TInstantDateTime);
-begin
-end;
-
-procedure TInstantNavigationalResolver.ClearFloat(Attribute: TInstantFloat);
-begin
-end;
-
-procedure TInstantNavigationalResolver.ClearCurrency(Attribute: TInstantCurrency);
-begin
-end;
-
-procedure TInstantNavigationalResolver.ClearInteger(Attribute: TInstantInteger);
-begin
-end;
-
-procedure TInstantNavigationalResolver.ClearMemo(Attribute: TInstantMemo);
-begin
-end;
-
-procedure TInstantNavigationalResolver.ClearPart(Attribute: TInstantPart);
-begin
-  if Attribute.Metadata.StorageKind = skExternal then
-    Attribute.Value.ObjectStore.DisposeObject(Attribute.Value, caIgnore);
-end;
-
-procedure TInstantNavigationalResolver.ClearParts(Attribute: TInstantParts);
-var
-  I: Integer;
-  LinkDatasetResolver: TInstantNavigationalLinkResolver;
-begin
-  if Attribute.Metadata.StorageKind = skExternal then
-  begin
-    for I := 0 to Pred(Attribute.Count) do
-      Attribute.Items[I].ObjectStore.DisposeObject(Attribute.Items[I], caIgnore);
-    LinkDatasetResolver :=
-        GetLinkDatasetResolver(Attribute.Metadata.ExternalStorageName);
-    LinkDatasetResolver.ClearAttributeLinkRecords;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.ClearReference(
-  Attribute: TInstantReference);
-begin
-end;
-
-procedure TInstantNavigationalResolver.ClearReferences(
-  Attribute: TInstantReferences);
-var
-  LinkDatasetResolver: TInstantNavigationalLinkResolver;
-begin
-  if Attribute.Metadata.StorageKind = skExternal then
-  begin
-    LinkDatasetResolver :=
-        GetLinkDatasetResolver(Attribute.Metadata.ExternalStorageName);
-    LinkDatasetResolver.ClearAttributeLinkRecords;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.ClearString(Attribute: TInstantString);
-begin
-end;
-
-procedure TInstantNavigationalResolver.Close;
-begin
-  DataSet.Close;
-end;
-
-constructor TInstantNavigationalResolver.Create(
-  ABroker: TInstantNavigationalBroker; const ATableName: string);
-begin
-  inherited Create(ABroker);
-  FTableName := ATableName;
-end;
-
-function TInstantNavigationalResolver.CreateLocateVarArray(
-  const AObjectClassName,
-  AObjectId: string): Variant;
-begin
-  Result := VarArrayOf([AObjectClassName, AObjectId]);
-end;
-
-procedure TInstantNavigationalResolver.Delete;
-begin
-  DataSet.Delete;
-end;
-
-destructor TInstantNavigationalResolver.Destroy;
-begin
-  FreeAndNil(FNavigationalLinkResolvers);
-  FreeDataSet;
-  inherited;
-end;
-
-procedure TInstantNavigationalResolver.Edit;
-begin
-  DataSet.Edit;
-end;
-
-function TInstantNavigationalResolver.GetLinkDatasetResolver(const ATableName:
-    string): TInstantNavigationalLinkResolver;
-begin
-  Result := FindLinkDatasetResolver(ATableName);
-  if not Assigned(Result) then
-  begin
-    Result := CreateNavigationalLinkResolver(ATableName);
-    NavigationalLinkResolvers.Add(Result);
-  end;
-end;
-
-function TInstantNavigationalResolver.FieldByName(
-  const FieldName: string): TField;
-begin
-  Result := DataSet.FieldByName(FieldName);
-end;
-
-function TInstantNavigationalResolver.FieldHasObjects(Field: TField): Boolean;
-begin
-  Result := Length(Field.AsString) > 1;
-end;
-
-function TInstantNavigationalResolver.FindLinkDatasetResolver(const ATableName:
-    string): TInstantNavigationalLinkResolver;
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(NavigationalLinkResolvers.Count) do
-  begin
-    Result := NavigationalLinkResolvers[I] as TInstantNavigationalLinkResolver;
-    if SameText(ATableName, Result.TableName) then
-      Exit;
-  end;
-  Result := nil;
-end;
-
-procedure TInstantNavigationalResolver.FreeDataSet;
-begin
-  if FFreeDataSet then
-    FreeAndNil(FDataSet);
-end;
-
-function TInstantNavigationalResolver.GetBroker: TInstantNavigationalBroker;
-begin
-  Result := inherited Broker as TInstantNavigationalBroker;
-end;
-
-function TInstantNavigationalResolver.GetDataSet: TDataSet;
-begin
-  if not Assigned(FDataSet) then
-  begin
-    Broker.Connector.DoGetDataSet(TableName, FDataSet);
-    if not Assigned(FDataSet) then
-    begin
-      FDataSet := CreateDataSet;
-      FFreeDataSet := True;
-    end;
-    Broker.Connector.DoInitDataSet(TableName, FDataSet);
-  end;
-  Result := FDataSet;
-end;
-
-function TInstantNavigationalResolver.GetNavigationalLinkResolvers: TObjectList;
-begin
-  if not Assigned(FNavigationalLinkResolvers) then
-    FNavigationalLinkResolvers := TObjectList.Create;
-  Result := FNavigationalLinkResolvers;
-end;
-
-function TInstantNavigationalResolver.GetObjectClassName: string;
-begin
-  Result := FieldByName(InstantClassFieldName).AsString;
-end;
-
-function TInstantNavigationalResolver.GetObjectId: string;
-begin
-  Result := FieldByName(InstantIdFieldName).AsString;
-end;
-
-procedure TInstantNavigationalResolver.InternalDisposeMap(
-  AObject: TInstantObject; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-var
-  TransError: Exception;
-  AInfo: TInstantOperationInfo;
-begin
-  if not Assigned(Info) then
-    Info := @AInfo;
-  Open;
-  if Locate(AObject.ClassName, AObject.PersistentId) then
-  begin
-    if Map.IsRootMap then
-      Info.Conflict := CheckConflict(AObject, AObject.PersistentId,
-        ConflictAction);
-    PerformOperation(AObject, Map, ClearAttribute);
-    try
-      Delete;
-      Info.Success := True;
-    except
-      on EAbort do
-        raise;
-      on E: Exception do
-      begin
-        TransError := TranslateError(AObject, E);
-        if Assigned(TransError) then
-          raise TransError
-        else
-          raise;
-      end;
-    end;
-  end else if Map.IsRootMap and (ConflictAction = caFail) then
-    raise EInstantConflict.CreateFmt(SDisposeConflict,
-      [AObject.ClassName, AObject.PersistentId])
-end;
-
-procedure TInstantNavigationalResolver.InternalRetrieveMap(
-  AObject: TInstantObject; const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-var
-  AInfo: TInstantOperationInfo;
-begin
-  if not Assigned(Info) then
-    Info := @AInfo;
-  Open;
-  Info.Success := Locate(AObject.ClassName, AObjectId);
-  if Info.Success then
-  begin
-    if Map.IsRootMap then
-    begin
-      Info.Conflict := CheckConflict(AObject, AObjectId, caIgnore);
-      SetObjectUpdateCount(AObject,
-        FieldByName(InstantUpdateCountFieldName).AsInteger);
-    end;
-    PerformOperation(AObject, Map, ReadAttribute);
-  end else
-    ResetAttributes(AObject, Map);
-end;
-
-procedure TInstantNavigationalResolver.InternalStoreMap(
-  AObject: TInstantObject; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-
-  procedure AppendMap;
-  begin
-    Append;
-  end;
-
-  procedure EditMap;
-  begin
-    if Locate(AObject.ClassName, AObject.PersistentId) then
-    begin
-      if Map.IsRootMap then
-        Info.Conflict := CheckConflict(AObject, AObject.Id, ConflictAction);
-      Edit;
-    end else
-      AppendMap;
-  end;
-
-var
-  NewId: string;
-  AInfo: TInstantOperationInfo;
-  TransError: Exception;
-begin
-  { Avoid any interference with storage when performing store operation }
-  NewId := AObject.Id;
-
-  if not Assigned(Info) then
-    Info := @AInfo;
-  Open;
-  if AObject.IsPersistent then
-    EditMap
-  else
-    AppendMap;
-  try
-    FieldByName(InstantClassFieldName).AsString := AObject.ClassName;
-    FieldByName(InstantIdFieldName).AsString := NewId;
-    with FieldByName(InstantUpdateCountFieldName) do
-    begin
-      if AsInteger = High(Integer) then
-        AsInteger := 1
-      else
-        AsInteger := AsInteger + 1;
-      if Map.IsRootMap then
-        SetObjectUpdateCount(AObject, AsInteger);
-    end;
-    PerformOperation(AObject, Map, WriteAttribute);
-    Post;
-    Info.Success := True;
-  except
-    on E: Exception do
-    begin
-      Cancel;
-      if E is EAbort then
-        raise
-      else begin
-        TransError := TranslateError(AObject, E);
-        if Assigned(TransError) then
-          raise TransError
-        else
-          raise;
-      end;
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.Open;
-begin
-  DataSet.Open;
-end;
-
-procedure TInstantNavigationalResolver.PerformOperation(AObject: TInstantObject;
-  Map: TInstantAttributeMap; Operation: TInstantNavigationalResolverOperation);
-var
-  I: Integer;
-  AttribMeta: TInstantAttributeMetadata;
-begin
-  if not Assigned(Operation) then
-    Exit;
-  for I := 0 to Pred(Map.Count) do
-  begin
-    AttribMeta := Map.Items[I];
-    Operation(AObject, AttribMeta);
-  end;
-end;
-
-procedure TInstantNavigationalResolver.Post;
-begin
-  DataSet.Post;
-end;
-
-procedure TInstantNavigationalResolver.ReadAttribute(AObject: TInstantObject;
-  AttributeMetadata: TInstantAttributeMetadata);
-var
-  Attribute: TInstantAttribute;
-begin
-  with AttributeMetadata do
-  begin
-    Attribute := AObject.AttributeByName(Name);
-    case AttributeType of
-      atInteger:
-        ReadInteger(Attribute as TInstantInteger);
-      atFloat:
-        ReadFloat(Attribute as TInstantFloat);
-      atCurrency:
-        ReadCurrency(Attribute as TInstantCurrency);
-      atBoolean:
-        ReadBoolean(Attribute as TInstantBoolean);
-      atString:
-        ReadString(Attribute as TInstantString);
-      atDateTime:
-        ReadDateTime(Attribute as TInstantDateTime);
-      atBlob:
-        ReadBlob(Attribute as TInstantBlob);
-      atGraphic:
-        ReadBlob(Attribute as TInstantGraphic);
-      atMemo:
-        ReadMemo(Attribute as TInstantMemo);
-      atPart:
-        ReadPart(Attribute as TInstantPart);
-      atReference:
-        ReadReference(Attribute as TInstantReference);
-      atParts:
-        ReadParts(Attribute as TInstantParts);
-      atReferences:
-        ReadReferences(Attribute as TInstantReferences);
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.ReadBlob(Attribute: TInstantBlob);
-begin
-  with Attribute do
-    Value := FieldByName(Metadata.FieldName).AsString;
-end;
-
-procedure TInstantNavigationalResolver.ReadBoolean(Attribute: TInstantBoolean);
-begin
-  with Attribute do
-    Value := FieldByName(Metadata.FieldName).AsBoolean;
-end;
-
-procedure TInstantNavigationalResolver.ReadDateTime(
-  Attribute: TInstantDateTime);
-begin
-  with Attribute do
-    Value := FieldByName(Metadata.FieldName).AsDateTime;
-end;
-
-procedure TInstantNavigationalResolver.ReadFloat(Attribute: TInstantFloat);
-begin
-  with Attribute do
-    Value := FieldByName(Metadata.FieldName).AsFloat;
-end;
-
-procedure TInstantNavigationalResolver.ReadCurrency(Attribute: TInstantCurrency);
-begin
-  with Attribute do
-    Value := FieldByName(Metadata.FieldName).AsCurrency;
-end;
-
-procedure TInstantNavigationalResolver.ReadInteger(Attribute: TInstantInteger);
-begin
-  with Attribute do
-    Value := FieldByName(Metadata.FieldName).AsInteger;
-end;
-
-procedure TInstantNavigationalResolver.ReadMemo(Attribute: TInstantMemo);
-begin
-  with Attribute do
-    Value := TrimRight(FieldByName(Metadata.FieldName).AsString);
-end;
-
-procedure TInstantNavigationalResolver.ReadPart(Attribute: TInstantPart);
-var
-  Field: TField;
-  Stream: TInstantStringStream;
-  PartClassName: string;
-  ObjID: string;
-begin
-  with Attribute do
-  begin
-    if Metadata.StorageKind = skExternal then
-    begin
-      // Must clear Value first to avoid leak for Refresh operation
-      // as OldValue = NewValue.
-      Value := nil;
-      PartClassName := FieldByName(Metadata.FieldName +
-          InstantClassFieldName).AsString;
-      ObjID := FieldByName(Metadata.FieldName + InstantIdFieldName).AsString;
-      // PartClassName and ObjID will be empty if the attribute was
-      // added to a class with existing instances in the database.
-      if (PartClassName = '') and (ObjID = '') then
-        Attribute.Reset
-      else
-        Value := InstantFindClass(PartClassName).Retrieve(
-            ObjID, False, False, Connector);
-    end
-    else
-    begin
-      Field := FieldByName(Metadata.FieldName);
-      if not FieldHasObjects(Field) then
-        Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
-      try
-        LoadObjectFromStream(Stream);
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.ReadParts(Attribute: TInstantParts);
-var
-  Field: TField;
-  Stream: TInstantStringStream;
-  LinkDatasetResolver: TInstantNavigationalLinkResolver;
-begin
-  with Attribute do
-  begin
-    if Metadata.StorageKind = skExternal then
-    begin
-      Clear;
-      LinkDatasetResolver :=
-          GetLinkDatasetResolver(Metadata.ExternalStorageName);
-      LinkDatasetResolver.ReadAttributeObjects(Attribute, ObjectId);
-    end
-    else
-    begin
-      Field := FieldByName(Metadata.FieldName);
-      if not FieldHasObjects(Field) then
-        Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
-      try
-        LoadObjectsFromStream(Stream);
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.ReadReference(
-  Attribute: TInstantReference);
-begin
-  with Attribute do
-  begin
-    ReferenceObject(
-      TrimRight(
-        FieldByName(Metadata.FieldName + InstantClassFieldName).AsString),
-      TrimRight(
-        FieldByName(Metadata.FieldName + InstantIdFieldName).AsString));
-  end;
-end;
-
-procedure TInstantNavigationalResolver.ReadReferences(
-  Attribute: TInstantReferences);
-var
-  Field: TField;
-  Stream: TInstantStringStream;
-  LinkDatasetResolver: TInstantNavigationalLinkResolver;
-begin
-  with Attribute do
-  begin
-    if Metadata.StorageKind = skExternal then
-    begin
-      Clear;
-      LinkDatasetResolver :=
-          GetLinkDatasetResolver(Metadata.ExternalStorageName);
-      LinkDatasetResolver.ReadAttributeObjects(Attribute, ObjectId);
-    end
-    else
-    begin
-      Field := FieldByName(Metadata.FieldName);
-      if not FieldHasObjects(Field) then
-        Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
-      try
-        LoadReferencesFromStream(Stream);
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.ReadString(Attribute: TInstantString);
-begin
-  with Attribute do
-    Value := TrimRight(FieldByName(Metadata.FieldName).AsString);
-end;
-
-procedure TInstantNavigationalResolver.ResetAttribute(AObject: TInstantObject;
-  AttributeMetadata: TInstantAttributeMetadata);
-begin
-  AObject.AttributeByName(AttributeMetadata.Name).Reset;
-end;
-
-procedure TInstantNavigationalResolver.ResetAttributes(AObject: TInstantObject;
-  Map: TInstantAttributeMap);
-begin
-  PerformOperation(AObject, Map, ResetAttribute);
-end;
-
-procedure TInstantNavigationalResolver.SetDataSet(Value: TDataset);
-begin
-  if Value <> FDataSet then
-  begin
-    FreeDataSet;
-    FDataSet := Value;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.SetObjectUpdateCount(
-  AObject: TInstantObject; Value: Integer);
-begin
-  Broker.SetObjectUpdateCount(AObject, Value);
-end;
-
-function TInstantNavigationalResolver.TranslateError(AObject: TInstantObject;
-  E: Exception): Exception;
-begin
-  Result := nil;
-end;
-
-procedure TInstantNavigationalResolver.WriteAttribute(AObject: TInstantObject;
-  AttributeMetadata: TInstantAttributeMetadata);
-var
-  Attribute: TInstantAttribute;
-begin
-  with AttributeMetadata do
-  begin
-    Attribute := AObject.AttributeByName(Name);
-    if not Attribute.IsChanged then
-      Exit;
-    case AttributeType of
-      atInteger:
-        WriteInteger(Attribute as TInstantInteger);
-      atFloat:
-        WriteFloat(Attribute as TInstantFloat);
-      atCurrency:
-        WriteCurrency(Attribute as TInstantCurrency);
-      atBoolean:
-        WriteBoolean(Attribute as TInstantBoolean);
-      atString:
-        WriteString(Attribute as TInstantString);
-      atDateTime:
-        WriteDateTime(Attribute as TInstantDateTime);
-      atBlob:
-        WriteBlob(Attribute as TInstantBlob);
-      atGraphic:
-        WriteBlob(Attribute as TInstantGraphic);
-      atMemo:
-        WriteMemo(Attribute as TInstantMemo);
-      atPart:
-        WritePart(Attribute as TInstantPart);
-      atReference:
-        WriteReference(Attribute as TInstantReference);
-      atParts:
-        WriteParts(Attribute as TInstantParts);
-      atReferences:
-        WriteReferences(Attribute as TInstantReferences);
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.WriteBlob(Attribute: TInstantBlob);
-begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsString := Value;
-end;
-
-procedure TInstantNavigationalResolver.WriteBoolean(Attribute: TInstantBoolean);
-begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsBoolean := Value;
-end;
-
-procedure TInstantNavigationalResolver.WriteDateTime(
-  Attribute: TInstantDateTime);
-begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsDateTime := Value;
-end;
-
-procedure TInstantNavigationalResolver.WriteFloat(Attribute: TInstantFloat);
-begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsFloat := Value;
-end;
-
-procedure TInstantNavigationalResolver.WriteCurrency(Attribute: TInstantCurrency);
-begin
-  with Attribute do
-{$IFDEF FPC}
-    FieldByName(Metadata.FieldName).AsFloat := Value;
-{$ELSE}
-    FieldByName(Metadata.FieldName).AsCurrency := Value;
-{$ENDIF}
-end;
-
-procedure TInstantNavigationalResolver.WriteInteger(Attribute: TInstantInteger);
-begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsInteger := Value;
-end;
-
-procedure TInstantNavigationalResolver.WriteMemo(Attribute: TInstantMemo);
-begin
-  WriteBlob(Attribute);
-end;
-
-procedure TInstantNavigationalResolver.WritePart(Attribute: TInstantPart);
-var
-  Field: TField;
-  Stream: TInstantStringStream;
-begin
-  with Attribute do
-  begin
-    if Metadata.StorageKind = skExternal then
-    begin
-      Value.CheckId;
-      FieldByName(Metadata.FieldName + InstantClassFieldName).AsString :=
-          Value.ClassName;
-      FieldByName(Metadata.FieldName + InstantIdFieldName).AsString :=
-          Value.Id;
-      Value.ObjectStore.StoreObject(Value, caIgnore);
-    end
-    else
-    begin
-      Field := FieldByName(Metadata.FieldName);
-      Stream := TInstantStringStream.Create('');
-      try
-        SaveObjectToStream(Stream);
-        Field.AsString := Stream.DataString;
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.WriteParts(Attribute: TInstantParts);
-var
-  Field: TField;
-  Stream: TInstantStringStream;
-  LinkDatasetResolver: TInstantNavigationalLinkResolver;
-begin
-  with Attribute do
-  begin
-    if Metadata.StorageKind = skExternal then
-    begin
-      LinkDatasetResolver :=
-          GetLinkDatasetResolver(Metadata.ExternalStorageName);
-      LinkDatasetResolver.Open;
-      try
-        LinkDatasetResolver.DisposeDeletedAttributeObjects(Attribute);
-        LinkDatasetResolver.ClearAttributeLinkRecords;
-        LinkDatasetResolver.StoreAttributeObjects(Attribute);
-      finally
-        LinkDatasetResolver.Close;
-      end;
-    end
-    else
-    begin
-      Field := FieldByName(Metadata.FieldName);
-      Stream := TInstantStringStream.Create('');
-      try
-        SaveObjectsToStream(Stream);
-        Field.AsString := Stream.DataString;
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.WriteReference(
-  Attribute: TInstantReference);
-begin
-  with Attribute do
-  begin
-    FieldByName(Metadata.FieldName + InstantClassFieldName).AsString :=
-      ObjectClassName;
-    FieldByName(Metadata.FieldName + InstantIdFieldName).AsString := ObjectId;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.WriteReferences(
-  Attribute: TInstantReferences);
-var
-  Field: TField;
-  Stream: TInstantStringStream;
-  LinkDatasetResolver: TInstantNavigationalLinkResolver;
-begin
-  with Attribute do
-  begin
-    if Metadata.StorageKind = skExternal then
-    begin
-      LinkDatasetResolver :=
-          GetLinkDatasetResolver(Metadata.ExternalStorageName);
-      LinkDatasetResolver.Open;
-      try
-        LinkDatasetResolver.ClearAttributeLinkRecords;
-        LinkDatasetResolver.StoreAttributeObjects(Attribute);
-      finally
-        LinkDatasetResolver.Close;
-      end;
-    end
-    else
-    begin
-      Field := FieldByName(Metadata.FieldName);
-      Stream := TInstantStringStream.Create('');
-      try
-        SaveReferencesToStream(Stream);
-        Field.AsString := Stream.DataString;
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-end;
-
-procedure TInstantNavigationalResolver.WriteString(Attribute: TInstantString);
-begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsString := Value;
-end;
-
-{ TInstantNavigationalQuery }
-
-function TInstantNavigationalQuery.CreateObject(Row: Integer): TObject;
-var
-  ClassNameField, ObjectNameField: TField;
-  AClass: TInstantObjectClass;
-begin
-  RowNumber := Row;
-  ObjectNameField := DataSet.FindField(InstantIdFieldName);
-  if Assigned(ObjectNameField) and
-    ObjectClass.InheritsFrom(TInstantObject) then
-  begin
-    ClassNameField := DataSet.FindField(InstantClassFieldName);
-    if Assigned(ClassNameField) then
-      AClass := InstantGetClass(ClassNameField.AsString)
-    else
-      AClass := TInstantObjectClass(ObjectClass);
-    if Assigned(AClass) then
-      Result := AClass.Retrieve(ObjectNameField.AsString, False, False,
-        Connector)
-    else
-      Result := nil;
-  end else
-    Result := CreateObjectFromDataSet(ObjectClass, DataSet);
-end;
-
-destructor TInstantNavigationalQuery.Destroy;
-begin
-  DestroyObjectRowList;
-  inherited;
-end;
-
-procedure TInstantNavigationalQuery.DestroyObjectRowList;
-var
-  I: Integer;
-  ObjectRow: PObjectRow;
-begin
-  if not Assigned(FObjectRowList) then
-    Exit;
-  for I := 0 to Pred(FObjectRowList.Count) do
-  begin
-    ObjectRow := FObjectRowList[I];
-    FreeAndNil(ObjectRow.Instance);
-    Dispose(ObjectRow);
-  end;
-  FreeAndNil(FObjectRowList);
-end;
-
-function TInstantNavigationalQuery.GetActive: Boolean;
-begin
-  Result := DataSet.Active;
-end;
-
-function TInstantNavigationalQuery.GetDataSet: TDataSet;
-begin
-  Result := nil;
-end;
-
-function TInstantNavigationalQuery.GetObjectRowCount: Integer;
-begin
-  Result := ObjectRowList.Count;
-end;
-
-function TInstantNavigationalQuery.GetObjectRowList: TList;
-begin
-  if not Assigned(FObjectRowList) then
-  begin
-    FObjectRowList := TList.Create;
-    FObjectRowList.Count := RowCount;
-    InitObjectRows(FObjectRowList, 0, Pred(FObjectRowList.Count));
-  end;
-  Result := FObjectRowList;
-end;
-
-function TInstantNavigationalQuery.GetObjectRows(Index: Integer): PObjectRow;
-begin
-  Result := ObjectRowList[Index];
-end;
-
-function TInstantNavigationalQuery.GetRowCount: Integer;
-begin
-  if Assigned(DataSet) then
-    Result := DataSet.RecordCount
-  else
-    Result := 0;
-end;
-
-function TInstantNavigationalQuery.GetRowNumber: Integer;
-begin
-  Result := DataSet.RecNo;
-end;
-
-procedure TInstantNavigationalQuery.InitObjectRows(List: TList; FromIndex,
-  ToIndex: Integer);
-var
-  I: Integer;
-  ObjectRow: PObjectRow;
-begin
-  for I := FromIndex to ToIndex do
-  begin
-    ObjectRow := List[I];
-    if not Assigned(ObjectRow) then
-    begin
-      New(ObjectRow);
-      List[I] := ObjectRow;
-    end;
-    ObjectRow.Row := Succ(I);
-    ObjectRow.Instance := nil;
-  end;
-end;
-
-function TInstantNavigationalQuery.InternalAddObject(AObject: TObject): Integer;
-var
-  ObjectRow: PObjectRow;
-begin
-  New(ObjectRow);
-  try
-    ObjectRow.Row := -1;
-    ObjectRow.Instance := AObject;
-    if AObject is TInstantObject then
-      TInstantObject(AObject).AddRef;
-    Result := ObjectRowList.Add(ObjectRow);
-  except
-    Dispose(ObjectRow);
-    raise;
-  end;
-end;
-
-procedure TInstantNavigationalQuery.InternalClose;
-begin
-  inherited;
-  if Assigned(DataSet) then
-    DataSet.Close;
-  DestroyObjectRowList;
-end;
-
-procedure TInstantNavigationalQuery.InternalGetInstantObjectRefs(List:
-    TInstantObjectReferenceList);
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(ObjectRowCount) do
-    if ObjectFetched(I) and (ObjectRows[I]^.Instance is TInstantObject) then
-      List.Add(TInstantObject(ObjectRows[I]^.Instance));
-end;
-
-function TInstantNavigationalQuery.InternalGetObjectCount: Integer;
-begin
-  if DataSet.Active then
-    Result := ObjectRowList.Count
-  else
-    Result := 0;
-end;
-
-function TInstantNavigationalQuery.InternalGetObjects(Index: Integer): TObject;
-var
-  ObjectRow: PObjectRow;
-begin
-  ObjectRow := ObjectRows[Index];
-  if not Assigned(ObjectRow.Instance) then
-    ObjectRow.Instance := CreateObject(ObjectRow.Row);
-  Result := ObjectRow.Instance;
-end;
-
-function TInstantNavigationalQuery.InternalIndexOfObject(
-  AObject: TObject): Integer;
-begin
-  for Result := 0 to Pred(ObjectRowCount) do
-    if ObjectRows[Result].Instance = AObject then
-      Exit;
-  if AObject is TInstantObject then
-    Result := Pred(RecNoOfObject(TInstantObject(AObject)))
-  else
-    Result := -1;
-end;
-
-procedure TInstantNavigationalQuery.InternalInsertObject(Index: Integer;
-  AObject: TObject);
-var
-  ObjectRow: PObjectRow;
-begin
-  New(ObjectRow);
-  try
-    ObjectRow.Row := -1;
-    ObjectRow.Instance := AObject;
-    if AObject is TInstantObject then
-      TInstantObject(AObject).AddRef;
-    ObjectRowList.Insert(Index, ObjectRow);
-  except
-    Dispose(ObjectRow);
-    raise;
-  end;
-end;
-
-procedure TInstantNavigationalQuery.InternalOpen;
-begin
-  inherited;
-  if Assigned(DataSet) then
-    DataSet.Open;
-end;
-
-procedure TInstantNavigationalQuery.InternalRefreshObjects;
-begin
-  if not DataSet.Active then
-    Exit;
-
-  inherited;
-end;
-
-procedure TInstantNavigationalQuery.InternalReleaseObject(AObject: TObject);
-var
-  I: Integer;
-  ObjectRow: PObjectRow;
-begin
-  for I := 0 to Pred(ObjectRowCount) do
-  begin
-    ObjectRow := ObjectRows[I];
-    if ObjectRow.Instance = AObject then
-    begin
-      AObject.Free;
-      ObjectRow.Instance := nil;
-      Exit;
-    end;
-  end;
-end;
-
-function TInstantNavigationalQuery.InternalRemoveObject(
-  AObject: TObject): Integer;
-var
-  ObjectRow: PObjectRow;
-begin
-  Result := IndexOfObject(AObject);
-  if Result <> -1 then
-  begin
-    ObjectRow := ObjectRows[Result];
-    ObjectRowList.Delete(Result);
-    FreeAndNil(ObjectRow.Instance);
-    Dispose(ObjectRow);
-  end;
-end;
-
-function TInstantNavigationalQuery.IsSequenced: Boolean;
-begin
-  Result := True;
-end;
-
-function TInstantNavigationalQuery.ObjectFetched(Index: Integer): Boolean;
-begin
-  Result := Assigned(ObjectRows[Index].Instance);
-end;
-
-function TInstantNavigationalQuery.RecNoOfObject(
-  AObject: TInstantObject): Integer;
-var
-  ClassField, IdField: TField;
-begin
-  if DataSet.IsSequenced then
-  begin
-    if DataSet.Locate(InstantClassFieldName + ';' + InstantIdFieldName,
-      VarArrayOf([AObject.ClassName, AObject.Id]), []) then
-    begin
-      Result := Pred(DataSet.RecNo);
-      Exit;
-    end;
-  end else
-  begin
-    ClassField := DataSet.FieldByName(InstantClassFieldName);
-    IdField := DataSet.FieldByName(InstantIdFieldName);
-    if Assigned(ClassField) and Assigned(IdField) then
-    begin
-      DataSet.First;
-      Result := 1;
-      while not DataSet.Eof do
-      begin
-        if (ClassField.AsString = AObject.ClassName) and
-          (IdField.AsString = AObject.Id) then
-          Exit;
-        DataSet.Next;
-        Inc(Result);
-      end;
-    end;
-  end;
-  Result := 0;
-end;
-
-procedure TInstantNavigationalQuery.SetRowNumber(Value: Integer);
-begin
-  if IsSequenced then
-    DataSet.RecNo := Value
-  else begin
-    DataSet.First;
-    while (not Dataset.Eof) and (Value > 1) do
-    begin
-      DataSet.Next;
-      Dec(Value);
-    end;
-  end;
-end;
-
-{ TInstantSQLGenerator }
-
-function TInstantSQLGenerator.BuildAssignment(const AName: string): string;
-begin
-  Result := EmbraceField(AName) + ' = ' + BuildParam(AName);
-end;
-
-function TInstantSQLGenerator.BuildAssignmentList(Map: TInstantAttributeMap;
-  Additional: array of string): string;
-begin
-  Result := BuildList(Map, Additional, BuildAssignment);
-end;
-
-function TInstantSQLGenerator.BuildConcurrencyCriteria: string;
-begin
-  Result := Format(' AND %s = %s', [EmbraceField(InstantUpdateCountFieldName),
-    BuildParam(ConcurrencyParamName)]);
-end;
-
-function TInstantSQLGenerator.BuildFieldList(Map: TInstantAttributeMap;
-  Additional: array of string): string;
-begin
-  Result := BuildList(Map, Additional, EmbraceField);
-end;
-
-function TInstantSQLGenerator.BuildFieldList(const S: string): string;
-var
-  I: Integer;
-  List: TStringList;
-begin
-  List := TStringList.Create;
-  try
-    InstantStrToList(S, List, [';']);
-    Result := '';
-    for I := 0 to Pred(List.Count) do
-      Result := Result + InstantEmbrace(List[I], Broker.SQLDelimiters) + ', ';
-    if Length(Result) > 0 then
-      Delete(Result, Length(Result) - 1, 2);
-  finally
-    List.Free;
-  end;
-end;
-
-function TInstantSQLGenerator.BuildList(Map: TInstantAttributeMap;
-  Additional: array of string; StringFunc: TInstantStringFunc;
-  const Delimiter: string): string;
-
-  function SpaceDelimiter: string;
-  begin
-    Result := Format(' %s ', [Delimiter]);
-  end;
-
-var
-  I: Integer;
-  AttributeMetadata: TInstantAttributeMetadata;
-  FieldName, RefClassFieldName, RefIdFieldName: string;
-begin
-  if not Assigned(StringFunc) then
-    StringFunc := EmbraceField;
-  Result := '';
-  if Assigned(Map) then
-    for I := 0 to Pred(Map.Count) do
-    begin
-      AttributeMetadata := Map[I];
-      FieldName := AttributeMetadata.FieldName;
-      if AttributeMetadata.AttributeType = atReference then
-      begin
-        RefClassFieldName := FieldName + InstantClassFieldName;
-        RefIdFieldName := FieldName + InstantIdFieldName;
-        Result := Result + StringFunc(RefClassFieldName) + ', ' +
-          StringFunc(RefIdFieldName);
-        Result := Result + SpaceDelimiter;
-      end
-      else if AttributeMetadata.AttributeType = atPart then
-      begin
-        if AttributeMetadata.StorageKind = skExternal then
-        begin
-          RefClassFieldName := FieldName + InstantClassFieldName;
-          RefIdFieldName := FieldName + InstantIdFieldName;
-          Result := Result + StringFunc(RefClassFieldName) + ', ' +
-            StringFunc(RefIdFieldName);
-          Result := Result + SpaceDelimiter;
-        end
-        else if AttributeMetadata.StorageKind = skEmbedded then
-        begin
-          Result := Result + StringFunc(FieldName);
-          Result := Result + SpaceDelimiter;
-        end;
-      end
-      else if AttributeMetadata.AttributeType in [atParts, atReferences] then
-      begin
-        if AttributeMetadata.StorageKind = skEmbedded then
-        begin
-          Result := Result + StringFunc(FieldName);
-          Result := Result + SpaceDelimiter;
-        end;
-      end
-      else
-      begin
-        Result := Result + StringFunc(FieldName);
-        Result := Result + SpaceDelimiter;
-      end;
-    end;
-  for I := Low(Additional) to High(Additional) do
-    Result := Result + StringFunc(Additional[I]) + SpaceDelimiter;
-  Delete(Result, Length(Result) - Length(Delimiter), Length(Delimiter) + 2);
-end;
-
-function TInstantSQLGenerator.BuildParam(const AName: string): string;
-begin
-  Result := ':' + AName;
-end;
-
-function TInstantSQLGenerator.BuildParamList(Map: TInstantAttributeMap;
-  Additional: array of string): string;
-begin
-  Result := BuildList(Map, Additional, BuildParam);
-end;
-
-function TInstantSQLGenerator.BuildPersistentIdCriteria: string;
-begin
-  Result := Format(' AND %s = %s', [EmbraceField(InstantIdFieldName),
-    BuildParam(PersistentIdParamName)]);
-end;
-
-function TInstantSQLGenerator.BuildWhereStr(Fields: array of string): string;
-begin
-  Result := BuildList(nil, Fields, BuildAssignment, 'AND');
-end;
-
-constructor TInstantSQLGenerator.Create(ABroker: TInstantSQLBroker);
-begin
-  inherited Create;
-  FBroker := ABroker;
-end;
-
-function TInstantSQLGenerator.EmbraceField(const FieldName: string): string;
-begin
-  Result := InstantEmbrace(FieldName, Delimiters);
-end;
-
-function TInstantSQLGenerator.EmbraceTable(const TableName: string): string;
-begin
-  Result := InstantEmbrace(TableName, Delimiters);
-end;
-
-function TInstantSQLGenerator.GenerateAddFieldSQL(
-  Metadata: TInstantFieldMetadata): string;
-begin
-  Result := InternalGenerateAddFieldSQL(Metadata);
-end;
-
-function TInstantSQLGenerator.GenerateAlterFieldSQL(OldMetadata,
-  NewMetadata: TInstantFieldMetadata): string;
-begin
-  Result := InternalGenerateAlterFieldSQL(OldMetadata, NewMetadata);
-end;
-
-function TInstantSQLGenerator.GenerateCreateIndexSQL(
-  Metadata: TInstantIndexMetadata): string;
-begin
-  Result := InternalGenerateCreateIndexSQL(Metadata);
-end;
-
-function TInstantSQLGenerator.GenerateCreateTableSQL(
-  Metadata: TInstantTableMetadata): string;
-begin
-  Result := InternalGenerateCreateTableSQL(Metadata);
-end;
-
-function TInstantSQLGenerator.GenerateDeleteConcurrentSQL
-  (Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateDeleteConcurrentSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateDeleteExternalSQL(
-  Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateDeleteExternalSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateDeleteSQL
-  (Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateDeleteSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateDropFieldSQL(
-  Metadata: TInstantFieldMetadata): string;
-begin
-  Result := InternalGenerateDropFieldSQL(Metadata);
-end;
-
-function TInstantSQLGenerator.GenerateDropIndexSQL(
-  Metadata: TInstantIndexMetadata): string;
-begin
-  Result := InternalGenerateDropIndexSQL(Metadata);
-end;
-
-function TInstantSQLGenerator.GenerateDropTableSQL(
-  Metadata: TInstantTableMetadata): string;
-begin
-  Result := InternalGenerateDropTableSQL(Metadata);
-end;
-
-function TInstantSQLGenerator.GenerateInsertExternalSQL(
-  Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateInsertExternalSQL(Map)
-end;
-
-function TInstantSQLGenerator.GenerateInsertSQL
-  (Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateInsertSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateSelectExternalPartSQL(
-  Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateSelectExternalPartSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateSelectExternalSQL(
-  Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateSelectExternalSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateSelectSQL
-  (Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateSelectSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateSelectTablesSQL: string;
-begin
-  Result := InternalGenerateSelectTablesSQL;
-end;
-
-function TInstantSQLGenerator.GenerateUpdateConcurrentSQL
-  (Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateUpdateConcurrentSQL(Map);
-end;
-
-function TInstantSQLGenerator.GenerateUpdateFieldCopySQL(OldMetadata,
-    NewMetadata: TInstantFieldMetadata): string;
-begin
-  Result := InternalGenerateUpdateFieldCopySQL(OldMetadata, NewMetadata);
-end;
-
-function TInstantSQLGenerator.GenerateUpdateSQL
-  (Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateUpdateSQL(Map);
-end;
-
-function TInstantSQLGenerator.GetDelimiters: string;
-begin
-  Result := Broker.SQLDelimiters;
-end;
-
-function TInstantSQLGenerator.InternalGenerateAddFieldSQL(
-  Metadata: TInstantFieldMetadata): string;
-begin
-  with Metadata do
-    Result := Format('ALTER TABLE %s ADD %s %s',
-      [EmbraceTable(TableMetadata.Name),
-       EmbraceField(Name),
-       Broker.DataTypeToColumnType(DataType, Size)]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateAlterFieldSQL(OldMetadata,
-  NewMetadata: TInstantFieldMetadata): string;
-begin
-  Result := Format('ALTER TABLE %s ALTER COLUMN %s TYPE %s',
-    [EmbraceTable(OldMetadata.TableMetadata.Name),
-     EmbraceField(OldMetadata.Name),
-     Broker.DataTypeToColumnType(NewMetadata.DataType, NewMetadata.Size)]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateCreateIndexSQL(
-  Metadata: TInstantIndexMetadata): string;
-var
-  Modifier, Columns, TableName: string;
-begin
-  if ixUnique in Metadata.Options then
-    Modifier := 'UNIQUE '
-  else
-    Modifier := '';
-  if ixDescending in Metadata.Options then
-    Modifier := Modifier + 'DESCENDING ';
-  Columns := BuildFieldList(Metadata.Fields);
-  TableName := Metadata.TableMetadata.Name;
-  Result := Format('CREATE %sINDEX %s ON %s (%s)',
-    [Modifier, Metadata.Name, EmbraceTable(TableName), Columns]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateCreateTableSQL(
-  Metadata: TInstantTableMetadata): string;
-var
-  I: Integer;
-  FieldMetadata: TInstantFieldMetadata;
-  Columns, PrimaryKey: string;
-begin
-  Columns := '';
-  with Metadata do
-    for I := 0 to Pred(FieldMetadatas.Count) do
-    begin
-      FieldMetadata := FieldMetadatas[I];
-      with FieldMetadata do
-      begin
-        if I > 0 then
-          Columns := Columns + ', ';
-        Columns := Columns + EmbraceField(Name) + ' ' + Broker.DataTypeToColumnType(DataType, Size);
-        if foRequired in Options then
-          Columns := Columns + ' NOT NULL';
-      end;
-    end;
-  PrimaryKey := '';
-  with Metadata do
-    for I := 0 to Pred(IndexMetadatas.Count) do
-      with IndexMetadatas[I] do
-        if ixPrimary in Options then
-        begin
-          PrimaryKey := BuildFieldList(Fields);
-          Break;
-        end;
-  if PrimaryKey <> '' then
-    Columns := Columns + ', PRIMARY KEY (' + PrimaryKey + ')';
-  Result := Format('CREATE TABLE %s (%s)',
-    [EmbraceTable(Metadata.Name), Columns]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateDeleteConcurrentSQL
-  (Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateDeleteSQL(Map) + BuildConcurrencyCriteria;
-end;
-
-function TInstantSQLGenerator.InternalGenerateDeleteExternalSQL(
-  Map: TInstantAttributeMap): string;
-var
-  WhereStr: string;
-begin
-  WhereStr := BuildWhereStr([InstantParentClassFieldName,
-    InstantParentIdFieldName]);
-  Result := Format('DELETE FROM %s WHERE %s',
-    [EmbraceTable('%s'), WhereStr]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateDeleteSQL
-  (Map: TInstantAttributeMap): string;
-var
-  WhereStr: string;
-begin
-  WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
-  Result := Format('DELETE FROM %s WHERE %s',
-    [EmbraceTable(Map.Name), WhereStr]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateDropFieldSQL(
-  Metadata: TInstantFieldMetadata): string;
-begin
-  with Metadata do
-    Result := Format('ALTER TABLE %s DROP %s',
-      [EmbraceTable(TableMetadata.Name),
-       EmbraceField(Name)]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateDropIndexSQL(
-  Metadata: TInstantIndexMetadata): string;
-begin
-  Result := Format('DROP INDEX %s', [Metadata.Name]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateDropTableSQL(
-  Metadata: TInstantTableMetadata): string;
-begin
-  Result := Format('DROP TABLE %s', [EmbraceTable(Metadata.Name)]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateInsertExternalSQL(
-  Map: TInstantAttributeMap): string;
-var
-  FieldStr, ParamStr: string;
-begin
-  FieldStr := Format('%s, %s, %s, %s, %s, %s',
-    [EmbraceField(InstantIdFieldName),
-    EmbraceField(InstantParentClassFieldName),
-    EmbraceField(InstantParentIdFieldName),
-    EmbraceField(InstantChildClassFieldName),
-    EmbraceField(InstantChildIdFieldName),
-    EmbraceField(InstantSequenceNoFieldName)]);
-  ParamStr := Format(':%s, :%s, :%s, :%s, :%s, :%s',
-    [InstantIdFieldName,
-    InstantParentClassFieldName, InstantParentIdFieldName,
-    InstantChildClassFieldName, InstantChildIdFieldName,
-    InstantSequenceNoFieldName]);
-  Result := Format('INSERT INTO %s (%s) VALUES (%s)',
-    [EmbraceTable('%s'), FieldStr, ParamStr]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateInsertSQL
-  (Map: TInstantAttributeMap): string;
-var
-  FieldStr, ParamStr: string;
-begin
-  FieldStr := BuildFieldList(Map,
-    [InstantClassFieldName, InstantIdFieldName, InstantUpdateCountFieldName]);
-  ParamStr := BuildParamList(Map,
-    [InstantClassFieldName, InstantIdFieldName, InstantUpdateCountFieldName]);
-  Result := Format('INSERT INTO %s (%s) VALUES (%s)',
-    [EmbraceTable(Map.Name), FieldStr, ParamStr]);
-  Result := Result + ' ';
-end;
-
-function TInstantSQLGenerator.InternalGenerateSelectExternalPartSQL(
-  Map: TInstantAttributeMap): string;
-var
-  FieldStr, WhereStr: string;
-begin
-  FieldStr := Format('%s, %s', [EmbraceField('%s'), EmbraceField('%s')]);
-  WhereStr := Format('%s = :%s AND %s = :%s',
-    [EmbraceField(InstantClassFieldName), InstantClassFieldName,
-     EmbraceField(InstantIdFieldName), InstantIdFieldName]);
-  Result := Format('SELECT %s FROM %s WHERE %s',
-    [FieldStr, EmbraceTable('%s'), WhereStr]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateSelectExternalSQL(
-  Map: TInstantAttributeMap): string;
-var
-  FieldStr, WhereStr: string;
-begin
-  FieldStr := Format('%s, %s, %s', [EmbraceField(InstantChildClassFieldName),
-    EmbraceField(InstantChildIdFieldName), EmbraceField(InstantSequenceNoFieldName)]);
-  WhereStr := Format('%s = :%s AND %s = :%s AND %s = :%s',
-    [EmbraceField(InstantParentClassFieldName), InstantParentClassFieldName,
-    EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName,
-    EmbraceField(InstantChildClassFieldName), InstantChildClassFieldName]);
-  Result := Format('SELECT %s FROM %s WHERE %s ORDER BY %s',
-    [FieldStr, EmbraceTable('%s'), WhereStr, EmbraceField(InstantSequenceNoFieldName)]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateSelectSQL
-  (Map: TInstantAttributeMap): string;
-var
-  FieldStr, WhereStr: string;
-begin
-  FieldStr := BuildFieldList(Map, [InstantUpdateCountFieldName]);
-  WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
-  Result := Format('SELECT %s FROM %s WHERE %s',
-    [FieldStr, EmbraceTable(Map.Name), WhereStr]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateSelectTablesSQL: string;
-begin
-  raise EInstantError.CreateFmt(SUnsupportedOperation,
-    ['InternalGenerateSelectTablesSQL']);
-end;
-
-function TInstantSQLGenerator.InternalGenerateUpdateConcurrentSQL
-  (Map: TInstantAttributeMap): string;
-begin
-  Result := InternalGenerateUpdateSQL(Map) + BuildConcurrencyCriteria;
-end;
-
-function TInstantSQLGenerator.InternalGenerateUpdateFieldCopySQL(OldMetadata,
-    NewMetadata: TInstantFieldMetadata): string;
-begin
-  Result := Format('UPDATE %s SET %s = %s',
-                    [EmbraceTable(OldMetadata.TableMetadata.Name),
-                     EmbraceField(NewMetadata.Name),
-                     EmbraceField(OldMetadata.Name)]);
-end;
-
-function TInstantSQLGenerator.InternalGenerateUpdateSQL
-  (Map: TInstantAttributeMap): string;
-var
-  AssignmentStr, WhereStr: string;
-begin
-  AssignmentStr := BuildAssignmentList(Map,
-    [InstantIdFieldName, InstantUpdateCountFieldName]);
-  WhereStr := BuildWhereStr([InstantClassFieldName]) +
-    BuildPersistentIdCriteria;
-  Result := Format('UPDATE %s SET %s WHERE %s',
-    [EmbraceTable(Map.Name), AssignmentStr, WhereStr]);
-end;
-
-{ TInstantSQLBroker }
-
-function TInstantSQLBroker.AcquireDataSet(const AStatement: string;
-  AParams: TParams): TDataSet;
-var
-  CachedStatement: TInstantStatement;
-begin
-  Result := nil;
-  if FStatementCacheCapacity <> 0 then
-  begin
-    CachedStatement := StatementCache.GetStatement(AStatement);
-    if Assigned(CachedStatement) then
-    begin
-      Result := TDataSet(CachedStatement.StatementImplementation);
-      AssignDataSetParams(Result, AParams);
-    end;
-  end;
-  if not Assigned(Result) then
-  begin
-    Result := CreateDataSet(AStatement, AParams);
-    try
-      if Assigned(AParams) and (FStatementCacheCapacity <> 0) then
-        StatementCache.AddStatement(AStatement, Result);
-    except
-      if FStatementCacheCapacity <> 0 then
-        StatementCache.RemoveStatement(AStatement);
-      Result.Free;
-      raise;
-    end;
-  end;
-end;
-
-procedure TInstantSQLBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
-begin
-  raise EInstantError.CreateFmt(SMissingImplementation, ['AssignDataSetParams', ClassName]);
-end;
-
-destructor TInstantSQLBroker.Destroy;
-begin
-  FGenerator.Free;
-  FResolverList.Free;
-  inherited;
-end;
-
-function TInstantSQLBroker.EnsureResolver(
-  AMap: TInstantAttributeMap): TInstantCustomResolver;
-begin
-  Result := FindResolver(AMap);
-  if not Assigned(Result) then
-  begin
-    Result := CreateResolver(AMap);
-    ResolverList.Add(Result)
-  end;
-end;
-
-function TInstantSQLBroker.FindResolver(
-  AMap: TInstantAttributeMap): TInstantSQLResolver;
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(ResolverCount) do
-  begin
-    Result := Resolvers[I];
-    if Result.Map = AMap then
-      Exit;
-  end;
-  Result := nil;
-end;
-
-class function TInstantSQLBroker.GeneratorClass: TInstantSQLGeneratorClass;
-begin
-  Result := TInstantSQLGenerator;
-end;
-
-function TInstantSQLBroker.GetGenerator: TInstantSQLGenerator;
-begin
-  if not Assigned(FGenerator) then
-    FGenerator := GeneratorClass.Create(Self);
-  Result := FGenerator;
-end;
-
-function TInstantSQLBroker.GetResolverCount: Integer;
-begin
-  Result := ResolverList.Count;
-end;
-
-function TInstantSQLBroker.GetResolverList: TObjectList;
-begin
-  if not Assigned(FResolverList) then
-    FResolverList := TObjectList.Create;
-  Result := FResolverList;
-end;
-
-function TInstantSQLBroker.GetResolvers(
-  Index: Integer): TInstantSQLResolver;
-begin
-  Result := ResolverList[Index] as TInstantSQLResolver;
-end;
-
-procedure TInstantSQLBroker.InternalBuildDatabase(Scheme: TInstantScheme);
-var
-  I, J: Integer;
-  TableMetadata: TInstantTableMetadata;
-  IndexMetadata: TInstantIndexMetadata;
-begin
-  if not Assigned(Scheme) then
-    Exit;
-  with Scheme do
-  begin
-    for I := 0 to Pred(TableMetadataCount) do
-    begin
-      TableMetadata := TableMetadatas[I];
-      try
-        Execute(Generator.GenerateDropTableSQL(TableMetadata));
-      except
-      end;
-      Execute(Generator.GenerateCreateTableSQL(TableMetadata));
-      with TableMetadata do
-      begin
-        for J := 0 to Pred(IndexMetadatas.Count) do
-        begin
-          IndexMetadata := IndexMetadatas[J];
-          if not (ixPrimary in IndexMetadata.Options) then
-            Execute(Generator.GenerateCreateIndexSQL(IndexMetadata));
-        end;
-      end;
-    end;
-  end;
-end;
-
-procedure TInstantSQLBroker.ReleaseDataSet(const ADataSet: TDataSet);
-begin
-  if FStatementCacheCapacity <> 0 then
-    ADataSet.Close
-  else
-    ADataSet.Free;
-end;
-
-{ TInstantSQLResolver }
-
-procedure TInstantSQLResolver.AddAttributeParam(Attribute: TInstantAttribute;
-  Params: TParams);
-var
-  FieldName: string;
-
-  procedure AddBlobParam(const AFieldName, Value: string);
-  var
-    Param: TParam;
-  begin
-    Param := AddParam(Params, AFieldName, ftBlob);
-    if Value <> '' then
-      Param.AsBlob := Value
-  end;
-
-  procedure AddMemoParam(const AFieldName, Value: string);
-  var
-    Param: TParam;
-  begin
-    Param := AddParam(Params, AFieldName, ftMemo);
-    if Value <> '' then
-      Param.AsMemo := Value
-  end;
-
-  procedure AddBlobAttributeParam;
-  begin
-    AddBlobParam(FieldName, (Attribute as TInstantBlob).Value);
-  end;
-
-  procedure AddBooleanAttributeParam;
-  begin
-    AddParam(Params, FieldName, ftBoolean).AsBoolean :=
-      (Attribute as TInstantBoolean).Value;
-  end;
-
-  procedure AddDateTimeAttributeParam;
-  begin
-    AddParam(Params, FieldName, ftDateTime).AsDateTime :=
-      (Attribute as TInstantDateTime).Value;
-  end;
-
-  procedure AddFloatAttributeParam;
-  begin
-    AddParam(Params, FieldName, ftFloat).AsFloat :=
-      (Attribute as TInstantFloat).Value;
-  end;
-
-  procedure AddCurrencyAttributeParam;
-  begin
-    AddParam(Params, FieldName, ftBCD).AsCurrency :=
-      (Attribute as TInstantCurrency).Value;
-  end;
-
-  procedure AddIntegerAttributeParam;
-  begin
-    AddIntegerParam(Params, FieldName, (Attribute as TInstantInteger).Value);
-  end;
-
-  procedure AddMemoAttributeParam;
-  var
-    Param: TParam;
-    MemoAttrib: TInstantMemo;
-  begin
-    Param := AddParam(Params, FieldName, ftMemo);
-    MemoAttrib := (Attribute as TInstantMemo);
-    if MemoAttrib.Size <> 0 then
-      Param.AsMemo := MemoAttrib.Value;
-  end;
-
-  procedure AddPartAttributeParam;
-  var
-    Stream: TInstantStringStream;
-    Part: TInstantPart;
-  begin
-    if Attribute.Metadata.StorageKind = skExternal then
-    begin
-      Part := Attribute as TInstantPart;
-      AddStringParam(Params, FieldName + InstantClassFieldName, Part.Value.ClassName);
-      Part.Value.CheckId;
-      AddIdParam(Params, FieldName + InstantIdFieldName, Part.Value.Id);
-    end
-    else
-    begin
-      Stream := TInstantStringStream.Create('');
-      try
-        (Attribute as TInstantPart).SaveObjectToStream(Stream);
-        if Broker.Connector.BlobStreamFormat = sfBinary then
-          AddBlobParam(FieldName, Stream.DataString)
-        else
-          AddMemoParam(FieldName, Stream.DataString);
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-
-  procedure AddPartsAttributeParam;
-  var
-    Stream: TInstantStringStream;
-  begin
-    Stream := TInstantStringStream.Create('');
-    try
-      (Attribute as TInstantParts).SaveObjectsToStream(Stream);
-      if Broker.Connector.BlobStreamFormat = sfBinary then
-        AddBlobParam(FieldName, Stream.DataString)
-      else
-        AddMemoParam(FieldName, Stream.DataString);
-    finally
-      Stream.Free;
-    end;
-  end;
-
-  procedure AddReferenceAttributeParams;
-  var
-    Reference: TInstantReference;
-  begin
-    Reference := Attribute as TInstantReference;
-    AddStringParam(Params, FieldName + InstantClassFieldName,
-      Reference.ObjectClassName);
-    AddIdParam(Params, FieldName + InstantIdFieldName, Reference.ObjectId);
-  end;
-
-  procedure AddReferencesAttributeParam;
-  var
-    Stream: TInstantStringStream;
-  begin
-    Stream := TInstantStringStream.Create('');
-    try
-      (Attribute as TInstantReferences).SaveReferencesToStream(Stream);
-      if Broker.Connector.BlobStreamFormat = sfBinary then
-        AddBlobParam(FieldName, Stream.DataString)
-      else
-        AddMemoParam(FieldName, Stream.DataString);
-    finally
-      Stream.Free;
-    end;
-  end;
-
-  procedure AddStringAttributeParam;
-  begin
-    AddStringParam(Params, FieldName, (Attribute as TInstantString).Value);
-  end;
-
-begin
-  FieldName := Attribute.Metadata.FieldName;
-  case Attribute.Metadata.AttributeType of
-    atBlob, atGraphic:
-      AddBlobAttributeParam;
-    atBoolean:
-      AddBooleanAttributeParam;
-    atDateTime:
-      AddDateTimeAttributeParam;
-    atFloat:
-      AddFloatAttributeParam;
-    atCurrency:
-      AddCurrencyAttributeParam;
-    atInteger:
-      AddIntegerAttributeParam;
-    atMemo:
-      AddMemoAttributeParam;
-    atPart:
-      AddPartAttributeParam;
-    atParts:
-      AddPartsAttributeParam;
-    atReference:
-      AddReferenceAttributeParams;
-    atReferences:
-      AddReferencesAttributeParam;
-    atString:
-      AddStringAttributeParam;
-  end;
-end;
-
-procedure TInstantSQLResolver.AddAttributeParams(Params: TParams;
-  AObject: TInstantObject; Map: TInstantAttributeMap);
-var
-  I: Integer;
-  Attribute: TInstantAttribute;
-begin
-  if Assigned(Params) and Assigned(AObject) and Assigned(Map) then
-    for I := 0 to Pred(Map.Count) do
-    begin
-      Attribute := AObject.AttributeByName(Map[I].Name); 
-      if (Attribute.Metadata.StorageKind = skEmbedded) or
-         ((Attribute.Metadata.StorageKind = skExternal) and (Attribute.Metadata.AttributeType = atPart)) then
-        AddAttributeParam(Attribute, Params);
-    end;
-end;
-
-procedure TInstantSQLResolver.AddBaseParams(Params: TParams; AClassName,
-  AObjectId: string; AUpdateCount: Integer);
-begin
-  if Assigned(Params) then
-  begin
-    AddStringParam(Params, InstantClassFieldName, AClassName);
-    AddIdParam(Params, InstantIdFieldName, AObjectId);
-    if AUpdateCount <> -1 then
-      AddIntegerParam(Params, InstantUpdateCountFieldName, AUpdateCount);
-  end;
-end;
-
-procedure TInstantSQLResolver.AddConcurrencyParam(Params: TParams;
-  AUpdateCount: Integer);
-begin
-  AddIntegerParam(Params, ConcurrencyParamName, AUpdateCount);
-end;
-
-procedure TInstantSQLResolver.AddIntegerParam(Params: TParams;
-  const ParamName: string; Value: Integer);
-begin
-  AddParam(Params, ParamName, ftInteger).AsInteger := Value;
-end;
-
-function TInstantSQLResolver.AddParam(Params: TParams;
-  const ParamName: string; ADataType: TFieldType): TParam;
-begin
-  Result := TParam(Params.Add);
-  Result.Name := ParamName;
-  Result.DataType := ADataType;
-end;
-
-procedure TInstantSQLResolver.AddPersistentIdParam(Params: TParams;
-  APersistentId: string);
-begin
-  AddIdParam(Params, PersistentIdParamName, APersistentId);
-end;
-
-procedure TInstantSQLResolver.AddStringParam(Params: TParams;
-  const ParamName, Value: string);
-var
-  Param: TParam;
-begin
-  Param := AddParam(Params, ParamName, ftString);
-  if Value <> '' then
-    Param.AsString := Value;
-end;
-
-procedure TInstantSQLResolver.AddIdParam(Params: TParams;
-  const ParamName, Value: string);
-var
-  Param: TParam;
-begin
-  Param := AddParam(Params, ParamName, InstantDataTypeToFieldType(Broker.Connector.IdDataType));
-  if Value <> '' then
-    Param.Value := Value;
-end;
-
-procedure TInstantSQLResolver.CheckConflict(Info: PInstantOperationInfo;
- AObject: TInstantObject);
-begin
-  if Info.Conflict then
-    raise EInstantConflict.CreateFmt(SUpdateConflict,
-      [AObject.ClassName, AObject.Id]);
-end;
-
-constructor TInstantSQLResolver.Create(ABroker: TInstantSQLBroker;
-  AMap: TInstantAttributeMap);
-begin
-  if not Assigned(AMap) then
-    raise EInstantError.Create(SUnassignedMap);
-  inherited Create(ABroker);
-  FMap := AMap;
-end;
-
-function TInstantSQLResolver.ExecuteStatement(const AStatement: string;
-  AParams: TParams; Info: PInstantOperationInfo;
-  ConflictAction: TInstantConflictAction; AObject: TInstantObject): Integer;
-var
-  TransError: Exception;
-begin
-  {$IFDEF IO_STATEMENT_LOGGING}
-  InstantLogStatement('Before: ', AStatement, AParams);
-  {$ENDIF}
-  try
-    Result := Broker.Execute(AStatement, AParams);
-    Info.Success := Result >= 1;
-    Info.Conflict := not (Info.Success or (ConflictAction = caIgnore));
-  except
-    on EAbort do
-      raise;
-    on E: Exception do
-    begin
-      TransError := TranslateError(AObject, E);
-      if Assigned(TransError) then
-        raise TransError
-      else
-        raise;
-    end;
-  end;
-end;
-
-function TInstantSQLResolver.GetBroker: TInstantSQLBroker;
-begin
-  Result := inherited Broker as TInstantSQLBroker;
-end;
-
-function TInstantSQLResolver.GetDeleteConcurrentSQL: string;
-begin
-  if FDeleteConcurrentSQL = '' then
-    FDeleteConcurrentSQL := Broker.Generator.GenerateDeleteConcurrentSQL(Map);
-  Result := FDeleteConcurrentSQL;
-end;
-
-function TInstantSQLResolver.GetDeleteSQL: string;
-begin
-  if FDeleteSQL = '' then
-    FDeleteSQL := Broker.Generator.GenerateDeleteSQL(Map);
-  Result := FDeleteSQL;
-end;
-
-function TInstantSQLResolver.GetDeleteExternalSQL: string;
-begin
-  if FDeleteExternalSQL = '' then
-    FDeleteExternalSQL := Broker.Generator.GenerateDeleteExternalSQL(Map);
-  Result := FDeleteExternalSQL;
-end;
-
-function TInstantSQLResolver.GetInsertSQL: string;
-begin
-  if FInsertSQL = '' then
-    FInsertSQL := Broker.Generator.GenerateInsertSQL(Map);
-  Result := FInsertSQL;
-end;
-
-function TInstantSQLResolver.GetInsertExternalSQL: string;
-begin
-  if FInsertExternalSQL = '' then
-    FInsertExternalSQL := Broker.Generator.GenerateInsertExternalSQL(Map);
-  Result := FInsertExternalSQL;
-end;
-
-function TInstantSQLResolver.GetSelectSQL: string;
-begin
-  if FSelectSQL = '' then
-    FSelectSQL := Broker.Generator.GenerateSelectSQL(Map);
-  Result := FSelectSQL;
-end;
-
-function TInstantSQLResolver.GetSelectExternalSQL: string;
-begin
-  if FSelectExternalSQL = '' then
-    FSelectExternalSQL := Broker.Generator.GenerateSelectExternalSQL(Map);
-  Result := FSelectExternalSQL;
-end;
-
-function TInstantSQLResolver.GetSelectExternalPartSQL: string;
-begin
-  if FSelectExternalPartSQL = '' then
-    FSelectExternalPartSQL := Broker.Generator.GenerateSelectExternalPartSQL(Map);
-  Result := FSelectExternalPartSQL;
-end;
-
-function TInstantSQLResolver.GetUpdateConcurrentSQL: string;
-begin
-  if FUpdateConcurrentSQL = '' then
-    FUpdateConcurrentSQL := Broker.Generator.GenerateUpdateConcurrentSQL(Map);
-  Result := FUpdateConcurrentSQL;
-end;
-
-function TInstantSQLResolver.GetUpdateSQL: string;
-begin
-  if FUpdateSQL = '' then
-    FUpdateSQL := Broker.Generator.GenerateUpdateSQL(Map);
-  Result := FUpdateSQL;
-end;
-
-procedure TInstantSQLResolver.InternalDisposeMap(AObject: TInstantObject;
-  Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
-  Info: PInstantOperationInfo);
-var
-  Params: TParams;
-  Statement: string;
-  AInfo: TInstantOperationInfo;
-
-  procedure DeleteExternalPartMap;
-  var
-    i: Integer;
-    PartObject: TInstantObject;
-    SelectParams: TParams;
-    SelectStatement: string;
-    AttributeMetadata: TInstantAttributeMetadata;
-    DataSet: TDataSet;
-  begin
-    for i := 0 to Pred(Map.Count) do
-    begin
-      AttributeMetadata := Map[i];
-      if (AttributeMetadata.AttributeType = atPart) and
-          (AttributeMetadata.StorageKind = skExternal) then
-      begin
-        // Dispose object
-        SelectParams := TParams.Create;
-        try
-          SelectStatement := Format(SelectExternalPartSQL,
-            [AttributeMetadata.FieldName + InstantClassFieldName,
-             AttributeMetadata.FieldName + InstantIdFieldName,
-             AttributeMetadata.ClassMetadata.TableName]);
-          AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-          AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-          DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-          try
-            DataSet.Open;
-            try
-              if not DataSet.IsEmpty then
-              begin
-                PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                  DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                try
-                  if Assigned(PartObject) then
-                    PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                finally
-                  PartObject.Free;
-                end;
-              end;
-            finally
-              DataSet.Close;
-            end;
-          finally
-            Broker.ReleaseDataSet(DataSet);
-          end;
-        finally
-          SelectParams.Free;
-        end;
-      end;
-    end;
-  end;
-
-  procedure DeleteAllExternalLinks(Index: Integer);
-  var
-    LinkResolver: TInstantSQLLinkResolver;
-  begin
-    LinkResolver := TInstantSQLLinkResolver.Create(Self,
-        Map[Index].ExternalStorageName, AObject);
-    try
-      LinkResolver.ClearAttributeLinkRecords;
-    finally
-      LinkResolver.Free;
-    end;
-  end;
-
-  procedure DeleteExternalContainerMaps;
-  var
-    i: Integer;
-    j: Integer;
-    AttributeMetadata: TInstantAttributeMetadata;
-    Attribute: TInstantContainer;
-  begin
-    for i := 0 to Pred(Map.Count) do
-    begin
-      AttributeMetadata := Map[i];
-      if (AttributeMetadata.AttributeType in [atParts, atReferences]) and
-              (AttributeMetadata.StorageKind = skExternal) then
-      begin
-        if AttributeMetadata.AttributeType = atParts then
-        begin
-          // Dispose all contained objects
-          Attribute := TInstantContainer(AObject.AttributeByName(
-              AttributeMetadata.Name));
-          for j := 0 to Pred(Attribute.Count) do
-            Attribute.Items[j].ObjectStore.DisposeObject(
-                Attribute.Items[j], caIgnore);
-        end;
-
-        DeleteAllExternalLinks(i);
-      end;
-    end;
-  end;
-
-begin
-  if not Assigned(Info) then
-    Info := @AInfo;
-  DeleteExternalPartMap;
-  DeleteExternalContainerMaps;
-  Params := TParams.Create;
-  try
-    AddBaseParams(Params, AObject.ClassName, AObject.PersistentId);
-    if Map.IsRootMap and (ConflictAction = caFail) then
-    begin
-      Statement := DeleteConcurrentSQL;
-      AddConcurrencyParam(Params, AObject.UpdateCount);
-      ExecuteStatement(Statement, Params, Info, ConflictAction, AObject);
-      CheckConflict(Info, AObject);
-    end else
-    begin
-      Statement := DeleteSQL;
-      ExecuteStatement(Statement, Params, Info, ConflictAction, AObject)
-    end;
-  finally
-    Params.Free;
-  end;
-end;
-
-procedure TInstantSQLResolver.InternalRetrieveMap(AObject: TInstantObject;
-  const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-
-  procedure ResetAttributes;
-  var
-    I: Integer;
-  begin
-    for I := 0 to Pred(Map.Count) do
-      AObject.AttributeByName(Map[I].Name).Reset
-  end;
-
-var
-  DataSet: TDataSet;
-  Params: TParams;
-  AInfo: TInstantOperationInfo;
-begin
-  if not Assigned(Info) then
-    Info := @AInfo;
-  Params := TParams.Create;
-  try
-    AddBaseParams(Params, AObject.ClassName, AObjectId);
-    DataSet := Broker.AcquireDataSet(SelectSQL, Params);
-    try
-      DataSet.Open;
-      Info.Success := not DataSet.EOF;
-      Info.Conflict := not Info.Success;
-      if Info.Success then
-      begin
-        if Map.IsRootMap then
-          Broker.SetObjectUpdateCount(AObject, DataSet.FieldByName(InstantUpdateCountFieldName).AsInteger);
-        ReadAttributes(AObject, AObjectId, Map, DataSet);
-      end else
-        ResetAttributes;
-    finally
-      Broker.ReleaseDataSet(DataSet);
-    end;
-  finally
-    Params.Free;
-  end;
-end;
-
-procedure TInstantSQLResolver.InternalStoreMap(AObject: TInstantObject;
-  Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
-  Info: PInstantOperationInfo);
-var
-  Params: TParams;
-  AInfo: TInstantOperationInfo;
-  NewUpdateCount, RowsAffected: Integer;
-
-  procedure InsertMap;
-  begin
-    if AObject.IsPersistent then
-    begin
-      RemoveConcurrencyParam(Params);
-      RemovePersistentIdParam(Params);
-    end;
-    RowsAffected := ExecuteStatement(InsertSQL, Params, Info, ConflictAction, AObject);
-  end;
-
-  procedure UpdateMap;
-  var
-    Statement: string;
-  begin
-    AddPersistentIdParam(Params, AObject.PersistentId);
-    if Map.IsRootMap and (ConflictAction = caFail) then
-    begin
-      Statement := UpdateConcurrentSQL;
-      AddConcurrencyParam(Params, AObject.UpdateCount);
-      ExecuteStatement(Statement, Params, Info, ConflictAction, AObject);
-      CheckConflict(Info, AObject);
-    end else
-    begin
-      Statement := UpdateSQL;
-      ExecuteStatement(Statement, Params, Info, ConflictAction, AObject);
-    end;
-    if not Info.Success then
-      InsertMap;
-  end;
-
-  procedure UpdateExternalPartMap;
-  var
-    i: Integer;
-    PartObject: TInstantObject;
-    PartAttribute: TInstantPart;
-    AttributeMetadata: TInstantAttributeMetadata;
-    SelectParams: TParams;
-    SelectStatement: string;
-    DataSet: TDataSet;
-  begin
-    for i := 0 to Pred(Map.Count) do
-    begin
-      AttributeMetadata := Map[i];
-      if AttributeMetadata.AttributeType = atPart then
-      begin
-        PartAttribute := TInstantPart(AObject.AttributeByName(AttributeMetadata.Name));
-        if PartAttribute.IsChanged or not PartAttribute.Value.IsPersistent then
-        begin
-          if Map[i].StorageKind = skExternal then
-          begin
-            // Delete object
-            SelectParams := TParams.Create;
-            try
-              SelectStatement := Format(SelectExternalPartSQL,
-                [AttributeMetadata.FieldName + InstantClassFieldName,
-                 AttributeMetadata.FieldName + InstantIdFieldName,
-                 AttributeMetadata.ClassMetadata.TableName]);
-              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
-              AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
-              DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
-              try
-                DataSet.Open;
-                try
-                  if not DataSet.IsEmpty then
-                  begin
-                    PartObject := AttributeMetadata.ObjectClass.Retrieve(
-                      DataSet.Fields[1].AsString, False, False, AObject.Connector);
-                    try
-                      if Assigned(PartObject) then
-                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-                    finally
-                      PartObject.Free;
-                    end;
-                  end;
-                finally
-                  DataSet.Close;
-                end;
-              finally
-                Broker.ReleaseDataSet(DataSet);
-              end;
-            finally
-              SelectParams.Free;
-            end;
-
-            // Store object
-            PartObject := PartAttribute.Value;
-            PartObject.CheckId;
-            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
-          end;
-        end;
-      end;
-    end;
-  end;
-
-  procedure UpdateExternalContainerMaps;
-  var
-    I: Integer;
-    AttributeMetadata: TInstantAttributeMetadata;
-    LinkResolver: TInstantSQLLinkResolver;
-    Attribute: TInstantContainer;
-  begin
-    for I := 0 to Pred(Map.Count) do
-    begin
-      AttributeMetadata := Map[I];
-      if AttributeMetadata.AttributeType in [atParts, atReferences] then
-      begin
-        Attribute := TInstantContainer(AObject.AttributeByName(
-            AttributeMetadata.Name));
-        if Attribute.IsChanged and
-            (AttributeMetadata.StorageKind = skExternal) then
-        begin
-          LinkResolver := TInstantSQLLinkResolver.Create(Self,
-              AttributeMetadata.ExternalStorageName, AObject);
-          try
-            if AttributeMetadata.AttributeType = atParts then
-              LinkResolver.DisposeDeletedAttributeObjects(Attribute);
-            LinkResolver.ClearAttributeLinkRecords;
-            LinkResolver.StoreAttributeObjects(Attribute);
-          finally
-            LinkResolver.Free;
-          end;
-        end;
-      end;
-    end;
-  end;
-
-begin
-  if not Assigned(Info) then
-    Info := @AInfo;
-  Params := TParams.Create;
-  try
-    if Map.IsRootMap then
-      if ConflictAction = caIgnore then
-      begin
-        Randomize;
-        NewUpdateCount := Random(High(Integer)) + 1;
-      end else if AObject.UpdateCount = High(Integer) then
-        NewUpdateCount := 1
-      else
-        NewUpdateCount := AObject.UpdateCount + 1
-    else
-      NewUpdateCount := AObject.UpdateCount;
-    AddBaseParams(Params, AObject.ClassName, AObject.Id, NewUpdateCount);
-    AddAttributeParams(Params, AObject, Map);
-    UpdateExternalPartMap;
-    if AObject.IsPersistent then
-      UpdateMap
-    else
-      InsertMap;
-    if Map.IsRootMap then
-      Broker.SetObjectUpdateCount(AObject, NewUpdateCount);
-
-    UpdateExternalContainerMaps;
-  finally
-    Params.Free;
-  end;
-end;
-
-procedure TInstantSQLResolver.ReadAttribute(AObject: TInstantObject;
-  const AObjectId: string; AttributeMetadata: TInstantAttributeMetadata;
-  DataSet: TDataSet);
-var
-  Attribute: TInstantAttribute;
-  AFieldName: string;
-
-  procedure ReadBlobAttribute;
-  begin
-    (Attribute as TInstantBlob).Value := ReadBlobField(DataSet, AFieldName);
-  end;
-
-  procedure ReadBooleanAttribute;
-  begin
-    (Attribute as TInstantBoolean).Value :=
-      ReadBooleanField(DataSet, AFieldName);
-  end;
-
-  procedure ReadDateTimeAttribute;
-  begin
-    (Attribute as TInstantDateTime).Value :=
-      ReadDateTimeField(DataSet, AFieldName);
-  end;
-
-  procedure ReadFloatAttribute;
-  begin
-    (Attribute as TInstantFloat).Value := ReadFloatField(DataSet, AFieldName);
-  end;
-
-  procedure ReadCurrencyAttribute;
-  begin
-    (Attribute as TInstantCurrency).Value := ReadCurrencyField(DataSet, AFieldName);
-  end;
-
-  procedure ReadIntegerAttribute;
-  begin
-    (Attribute as TInstantInteger).Value :=
-      ReadIntegerField(DataSet, AFieldName);
-  end;
-
-  procedure ReadMemoAttribute;
-  begin
-    (Attribute as TInstantMemo).Value := ReadMemoField(DataSet, AFieldName);
-  end;
-
-  procedure ReadPartAttribute;
-  var
-    Stream: TInstantStringStream;
-    LPartClassName: string;
-    LPartId: string;
-  begin
-    if AttributeMetadata.StorageKind = skExternal then
-    begin
-      with (Attribute as TInstantPart) do
-      begin
-        // Must clear Value first to avoid leak for Refresh operation
-        // as OldValue = NewValue.
-        Value := nil;
-        LPartClassName := ReadStringField(DataSet, AFieldName +
-          InstantClassFieldName);
-        LPartId := ReadStringField(DataSet, AFieldName +
-          InstantIdFieldName);
-        // LPartClassName and LPartId will be empty if the attribute was
-        // added to a class with existing instances in the database.
-        if (LPartClassName = '') and (LPartId = '') then
-           (Attribute as TInstantPart).Reset
-        else
-          Value := InstantFindClass(LPartClassName).Retrieve(LPartId,
-            False, False, AObject.Connector);
-      end;
-    end
-    else
-    begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet,
-        AFieldName));
-      try
-        if Stream.Size = 0 then
-          (Attribute as TInstantPart).Reset
-        else
-          (Attribute as TInstantPart).LoadObjectFromStream(Stream);
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-
-  procedure ReadPartsAttribute;
-  var
-    Stream: TInstantStringStream;
-    LinkResolver: TInstantSQLLinkResolver;
-  begin
-    if AttributeMetadata.StorageKind = skExternal then
-    begin
-      with (Attribute as TInstantParts) do
-      begin
-        Clear;
-        LinkResolver := TInstantSQLLinkResolver.Create(Self,
-            AttributeMetadata.ExternalStorageName, AObject);
-        try
-          LinkResolver.ReadAttributeObjects(TInstantParts(Attribute),
-              AObjectId);
-        finally
-          LinkResolver.Free;
-        end;
-      end;
-    end
-    else
-    begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
-      try
-        if Stream.Size = 0 then
-          (Attribute as TInstantParts).Reset
-        else
-          (Attribute as TInstantParts).LoadObjectsFromStream(Stream);
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-
-  procedure ReadReferenceAttribute;
-  begin
-    (Attribute as TInstantReference).ReferenceObject(
-      ReadStringField(DataSet, AFieldName + InstantClassFieldName),
-      ReadStringField(DataSet, AFieldName + InstantIdFieldName));
-  end;
-
-  procedure ReadReferencesAttribute;
-  var
-    Stream: TInstantStringStream;
-    LinkResolver: TInstantSQLLinkResolver;
-  begin
-    if AttributeMetadata.StorageKind = skExternal then
-    begin
-      with (Attribute as TInstantReferences) do
-      begin
-        Clear;
-        LinkResolver := TInstantSQLLinkResolver.Create(Self,
-            AttributeMetadata.ExternalStorageName, AObject);
-        try
-          LinkResolver.ReadAttributeObjects(TInstantReferences(Attribute),
-              AObjectId);
-        finally
-          LinkResolver.Free;
-        end;
-      end;
-    end
-    else
-    begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
-      try
-        if Stream.Size = 0 then
-          (Attribute as TInstantReferences).Reset
-        else
-          (Attribute as TInstantReferences).LoadReferencesFromStream(Stream);
-      finally
-        Stream.Free;
-      end;
-    end;
-  end;
-
-  procedure ReadStringAttribute;
-  begin
-    (Attribute as TInstantString).Value :=
-      ReadStringField(DataSet, AFieldName);
-  end;
-
-begin
-  with AttributeMetadata do
-  begin
-    Attribute := AObject.AttributeByName(Name);
-    AFieldName := FieldName;
-    case AttributeType of
-      atInteger:
-        ReadIntegerAttribute;
-      atFloat:
-        ReadFloatAttribute;
-      atCurrency:
-        ReadCurrencyAttribute;
-      atBoolean:
-        ReadBooleanAttribute;
-      atString:
-        ReadStringAttribute;
-      atDateTime:
-        ReadDateTimeAttribute;
-      atBlob, atGraphic:
-        ReadBlobAttribute;
-      atMemo:
-        ReadMemoAttribute;
-      atPart:
-        ReadPartAttribute;
-      atReference:
-        ReadReferenceAttribute;
-      atParts:
-        ReadPartsAttribute;
-      atReferences:
-        ReadReferencesAttribute;
-    end;
-  end;
-end;
-
-procedure TInstantSQLResolver.ReadAttributes(AObject: TInstantObject;
-  const AObjectId: string; Map: TInstantAttributeMap; DataSet: TDataSet);
-var
-  I: Integer;
-begin
-  if Assigned(AObject) and Assigned(Map) and Assigned(DataSet) then
-    for I := 0 to Pred(Map.Count) do
-      ReadAttribute(AObject, AObjectId, Map[I], DataSet);
-end;
-
-function TInstantSQLResolver.ReadBlobField(DataSet: TDataSet;
-  const FieldName: string): string;
-begin
-  Result := DataSet.FieldByName(FieldName).AsString
-end;
-
-function TInstantSQLResolver.ReadBooleanField(DataSet: TDataSet;
-  const FieldName: string): Boolean;
-begin
-  Result := DataSet.FieldByName(FieldName).AsBoolean;
-end;
-
-function TInstantSQLResolver.ReadDateTimeField(DataSet: TDataSet;
-  const FieldName: string): TDateTime;
-begin
-  Result := DataSet.FieldByName(FieldName).AsDateTime;
-end;
-
-function TInstantSQLResolver.ReadFloatField(DataSet: TDataSet;
-  const FieldName: string): Double;
-begin
-  Result := DataSet.FieldByName(FieldName).AsFloat;
-end;
-
-function TInstantSQLResolver.ReadCurrencyField(DataSet: TDataSet;
-  const FieldName: string): Currency;
-begin
-  Result := DataSet.FieldByName(FieldName).AsCurrency;
-end;
-
-function TInstantSQLResolver.ReadIntegerField(DataSet: TDataSet;
-  const FieldName: string): Integer;
-begin
-  Result := DataSet.FieldByName(FieldName).AsInteger;
-end;
-
-function TInstantSQLResolver.ReadMemoField(DataSet: TDataSet;
-  const FieldName: string): string;
-begin
-  Result := TrimRight(DataSet.FieldByName(FieldName).AsString);
-end;
-
-function TInstantSQLResolver.ReadStringField(DataSet: TDataSet;
-  const FieldName: string): string;
-begin
-  Result := TrimRight(DataSet.FieldByName(FieldName).AsString);
-end;
-
-procedure TInstantSQLResolver.RemoveConcurrencyParam(Params: TParams);
-var
-  Param: TParam;
-begin
-  Param := Params.FindParam(ConcurrencyParamName);
-  if Assigned(Param) then
-    Params.Delete(Param.Index);
-end;
-
-procedure TInstantSQLResolver.RemovePersistentIdParam(Params: TParams);
-var
-  Param: TParam;
-begin
-  Param := Params.FindParam(PersistentIdParamName);
-  if Assigned(Param) then
-    Params.Delete(Param.Index);
-end;
-
-function TInstantSQLResolver.TranslateError(AObject: TInstantObject;
-  E: Exception): Exception;
-begin
-  Result := nil;
-end;
-
-{ TInstantSQLQuery }
-
-function TInstantSQLQuery.AcquireDataSet(const AStatement: string;
-  AParams: TParams): TDataSet;
-begin
-  Result := (Connector.Broker as TInstantSQLBroker).AcquireDataSet(AStatement,
-    AParams);
-end;
-
-procedure TInstantSQLQuery.ReleaseDataSet(const DataSet: TDataSet);
-begin
-  (Connector.Broker as TInstantSQLBroker).ReleaseDataSet(DataSet);
-end;
-
-destructor TInstantSQLQuery.Destroy;
-begin
-  DestroyObjectReferenceList;
-  FParamsObject.Free;
-  inherited;
-end;
-
-procedure TInstantSQLQuery.DestroyObjectReferenceList;
-begin
-  FreeAndNil(FObjectReferenceList);
-end;
-
-function TInstantSQLQuery.GetActive: Boolean;
-begin
-  Result := Assigned(FObjectReferenceList);
-end;
-
-function TInstantSQLQuery.GetObjectReferenceCount: Integer;
-begin
-  Result := ObjectReferenceList.Count;
-end;
-
-function TInstantSQLQuery.GetObjectReferenceList: TInstantObjectReferenceList;
-begin
-  if not Assigned(FObjectReferenceList) then
-    FObjectReferenceList :=
-        TInstantObjectReferenceList.Create(True, Connector);
-  Result := FObjectReferenceList;
-end;
-
-function TInstantSQLQuery.GetParams: TParams;
-begin
-  Result := ParamsObject;
-end;
-
-function TInstantSQLQuery.GetParamsObject: TParams;
-begin
-  if not Assigned(FParamsObject) then
-    FParamsObject := TParams.Create;
-  Result := FParamsObject;
-end;
-
-function TInstantSQLQuery.GetStatement: string;
-begin
-  Result := FStatement;
-end;
-
-procedure TInstantSQLQuery.InitObjectReferences(DataSet: TDataSet);
-var
-  ObjRef: TInstantObjectReference;
-begin
-  if Assigned(DataSet) then
-  begin
-    DataSet.DisableControls;
-    try
-      while not DataSet.Eof do
-      begin
-        ObjRef := ObjectReferenceList.Add;
-        try
-          ObjRef.ReferenceObject(
-            DataSet.FieldByName(InstantClassFieldName).AsString,
-            DataSet.FieldByName(InstantIdFieldName).AsString);
-        except
-          ObjRef.Free;
-          raise;
-        end;
-        if (MaxCount > 0) and (ObjectReferenceList.Count = MaxCount) then break;
-        DataSet.Next;
-      end;
-    finally
-      DataSet.EnableControls;
-    end;
-  end;
-end;
-
-function TInstantSQLQuery.InternalAddObject(AObject: TObject): Integer;
-begin
-  Result := ObjectReferenceList.Add(AObject as TInstantObject);
-end;
-
-procedure TInstantSQLQuery.InternalClose;
-begin
-  DestroyObjectReferenceList;
-  inherited;
-end;
-
-procedure TInstantSQLQuery.InternalGetInstantObjectRefs(List:
-    TInstantObjectReferenceList);
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(ObjectReferenceCount) do
-    if ObjectReferenceList.RefItems[I].HasInstance then
-      List.Add(ObjectReferenceList[I]);
-end;
-
-function TInstantSQLQuery.InternalGetObjectCount: Integer;
-begin
-  Result := ObjectReferenceCount;
-end;
-
-function TInstantSQLQuery.InternalGetObjects(Index: Integer): TObject;
-begin
-  Result := ObjectReferenceList[Index];
-end;
-
-function TInstantSQLQuery.InternalIndexOfObject(AObject: TObject): Integer;
-begin
-  if AObject is TInstantObject then
-    Result := ObjectReferenceList.IndexOf(TInstantObject(AObject))
-  else
-    Result := -1;
-end;
-
-procedure TInstantSQLQuery.InternalInsertObject(Index: Integer;
-  AObject: TObject);
-begin
-  ObjectReferenceList.Insert(Index, AObject as TInstantObject);
-end;
-
-procedure TInstantSQLQuery.InternalOpen;
-var
-  DataSet: TDataSet;
-begin
-  inherited;
-  DataSet := AcquireDataSet(Statement, ParamsObject);
-  if Assigned(DataSet) then
-  try
-    if not DataSet.Active then
-      DataSet.Open;
-    InitObjectReferences(DataSet);
-  finally
-    ReleaseDataSet(DataSet);
-  end;
-end;
-
-procedure TInstantSQLQuery.InternalReleaseObject(AObject: TObject);
-var
-  Index: Integer;
-begin
-  Index := IndexOfObject(AObject);
-  if Index <> -1 then
-    ObjectReferenceList.RefItems[Index].DestroyInstance;
-end;
-
-function TInstantSQLQuery.InternalRemoveObject(AObject: TObject): Integer;
-begin
-  Result := ObjectReferenceList.Remove(AObject as TInstantObject);
-end;
-
-function TInstantSQLQuery.ObjectFetched(Index: Integer): Boolean;
-begin
-  Result := ObjectReferenceList.RefItems[Index].HasInstance;
-end;
-
-procedure TInstantSQLQuery.SetParams(Value: TParams);
-begin
-  ParamsObject.Assign(Value);
-end;
-
-procedure TInstantSQLQuery.SetStatement(const Value: string);
-begin
-  FStatement := Value;
 end;
 
 { TInstantObjectNotifier }
@@ -15435,120 +8012,6 @@ begin
   Result := atGraphic;
 end;
 
-{ TInstantStatementCache }
-
-constructor TInstantStatementCache.Create(AOwner: TComponent);
-begin
-  inherited Create(AOwner);
-  FStatements := TStringList.Create;
-  FStatements.Sorted := True;
-  FStatements.Duplicates := dupError;
-  FCapacity := 0;
-end;
-
-destructor TInstantStatementCache.Destroy;
-begin
-  DeleteAllStatements;
-  FStatements.Free;
-  inherited;
-end;
-
-function TInstantStatementCache.AddStatement(const StatementText: string;
-  const StatementImplementation: TComponent): Integer;
-var
-  StatementObject: TInstantStatement;
-begin
-  if Assigned(StatementImplementation) then
-  begin
-    Shrink;
-    StatementObject := TInstantStatement.Create(StatementImplementation);
-    Result := FStatements.AddObject(StatementText, StatementObject);
-    StatementImplementation.FreeNotification(Self);
-  end
-  else
-    Result := -1;
-end;
-
-function TInstantStatementCache.RemoveStatement(const StatementText: string): Boolean;
-var
-  Index: Integer;
-begin
-  Index := FStatements.IndexOf(StatementText);
-  if Index >= 0 then
-  begin
-    DeleteStatement(Index);
-    Result := True;
-  end
-  else
-    Result := False;
-end;
-
-function TInstantStatementCache.GetStatement(const StatementText: string): TInstantStatement;
-var
-  Index: Integer;
-begin
-  Index := FStatements.IndexOf(StatementText);
-  if Index >= 0 then
-    Result := TInstantStatement(FStatements.Objects[Index])
-  else
-    Result := nil;
-end;
-
-procedure TInstantStatementCache.Notification(AComponent: TComponent; Operation: TOperation);
-var
-  I: Integer;
-begin
-  inherited;
-  if Operation = opRemove then
-    for I := FStatements.Count - 1 downto 0 do
-      if TInstantStatement(FStatements.Objects[I]).StatementImplementation = AComponent then
-        DeleteStatement(I);
-end;
-
-procedure TInstantStatementCache.DeleteStatement(const Index: Integer);
-var
-  AObject: TObject;
-begin
-  // Avoid looping with Notification.
-  AObject := FStatements.Objects[Index];
-  FStatements.Delete(Index);
-  AObject.Free;
-end;
-
-procedure TInstantStatementCache.DeleteAllStatements;
-var
-  I: Integer;
-begin
-  for I := FStatements.Count - 1 downto 0 do
-    DeleteStatement(I);
-end;
-
-procedure TInstantStatementCache.SetCapacity(const Value: Integer);
-begin
-  FCapacity := Value;
-  Shrink;
-end;
-
-procedure TInstantStatementCache.Shrink;
-begin
-  // TODO : implement a shrink policy here when the cache can be limited in size.
-  // currently the cache is always unlimited if enabled (Capacity <> 0).
-end;
-
-{ TInstantStatement }
-
-constructor TInstantStatement.Create(const AStatementImplementation: TComponent);
-begin
-  inherited Create;
-  FStatementImplementation := AStatementImplementation;
-end;
-
-destructor TInstantStatement.Destroy;
-begin
-  FStatementImplementation.Free;
-  inherited;
-end;
-
 { TInstantDBBuildCommand }
 
 constructor TInstantDBBuildCommand.Create(
@@ -15606,186 +8069,11 @@ begin
   Result := False;
 end;
 
-{ TInstantBrokerCatalog }
-
-constructor TInstantBrokerCatalog.Create(const AScheme: TInstantScheme;
-  const ABroker: TInstantBroker);
-begin
-  inherited Create(AScheme);
-  FBroker := ABroker;
-end;
-
-function TInstantBrokerCatalog.GetBroker: TInstantBroker;
-begin
-  if not Assigned(FBroker) then
-    raise EInstantError.Create(SUnassignedBroker);
-  Result := FBroker;
-end;
-
-{ TInstantModelCatalog }
-
-constructor TInstantModelCatalog.Create(const AScheme: TInstantScheme;
-  const AModel: TInstantModel);
-begin
-  inherited Create(AScheme);
-  FModel := AModel;
-end;
-
-procedure TInstantModelCatalog.InitTableMetadatas(ATableMetadatas:
-  TInstantTableMetadatas);
-var
-  Maps: TInstantAttributeMaps;
-  I: Integer;
-
-  procedure AddMap(Map: TInstantAttributeMap);
-  var
-    I: Integer;
-    TableMetadata: TInstantTableMetadata;
-    AttributeMetadata: TInstantAttributeMetadata;
-    Options: TInstantFieldOptions;
-
-    // Adds a table metadata definition matching AttributeMetadata, which
-    // must have StorageKind = skEmbedded.
-    procedure AddExternalTableMetadata;
-    var
-      TableMetadata: TInstantTableMetadata;
-    begin
-      TableMetadata := ATableMetadatas.Add;
-      with TableMetadata do
-      begin
-        Name := AttributeMetadata.ExternalStorageName;
-        // The structure of an external table is fixed.
-        FieldMetadatas.AddFieldMetadata(InstantIdFieldName, Scheme.IdDataType,
-          Scheme.IdSize, [foRequired, foIndexed]);
-        FieldMetadatas.AddFieldMetadata(InstantParentClassFieldName, dtString,
-          InstantDefaultFieldSize);
-        FieldMetadatas.AddFieldMetadata(InstantParentIdFieldName, Scheme.IdDataType,
-          Scheme.IdSize);
-        FieldMetadatas.AddFieldMetadata(InstantChildClassFieldName, dtString,
-          InstantDefaultFieldSize);
-        FieldMetadatas.AddFieldMetadata(InstantChildIdFieldName, Scheme.IdDataType,
-          Scheme.IdSize);
-        FieldMetadatas.AddFieldMetadata(InstantSequenceNoFieldName, dtInteger,
-          InstantDefaultFieldSize);
-        IndexMetadatas.AddIndexMetadata('', InstantIdFieldName,
-          [ixPrimary, ixUnique]);
-      end;
-    end;
-
-  begin
-    TableMetadata := ATableMetadatas.Add;
-    with TableMetadata do
-    begin
-      Name := Map.Name;
-
-      // Class + Id + UpdateCount.
-      FieldMetadatas.AddFieldMetadata(InstantClassFieldName, dtString,
-        InstantDefaultFieldSize, [foRequired, foIndexed]);
-      FieldMetadatas.AddFieldMetadata(InstantIdFieldName, Scheme.IdDataType,
-        Scheme.IdSize, [foRequired, foIndexed]);
-      FieldMetadatas.AddFieldMetadata(InstantUpdateCountFieldName, dtInteger, 0);
-      IndexMetadatas.AddIndexMetadata('', InstantIndexFieldNames,
-        [ixPrimary, ixUnique]);
-
-      // Other.
-      for I := 0 to Pred(Map.Count) do
-      begin
-        Options := [];
-        AttributeMetadata := Map[I];
-        if AttributeMetadata.AttributeType = atReference then
-        begin
-          FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName + InstantClassFieldName,
-            Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize);
-          FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName + InstantIdFieldName,
-            Scheme.IdDataType, Scheme.IdSize);
-        end
-        else if AttributeMetadata.AttributeType = atPart then
-        begin
-          if AttributeMetadata.StorageKind = skEmbedded then
-            FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName,
-              Scheme.AttributeTypeToDataType(AttributeMetadata.AttributeType),
-              AttributeMetadata.Size)
-          else if AttributeMetadata.StorageKind = skExternal then
-          begin
-            FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName + InstantClassFieldName,
-              Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize);
-            FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName + InstantIdFieldName,
-              Scheme.IdDataType, Scheme.IdSize);
-          end;
-        end
-        else if AttributeMetadata.AttributeType in [atParts, atReferences] then
-        begin
-          if AttributeMetadata.StorageKind = skEmbedded then
-            FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName,
-              Scheme.AttributeTypeToDataType(AttributeMetadata.AttributeType),
-              AttributeMetadata.Size)
-          else if AttributeMetadata.StorageKind = skExternal then
-            AddExternalTableMetadata;
-        end
-        else
-        begin
-          if AttributeMetadata.IsIndexed then
-          begin
-            IndexMetadatas.AddIndexMetadata(Map.Name +
-              AttributeMetadata.FieldName, AttributeMetadata.FieldName, []);
-            Options := Options + [foIndexed];
-          end
-          else if AttributeMetadata.IsRequired then
-          begin
-            Options := Options + [foRequired];
-          end;
-          FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName,
-            Scheme.AttributeTypeToDataType(AttributeMetadata.AttributeType),
-            AttributeMetadata.Size, Options);
-        end;
-      end;
-    end;
-  end;
-
-begin
-  Maps := InstantCreateStorageMaps(Model.ClassMetadatas);
-  try
-    if Assigned(Maps) then
-    begin
-      for I := 0 to Pred(Maps.Count) do
-        AddMap(Maps[I]);
-    end;
-  finally
-    Maps.Free;
-  end;
-end;
-
 { TInstantUnsupportedDBBuildCommand }
 
 procedure TInstantUnsupportedDBBuildCommand.InternalExecute;
 begin
   raise EInstantDBBuildError.CreateFmt(SCannotBuildDB, [Description]);
-end;
-
-{ TInstantCatalog }
-
-constructor TInstantCatalog.Create(const AScheme: TInstantScheme);
-begin
-  inherited Create;
-  FScheme := AScheme;
-end;
-
-procedure TInstantCatalog.DoWarning(const WarningText: string);
-begin
-  if Assigned(FOnWarning) then
-    FOnWarning(Self, WarningText);
-end;
-
-function TInstantCatalog.GetFeatures: TInstantCatalogFeatures;
-begin
-  Result := [cfReadTableInfo, cfReadColumnInfo, cfReadIndexInfo];
-end;
-
-{ TInstantSQLBrokerCatalog }
-
-function TInstantSQLBrokerCatalog.GetBroker: TInstantSQLBroker;
-begin
-  Result := inherited Broker as TInstantSQLBroker;
 end;
 
 { TObjectReferenceList }
@@ -15951,460 +8239,573 @@ begin
   end;
 end;
 
-constructor TInstantNavigationalLinkResolver.Create(AResolver:
-    TInstantNavigationalResolver; const ATableName: string);
+
+{ TInstantBroker }
+
+constructor TInstantBroker.Create(AConnector: TInstantConnector);
 begin
-  inherited Create(AResolver);
-  FTableName := ATableName;
+  inherited Create;
+  FConnector := AConnector;
 end;
 
-destructor TInstantNavigationalLinkResolver.Destroy;
+destructor TInstantBroker.Destroy;
 begin
-  FreeDataSet;
   inherited;
 end;
 
-procedure TInstantNavigationalLinkResolver.Append;
+procedure TInstantBroker.BuildDatabase(Scheme: TInstantScheme);
 begin
-  DataSet.Append;
+  InternalBuildDatabase(Scheme);
 end;
 
-procedure TInstantNavigationalLinkResolver.Cancel;
+function TInstantBroker.CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
 begin
-  DataSet.Cancel;
+  Result := nil;
 end;
 
-procedure TInstantNavigationalLinkResolver.Close;
+function TInstantBroker.CreateDBBuildCommand(
+  const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand;
 begin
-  DataSet.Close;
+  Result := TInstantUnsupportedDBBuildCommand.Create(CommandType,
+    Connector);
 end;
 
-procedure TInstantNavigationalLinkResolver.Delete;
+function TInstantBroker.CreateQuery: TInstantQuery;
 begin
-  DataSet.Delete;
+  Result := InternalCreateQuery;
 end;
 
-procedure TInstantNavigationalLinkResolver.Edit;
+function TInstantBroker.DisposeObject(AObject: TInstantObject;
+  ConflictAction: TInstantConflictAction): Boolean;
 begin
-  DataSet.Edit;
+  Result := InternalDisposeObject(AObject, ConflictAction);
 end;
 
-function TInstantNavigationalLinkResolver.Eof: Boolean;
+function TInstantBroker.GetConnector: TInstantConnector;
 begin
-  Result := DataSet.Eof;
+  Result := FConnector;
+  if not Assigned(Result) then
+    raise EInstantError.Create(SUnassignedConnector);
 end;
 
-function TInstantNavigationalLinkResolver.FieldByName(const FieldName: string):
-    TField;
+function TInstantBroker.GetDatabaseName: string;
 begin
-  Result := DataSet.FieldByName(FieldName);
+  Result := '';
 end;
 
-procedure TInstantNavigationalLinkResolver.First;
+procedure TInstantBroker.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
-  Dataset.First;
 end;
 
-procedure TInstantNavigationalLinkResolver.FreeDataSet;
+function TInstantBroker.InternalCreateQuery: TInstantQuery;
 begin
-  if FFreeDataSet then
-    FreeAndNil(FDataSet);
+  Result := TInstantQuery.Create(Connector);
 end;
 
-function TInstantNavigationalLinkResolver.GetBroker: TInstantNavigationalBroker;
+function TInstantBroker.IsCatalogSupported: Boolean;
+var
+  vCatalog: TInstantCatalog;
 begin
-  Result := Resolver.Broker;
-end;
-
-function TInstantNavigationalLinkResolver.GetDataSet: TDataSet;
-begin
-  if not Assigned(FDataSet) then
-  begin
-    Broker.Connector.DoGetDataSet(TableName, FDataSet);
-    if not Assigned(FDataSet) then
-    begin
-      FDataSet := CreateDataSet;
-      FFreeDataSet := True;
-    end;
-    Broker.Connector.DoInitDataSet(TableName, FDataSet);
+  vCatalog := CreateCatalog(nil);
+  try
+    Result := Assigned(vCatalog);
+  finally
+    vCatalog.Free;
   end;
-  Result := FDataSet;
 end;
 
-function TInstantNavigationalLinkResolver.GetResolver:
-    TInstantNavigationalResolver;
+function TInstantBroker.ReadDatabaseScheme(
+  const AWarningEventHandler: TInstantWarningEvent): TInstantScheme;
 begin
-  Result := inherited Resolver as TInstantNavigationalResolver;
+  Result := TInstantScheme.Create;
+  try
+    Result.OnWarning := AWarningEventHandler;
+    Result.Catalog := CreateCatalog(Result);
+    if Result.Catalog = nil then
+      raise Exception.CreateFmt(SUndefinedCatalog, [ClassName]);
+  except
+    Result.Free;
+    raise;
+  end;
 end;
 
-procedure TInstantNavigationalLinkResolver.InternalStoreAttributeObjects(
-    Attribute: TInstantContainer);
+function TInstantBroker.RetrieveObject(AObject: TInstantObject;
+  const AObjectId: string; ConflictAction: TInstantConflictAction): Boolean;
+begin
+  Result := InternalRetrieveObject(AObject, AObjectId, ConflictAction);
+end;
+
+procedure TInstantBroker.SetObjectUpdateCount(AObject: TInstantObject;
+  Value: Integer);
+begin
+  if Assigned(AObject) then
+    AObject.SetUpdateCount(Value);
+end;
+
+function TInstantBroker.StoreObject(AObject: TInstantObject;
+  ConflictAction: TInstantConflictAction): Boolean;
+begin
+  Result := InternalStoreObject(AObject, ConflictAction);
+end;
+
+constructor TInstantConnector.Create(AOwner: TComponent);
+begin
+  inherited;
+  FUseTransactions := True;
+  FIdDataType := dtString;
+  FIdSize := InstantDefaultFieldSize;
+end;
+
+destructor TInstantConnector.Destroy;
+begin
+  AbandonObjects;
+  IsDefault := False;
+  FClientList.Free;
+  FBroker.Free;
+  FObjectStores.Free;
+  FTransactedObjectList.Free;
+  inherited;
+end;
+
+{ TInstantConnector }
+
+procedure TInstantConnector.AbandonObjects;
 var
   I: Integer;
-  Obj: TInstantObject;
-  WasOpen: Boolean;
+  Obj: TObject;
 begin
-  WasOpen := Dataset.Active;
-
-  if not WasOpen then
-    Open;
-  try
-    for I := 0 to Pred(Attribute.Count) do
-    begin
-      Obj := Attribute.Items[I];
-      if Obj.InUpdate then     // prevent recursion
-        Continue;
-      Obj.CheckId;
-      Append;
-      try
-        FieldByName(InstantIdFieldName).AsString := Obj.GenerateId;
-        FieldByName(InstantParentClassFieldName).AsString :=
-            Attribute.Owner.ClassName;
-        FieldByName(InstantParentIdFieldName).AsString := Attribute.Owner.Id;
-        FieldByName(InstantChildClassFieldName).AsString := Obj.ClassName;
-        FieldByName(InstantChildIdFieldName).AsString := Obj.Id;
-        FieldByName(InstantSequenceNoFieldName).AsInteger := Succ(I);
-        Post;
-      except
-        Cancel;
-      end;
-      Obj.ObjectStore.StoreObject(Obj, caIgnore);
-    end;
-  finally
-    if not WasOpen then
-      Close;
-  end;
-end;
-
-procedure TInstantNavigationalLinkResolver.InternalClearAttributeLinkRecords;
-var
-  WasOpen: Boolean;
-begin
-  WasOpen := Dataset.Active;
-
-  if not WasOpen then
-    Open;
-  try
-    SetDatasetParentRange(Resolver.ObjectClassname, Resolver.ObjectId);
-    First;
-    while not Eof do
-      Delete;
-  finally
-    if not WasOpen then
-      Close;
-  end;
-end;
-
-procedure TInstantNavigationalLinkResolver.InternalDisposeDeletedAttributeObjects(
-    Attribute: TInstantContainer);
-var
-//    I: Integer;
-  Obj: TInstantObject;
-  AttributeMetadata: TInstantAttributeMetadata;
-  ObjDisposed: Boolean;
-  WasOpen: Boolean;
-begin
-  WasOpen := Dataset.Active;
-
-  if not WasOpen then
-    Open;
-  try
-    SetDatasetParentRange(Attribute.Owner.ClassName, Attribute.Owner.Id);
-    First;
-    AttributeMetadata := Attribute.Metadata;
-    while not Eof do
-    begin
-      ObjDisposed := False;
-      Obj := AttributeMetadata.ObjectClass.Retrieve(
-          FieldByName(InstantChildIdFieldName).AsString,
-          False, False, Attribute.Connector);
-      try
-        if Assigned(Obj) and
-            (Attribute.IndexOf(Obj) = -1) then
-        begin
-          Obj.ObjectStore.DisposeObject(Obj, caIgnore);
-          Delete;
-          ObjDisposed := True;
-        end;
-      finally
-        Obj.Free;
-      end;
-      if not ObjDisposed then
-        Next;
-    end;
-  finally
-    if not WasOpen then
-      Close;
-  end;
-end;
-
-procedure TInstantNavigationalLinkResolver.InternalReadAttributeObjects(
-    Attribute: TInstantContainer; const AObjectId: string);
-var
-  WasOpen: Boolean;
-begin
-  WasOpen := Dataset.Active;
-
-  if not WasOpen then
-    Open;
-  try
-    // Attribute.Owner.Id can be '', so do not use here.
-    SetDatasetParentRange(Attribute.Owner.Classname, AObjectId);
-    First;
-    while not Eof do
-    begin
-      Attribute.AddReference(
-          FieldByName(InstantChildClassFieldName).AsString,
-          FieldByName(InstantChildIdFieldName).AsString);
-      Next;
-    end;
-  finally
-    if not WasOpen then
-      Close;
-  end;
-end;
-
-procedure TInstantNavigationalLinkResolver.Next;
-begin
-  DataSet.Next;
-end;
-
-procedure TInstantNavigationalLinkResolver.Open;
-begin
-  DataSet.Open;
-end;
-
-procedure TInstantNavigationalLinkResolver.Post;
-begin
-  DataSet.Post;
-end;
-
-procedure TInstantNavigationalLinkResolver.SetDataSet(Value: TDataset);
-begin
-  if Value <> FDataSet then
+  for I := 0 to Pred(ClientCount) do
   begin
-    FreeDataSet;
-    FDataSet := Value;
+    Obj := Clients[I];
+    if Obj is TInstantObjectStore then
+      TInstantObjectStore(Obj).AbandonObjects;
   end;
 end;
 
-constructor TInstantLinkResolver.Create(AResolver: TInstantCustomResolver);
+function TInstantConnector.AddTransactedObject(
+  AObject: TInstantObject): Integer;
 begin
-  inherited Create;
-  FResolver := AResolver;
+  if Assigned(AObject) then
+    Result := TransactedObjectList.Add(AObject)
+  else
+    Result := -1;
 end;
 
-procedure TInstantLinkResolver.StoreAttributeObjects(Attribute:
-    TInstantContainer);
-begin
-  InternalStoreAttributeObjects(Attribute);
-end;
-
-procedure TInstantLinkResolver.ClearAttributeLinkRecords;
-begin
-  InternalClearAttributeLinkRecords;
-end;
-
-procedure TInstantLinkResolver.DisposeDeletedAttributeObjects(Attribute:
-    TInstantContainer);
-begin
-  InternalDisposeDeletedAttributeObjects(Attribute);
-end;
-
-function TInstantLinkResolver.GetBroker: TInstantCustomRelationalBroker;
-begin
-  Result := Resolver.Broker;
-end;
-
-function TInstantLinkResolver.GetResolver: TInstantCustomResolver;
-begin
-  Result := FResolver;
-end;
-
-procedure TInstantLinkResolver.InternalStoreAttributeObjects(Attribute:
-    TInstantContainer);
-begin
-end;
-
-procedure TInstantLinkResolver.InternalClearAttributeLinkRecords;
-begin
-end;
-
-procedure TInstantLinkResolver.InternalDisposeDeletedAttributeObjects(
-    Attribute: TInstantContainer);
-begin
-end;
-
-procedure TInstantLinkResolver.InternalReadAttributeObjects(Attribute:
-    TInstantContainer; const AObjectId: string);
-begin
-end;
-
-procedure TInstantLinkResolver.ReadAttributeObjects(Attribute:
-    TInstantContainer; const AObjectId: string);
-begin
-  InternalReadAttributeObjects(Attribute, AObjectId);
-end;
-
-constructor TInstantSQLLinkResolver.Create(AResolver: TInstantSQLResolver;
-    const ATableName: string; AObject: TInstantObject);
-begin
-  inherited Create(AResolver);
-  FTableName := ATableName;
-  FAttributeOwner := AObject;
-end;
-
-function TInstantSQLLinkResolver.GetBroker: TInstantSQLBroker;
-begin
-  Result := Resolver.Broker;
-end;
-
-function TInstantSQLLinkResolver.GetResolver: TInstantSQLResolver;
-begin
-  Result := FResolver as TInstantSQLResolver;
-end;
-
-procedure TInstantSQLLinkResolver.InternalStoreAttributeObjects(Attribute:
-    TInstantContainer);
+procedure TInstantConnector.ApplyTransactedObjectStates;
 var
-  Params: TParams;
-  Statement: string;
-  Obj: TInstantObject;
   I: Integer;
 begin
-  // Store all objects and links
-  for I := 0 to Pred(Attribute.Count) do
+  for I := 0 to Pred(TransactedObjectCount) do
+    TransactedObjects[I].ApplyState;
+end;
+
+procedure TInstantConnector.BuildDatabase(
+  AClasses: array of TInstantObjectClass);
+var
+  I: Integer;
+  Model: TInstantModel;
+begin
+  Model := TInstantModel.Create;
+  try
+    for I := Low(AClasses) to High(AClasses) do
+      if Assigned(AClasses[I]) then
+        Model.ClassMetadatas.Add.Assign(AClasses[I].Metadata);
+    BuildDatabase(Model);
+  finally
+    Model.Free;
+  end;
+end;
+
+procedure TInstantConnector.BuildDatabase(Model: TInstantModel);
+var
+  Scheme: TInstantScheme;
+begin
+  CreateDatabase;
+  Connect;
+  try
+    if Model = nil then
+      Model := InstantModel;
+    Scheme := CreateScheme(Model);
+    try
+      DoBeforeBuildDatabase(Scheme);
+      InternalBuildDatabase(Scheme);
+    finally
+      Scheme.Free;
+    end;
+  finally
+    Disconnect;
+  end;
+end;
+
+procedure TInstantConnector.ClearTransactedObjects;
+begin
+  TransactedObjectList.Clear;
+end;
+
+procedure TInstantConnector.CommitTransaction;
+begin
+  if not InTransaction then
+    Exit;
+  Dec(FTransactionLevel);
+  if FTransactionLevel = 0 then
+    try
+      InternalCommitTransaction;
+      ApplyTransactedObjectStates;
+    finally
+      ClearTransactedObjects;
+    end;
+end;
+
+procedure TInstantConnector.Connect;
+begin
+  InternalConnect;
+end;
+
+procedure TInstantConnector.CreateDatabase;
+begin
+  if Connected or DatabaseExists then
+    Exit;
+  InternalCreateDatabase;
+end;
+
+function TInstantConnector.CreateQuery: TInstantQuery;
+begin
+  Result := InternalCreateQuery;
+  if not Assigned(Result) then
+    raise EInstantError.Create(SCapabilityNotSuppported);
+end;
+
+function TInstantConnector.CreateScheme(Model: TInstantModel): TInstantScheme;
+begin
+  Result := InternalCreateScheme(Model);
+end;
+
+procedure TInstantConnector.Disconnect;
+begin
+  InternalDisconnect;
+end;
+
+procedure TInstantConnector.DoBeforeBuildDatabase(Scheme: TInstantScheme);
+begin
+  if Assigned(FBeforeBuildDatabase) then
+    FBeforeBuildDatabase(Self, Scheme);
+end;
+
+function TInstantConnector.EnsureObjectStore(
+  AClass: TInstantObjectClass): TInstantObjectStore;
+begin
+  Result := ObjectStores.FindObjectStore(AClass);
+  if not Assigned(Result) then
   begin
-    // Store object
-    Obj := Attribute.Items[I];
-    Obj.CheckId;
-    Obj.ObjectStore.StoreObject(Obj, caIgnore);
-
-    // Insert link
-    Params := TParams.Create;
-    try
-      Statement := Format(Resolver.InsertExternalSQL,
-          [TableName]);
-      Resolver.AddIdParam(Params, InstantIdFieldName, AttributeOwner.GenerateId);
-      Resolver.AddStringParam(Params, InstantParentClassFieldName,
-          AttributeOwner.ClassName);
-      Resolver.AddIdParam(Params, InstantParentIdFieldName,
-          AttributeOwner.Id);
-      Resolver.AddStringParam(Params, InstantChildClassFieldName,
-          Obj.ClassName);
-      Resolver.AddIdParam(Params, InstantChildIdFieldName,
-          Obj.Id);
-      Resolver.AddIntegerParam(Params, InstantSequenceNoFieldName, Succ(I));
-      Broker.Execute(Statement, Params);
-    finally
-      Params.Free;
+    Result := ObjectStores.AddObjectStore;
+    with Result do
+    begin
+      Connector := Self;
+      ObjectClass := AClass;
     end;
   end;
 end;
 
-procedure TInstantSQLLinkResolver.InternalClearAttributeLinkRecords;
-var
-  Params: TParams;
-  Statement: string;
+function TInstantConnector.GenerateId(const AObject: TInstantObject = nil): string;
 begin
-  Params := TParams.Create;
+  Result := InternalGenerateId(AObject);
+end;
+
+function TInstantConnector.GetBroker: TInstantBroker;
+begin
+  if not Assigned(FBroker) then
+    FBroker := CreateBroker;
+  Result := FBroker;
+end;
+
+function TInstantConnector.GetClient(Index: Integer): TObject;
+begin
+  Result := ClientList[Index];
+end;
+
+function TInstantConnector.GetClientCount: Integer;
+begin
+  Result := ClientList.Count;
+end;
+
+function TInstantConnector.GetClientList: TList;
+begin
+  if not Assigned(FClientList) then
+    FClientList := TList.Create;
+  Result := FClientList;
+end;
+
+function TInstantConnector.GetConnected: Boolean;
+begin
+  Result := False;
+end;
+
+function TInstantConnector.GetDatabaseExists: Boolean;
+begin
+  Result := True;
+end;
+
+function TInstantConnector.GetDatabaseName: string;
+begin
+  Result := Broker.DatabaseName;
+end;
+
+function TInstantConnector.GetDDLTransactionSupported: Boolean;
+begin
+  Result := True;
+end;
+
+function TInstantConnector.GetInTransaction: Boolean;
+begin
+  Result := FTransactionLevel > 0;
+end;
+
+function TInstantConnector.GetInUse: Boolean;
+begin
+  Result := ClientCount > 0;
+end;
+
+function TInstantConnector.GetIsDefault: Boolean;
+begin
+  Result := Self = DefaultConnector;
+end;
+
+function TInstantConnector.GetObjectCount: Integer;
+var
+  I: Integer;
+begin
+  Result := 0;
+  for I := 0 to Pred(ObjectStores.Count) do
+    Inc(Result, ObjectStores[I].Count);
+end;
+
+function TInstantConnector.GetObjects(Index: Integer): TInstantObject;
+var
+  I, EndIndex, Count: Integer;
+  ObjectStore: TInstantObjectStore;
+begin
+  EndIndex := -1;
+  for I := 0 to Pred(ObjectStores.Count) do
+  begin
+    ObjectStore := ObjectStores[I];
+    Count := ObjectStore.Count;
+    EndIndex := EndIndex + Count;
+    if Index <= EndIndex then
+    begin
+      Result := ObjectStore.Items[Pred(Count - (EndIndex - Index))];
+      Exit;
+    end;
+  end;
+  raise EInstantError.CreateFmt(SIndexOutOfBounds, [Index]);
+end;
+
+function TInstantConnector.GetObjectStores: TInstantObjectStores;
+begin
+  if not Assigned(FObjectStores) then
+    FObjectStores := TInstantObjectStores.Create;
+  Result := FObjectStores;
+end;
+
+function TInstantConnector.GetTransactedObjectCount: Integer;
+begin
+  Result := TransactedObjectList.Count;
+end;
+
+function TInstantConnector.GetTransactedObjectList: TList;
+begin
+  if not Assigned(FTransactedObjectList) then
+    FTransactedObjectList := TList.Create;
+  Result := FTransactedObjectList;
+end;
+
+function TInstantConnector.GetTransactedObjects(Index: Integer): TInstantObject;
+begin
+  Result := TransactedObjectList[Index];
+end;
+
+procedure TInstantConnector.InternalBuildDatabase(Scheme: TInstantScheme);
+begin
+  if Assigned(Scheme) then
+  begin
+    Scheme.BlobStreamFormat := BlobStreamFormat;
+    Scheme.IdDataType := IdDataType;
+    Scheme.IdSize := IdSize;
+  end;
+  Broker.BuildDatabase(Scheme);
+end;
+
+procedure TInstantConnector.InternalCommitTransaction;
+begin
+end;
+
+procedure TInstantConnector.InternalCreateDatabase;
+begin
+end;
+
+function TInstantConnector.InternalCreateQuery: TInstantQuery;
+begin
+  Result := Broker.CreateQuery;
+end;
+
+function TInstantConnector.InternalGenerateId(const AObject: TInstantObject = nil): string;
+begin
+  if Assigned(FOnGenerateId) then
+  begin
+    Result := '';
+    FOnGenerateId(Self, AObject, Result);
+  end
+  else
+    Result := InstantGenerateId;
+end;
+
+procedure TInstantConnector.InternalRollbackTransaction;
+begin
+end;
+
+procedure TInstantConnector.InternalStartTransaction;
+begin
+end;
+
+class procedure TInstantConnector.RegisterClass;
+begin
+  ConnectorClasses.Add(Self);
+end;
+
+procedure TInstantConnector.RegisterClient(Client: TObject);
+begin
+  if not Assigned(Client) then
+    Exit;
+  ClientList.Add(Client);
+end;
+
+function TInstantConnector.RemoveTransactedObject(
+  AObject: TInstantObject): Integer;
+begin
+  if Assigned(AObject) then
+    Result := TransactedObjectList.Remove(AObject)
+  else
+    Result := -1
+end;
+
+procedure TInstantConnector.RestoreTransactedObjectStates;
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(TransactedObjectCount) do
+    TransactedObjects[I].RestoreState;
+end;
+
+procedure TInstantConnector.RollbackTransaction;
+begin
+  if not InTransaction then
+    Exit;
+  Dec(FTransactionLevel);
+  if FTransactionLevel = 0 then
+    try
+      InternalRollbackTransaction;
+      RestoreTransactedObjectStates;
+    finally
+      ClearTransactedObjects;
+    end;
+end;
+
+procedure TInstantConnector.SetConnected(Value: Boolean);
+begin
+  if Value then
+    Connect
+  else
+    Disconnect;
+end;
+
+procedure TInstantConnector.SetIsDefault(const Value: Boolean);
+begin
+  if Value <> IsDefault then
+    if Value then
+      DefaultConnector := Self
+    else
+      DefaultConnector := nil;
+end;
+
+procedure TInstantConnector.StartTransaction;
+begin
+  if not UseTransactions then
+    Exit;
+  Inc(FTransactionLevel);
+  if FTransactionLevel = 1 then
+    InternalStartTransaction;
+end;
+
+class procedure TInstantConnector.UnregisterClass;
+begin
+  ConnectorClasses.Remove(Self);
+end;
+
+procedure TInstantConnector.UnregisterClient(Client: TObject);
+begin
+  if not Assigned(Client) then
+    Exit;
+  ClientList.Remove(Client);
+end;
+
+{ TInstantConnectionDef }
+
+constructor TInstantConnectionDef.Create(Collection: TCollection);
+begin
+  inherited Create(Collection);
+  FBlobStreamFormat := sfBinary;
+  FIdDataType := dtString;
+  FIdSize := InstantDefaultFieldSize;
+end;
+
+function TInstantConnectionDef.CreateConnector(AOwner: TComponent): TInstantConnector;
+begin
+  Result := ConnectorClass.Create(AOwner);
   try
-    Statement := Format(Resolver.DeleteExternalSQL,
-      [TableName,
-      InstantParentClassFieldName,
-      InstantParentIdFieldName]);
-    Resolver.AddStringParam(Params, InstantParentClassFieldName,
-        AttributeOwner.ClassName);
-    Resolver.AddIdParam(Params, InstantParentIdFieldName,
-        AttributeOwner.Id);
-    Broker.Execute(Statement, Params);
-  finally
-    Params.Free;
+    InitConnector(Result);
+  except
+    Result.Free;
+    raise;
   end;
 end;
 
-procedure TInstantSQLLinkResolver.InternalDisposeDeletedAttributeObjects(
-    Attribute: TInstantContainer);
+function TInstantConnectionDef.GetCaption: string;
 var
-  Statement: string;
-  Params: TParams;
-  Dataset: TDataset;
-  Obj: TInstantObject;
+  Connector: TInstantConnector;
 begin
-  // Delete all objects
-  Params := TParams.Create;
+  Connector := CreateConnector(nil);
   try
-    Statement := Format(Resolver.SelectExternalSQL, [TableName]);
-    Resolver.AddIdParam(Params, InstantParentIdFieldName, AttributeOwner.Id);
-    Resolver.AddStringParam(Params, InstantParentClassFieldName,
-        AttributeOwner.ClassName);
-    Resolver.AddStringParam(Params, InstantChildClassFieldName,
-        Attribute.Metadata.ObjectClassName);
-    DataSet := Broker.AcquireDataSet(Statement, Params);
-    try
-      DataSet.Open;
-      try
-        while not DataSet.Eof do
-        begin
-          Obj := Attribute.Metadata.ObjectClass.Retrieve(
-              DataSet.FieldByName(InstantChildIdFieldName).AsString,
-              False, False, Attribute.Connector);
-          try
-            if Assigned(Obj) and
-                (Attribute.IndexOf(Obj) = -1) then
-              Obj.ObjectStore.DisposeObject(Obj,
-                  caIgnore);
-          finally
-            Obj.Free;
-          end;
-          DataSet.Next;
-        end;
-      finally
-        DataSet.Close;
-      end;
-    finally
-      Broker.ReleaseDataSet(DataSet);
-    end;
+    if Assigned(Connector) then
+      Result := Connector.DatabaseName
+    else
+      Result := ''
   finally
-    Params.Free;
+    Connector.Free;
   end;
 end;
 
-procedure TInstantSQLLinkResolver.InternalReadAttributeObjects(Attribute:
-    TInstantContainer; const AObjectId: string);
-var
-  Statement: string;
-  Params: TParams;
-  Dataset: TDataset;
+procedure TInstantConnectionDef.InitConnector(Connector: TInstantConnector);
 begin
-  Params := TParams.Create;
-  try
-    Statement := Format(Resolver.SelectExternalSQL, [TableName]);
-    Resolver.AddIdParam(Params, InstantParentIdFieldName, AObjectId);
-    Resolver.AddStringParam(Params, InstantParentClassFieldName,
-        AttributeOwner.ClassName);
-    Resolver.AddStringParam(Params, InstantChildClassFieldName,
-        Attribute.Metadata.ObjectClassName);
-    DataSet := Broker.AcquireDataSet(Statement, Params);
-    try
-      DataSet.Open;
-      try
-        while not DataSet.Eof do
-        begin
-          Attribute.AddReference(
-              DataSet.FieldByName(InstantChildClassFieldName).AsString,
-              DataSet.FieldByName(InstantChildIdFieldName).AsString);
-          DataSet.Next;
-        end;
-      finally
-        DataSet.Close;
-      end;
-    finally
-      Broker.ReleaseDataSet(DataSet);
-    end;
-  finally
-    Params.Free;
-  end;
+  Connector.BlobStreamFormat := BlobStreamFormat;
+  Connector.IdDataType := IdDataType;
+  Connector.IdSize := IdSize;
+end;
+
+{ TInstantConnectionDefs }
+
+constructor TInstantConnectionDefs.Create;
+begin
+  inherited Create(TInstantConnectionDef);
+end;
+
+function TInstantConnectionDefs.GetItems(Index: Integer): TInstantConnectionDef;
+begin
+  Result := inherited Items[Index] as TInstantConnectionDef;
+end;
+
+procedure TInstantConnectionDefs.SetItems(Index: Integer;
+  const Value: TInstantConnectionDef);
+begin
+  inherited Items[Index] := Value;
 end;
 
 
@@ -16435,3 +8836,4 @@ finalization
   ObjectNotifiers.Free;
 
 end.
+

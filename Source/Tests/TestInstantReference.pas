@@ -61,7 +61,7 @@ type
 
 implementation
 
-uses SysUtils, Classes, InstantClasses, testregistry;
+uses SysUtils, Classes, InstantClasses, testregistry, InstantMetadata;
 
 procedure TestTInstantReference.SetUp;
 begin

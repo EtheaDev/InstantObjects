@@ -47,7 +47,8 @@ uses
   QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList,
   QStdCtrls, QComCtrls, QExtCtrls,
 {$ENDIF}
-  InstantPersistence, InstantDBBuild, InstantDBEvolution, InstantPresentation;
+  InstantPersistence, InstantDBBuild, InstantDBEvolution, InstantPresentation,
+  InstantMetadata;
 
 type
   TInstantCustomDBEvolverForm = class(TForm)

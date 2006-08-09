@@ -380,6 +380,36 @@ type
   EInstantConversionError = class(EInstantError)
   end;
 
+  TInstantAbstractObjectClass = class of TInstantAbstractObject;
+
+  TInstantAbstractObject = class(TInstantStreamable)
+  private
+    FConnector: TComponent;
+  protected
+    function GetConnector: TComponent;
+    procedure SetConnector(AConnector: TComponent);
+  public
+    constructor Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      Refresh: Boolean = False; AConnector: TComponent = nil); virtual; abstract;
+  end;
+
+  TInstantAbstractAttributeClass = class of TInstantAbstractAttribute;
+
+  TInstantAbstractAttribute = class(TInstantStreamable)
+  private
+    FMetadata: TInstantCollectionItem;
+    FOwner: TInstantAbstractObject;
+  protected
+    function GetOwner: TInstantAbstractObject; reintroduce; virtual;
+    procedure SetOwner(AOwner: TInstantAbstractObject);
+    function GetMetadata: TInstantCollectionItem;
+    procedure SetMetadata(AMetadata: TInstantCollectionItem);
+    procedure Initialize; virtual; abstract;
+  public
+    constructor Create(AOwner: TInstantAbstractObject;
+      AMetadata: TInstantCollectionItem); virtual;
+  end;
+
   TInstantStreamFormat = (sfBinary, sfXML);
 
 const
@@ -1888,6 +1918,50 @@ end;
 procedure TInstantTextToBinaryConverter.InternalConvertProperties;
 begin
   DoConvertProperties('');
+end;
+
+{ TInstantAbstractObject }
+
+function TInstantAbstractObject.GetConnector: TComponent;
+begin
+  Result := FConnector;
+end;
+
+procedure TInstantAbstractObject.SetConnector(AConnector: TComponent);
+begin
+  FConnector := AConnector;
+end;
+
+{ TInstantAbstractAttribute }
+
+function TInstantAbstractAttribute.GetMetadata: TInstantCollectionItem;
+begin
+  Result := FMetadata;
+end;
+
+function TInstantAbstractAttribute.GetOwner: TInstantAbstractObject;
+begin
+  Result := FOwner;
+end;
+
+procedure TInstantAbstractAttribute.SetMetadata(
+  AMetadata: TInstantCollectionItem);
+begin
+  FMetadata := AMetadata;
+  Initialize;
+end;
+
+procedure TInstantAbstractAttribute.SetOwner(AOwner: TInstantAbstractObject);
+begin
+  FOwner := AOwner;
+end;
+
+constructor TInstantAbstractAttribute.Create(AOwner: TInstantAbstractObject;
+    AMetadata: TInstantCollectionItem);
+begin
+  inherited Create;
+  FOwner := AOwner;
+  SetMetadata(AMetadata);
 end;
 
 end.

@@ -32,7 +32,7 @@ unit TestInstantClassMetadata;
 
 interface
 
-uses fpcunit, InstantMock, InstantPersistence;
+uses fpcunit, InstantPersistence, InstantMock, InstantMetadata;
 
 type
   // Test methods for class TInstantClassMetadata
@@ -74,7 +74,7 @@ type
 
 implementation
 
-uses SysUtils, TypInfo, testregistry;
+uses SysUtils, TypInfo, testregistry, InstantTypes;
 
 procedure TestTInstantClassMetadata.SetUp;
 begin

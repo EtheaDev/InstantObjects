@@ -32,7 +32,7 @@ unit TestInstantIndexMetadata;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantPersistence, InstantMetadata;
 
 type
 

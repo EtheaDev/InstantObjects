@@ -2,6 +2,12 @@ unit PersonBrowse;
 
 interface
 
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
+
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}

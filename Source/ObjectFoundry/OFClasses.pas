@@ -91,7 +91,8 @@ type
 implementation
 
 uses
-  SysUtils, MMEngineDefs, InstantPersistence, TypInfo, OFUtils;
+  SysUtils, MMEngineDefs, InstantPersistence, InstantMetadata, InstantTypes,
+  TypInfo, OFUtils;
 
 const
   IOTagPrefix = 'IO.';
@@ -461,7 +462,7 @@ begin
     { If the type of attribute field is Integer (which is considered
       an invalid type since types should be TInstant*) the attribute
       is assumed to be new. If the type of the associated property
-      is also Integer the attribute type is TInstanInteger, otherwise
+      is also Integer the attribute type is TInstantInteger, otherwise
       the attribute defaults to a TInstantPart of an instance of the
       class specified as the property type. }
 
@@ -469,7 +470,7 @@ begin
     if SameText(FieldTypeName, 'Integer') then
       if Prop.DataName = 'Integer' then
         FieldTypeName := 'TInstantInteger'
-      else                                    
+      else
         FieldTypeName := 'TInstantPart';
     AttributeClassName := FieldTypeName;
   end;

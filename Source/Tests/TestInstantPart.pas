@@ -79,7 +79,8 @@ type
 
 implementation
 
-uses SysUtils, Classes, InstantClasses, testregistry;
+uses SysUtils, Classes, InstantClasses, testregistry, InstantMetadata,
+  InstantTypes;
 
 procedure TestTInstantEmbPart.SetUp;
 begin

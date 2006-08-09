@@ -146,7 +146,7 @@ implementation
 
 uses
   InstantAttributeEditor, InstantDesignUtils, InstantConsts, InstantRtti,
-  TypInfo, InstantImageUtils;
+  TypInfo, InstantImageUtils, InstantTypes;
 
 {$R *.dfm}
 

@@ -197,7 +197,6 @@ inherited ContactEditForm: TContactEditForm
     end
   end
   object PhonesExposer: TInstantExposer [2]
-    Options = []
     ContainerName = 'Phones'
     MasterSource = SubjectSource
     Mode = amContent

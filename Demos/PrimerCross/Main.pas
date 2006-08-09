@@ -1,11 +1,11 @@
 unit Main;
 
 interface
-{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
-{$IFDEF VER150}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
+
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
 {$ENDIF}
 
 uses
@@ -108,7 +108,8 @@ type
     procedure Connect;
     procedure Disconnect;
     procedure Reset;
-    property ActiveSubView: TBasicViewForm read FActiveSubView write SetActiveSubView;
+    property ActiveSubView: TBasicViewForm read FActiveSubView
+      write SetActiveSubView;
     property Connector: TInstantConnector read FConnector;
     property ConnectionName: string read GetConnectionName;
     property IsConnected: Boolean read GetIsConnected;
@@ -124,7 +125,8 @@ var
 implementation
 
 uses
-  Contnrs, Model, Welcome, MainData, RandomData, DemoData, Utility, ContactView, PerformanceView,
+  Contnrs, Model, Welcome, MainData, RandomData, DemoData, Utility, ContactView,
+  PerformanceView,
 {$IFDEF MSWINDOWS}
   HelpView, JPeg,
 {$ENDIF}
@@ -132,7 +134,7 @@ uses
   HelpViewK3,
 {$ENDIF}
   DemoDataRequest, InstantPresentation, InstantClasses,
-  QueryView, InstantImageUtils,
+  QueryView, InstantImageUtils, InstantTypes,
 
 { Note: This demo attempts to include brokers for the data access
   layers supported natively by Delphi. To include additional brokers,

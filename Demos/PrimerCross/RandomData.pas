@@ -2,10 +2,10 @@ unit RandomData;
 
 interface
 
-{$IFDEF VER150}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
 {$ENDIF}
 
 type

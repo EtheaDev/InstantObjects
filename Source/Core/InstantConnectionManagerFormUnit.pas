@@ -48,7 +48,7 @@ uses
   QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList,
   QStdCtrls, QComCtrls, QExtCtrls,
 {$ENDIF}
-  InstantConnectionManager, InstantClasses, InstantPersistence;
+  InstantConnectionManager, InstantClasses, InstantPersistence, InstantMetadata;
 
 type
   TInstantConnectionManagerForm = class(TForm)

@@ -42,7 +42,8 @@ unit InstantXML;
 interface
 
 uses
-  Classes, DB, InstantPersistence, InstantCommand, Contnrs;
+  Classes, DB, Contnrs, InstantPersistence, InstantBrokers, InstantCommand,
+  InstantMetadata, InstantTypes;
 
 const
   XML_UTF8_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';

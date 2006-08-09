@@ -114,7 +114,7 @@ type
 implementation
 
 uses
-  InstantPersistence, InstantPresentation;
+  InstantPersistence, InstantPresentation, InstantMetadata, InstantTypes;
 
 {$R *.dfm}
 

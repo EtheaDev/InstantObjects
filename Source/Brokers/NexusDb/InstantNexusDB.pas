@@ -43,7 +43,8 @@ uses
 {$IFDEF MSWINDOWS}
   Windows,
 {$ENDIF}
-  Classes, DB, InstantPersistence, InstantCommand,
+  Classes, DB, InstantPersistence, InstantBrokers, InstantCommand, 
+  InstantMetadata, InstantTypes,
   nxptBasePooledTransport, nxsdServerEngine, nxdb, nxsdDataDictionary;
 
 type
@@ -842,7 +843,7 @@ begin
 end;
 {$ENDIF}
 
-{ TInstantNexusDBSQLQuery }
+{ TInstantNexusDBQuery }
 
 class function TInstantNexusDBQuery.TranslatorClass:
   TInstantRelationalTranslatorClass;

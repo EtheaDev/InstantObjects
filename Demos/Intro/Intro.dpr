@@ -2,8 +2,8 @@ program Intro;
 
 uses
   Forms,
-  Main in 'Main.pas' {MainForm},
   Model in 'Model.pas',
+  Main in 'Main.pas' {MainForm},
   ContactEdit in 'ContactEdit.pas' {ContactEditForm},
   PersonEdit in 'PersonEdit.pas' {PersonEditForm},
   CompanyEdit in 'CompanyEdit.pas' {CompanyEditForm};

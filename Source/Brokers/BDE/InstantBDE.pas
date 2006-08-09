@@ -44,7 +44,7 @@ interface
 
 uses
   Classes, Db, DBTables, SysUtils, InstantPersistence, InstantCommand,
-  InstantConsts;
+  InstantBrokers, InstantMetadata, InstantTypes, InstantConsts;
 
 type
   TInstantBDEDriverType = (dtUnknown, dtStandard, dtInterBase, dtMSAccess,
