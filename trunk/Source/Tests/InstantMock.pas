@@ -33,7 +33,8 @@ unit InstantMock;
 interface
 
 uses
-  SysUtils, DB, InstantPersistence, Classes, UbMockObject;
+  SysUtils, Classes, DB, InstantPersistence, InstantBrokers, InstantMetadata,
+  InstantTypes, UbMockObject;
 
 type
   TInstantBrokerClass = class of TInstantBroker;

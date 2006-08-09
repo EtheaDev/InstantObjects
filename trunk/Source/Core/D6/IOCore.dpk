@@ -54,6 +54,9 @@ contains
   InstantConnectionManagerFormUnit in '..\InstantConnectionManagerFormUnit.pas' {InstantConnectionManagerForm},
   InstantCustomDBEvolverFormUnit in '..\InstantCustomDBEvolverFormUnit.pas' {InstantCustomDBEvolverForm},
   InstantDBBuilderFormUnit in '..\InstantDBBuilderFormUnit.pas' {InstantDBBuilderForm},
-  InstantDBEvolverFormUnit in '..\InstantDBEvolverFormUnit.pas' {InstantDBEvolverForm};
+  InstantDBEvolverFormUnit in '..\InstantDBEvolverFormUnit.pas' {InstantDBEvolverForm},
+  InstantTypes in '..\InstantTypes.pas',
+  InstantBrokers in '..\InstantBrokers.pas',
+  InstantMetadata in '..\InstantMetadata.pas';
 
 end.

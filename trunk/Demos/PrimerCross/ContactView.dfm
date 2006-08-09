@@ -70,8 +70,6 @@ inherited ContactViewForm: TContactViewForm
         Height = 28
         Align = alLeft
         BorderWidth = 1
-        EdgeBorders = []
-        Flat = True
         Images = ActionImages
         ParentShowHint = False
         ShowHint = True

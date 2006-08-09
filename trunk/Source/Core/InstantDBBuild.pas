@@ -39,7 +39,8 @@ unit InstantDBBuild;
 interface
 
 uses
-  SysUtils, Classes, Contnrs, InstantClasses, InstantPersistence, InstantConsts;
+  SysUtils, Classes, Contnrs, InstantClasses, InstantPersistence, InstantConsts,
+  InstantTypes, InstantBrokers, InstantMetadata;
   
 type
   TInstantDBBuildCommandSequence = class;

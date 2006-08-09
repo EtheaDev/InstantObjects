@@ -157,7 +157,7 @@ implementation
 
 uses
   InstantRtti, InstantPersistence, InstantDesignUtils, InstantImageUtils,
-  InstantClasses;
+  InstantClasses, InstantMetadata, InstantTypes;
 
 {$R *.dfm}
 

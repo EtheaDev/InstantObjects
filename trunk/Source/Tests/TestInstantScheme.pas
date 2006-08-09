@@ -32,7 +32,7 @@ unit TestInstantScheme;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantPersistence, InstantMetadata;
 
 type
 
@@ -54,7 +54,7 @@ type
 
 implementation
 
-uses SysUtils, testregistry, InstantClasses, InstantConsts;
+uses SysUtils, testregistry, InstantClasses, InstantTypes, InstantConsts;
 
 procedure TestTInstantScheme.SetUp;
 begin

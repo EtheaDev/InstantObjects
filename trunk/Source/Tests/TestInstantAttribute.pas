@@ -58,7 +58,7 @@ type
 
 implementation
 
-uses SysUtils, testregistry, InstantClasses;
+uses SysUtils, testregistry, InstantClasses, InstantMetadata;
 
 procedure TestTInstantAttribute.SetUp;
 begin

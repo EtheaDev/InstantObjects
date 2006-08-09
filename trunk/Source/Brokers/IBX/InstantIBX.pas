@@ -40,7 +40,7 @@ interface
 
 uses
   Classes, Db, IBDatabase, IBTable, IBQuery, SysUtils, InstantPersistence,
-  InstantClasses, InstantCommand;
+  InstantBrokers, InstantClasses, InstantCommand, InstantMetadata, InstantTypes;
 
 type
   TInstantIBXOption = (ibxUseDelimitedIdents);

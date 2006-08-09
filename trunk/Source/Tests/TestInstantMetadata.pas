@@ -32,7 +32,7 @@ unit TestInstantMetadata;
 
 interface
 
-uses SysUtils, fpcunit, InstantPersistence;
+uses SysUtils, fpcunit, InstantMetadata;
 
 type
   // Test methods for class TInstantMetadata

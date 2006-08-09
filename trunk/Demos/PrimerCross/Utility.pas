@@ -1,7 +1,13 @@
 unit Utility;
 
 interface
-{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
+
 procedure BeginBusy;
 procedure EndBusy;
 function Confirm(const Text: string): Boolean;

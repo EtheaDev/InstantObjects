@@ -2,6 +2,12 @@ unit DemoData;
 
 interface
 
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
+
 uses
   Classes, Model, InstantPersistence, RandomData;
 

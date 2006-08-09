@@ -39,7 +39,7 @@ unit InstantIBFbCatalog;
 interface
 
 uses
-  InstantPersistence;
+  InstantPersistence, InstantBrokers, InstantMetadata, InstantTypes;
 
 type
   // A TInstantCatalog that reads catalog information from an InterBase

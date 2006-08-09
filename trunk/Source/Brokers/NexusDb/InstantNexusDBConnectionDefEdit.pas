@@ -124,9 +124,7 @@ uses
     {$WARN UNIT_PLATFORM ON}
   {$ENDIF}
 {$ENDIF}
-  InstantClasses,
-  InstantPersistence,
-  InstantConsts,
+  InstantClasses, InstantPersistence, InstantTypes, InstantConsts,
   InstantNexusDBConsts;
 
 { TInstantNexusDBConnectionDefEditForm }

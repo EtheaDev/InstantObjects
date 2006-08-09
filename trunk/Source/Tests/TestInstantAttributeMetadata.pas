@@ -32,11 +32,12 @@ unit TestInstantAttributeMetadata;
 
 interface
 
-uses SysUtils, fpcunit, InstantMock, InstantPersistence;
+uses SysUtils, fpcunit, InstantMock, InstantPersistence, InstantTypes,
+InstantMetadata, InstantClasses;
 
 type
   TRunMethodCategory = procedure(Category: TInstantAttributeCategory) of object;
-  TRunMethodIAClass = procedure(AClass: TInstantAttributeClass) of object;
+  TRunMethodIAClass = procedure(AClass: TInstantAbstractAttributeClass) of object;
 
   // Extended test methods for class TTestCase
   TTestCaseEx = class(TTestCase)
@@ -52,11 +53,11 @@ type
                                     overload;
     class procedure AssertException(const AMessage: string;
                                     AExceptionClass: ExceptClass;
-                                    AClass: TInstantAttributeClass;
+                                    AClass: TInstantAbstractAttributeClass;
                                     AMethod: TRunMethodIAClass);
                                     overload;
     class procedure AssertException(AExceptionClass: ExceptClass;
-                                    AClass: TInstantAttributeClass;
+                                    AClass: TInstantAbstractAttributeClass;
                                     AMethod: TRunMethodIAClass);
                                     overload;
     class procedure AssertNoException(const AMessage: string;
@@ -70,11 +71,11 @@ type
                                     overload;
     class procedure AssertNoException(const AMessage: string;
                                     AExceptionClass: ExceptClass;
-                                    AClass: TInstantAttributeClass;
+                                    AClass: TInstantAbstractAttributeClass;
                                     AMethod: TRunMethodIAClass);
                                     overload;
     class procedure AssertNoException(AExceptionClass: ExceptClass;
-                                    AClass: TInstantAttributeClass;
+                                    AClass: TInstantAbstractAttributeClass;
                                     AMethod: TRunMethodIAClass);
                                     overload;
   end;
@@ -113,7 +114,7 @@ type
 
 implementation
 
-uses Classes, TypInfo, testregistry, InstantClasses;
+uses Classes, TypInfo, testregistry;
 
 class procedure TTestCaseEx.AssertException(const AMessage: string;
 AExceptionClass: ExceptClass; ACategory: TInstantAttributeCategory;
@@ -140,8 +141,8 @@ begin
 end;
 
 class procedure TTestCaseEx.AssertException(const AMessage: string;
-AExceptionClass: ExceptClass; AClass: TInstantAttributeClass;
-AMethod: TRunMethodIAClass);
+    AExceptionClass: ExceptClass; AClass: TInstantAbstractAttributeClass;
+    AMethod: TRunMethodIAClass);
 var
   Passed : Boolean;
   ExceptionName: string;
@@ -170,7 +171,7 @@ begin
 end;
 
 class procedure TTestCaseEx.AssertException(AExceptionClass: ExceptClass;
-  AClass: TInstantAttributeClass; AMethod: TRunMethodIAClass);
+    AClass: TInstantAbstractAttributeClass; AMethod: TRunMethodIAClass);
 begin
   AssertException('', AExceptionClass, AClass, AMethod);
 end;
@@ -191,8 +192,8 @@ begin
 end;
 
 class procedure TTestCaseEx.AssertNoException(const AMessage: string;
-AExceptionClass: ExceptClass; AClass: TInstantAttributeClass;
-AMethod: TRunMethodIAClass);
+    AExceptionClass: ExceptClass; AClass: TInstantAbstractAttributeClass;
+    AMethod: TRunMethodIAClass);
 var
   Passed : Boolean;
 begin
@@ -212,7 +213,7 @@ begin
 end;
 
 class procedure TTestCaseEx.AssertNoException(AExceptionClass: ExceptClass;
-  AClass: TInstantAttributeClass; AMethod: TRunMethodIAClass);
+    AClass: TInstantAbstractAttributeClass; AMethod: TRunMethodIAClass);
 begin
   AssertNoException('', AExceptionClass, AClass, AMethod);
 end;
@@ -320,7 +321,8 @@ var
 begin
   vObject := TInstantObject.Create(FConn);
   try
-    vReturnValue := FInstantAttributeMetadata.CreateAttribute(vObject);
+    vReturnValue := FInstantAttributeMetadata.CreateAttribute(vObject)
+        as TInstantAttribute;
     AssertNotNull('vReturnValue', vReturnValue);
     AssertEquals('AsString', 'Default', vReturnValue.AsString);
     AssertNotNull('Metadata ', vReturnValue.Metadata);

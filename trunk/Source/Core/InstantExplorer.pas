@@ -220,7 +220,8 @@ procedure InstantExploreObject(AObject: TObject);
 implementation
 
 uses
-  SysUtils, InstantClasses, InstantRtti, TypInfo,
+  SysUtils, InstantClasses, InstantRtti, TypInfo, InstantMetadata,
+  InstantTypes,
 {$IFDEF MSWINDOWS}
   Graphics, StdCtrls, DbCtrls, Windows;
 {$ENDIF}

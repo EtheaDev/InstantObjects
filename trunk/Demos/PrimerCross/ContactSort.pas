@@ -1,7 +1,13 @@
 unit ContactSort;
 
 interface
-{$IFDEF VER130}{$DEFINE MSWINDOWS}{$ENDIF}
+
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
+
 uses
   SysUtils, Classes,
 {$IFDEF MSWINDOWS}
@@ -40,7 +46,8 @@ type
 implementation
 
 uses
-  Model, TypInfo, InstantRtti, InstantPresentation;
+  Model, TypInfo, InstantRtti, InstantPresentation, InstantMetadata,
+  InstantTypes;
 
 {$R *.dfm}
 

@@ -60,11 +60,13 @@ type
     procedure TearDown; override;
   published
     procedure TestGetBroker;
-    procedure TestStoreAndRetrieveContact;
     procedure TestParts;
+    procedure TestStoreAndRetrieveContact;
   end;
 
 implementation
+
+uses InstantMetadata;
 
 procedure TTestMockBroker.TestModelFromToFile;
 var

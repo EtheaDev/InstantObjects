@@ -38,7 +38,7 @@ unit InstantPump;
 interface
 
 uses
-  SysUtils, Classes, InstantPersistence;
+  SysUtils, Classes, InstantPersistence, InstantMetadata;
 
 type
   EInstantPumpError = class(Exception);

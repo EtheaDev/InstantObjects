@@ -38,7 +38,8 @@ unit InstantBDECatalog;
 interface
 
 uses
-  InstantPersistence, DB, DBTables;
+  InstantPersistence, DB, DBTables, InstantMetadata, InstantBrokers,
+  InstantTypes;
 
 type
   // A TInstantCatalog that reads catalog information from a BDE

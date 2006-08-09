@@ -51,6 +51,8 @@ procedure CreateMinimalModel;
 
 implementation
 
+uses InstantMetadata, InstantTypes;
+
 procedure CreateMinimalModel;
 var
   InstantClassMetadata : TInstantClassMetadata;

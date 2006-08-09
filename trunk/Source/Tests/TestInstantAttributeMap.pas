@@ -32,7 +32,7 @@ unit TestInstantAttributeMap;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantPersistence, InstantMetadata;
 
 type
 

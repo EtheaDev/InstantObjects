@@ -64,7 +64,7 @@ type
 
 implementation
 
-uses SysUtils, testregistry, InstantClasses;
+uses SysUtils, testregistry, InstantClasses, InstantMetadata, InstantTypes;
 
 procedure TestTInstantObjectStore.SetUp;
 begin

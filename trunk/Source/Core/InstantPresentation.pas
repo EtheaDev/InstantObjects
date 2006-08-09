@@ -40,7 +40,8 @@ interface
 {$ENDIF}
 
 uses
-  Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantUtils;
+  Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, 
+  InstantMetadata, InstantUtils;
 
 type
   TInstantAddClassFieldDefEvent = procedure (const FieldName : string; var BreakProcess : boolean) of object;
@@ -753,7 +754,7 @@ uses
      FmtBcd,
   {$ENDIF} InstantClasses,
   InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors,
-  DbConsts;
+  InstantTypes, DbConsts;
 
 const
   SelfFieldName = 'Self';

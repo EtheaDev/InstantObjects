@@ -32,7 +32,7 @@ unit TestInstantTableMetadata;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses fpcunit, InstantPersistence, InstantMetadata;
 
 type
 

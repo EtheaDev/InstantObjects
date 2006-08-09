@@ -39,7 +39,7 @@ unit InstantCommand;
 interface
 
 uses
-  Classes, SysUtils, Contnrs, InstantClasses, InstantTextFiler;
+  Classes, SysUtils, Contnrs, InstantClasses, InstantTextFiler, InstantMetadata;
 
 type
   TInstantIQLObject= class;
@@ -453,10 +453,20 @@ type
   EInstantIQLError = class(EInstantError)
   end;
 
+  TInstantQueryCommand = class(TInstantIQLCommand)
+  private
+    function FindAttributeMetadata(const PathText: string): TInstantAttributeMetadata;
+    function GetObjectClassMetadata: TInstantClassMetadata;
+  protected
+    function GetResultClassName: string; override;
+  public
+    property ObjectClassMetadata: TInstantClassMetadata read GetObjectClassMetadata;
+  end;
+
 implementation
 
 uses
-  InstantUtils, InstantConsts;
+  InstantPersistence, InstantUtils, InstantConsts, InstantTypes;
 
 const
   OperatorTokens: array[TInstantIQLOperatorType] of string = ('=', '>', '<',
@@ -1656,5 +1666,57 @@ begin
   if Assigned(AObject) and Assigned(Writer) then
     AObject.WriteObject(Writer);
 end;
+
+{ TInstantQueryCommand }
+
+function TInstantQueryCommand.FindAttributeMetadata(
+  const PathText: string): TInstantAttributeMetadata;
+var
+  I: Integer;
+  AClassMetadata: TInstantClassMetadata;
+  List: TStringList;
+  AttribName: string;
+begin
+  List := TStringList.Create;
+  try
+    AClassMetadata := ObjectClassMetadata;
+    Result := nil;
+    InstantStrToList(PathText, List, [InstantDot]);
+    for I := 0 to Pred(List.Count) do
+    begin
+      AttribName := List[I];
+      Result := AClassMetadata.MemberMap.Find(AttribName);
+      if not Assigned(Result) then
+        raise EInstantError.CreateFmt(SAttributeNotFound,
+          [AttribName, AClassMetadata.Name]);
+      if Result.Category = acElement then
+        AClassMetadata := Result.ObjectClassMetadata;
+    end;
+  finally
+    List.Free;
+  end;
+end;
+
+function TInstantQueryCommand.GetObjectClassMetadata: TInstantClassMetadata;
+begin
+  Result := InstantFindClassMetadata(ObjectClassName);
+end;
+
+function TInstantQueryCommand.GetResultClassName: string;
+var
+  AttribMeta: TInstantAttributeMetadata;
+begin
+  if Assigned(Specifier) and Specifier.IsPath then
+  begin
+    AttribMeta := FindAttributeMetadata(Specifier.Text);
+    if Assigned(AttribMeta) and (AttribMeta.Category = acElement) then
+    begin
+      Result := AttribMeta.ObjectClassName;
+      Exit;
+    end;
+  end;
+  Result := inherited GetResultClassName;
+end;
+
 
 end.

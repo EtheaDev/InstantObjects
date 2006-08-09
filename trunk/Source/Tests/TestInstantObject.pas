@@ -84,7 +84,8 @@ type
 
 implementation
 
-uses SysUtils, Classes, Db, InstantClasses, testregistry;
+uses SysUtils, Classes, Db, InstantClasses, testregistry,
+  InstantMetadata, InstantTypes;
 
 procedure TestTInstantObject.SetUp;
 var

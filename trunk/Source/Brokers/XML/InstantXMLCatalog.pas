@@ -45,7 +45,7 @@ uses
 {$IFDEF MSWINDOWS}
   FileCtrl,
 {$ENDIF}
-  InstantPersistence;
+  InstantPersistence, InstantBrokers, InstantMetadata, InstantTypes;
 
 type
   // A TInstantCatalog that reads catalog information from a XML

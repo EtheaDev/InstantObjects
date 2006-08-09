@@ -60,7 +60,8 @@ type
 implementation
 
 uses
-  InstantPersistence, testregistry, MinimalModel, InstantClasses;
+  InstantPersistence, testregistry, MinimalModel, InstantClasses,
+  InstantMetadata, InstantTypes;
 
 { TTestMinimalModel }
 

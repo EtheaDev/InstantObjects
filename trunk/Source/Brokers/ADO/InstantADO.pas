@@ -40,7 +40,7 @@ interface
 
 uses
   Classes, Db, ADODB, SysUtils, InstantPersistence, InstantClasses,
-  InstantCommand;
+  InstantCommand, InstantBrokers, InstantMetadata, InstantTypes;
 
 type
   TInstantADOProviderType = (ptUnknown, ptMSJet, ptMSSQLServer, ptOracle, ptMySQL, ptIBMDB2);

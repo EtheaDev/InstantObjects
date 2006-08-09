@@ -158,6 +158,7 @@ begin
   else
     Result := InternalObjectCount;
 end;
+
 function TInstantObjectAccessor.GetSubject: TInstantObject;
 begin
   Result := inherited Subject as TInstantObject;

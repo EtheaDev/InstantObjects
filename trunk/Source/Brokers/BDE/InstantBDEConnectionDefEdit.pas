@@ -40,7 +40,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  InstantBDE, StdCtrls, ExtCtrls;
+  InstantBDE, StdCtrls, ExtCtrls, InstantMetadata;
 
 type
   TInstantBDEConnectionDefEditForm = class(TForm)
@@ -84,7 +84,7 @@ implementation
 {$R *.DFM}
 
 uses
-  DbTables, InstantPersistence, InstantClasses, InstantConsts;
+  DbTables, InstantPersistence, InstantClasses, InstantTypes, InstantConsts;
 
 const
   NoAlias = '(None)';
