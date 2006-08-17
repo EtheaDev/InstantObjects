@@ -2,7 +2,7 @@
 ;Licensed to: Steven Mitchell
 
 :BASE IOHelp.hlp
-:TITLE InstantObjects Guide 2.0
+:TITLE InstantObjects Help
 1 Welcome=Scribble10
 1 License Agreement=327SA3X
 1 License Agreement=Scribble30
@@ -10,13 +10,13 @@
 1 InstantObjects User Guide
 2 User Guide for InstantObjects 2.0=Scribble50
 2 Creating the Business Model
-3 Creating the Business Model=327SA3P
 3 Creating the Business Model=Scribble70
 3 The Model Explorer=Scribble90
 3 Defining Classes
 4 Defining Classes=Scribble120
 4 Class Editor=Scribble130
 4 Attribute Editor=Scribble170
+4 External Storage of Attributes=Scribble220
 3 Adding Business Rules=Scribble240
 3 Building/Evolving the Business Model=Scribble270
 2 Creating the User Interface
@@ -27,7 +27,7 @@
 3 The Exposer=Scribble320
 3 The Selector=Scribble330
 2 Programming with Persistent Objects
-3 Programming with Persistent Objects=327SA.T
+3 Programming with Persistent Objects=Scribble340
 3 Creating New Objects=Scribble340
 3 Retrieving Existing Objects=Scribble380
 3 Associating Objects=Scribble420
@@ -183,33 +183,35 @@
 3 TInstantNotifyEvent=Scribble12470>MAIN
 3 TInstantObjectNotifyEvent=Scribble12480>MAIN
 3 TInstantOperationType=Scribble12490>MAIN
-3 TInstantProcessObjectEvent=Scribble12500>MAIN
-3 TInstantProgressEvent=Scribble12510>MAIN
-3 TInstantSchemeEvent=Scribble12520>MAIN
-3 TInstantSortCompare=Scribble12530>MAIN
-3 TInstantStreamFormat=Scribble12550>MAIN
-3 TInstantVerificationResult=Scribble12570>MAIN
+3 TInstantPersistence=Scribble12500>MAIN
+3 TInstantProcessObjectEvent=Scribble12510>MAIN
+3 TInstantProgressEvent=Scribble12520>MAIN
+3 TInstantSchemeEvent=Scribble12530>MAIN
+3 TInstantSortCompare=Scribble12540>MAIN
+3 TInstantStorageKind=Scribble12560>MAIN
+3 TInstantStreamFormat=Scribble12580>MAIN
+3 TInstantVerificationResult=Scribble12600>MAIN
 2 Constants
-3 InstantAttributePrefix=Scribble12590>MAIN
-3 InstantClassPrefix=Scribble12610>MAIN
-3 InstantDateFormat=Scribble12620>MAIN
-3 InstantDateTimeFormat=Scribble12640>MAIN
-3 InstantTimeFormat=Scribble12660>MAIN
+3 InstantAttributePrefix=Scribble12620>MAIN
+3 InstantClassPrefix=Scribble12640>MAIN
+3 InstantDateFormat=Scribble12650>MAIN
+3 InstantDateTimeFormat=Scribble12670>MAIN
+3 InstantTimeFormat=Scribble12690>MAIN
 2 Units
-3 InstantADO.pas=Scribble12680>MAIN
-3 InstantADS.pas=Scribble12710>MAIN
-3 InstantBDE.pas=Scribble12730>MAIN
-3 InstantBrokers.pas=Scribble12760>MAIN
-3 InstantClasses.pas=Scribble12790>MAIN
-3 InstantConnectionManager.pas=Scribble12830>MAIN
-3 InstantConsts.pas=Scribble12860>MAIN
-3 InstantDBISAM.pas=Scribble12880>MAIN
-3 InstantDBX.pas=Scribble12900>MAIN
-3 InstantExplorer.pas=Scribble12920>MAIN
-3 InstantFlashFiler.pas=Scribble12960>MAIN
-3 InstantIBX.pas=Scribble12980>MAIN
-3 InstantMetadata.pas=Scribble13000>MAIN
-3 InstantPersistence.pas=Scribble13020>MAIN
-3 InstantPresentation.pas=Scribble13070>MAIN
-3 InstantTypes.pas=Scribble13110>MAIN
-3 InstantUtils.pas=Scribble13130>MAIN
+3 InstantADO.pas=Scribble12710>MAIN
+3 InstantADS.pas=Scribble12740>MAIN
+3 InstantBDE.pas=Scribble12760>MAIN
+3 InstantBrokers.pas=Scribble12790>MAIN
+3 InstantClasses.pas=Scribble12820>MAIN
+3 InstantConnectionManager.pas=Scribble12860>MAIN
+3 InstantConsts.pas=Scribble12890>MAIN
+3 InstantDBISAM.pas=Scribble12910>MAIN
+3 InstantDBX.pas=Scribble12930>MAIN
+3 InstantExplorer.pas=Scribble12950>MAIN
+3 InstantFlashFiler.pas=Scribble12990>MAIN
+3 InstantIBX.pas=Scribble13010>MAIN
+3 InstantMetadata.pas=Scribble13030>MAIN
+3 InstantPersistence.pas=Scribble13050>MAIN
+3 InstantPresentation.pas=Scribble13100>MAIN
+3 InstantTypes.pas=Scribble13140>MAIN
+3 InstantUtils.pas=Scribble13160>MAIN

@@ -1,4 +1,4 @@
-; InstantObjects Guide 2.0
+; InstantObjects Help
 ; 
 
 ; This help file was created with HelpScribble 7.6.1
@@ -15,7 +15,7 @@ COMPRESS=True
 LCID=0x0409
 CNT=IOHelp.cnt
 ROOT=D:\L\INSTAN~1\Help
-TITLE=InstantObjects Guide 2.0
+TITLE=InstantObjects Help
 
 [CONFIG]
 BrowseButtons()
@@ -1305,4 +1305,7 @@ Scribble13130   13130
 Scribble13140   13140
 Scribble13150   13150
 Scribble13160   13160
+Scribble13170   13170
+Scribble13180   13180
+Scribble13190   13190
 
