@@ -3,7 +3,7 @@ HelpScribble project file.
 `grira Zvgpuryy-0Q4954
 0
 1
-InstantObjects Guide 2.0
+InstantObjects Help
 
 
 
@@ -37,7 +37,7 @@ Previous
 Next
 FALSE
 
-1276
+1279
 10
 Scribble10
 InstantObjects Welcome
@@ -658,7 +658,7 @@ FALSE
 \par \f2\fs10 
 \par \cf3\f1\fs18\{bmc AttributeEditorDefinitionExternal.gif\}\cf1 
 \par \f2\fs10 
-\par \f1\fs18 The\lang1033\f0  \lang1040\b\f1 Storage Kind\b0\i  \i0 combo-box allows to choose between \i Embedded \i0 (the classic model) and \i External \i0 (the new model). For Part attributes that (in addition to defining the target class \i stored \i0 and not \i embedded\i0 ) is enough. For Parts and References you also need \lang1033\f0 an\lang1040\f1  \b External Storage Name\lang1033\b0\f0  entry\lang1040\f1 , that is the name the \lang1033\f0 linking\lang1040\f1  table will have. \lang1033\f0 The default naming \lang1040\f1 convention\lang1033\f0  is to \lang1040\f1 use "<\lang1033\f0 class\lang1040\f1  \lang1033\f0 storage\lang1040\f1  name>_<attribute name>"\lang1033\f0  for new attributes\lang1040\f1 , but\lang1033\f0  any other suitable\lang1040\f1  naming scheme\lang1033\f0  may be used\lang1040\f1 .\lang1033\f0  If \b Auto\b0  is checked the default naming scheme will be used to update the \lang1040\b\f1 External Storage Name\lang1033\b0\f0  entry to the current values of its component names (ie \lang1040\f1 <\lang1033\f0 class\lang1040\f1  \lang1033\f0 storage\lang1040\f1  name>\lang1033\f0  and \lang1040\f1 <attribute name>\lang1033\f0 ).\lang1040\f1 
+\par \f1\fs18 The\lang1033\f0  \lang1040\b\f1 Storage Kind\b0\i  \i0 combo-box \lang1033\f0 allows a selection\lang1040\f1  between \i Embedded \i0 (the classic model) and \i External \i0 (the new model). For Part attributes that (in addition to defining the target class \i stored \i0 and not \i embedded\i0 ) is enough. For Parts and References you also need \lang1033\f0 an\lang1040\f1  \b External Storage Name\lang1033\b0\f0  entry\lang1040\f1 , that is the name the \lang1033\f0 linking\lang1040\f1  table will have. \lang1033\f0 The default naming \lang1040\f1 convention\lang1033\f0  is to \lang1040\f1 use "<\lang1033\f0 class\lang1040\f1  \lang1033\f0 storage\lang1040\f1  name>_<attribute name>"\lang1033\f0  for new attributes\lang1040\f1 , but\lang1033\f0  any other suitable\lang1040\f1  naming scheme\lang1033\f0  may be used\lang1040\f1 .\lang1033\f0  If \b Auto\b0  is checked the default naming scheme will be used to update the \lang1040\b\f1 External Storage Name\lang1033\b0\f0  entry to the current values of its component names (ie \lang1040\f1 <\lang1033\f0 class\lang1040\f1  \lang1033\f0 storage\lang1040\f1  name>\lang1033\f0  and \lang1040\f1 <attribute name>\lang1033\f0 ).\lang1040\f1 
 \par \pard\f2\fs10 
 \par \pard\sb25\sa25\lang1033\f0\fs18 IMPORTANT\lang1040\f1  NOTE\lang1033\f0 S:
 \par \pard{\pntext\f3\'B7\tab}{\*\pn\pnlvlblt\pnf3\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\b\i External Storage and Class Persistence\b0\i0  - A cl\lang1040\f1 ass must \lang1033\f0 have its Persistence property set to\lang1040\f1  \i stored\i0  \lang1033\f0 if it is referred\lang1040\f1  \lang1033\f0 to by attributes that use\lang1040\f1  \i external \i0 storage. \lang1033\f0 A c\lang1040\f1 lass\lang1033\f0  defined with\lang1040\f1  \i embedded\i0  \lang1033\f0 Persistence may only be used by\lang1040\f1  \i embedded\i0  (the \lang1033\f0 InstantObjects \lang1040\f1 historical arrangement) part and parts attributes\lang1033\f0 ;\lang1040\f1 
@@ -1852,7 +1852,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantAccessError \cf1\b0\fs16  
-\par \pard\sb25\tx1435\tx2875\tx4315\cf2\ul Hierarchy\cf3\ulnone\{linkID=1030\}\cf1\tab\cf2\ul See Also\cf3\ulnone\{linkID=1010\}\cf1\tab\cf2\strike Example 1\cf3\strike0\{linkID=1020>example\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13020>main\}\{keepn\}\cf1 
+\par \pard\sb25\tx1435\tx2875\tx4315\cf2\ul Hierarchy\cf3\ulnone\{linkID=1030\}\cf1\tab\cf2\ul See Also\cf3\ulnone\{linkID=1010\}\cf1\tab\cf2\strike Example 1\cf3\strike0\{linkID=1020>example\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13050>main\}\{keepn\}\cf1 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 The exception class for access errors.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 EInstantAccessError = \b class\b0 (\cf2\strike EInstantError\cf3\strike0\{linkID=1350>main\}\cf1 )
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -2101,7 +2101,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantConflict\cf1\b0\fs16  
-\par \pard\sb25\tx1440\tx2840\cf2\ul Hierarchy\cf3\ulnone\{linkID=1140\}\cf1\tab\cf2\strike Example 1\cf3\strike0\{linkID=1130>example\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13020>main\}\{keepn\}\cf1 
+\par \pard\sb25\tx1440\tx2840\cf2\ul Hierarchy\cf3\ulnone\{linkID=1140\}\cf1\tab\cf2\strike Example 1\cf3\strike0\{linkID=1130>example\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13050>main\}\{keepn\}\cf1 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 The exception class for conflict errors.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 EInstantConflict = \b class\b0 (\cf2\strike EInstantError\cf3\strike0\{linkID=1350>main\}\cf1 )
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -2331,7 +2331,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantConversionError \cf1\b0\fs16 
-\par \pard\sb25\tx1435\tx2875\tx4315\cf2\ul Hierarchy\cf3\ulnone\{linkID=1260\}\cf1\tab\cf2\ul See Also\cf3\ulnone\{linkID=1240\}\cf1\tab\cf2\strike Example 1\cf3\strike0\{linkID=1250>example\}\cf1\tab\cf2\strike Unit: InstantClasses\cf3\strike0\{linkID=12790>main\}\cf1\{keepn\} 
+\par \pard\sb25\tx1435\tx2875\tx4315\cf2\ul Hierarchy\cf3\ulnone\{linkID=1260\}\cf1\tab\cf2\ul See Also\cf3\ulnone\{linkID=1240\}\cf1\tab\cf2\strike Example 1\cf3\strike0\{linkID=1250>example\}\cf1\tab\cf2\strike Unit: InstantClasses\cf3\strike0\{linkID=12820>main\}\cf1\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 The exception class for conversion errors.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 EInstantConversionError = \b class\b0 (\cf2\strike EInstantError\cf3\strike0\{linkID=1350>main\}\cf1 )
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -2582,7 +2582,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantError \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\cf2\ul Hierarchy\cf3\ulnone\{linkID=1360\}\cf1\tab\cf2\strike Members\cf3\strike0\{linkID=1430>nav\}\cf1\tab\cf2\strike Properties\cf3\strike0\{linkID=1380>nav\}\cf1\tab\cf2\strike Methods\cf3\strike0\{linkID=1410>nav\}\cf1\tab\cf2\strike Unit: InstantClasses\cf3\strike0\{linkID=12790>main\}\cf1\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\cf2\ul Hierarchy\cf3\ulnone\{linkID=1360\}\cf1\tab\cf2\strike Members\cf3\strike0\{linkID=1430>nav\}\cf1\tab\cf2\strike Properties\cf3\strike0\{linkID=1380>nav\}\cf1\tab\cf2\strike Methods\cf3\strike0\{linkID=1410>nav\}\cf1\tab\cf2\strike Unit: InstantClasses\cf3\strike0\{linkID=12820>main\}\cf1\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 The common ancestor of exception classes.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 EInstantError = \b class\b0 (Exception)
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -2884,7 +2884,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantKeyViolation \cf1\b0\fs16 
-\par \pard\sb25\tx1435\tx2875\ul Hierarchy\ulnone\{linkID=1510\}\tab\ul See Also\ulnone\{linkID=1500\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\tx2875\ul Hierarchy\ulnone\{linkID=1510\}\tab\ul See Also\ulnone\{linkID=1500\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 The exception class for key violations.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 EInstantKeyViolation = \b class\b0 (\strike EInstantConflict\strike0\{linkID=1120>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -3111,7 +3111,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantRangeError \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=1610\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=1610\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 The exception class for too large or too small integer values.
 \par \pard\sb25\sa25\tx1435\f1 EInstantRangeError = \b class\b0 (\strike EInstantError\strike0\{linkID=1350>main\})
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -3317,7 +3317,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantStreamError \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=1710\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=1710\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 The exception class for streaming errors.
 \par \pard\sb25\sa25\tx1435\f1 EInstantStreamError = \b class\b0 (\strike EInstantError\strike0\{linkID=1350>main\})
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -3523,7 +3523,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 EInstantValidationError \cf1\b0\fs16 
-\par \pard\sb25\tx1435\tx2875\ul Hierarchy\ulnone\{linkID=1820\}\tab\ul See Also\ulnone\{linkID=1810\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1435\tx2875\ul Hierarchy\ulnone\{linkID=1820\}\tab\ul See Also\ulnone\{linkID=1810\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 The exception class for validation errors.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 EInstantValidationError = \b class\b0 (\strike EInstantError\strike0\{linkID=1350>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -3729,7 +3729,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantADOConnector \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=1910\}\tab\strike Members\strike0\{linkID=1980>nav\}\tab\strike Properties\strike0\{linkID=1930>nav\}\tab\strike Methods\strike0\{linkID=1970>nav\}\tab\strike Unit: InstantADO\strike0\{linkID=12680>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=1910\}\tab\strike Members\strike0\{linkID=1980>nav\}\tab\strike Properties\strike0\{linkID=1930>nav\}\tab\strike Methods\strike0\{linkID=1970>nav\}\tab\strike Unit: InstantADO\strike0\{linkID=12710>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -4088,7 +4088,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantADSConnector \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=2050\}\tab\strike Members\strike0\{linkID=2120>nav\}\tab\strike Properties\strike0\{linkID=2070>nav\}\tab\strike Methods\strike0\{linkID=2110>nav\}\tab\strike Unit: InstantADS\strike0\{linkID=12710>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=2050\}\tab\strike Members\strike0\{linkID=2120>nav\}\tab\strike Properties\strike0\{linkID=2070>nav\}\tab\strike Methods\strike0\{linkID=2110>nav\}\tab\strike Unit: InstantADS\strike0\{linkID=12740>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -4413,7 +4413,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantAttribute \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5680\ul Hierarchy\ulnone\{linkID=2180\}\tab\strike Members\strike0\{linkID=2250>nav\}\tab\strike Properties\strike0\{linkID=2200>nav\}\tab\strike Methods\strike0\{linkID=2230>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5680\ul Hierarchy\ulnone\{linkID=2180\}\tab\strike Members\strike0\{linkID=2250>nav\}\tab\strike Properties\strike0\{linkID=2200>nav\}\tab\strike Methods\strike0\{linkID=2230>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 The common ancestor of all the attribute classes.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantAttribute = \b class\b0 (\strike TInstantStreamable\strike0\{linkID=10830>main\})
 \par PInstantAttribute = ^TInstantAttribute;
@@ -5342,7 +5342,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantBDEConnector \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=2570\}\tab\strike Members\strike0\{linkID=2640>nav\}\tab\strike Properties\strike0\{linkID=2590>nav\}\tab\strike Unit: InstantBDE\strike0\{linkID=12730>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=2570\}\tab\strike Members\strike0\{linkID=2640>nav\}\tab\strike Properties\strike0\{linkID=2590>nav\}\tab\strike Unit: InstantBDE\strike0\{linkID=12760>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\tx2875\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -5648,7 +5648,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantBlob \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\ul Hierarchy\ulnone\{linkID=2700\}\tab\strike Members\strike0\{linkID=2770>nav\}\tab\strike Properties\strike0\{linkID=2720>nav\}\tab\strike Methods\strike0\{linkID=2750>nav\}\tab\ul See Also\ulnone\{linkID=2690\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\ul Hierarchy\ulnone\{linkID=2700\}\tab\strike Members\strike0\{linkID=2770>nav\}\tab\strike Properties\strike0\{linkID=2720>nav\}\tab\strike Methods\strike0\{linkID=2750>nav\}\tab\ul See Also\ulnone\{linkID=2690\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\fs18 TInstantBlob represents a binary large object (BLOB).
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\f1 TInstantBlob = \b class\b0 (\strike TInstantSimple\strike0\{linkID=10430>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\b\f0 Description
@@ -6089,7 +6089,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantBoolean\cf1\b0\fs16 
-\par \pard\sb25\tx1420\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=2870\}\tab\strike Members\strike0\{linkID=2940>nav\}\tab\strike Properties\strike0\{linkID=2890>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1420\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=2870\}\tab\strike Members\strike0\{linkID=2940>nav\}\tab\strike Properties\strike0\{linkID=2890>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 TInstantBoolean represents a Boolean value.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantBoolean = \b class\b0 (\strike TInstantSimple\strike0\{linkID=10430>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -6358,7 +6358,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCollection \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=2980\}\tab\strike Members\strike0\{linkID=3030>nav\}\tab\strike Methods\strike0\{linkID=3020>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=2980\}\tab\strike Members\strike0\{linkID=3030>nav\}\tab\strike Methods\strike0\{linkID=3020>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 TInstantCollection is a container for \strike TInstantCollectionItem\strike0\{linkID=3090>main\} objects.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantCollection = \b class\b0 (TCollection)
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -6625,7 +6625,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCollectionItem \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=3100\}\tab\strike Members\strike0\{linkID=3160>nav\}\tab\strike Properties\strike0\{linkID=3120>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=3100\}\tab\strike Members\strike0\{linkID=3160>nav\}\tab\strike Properties\strike0\{linkID=3120>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 TInstantCollectionItem is the ancestor for collection item classes.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantCollectionItem = \b class\b0 (TCollectionItem)
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -6831,7 +6831,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantComplex \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7080\ul Hierarchy\ulnone\{linkID=3210\}\tab\strike Members\strike0\{linkID=3280>nav\}\tab\strike Properties\strike0\{linkID=3230>nav\}\tab\strike Methods\strike0\{linkID=3260>nav\}\tab\ul See Also\ulnone\{linkID=3200\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7080\ul Hierarchy\ulnone\{linkID=3210\}\tab\strike Members\strike0\{linkID=3280>nav\}\tab\strike Properties\strike0\{linkID=3230>nav\}\tab\strike Methods\strike0\{linkID=3260>nav\}\tab\ul See Also\ulnone\{linkID=3200\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\fs18 The ancestor of all the attribute classes that represent objects.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\f1 TInstantComplex = \b class\b0 (\strike TInstantAttribute\strike0\{linkID=2170>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\b\f0 Description
@@ -7349,7 +7349,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantConnectionBasedConnector \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=3410\}\tab\strike Members\strike0\{linkID=3480>nav\}\tab\strike Properties\strike0\{linkID=3430>nav\}\tab\strike Methods\strike0\{linkID=3470>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=3410\}\tab\strike Members\strike0\{linkID=3480>nav\}\tab\strike Properties\strike0\{linkID=3430>nav\}\tab\strike Methods\strike0\{linkID=3470>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -7650,7 +7650,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantConnectionManager \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4260\tx5700\ul Hierarchy\ulnone\{linkID=3530\}\tab\strike Members\strike0\{linkID=3600>nav\}\tab\strike Properties\strike0\{linkID=3550>nav\}\tab\strike Methods\strike0\{linkID=3580>nav\}\tab\strike Unit: InstantConnectionManager\strike0\{linkID=12830>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4260\tx5700\ul Hierarchy\ulnone\{linkID=3530\}\tab\strike Members\strike0\{linkID=3600>nav\}\tab\strike Properties\strike0\{linkID=3550>nav\}\tab\strike Methods\strike0\{linkID=3580>nav\}\tab\strike Unit: InstantConnectionManager\strike0\{linkID=12860>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 Allows the user to manage connections to various databases.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantConnectionManager = \b class\b0 (TComponent)
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -8230,7 +8230,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantConnector \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4260\tx5700\tx7100\ul Hierarchy\ulnone\{linkID=3780\}\tab\strike Members\strike0\{linkID=3850>nav\}\tab\strike Properties\strike0\{linkID=3800>nav\}\tab\strike Methods\strike0\{linkID=3840>nav\}\tab\strike Events\strike0\{linkID=3820>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4260\tx5700\tx7100\ul Hierarchy\ulnone\{linkID=3780\}\tab\strike Members\strike0\{linkID=3850>nav\}\tab\strike Properties\strike0\{linkID=3800>nav\}\tab\strike Methods\strike0\{linkID=3840>nav\}\tab\strike Events\strike0\{linkID=3820>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  TInstantConnector;
 \par TInstantConnector = \b class\b0 (TComponent)
@@ -9413,7 +9413,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantConnector.BeforeBuildDatabase \cf1\b0\fs16 
 \par \cf2\strike TInstantConnector\cf3\strike0\{linkID=3770>main\}\cf1\{keepn\} 
 \par \pard\sb25\sa85\fs18 Occurs before the database is build.
-\par \pard\sb25\sa25\b\f1 property\b0  BeforeBuildDatabase: \strike TInstantSchemeEvent\strike0\{linkID=12520>main\};
+\par \pard\sb25\sa25\b\f1 property\b0  BeforeBuildDatabase: \strike TInstantSchemeEvent\strike0\{linkID=12530>main\};
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Write a BeforeBuildDatabase event handler to take specific action before a database is build. The event is particularly useful if modifications or additions should be made to the database scheme like adding indices.
 \par 
@@ -9434,7 +9434,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}{\f4\fnil\fcharset2 Symbol;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantContainer \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4260\tx5680\ul Hierarchy\ulnone\{linkID=4310\}\tab\strike Members\strike0\{linkID=4380>nav\}\tab\strike Properties\strike0\{linkID=4330>nav\}\tab\strike Methods\strike0\{linkID=4360>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4260\tx5680\ul Hierarchy\ulnone\{linkID=4310\}\tab\strike Members\strike0\{linkID=4380>nav\}\tab\strike Properties\strike0\{linkID=4330>nav\}\tab\strike Methods\strike0\{linkID=4360>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 TInstantContainer is the ancestor of attribute classes that represent a relationship with multiple objects.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantContainer = \b class\b0 (\strike TInstantComplex\strike0\{linkID=3190>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -10304,7 +10304,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantContainer.Sort \cf1\b0\fs16 
 \par \cf2\strike TInstantContainer\cf3\strike0\{linkID=4300>main\}\cf1\{keepn\} 
 \par \pard\sb25\sa85\fs18 Sorts the objects in the container based on comparison function.
-\par \pard\sb25\sa25\b\f1 procedure\b0  Sort(Compare: \strike TInstantSortCompare\strike0\{linkID=12530>main\});
+\par \pard\sb25\sa25\b\f1 procedure\b0  Sort(Compare: \strike TInstantSortCompare\strike0\{linkID=12540>main\});
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Call Sort to QuickSort the objects in the container. Compare is a comparison function that indicates how the items are to be ordered.
 \par 
@@ -10325,7 +10325,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0\deflang3081{\fonttbl{\f0\fnil\fcharset0 Arial;}{\f1\fnil Arial;}{\f2\fswiss Arial;}{\f3\fswiss\fcharset0 Arial;}{\f4\fmodern Courier New;}{\f5\fmodern\fcharset0 Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1033\b\fs24 TInstantCurrency\cf1\lang3081\b0\f1\fs18 
-\par \pard\sb25\tx1400\tx2840\tx4260\tx5680\lang1040\ul\f2\fs16 Hierarchy\ulnone\{linkID=4690\}\tab\strike Members\strike0\{linkID=4760>nav\}\tab\strike Properties\strike0\{linkID=4710>nav\}\tab\ul See Also\ulnone\{linkID=4680\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4260\tx5680\lang1040\ul\f2\fs16 Hierarchy\ulnone\{linkID=4690\}\tab\strike Members\strike0\{linkID=4760>nav\}\tab\strike Properties\strike0\{linkID=4710>nav\}\tab\ul See Also\ulnone\{linkID=4680\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 TInstant\lang1033\f3 Currency \lang1040\f2 represents a \lang1033\f3 Currency \lang1040\f2 value.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f4 TInstant\lang1033\f5 Currency\lang1040\f4  = \b class\b0 (\strike TInstantNumeric\strike0\{linkID=7290>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f2 Description
@@ -10618,7 +10618,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCustomExposer \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\cf2\ul Hierarchy\cf3\ulnone\{linkID=4800\}\cf1\tab\cf2\strike Members\cf3\strike0\{linkID=4880>nav\}\cf1\tab\cf2\strike Properties\cf3\strike0\{linkID=4820>nav\}\cf1\tab\cf2\strike Methods\cf3\strike0\{linkID=4860>nav\}\cf1\tab\cf2\strike Events\cf3\strike0\{linkID=4840>nav\}\cf1\tab\cf2\strike Unit: InstantPresentation\cf3\strike0\{linkID=13070>main\}\cf1\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\cf2\ul Hierarchy\cf3\ulnone\{linkID=4800\}\cf1\tab\cf2\strike Members\cf3\strike0\{linkID=4880>nav\}\cf1\tab\cf2\strike Properties\cf3\strike0\{linkID=4820>nav\}\cf1\tab\cf2\strike Methods\cf3\strike0\{linkID=4860>nav\}\cf1\tab\cf2\strike Events\cf3\strike0\{linkID=4840>nav\}\cf1\tab\cf2\strike Unit: InstantPresentation\cf3\strike0\{linkID=13100>main\}\cf1\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\fs18 The ancestor of components that make objects accessible via data-aware controls.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\f1 TInstantCustomExposer = \b class\b0 (TDataSet)
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\b\f0 Description
@@ -11021,7 +11021,7 @@ Modified
 main
 
 FieldOptions;FieldOptions_Property;TInstantCustomExposer_FieldOptions
-TRUE
+FALSE
 11
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fnil Arial;}{\f3\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
@@ -12312,7 +12312,7 @@ Imported
 main
 
 OnAddClassFieldDef;OnAddClassFieldDef_Event;TInstantCustomExposer_OnAddClassFieldDef
-TRUE
+FALSE
 10
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}{\f3\fmodern\fcharset0 Courier New;}{\f4\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
@@ -12680,7 +12680,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 TInstantDateTime \b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=5680\}\tab\strike Members\strike0\{linkID=5750>nav\}\tab\strike Properties\strike0\{linkID=5700>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=5680\}\tab\strike Members\strike0\{linkID=5750>nav\}\tab\strike Properties\strike0\{linkID=5700>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 TInstantDateTime represents a TDateTime value.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantDateTime = \b class\b0 (\strike TInstantSimple\strike0\{linkID=10430>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -12949,7 +12949,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantDBISAMConnector \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=5790\}\tab\strike Members\strike0\{linkID=5860>nav\}\tab\strike Properties\strike0\{linkID=5810>nav\}\tab\strike Methods\strike0\{linkID=5850>nav\}\tab\strike Unit: InstantDBISAM\strike0\{linkID=12880>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=5790\}\tab\strike Members\strike0\{linkID=5860>nav\}\tab\strike Properties\strike0\{linkID=5810>nav\}\tab\strike Methods\strike0\{linkID=5850>nav\}\tab\strike Unit: InstantDBISAM\strike0\{linkID=12910>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -13362,7 +13362,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantDBXConnector \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=5960\}\tab\strike Unit: InstantDBX\strike0\{linkID=12900>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=5960\}\tab\strike Unit: InstantDBX\strike0\{linkID=12930>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -13616,7 +13616,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantElement \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=6060\}\tab\strike Members\strike0\{linkID=6130>nav\}\tab\strike Properties\strike0\{linkID=6080>nav\}\tab\strike Methods\strike0\{linkID=6110>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=6060\}\tab\strike Members\strike0\{linkID=6130>nav\}\tab\strike Properties\strike0\{linkID=6080>nav\}\tab\strike Methods\strike0\{linkID=6110>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 TInstantElement is the ancestor of attribute classes that represent a relationship with a single object.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantElement = \b class\b0 (\strike TInstantComplex\strike0\{linkID=3190>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -14077,7 +14077,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantExplorer \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=6240\}\tab\strike Members\strike0\{linkID=6300>nav\}\tab\strike Properties\strike0\{linkID=6260>nav\}\tab\strike Methods\strike0\{linkID=6290>nav\}\tab\strike Unit: InstantExplorer\strike0\{linkID=12920>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=6240\}\tab\strike Members\strike0\{linkID=6300>nav\}\tab\strike Properties\strike0\{linkID=6260>nav\}\tab\strike Methods\strike0\{linkID=6290>nav\}\tab\strike Unit: InstantExplorer\strike0\{linkID=12950>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 Allows navigation of objects within a tree.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantExplorer = \b class\b0 (TCustomControl)
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -14584,7 +14584,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantExposer \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=6460\}\tab\strike Members\strike0\{linkID=6540>nav\}\tab\strike Properties\strike0\{linkID=6480>nav\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=6460\}\tab\strike Members\strike0\{linkID=6540>nav\}\tab\strike Properties\strike0\{linkID=6480>nav\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 Provides dataset-based access to objects.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantExposer = \b class\b0 (\strike TInstantCustomExposer\strike0\{linkID=4790>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -15100,7 +15100,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantFileStream \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=6670\}\tab\strike Members\strike0\{linkID=6720>nav\}\tab\strike Methods\strike0\{linkID=6710>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=6670\}\tab\strike Members\strike0\{linkID=6720>nav\}\tab\strike Methods\strike0\{linkID=6710>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 Provides stream-based access to data stored in a file.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantFileStream = \b class\b0 (\strike TInstantStream\strike0\{linkID=10540>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -15306,7 +15306,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantFlashFilerConnector \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=6750\}\tab\strike Unit: InstantFlashFiler\strike0\{linkID=12960>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=6750\}\tab\strike Unit: InstantFlashFiler\strike0\{linkID=12990>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -15552,7 +15552,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantFloat \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5680\ul Hierarchy\ulnone\{linkID=6860\}\tab\strike Members\strike0\{linkID=6930>nav\}\tab\strike Properties\strike0\{linkID=6880>nav\}\tab\ul See Also\ulnone\{linkID=6850\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5680\ul Hierarchy\ulnone\{linkID=6860\}\tab\strike Members\strike0\{linkID=6930>nav\}\tab\strike Properties\strike0\{linkID=6880>nav\}\tab\ul See Also\ulnone\{linkID=6850\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 TInstantFloat represents a Double value.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantFloat = \b class\b0 (\strike TInstantNumeric\strike0\{linkID=7290>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -15844,7 +15844,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantIBXConnector \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=6970\}\tab\strike Members\strike0\{linkID=7040>nav\}\tab\strike Properties\strike0\{linkID=6990>nav\}\tab\strike Unit: InstantIBX\strike0\{linkID=12980>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=6970\}\tab\strike Members\strike0\{linkID=7040>nav\}\tab\strike Properties\strike0\{linkID=6990>nav\}\tab\strike Unit: InstantIBX\strike0\{linkID=13010>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\tx2875\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -16125,7 +16125,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantInteger \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=7090\}\tab\strike Members\strike0\{linkID=7160>nav\}\tab\strike Properties\strike0\{linkID=7110>nav\}\tab\ul See Also\ulnone\{linkID=7080\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=7090\}\tab\strike Members\strike0\{linkID=7160>nav\}\tab\strike Properties\strike0\{linkID=7110>nav\}\tab\ul See Also\ulnone\{linkID=7080\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 TInstantInteger represents a 32-bit Integer value.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantInteger = \b class\b0 (\strike TInstantNumeric\strike0\{linkID=7290>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -16415,7 +16415,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantMemo \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=7200\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=7200\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 TInstantMemo represents a memo.
 \par \pard\sb25\sa25\tx1435\f1 TInstantMemo = \b class\b0 (\strike TInstantBlob\strike0\{linkID=2680>main\})
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -16668,7 +16668,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantNumeric \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=7300\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul Hierarchy\ulnone\{linkID=7300\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 TInstantNumeric is the ancestor of attribute classes that represent a numeric value.
 \par \pard\sb25\sa25\tx1435\f1 TInstantNumeric = \b class\b0 (\strike TInstantSimple\strike0\{linkID=10430>main\})
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -16914,7 +16914,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\tx8520\tx9940\ul Hierarchy\ulnone\{linkID=7420\}\tab\strike Members\strike0\{linkID=7490>nav\}\tab\strike Properties\strike0\{linkID=7440>nav\}\tab\strike Methods\strike0\{linkID=7470>nav\}\tab\strike Events\strike0\{linkID=7460>nav\}\tab\ul See Also\ulnone\{linkID=7400\}\tab\strike Example 1\strike0\{linkID=7410>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\tx8520\tx9940\ul Hierarchy\ulnone\{linkID=7420\}\tab\strike Members\strike0\{linkID=7490>nav\}\tab\strike Properties\strike0\{linkID=7440>nav\}\tab\strike Methods\strike0\{linkID=7470>nav\}\tab\strike Events\strike0\{linkID=7460>nav\}\tab\ul See Also\ulnone\{linkID=7400\}\tab\strike Example 1\strike0\{linkID=7410>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\tx7195\tx8635\fs18 The ancestor for classes with persistence capabilities.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\tx8635\f1 TInstantObject = \b class\b0 (\strike TInstantStreamable\strike0\{linkID=10830>main\}, IUnknown)
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\tx8635\b\f0 Description
@@ -20414,7 +20414,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.RefreshAll \cf1\b0\fs16 
 \par \strike TInstantObject\strike0\{linkID=7390>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Refreshes all instances associated with a connector object.
-\par \pard\sb25\sa25\b\f1 class\b0  \b procedure\b0  RefreshAll(AConnector: \strike TInstantConnector\strike0\{linkID=3770>main\}; Progress: \strike TInstantProgressEvent\strike0\{linkID=12510>main\});
+\par \pard\sb25\sa25\b\f1 class\b0  \b procedure\b0  RefreshAll(AConnector: \strike TInstantConnector\strike0\{linkID=3770>main\}; Progress: \strike TInstantProgressEvent\strike0\{linkID=12520>main\});
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Call RefreshAll to refresh all instances of the class associated with a connector object. The \strike Connector\strike0\{linkID=7530>main\} argument can optionally be used to specify a \strike Connector\strike0\{linkID=7530>main\} object. If the connector is not specified, RefreshAll uses the default connector. Use the progress argument to attach a progress event in order to receive progress information during the refresh process.
 \par 
@@ -20745,7 +20745,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.VerifyOperation \cf1\b0\fs16  
 \par \pard\sb25\tx1435\strike TInstantObject\strike0\{linkID=7390>main\}\tab\ul See Also\ulnone\{linkID=9070\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Called automatically to verify that an operation may be carried out.
-\par \pard\sb25\sa25\tx1435\b\f1 function\b0  VerifyOperation(OperationType: \strike TInstantOperationType\strike0\{linkID=12490>main\}): \strike TInstantVerificationResult\strike0\{linkID=12570>main\}; \b virtual\b0 ;
+\par \pard\sb25\sa25\tx1435\b\f1 function\b0  VerifyOperation(OperationType: \strike TInstantOperationType\strike0\{linkID=12490>main\}): \strike TInstantVerificationResult\strike0\{linkID=12600>main\}; \b virtual\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 VerifyOperation is called automatically to verify that a specific operation may be carried out. Do not call it explicitly in your applications. The VerifyOperation implemented in \strike TInstantObject\strike0\{linkID=7390>main\} does nothing. Override this method when creating a class that needs to verify operations before they are carried out. The method returns vrOk by default.
 \par 
@@ -20977,7 +20977,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantOwnedCollection \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=9180\}\tab\strike Members\strike0\{linkID=9230>nav\}\tab\strike Methods\strike0\{linkID=9220>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=9180\}\tab\strike Members\strike0\{linkID=9230>nav\}\tab\strike Methods\strike0\{linkID=9220>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 TInstantOwnedCollection is a collection that has an owner.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantOwnedCollection = \b class\b0 (\strike TInstantCollection\strike0\{linkID=2970>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -21152,7 +21152,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantPart \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\ul Hierarchy\ulnone\{linkID=9280\}\tab\strike Members\strike0\{linkID=9350>nav\}\tab\strike Methods\strike0\{linkID=9330>nav\}\tab\ul See Also\ulnone\{linkID=9260\}\tab\strike Example 1\strike0\{linkID=9270>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\ul Hierarchy\ulnone\{linkID=9280\}\tab\strike Members\strike0\{linkID=9350>nav\}\tab\strike Methods\strike0\{linkID=9330>nav\}\tab\ul See Also\ulnone\{linkID=9260\}\tab\strike Example 1\strike0\{linkID=9270>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\fs18 TInstantPart represents a part relationship to a single object.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\f1 TInstantPart = \b class\b0 (\strike TInstantElement\strike0\{linkID=6050>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\b\f0 Description
@@ -21523,7 +21523,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantParts \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\ul Hierarchy\ulnone\{linkID=9420\}\tab\strike Members\strike0\{linkID=9490>nav\}\tab\strike Methods\strike0\{linkID=9470>nav\}\tab\ul See Also\ulnone\{linkID=9400\}\tab\strike Example 1\strike0\{linkID=9410>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\ul Hierarchy\ulnone\{linkID=9420\}\tab\strike Members\strike0\{linkID=9490>nav\}\tab\strike Methods\strike0\{linkID=9470>nav\}\tab\ul See Also\ulnone\{linkID=9400\}\tab\strike Example 1\strike0\{linkID=9410>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\fs18 TInstantParts represents a part relationship to multiple objects.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\f1 TInstantParts = \b class\b0 (\strike TInstantContainer\strike0\{linkID=4300>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\b\f0 Description
@@ -21878,7 +21878,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantReference \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\tx8520\ul Hierarchy\ulnone\{linkID=9550\}\tab\strike Members\strike0\{linkID=9620>nav\}\tab\strike Properties\strike0\{linkID=9570>nav\}\tab\strike Methods\strike0\{linkID=9600>nav\}\tab\ul See Also\ulnone\{linkID=9530\}\tab\strike Example 1\strike0\{linkID=9540>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\tx8520\ul Hierarchy\ulnone\{linkID=9550\}\tab\strike Members\strike0\{linkID=9620>nav\}\tab\strike Properties\strike0\{linkID=9570>nav\}\tab\strike Methods\strike0\{linkID=9600>nav\}\tab\ul See Also\ulnone\{linkID=9530\}\tab\strike Example 1\strike0\{linkID=9540>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\tx7195\fs18 TInstantReference represents a reference relationship to a single object.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\f1 TInstantReference = \b class\b0 (\strike TInstantElement\strike0\{linkID=6050>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\b\f0 Description
@@ -22540,7 +22540,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantReferences \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\tx8520\ul Hierarchy\ulnone\{linkID=9810\}\tab\strike Members\strike0\{linkID=9880>nav\}\tab\strike Properties\strike0\{linkID=9830>nav\}\tab\strike Methods\strike0\{linkID=9860>nav\}\tab\ul See Also\ulnone\{linkID=9790\}\tab\strike Example 1\strike0\{linkID=9800>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7100\tx8520\ul Hierarchy\ulnone\{linkID=9810\}\tab\strike Members\strike0\{linkID=9880>nav\}\tab\strike Properties\strike0\{linkID=9830>nav\}\tab\strike Methods\strike0\{linkID=9860>nav\}\tab\ul See Also\ulnone\{linkID=9790\}\tab\strike Example 1\strike0\{linkID=9800>example\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\tx7195\fs18 TInstantReferences represents a reference relationship to multiple objects.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\f1 TInstantReferences = \b class\b0 (\strike TInstantContainer\strike0\{linkID=4300>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\tx7195\b\f0 Description
@@ -23011,7 +23011,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantRelationalConnector \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=9970\}\tab\strike Members\strike0\{linkID=10040>nav\}\tab\strike Properties\strike0\{linkID=9990>nav\}\tab\strike Events\strike0\{linkID=10010>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=9970\}\tab\strike Members\strike0\{linkID=10040>nav\}\tab\strike Properties\strike0\{linkID=9990>nav\}\tab\strike Events\strike0\{linkID=10010>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 Provides access to a database.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\strike\f1 TInstantConnectorClass\strike0\{linkID=12210>main\} = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -23369,7 +23369,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantResourceStream \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=10120\}\tab\strike Members\strike0\{linkID=10170>nav\}\tab\strike Methods\strike0\{linkID=10160>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=10120\}\tab\strike Members\strike0\{linkID=10170>nav\}\tab\strike Methods\strike0\{linkID=10160>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 TInstantResourceStream provides access to a compiled resource in the application.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantResourceStream = \b class\b0 (\strike TInstantStream\strike0\{linkID=10540>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -23579,7 +23579,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantSelector \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=10220\}\tab\strike Members\strike0\{linkID=10300>nav\}\tab\strike Properties\strike0\{linkID=10240>nav\}\tab\ul See Also\ulnone\{linkID=10210\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=10220\}\tab\strike Members\strike0\{linkID=10300>nav\}\tab\strike Properties\strike0\{linkID=10240>nav\}\tab\ul See Also\ulnone\{linkID=10210\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 TInstantSelector provides dataset-based access to a selection of objects.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantSelector = \b class\b0 (\strike TInstantCustomExposer\strike0\{linkID=4790>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -24148,7 +24148,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantSimple \b0\fs16  
-\par \pard\sb25\tx1435\tx2875\cf1\ul Hierarchy\cf2\ulnone\{linkID=10450\}\cf1\tab\ul See Also\cf2\ulnone\{linkID=10440\}\tab\cf1\strike Unit: InstantPersistence\cf2\strike0\{linkID=13020>main\}\{keepn\}\cf0 
+\par \pard\sb25\tx1435\tx2875\cf1\ul Hierarchy\cf2\ulnone\{linkID=10450\}\cf1\tab\ul See Also\cf2\ulnone\{linkID=10440\}\tab\cf1\strike Unit: InstantPersistence\cf2\strike0\{linkID=13050>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 The ancestor of all the attribute classes that represent simple types.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantSimple = \b class\b0 (\cf1\strike TInstantAttribute\cf2\strike0\{linkID=2170>main\}\cf0 )
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -24416,7 +24416,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantStream \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7080\ul Hierarchy\ulnone\{linkID=10550\}\tab\strike Members\strike0\{linkID=10600>nav\}\tab\strike Properties\strike0\{linkID=10570>nav\}\tab\strike Methods\strike0\{linkID=10590>nav\}\tab\strike Events\strike0\{linkID=10580>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5720\tx7080\ul Hierarchy\ulnone\{linkID=10550\}\tab\strike Members\strike0\{linkID=10600>nav\}\tab\strike Properties\strike0\{linkID=10570>nav\}\tab\strike Methods\strike0\{linkID=10590>nav\}\tab\strike Events\strike0\{linkID=10580>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\tx5755\fs18 TStream is the base class for classes that provide streaming capabilities for various kinds of media.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\tx5755\f1 TInstantStream = \b class\b0 (TStream)
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\tx5755\b\f0 Description
@@ -25041,7 +25041,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantStream.OnProcessObject \cf1\b0\fs16 
 \par \strike TInstantStream\strike0\{linkID=10540>main\}\{keepn\}
 \par \pard\sb25\sa85\fs18 Specifies an object processing event handler.
-\par \pard\sb25\sa25\b\f1 property\b0  OnProcessObject: \strike TInstantProcessObjectEvent\strike0\{linkID=12500>main\};
+\par \pard\sb25\sa25\b\f1 property\b0  OnProcessObject: \strike TInstantProcessObjectEvent\strike0\{linkID=12510>main\};
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Use OnProcessObject to attach an optional object processing event handler to the stream. When an object is either written to or read from the stream, the OnProcessObject event is triggered.
 \par 
@@ -25062,7 +25062,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantStreamable \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=10840\}\tab\strike Members\strike0\{linkID=10900>nav\}\tab\strike Methods\strike0\{linkID=10880>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=10840\}\tab\strike Members\strike0\{linkID=10900>nav\}\tab\strike Methods\strike0\{linkID=10880>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 TInstantStreamable is the base class for classes that are streamable.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantStreamable = \b class\b0 (TPersistent)
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -25279,7 +25279,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantStreamable.LoadFromStream \cf1\b0\fs16  
 \par \pard\sb25\tx1435\strike TInstantStreamable\strike0\{linkID=10830>main\}\tab\ul See Also\ulnone\{linkID=10940\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Loads the object from a stream
-\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  LoadFromStream(Stream: TStream; ProcessEvent: \strike TInstantProcessObjectEvent\strike0\{linkID=12500>main\});
+\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  LoadFromStream(Stream: TStream; ProcessEvent: \strike TInstantProcessObjectEvent\strike0\{linkID=12510>main\});
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 Call LoadFromStream to load the object from a stream specified by the Stream argument. The stream must contain an object in the binary stream format. By setting the ProcessEvent argument, information about the objects being processed can be obtained.
 \par 
@@ -25363,7 +25363,7 @@ FALSE
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantStreamable.SaveToStream \cf1\b0\fs16 
 \par \strike TInstantStreamable\strike0\{linkID=10830>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Saves the object to a stream
-\par \pard\sb25\sa25\b\f1 procedure\b0  SaveToStream(Stream: TStream; ProcessEvent: \strike TInstantProcessObjectEvent\strike0\{linkID=12500>main\});
+\par \pard\sb25\sa25\b\f1 procedure\b0  SaveToStream(Stream: TStream; ProcessEvent: \strike TInstantProcessObjectEvent\strike0\{linkID=12510>main\});
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 Saves the object to a stream specified by the Stream argument. By setting the ProcessEvent argument, information about the objects being processed can be obtained.
 \par 
@@ -25426,7 +25426,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantString \cf1\b0\fs16 
-\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=11010\}\tab\strike Members\strike0\{linkID=11080>nav\}\tab\strike Properties\strike0\{linkID=11030>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1400\tx2840\tx4260\ul Hierarchy\ulnone\{linkID=11010\}\tab\strike Members\strike0\{linkID=11080>nav\}\tab\strike Properties\strike0\{linkID=11030>nav\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 TInstantString represents a string value.
 \par \pard\sb25\sa25\tx1435\tx2875\f1 TInstantString = \b class\b0 (\strike TInstantSimple\strike0\{linkID=10430>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -25695,7 +25695,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantStringStream \cf1\b0\fs16  
-\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=11120\}\tab\strike Members\strike0\{linkID=11180>nav\}\tab\strike Properties\strike0\{linkID=11140>nav\}\tab\strike Methods\strike0\{linkID=11170>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1400\tx2840\tx4280\tx5700\ul Hierarchy\ulnone\{linkID=11120\}\tab\strike Members\strike0\{linkID=11180>nav\}\tab\strike Properties\strike0\{linkID=11140>nav\}\tab\strike Methods\strike0\{linkID=11170>nav\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\tx4315\fs18 TInstantStringStream provides stream-based access to a string.
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\f1 TInstantStringStream = \b class\b0 (\strike TInstantStream\strike0\{linkID=10540>main\})
 \par \pard\sb55\sa25\tx1435\tx2875\tx4315\b\f0 Description
@@ -25945,7 +25945,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantCharSetToStr \cf1\b0\fs16  
-\par \pard\sb25\tx1435\tx2875\ul See Also\ulnone\{linkID=11230\}\tab\strike Example 1\strike0\{linkID=11240>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\}
+\par \pard\sb25\tx1435\tx2875\ul See Also\ulnone\{linkID=11230\}\tab\strike Example 1\strike0\{linkID=11240>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 Converts a set of char to a string.
 \par \pard\sb25\sa25\tx1435\tx2875\b\f1 function\b0  InstantCharSetToStr(C: TChars): \b string\b0 ;
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -26009,7 +26009,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 InstantCheckConnection \b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Checks the assignment of a connection
 \par \pard\sb25\sa25\b\f1 procedure\b0  InstantCheckConnection(Connection: TCustomConnection);
 \par \pard\sb55\sa25\b\f0 Description
@@ -26032,7 +26032,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantCheckConnector \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11270\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11270\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Checks the assignment of a connector
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantCheckConnector(\b var\b0  Connector: \strike TInstantConnector\strike0\{linkID=3770>main\}): \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26074,7 +26074,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantClassNameToName \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11290\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11290\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Converts a class name to a name.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantClassNameToName(\b const\b0  ClassName: \b string\b0 ): \b string\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26116,7 +26116,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang3081\b\f0\fs24 InstantCompareObjects 1 \b0\fs16 
-\par \cf1\strike Unit: InstantUtils\cf2\strike0\{linkID=13130>main\}\{keepn\}\cf0 
+\par \cf1\strike Unit: InstantUtils\cf2\strike0\{linkID=13160>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\fs18 Compares two objects by comparing a named published property.
 \par \pard\sb25\sa25\b\f1 function\b0  InstantCompareObjects(Obj1: TObject; Obj2: TObject; PropName: \b string\b0 ; Options: \cf1\strike TInstantCompareOptions\cf2\strike0\{linkID=12170>main\}\cf0 ): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -26145,7 +26145,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang3081\b\f0\fs24 InstantCompareObjects 2 \b0\fs16 
-\par \cf1\strike Unit: InstantUtils\cf2\strike0\{linkID=13130>main\}\{keepn\}\cf0 
+\par \cf1\strike Unit: InstantUtils\cf2\strike0\{linkID=13160>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\fs18 Compares two objects by comparing mulpiple named published properties.
 \par \pard\sb25\sa25\b\f1 function\cf1\b0\strike InstantCompareObjects\cf2\strike0\{linkID=11300>main\}\cf0 (Obj1: TObject; Obj2: TObject; PropNames: TStrings; Options: \cf1\strike TInstantCompareOptions\cf2\strike0\{linkID=12170>main\}\cf0 ): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -26174,7 +26174,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantCompareText \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Compares two strings by ordinal value.
 \par \pard\sb25\sa25\b\f1 function\b0  InstantCompareText(\b const\b0  S1: \b string\b0 ; \b const\b0  S2: \b string\b0 ; IgnoreCase: Boolean): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -26197,7 +26197,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantCompareValues \b0\fs16 
-\par \cf1\strike Unit: InstantUtils\cf2\strike0\{linkID=13130>main\}\{keepn\}\cf0 
+\par \cf1\strike Unit: InstantUtils\cf2\strike0\{linkID=13160>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\fs18 Compares the values of two variants.
 \par \pard\sb25\sa25\b\f1 function\b0  InstantCompareValues(V1: Variant; V2: Variant; Options: \cf1\strike TInstantCompareOptions\cf2\strike0\{linkID=12170>main\}\cf0 ): Integer;
 \par \pard\sb55\sa25\b\f0 Description
@@ -26226,7 +26226,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantConstArrayToVariant \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Converts an array of constants to a variant array.
 \par \pard\sb25\sa25\b\f1 function\b0  InstantConstArrayToVariant(AValues: \b array\b0  \b of\b0  \b const\b0 ): Variant;
 \par \pard\sb55\sa25\b\f0 Description
@@ -26249,11 +26249,11 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantDateTimeToStr \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11360\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11360\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Converts a TDatetime value to a string.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantDateTimeToStr(DateTime: TDateTime): \b string\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 Use InstantDateTimeToStr to convert a TDateTimeValue to a string using the datetime format specified by the \strike InstantDateTimeFormat\strike0\{linkID=12640>main\} string.
+\par \pard\sb25\sa25\tx1435\b0 Use InstantDateTimeToStr to convert a TDateTimeValue to a string using the datetime format specified by the \strike InstantDateTimeFormat\strike0\{linkID=12670>main\} string.
 \par 
 \par }
 11360
@@ -26291,7 +26291,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantDefaultConnector \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Returns the default connector instance.
 \par \pard\sb25\sa25\b\f1 function\b0  InstantDefaultConnector: \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \pard\sb55\sa25\b\f0 Description
@@ -26314,7 +26314,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantDisableNotifiers \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11390\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11390\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Disables all notifiers
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantDisableNotifiers;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26356,7 +26356,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantEnableNotifiers \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11410\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11410\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Enables all notifiers
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantEnableNotifiers;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26398,7 +26398,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantExploreObject \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11430\}\tab\strike Unit: InstantExplorer\strike0\{linkID=12920>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11430\}\tab\strike Unit: InstantExplorer\strike0\{linkID=12950>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Explores an object
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantExploreObject(AObject: TObject);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26440,7 +26440,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantFileVersion \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11450\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11450\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Returns the version of a file as a record
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantFileVersion(\b const\b0  FileName: \b string\b0 ): \strike TInstantVersion\strike0\{linkID=12070>main\};
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26482,7 +26482,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantFileVersionStr \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11470\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11470\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Returns the version of a file as a string
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantFileVersionStr(\b const\b0  FileName: \b string\b0 ): \b string\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26524,7 +26524,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantFindAccessorClass \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11490\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11490\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Finds and returns a class derived from TInstantAccessor.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantFindAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26568,7 +26568,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantFindClass \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11510\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11510\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Finds and returns a class derived from \strike TInstantObject\strike0\{linkID=7390>main\}.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantFindClass(\b const\b0  ClassName: \b string\b0 ): TInstantObjectClass;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26612,7 +26612,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantGenerateId \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Generates an unique Id.
 \par \pard\sb25\sa25\b\f1 function\b0  InstantGenerateId: \b string\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -26635,7 +26635,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantGetAccessorClass \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11540\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11540\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Finds and returns a class derived from TInstantAccessor.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantGetAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26678,7 +26678,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantGetClass \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11560\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11560\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Finds and returns a class derived from \strike TInstantObject\strike0\{linkID=7390>main\}.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantGetClass(\b const\b0  ClassName: \b string\b0 ): TInstantObjectClass;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26721,7 +26721,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantGetClasses \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Extracts a list of registered classes.
 \par \pard\sb25\sa25\b\f1 procedure\b0  InstantGetClasses(Classes: TList; BaseClass: TInstantObjectClass);
 \par \pard\sb55\sa25\b\f0 Description
@@ -26744,7 +26744,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantIsIdentifier \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Determines if a string is a valid identifier
 \par \pard\sb25\sa25\b\f1 function\b0  InstantIsIdentifier(Str: \b string\b0 ): Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -26767,7 +26767,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantIsValidObjectId \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Tests for a valid Object Id.
 \par \pard\sb25\sa25\b\f1 function\b0  InstantIsValidObjectId(\b const\b0  AObjectId: \b string\b0 ): Boolean;
 \par \pard\sb55\sa25\b\f0 Description
@@ -26790,7 +26790,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantMatchObject 1 \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11610\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11610\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Compares a value to the value of an objects property
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantMatchObject(Obj: TObject; PropName: \b string\b0 ; \b const\b0  KeyValue: Variant; Options: \strike TInstantCompareOptions\strike0\{linkID=12170>main\}): Boolean;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26832,7 +26832,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantMatchObject 2  \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11630\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11630\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Compares multiple values to the values of an objects properties
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  \strike InstantMatchObject\strike0\{linkID=11600>main\}(Obj: TObject; PropNames: TStrings; \b const\b0  KeyValues: Variant; Options: \strike TInstantCompareOptions\strike0\{linkID=12170>main\}): Boolean;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26874,7 +26874,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantNameToClassName \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11650\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11650\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Converts a name to a class name.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantNameToClassName(\b const\b0  \b Name\b0 : \b string\b0 ): \b string\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26916,7 +26916,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantObjectBinaryToText \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11670\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11670\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Converts the binary representation of an object to a textual representation.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantObjectBinaryToText(Input: TStream; Output: TStream);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -26959,7 +26959,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantObjectTextToBinary \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11690\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11690\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Converts the textual representation of an object to a binary representation.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantObjectTextToBinary(Input: TStream; Output: TStream);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27002,7 +27002,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantPartStr \cf1\b0\fs16  
-\par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=11710>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\}
+\par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=11710>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Extracts a part of a delimited string.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantPartStr(Str: \b string\b0 ; \b Index\b0 : Integer; Delimiter: Char): \b string\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27046,9 +27046,9 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 InstantReadObject \b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11730\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11730\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Reads an object from a stream
-\par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantReadObject(Stream: TStream; Format: \strike TInstantStreamFormat\strike0\{linkID=12550>main\}; AObject: TPersistent): TPersistent;
+\par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantReadObject(Stream: TStream; Format: \strike TInstantStreamFormat\strike0\{linkID=12580>main\}; AObject: TPersistent): TPersistent;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 Call InstantReadObject to read the object specified by the AObject argument from the stream specified by the Stream argument. If the AObject argument is nil, InstantReadObject creates an object and returns this object as the function result. The Format argument specifies the format of the stream.
 \par \pard\fi-195\li195\sb25\sa25\tx1435\b Note: \b0  The sfXML format can only be used for instances of \strike TInstantObject\strike0\{linkID=7390>main\} descendants
@@ -27089,9 +27089,9 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantReadObjects \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11750\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11750\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Reads objects from a stream
-\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantReadObjects(Stream: TStream; Format: \strike TInstantStreamFormat\strike0\{linkID=12550>main\}; Objects: TList);
+\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantReadObjects(Stream: TStream; Format: \strike TInstantStreamFormat\strike0\{linkID=12580>main\}; Objects: TList);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 Call InstantReadObjects to read objects from the stream specified by the Stream argument into the list specified by the Objects argument. The Format argument specifies the format of the stream.
 \par \pard\fi-195\li195\sb25\sa25\tx1435\b Note: \b0  The sfXML format can only be used for instances of \strike TInstantObject\strike0\{linkID=7390>main\} descendants
@@ -27132,9 +27132,9 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantRefreshObjects \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11770\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11770\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Refreshes all instances of an array of classes
-\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantRefreshObjects(Classes: \b array\b0  \b of\b0  TInstantObjectClass; Progress: \strike TInstantProgressEvent\strike0\{linkID=12510>main\}; Connector: \strike TInstantConnector\strike0\{linkID=3770>main\});
+\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantRefreshObjects(Classes: \b array\b0  \b of\b0  TInstantObjectClass; Progress: \strike TInstantProgressEvent\strike0\{linkID=12520>main\}; Connector: \strike TInstantConnector\strike0\{linkID=3770>main\});
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 Use InstantRefreshObjects to refresh all instances of the Classes in the array using the specified Connector. Assign the progress argument to receive progress information.
 \par 
@@ -27175,7 +27175,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantRegisterAccessorClass \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11790\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11790\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Registers a class derived from TInstantAccessor.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantRegisterAccessorClass(AClass: TInstantAccessorClass);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27217,7 +27217,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantRegisterClass \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11810\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11810\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Registers a class derived from \strike TInstantObject\strike0\{linkID=7390>main\}.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantRegisterClass(AClass: TInstantObjectClass);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27261,7 +27261,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantRegisterClasses \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11830\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11830\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Registers an array of classes derived from \strike TInstantObject\strike0\{linkID=7390>main\}.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantRegisterClasses(AClasses: \b array\b0  \b of\b0  TInstantObjectClass);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27305,7 +27305,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantRightPos \cf1\b0\fs16 
-\par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=11850>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=11850>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Returns the starting position of the last occurrence of a substring in a given string.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantRightPos(\b const\b0  SubStr: \b string\b0 ; \b const\b0  Str: \b string\b0 ; IgnoreCase: Boolean): Integer;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27353,7 +27353,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 InstantStrToCharSet \b0\fs16  
-\par \pard\sb25\tx1435\tx2875\ul See Also\ulnone\{linkID=11870\}\tab\strike Example 1\strike0\{linkID=11880>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\}
+\par \pard\sb25\tx1435\tx2875\ul See Also\ulnone\{linkID=11870\}\tab\strike Example 1\strike0\{linkID=11880>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\tx2875\fs18 Converts a string to a set of char.
 \par \pard\sb25\sa25\tx1435\tx2875\b\f1 function\b0  InstantStrToCharSet(\b const\b0  Str: \b string\b0 ): TChars;
 \par \pard\sb55\sa25\tx1435\tx2875\b\f0 Description
@@ -27417,7 +27417,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 InstantStrToDate \b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11900\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11900\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Converts a string to a TDateTime value.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantStrToDate(\b const\b0  Str: \b string\b0 ): TDateTime;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27441,7 +27441,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
-\par \strike InstantDateFormat\strike0\{linkID=12620>main\}
+\par \strike InstantDateFormat\strike0\{linkID=12650>main\}
 \par \strike InstantStrToTime\strike0\{linkID=11950>main\}
 \par \strike InstantStrToDateTime\strike0\{linkID=11910>main\}
 \par }
@@ -27461,7 +27461,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantStrToDateTime \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11920\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11920\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Converts a string to a TDateTime value.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantStrToDateTime(\b const\b0  Str: \b string\b0 ): TDateTime;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27486,7 +27486,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
-\par \strike InstantDateTimeFormat\strike0\{linkID=12640>main\}
+\par \strike InstantDateTimeFormat\strike0\{linkID=12670>main\}
 \par \strike InstantStrToDate\strike0\{linkID=11890>main\}
 \par \strike InstantStrToTime\strike0\{linkID=11950>main\}
 \par }
@@ -27506,7 +27506,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantStrToList \cf1\b0\fs16  
-\par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=11940>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\}
+\par \pard\sb25\tx1435\strike Example 1\strike0\{linkID=11940>example\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Adds the individual strings of a delimited string to a TStrings object.
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantStrToList(\b const\b0  Str: \b string\b0 ; List: TStrings; Delimiters: TChars);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27561,7 +27561,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\cf1\lang1040\b\f0\fs24 InstantStrToTime \b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11960\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11960\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Converts a string to a TDateTime value.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  InstantStrToTime(\b const\b0  Str: \b string\b0 ): TDateTime;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27585,7 +27585,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
-\par \strike InstantTimeFormat\strike0\{linkID=12660>main\}
+\par \strike InstantTimeFormat\strike0\{linkID=12690>main\}
 \par \strike InstantStrToDate\strike0\{linkID=11890>main\}
 \par \strike InstantStrToDateTime\strike0\{linkID=11910>main\}
 \par }
@@ -27605,7 +27605,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantUnregisterAccessorClass \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11980\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=11980\}\tab\strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Unregisters a class derived from TInstantAccessor
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27647,7 +27647,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantUnregisterClass \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12000\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12000\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Unregisters a class derived from \strike TInstantObject\strike0\{linkID=7390>main\}
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantUnregisterClass(AClass: TInstantObjectClass);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27689,7 +27689,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantUnregisterClasses \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12020\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12020\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Unregisters an array of classes derived from \strike TInstantObject\strike0\{linkID=7390>main\}
 \par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantUnregisterClasses(AClasses: \b array\b0  \b of\b0  TInstantObjectClass);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -27731,9 +27731,9 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantWriteObject \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12040\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12040\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Writes an object to a stream
-\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantWriteObject(Stream: TStream; Format: \strike TInstantStreamFormat\strike0\{linkID=12550>main\}; AObject: TPersistent);
+\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantWriteObject(Stream: TStream; Format: \strike TInstantStreamFormat\strike0\{linkID=12580>main\}; AObject: TPersistent);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 Call InstantWriteObject to write the object specified by the AObject argument to the stream specified by the Stream argument. The Format argument specifies the format of the output.
 \par \pard\fi-195\li195\sb25\sa25\tx1435\b Note: \b0  The sfXML format can only be used for instances of \strike TInstantObject\strike0\{linkID=7390>main\} descendants
@@ -27774,9 +27774,9 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantWriteObjects \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12060\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12060\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Writes objects to a stream
-\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantWriteObjects(Stream: TStream; Format: \strike TInstantStreamFormat\strike0\{linkID=12550>main\}; Objects: TList);
+\par \pard\sb25\sa25\tx1435\b\f1 procedure\b0  InstantWriteObjects(Stream: TStream; Format: \strike TInstantStreamFormat\strike0\{linkID=12580>main\}; Objects: TList);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 Call InstantWriteObjects to write the objects in the list specified by the Objects argument to the stream specified by the Stream argument. The Format argument specifies the format of the output.
 \par \pard\fi-195\li195\sb25\sa25\tx1435\b Note: \b0  The sfXML format can only be used for instances of \strike TInstantObject\strike0\{linkID=7390>main\} descendants
@@ -27817,7 +27817,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantVersion \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12080\}\tab\strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12080\}\tab\strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Specifies the version of a file.
 \par \pard\sb25\sa25\tx1435\f1 TInstantVersion = \b record\b0 
 \par   Build: Word;
@@ -27854,17 +27854,17 @@ TInstantAddClassFieldDefEvent
 TInstantAddClassFieldDefEvent;
 
 
-typessymbol:000030
+typessymbol:000040
 Added
 main
 
 
-TRUE
+FALSE
 10
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}{\f3\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantAddClassFieldDefEvent \cf1\b0\fs16 
-\par \cf2\strike Unit: InstantP\lang1033\f1 resentation\cf3\strike0\{linkID=13070>main\}\cf1\lang1040\f0\{keepn\} 
+\par \cf2\strike Unit: InstantP\lang1033\f1 resentation\cf3\strike0\{linkID=13100>main\}\cf1\lang1040\f0\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for \lang1033\f1 exposer field definition\lang1040\f0  \lang1033\f1 creation\lang1040\f0  events.
 \par \pard\sb25\sa25\f2 TInstantAddClassFieldDefEvent = \b procedure\b0  (const FieldName : string; var BreakProcess : boolean) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -27887,7 +27887,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantAccessMode \cf1\b0\fs16 
-\par \strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Determines how an object is being accessed.
 \par \pard\sb25\sa25\f1 TInstantAccessMode = (amObject, amContent);
 \par \pard\sb55\sa25\b\f0 Description
@@ -27914,7 +27914,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}{\f4\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantADOProviderType \cf1\b0\fs16 
-\par \strike Unit: InstantADO\strike0\{linkID=12680>main\}\{keepn\} 
+\par \strike Unit: InstantADO\strike0\{linkID=12710>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The ADO provider type
 \par \pard\sb25\sa25\f1 TInstantADOProviderType = (ptUnknown, ptMSJet, ptMSSQLServer, ptOracle, ptMySQL, ptIBMDB2);
 \par \pard\sb55\sa25\b\f0 Description
@@ -27945,7 +27945,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantAttributeChangeEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for attribute change notification events.
 \par \pard\sb25\sa25\f1 TInstantAttributeChangeEvent = \b procedure\b0  (Sender: \strike TInstantObject\strike0\{linkID=7390>main\}; Attribute: \strike TInstantAttribute\strike0\{linkID=2170>main\}) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -27958,7 +27958,7 @@ TInstantAttributeType
 TInstantAttributeType;
 
 
-typessymbol:000040
+typessymbol:000050
 Imported
 main
 
@@ -27968,7 +27968,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantAttributeType \cf1\b0\fs16 
-\par \cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13020>main\}\{keepn\}\cf1  
+\par \cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13050>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa85\fs18 Specifies the type of an attribute.
 \par \pard\sb25\sa25\f1 TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean, atString, atDateTime, atBlob, atMemo, atPart, atReference, atParts, atReferences);
 \par \pard\sb55\sa25\b\f0 Description
@@ -27996,7 +27996,7 @@ TInstantBDEDriverType
 TInstantBDEDriverType;
 
 
-typessymbol:000050
+typessymbol:000060
 Imported
 main
 
@@ -28006,7 +28006,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantBDEDriverType \cf1\b0\fs16 
-\par \strike Unit: InstantBDE\strike0\{linkID=12730>main\}\{keepn\} 
+\par \strike Unit: InstantBDE\strike0\{linkID=12760>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The BDE driver type
 \par \pard\sb25\sa25\f1 TInstantBDEDriverType = (dtUnknown, dtStandard, dtInterBase, dtMSAccess, dtMSSQLServer, dtOracle, dtDB2);
 \par \pard\sb55\sa25\b\f0 Description
@@ -28028,7 +28028,7 @@ TInstantCompareObjectsEvent
 TInstantCompareObjectsEvent;
 
 
-typessymbol:000060
+typessymbol:000070
 Imported
 main
 
@@ -28038,7 +28038,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCompareObjectsEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for object comparison events.
 \par \pard\sb25\sa25\f1 TInstantCompareObjectsEvent = \b procedure\b0  (Sender: TObject; AObject1, AObject2: TObject; \b var\b0  Compare: Integer) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28051,7 +28051,7 @@ TInstantCompareOption
 TInstantCompareOption;
 
 
-typessymbol:000070
+typessymbol:000080
 Imported
 main
 
@@ -28061,7 +28061,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCompareOption \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Specifies options for a comparison.
 \par \pard\sb25\sa25\f1 TInstantCompareOption = (coCaseInsensitive, coPartial);
 \par \strike TInstantCompareOptions\strike0\{linkID=12170>main\} = \b set\b0  \b of\b0  TInstantCompareOption;
@@ -28079,7 +28079,7 @@ TInstantCompareOptions
 TInstantCompareOptions;
 
 
-typessymbol:000080
+typessymbol:000090
 Imported
 main
 
@@ -28089,7 +28089,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCompareOptions \cf1\b0\fs16 
-\par \strike Unit: InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \strike Unit: InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Specifies options for a comparison.
 \par \pard\sb25\sa25\strike\f1 TInstantCompareOption\strike0\{linkID=12160>main\} = (coCaseInsensitive, coPartial);
 \par TInstantCompareOptions = \b set\b0  \b of\b0  \strike TInstantCompareOption\strike0\{linkID=12160>main\};
@@ -28107,7 +28107,7 @@ TInstantConflictAction
 TInstantConflictAction;
 
 
-typessymbol:000090
+typessymbol:000100
 Imported
 main
 
@@ -28117,7 +28117,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantConflictAction \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Specifies how conflicts should be resolved.
 \par \pard\sb25\sa25\f1 TInstantConflictAction = (caIgnore, caFail);
 \par \pard\sb55\sa25\b\f0 Description
@@ -28134,7 +28134,7 @@ TInstantConnectionManagerActionType
 TInstantConnectionManagerActionType;
 
 
-typessymbol:000100
+typessymbol:000110
 Imported
 main
 
@@ -28144,7 +28144,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantConnectionManagerActionType \cf1\b0\fs16 
-\par \strike Unit: InstantConnectionManager\strike0\{linkID=12830>main\}\{keepn\} 
+\par \strike Unit: InstantConnectionManager\strike0\{linkID=12860>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Connection manager action types.
 \par \pard\sb25\sa25\f1 TInstantConnectionManagerActionType = (atNew, atEdit, atDelete, atRename, atConnect, atDisconnect, atBuild);
 \par \strike TInstantConnectionManagerActionTypes\strike0\{linkID=12200>main\} = \b set\b0  \b of\b0  TInstantConnectionManagerActionType;
@@ -28168,7 +28168,7 @@ TInstantConnectionManagerActionTypes
 TInstantConnectionManagerActionTypes;
 
 
-typessymbol:000110
+typessymbol:000120
 Imported
 main
 
@@ -28178,7 +28178,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantConnectionManagerActionTypes \cf1\b0\fs16 
-\par \strike Unit: InstantConnectionManager\strike0\{linkID=12830>main\}\{keepn\} 
+\par \strike Unit: InstantConnectionManager\strike0\{linkID=12860>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Connection manager action types.
 \par \pard\sb25\sa25\strike\f1 TInstantConnectionManagerActionType\strike0\{linkID=12190>main\} = (atNew, atEdit, atDelete, atRename, atConnect, atDisconnect, atBuild);
 \par TInstantConnectionManagerActionTypes = \b set\b0  \b of\b0  \strike TInstantConnectionManagerActionType\strike0\{linkID=12190>main\};
@@ -28202,7 +28202,7 @@ TInstantConnectorClass
 TInstantConnectorClass;
 
 
-typessymbol:000120
+typessymbol:000130
 Imported
 main
 
@@ -28212,7 +28212,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantConnectorClass \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Provides access to a database.
 \par \pard\sb25\sa25\f1 TInstantConnectorClass = \b class\b0  \b of\b0  \strike TInstantConnector\strike0\{linkID=3770>main\};
 \par \strike TInstantConnector\strike0\{linkID=3770>main\} = \b class\b0 (TComponent)
@@ -28232,7 +28232,7 @@ TInstantContentChangeEvent
 TInstantContentChangeEvent;
 
 
-typessymbol:000130
+typessymbol:000140
 Imported
 main
 
@@ -28242,7 +28242,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantContentChangeEvent \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12230\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12230\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 The event type for content change notification events.
 \par \pard\sb25\sa25\tx1435\f1 TInstantContentChangeEvent = \b procedure\b0  (Sender: \strike TInstantObject\strike0\{linkID=7390>main\}; Container: \strike TInstantContainer\strike0\{linkID=4300>main\}; ChangeType: \strike TInstantContentChangeType\strike0\{linkID=12240>main\}; \b Index\b0 : Integer; AObject: \strike TInstantObject\strike0\{linkID=7390>main\}) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -28275,7 +28275,7 @@ TInstantContentChangeType
 TInstantContentChangeType;
 
 
-typessymbol:000140
+typessymbol:000150
 Imported
 main
 
@@ -28285,7 +28285,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantContentChangeType \b0\fs16  
-\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12250\}\tab\cf1\strike Unit: InstantPersistence\cf2\strike0\{linkID=13020>main\}\{keepn\}\cf0 
+\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12250\}\tab\cf1\strike Unit: InstantPersistence\cf2\strike0\{linkID=13050>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\tx1435\fs18 The types of possible changes that may occur to a container.
 \par \pard\sb25\sa25\tx1435\f1 TInstantContentChangeType = (ctAdd, ctRemove, ctReplace, ctClear);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -28323,7 +28323,7 @@ TInstantCreateObjectEvent
 TInstantCreateObjectEvent;
 
 
-typessymbol:000150
+typessymbol:000160
 Imported
 main
 
@@ -28333,7 +28333,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantCreateObjectEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type used for object creation events.
 \par \pard\sb25\sa25\f1 TInstantCreateObjectEvent = \b procedure\b0  (Sender: TObject; \b var\b0  AObject: TObject) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28342,23 +28342,24 @@ FALSE
 \par }
 12270
 Scribble12270
-TInstantDataType
-TInstantDataType;
+TInstantDataTypes
+TInstantDataType;TInstantDataTypes;
 
 
-typessymbol:000160
+typessymbol:000170
 Imported
 main
 
 
 FALSE
-10
+11
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantDataType \cf1\b0\fs16 
-\par \cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13020>main\}\{keepn\}\cf1  
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantDataTypes \cf1\b0\fs16 
+\par \cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13050>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa85\fs18 Specifies the datatype of fields in tables
 \par \pard\sb25\sa25\f1 TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString, dtMemo, dtDateTime, dtBlob);
+\par TInstantDataTypes = set of TInstantDataType;
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 TInstantDataType specifies the datatype of fields in tables.
 \par 
@@ -28369,7 +28370,7 @@ TInstantErrorAction
 TInstantErrorAction;
 
 
-typessymbol:000170
+typessymbol:000180
 Imported
 main
 
@@ -28379,7 +28380,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantErrorAction \cf1\b0\fs16 
-\par \pard\sb25\tx1435\cf2\ul See Also\cf3\ulnone\{linkID=12290\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13020>main\}\{keepn\}\cf1  
+\par \pard\sb25\tx1435\cf2\ul See Also\cf3\ulnone\{linkID=12290\}\cf1\tab\cf2\strike Unit: InstantPersistence\cf3\strike0\{linkID=13050>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa85\tx1435\fs18 Defines actions used in error handlers.
 \par \pard\sb25\sa25\tx1435\f1 TInstantErrorAction = (eaRetry, eaIgnore, eaError, eaRevert, eaCancel);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -28421,7 +28422,7 @@ TInstantErrorEvent
 TInstantErrorEvent;
 
 
-typessymbol:000180
+typessymbol:000190
 Imported
 main
 
@@ -28431,7 +28432,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantErrorEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for error events.
 \par \pard\sb25\sa25\f1 TInstantErrorEvent = \b procedure\b0  (Sender: TObject; OperationType: \strike TInstantOperationType\strike0\{linkID=12490>main\}; E: Exception; \b var\b0  Action: \strike TInstantErrorAction\strike0\{linkID=12280>main\}) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28444,7 +28445,7 @@ TInstantExplorerLayout
 TInstantExplorerLayout;
 
 
-typessymbol:000190
+typessymbol:000200
 Imported
 main
 
@@ -28454,7 +28455,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantExplorerLayout \b0\fs16 
-\par \cf1\strike Unit: InstantExplorer\cf2\strike0\{linkID=12920>main\}\{keepn\}\cf0 
+\par \cf1\strike Unit: InstantExplorer\cf2\strike0\{linkID=12950>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\fs18 Determines the layout of the explorer.
 \par \pard\sb25\sa25\f1 TInstantExplorerLayout = (loTreeOnly, loDetailOnly, loVertical, loHorizontal);
 \par \pard\sb55\sa25\b\f0 Description
@@ -28473,7 +28474,7 @@ TInstantExplorerNodeType
 TInstantExplorerNodeType;
 
 
-typessymbol:000200
+typessymbol:000210
 Imported
 main
 
@@ -28483,7 +28484,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantExplorerNodeType \cf1\b0\fs16 
-\par \strike Unit: InstantExplorer\strike0\{linkID=12920>main\}\{keepn\} 
+\par \strike Unit: InstantExplorer\strike0\{linkID=12950>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Defines node types of an explorer.
 \par \pard\sb25\sa25\f1 TInstantExplorerNodeType = (ntProperty, ntObject, ntContainer);
 \par \strike TInstantExplorerNodeTypes\strike0\{linkID=12330>main\} = \b set\b0  \b of\b0  TInstantExplorerNodeType;
@@ -28504,7 +28505,7 @@ TInstantExplorerNodeTypes
 TInstantExplorerNodeTypes;
 
 
-typessymbol:000210
+typessymbol:000220
 Imported
 main
 
@@ -28514,7 +28515,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantExplorerNodeTypes \cf1\b0\fs16 
-\par \strike Unit: InstantExplorer\strike0\{linkID=12920>main\}\{keepn\} 
+\par \strike Unit: InstantExplorer\strike0\{linkID=12950>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Defines node types of an explorer.
 \par \pard\sb25\sa25\strike\f1 TInstantExplorerNodeType\strike0\{linkID=12320>main\} = (ntProperty, ntObject, ntContainer);
 \par TInstantExplorerNodeTypes = \b set\b0  \b of\b0  \strike TInstantExplorerNodeType\strike0\{linkID=12320>main\};
@@ -28534,7 +28535,7 @@ TInstantExposerOptions
 TInstantExposerOption;TInstantExposerOptions;
 
 
-typessymbol:000220
+typessymbol:000240
 Modified
 main
 
@@ -28544,7 +28545,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fnil Arial;}{\f3\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantExposerOptions\b0\fs16 
-\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12350\}\tab\cf1\strike Unit: InstantPresentation\cf2\strike0\{linkID=13070>main\}\{keepn\}\cf0 
+\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12350\}\tab\cf1\strike Unit: InstantPresentation\cf2\strike0\{linkID=13100>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\tx1435\fs18 Specifies options for an exposer.
 \par \pard\fi-2620\li2620\sb25\sa25\f1 TInstantExposerOption = (eoAutoApply, eoAutoRemember, eoNotDisposeReferences, eoDeferInsert, eoSyncEdit);
 \par \pard\sb25\sa25\tx1435 TInstantExposerOptions = \b set\b0  \b of\b0  TInstantExposerOption;
@@ -28584,7 +28585,7 @@ TInstantFieldDefEvent
 TInstantFieldDefEvent;
 
 
-typessymbol:000230
+typessymbol:000250
 Imported
 main
 
@@ -28594,7 +28595,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantFieldDefEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for field definition initialization events.
 \par \pard\sb25\sa25\f1 TInstantFieldDefEvent = \b procedure\b0  (Sender: TObject; FieldDef: TFieldDef) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28607,7 +28608,7 @@ TInstantFieldErrorEvent
 TInstantFieldErrorEvent;
 
 
-typessymbol:000240
+typessymbol:000260
 Imported
 main
 
@@ -28617,7 +28618,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantFieldErrorEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for field errors.
 \par \pard\sb25\sa25\f1 TInstantFieldErrorEvent = \b procedure\b0  (Sender: TObject; E: Exception; Field: TField; Value: Variant; \b Write\b0 : Boolean; \b var\b0  Handled: Boolean) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28630,7 +28631,7 @@ TInstantFieldEvent
 TInstantFieldEvent;
 
 
-typessymbol:000250
+typessymbol:000270
 Imported
 main
 
@@ -28640,7 +28641,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantFieldEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for field events.
 \par \pard\sb25\sa25\f1 TInstantFieldEvent = \b procedure\b0  (Sender: TObject; Field: TField) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28653,17 +28654,17 @@ TInstantFieldOptions
 TInstantFieldOption;TInstantFieldOptions;
 
 
-typessymbol:000220
+typessymbol:000230
 Added
 main
 
 
-TRUE
+FALSE
 17
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fswiss Arial;}{\f2\fmodern Courier New;}{\f3\fmodern\fcharset0 Courier New;}{\f4\fnil\fcharset0 Arial;}{\f5\fnil Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1033\b\f0\fs24 TInstantFieldOptions\lang3081\b0\f1\fs16 
-\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12400\}\tab\cf1\strike Unit: InstantPresentation\cf2\strike0\{linkID=13070>main\}\cf0\{keepn\}
+\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12400\}\tab\cf1\strike Unit: InstantPresentation\cf2\strike0\{linkID=13100>main\}\cf0\{keepn\}
 \par \pard\sb25\sa85\tx1435\cf3\lang1033\f0\fs18 Defines additional default field creation\lang1040\f1  \cf0\lang3081 options for an exposer.
 \par \pard\fi-2620\li2620\sb25\sa25\f2 TInstant\lang1033\f3 Field\lang3081\f2 Option = (\lang1033\f3 f\lang3081\f2 o\lang1033\f3 Objects\lang3081\f2 , \lang1033\f3 f\lang3081\f2 o\lang1033\f3 Thorough\lang3081\f2 , \lang1033\f3 foRecurseNesting\lang3081\f2 );
 \par \pard\sb25\sa25\tx1435 TInstant\lang1033\f3 Field\lang3081\f2 Options = \b set\b0  \b of\b0  TInstant\lang1033\f3 Field\lang3081\f2 Option;
@@ -28703,7 +28704,7 @@ TInstantGetDataSetEvent
 TInstantGetDataSetEvent;
 
 
-typessymbol:000260
+typessymbol:000280
 Imported
 main
 
@@ -28713,7 +28714,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantGetDataSetEvent \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12420\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12420\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 The event type for dataset request events.
 \par \pard\sb25\sa25\tx1435\f1 TInstantGetDataSetEvent = \b procedure\b0  (Sender: TObject; \b const\b0  CommandText: \b string\b0 ; \b var\b0  DataSet: TDataset) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -28745,7 +28746,7 @@ TInstantIncludeFieldEvent
 TInstantIncludeFieldEvent;
 
 
-typessymbol:000270
+typessymbol:000290
 Imported
 main
 
@@ -28755,7 +28756,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantIncludeFieldEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for field inclusion events.
 \par \pard\sb25\sa25\f1 TInstantIncludeFieldEvent = \b procedure\b0  (Sender: TObject; \b const\b0  FieldName: \b string\b0 ; \b var\b0  Include: Boolean) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28768,7 +28769,7 @@ TInstantInitDataSetEvent
 TInstantInitDataSetEvent;
 
 
-typessymbol:000280
+typessymbol:000300
 Imported
 main
 
@@ -28778,7 +28779,7 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantInitDataSetEvent \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12450\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12450\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 The event type for dataset initialization events.
 \par \pard\sb25\sa25\tx1435\f1 TInstantInitDataSetEvent = \b procedure\b0  (Sender: TObject; \b const\b0  CommandText: \b string\b0 ; DataSet: TDataSet) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -28810,7 +28811,7 @@ TInstantLimitObjectsEvent
 TInstantLimitObjectsEvent;
 
 
-typessymbol:000290
+typessymbol:000310
 Imported
 main
 
@@ -28820,7 +28821,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantLimitObjectsEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike Unit: InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The event type for object limitation events.
 \par \pard\sb25\sa25\f1 TInstantLimitObjectsEvent = \b procedure\b0  (Sender: TObject; AObject: TObject; \b var\b0  Accept: Boolean) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28833,7 +28834,7 @@ TInstantNotifyEvent
 TInstantNotifyEvent;
 
 
-typessymbol:000300
+typessymbol:000320
 Imported
 main
 
@@ -28843,7 +28844,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantNotifyEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 TInstantNotifyEvent is the event type for simple notification events.
 \par \pard\sb25\sa25\f1 TInstantNotifyEvent = \b procedure\b0  (Sender: \strike TInstantObject\strike0\{linkID=7390>main\}) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28856,7 +28857,7 @@ TInstantObjectNotifyEvent
 TInstantObjectNotifyEvent;
 
 
-typessymbol:000310
+typessymbol:000330
 Imported
 main
 
@@ -28866,7 +28867,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObjectNotifyEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 TInstantObjectNotifyEvent is used for notification.
 \par \pard\sb25\sa25\f1 TInstantObjectNotifyEvent = \b procedure\b0  (Sender: \strike TInstantObject\strike0\{linkID=7390>main\}; Notification: TInstantObjectNotification) \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\b\f0 Description
@@ -28879,7 +28880,7 @@ TInstantOperationType
 TInstantOperationType;
 
 
-typessymbol:000320
+typessymbol:000340
 Imported
 main
 
@@ -28889,7 +28890,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantOperationType \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 Indicates the type an operation.
 \par \pard\sb25\sa25\f1 TInstantOperationType = (otNone, otCreate, otStore, otRetrieve, otRefresh, otDispose);
 \par \pard\sb55\sa25\b\f0 Description
@@ -28907,54 +28908,8 @@ FALSE
 \par }
 12500
 Scribble12500
-TInstantProcessObjectEvent
-TInstantProcessObjectEvent;
-
-
-typessymbol:000330
-Imported
-main
-
-
-FALSE
-10
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantProcessObjectEvent \cf1\b0\fs16 
-\par \strike Unit: InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
-\par \pard\sb25\sa85\fs18 The event type for object processing events.
-\par \pard\sb25\sa25\f1 TInstantProcessObjectEvent = \b procedure\b0  (Sender: TObject; AObject: TPersistent) \b of\b0  \b object\b0 ;
-\par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 TInstantProcessObjectEvent is the event type for object processing events. The Sender argument contains a reference to the processing object. The AObject argument contains a reference to the object being processed.
-\par 
-\par }
-12510
-Scribble12510
-TInstantProgressEvent
-TInstantProgressEvent;
-
-
-typessymbol:000340
-Imported
-main
-
-
-FALSE
-10
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantProgressEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
-\par \pard\sb25\sa85\fs18 The event type for progress events.
-\par \pard\sb25\sa25\f1 TInstantProgressEvent = \b procedure\b0  (Sender: TObject; Count: Integer; \b var\b0  Continue: Boolean) \b of\b0  \b object\b0 ;
-\par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0 TInstantProgressEvent is the event type for progress events. The Sender argument specifies the object to which the progress occurs. The Count argument specifies the progress in percent. Use the Continue argument to specify if the process triggering the event should continue.
-\par 
-\par }
-12520
-Scribble12520
-TInstantSchemeEvent
-TInstantSchemeEvent;
+TInstantPersistence
+TInstantPersistence;
 
 
 typessymbol:000350
@@ -28962,22 +28917,27 @@ Imported
 main
 
 
-FALSE
-10
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantSchemeEvent \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
-\par \pard\sb25\sa85\fs18 The event type for database-build related events.
-\par \pard\sb25\sa25\f1 TInstantSchemeEvent = \b procedure\b0  (Sender: TObject; Scheme: TInstantScheme) \b of\b0  \b object\b0 ;
+TRUE
+15
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Courier New;}{\f3\fmodern Courier New;}{\f4\fnil Arial;}{\f5\fnil\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantPersistence \cf1\b0\fs16 
+\par \cf2\strike Unit: Instant\lang1033\f1 Types\cf3\strike0\{linkID=13140>main\}\cf1\lang1040\f0\{keepn\} 
+\par \pard\sb25\sa85\fs18 Indicates the type \lang1033\f1 of persistence for instances of a class\lang1040\f0 .
+\par \pard\sb25\sa25\lang3081\f2 TInstantPersistence\lang1040  \f3 = (peEmbedded, peStored);
 \par \pard\sb55\sa25\b\f0 Description
-\par \pard\sb25\sa25\b0\strike TInstantAttributeChangeEvent\strike0\{linkID=12120>main\} is the event type for database-build related events. The Sender argument contains a reference to the object which attempts to build a database and the Scheme argument specifies the database scheme that is used.
+\par \pard\b0 TInstantPersistence\lang1033\f1  \lang1040\f0 indicates the type \lang1033\f1 of persistence for the instances of a class\lang1040\f0 .
+\par \pard\fi-1980\li1980\tx1980\b 
+\par Operation Type\lang1033\f1\tab\lang1040\f0 Operation\b0\f4 
+\par \f5 peEmbedded\lang1033\tab\f1 I\lang1040\f0 nstance\lang1033\f1 s\lang1040\f0  can exist in the database only as \lang1033\f1 an attribute\lang1040\f0  of \lang1033\f1 its owner, usually in a BLOB type column in the database .\lang1040\f0  \f5 
+\par peStored\lang1033\tab\lang1040\f0 Instances can be \lang1033\f1 independently \lang1040\f0 stored in and retrieved from \lang1033\f1 the database\lang1040\f0 .\f5 
+\par \f4 
 \par 
 \par }
-12530
-Scribble12530
-TInstantSortCompare
-TInstantSortCompare;
+12510
+Scribble12510
+TInstantProcessObjectEvent
+TInstantProcessObjectEvent;
 
 
 typessymbol:000360
@@ -28987,18 +28947,87 @@ main
 
 FALSE
 10
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantProcessObjectEvent \cf1\b0\fs16 
+\par \strike Unit: InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
+\par \pard\sb25\sa85\fs18 The event type for object processing events.
+\par \pard\sb25\sa25\f1 TInstantProcessObjectEvent = \b procedure\b0  (Sender: TObject; AObject: TPersistent) \b of\b0  \b object\b0 ;
+\par \pard\sb55\sa25\b\f0 Description
+\par \pard\sb25\sa25\b0 TInstantProcessObjectEvent is the event type for object processing events. The Sender argument contains a reference to the processing object. The AObject argument contains a reference to the object being processed.
+\par 
+\par }
+12520
+Scribble12520
+TInstantProgressEvent
+TInstantProgressEvent;
+
+
+typessymbol:000370
+Imported
+main
+
+
+FALSE
+10
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantProgressEvent \cf1\b0\fs16 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
+\par \pard\sb25\sa85\fs18 The event type for progress events.
+\par \pard\sb25\sa25\f1 TInstantProgressEvent = \b procedure\b0  (Sender: TObject; Count: Integer; \b var\b0  Continue: Boolean) \b of\b0  \b object\b0 ;
+\par \pard\sb55\sa25\b\f0 Description
+\par \pard\sb25\sa25\b0 TInstantProgressEvent is the event type for progress events. The Sender argument specifies the object to which the progress occurs. The Count argument specifies the progress in percent. Use the Continue argument to specify if the process triggering the event should continue.
+\par 
+\par }
+12530
+Scribble12530
+TInstantSchemeEvent
+TInstantSchemeEvent;
+
+
+typessymbol:000380
+Imported
+main
+
+
+FALSE
+10
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantSchemeEvent \cf1\b0\fs16 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
+\par \pard\sb25\sa85\fs18 The event type for database-build related events.
+\par \pard\sb25\sa25\f1 TInstantSchemeEvent = \b procedure\b0  (Sender: TObject; Scheme: TInstantScheme) \b of\b0  \b object\b0 ;
+\par \pard\sb55\sa25\b\f0 Description
+\par \pard\sb25\sa25\b0\strike TInstantAttributeChangeEvent\strike0\{linkID=12120>main\} is the event type for database-build related events. The Sender argument contains a reference to the object which attempts to build a database and the Scheme argument specifies the database scheme that is used.
+\par 
+\par }
+12540
+Scribble12540
+TInstantSortCompare
+TInstantSortCompare;
+
+
+typessymbol:000390
+Imported
+main
+
+
+FALSE
+10
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantSortCompare \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12540\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12550\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 Prototype of function used to Compares objects
 \par \pard\sb25\sa25\tx1435\f1 TInstantSortCompare = \b function\b0  (Holder, Obj1, Obj2: \strike TInstantObject\strike0\{linkID=7390>main\}): Integer \b of\b0  \b object\b0 ;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 Implement a function compatible with TInstantSortCompare to use for comparison of objects. The function is expected to return < 0 if Obj1 is less and Obj2, 0 if they are equal and > 0 if Obj1 is greater than Obj2. The Holder argument specifies the context of the comparison in terms of another object.
 \par 
 \par }
-12540
-Scribble12540
+12550
+Scribble12550
 
 
 
@@ -29016,13 +29045,59 @@ FALSE
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
 \par \strike TInstantContainer.Sort\strike0\{linkID=4660>main\}
 \par }
-12550
-Scribble12550
+12560
+Scribble12560
+TInstantStorageKind
+TInstantStorageKind;
+
+
+typessymbol:000400
+Imported
+main
+
+
+TRUE
+14
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fmodern Courier New;}{\f3\fnil\fcharset0 Arial;}}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantStorageKind  \b0\fs16 
+\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12570\}\tab\cf1\strike Unit: Instant\lang1033\f1 Types\cf2\strike0\{linkID=13140>main\}\lang3081\f0\{keepn\}\cf0 
+\par \pard\sb25\sa85\tx1435\fs18 The types of \lang1033\f1 persistence table mapping options for Part, Parts and References class attributes\lang3081\f0 .
+\par \pard\sb25\sa25\tx1435\f2 TInstantStorageKind = (skEmbedded, skExternal);
+\par \pard\sb55\sa25\tx1435\b\f0 Description
+\par \pard\sb25\sa85\tx1435\b0 TInstantStorageKind specifies the  type of \lang1033\f1 persistence table mapping for Part, Parts and References class attributes\lang3081\f0 . 
+\par \pard\fs10 
+\par \pard\tx1980\b\fs18 Value\f1\tab Meaning\b0 
+\par \f3 skEmbedded\tab The atrribute value storage occurs within the table of its owning class; usually in a BLOB type column.
+\par skExternal\tab The atrribute value storage is mapped externally to the table of its owning class.
+\par \f1  
+\par }
+12570
+Scribble12570
+
+
+
+
+
+Imported
+
+
+
+FALSE
+6
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
+\par \pard\li95\sb25\sa25\cf1\b0\fs18 
+\par \cf2\strike External Storage of Attributes\cf3\strike0\{linkID=220>main\}\cf1 
+\par }
+12580
+Scribble12580
 TInstantStreamFormat
 TInstantStreamFormat;
 
 
-typessymbol:000370
+typessymbol:000410
 Imported
 main
 
@@ -29032,7 +29107,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantStreamFormat\cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12560\}\tab\strike Unit: InstantClasses\strike0\{linkID=12790>main\}\cf0\b\fs24  \cf1\b0\fs16\{keepn\}
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12590\}\tab\strike Unit: InstantClasses\strike0\{linkID=12820>main\}\cf0\b\fs24  \cf1\b0\fs16\{keepn\}
 \par \pard\sb25\sa85\tx1435\fs18 The possible stream formats
 \par \pard\sb25\sa25\tx1435\f1 TInstantStreamFormat = (sfBinary, sfXML);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -29042,8 +29117,8 @@ FALSE
 \par \b0 sfBinary\tab The stream contains data in binary format
 \par sfXML\tab The stream contains data in the XML format
 \par }
-12560
-Scribble12560
+12590
+Scribble12590
 
 
 
@@ -29062,13 +29137,13 @@ FALSE
 \par \strike InstantWriteObject\strike0\{linkID=12030>main\}
 \par \strike InstantReadObject\strike0\{linkID=11720>main\}
 \par }
-12570
-Scribble12570
+12600
+Scribble12600
 TInstantVerificationResult
 TInstantVerificationResult;
 
 
-typessymbol:000380
+typessymbol:000420
 Imported
 main
 
@@ -29078,7 +29153,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantVerificationResult \b0\fs16  
-\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12580\}\tab\cf1\strike Unit: InstantPersistence\cf2\strike0\{linkID=13020>main\}\{keepn\}\cf0 
+\par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12610\}\tab\cf1\strike Unit: InstantPersistence\cf2\strike0\{linkID=13050>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\tx1435\fs18 Defines result of a verification operation.
 \par \pard\sb25\sa25\tx1435\f1 TInstantVerificationResult = (vrOk, vrCancel, vrAbort, vrError);
 \par \pard\sb55\sa25\tx1435\b\f0 Description
@@ -29093,8 +29168,8 @@ FALSE
 \par vrError\tab The operation must be terminated with an exception
 \par 
 \par }
-12580
-Scribble12580
+12610
+Scribble12610
 
 
 
@@ -29112,8 +29187,8 @@ FALSE
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
 \par \strike TInstantObject.VerifyOperation\strike0\{linkID=9060>main\}
 \par }
-12590
-Scribble12590
+12620
+Scribble12620
 InstantAttributePrefix
 InstantAttributePrefix;
 
@@ -29128,15 +29203,15 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantAttributePrefix \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12600\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12630\}\tab\strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 The prefix used for attribute fields.
 \par \pard\sb25\sa25\tx1435\f1 InstantAttributePrefix: \b string\b0   = '_';
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 InstantAttributePrefix is the prefix used for attribute fields. The value can be changed if another prefix is required.
 \par 
 \par }
-12600
-Scribble12600
+12630
+Scribble12630
 
 
 
@@ -29154,8 +29229,8 @@ FALSE
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
 \par \strike TInstantObject.AttributeByName\strike0\{linkID=8140>main\}
 \par }
-12610
-Scribble12610
+12640
+Scribble12640
 InstantClassPrefix
 InstantClassPrefix;
 
@@ -29170,15 +29245,15 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantClassPrefix \cf1\b0\fs16 
-\par \strike Unit: InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike Unit: InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb25\sa85\fs18 The prefix used for classes.
 \par \pard\sb25\sa25\f1 InstantClassPrefix: \b string\b0   = 'T';
 \par \pard\sb55\sa25\b\f0 Description
 \par \pard\sb25\sa25\b0 InstantClassPrefix is the prefix used for classes. The value can be changed if another prefix is required.
 \par 
 \par }
-12620
-Scribble12620
+12650
+Scribble12650
 InstantDateFormat
 InstantDateFormat;
 
@@ -29193,14 +29268,14 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantDateFormat \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12630\}\tab\strike Unit: InstantConsts\strike0\{linkID=12860>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12660\}\tab\strike Unit: InstantConsts\strike0\{linkID=12890>main\}\{keepn\} 
 \par \pard\sb25\sa25\tx1435\f1\fs18 InstantDateFormat = 'yyyymmdd';
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 InstantDateFormat is the date format string. It complies with the date format of ISO 8601.
 \par 
 \par }
-12630
-Scribble12630
+12660
+Scribble12660
 
 
 
@@ -29216,11 +29291,11 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
-\par \strike InstantTimeFormat\strike0\{linkID=12660>main\}
-\par \strike InstantDateTimeFormat\strike0\{linkID=12640>main\}
+\par \strike InstantTimeFormat\strike0\{linkID=12690>main\}
+\par \strike InstantDateTimeFormat\strike0\{linkID=12670>main\}
 \par }
-12640
-Scribble12640
+12670
+Scribble12670
 InstantDateTimeFormat
 InstantDateTimeFormat;
 
@@ -29235,14 +29310,14 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantDateTimeFormat \cf1\b0\fs16  
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12650\}\tab\strike Unit: InstantConsts\strike0\{linkID=12860>main\}\{keepn\}
-\par \pard\sb25\sa25\tx1435\f1\fs18 InstantDateTimeFormat = \strike InstantDateFormat\strike0\{linkID=12620>main\} + \strike InstantTimeFormat\strike0\{linkID=12660>main\};
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12680\}\tab\strike Unit: InstantConsts\strike0\{linkID=12890>main\}\{keepn\}
+\par \pard\sb25\sa25\tx1435\f1\fs18 InstantDateTimeFormat = \strike InstantDateFormat\strike0\{linkID=12650>main\} + \strike InstantTimeFormat\strike0\{linkID=12690>main\};
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 InstantDateTimeFormat is the date and time format string. It complies with the date and time format of ISO 8601. InstantDateTimeFormat is use to convert TDateTime values to strings.
 \par 
 \par }
-12650
-Scribble12650
+12680
+Scribble12680
 
 
 
@@ -29258,12 +29333,12 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
-\par \strike InstantDateFormat\strike0\{linkID=12620>main\}
-\par \strike InstantTimeFormat\strike0\{linkID=12660>main\}
+\par \strike InstantDateFormat\strike0\{linkID=12650>main\}
+\par \strike InstantTimeFormat\strike0\{linkID=12690>main\}
 \par \strike InstantDateTimeToStr\strike0\{linkID=11350>main\}
 \par }
-12660
-Scribble12660
+12690
+Scribble12690
 InstantTimeFormat
 InstantTimeFormat;
 
@@ -29278,14 +29353,14 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantTimeFormat \cf1\b0\fs16 
-\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12670\}\tab\strike Unit: InstantConsts\strike0\{linkID=12860>main\}\{keepn\} 
+\par \pard\sb25\tx1435\ul See Also\ulnone\{linkID=12700\}\tab\strike Unit: InstantConsts\strike0\{linkID=12890>main\}\{keepn\} 
 \par \pard\sb25\sa25\tx1435\f1\fs18 InstantTimeFormat = 'hhnnsszzz';
 \par \pard\sb55\sa25\tx1435\b\f0 Description
 \par \pard\sb25\sa25\tx1435\b0 InstantTimeFormat is the time format string. It complies with the time format of ISO 8601.
 \par 
 \par }
-12670
-Scribble12670
+12700
+Scribble12700
 
 
 
@@ -29301,11 +29376,11 @@ FALSE
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb55\sa25\lang1040\b\f0\fs24 See Also
 \par \pard\li95\sb25\sa25\cf1\b0\fs18 
-\par \strike InstantDateFormat\strike0\{linkID=12620>main\}
-\par \strike InstantDateTimeFormat\strike0\{linkID=12640>main\}
+\par \strike InstantDateFormat\strike0\{linkID=12650>main\}
+\par \strike InstantDateTimeFormat\strike0\{linkID=12670>main\}
 \par }
-12680
-Scribble12680
+12710
+Scribble12710
 InstantADO.pas
 InstantADO.pas;
 
@@ -29320,72 +29395,8 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantADO.pas \cf1\b0\fs16 
-\par \pard\sb25\tx1435\strike Classes\strike0\{linkID=12690>nav\}\tab\strike Types\strike0\{linkID=12700>nav\}\{keepn\} 
+\par \pard\sb25\tx1435\strike Classes\strike0\{linkID=12720>nav\}\tab\strike Types\strike0\{linkID=12730>nav\}\{keepn\} 
 \par \pard\sb25\sa25\tx1435\fs18 InstantObjects ADO support.
-\par 
-\par }
-12690
-Scribble12690
-
-
-
-
-
-Imported
-
-
-
-FALSE
-9
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantADO\strike0\{linkID=12680>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantADO
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantADOConnector\strike0\{linkID=1900>main\}
-\par \pard\li195\sb15\sa25\fs16 Provides access to a database.
-\par 
-\par }
-12700
-Scribble12700
-
-
-
-
-
-Imported
-
-
-
-FALSE
-9
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantADO\strike0\{linkID=12680>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Types in Unit InstantADO
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantADOProviderType\strike0\{linkID=12110>main\}
-\par \pard\li195\sb15\sa25\fs16 The ADO provider type
-\par 
-\par }
-12710
-Scribble12710
-InstantADS.pas
-InstantADS.pas;
-
-
-unitssymbol:000020
-Imported
-main
-
-
-FALSE
-7
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantADS.pas \cf1\b0\fs16 
-\par \strike Classes\strike0\{linkID=12720>nav\}\{keepn\} 
-\par \pard\sb25\sa25\fs18 InstantObjects Advantage Database Server support.
 \par 
 \par }
 12720
@@ -29404,34 +29415,14 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantADS\strike0\{linkID=12710>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantADS
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantADSConnector\strike0\{linkID=2040>main\}
+\par \strike InstantADO\strike0\{linkID=12710>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantADO
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantADOConnector\strike0\{linkID=1900>main\}
 \par \pard\li195\sb15\sa25\fs16 Provides access to a database.
 \par 
 \par }
 12730
 Scribble12730
-InstantBDE.pas
-InstantBDE.pas;
-
-
-unitssymbol:000030
-Imported
-main
-
-
-FALSE
-7
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantBDE.pas \cf1\b0\fs16 
-\par \pard\sb25\tx1435\strike Classes\strike0\{linkID=12740>nav\}\tab\strike Types\strike0\{linkID=12750>nav\}\{keepn\} 
-\par \pard\sb25\sa25\tx1435\fs18 InstantObjects BDE support.
-\par 
-\par }
-12740
-Scribble12740
 
 
 
@@ -29446,10 +29437,30 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantBDE\strike0\{linkID=12730>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantBDE
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantBDEConnector\strike0\{linkID=2560>main\}
-\par \pard\li195\sb15\sa25\fs16 Provides access to a database.
+\par \strike InstantADO\strike0\{linkID=12710>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Types in Unit InstantADO
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantADOProviderType\strike0\{linkID=12110>main\}
+\par \pard\li195\sb15\sa25\fs16 The ADO provider type
+\par 
+\par }
+12740
+Scribble12740
+InstantADS.pas
+InstantADS.pas;
+
+
+unitssymbol:000020
+Imported
+main
+
+
+FALSE
+7
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantADS.pas \cf1\b0\fs16 
+\par \strike Classes\strike0\{linkID=12750>nav\}\{keepn\} 
+\par \pard\sb25\sa25\fs18 InstantObjects Advantage Database Server support.
 \par 
 \par }
 12750
@@ -29468,30 +29479,30 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantBDE\strike0\{linkID=12730>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Types in Unit InstantBDE
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantBDEDriverType\strike0\{linkID=12140>main\}
-\par \pard\li195\sb15\sa25\fs16 The BDE driver type
+\par \strike InstantADS\strike0\{linkID=12740>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantADS
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantADSConnector\strike0\{linkID=2040>main\}
+\par \pard\li195\sb15\sa25\fs16 Provides access to a database.
 \par 
 \par }
 12760
 Scribble12760
-InstantBrokers.pas
-InstantBrokers.pas;
+InstantBDE.pas
+InstantBDE.pas;
 
 
-unitssymbol:000040
+unitssymbol:000030
 Imported
 main
 
 
 FALSE
 7
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantBrokers.pas \cf1\b0\fs16 
-\par \pard\sb25\tx1435\tx2875\tx4315\cf2\strike Classes\cf3\strike0\{linkID=12770>nav\}\cf1\tab\cf2\strike Types\cf3\strike0\{linkID=12780>nav\}\cf1\{keepn\} 
-\par \pard\sb25\sa25\tx1435\tx2875\tx4315\fs18 InstantObjects Broker and Connector Classes
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantBDE.pas \cf1\b0\fs16 
+\par \pard\sb25\tx1435\strike Classes\strike0\{linkID=12770>nav\}\tab\strike Types\strike0\{linkID=12780>nav\}\{keepn\} 
+\par \pard\sb25\sa25\tx1435\fs18 InstantObjects BDE support.
 \par 
 \par }
 12770
@@ -29506,11 +29517,75 @@ Imported
 
 
 FALSE
+9
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantBDE\strike0\{linkID=12760>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantBDE
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantBDEConnector\strike0\{linkID=2560>main\}
+\par \pard\li195\sb15\sa25\fs16 Provides access to a database.
+\par 
+\par }
+12780
+Scribble12780
+
+
+
+
+
+Imported
+
+
+
+FALSE
+9
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantBDE\strike0\{linkID=12760>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Types in Unit InstantBDE
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantBDEDriverType\strike0\{linkID=12140>main\}
+\par \pard\li195\sb15\sa25\fs16 The BDE driver type
+\par 
+\par }
+12790
+Scribble12790
+InstantBrokers.pas
+InstantBrokers.pas;
+
+
+unitssymbol:000040
+Imported
+main
+
+
+FALSE
+7
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantBrokers.pas \cf1\b0\fs16 
+\par \pard\sb25\tx1435\tx2875\tx4315\cf2\strike Classes\cf3\strike0\{linkID=12800>nav\}\cf1\tab\cf2\strike Types\cf3\strike0\{linkID=12810>nav\}\cf1\{keepn\} 
+\par \pard\sb25\sa25\tx1435\tx2875\tx4315\fs18 InstantObjects Broker and Connector Classes
+\par 
+\par }
+12800
+Scribble12800
+
+
+
+
+
+Imported
+
+
+
+FALSE
 31
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}{\f3\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \cf2\strike Instant\lang1033\f1 Brokers\cf3\strike0\{linkID=12760>main\}\cf1\lang1040\f0\{keepn\} 
+\par \cf2\strike Instant\lang1033\f1 Brokers\cf3\strike0\{linkID=12790>main\}\cf1\lang1040\f0\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Classes in Unit Instant\lang1033\f1 Brokers\lang1040\f0 
 \par \pard\li80\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang3081\b0\f2 TInstantBrokerCatalog
 \par TInstantConnectionBasedConnectionDef
@@ -29538,8 +29613,8 @@ FALSE
 \par \pard\li100\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640 
 \par \pard\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang1040\strike\f0 
 \par }
-12780
-Scribble12780
+12810
+Scribble12810
 
 
 
@@ -29554,7 +29629,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \cf2\strike Instant\lang1033\f1 Types\cf3\strike0\{linkID=13110>main\}\cf1\lang1040\f0\{keepn\} 
+\par \cf2\strike Instant\lang1033\f1 Types\cf3\strike0\{linkID=13140>main\}\cf1\lang1040\f0\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Types in Unit Instant\lang1033\f1 Brokers\lang1040\f0 
 \par \pard\li80\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang3081\b0\f2 PInstantOperationInfo
 \par PObjectRow
@@ -29573,8 +29648,8 @@ FALSE
 \par TObjectRow
 \par \pard\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang1040\strike\f0 
 \par }
-12790
-Scribble12790
+12820
+Scribble12820
 InstantClasses.pas
 InstantClasses.pas;
 
@@ -29589,12 +29664,12 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantClasses.pas \cf1\b0\fs16  
-\par \pard\sb25\tx1435\tx2875\strike Classes\strike0\{linkID=12800>nav\}\tab\strike Functions\strike0\{linkID=12810>nav\}\tab\strike Types\strike0\{linkID=12820>nav\}\{keepn\}
+\par \pard\sb25\tx1435\tx2875\strike Classes\strike0\{linkID=12830>nav\}\tab\strike Functions\strike0\{linkID=12840>nav\}\tab\strike Types\strike0\{linkID=12850>nav\}\{keepn\}
 \par \pard\sb25\sa25\tx1435\tx2875\fs18 InstantObjects Classes.
 \par 
 \par }
-12800
-Scribble12800
+12830
+Scribble12830
 
 
 
@@ -29609,7 +29684,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \strike InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Classes in Unit InstantClasses
 \par \pard\keep\li95\sb25\sa25\b0\strike EInstantConversionError\strike0\{linkID=1230>main\}
 \par \pard\li195\sb15\sa25\fs16 The exception class for conversion errors.
@@ -29639,8 +29714,8 @@ FALSE
 \par \pard\li195\sb15\sa25\fs16 TInstantStringStream provides stream-based access to a string.
 \par 
 \par }
-12810
-Scribble12810
+12840
+Scribble12840
 
 
 
@@ -29655,7 +29730,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
+\par \strike InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Functions in Unit InstantClasses
 \par \pard\keep\li95\sb25\sa25\b0\strike InstantObjectBinaryToText\strike0\{linkID=11660>main\}
 \par \pard\li195\sb15\sa25\fs16 Converts the binary representation of an object to a textual representation.
@@ -29669,72 +29744,6 @@ FALSE
 \par \pard\li195\sb15\sa25\fs16 Writes an object to a stream
 \par \pard\keep\li95\sb25\sa25\strike\fs18 InstantWriteObjects\strike0\{linkID=12050>main\}
 \par \pard\li195\sb15\sa25\fs16 Writes objects to a stream
-\par 
-\par }
-12820
-Scribble12820
-
-
-
-
-
-Imported
-
-
-
-FALSE
-11
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantClasses\strike0\{linkID=12790>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Types in Unit InstantClasses
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantProcessObjectEvent\strike0\{linkID=12500>main\}
-\par \pard\li195\sb15\sa25\fs16 The event type for object processing events.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantStreamFormat\strike0\{linkID=12550>main\}
-\par \pard\li195\sb15\sa25\fs16 The possible stream formats
-\par 
-\par }
-12830
-Scribble12830
-InstantConnectionManager.pas
-InstantConnectionManager.pas;
-
-
-unitssymbol:000060
-Imported
-main
-
-
-FALSE
-7
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantConnectionManager.pas \cf1\b0\fs16 
-\par \pard\sb25\tx1435\strike Classes\strike0\{linkID=12840>nav\}\tab\strike Types\strike0\{linkID=12850>nav\}\{keepn\} 
-\par \pard\sb25\sa25\tx1435\fs18 InstantObjects Connection Manager.
-\par 
-\par }
-12840
-Scribble12840
-
-
-
-
-
-Imported
-
-
-
-FALSE
-9
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantConnectionManager\strike0\{linkID=12830>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantConnectionManager
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantConnectionManager\strike0\{linkID=3520>main\}
-\par \pard\li195\sb15\sa25\fs16 Allows the user to manage connections to various databases.
 \par 
 \par }
 12850
@@ -29753,32 +29762,32 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantConnectionManager\strike0\{linkID=12830>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Types in Unit InstantConnectionManager
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantConnectionManagerActionType\strike0\{linkID=12190>main\}
-\par \pard\li195\sb15\sa25\fs16 Connection manager action types.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantConnectionManagerActionTypes\strike0\{linkID=12200>main\}
-\par \pard\li195\sb15\sa25\fs16 Connection manager action types.
+\par \strike InstantClasses\strike0\{linkID=12820>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Types in Unit InstantClasses
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantProcessObjectEvent\strike0\{linkID=12510>main\}
+\par \pard\li195\sb15\sa25\fs16 The event type for object processing events.
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantStreamFormat\strike0\{linkID=12580>main\}
+\par \pard\li195\sb15\sa25\fs16 The possible stream formats
 \par 
 \par }
 12860
 Scribble12860
-InstantConsts.pas
-InstantConsts.pas;
+InstantConnectionManager.pas
+InstantConnectionManager.pas;
 
 
-unitssymbol:000070
+unitssymbol:000060
 Imported
 main
 
 
 FALSE
 7
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantConsts.pas \b0\fs16 
-\par \cf1\strike Constants\cf2\strike0\{linkID=12870>nav\}\{keepn\}\cf0 
-\par \pard\sb25\sa25\fs18 InstantObjects constants and resource strings.
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantConnectionManager.pas \cf1\b0\fs16 
+\par \pard\sb25\tx1435\strike Classes\strike0\{linkID=12870>nav\}\tab\strike Types\strike0\{linkID=12880>nav\}\{keepn\} 
+\par \pard\sb25\sa25\tx1435\fs18 InstantObjects Connection Manager.
 \par 
 \par }
 12870
@@ -29793,19 +29802,85 @@ Imported
 
 
 FALSE
-10
+9
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantConsts\strike0\{linkID=12860>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Constants in Unit InstantConsts
-\par \pard\keep\li95\sb25\sa25\b0\strike InstantDateFormat\strike0\{linkID=12620>main\}
-\par \strike InstantDateTimeFormat\strike0\{linkID=12640>main\}
-\par \strike InstantTimeFormat\strike0\{linkID=12660>main\}
+\par \strike InstantConnectionManager\strike0\{linkID=12860>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantConnectionManager
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantConnectionManager\strike0\{linkID=3520>main\}
+\par \pard\li195\sb15\sa25\fs16 Allows the user to manage connections to various databases.
 \par 
 \par }
 12880
 Scribble12880
+
+
+
+
+
+Imported
+
+
+
+FALSE
+11
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantConnectionManager\strike0\{linkID=12860>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Types in Unit InstantConnectionManager
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantConnectionManagerActionType\strike0\{linkID=12190>main\}
+\par \pard\li195\sb15\sa25\fs16 Connection manager action types.
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantConnectionManagerActionTypes\strike0\{linkID=12200>main\}
+\par \pard\li195\sb15\sa25\fs16 Connection manager action types.
+\par 
+\par }
+12890
+Scribble12890
+InstantConsts.pas
+InstantConsts.pas;
+
+
+unitssymbol:000070
+Imported
+main
+
+
+FALSE
+7
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantConsts.pas \b0\fs16 
+\par \cf1\strike Constants\cf2\strike0\{linkID=12900>nav\}\{keepn\}\cf0 
+\par \pard\sb25\sa25\fs18 InstantObjects constants and resource strings.
+\par 
+\par }
+12900
+Scribble12900
+
+
+
+
+
+Imported
+
+
+
+FALSE
+10
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantConsts\strike0\{linkID=12890>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Constants in Unit InstantConsts
+\par \pard\keep\li95\sb25\sa25\b0\strike InstantDateFormat\strike0\{linkID=12650>main\}
+\par \strike InstantDateTimeFormat\strike0\{linkID=12670>main\}
+\par \strike InstantTimeFormat\strike0\{linkID=12690>main\}
+\par 
+\par }
+12910
+Scribble12910
 InstantDBISAM.pas
 InstantDBISAM.pas;
 
@@ -29820,12 +29895,12 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantDBISAM.pas \cf1\b0\fs16 
-\par \strike Classes\strike0\{linkID=12890>nav\}\{keepn\} 
+\par \strike Classes\strike0\{linkID=12920>nav\}\{keepn\} 
 \par \pard\sb25\sa25\fs18 InstantObjects DBISAM support.
 \par 
 \par }
-12890
-Scribble12890
+12920
+Scribble12920
 
 
 
@@ -29840,14 +29915,14 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantDBISAM\strike0\{linkID=12880>main\}\{keepn\} 
+\par \strike InstantDBISAM\strike0\{linkID=12910>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Classes in Unit InstantDBISAM
 \par \pard\keep\li95\sb25\sa25\b0\strike TInstantDBISAMConnector\strike0\{linkID=5780>main\}
 \par \pard\li195\sb15\sa25\fs16 Provides access to a database.
 \par 
 \par }
-12900
-Scribble12900
+12930
+Scribble12930
 InstantDBX.pas
 InstantDBX.pas;
 
@@ -29862,72 +29937,8 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantDBX.pas \cf1\b0\fs16 
-\par \strike Classes\strike0\{linkID=12910>nav\}\{keepn\} 
+\par \strike Classes\strike0\{linkID=12940>nav\}\{keepn\} 
 \par \pard\sb25\sa25\fs18 InstantObjects dbExpress support.
-\par 
-\par }
-12910
-Scribble12910
-
-
-
-
-
-Imported
-
-
-
-FALSE
-9
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantDBX\strike0\{linkID=12900>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantDBX
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantDBXConnector\strike0\{linkID=5950>main\}
-\par \pard\li195\sb15\sa25\fs16 Provides access to a database.
-\par 
-\par }
-12920
-Scribble12920
-InstantExplorer.pas
-InstantExplorer.pas;
-
-
-unitssymbol:000100
-Imported
-main
-
-
-FALSE
-7
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantExplorer.pas \cf1\b0\fs16  
-\par \pard\sb25\tx1435\tx2875\strike Classes\strike0\{linkID=12930>nav\}\tab\strike Functions\strike0\{linkID=12940>nav\}\tab\strike Types\strike0\{linkID=12950>nav\}\{keepn\}
-\par \pard\sb25\sa25\tx1435\tx2875\fs18 InstantObjects Object Explorer.
-\par 
-\par }
-12930
-Scribble12930
-
-
-
-
-
-Imported
-
-
-
-FALSE
-9
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantExplorer\strike0\{linkID=12920>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantExplorer
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantExplorer\strike0\{linkID=6230>main\}
-\par \pard\li195\sb15\sa25\fs16 Allows navigation of objects within a tree.
 \par 
 \par }
 12940
@@ -29946,56 +29957,52 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantExplorer\strike0\{linkID=12920>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Functions in Unit InstantExplorer
-\par \pard\keep\li95\sb25\sa25\b0\strike InstantExploreObject\strike0\{linkID=11420>main\}
-\par \pard\li195\sb15\sa25\fs16 Explores an object
+\par \strike InstantDBX\strike0\{linkID=12930>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantDBX
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantDBXConnector\strike0\{linkID=5950>main\}
+\par \pard\li195\sb15\sa25\fs16 Provides access to a database.
 \par 
 \par }
 12950
 Scribble12950
+InstantExplorer.pas
+InstantExplorer.pas;
 
 
-
-
-
-Imported
-
-
-
-FALSE
-13
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantExplorer\strike0\{linkID=12920>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Types in Unit InstantExplorer
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantExplorerLayout\strike0\{linkID=12310>main\}
-\par \pard\li195\sb15\sa25\fs16 Determines the layout of the explorer.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantExplorerNodeType\strike0\{linkID=12320>main\}
-\par \pard\li195\sb15\sa25\fs16 Defines node types of an explorer.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantExplorerNodeTypes\strike0\{linkID=12330>main\}
-\par \pard\li195\sb15\sa25\fs16 Defines node types of an explorer.
-\par 
-\par }
-12960
-Scribble12960
-InstantFlashFiler.pas
-InstantFlashFiler.pas;
-
-
-unitssymbol:000110
+unitssymbol:000100
 Imported
 main
 
 
 FALSE
 7
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantExplorer.pas \cf1\b0\fs16  
+\par \pard\sb25\tx1435\tx2875\strike Classes\strike0\{linkID=12960>nav\}\tab\strike Functions\strike0\{linkID=12970>nav\}\tab\strike Types\strike0\{linkID=12980>nav\}\{keepn\}
+\par \pard\sb25\sa25\tx1435\tx2875\fs18 InstantObjects Object Explorer.
+\par 
+\par }
+12960
+Scribble12960
+
+
+
+
+
+Imported
+
+
+
+FALSE
+9
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantFlashFiler.pas \cf1\b0\fs16 
-\par \strike Classes\strike0\{linkID=12970>nav\}\{keepn\} 
-\par \pard\sb25\sa25\fs18 InstantObjects FlashFiler support.
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantExplorer\strike0\{linkID=12950>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantExplorer
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantExplorer\strike0\{linkID=6230>main\}
+\par \pard\li195\sb15\sa25\fs16 Allows navigation of objects within a tree.
 \par 
 \par }
 12970
@@ -30014,34 +30021,60 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantFlashFiler\strike0\{linkID=12960>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantFlashFiler
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantFlashFilerConnector\strike0\{linkID=6740>main\}
-\par \pard\li195\sb15\sa25\fs16 Provides access to a database.
+\par \strike InstantExplorer\strike0\{linkID=12950>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Functions in Unit InstantExplorer
+\par \pard\keep\li95\sb25\sa25\b0\strike InstantExploreObject\strike0\{linkID=11420>main\}
+\par \pard\li195\sb15\sa25\fs16 Explores an object
 \par 
 \par }
 12980
 Scribble12980
-InstantIBX.pas
-InstantIBX.pas;
 
 
-unitssymbol:000120
+
+
+
+Imported
+
+
+
+FALSE
+13
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantExplorer\strike0\{linkID=12950>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Types in Unit InstantExplorer
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantExplorerLayout\strike0\{linkID=12310>main\}
+\par \pard\li195\sb15\sa25\fs16 Determines the layout of the explorer.
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantExplorerNodeType\strike0\{linkID=12320>main\}
+\par \pard\li195\sb15\sa25\fs16 Defines node types of an explorer.
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantExplorerNodeTypes\strike0\{linkID=12330>main\}
+\par \pard\li195\sb15\sa25\fs16 Defines node types of an explorer.
+\par 
+\par }
+12990
+Scribble12990
+InstantFlashFiler.pas
+InstantFlashFiler.pas;
+
+
+unitssymbol:000110
 Imported
 main
 
 
 FALSE
 7
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantIBX.pas \cf1\b0\fs16 
-\par \cf2\lang1033\strike\f1 Classes\cf3\strike0\{linkID=12990>nav\}\cf1\lang1040\f0\{keepn\} 
-\par \pard\sb25\sa25\fs18 InstantObjects InterBase Express support.
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantFlashFiler.pas \cf1\b0\fs16 
+\par \strike Classes\strike0\{linkID=13000>nav\}\{keepn\} 
+\par \pard\sb25\sa25\fs18 InstantObjects FlashFiler support.
 \par 
 \par }
-12990
-Scribble12990
+13000
+Scribble13000
 
 
 
@@ -30056,14 +30089,56 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantIBX\strike0\{linkID=12980>main\}\{keepn\} 
+\par \strike InstantFlashFiler\strike0\{linkID=12990>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantFlashFiler
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantFlashFilerConnector\strike0\{linkID=6740>main\}
+\par \pard\li195\sb15\sa25\fs16 Provides access to a database.
+\par 
+\par }
+13010
+Scribble13010
+InstantIBX.pas
+InstantIBX.pas;
+
+
+unitssymbol:000120
+Imported
+main
+
+
+FALSE
+7
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantIBX.pas \cf1\b0\fs16 
+\par \cf2\lang1033\strike\f1 Classes\cf3\strike0\{linkID=13020>nav\}\cf1\lang1040\f0\{keepn\} 
+\par \pard\sb25\sa25\fs18 InstantObjects InterBase Express support.
+\par 
+\par }
+13020
+Scribble13020
+
+
+
+
+
+Imported
+
+
+
+FALSE
+9
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantIBX\strike0\{linkID=13010>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Classes in Unit InstantIBX
 \par \pard\keep\li95\sb25\sa25\b0\strike TInstantIBXConnector\strike0\{linkID=6960>main\}
 \par \pard\li195\sb15\sa25\fs16 Provides access to a database.
 \par 
 \par }
-13000
-Scribble13000
+13030
+Scribble13030
 InstantMetadata.pas
 InstantMetadata.pas;
 
@@ -30073,17 +30148,17 @@ Added
 main
 
 
-TRUE
+FALSE
 7
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantMetadata.pas \cf1\b0\fs16 
-\par \cf2\strike Classes\cf3\strike0\{linkID=13010>nav\}\cf1\{keepn\} 
+\par \cf2\strike Classes\cf3\strike0\{linkID=13040>nav\}\cf1\{keepn\} 
 \par \pard\sb25\sa25\fs18 InstantObjects Metadata Classes.
 \par 
 \par }
-13010
-Scribble13010
+13040
+Scribble13040
 
 
 
@@ -30098,7 +30173,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \cf2\strike Instant\lang1033\f1 Metadata\cf3\strike0\{linkID=13000>main\}\cf1\lang1040\f0\{keepn\} 
+\par \cf2\strike Instant\lang1033\f1 Metadata\cf3\strike0\{linkID=13030>main\}\cf1\lang1040\f0\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Classes in Unit Instant\lang1033\f1 Metadata\lang1040\f0 
 \par \pard\li80\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang3081\b0\f2 TInstantAttributeMap
 \par TInstantAttributeMaps
@@ -30120,8 +30195,8 @@ FALSE
 \par TInstantTableMetadatas
 \par \pard\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang1040\strike\f0 
 \par }
-13020
-Scribble13020
+13050
+Scribble13050
 InstantPersistence.pas
 InstantPersistence.pas;
 
@@ -30136,12 +30211,12 @@ FALSE
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantPersistence.pas \cf1\b0\fs16 
-\par \pard\sb25\tx1435\tx2875\tx4315\strike Classes\strike0\{linkID=13030>nav\}\tab\strike Functions\strike0\{linkID=13040>nav\}\tab\strike Types\strike0\{linkID=13050>nav\}\tab\strike Constants\strike0\{linkID=13060>nav\}\{keepn\} 
+\par \pard\sb25\tx1435\tx2875\tx4315\strike Classes\strike0\{linkID=13060>nav\}\tab\strike Functions\strike0\{linkID=13070>nav\}\tab\strike Types\strike0\{linkID=13080>nav\}\tab\strike Constants\strike0\{linkID=13090>nav\}\{keepn\} 
 \par \pard\sb25\sa25\tx1435\tx2875\tx4315\fs18 InstantObjects Core Classes
 \par 
 \par }
-13030
-Scribble13030
+13060
+Scribble13060
 
 
 
@@ -30156,7 +30231,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Classes in Unit InstantPersistence
 \par \pard\keep\li95\sb25\sa25\b0\strike EInstantAccessError\strike0\{linkID=1000>main\}
 \par \pard\li195\sb15\sa25\fs16 The exception class for access errors.
@@ -30204,8 +30279,8 @@ FALSE
 \par \pard\li195\sb15\sa25\fs16 TInstantString represents a string value.
 \par 
 \par }
-13040
-Scribble13040
+13070
+Scribble13070
 
 
 
@@ -30220,7 +30295,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Functions in Unit InstantPersistence
 \par \pard\keep\li95\sb25\sa25\b0\strike InstantCheckConnection\strike0\{linkID=11250>main\}
 \par \pard\li195\sb15\sa25\fs16 Checks the assignment of a connection
@@ -30256,8 +30331,8 @@ FALSE
 \par \pard\li195\sb15\sa25\fs16 Unregisters an array of classes derived from \strike TInstantObject\strike0\{linkID=7390>main\}
 \par 
 \par }
-13050
-Scribble13050
+13080
+Scribble13080
 
 
 
@@ -30272,7 +30347,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
+\par \strike InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Types in Unit InstantPersistence
 \par \pard\keep\li95\sb25\sa25\lang1033\b0\strike\f1 T\lang1040\f0 InstantAttribute\strike0\{linkID=2170>main\}
 \par \pard\li195\sb15\sa25\fs16 The common ancestor of all the attribute classes.
@@ -30288,82 +30363,12 @@ FALSE
 \par \pard\li195\sb15\sa25\fs16 TInstantNotifyEvent is the event type for simple notification events.
 \par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantObjectNotifyEvent\strike0\{linkID=12480>main\}
 \par \pard\li195\sb15\sa25\fs16 TInstantObjectNotifyEvent is used for notification.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantProgressEvent\strike0\{linkID=12510>main\}
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantProgressEvent\strike0\{linkID=12520>main\}
 \par \pard\li195\sb15\sa25\fs16 The event type for progress events.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantSchemeEvent\strike0\{linkID=12520>main\}
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantSchemeEvent\strike0\{linkID=12530>main\}
 \par \pard\li195\sb15\sa25\fs16 The event type for database-build related events.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantSortCompare\strike0\{linkID=12530>main\}
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantSortCompare\strike0\{linkID=12540>main\}
 \par \pard\li195\sb15\sa25\fs16 Prototype of function used to Compares objects
-\par 
-\par }
-13060
-Scribble13060
-
-
-
-
-
-Imported
-
-
-
-FALSE
-11
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantPersistence\strike0\{linkID=13020>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Constants in Unit InstantPersistence
-\par \pard\keep\li95\sb25\sa25\b0\strike InstantAttributePrefix\strike0\{linkID=12590>main\}
-\par \pard\li195\sb15\sa25\fs16 The prefix used for attribute fields.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 InstantClassPrefix\strike0\{linkID=12610>main\}
-\par \pard\li195\sb15\sa25\fs16 The prefix used for classes.
-\par 
-\par }
-13070
-Scribble13070
-InstantPresentation.pas
-InstantPresentation.pas;
-
-
-unitssymbol:000150
-Imported
-main
-
-
-FALSE
-7
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantPresentation.pas \cf1\b0\fs16 
-\par \pard\sb25\tx1435\tx2875\strike Classes\strike0\{linkID=13080>nav\}\tab\strike Functions\strike0\{linkID=13090>nav\}\tab\strike Types\strike0\{linkID=13100>nav\}\{keepn\} 
-\par \pard\sb25\sa25\tx1435\tx2875\fs18 InstantObjects Presentation Classes.
-\par 
-\par }
-13080
-Scribble13080
-
-
-
-
-
-Imported
-
-
-
-FALSE
-13
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantPresentation
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantCustomExposer\strike0\{linkID=4790>main\}
-\par \pard\li195\sb15\sa25\fs16 The ancestor of components that make objects accessible via data-aware controls.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantExposer\strike0\{linkID=6450>main\}
-\par \pard\li195\sb15\sa25\fs16 Provides dataset-based access to objects.
-\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantSelector\strike0\{linkID=10200>main\}
-\par \pard\li195\sb15\sa25\fs16 TInstantSelector provides dataset-based access to a selection of objects.
 \par 
 \par }
 13090
@@ -30378,11 +30383,81 @@ Imported
 
 
 FALSE
+11
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantPersistence\strike0\{linkID=13050>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Constants in Unit InstantPersistence
+\par \pard\keep\li95\sb25\sa25\b0\strike InstantAttributePrefix\strike0\{linkID=12620>main\}
+\par \pard\li195\sb15\sa25\fs16 The prefix used for attribute fields.
+\par \pard\keep\li95\sb25\sa25\strike\fs18 InstantClassPrefix\strike0\{linkID=12640>main\}
+\par \pard\li195\sb15\sa25\fs16 The prefix used for classes.
+\par 
+\par }
+13100
+Scribble13100
+InstantPresentation.pas
+InstantPresentation.pas;
+
+
+unitssymbol:000150
+Imported
+main
+
+
+FALSE
+7
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantPresentation.pas \cf1\b0\fs16 
+\par \pard\sb25\tx1435\tx2875\strike Classes\strike0\{linkID=13110>nav\}\tab\strike Functions\strike0\{linkID=13120>nav\}\tab\strike Types\strike0\{linkID=13130>nav\}\{keepn\} 
+\par \pard\sb25\sa25\tx1435\tx2875\fs18 InstantObjects Presentation Classes.
+\par 
+\par }
+13110
+Scribble13110
+
+
+
+
+
+Imported
+
+
+
+FALSE
+13
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantPresentation
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantCustomExposer\strike0\{linkID=4790>main\}
+\par \pard\li195\sb15\sa25\fs16 The ancestor of components that make objects accessible via data-aware controls.
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantExposer\strike0\{linkID=6450>main\}
+\par \pard\li195\sb15\sa25\fs16 Provides dataset-based access to objects.
+\par \pard\keep\li95\sb25\sa25\strike\fs18 TInstantSelector\strike0\{linkID=10200>main\}
+\par \pard\li195\sb15\sa25\fs16 TInstantSelector provides dataset-based access to a selection of objects.
+\par 
+\par }
+13120
+Scribble13120
+
+
+
+
+
+Imported
+
+
+
+FALSE
 15
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantPresentation\strike0\{linkID=13070>main\}\{keepn\} 
+\par \strike InstantPresentation\strike0\{linkID=13100>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Functions in Unit InstantPresentation
 \par \pard\keep\li95\sb25\sa25\b0\strike InstantFindAccessorClass\strike0\{linkID=11480>main\}
 \par \pard\li195\sb15\sa25\fs16 Finds and returns a class derived from TInstantAccessor.
@@ -30394,8 +30469,8 @@ FALSE
 \par \pard\li195\sb15\sa25\fs16 Unregisters a class derived from TInstantAccessor
 \par 
 \par }
-13100
-Scribble13100
+13130
+Scribble13130
 
 
 
@@ -30405,12 +30480,12 @@ Modified
 
 
 
-TRUE
+FALSE
 27
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \cf2\strike InstantPresentation\cf3\strike0\{linkID=13070>main\}\cf1\{keepn\} 
+\par \cf2\strike InstantPresentation\cf3\strike0\{linkID=13100>main\}\cf1\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Types in Unit InstantPresentation
 \par \pard\keep\li95\sb25\sa25\cf2\b0\strike TInstantAddClassFieldDefEvent\cf3\strike0\{linkID=12090>main\}\cf1\strike 
 \par \pard\li195\sb15\sa25\strike0\fs16 The event type for \lang1033\f1 exposer field definition\lang1040\f0  \lang1033\f1 creation\lang1040\f0  events.\strike\fs18 
@@ -30434,8 +30509,8 @@ TRUE
 \par \pard\li195\sb15\sa25\fs16 The event type for object limitation events.
 \par 
 \par }
-13110
-Scribble13110
+13140
+Scribble13140
 InstantTypes.pas
 InstantTypes.pas;
 
@@ -30450,90 +30525,8 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantTypes.pas \cf1\b0\fs16 
-\par \cf2\lang1033\strike\f1 Types\cf3\strike0\{linkID=13120>nav\}\cf1\lang1040\f0\{keepn\} 
+\par \cf2\lang1033\strike\f1 Types\cf3\strike0\{linkID=13150>nav\}\cf1\lang1040\f0\{keepn\} 
 \par \pard\sb25\sa25\fs18 InstantObjects \lang1033\f1 Types\lang1040\f0 .
-\par 
-\par }
-13120
-Scribble13120
-
-
-
-
-
-Imported
-
-
-
-FALSE
-27
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}}
-{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \cf2\strike Instant\lang1033\f1 Types\cf3\strike0\{linkID=13110>main\}\cf1\lang1040\f0\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Types in Unit Instant\lang1033\f1 Types \lang1040\f0 
-\par \pard\li80\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang3081\b0\f2 TInstantAttributeCategory
-\par \cf2\strike TInstantAttributeType\cf3\strike0\{linkID=12130>main\}\cf1 
-\par TInstantCacheNodeColor
-\par TInstantCatalogFeature
-\par TInstantCatalogFeatures
-\par \cf2\strike TInstantConflictAction\cf3\strike0\{linkID=12180>main\}\cf1 
-\par \cf2\strike TInstantContentChangeType\cf3\strike0\{linkID=12240>main\}\cf1 
-\par \cf2\strike TInstantDataType\cf3\strike0\{linkID=12270>main\}\cf1 
-\par TInstantDataTypes
-\par TInstantDBBuildCommandType
-\par \cf2\strike TInstantErrorAction\cf3\strike0\{linkID=12280>main\}\cf1 
-\par TInstantFieldOption
-\par TInstantFieldOptions
-\par TInstantGraphicFileFormat
-\par TInstantObjectNotification
-\par \cf2\strike TInstantOperationType\cf3\strike0\{linkID=12490>main\}\cf1 
-\par TInstantPersistence
-\par TInstantStorageKind
-\par \cf2\strike TInstantVerificationResult\cf3\strike0\{linkID=12570>main\}\cf1 
-\par TInstantWarningEvent
-\par \pard\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang1040\strike\f0 
-\par }
-13130
-Scribble13130
-InstantUtils.pas
-InstantUtils.pas;
-
-
-unitssymbol:000170
-Imported
-main
-
-
-FALSE
-7
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantUtils.pas \cf1\b0\fs16  
-\par \pard\sb25\tx1435\tx2875\strike Classes\strike0\{linkID=13140>nav\}\tab\strike Functions\strike0\{linkID=13150>nav\}\tab\strike Types\strike0\{linkID=13160>nav\}\{keepn\}
-\par \pard\sb25\sa25\tx1435\tx2875\fs18 InstantObjects Utilities
-\par 
-\par }
-13140
-Scribble13140
-
-
-
-
-
-Imported
-
-
-
-FALSE
-9
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
-{\colortbl ;\red0\green0\blue0;}
-\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
-\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantUtils
-\par \pard\keep\li95\sb25\sa25\b0\strike TInstantVersion\strike0\{linkID=12070>main\}
-\par \pard\li195\sb15\sa25\fs16 Specifies the version of a file.
 \par 
 \par }
 13150
@@ -30548,11 +30541,93 @@ Imported
 
 
 FALSE
+27
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil Arial;}}
+{\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \cf2\strike Instant\lang1033\f1 Types\cf3\strike0\{linkID=13140>main\}\cf1\lang1040\f0\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Types in Unit Instant\lang1033\f1 Types \lang1040\f0 
+\par \pard\li80\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang3081\b0\f2 TInstantAttributeCategory
+\par \cf2\strike TInstantAttributeType\cf3\strike0\{linkID=12130>main\}\cf1 
+\par TInstantCacheNodeColor
+\par TInstantCatalogFeature
+\par TInstantCatalogFeatures
+\par \cf2\strike TInstantConflictAction\cf3\strike0\{linkID=12180>main\}\cf1 
+\par \cf2\strike TInstantContentChangeType\cf3\strike0\{linkID=12240>main\}\cf1 
+\par \cf2\strike TInstantDataType\cf3\strike0\{linkID=12270>main\}\cf1 
+\par \cf2\strike TInstantDataTypes\cf3\strike0\{linkID=12270>main\}\cf1 
+\par TInstantDBBuildCommandType
+\par \cf2\strike TInstantErrorAction\cf3\strike0\{linkID=12280>main\}\cf1 
+\par \cf2\strike TInstantFieldOption\cf3\strike0\{linkID=12390>main\}\cf1 
+\par \cf2\strike TInstantFieldOptions\cf3\strike0\{linkID=12390>main\}\cf1 
+\par TInstantGraphicFileFormat
+\par TInstantObjectNotification
+\par \cf2\strike TInstantOperationType\cf3\strike0\{linkID=12490>main\}\cf1 
+\par \cf2\strike TInstantPersistence\cf3\strike0\{linkID=12500>main\}\cf1 
+\par \cf2\strike TInstantStorageKind\cf3\strike0\{linkID=12560>main\}\cf1 
+\par \cf2\strike TInstantVerificationResult\cf3\strike0\{linkID=12600>main\}\cf1 
+\par TInstantWarningEvent
+\par \pard\tx1440\tx2880\tx4320\tx5760\tx7200\tx8640\lang1040\strike\f0 
+\par }
+13160
+Scribble13160
+InstantUtils.pas
+InstantUtils.pas;
+
+
+unitssymbol:000170
+Imported
+main
+
+
+FALSE
+7
+{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\lang1040\b\f0\fs24 InstantUtils.pas \cf1\b0\fs16  
+\par \pard\sb25\tx1435\tx2875\strike Classes\strike0\{linkID=13170>nav\}\tab\strike Functions\strike0\{linkID=13180>nav\}\tab\strike Types\strike0\{linkID=13190>nav\}\{keepn\}
+\par \pard\sb25\sa25\tx1435\tx2875\fs18 InstantObjects Utilities
+\par 
+\par }
+13170
+Scribble13170
+
+
+
+
+
+Imported
+
+
+
+FALSE
+9
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+{\colortbl ;\red0\green0\blue0;}
+\viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
+\par \strike InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
+\par \pard\sb55\sa55\b\fs18 Classes in Unit InstantUtils
+\par \pard\keep\li95\sb25\sa25\b0\strike TInstantVersion\strike0\{linkID=12070>main\}
+\par \pard\li195\sb15\sa25\fs16 Specifies the version of a file.
+\par 
+\par }
+13180
+Scribble13180
+
+
+
+
+
+Imported
+
+
+
+FALSE
 47
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \strike InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Functions in Unit InstantUtils
 \par \pard\keep\li95\sb25\sa25\b0\strike InstantCharSetToStr\strike0\{linkID=11220>main\}
 \par \pard\li195\sb15\sa25\fs16 Co\lang1033\f1 n\lang1040\f0 verts a set of char to a string.
@@ -30596,8 +30671,8 @@ FALSE
 \par \pard\li195\sb15\sa25\fs16 Converts a string to a TDateTime value.
 \par 
 \par }
-13160
-Scribble13160
+13190
+Scribble13190
 
 
 
@@ -30612,7 +30687,7 @@ FALSE
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\sb25\lang1040\b\f0\fs24 Unit Overview \cf1\b0\fs16 
-\par \strike InstantUtils\strike0\{linkID=13130>main\}\{keepn\} 
+\par \strike InstantUtils\strike0\{linkID=13160>main\}\{keepn\} 
 \par \pard\sb55\sa55\b\fs18 Types in Unit InstantUtils
 \par \pard\keep\li95\sb25\sa25\b0\strike TInstantCompareOption\strike0\{linkID=12160>main\}
 \par \pard\li195\sb15\sa25\fs16 Specifies options for a comparison.
@@ -30626,7 +30701,7 @@ example="InstantObjects Guide",(420,45,563,366),0,(255,255,255),(255,255,255),0
 nav="InstantObjects Guide",(200,410,220,503),0,(255,255,255),(255,255,255),0
 0
 0
-210
+212
 1 Welcome=Scribble10
 1 License Agreement=327SA3X
 1 License Agreement=Scribble30
@@ -30634,13 +30709,13 @@ nav="InstantObjects Guide",(200,410,220,503),0,(255,255,255),(255,255,255),0
 1 InstantObjects User Guide
 2 User Guide for InstantObjects 2.0=Scribble50
 2 Creating the Business Model
-3 Creating the Business Model=327SA3P
 3 Creating the Business Model=Scribble70
 3 The Model Explorer=Scribble90
 3 Defining Classes
 4 Defining Classes=Scribble120
 4 Class Editor=Scribble130
 4 Attribute Editor=Scribble170
+4 External Storage of Attributes=Scribble220
 3 Adding Business Rules=Scribble240
 3 Building/Evolving the Business Model=Scribble270
 2 Creating the User Interface
@@ -30651,7 +30726,7 @@ nav="InstantObjects Guide",(200,410,220,503),0,(255,255,255),(255,255,255),0
 3 The Exposer=Scribble320
 3 The Selector=Scribble330
 2 Programming with Persistent Objects
-3 Programming with Persistent Objects=327SA.T
+3 Programming with Persistent Objects=Scribble340
 3 Creating New Objects=Scribble340
 3 Retrieving Existing Objects=Scribble380
 3 Associating Objects=Scribble420
@@ -30807,36 +30882,38 @@ nav="InstantObjects Guide",(200,410,220,503),0,(255,255,255),(255,255,255),0
 3 TInstantNotifyEvent=Scribble12470>MAIN
 3 TInstantObjectNotifyEvent=Scribble12480>MAIN
 3 TInstantOperationType=Scribble12490>MAIN
-3 TInstantProcessObjectEvent=Scribble12500>MAIN
-3 TInstantProgressEvent=Scribble12510>MAIN
-3 TInstantSchemeEvent=Scribble12520>MAIN
-3 TInstantSortCompare=Scribble12530>MAIN
-3 TInstantStreamFormat=Scribble12550>MAIN
-3 TInstantVerificationResult=Scribble12570>MAIN
+3 TInstantPersistence=Scribble12500>MAIN
+3 TInstantProcessObjectEvent=Scribble12510>MAIN
+3 TInstantProgressEvent=Scribble12520>MAIN
+3 TInstantSchemeEvent=Scribble12530>MAIN
+3 TInstantSortCompare=Scribble12540>MAIN
+3 TInstantStorageKind=Scribble12560>MAIN
+3 TInstantStreamFormat=Scribble12580>MAIN
+3 TInstantVerificationResult=Scribble12600>MAIN
 2 Constants
-3 InstantAttributePrefix=Scribble12590>MAIN
-3 InstantClassPrefix=Scribble12610>MAIN
-3 InstantDateFormat=Scribble12620>MAIN
-3 InstantDateTimeFormat=Scribble12640>MAIN
-3 InstantTimeFormat=Scribble12660>MAIN
+3 InstantAttributePrefix=Scribble12620>MAIN
+3 InstantClassPrefix=Scribble12640>MAIN
+3 InstantDateFormat=Scribble12650>MAIN
+3 InstantDateTimeFormat=Scribble12670>MAIN
+3 InstantTimeFormat=Scribble12690>MAIN
 2 Units
-3 InstantADO.pas=Scribble12680>MAIN
-3 InstantADS.pas=Scribble12710>MAIN
-3 InstantBDE.pas=Scribble12730>MAIN
-3 InstantBrokers.pas=Scribble12760>MAIN
-3 InstantClasses.pas=Scribble12790>MAIN
-3 InstantConnectionManager.pas=Scribble12830>MAIN
-3 InstantConsts.pas=Scribble12860>MAIN
-3 InstantDBISAM.pas=Scribble12880>MAIN
-3 InstantDBX.pas=Scribble12900>MAIN
-3 InstantExplorer.pas=Scribble12920>MAIN
-3 InstantFlashFiler.pas=Scribble12960>MAIN
-3 InstantIBX.pas=Scribble12980>MAIN
-3 InstantMetadata.pas=Scribble13000>MAIN
-3 InstantPersistence.pas=Scribble13020>MAIN
-3 InstantPresentation.pas=Scribble13070>MAIN
-3 InstantTypes.pas=Scribble13110>MAIN
-3 InstantUtils.pas=Scribble13130>MAIN
+3 InstantADO.pas=Scribble12710>MAIN
+3 InstantADS.pas=Scribble12740>MAIN
+3 InstantBDE.pas=Scribble12760>MAIN
+3 InstantBrokers.pas=Scribble12790>MAIN
+3 InstantClasses.pas=Scribble12820>MAIN
+3 InstantConnectionManager.pas=Scribble12860>MAIN
+3 InstantConsts.pas=Scribble12890>MAIN
+3 InstantDBISAM.pas=Scribble12910>MAIN
+3 InstantDBX.pas=Scribble12930>MAIN
+3 InstantExplorer.pas=Scribble12950>MAIN
+3 InstantFlashFiler.pas=Scribble12990>MAIN
+3 InstantIBX.pas=Scribble13010>MAIN
+3 InstantMetadata.pas=Scribble13030>MAIN
+3 InstantPersistence.pas=Scribble13050>MAIN
+3 InstantPresentation.pas=Scribble13100>MAIN
+3 InstantTypes.pas=Scribble13140>MAIN
+3 InstantUtils.pas=Scribble13160>MAIN
 22
 *InternetLink
 16711680
