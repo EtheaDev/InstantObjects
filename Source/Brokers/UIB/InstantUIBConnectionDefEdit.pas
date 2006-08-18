@@ -37,7 +37,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, InstantUIB;
+  StdCtrls, ExtCtrls, InstantUIB, InstantTypes;
 
 type
   TInstantUIBConnectionDefEditForm = class(TForm)

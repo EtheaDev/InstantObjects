@@ -37,7 +37,8 @@ interface
 
 uses
   Classes, Db, jvuib, jvuibdataset, jvuiblib, SysUtils,
-  InstantPersistence, InstantClasses, InstantCommand;
+  InstantPersistence, InstantBrokers, InstantClasses,
+  InstantCommand, InstantMetadata, InstantTypes;
 
 type
   TInstantUIBOption = (uibUseDelimitedIdents);
