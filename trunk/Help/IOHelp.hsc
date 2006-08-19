@@ -713,13 +713,14 @@ Done
 
 
 FALSE
-7
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}}
+8
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Adding Business Rules \cf1\b0\fs16 
 \par \cf2\strike Example 1\cf3\strike0\{linkID=250>example\}\cf1\tab\cf2\strike Example 2\cf3\strike0\{linkID=260>example\}\cf1\f1\tab\cf2\strike\f0 Creating the Business Model\cf3\strike0\{LinkID=70>main\}\{keepn\}\cf1  
 \par \pard\sb25\sa25\fs18 Validation rules and other business related behavior is added to your business classes by adding the required code plus additional methods and properties to the class. Validation rules and side effects of changing the value of an attribute are often added to the setter method of the corresponding property. Complete validation of business objects before they are stored to the database can be added by overriding the BeforeStore method of the class. New objects can be initialized by overriding the Initialize method. For a complete list of the virtual methods of \cf2\strike TInstantObject\cf3\strike0\{linkID=7390>main\}\cf1 , please refer to the InstantObjects Reference Guide.
 \par 
+\par \pard\cf0\lang3081\f2 Note: BeforeStore is currently NOT called for \i embedded\i0  objects. Validation of \i embedded \i0 objects, however, can be done by using its owner's BeforeStore event.\cf1\lang1040 
 \par }
 250
 Scribble250
@@ -28541,9 +28542,9 @@ main
 
 
 FALSE
-18
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fnil Arial;}{\f3\fswiss\fcharset0 Arial;}}
-{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;}
+20
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fnil Arial;}{\f3\fswiss\fcharset0 Arial;}{\f4\fnil\fcharset0 Arial;}}
+{\colortbl ;\red0\green128\blue0;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang3081\b\f0\fs24 TInstantExposerOptions\b0\fs16 
 \par \pard\sb25\tx1435\cf1\ul See Also\cf2\ulnone\{linkID=12350\}\tab\cf1\strike Unit: InstantPresentation\cf2\strike0\{linkID=13100>main\}\{keepn\}\cf0 
 \par \pard\sb25\sa85\tx1435\fs18 Specifies options for an exposer.
@@ -28556,9 +28557,11 @@ FALSE
 \par eoAutoApply\tab Changes \f0 made to the exposer's \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  or objects contained in the \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  should be applied automatically. For \cf1\strike TInstantObject\cf2\strike0\{linkID=7390>main\}\cf0  descendants this means that the persistent storage is updated for each changed object. Deleted objects will be disposed from the persistent storage and new objects will be added.
 \par eoAutoRemember\tab Automatically applies \cf1\strike Remember\cf2\strike0\{linkID=5430>main\}\cf0  and \cf1\strike Revert\cf2\strike0\{linkID=5480>main\}\cf0  functionality to the \f3 exposer's \cf1\strike\f0 Subject\cf2\strike0\{linkID=5150>main\}\cf0 .
 \par eoNotDisposeReferences\tab Do not \cf1\strike Dispose\cf2\strike0\{linkID=8570>main\}\cf0  referenced objects of References attributes when deleting the \cf1\strike CurrentObject\cf2\strike0\{linkID=4920>main\}\cf0  of the exposer. This option is only effective when the exposer is in amContent \cf1\strike Mode\cf2\strike0\{linkID=5020>main\}\cf0  and its \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  is a References attribute.
-\par eoDeferInsert\tab Insertion of the object in the of the container of the Subject is deferred. It specifies that objects that are appended or inserted are not applied to the container of the \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  until a row is posted. This option is only effective when the exposer is in amContent \cf1\strike\f3 Mode\cf2\strike0\f0\{linkID=5020>main\}\cf0 .
-\par eoSyncEdit\tab Allows a buffer update if the exposer's \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  is changed or refreshed and the exposer is in Edit mode.\f2 
-\par \f0 
+\par eoDeferInsert\tab\lang1033\f3 Addition or i\lang3081\f0 nsertion of object\lang1033\f3 s\lang3081\f0  in\lang1033\f3 to\lang3081\f0  \lang1033\f3 a\lang3081\f0  container of the Subject is deferred. It specifies that objects that are appended or inserted are not applied to the container of the \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf0  until a row is posted. This option is only effective when the exposer is in amContent \cf1\strike\f3 Mode\cf2\strike0\f0\{linkID=5020>main\}\cf0 .
+\par \pard\fi-2440\li2440\tx2440\cf3\f2 eoSyncEdit\lang1033\tab\lang3081 Allows a buffer update if the exposer's \cf1\strike Subject\cf2\strike0\{linkID=5150>main\}\cf3  is changed or refreshed and the exposer is in Edit mode.\lang1033  \f4 This option is useful \lang3081\f2 when a\lang1033\f4  \lang3081\f2 single \lang1033\f4 o\lang3081\f2 bject is simultaneously connected to multiple exposers\lang1033\f4  \cf0\lang3081 to ensure that all of the exposers maintain a consistent view of the shared object\cf3\f2 .\lang1033\f4  \cf0\lang3081 If eoSyncEdit is not enabled (the default) in this scenario, the exposers can easily get out of sync causing undesirable behaviour.\f0 
+\par \pard\fi-2440\li2440\sb25\sa25\tx2440 
+\par \tab\f2 
+\par \pard\f4 . 
 \par }
 12350
 Scribble12350
@@ -30701,9 +30704,8 @@ example="InstantObjects Guide",(420,45,563,366),0,(255,255,255),(255,255,255),0
 nav="InstantObjects Guide",(200,410,220,503),0,(255,255,255),(255,255,255),0
 0
 0
-212
+210
 1 Welcome=Scribble10
-1 License Agreement=327SA3X
 1 License Agreement=Scribble30
 1 Installing InstantObjects=Scribble40
 1 InstantObjects User Guide
@@ -30723,11 +30725,10 @@ nav="InstantObjects Guide",(200,410,220,503),0,(255,255,255),(255,255,255),0
 3 Persistence by RAD=Scribble300
 3 The Connector=Scribble310
 3 The Exposer=Scribble320
-3 The Exposer=Scribble320
 3 The Selector=Scribble330
 2 Programming with Persistent Objects
 3 Programming with Persistent Objects=Scribble340
-3 Creating New Objects=Scribble340
+3 Creating New Objects=Scribble360
 3 Retrieving Existing Objects=Scribble380
 3 Associating Objects=Scribble420
 3 Using an InstantQuery=Scribble440

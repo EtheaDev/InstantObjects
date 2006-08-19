@@ -4,7 +4,6 @@
 :BASE IOHelp.hlp
 :TITLE InstantObjects Help
 1 Welcome=Scribble10
-1 License Agreement=327SA3X
 1 License Agreement=Scribble30
 1 Installing InstantObjects=Scribble40
 1 InstantObjects User Guide
@@ -24,11 +23,10 @@
 3 Persistence by RAD=Scribble300
 3 The Connector=Scribble310
 3 The Exposer=Scribble320
-3 The Exposer=Scribble320
 3 The Selector=Scribble330
 2 Programming with Persistent Objects
 3 Programming with Persistent Objects=Scribble340
-3 Creating New Objects=Scribble340
+3 Creating New Objects=Scribble360
 3 Retrieving Existing Objects=Scribble380
 3 Associating Objects=Scribble420
 3 Using an InstantQuery=Scribble440

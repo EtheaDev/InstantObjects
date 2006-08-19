@@ -532,6 +532,7 @@
 \par \cf2\strike Example 1\cf3\strike0{\v Scribble250>example}\cf1\tab\cf2\strike Example 2\cf3\strike0{\v Scribble260>example}\cf1\f1\tab\cf2\strike\f0 Creating the Business Model\cf3\strike0{\v Scribble70>main}\cf1  
 \par \pard\sb25\sa25\fs18 Validation rules and other business related behavior is added to your business classes by adding the required code plus additional methods and properties to the class. Validation rules and side effects of changing the value of an attribute are often added to the setter method of the corresponding property. Complete validation of business objects before they are stored to the database can be added by overriding the BeforeStore method of the class. New objects can be initialized by overriding the Initialize method. For a complete list of the virtual methods of \cf2\strike TInstantObject\cf3\strike0{\v Scribble7390>main}\cf1 , please refer to the InstantObjects Reference Guide.
 \par 
+\par \pard\cf0\lang3081\f5 Note: BeforeStore is currently NOT called for \i embedded\i0  objects. Validation of \i embedded \i0 objects, however, can be done by using its owner's BeforeStore event.\cf1\lang1040 
 \par \pard\plain\f2
 
 {\page}
@@ -19926,9 +19927,11 @@
 \par eoAutoApply\tab Changes \f0 made to the exposer's \cf2\strike Subject\cf3\strike0{\v Scribble5150>main}\cf0  or objects contained in the \cf2\strike Subject\cf3\strike0{\v Scribble5150>main}\cf0  should be applied automatically. For \cf2\strike TInstantObject\cf3\strike0{\v Scribble7390>main}\cf0  descendants this means that the persistent storage is updated for each changed object. Deleted objects will be disposed from the persistent storage and new objects will be added.
 \par eoAutoRemember\tab Automatically applies \cf2\strike Remember\cf3\strike0{\v Scribble5430>main}\cf0  and \cf2\strike Revert\cf3\strike0{\v Scribble5480>main}\cf0  functionality to the \f1 exposer's \cf2\strike\f0 Subject\cf3\strike0{\v Scribble5150>main}\cf0 .
 \par eoNotDisposeReferences\tab Do not \cf2\strike Dispose\cf3\strike0{\v Scribble8570>main}\cf0  referenced objects of References attributes when deleting the \cf2\strike CurrentObject\cf3\strike0{\v Scribble4920>main}\cf0  of the exposer. This option is only effective when the exposer is in amContent \cf2\strike Mode\cf3\strike0{\v Scribble5020>main}\cf0  and its \cf2\strike Subject\cf3\strike0{\v Scribble5150>main}\cf0  is a References attribute.
-\par eoDeferInsert\tab Insertion of the object in the of the container of the Subject is deferred. It specifies that objects that are appended or inserted are not applied to the container of the \cf2\strike Subject\cf3\strike0{\v Scribble5150>main}\cf0  until a row is posted. This option is only effective when the exposer is in amContent \cf2\strike\f1 Mode\cf3\strike0\f0{\v Scribble5020>main}\cf0 .
-\par eoSyncEdit\tab Allows a buffer update if the exposer's \cf2\strike Subject\cf3\strike0{\v Scribble5150>main}\cf0  is changed or refreshed and the exposer is in Edit mode.\f2 
-\par \f0 
+\par eoDeferInsert\tab\lang1033\f1 Addition or i\lang3081\f0 nsertion of object\lang1033\f1 s\lang3081\f0  in\lang1033\f1 to\lang3081\f0  \lang1033\f1 a\lang3081\f0  container of the Subject is deferred. It specifies that objects that are appended or inserted are not applied to the container of the \cf2\strike Subject\cf3\strike0{\v Scribble5150>main}\cf0  until a row is posted. This option is only effective when the exposer is in amContent \cf2\strike\f1 Mode\cf3\strike0\f0{\v Scribble5020>main}\cf0 .
+\par \pard\fi-2440\li2440\tx2440\cf1\f2 eoSyncEdit\lang1033\tab\lang3081 Allows a buffer update if the exposer's \cf2\strike Subject\cf3\strike0{\v Scribble5150>main}\cf1  is changed or refreshed and the exposer is in Edit mode.\lang1033  \f5 This option is useful \lang3081\f2 when a\lang1033\f5  \lang3081\f2 single \lang1033\f5 o\lang3081\f2 bject is simultaneously connected to multiple exposers\lang1033\f5  \cf0\lang3081 to ensure that all of the exposers maintain a consistent view of the shared object\cf1\f2 .\lang1033\f5  \cf0\lang3081 If eoSyncEdit is not enabled (the default) in this scenario, the exposers can easily get out of sync causing undesirable behaviour.\f0 
+\par \pard\fi-2440\li2440\sb25\sa25\tx2440 
+\par \tab\f2 
+\par \pard\f5 . 
 \par \pard\plain\f0
 
 {\page}
