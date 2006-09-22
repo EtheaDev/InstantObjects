@@ -1,0 +1,11 @@
+The author of ubMock, Uberto Barbini, has granted permission for the
+InstantObjects Project to use and include the ubMock library under MPL
+for the sole purposes of testing the InstantObjects Library and its
+derivatives. For use or inclusion of the ubMock library for other
+purposes, the library and its licence conditions can be obtained from
+here:
+
+http://sourceforge.net/projects/ubmock
+
+The FPCUnit code, by Dean Zobec, is released under a modified LGPL
+license. See the file COPYING.FPC in this folder.
