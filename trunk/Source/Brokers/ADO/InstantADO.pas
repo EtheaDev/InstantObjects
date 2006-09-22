@@ -164,6 +164,11 @@ type
 
   { MS SQL Server }
 
+  TInstantADOMSSQLGenerator = class(TInstantSQLGenerator)
+  protected
+    function InternalGenerateAlterFieldSQL(OldMetadata,  NewMetadata: TInstantFieldMetadata): string; override;
+  end;
+
   TInstantADOMSSQLBroker = class(TInstantSQLBroker)
   protected
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
@@ -177,6 +182,7 @@ type
     function CreateDataSet(const Statement: string; Params: TParams): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
     function Execute(const AStatement: string; AParams: TParams): Integer; override;
+    class function GeneratorClass: TInstantSQLGeneratorClass; override;
   end;
 
   TInstantADOMSSQLResolver = class(TInstantSQLResolver)
@@ -685,6 +691,7 @@ function TInstantADOConnector.GetProviderType: TInstantADOProviderType;
 const
   MSJetPrefix = 'Microsoft.Jet';
   MSSQLPrefix = 'SQLOLEDB';
+  MSSQL2005Prefix = 'SQLNCLI';
   OraclePrefix = 'ORA';
   MySQLPrefix = 'My';
   IBMDB2Prefix = 'IBMDADB2';
@@ -694,7 +701,7 @@ begin
   begin
     if HasPrefix(MSJetPrefix) then
       Result := ptMSJet
-    else if HasPrefix(MSSQLPrefix) then
+    else if HasPrefix(MSSQLPrefix) or HasPrefix(MSSQL2005Prefix) then
       Result := ptMSSQLServer
     else if HasPrefix(OraclePrefix) or HasPrefix(MSOraclePrefix) then
       Result := ptOracle
@@ -1024,7 +1031,23 @@ begin
     end;
 end;
 
+{ TInstantADOMSSQLGenerator }
+
+function TInstantADOMSSQLGenerator.InternalGenerateAlterFieldSQL(OldMetadata,
+  NewMetadata: TInstantFieldMetadata): string;
+begin
+  Result := Format('ALTER TABLE %s ALTER COLUMN %s %s',
+    [EmbraceTable(OldMetadata.TableMetadata.Name),
+     EmbraceField(OldMetadata.Name),
+     Broker.DataTypeToColumnType(NewMetadata.DataType, NewMetadata.Size)]);
+end;
+
 { TInstantADOMSSQLBroker }
+
+class function TInstantADOMSSQLBroker.GeneratorClass: TInstantSQLGeneratorClass;
+begin
+  Result := TInstantADOMSSQLGenerator;
+end;
 
 procedure TInstantADOMSSQLBroker.AssignDataSetParams(DataSet: TDataSet;
   AParams: TParams);
