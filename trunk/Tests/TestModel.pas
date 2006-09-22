@@ -42,6 +42,11 @@ type
   TContact = class;
   TContactFilter = class;
   TCountry = class;
+  TDBField = class;
+  TDBFieldPair = class;
+  TDBForeignKey = class;
+  TDBPrimaryKey = class;
+  TDBTable = class;
   TEmail = class;
   TExternalAddress = class;
   TExternalPhone = class;
@@ -408,6 +413,116 @@ type
   published
     property Name: string read GetName write SetName;
     property Number: string read GetNumber write SetNumber;
+  end;
+
+  TDBTable = class(TInstantObject)
+  {IOMETADATA stored;
+    PrimaryKey: Part(TDBPrimaryKey);
+    Name: String;
+    ForeignKeys: Parts(TDBForeignKey); }
+    _ForeignKeys: TInstantParts;
+    _Name: TInstantString;
+    _PrimaryKey: TInstantPart;
+  private
+    function GetForeignKeyCount: Integer;
+    function GetForeignKeys(Index: Integer): TDBForeignKey;
+    function GetName: string;
+    function GetPrimaryKey: TDBPrimaryKey;
+    procedure SetForeignKeys(Index: Integer; Value: TDBForeignKey);
+    procedure SetName(const Value: string);
+    procedure SetPrimaryKey(Value: TDBPrimaryKey);
+  public
+    function AddForeignKey(ForeignKey: TDBForeignKey): Integer;
+    procedure ClearForeignKeys;
+    procedure DeleteForeignKey(Index: Integer);
+    function IndexOfForeignKey(ForeignKey: TDBForeignKey): Integer;
+    procedure InsertForeignKey(Index: Integer; ForeignKey: TDBForeignKey);
+    function RemoveForeignKey(ForeignKey: TDBForeignKey): Integer;
+    property ForeignKeyCount: Integer read GetForeignKeyCount;
+    property ForeignKeys[Index: Integer]: TDBForeignKey read GetForeignKeys write SetForeignKeys;
+  published
+    property Name: string read GetName write SetName;
+    property PrimaryKey: TDBPrimaryKey read GetPrimaryKey write SetPrimaryKey;
+  end;
+
+  TDBField = class(TInstantObject)
+  {IOMETADATA stored;
+    Table: Reference(TDBTable);
+    Name: String; }
+    _Name: TInstantString;
+    _Table: TInstantReference;
+  private
+    function GetName: string;
+    function GetTable: TDBTable;
+    procedure SetName(const Value: string);
+    procedure SetTable(Value: TDBTable);
+  published
+    property Name: string read GetName write SetName;
+    property Table: TDBTable read GetTable write SetTable;
+  end;
+
+  TDBPrimaryKey = class(TInstantObject)
+  {IOMETADATA stored;
+    Fields: References(TDBField);
+    Name: String; }
+    _Fields: TInstantReferences;
+    _Name: TInstantString;
+  private
+    function GetFieldCount: Integer;
+    function GetFields(Index: Integer): TDBField;
+    function GetName: string;
+    procedure SetFields(Index: Integer; Value: TDBField);
+    procedure SetName(const Value: string);
+  public
+    function AddField(Field: TDBField): Integer;
+    procedure ClearFields;
+    procedure DeleteField(Index: Integer);
+    function IndexOfField(Field: TDBField): Integer;
+    procedure InsertField(Index: Integer; Field: TDBField);
+    function RemoveField(Field: TDBField): Integer;
+    property FieldCount: Integer read GetFieldCount;
+    property Fields[Index: Integer]: TDBField read GetFields write SetFields;
+  published
+    property Name: string read GetName write SetName;
+  end;
+
+  TDBFieldPair = class(TINstantObject)
+  {IOMETADATA Field: Reference(TDBField);
+    ForeignField: Reference(TDBField); }
+    _Field: TInstantReference;
+    _ForeignField: TInstantReference;
+  private
+    function GetField: TDBField;
+    function GetForeignField: TDBField;
+    procedure SetField(Value: TDBField);
+    procedure SetForeignField(Value: TDBField);
+  published
+    property Field: TDBField read GetField write SetField;
+    property ForeignField: TDBField read GetForeignField write SetForeignField;
+  end;
+
+  TDBForeignKey = class(TInstantObject)
+  {IOMETADATA FieldPairs: Parts(TDBFieldPair);
+    Name: String; }
+    _FieldPairs: TInstantParts;
+    _Name: TInstantString;
+  private
+    function GetFieldPairCount: Integer;
+    function GetFieldPairs(Index: Integer): TDBFieldPair;
+    function GetName: string;
+    procedure SetFieldPairs(Index: Integer; Value: TDBFieldPair);
+    procedure SetName(const Value: string);
+  public
+    function AddFieldPair(FieldPair: TDBFieldPair): Integer;
+    procedure ClearFieldPairs;
+    procedure DeleteFieldPair(Index: Integer);
+    function IndexOfFieldPair(FieldPair: TDBFieldPair): Integer;
+    procedure InsertFieldPair(Index: Integer; FieldPair: TDBFieldPair);
+    function RemoveFieldPair(FieldPair: TDBFieldPair): Integer;
+    property FieldPairCount: Integer read GetFieldPairCount;
+    property FieldPairs[Index: Integer]: TDBFieldPair read GetFieldPairs write SetFieldPairs;
+  published
+    property Name: string read GetName write SetName;
   end;
 
 implementation
@@ -873,6 +988,78 @@ end;
 
 { TEmail }
 
+{ TDBTable }
+
+procedure TDBPrimaryKey.SetName(const Value: string);
+begin
+  _Name.Value := Value;
+end;
+
+function TDBTable.AddForeignKey(ForeignKey: TDBForeignKey): Integer;
+begin
+  Result := _ForeignKeys.Add(ForeignKey);
+end;
+
+procedure TDBTable.ClearForeignKeys;
+begin
+  _ForeignKeys.Clear;
+end;
+
+procedure TDBTable.DeleteForeignKey(Index: Integer);
+begin
+  _ForeignKeys.Delete(Index);
+end;
+
+function TDBTable.GetForeignKeyCount: Integer;
+begin
+  Result := _ForeignKeys.Count;
+end;
+
+function TDBTable.GetForeignKeys(Index: Integer): TDBForeignKey;
+begin
+  Result := _ForeignKeys[Index] as TDBForeignKey;
+end;
+
+function TDBTable.GetName: string;
+begin
+  Result := _Name.Value;
+end;
+
+function TDBTable.GetPrimaryKey: TDBPrimaryKey;
+begin
+  Result := _PrimaryKey.Value as TDBPrimaryKey;
+end;
+
+function TDBTable.IndexOfForeignKey(ForeignKey: TDBForeignKey): Integer;
+begin
+  Result := _ForeignKeys.IndexOf(ForeignKey);
+end;
+
+procedure TDBTable.InsertForeignKey(Index: Integer; ForeignKey: TDBForeignKey);
+begin
+  _ForeignKeys.Insert(Index, ForeignKey);
+end;
+
+function TDBTable.RemoveForeignKey(ForeignKey: TDBForeignKey): Integer;
+begin
+  Result := _ForeignKeys.Remove(ForeignKey);
+end;
+
+procedure TDBTable.SetForeignKeys(Index: Integer; Value: TDBForeignKey);
+begin
+  _ForeignKeys[Index] := Value;
+end;
+
+procedure TDBTable.SetName(const Value: string);
+begin
+  _Name.Value := Value;
+end;
+
+procedure TDBTable.SetPrimaryKey(Value: TDBPrimaryKey);
+begin
+  _PrimaryKey.Value := Value;
+end;
+
 function TEmail.GetAddress: string;
 begin
   Result := _Address.Value;
@@ -1315,6 +1502,159 @@ begin
   _Name.Value := Value;
 end;
 
+{ TDBField }
+
+function TDBField.GetName: string;
+begin
+  Result := _Name.Value;
+end;
+
+function TDBField.GetTable: TDBTable;
+begin
+  Result := _Table.Value as TDBTable;
+end;
+
+procedure TDBField.SetName(const Value: string);
+begin
+  _Name.Value := Value;
+end;
+
+procedure TDBField.SetTable(Value: TDBTable);
+begin
+  _Table.Value := Value;
+end;
+
+{ TDBPrimaryKey }
+
+procedure TDBForeignKey.SetName(const Value: string);
+begin
+  _Name.Value := Value;
+end;
+
+function TDBPrimaryKey.AddField(Field: TDBField): Integer;
+begin
+  Result := _Fields.Add(Field);
+end;
+
+procedure TDBPrimaryKey.ClearFields;
+begin
+  _Fields.Clear;
+end;
+
+procedure TDBPrimaryKey.DeleteField(Index: Integer);
+begin
+  _Fields.Delete(Index);
+end;
+
+function TDBPrimaryKey.GetFieldCount: Integer;
+begin
+  Result := _Fields.Count;
+end;
+
+function TDBPrimaryKey.GetFields(Index: Integer): TDBField;
+begin
+  Result := _Fields[Index] as TDBField;
+end;
+
+function TDBPrimaryKey.GetName: string;
+begin
+  Result := _Name.Value;
+end;
+
+function TDBPrimaryKey.IndexOfField(Field: TDBField): Integer;
+begin
+  Result := _Fields.IndexOf(Field);
+end;
+
+procedure TDBPrimaryKey.InsertField(Index: Integer; Field: TDBField);
+begin
+  _Fields.Insert(Index, Field);
+end;
+
+function TDBPrimaryKey.RemoveField(Field: TDBField): Integer;
+begin
+  Result := _Fields.Remove(Field);
+end;
+
+procedure TDBPrimaryKey.SetFields(Index: Integer; Value: TDBField);
+begin
+  _Fields[Index] := Value;
+end;
+
+{ TDBFieldPair }
+
+function TDBFieldPair.GetField: TDBField;
+begin
+  Result := _Field.Value as TDBField;
+end;
+
+function TDBFieldPair.GetForeignField: TDBField;
+begin
+  Result := _ForeignField.Value as TDBField;
+end;
+
+procedure TDBFieldPair.SetField(Value: TDBField);
+begin
+  _Field.Value := Value;
+end;
+
+procedure TDBFieldPair.SetForeignField(Value: TDBField);
+begin
+  _ForeignField.Value := Value;
+end;
+
+{ TDBForeignKey }
+
+function TDBForeignKey.AddFieldPair(FieldPair: TDBFieldPair): Integer;
+begin
+  Result := _FieldPairs.Add(FieldPair);
+end;
+
+procedure TDBForeignKey.ClearFieldPairs;
+begin
+  _FieldPairs.Clear;
+end;
+
+procedure TDBForeignKey.DeleteFieldPair(Index: Integer);
+begin
+  _FieldPairs.Delete(Index);
+end;
+
+function TDBForeignKey.GetFieldPairCount: Integer;
+begin
+  Result := _FieldPairs.Count;
+end;
+
+function TDBForeignKey.GetFieldPairs(Index: Integer): TDBFieldPair;
+begin
+  Result := _FieldPairs[Index] as TDBFieldPair;
+end;
+
+function TDBForeignKey.GetName: string;
+begin
+  Result := _Name.Value;
+end;
+
+function TDBForeignKey.IndexOfFieldPair(FieldPair: TDBFieldPair): Integer;
+begin
+  Result := _FieldPairs.IndexOf(FieldPair);
+end;
+
+procedure TDBForeignKey.InsertFieldPair(Index: Integer; FieldPair: TDBFieldPair);
+begin
+  _FieldPairs.Insert(Index, FieldPair);
+end;
+
+function TDBForeignKey.RemoveFieldPair(FieldPair: TDBFieldPair): Integer;
+begin
+  Result := _FieldPairs.Remove(FieldPair);
+end;
+
+procedure TDBForeignKey.SetFieldPairs(Index: Integer; Value: TDBFieldPair);
+begin
+  _FieldPairs[Index] := Value;
+end;
+
 initialization
   InstantRegisterClasses([
     TAddress,
@@ -1323,6 +1663,11 @@ initialization
     TContact,
     TContactFilter,
     TCountry,
+    TDBField,
+    TDBFieldPair,
+    TDBForeignKey,
+    TDBPrimaryKey,
+    TDBTable,
     TEmail,
     TExternalAddress,
     TExternalPhone,

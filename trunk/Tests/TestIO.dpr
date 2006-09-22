@@ -7,6 +7,7 @@ program TestIO;
 {$ENDIF}
 
 uses
+  FastMM4,
 {$IFDEF FPC}
   Interfaces,
 {$ENDIF}

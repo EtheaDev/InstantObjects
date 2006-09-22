@@ -91,6 +91,10 @@ type
     procedure TestCircularReferences8;
     // A -> A
     procedure TestCircularReferences9;
+
+    // This is intended to demonstrate a problem I am having in a project,
+    // but doesn't leak as expected. More investigation needed.
+    procedure TestCircularReferences10;
   end;
 
 implementation
@@ -260,6 +264,67 @@ begin
   finally
     vPerson.Free;  // A
   end;
+end;
+
+procedure TestCircularReferences.TestCircularReferences10;
+var
+  vMainTable, vLookupTable: TDBTable;
+  vLookupTableIdField: TDBField;
+  vLookupTableDescField: TDBField;
+  vMainTableIdField: TDBField;
+  vMainTableLookupIdField: TDBField;
+  vFK: TDBForeignKey;
+  vFieldPair: TDBFieldPair;
+begin
+  vLookupTable := TDBTable.Create(FConn);
+  vLookupTable.Id := 'LookupTable';
+  vLookupTable.Name := 'LookupTable';
+  vLookupTable.Store;
+
+  vLookupTableIdField := TDBField.Create(FConn);
+  vLookupTableIdField.Name := 'ID';
+  vLookupTableIdField.Table := vLookupTable;
+  vLookupTableIdField.Store;
+
+  vLookupTableDescField := TDBField.Create(FConn);
+  vLookupTableDescField.Name := 'DESCRIPTION';
+  vLookupTableDescField.Table := vLookupTable;
+  vLookupTableDescField.Store;
+
+  vLookupTable.Free;
+
+  vMainTable := TDBTable.Create(FConn);
+  vMainTable.Name := 'MainTable';
+  vMainTable.Store;
+
+  vMainTableIdField := TDBField.Create(FConn);
+  vMainTableIdField.Name := 'ID';
+  vMainTableIdField.Table := vMainTable;
+  vMainTableIdField.Store;
+
+  vMainTableLookupIdField := TDBField.Create(FConn);
+  vMainTableLookupIdField.Name := 'LookupTable_ID';
+  vMainTableLookupIdField.Table := vMainTable;
+  vMainTableLookupIdField.Store;
+
+  vFieldPair := TDBFieldPair.Create(FConn);
+  vFieldPair.Field := vMainTableLookupIdField;
+  vFieldPair.ForeignField := vLookupTableIdField;
+
+  vFK := TDBForeignKey.Create(FConn);
+  vFK.AddFieldPair(vFieldPair);
+  vMainTable.AddForeignKey(vFK);
+
+  vMainTable.Store;
+
+  vMainTable.Free;
+
+  vLookupTableIdField.Free;
+  vLookupTableDescField.Free;
+
+  vMainTableIdField.Free;
+  vMainTableLookupIdField.Free;
+
 end;
 
 // A -> B {Parts}-> C {Parts}-> D -> A
