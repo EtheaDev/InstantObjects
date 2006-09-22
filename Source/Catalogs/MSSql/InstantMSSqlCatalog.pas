@@ -23,7 +23,7 @@
  * Portions created by the Initial Developer are Copyright (C) 2005
  * the Initial Developer. All Rights Reserved.
  *
- * Contributor(s): Nando Dessena
+ * Contributor(s): Nando Dessena, Bernard Simmons
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -242,23 +242,22 @@ begin
     '  t.name AS COLUMN_TYPENAME, ' +
     '  c.xtype AS COLUMN_SUBTYPE, ' +
     '  CASE ' +
-    '    WHEN (d.oledb_data_type = 135) AND (c.xtype in (58, 61)) THEN 16' +
-    '    WHEN (d.oledb_data_type = 6) THEN 8' +
-    '    WHEN (d.oledb_data_type = 4) THEN 8' +
-    '    WHEN (d.oledb_data_type = 20) THEN 34' +
-    '    WHEN (d.oledb_data_type = 72) AND (c.xtype = 36) THEN 38' +
+    '    WHEN (c.xtype in (58, 61)) THEN 16' +
+    '    WHEN (c.xtype = 122) THEN 8' +
+    '    WHEN (c.xtype = 59) THEN 8' +
+    '    WHEN (c.xtype = 127) THEN 34' +
+    '    WHEN (c.xtype = 36) THEN 38' +
     '    ELSE c.length ' +
     '  END ' +
     '  AS COLUMN_LENGTH, ' +
     '  c.prec AS COLUMN_PRECISION, ' +
     '  CAST(c.scale AS SMALLINT) AS COLUMN_SCALE ' +
     'FROM ' +
-    '  sysobjects o, syscolumns c, systypes t, master.dbo.spt_provider_types d ' +
+    '  sysobjects o, syscolumns c, systypes t ' +
     'WHERE ' +
     '  o.type in (''U'', ''V'', ''S'') ' +
     '  AND o.id = c.id ' +
     '  AND c.xusertype = t.xusertype ' +
-    '  and c.xtype = d.ss_dtype ' +
     '  AND o.name = ''' + ATableName + ''' ' +
     ' ORDER BY c.colorder';
 end;
