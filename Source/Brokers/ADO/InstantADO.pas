@@ -167,6 +167,9 @@ type
   TInstantADOMSSQLGenerator = class(TInstantSQLGenerator)
   protected
     function InternalGenerateAlterFieldSQL(OldMetadata,  NewMetadata: TInstantFieldMetadata): string; override;
+    function InternalGenerateDropFieldSQL(Metadata: TInstantFieldMetadata): string; override;
+    function InternalGenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string; override;
+    function EmbraceIndex(const IndexName: string): string; virtual;
   end;
 
   TInstantADOMSSQLBroker = class(TInstantSQLBroker)
@@ -1033,6 +1036,12 @@ end;
 
 { TInstantADOMSSQLGenerator }
 
+function TInstantADOMSSQLGenerator.EmbraceIndex(
+  const IndexName: string): string;
+begin
+  Result := InstantEmbrace(IndexName, Delimiters);
+end;
+
 function TInstantADOMSSQLGenerator.InternalGenerateAlterFieldSQL(OldMetadata,
   NewMetadata: TInstantFieldMetadata): string;
 begin
@@ -1040,6 +1049,22 @@ begin
     [EmbraceTable(OldMetadata.TableMetadata.Name),
      EmbraceField(OldMetadata.Name),
      Broker.DataTypeToColumnType(NewMetadata.DataType, NewMetadata.Size)]);
+end;
+
+function TInstantADOMSSQLGenerator.InternalGenerateDropFieldSQL(
+  Metadata: TInstantFieldMetadata): string;
+begin
+  Result := Format('ALTER TABLE %s DROP COLUMN %s',
+    [EmbraceTable(Metadata.TableMetadata.Name),
+     EmbraceField(Metadata.Name)]);
+end;
+
+function TInstantADOMSSQLGenerator.InternalGenerateDropIndexSQL(
+  Metadata: TInstantIndexMetadata): string;
+begin
+  Result := Format('DROP INDEX %s.%s',
+          [EmbraceTable(Metadata.TableMetadata.Name),
+           EmbraceIndex(Metadata.Name)]);
 end;
 
 { TInstantADOMSSQLBroker }
