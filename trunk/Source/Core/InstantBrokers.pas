@@ -4705,12 +4705,12 @@ procedure TInstantCustomRelationalQuery.TranslateCommand;
 begin
   if TranslatorClass <> nil then
     with TranslatorClass.Create(Self) do
-    try
-      CommandText := Self.Command;
-      Statement := StatementText;
-    finally
-      Free;
-    end;
+      try
+        CommandText := Self.Command;
+        Statement := StatementText;
+      finally
+        Free;
+      end;
 end;
 
 class function TInstantCustomRelationalQuery.TranslatorClass: TInstantRelationalTranslatorClass;
