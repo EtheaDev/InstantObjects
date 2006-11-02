@@ -202,7 +202,8 @@ begin
             IsClassPersistent(FModel.Classes[I].Name)) then
           ObjectClassEdit.Items.Add(FModel.Classes[I].Name);
     end
-    else if Assigned(ObjectClassEdit.Field) then
+    else if Assigned(ObjectClassEdit.Field) and
+        (ObjectClassEdit.Field.AsString <> '') then
       ObjectClassEdit.Items.Add(ObjectClassEdit.Field.AsString)
     else if Assigned(FOnLoadClasses) then
       OnLoadClasses(Self, ObjectClassEdit.Items, NeedOnlyPersistentClasses);
