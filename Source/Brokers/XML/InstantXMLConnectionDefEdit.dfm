@@ -1,9 +1,9 @@
 object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
   Left = 425
   Top = 292
-  Width = 302
-  Height = 190
   Caption = 'XML Connection'
+  ClientHeight = 133
+  ClientWidth = 294
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,7 +17,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 133
+    Top = 103
     Width = 294
     Height = 2
     Align = alBottom
@@ -27,7 +27,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 294
-    Height = 133
+    Height = 103
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -41,7 +41,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
     end
     object Label1: TLabel
       Left = 8
-      Top = 83
+      Top = 60
       Width = 69
       Height = 13
       Caption = 'XML &encoding'
@@ -63,27 +63,19 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
       TabOrder = 1
       OnClick = FolderButtonClick
     end
-    object cbVersioning: TCheckBox
+    object EncodingComboBox: TComboBox
       Left = 8
-      Top = 60
-      Width = 149
-      Height = 17
-      Caption = 'Enable file versioning'
-      TabOrder = 2
-    end
-    object cbEncoding: TComboBox
-      Left = 8
-      Top = 98
+      Top = 75
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
-      TabOrder = 3
+      ItemHeight = 0
+      TabOrder = 2
     end
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 135
+    Top = 105
     Width = 294
     Height = 28
     Align = alBottom

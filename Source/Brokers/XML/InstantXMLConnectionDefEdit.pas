@@ -48,12 +48,7 @@ uses
   QForms, QStdCtrls, QControls, QExtCtrls;
 {$ENDIF}
 
-const
-  AXMLFileFormatStr : Array[TXMLFileFormat] of string =
-    ('xffUtf8', 'xffUtf8BOT', 'xffIso');
-
 type
-
   TInstantXMLConnectionDefEditForm = class(TForm)
     BottomBevel: TBevel;
     BottomPanel: TPanel;
@@ -64,8 +59,7 @@ type
     ButtonsPanel: TPanel;
     OkButton: TButton;
     CancelButton: TButton;
-    cbVersioning: TCheckBox;
-    cbEncoding: TComboBox;
+    EncodingComboBox: TComboBox;
     Label1: TLabel;
     procedure FolderButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -80,6 +74,7 @@ implementation
 {$R *.dfm}
 
 uses
+  TypInfo,
 {$IFDEF MSWINDOWS}
   FileCtrl;
 {$ELSE}
@@ -91,19 +86,15 @@ uses
 procedure TInstantXMLConnectionDefEditForm.LoadData(
   ConnectionDef: TInstantXMLConnectionDef);
 begin
-  { TODO: Copy data from ConnectionDef to edit controls }
   RootDirEdit.Text := ConnectionDef.RootFolder;
-  cbEncoding.ItemIndex := Ord(ConnectionDef.XMLFileFormat);
-  cbVersioning.Checked := ConnectionDef.UseVersioning;
+  EncodingComboBox.ItemIndex := Ord(ConnectionDef.XMLFileFormat);
 end;
 
 procedure TInstantXMLConnectionDefEditForm.SaveData(
   ConnectionDef: TInstantXMLConnectionDef);
 begin
-  { TODO: Copy data from edit controls to ConnectionDef }
   ConnectionDef.RootFolder := RootDirEdit.Text;
-  ConnectionDef.XMLFileFormat := TXMLFileFormat(cbEncoding.ItemIndex);
-  ConnectionDef.UseVersioning := cbVersioning.Checked;
+  ConnectionDef.XMLFileFormat := TXMLFileFormat(EncodingComboBox.ItemIndex);
 end;
 
 procedure TInstantXMLConnectionDefEditForm.FolderButtonClick(
@@ -134,12 +125,10 @@ end;
 
 procedure TInstantXMLConnectionDefEditForm.InitXMLEncoding;
 var
-  i : TXMLFileFormat;
+  I: TXMLFileFormat;
 begin
-  for i := Low(TXMLFileFormat) to High(TXMLFileFormat) do
-  begin
-    cbEncoding.Items.Add(AXMLFileFormatStr[i]);
-  end;
+  for I := Low(TXMLFileFormat) to High(TXMLFileFormat) do
+    EncodingComboBox.Items.Add(GetEnumName(TypeInfo(TXMLFileFormat), Ord(I)));
 end;
 
 end.
