@@ -417,10 +417,6 @@ const
    ('Binary format',
     'XML format');
 
-{$IFDEF D5}
-  sLineBreak = #13#10;
-{$ENDIF}
-
 function InstantBuildEndTag(const TagName: string): string;
 function InstantBuildStartTag(const TagName: string): string;
 procedure InstantCheckClass(AClass: TClass; MinimumClass: TClass);
