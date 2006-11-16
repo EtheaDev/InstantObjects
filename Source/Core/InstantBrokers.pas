@@ -40,7 +40,8 @@ unit InstantBrokers;
 
 interface
 
-uses SysUtils, Classes, Db, InstantPersistence, InstantTypes, InstantMetadata,
+uses
+  SysUtils, Classes, Db, InstantPersistence, InstantTypes, InstantMetadata,
   InstantConsts, InstantClasses, Contnrs, InstantCommand;
 
 type
