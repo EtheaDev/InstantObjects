@@ -348,7 +348,7 @@ begin
       try
         FSQLServerVersion := VersionDataSet.Fields[0].AsString;
         // Trim everything but the first line, which contains the info we need.
-        FSQLServerVersion := Copy(FSQLServerVersion, 1, Pos(sLineBreak, Result) - 1);
+        FSQLServerVersion := Copy(FSQLServerVersion, 1, Pos(#$A#9, FSQLServerVersion) - 1);
       finally
         VersionDataSet.Close;
       end;
