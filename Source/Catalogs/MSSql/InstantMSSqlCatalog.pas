@@ -45,6 +45,7 @@ type
   // Can be used with a SQL broker that accesses MS-SQL databases.
   TInstantMSSqlCatalog = class(TInstantSQLBrokerCatalog)
   private
+    FSQLServerVersion: string;
     procedure AddFieldMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
@@ -55,9 +56,17 @@ type
     function GetSelectIndexesSQL(const ATableName: string): string;
     function GetSelectIndexFieldsSQL(const AIndexName: string): string;
     function GetSelectTablesSQL: string;
+    {
+      Returns a string which is formatted as follows:
+      'Microsoft SQL Server 2005 - 9.00.1399.06 (Intel X86)'
+      'Microsoft SQL Server  2000 - 8.00.760 (Intel X86)'
+      'Microsoft SQL Server  7.00 - 7.00.623 (Intel X86)'
+      See http://support.microsoft.com/kb/321185 for complete details
+      The string is retrieved on demand and then cached in FSQLServerVersion.
+    }
+    function GetSQLServerVersion: string;
   public
-    procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas);
-      override;
+    procedure InitTableMetadatas(ATableMetadatas: TInstantTableMetadatas); override;
   end;
 
 implementation
@@ -264,14 +273,23 @@ end;
 
 function TInstantMSSqlCatalog.GetSelectIndexesSQL(
   const ATableName: string): string;
+
+  function GetSortOrderExpression: string;
+  begin
+    // All indexes are reported as ascending in SQL Server 7.
+  	if Pos('Microsoft SQL Server  7.00', GetSQLServerVersion) > 0 then
+      Result := '''A'''
+    else
+      Result := '(CASE WHEN indexkey_property(x.id, x.indid, 1, N''isdescending'') <> 0 THEN ''D'' ELSE ''A'' END)';
+  end;
+
 begin
   Result :=
     'SELECT DISTINCT ' +
     '  x.name AS INDEX_NAME, ' +
     '  (CASE WHEN x.status & 0x800 <> 0 THEN 4 ELSE 0 END) + ' +
     '  (CASE WHEN x.status & 0x2 <> 0 THEN 2 ELSE 1 END) ' +
-    '  AS INDEX_TYPE, ' +
-    '  (CASE WHEN indexkey_property(x.id, x.indid, 1, N''isdescending'') <> 0 THEN ''D'' ELSE ''A'' END) AS SORT_ORDER ' +
+    '  AS INDEX_TYPE, ' + GetSortOrderExpression + ' AS SORT_ORDER ' +
     'FROM ' +
     '  sysobjects o, sysindexes x, syscolumns c, sysindexkeys xk ' +
     'WHERE ' +
@@ -318,9 +336,33 @@ begin
     'ORDER BY name';
 end;
 
+function TInstantMSSqlCatalog.GetSQLServerVersion: string;
+var
+  VersionDataSet: TDataSet;
+begin
+  if FSQLServerVersion = '' then
+  begin
+    VersionDataSet := Broker.AcquireDataSet('SELECT @@VERSION');
+    try
+      VersionDataSet.Open;
+      try
+        FSQLServerVersion := VersionDataSet.Fields[0].AsString;
+        // Trim everything but the first line, which contains the info we need.
+        FSQLServerVersion := Copy(FSQLServerVersion, 1, Pos(sLineBreak, Result) - 1);
+      finally
+        VersionDataSet.Close;
+      end;
+    finally
+      Broker.ReleaseDataSet(VersionDataSet);
+    end;
+  end;
+  Result := FSQLServerVersion;
+end;
+
 procedure TInstantMSSqlCatalog.InitTableMetadatas(
   ATableMetadatas: TInstantTableMetadatas);
 begin
+  FSQLServerVersion := '';
   ATableMetadatas.Clear;
   AddTableMetadatas(ATableMetadatas);
 end;
