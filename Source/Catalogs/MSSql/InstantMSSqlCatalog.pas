@@ -347,7 +347,6 @@ begin
       VersionDataSet.Open;
       try
         FSQLServerVersion := VersionDataSet.Fields[0].AsString;
-        // Trim everything but the first line, which contains the info we need.
       finally
         VersionDataSet.Close;
       end;
