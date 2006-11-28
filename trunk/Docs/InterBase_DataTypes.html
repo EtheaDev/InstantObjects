@@ -1,0 +1,750 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+	<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=windows-1252">
+	<TITLE></TITLE>
+	<META NAME="GENERATOR" CONTENT="OpenOffice.org 2.0  (Win32)">
+	<META NAME="CREATED" CONTENT="20061127;22314800">
+	<META NAME="CHANGED" CONTENT="16010101;12000000">
+	<STYLE>
+	<!--
+		@page { size: 29.7cm 21cm; margin-left: 2cm; margin-right: 2cm; margin-top: 1.7cm; margin-bottom: 1.7cm }
+		P { margin-bottom: 0.21cm; direction: ltr; color: #000000; widows: 0; orphans: 0 }
+		P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		P.cjk { font-family: "Arial Unicode MS", sans-serif; font-size: 12pt; so-language:  }
+		P.ctl { font-family: "Tahoma"; font-size: 12pt; so-language:  }
+		TD P { margin-bottom: 0cm; direction: ltr; color: #000000; widows: 0; orphans: 0 }
+		TD P.western { font-family: "Times New Roman", serif; font-size: 12pt; so-language: en-US }
+		TD P.cjk { font-family: "Arial Unicode MS", sans-serif; font-size: 12pt; so-language:  }
+		TD P.ctl { font-family: "Tahoma"; font-size: 12pt; so-language:  }
+	-->
+	</STYLE>
+</HEAD>
+<BODY LANG="en-US" TEXT="#000000" DIR="LTR">
+<P CLASS="western"><FONT SIZE=4><B>Interbase Data Types and Instant
+Objects</B></FONT></P>
+<TABLE WIDTH=960 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=132>
+	<COL WIDTH=102>
+	<COL WIDTH=117>
+	<COL WIDTH=60>
+	<COL WIDTH=56>
+	<COL WIDTH=63>
+	<COL WIDTH=58>
+	<COL WIDTH=60>
+	<COL WIDTH=240>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western"><B>IB Data Type</B></P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western"><B>RDB$FIELDS definition (1)</B></P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT><B>RDB$TYPES description (2)</B></P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER><B>IB 4</B></P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER><B>IB 5.x</B></P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER><B>IB 6.0</B></P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER><B>IB6.5</B></P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER><B>IB7.x</B></P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western"><B>Mapped to IO Data Type</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">SMALLINT</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">7</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>SHORT</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">Boolean</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">INTEGER</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">8</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>LONG</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">Integer</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">QUAD</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">9</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>QUAD</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">n/a</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">FLOAT</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">10</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>FLOAT</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">n/a</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">D_FLOAT</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">11</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>-</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">Float</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">DATE (3)</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">12</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>DATE</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">Date</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">TIME</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">13</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>TIME</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">Time</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">CHAR</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">14</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>TEXT</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">String</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">INT64 (4)</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">16</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>-</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">Currency</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">BOOLEAN</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">17</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>-</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>?</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">n/a</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">DOUBLE</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">27</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>DOUBLE</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">Float</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">TIMESTAMP (3)</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">35</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>TIMESTAMP</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">DateTime</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">VARCHAR</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">37</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>VARYING</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">String</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">CSTRING</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">40</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>CSTRING</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">n/a</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">BLOB_ID</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">45</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>BLOB_ID</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>N</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">n/a</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=132>
+			<P CLASS="western">BLOB (4)</P>
+		</TD>
+		<TD WIDTH=102>
+			<P CLASS="western">261</P>
+		</TD>
+		<TD WIDTH=117>
+			<P CLASS="western" ALIGN=LEFT>BLOB</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=56>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=63>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=58>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=60>
+			<P CLASS="western" ALIGN=CENTER>Y</P>
+		</TD>
+		<TD WIDTH=240>
+			<P CLASS="western">Memo or Blob</P>
+		</TD>
+	</TR>
+</TABLE>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><B>Notes:</B></P>
+<OL>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm">Data Types used in
+	RDB$FIELDS table to describe column data type</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm">Some Data Types
+	described in RDB$TYPES table,  Note there are no entries for data
+	types 11,16,17 !</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm">Type 35 changed
+	from DATE to TIMESTAMP in version 6.0</P>
+	<LI><P CLASS="western" STYLE="margin-bottom: 0cm">Sub types defined
+	for BLOB, CHAR, SMALLINT, INTEGER and INT64.</P>
+</OL>
+<P CLASS="western" STYLE="margin-bottom: 0cm">See language reference
+guide (System Tables chapter) for more information.</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><FONT SIZE=4><B>Mapping
+of Instant Attributes Types to IB Data Types (via the Instant Data
+Types)</B></FONT></P>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+<TABLE WIDTH=971 BORDER=1 BORDERCOLOR="#000000" CELLPADDING=4 CELLSPACING=0>
+	<COL WIDTH=282>
+	<COL WIDTH=392>
+	<COL WIDTH=271>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western"><B>TInstantAttributeType</B></P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western"><B>TInstantDataType</B></P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western"><B>Mapping to IB Data Type</B></P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atUnknown</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtString</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">VARCHAR</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atInteger</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtInteger</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">INTEGER</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atFloat</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtFloat</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">DOUBLE PRECISION</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atCurrency</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtCurrency</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">DECIMAL(14,4)</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atBoolean</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtBoolean</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">SMALLINT'</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atString</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtString</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">VARCHAR</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atDateTime</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtDateTime</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">TIMESTAMP</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atBlob</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtBlob</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">BLOB</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atMemo</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtMemo</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">BLOB SUB_TYPE 1</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atGraphic</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtBlob</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">BLOB</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atPart (embedded only)</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtBlob</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">BLOB</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atReference</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">n/a</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">n/a</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atParts (embedded only)</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtBlob</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">BLOB</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atReferences (embedded only)</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtBlob</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">BLOB</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atDate</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtDate</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">DATE</P>
+		</TD>
+	</TR>
+	<TR VALIGN=TOP>
+		<TD WIDTH=282>
+			<P CLASS="western">atTime</P>
+		</TD>
+		<TD WIDTH=392>
+			<P CLASS="western">dtTime</P>
+		</TD>
+		<TD WIDTH=271>
+			<P CLASS="western">TIME'</P>
+		</TD>
+	</TR>
+</TABLE>
+<P CLASS="western" STYLE="margin-bottom: 0cm"><BR>
+</P>
+</BODY>
+</HTML>
