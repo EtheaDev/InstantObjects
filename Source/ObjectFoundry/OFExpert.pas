@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Steven Mitchell
+ * Steven Mitchell, David Moorhouse
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -35,7 +35,7 @@ interface
 uses
   Classes,
   {$IFDEF VER130}
-  Windows,    // Need in D5 for definition of THandle 
+  Windows,    // Need in D5 for definition of THandle
   {$ENDIF}
   MMIOAPI, OFOptions, SysUtils, MMToolsAPI, OFDefs;
 
@@ -97,6 +97,13 @@ uses
 
 const
   SObjectFoundry = 'ObjectFoundry';
+
+type
+  TMMAttributeValidator = class(TInstantAttributeValidator)
+  public
+    procedure Validate; override;
+  end;
+
 
 // Function externalised from AttributeEditorLoadClasses function.
 function TObjectFoundryExpert.IsInstantObjectClass(AClass: IMMClassBase):
@@ -184,6 +191,7 @@ function TObjectFoundryExpert.EditAttribute(const P: IMMProperty): Boolean;
 var
   Attribute: TMMCodeAttribute;
   lClass: IMMClassifier;
+  AttributeValidator: TMMAttributeValidator;
 
   function GetBaseClassStorageName: String;
   begin
@@ -201,6 +209,7 @@ begin
   begin
     lClass := P.ClassBase;
     Attribute := TMMCodeAttribute.Create(P);
+    AttributeValidator := TMMAttributeValidator.Create(Attribute, P);
     try
       with TInstantAttributeEditorForm.Create(nil) do
       try
@@ -208,6 +217,7 @@ begin
         OnLoadClasses := AttributeEditorLoadClasses;
         OnIsClassPersistent := ClassIsPersistent;
         Subject := Attribute;
+        Validator := AttributeValidator;
         Result := ShowModal = mrOK;
         if Result then
           Attribute.ApplyChanges;
@@ -215,6 +225,7 @@ begin
         Free;
       end;
     finally
+      AttributeValidator.Free;
       Attribute.Free;
     end;
   end else
@@ -575,6 +586,50 @@ begin
     finally
       Free;
     end;
+end;
+
+{ TMMAttributeValidator }
+
+procedure TMMAttributeValidator.Validate;
+var
+  MMProperty: IMMProperty;
+  CodeClass: IMMClassifier;
+  I: Integer;
+
+  procedure CheckChildClass(CurrentClass: IMMClassifier);
+  var
+    J: Integer;
+  begin
+    if CurrentClass = nil then
+      Exit;
+    for J := 0 to Pred(CurrentClass.DescendantCount) do
+    begin
+      if CurrentClass.Descendants[J].FindMember(Attribute.Name, I) then
+        raise Exception.CreateFmt('Attribute "%s" exists in descendant class "%s"',
+          [Attribute.Name, CurrentClass.Descendants[J].Name]);
+      CheckChildClass(CurrentClass.Descendants[J]);
+    end;
+  end;
+
+begin
+  if MMInterface = nil then
+    Exit;
+  MMProperty :=  MMInterface as IMMProperty;
+
+  if MMProperty.ClassBase.FindMember(Attribute.Name, I) then
+        raise Exception.Create('Attribute Name already used');
+
+  // check that the same attribute name is not used in an ancestor class
+  CodeClass :=  MMProperty.ClassBase;
+  while (CodeClass <> nil) do
+  begin
+    if CodeClass.FindMember(Attribute.Name, I) then
+      raise Exception.CreateFmt('Attribute "%s" exists in ancestor class "%s"',
+        [Attribute.Name, CodeClass.Name]);
+   CodeClass := CodeClass.Ancestor;
+  end;
+  // check that the same attribute name is not used in any child class
+  CheckChildClass(MMProperty.ClassBase);
 end;
 
 end.
