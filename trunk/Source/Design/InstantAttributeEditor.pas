@@ -57,6 +57,18 @@ type
   TInstantBooleanEvent = procedure (Sender: TObject; const AClassName: String;
     var IsPersistent: Boolean) of object;
 
+  TInstantAttributeValidator = class
+  private
+    FAttribute: TInstantCodeAttribute;
+    FInterface: IInterface;
+  protected
+    property Attribute: TInstantCodeAttribute read FAttribute;
+    property MMInterface: IInterface read FInterface;
+  public
+    constructor Create(AnAttribute: TInstantCodeAttribute; const AInterface: IInterface);
+    procedure Validate; virtual;
+  end;
+
   TInstantAttributeEditorForm = class(TInstantEditForm)
     AccessSheet: TTabSheet;
     DefinitionSheet: TTabSheet;
@@ -123,10 +135,12 @@ type
     FModel: TInstantCodeModel;
     FOnIsClassPersistent: TInstantBooleanEvent;
     FOnLoadClasses: TInstantStringsEvent;
+    FValidator: TInstantAttributeValidator;
     function GetSubject: TInstantCodeAttribute;
     procedure SetSubject(const Value: TInstantCodeAttribute);
     procedure SetLimited(Value: Boolean);
     procedure SetModel(const Value: TInstantCodeModel);
+    procedure SetValidator(const Value: TInstantAttributeValidator);
   protected
     procedure LoadClasses;
     procedure LoadData; override;
@@ -151,6 +165,7 @@ type
     property OnLoadClasses: TInstantStringsEvent read FOnLoadClasses
       write FOnLoadClasses;
     property Subject: TInstantCodeAttribute read GetSubject write SetSubject;
+    property Validator: TInstantAttributeValidator read FValidator write SetValidator;
   end;
 
 implementation
@@ -172,6 +187,7 @@ procedure TInstantAttributeEditorForm.FormCreate(Sender: TObject);
 begin
   PageControl.ActivePage := DefinitionSheet;
   ActiveControl := NameEdit;
+  FValidator := TInstantAttributeValidator.Create(Subject, nil);
 end;
 
 function TInstantAttributeEditorForm.GetSubject: TInstantCodeAttribute;
@@ -385,24 +401,18 @@ begin
 end;
 
 procedure TInstantAttributeEditorForm.OkButtonClick(Sender: TObject);
-var
-  Attribute: TInstantCodeAttribute;
-  I: Integer;
 begin
   if OKButton.CanFocus then
     OKButton.SetFocus;
-  if Assigned(Subject.Owner) then
-    for I := 0 to Pred(Subject.Owner.AttributeCount) do
-    begin
-      Attribute := Subject.Owner.Attributes[I];
-      if (Attribute <> Subject) and SameText(Attribute.Name, Subject.Name) then
-      begin
-        ModalResult := mrNone;
-        PageControl.ActivePage := DefinitionSheet;
-        NameEdit.SetFocus;
-        raise Exception.Create('Attribute Name already used');
-      end;
-    end;
+
+  try
+    FValidator.Validate;
+  except
+    ModalResult := mrNone;
+    PageControl.ActivePage := DefinitionSheet;
+    NameEdit.SetFocus;
+    raise;
+  end;
 
   if (Subject.AttributeType = atString) and (Subject.Metadata.Size = 0) then
     if not Confirm(SConfirmZeroSizeStringAttribute) then
@@ -502,10 +512,11 @@ begin
   end;
 end;
 
-procedure TInstantAttributeEditorForm.SetSubject(
-  const Value: TInstantCodeAttribute);
+procedure TInstantAttributeEditorForm.SetSubject(const Value: TInstantCodeAttribute);
 begin
   inherited Subject := Value;
+  if FValidator <> nil then
+    FValidator.FAttribute := Value;
 end;
 
 procedure TInstantAttributeEditorForm.SubjectChanged;
@@ -740,10 +751,87 @@ end;
 procedure TInstantAttributeEditorForm.StorageNameEditChange(Sender: TObject);
 begin
   inherited;
-  if Assigned(StorageNameEdit.DataSource) then 
+  if Assigned(StorageNameEdit.DataSource) then
     SubjectExposer.AssignFieldValue(StorageNameEdit.Field, StorageNameEdit.Text);
   UpdateControls;
 end;
+
+procedure TInstantAttributeEditorForm.SetValidator(const Value: TInstantAttributeValidator);
+begin
+  if FValidator <> Value then begin
+    if FValidator <> nil then
+      FreeAndNil(FValidator);
+    FValidator := Value;
+  end;
+end;
+
+{ TInstantAttributeValidator }
+
+constructor TInstantAttributeValidator.Create(
+  AnAttribute: TInstantCodeAttribute; const AInterface: IInterface);
+begin
+  inherited Create;
+  FAttribute := AnAttribute;
+  FInterface := AInterface;
+end;
+
+procedure TInstantAttributeValidator.Validate;
+var
+  TempAttribute: TInstantCodeAttribute;
+  CodeClass: TInstantCodeClass;
+  I: Integer;
+
+  procedure CheckChildClass(CurrentClass: TInstantCodeClass);
+  var
+    J,K: Integer;
+  begin
+    if CurrentClass = nil then
+      Exit;
+    for J := 0 to Pred(CurrentClass.SubClassCount) do
+    begin
+      for K := 0 to Pred(CurrentClass.SubClasses[J].PropertyCount) do
+        if SameText(CurrentClass.SubClasses[J].Properties[K].Name, FAttribute.Name) then
+          raise Exception.CreateFmt('Attribute "%s" exists in descendant class "%s"',
+            [FAttribute.Name, CurrentClass.SubClasses[J].Name]);
+      for K := 0 to Pred(CurrentClass.SubClasses[J].MethodCount) do
+        if SameText(CurrentClass.SubClasses[J].Methods[K].Name, FAttribute.Name) then
+           raise Exception.CreateFmt('Attribute "%s" exists as a method in descendant class "%s"',
+            [FAttribute.Name, CurrentClass.SubClasses[J].Name]);
+      CheckChildClass(CurrentClass.SubClasses[J]);
+    end;
+  end;
+
+begin
+  if not Assigned(FAttribute) and not Assigned(FAttribute.Owner)
+    and not Assigned(FAttribute.Owner.Owner) then
+    raise Exception.Create('Cannot validate attribute');
+
+  // check that the same attribute name is not used in an ancestor class
+  CodeClass := FAttribute.Owner.Owner.BaseClass;
+  while (CodeClass <> nil) do
+  begin
+    for I := 0 to Pred(CodeClass.PropertyCount) do
+      if SameText(CodeClass.Properties[I].Name, FAttribute.Name) then
+        raise Exception.CreateFmt('Attribute "%s" exists in ancestor class "%s"',
+          [FAttribute.Name, CodeClass.Name]);
+    for I := 0 to Pred(CodeClass.MethodCount) do
+      if SameText(CodeClass.Methods[I].Name, FAttribute.Name) then
+        raise Exception.CreateFmt('Attribute "%s" exists as a method in ancestor class "%s"',
+          [FAttribute.Name, CodeClass.Name]);
+    CodeClass := CodeClass.BaseClass;
+  end;
+  // check that the same attribute name is not used in any child class
+  CheckChildClass(FAttribute.Owner.Owner);
+
+  if Assigned(FAttribute.Owner) then
+    for I := 0 to Pred(FAttribute.Owner.AttributeCount) do
+    begin
+      TempAttribute := FAttribute.Owner.Attributes[I];
+      if (TempAttribute <> FAttribute) and SameText(TempAttribute.Name, FAttribute.Name) then
+        raise Exception.Create('Attribute Name already used');
+    end;
+end;
+
 
 end.
 
