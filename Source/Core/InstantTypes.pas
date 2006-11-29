@@ -48,7 +48,7 @@ type
   TInstantAttributeCategory = (acUnknown, acSimple, acElement, acContainer);
 
   TInstantGraphicFileFormat = (gffUnknown, gffBmp, gffTiff, gffJpeg, gffPng,
-    gffDcx, gffPcx, gffEmf, gffGif);
+    gffDcx, gffPcx, gffEmf, gffGif, gffIco);
 
   TInstantPersistence = (peEmbedded, peStored);
 

@@ -422,6 +422,7 @@ type
     procedure SetAsVariant(AValue: Variant); override;
     function Write(const Buffer; Position, Count: Integer): Integer; virtual;
     procedure WriteObject(Writer: TInstantWriter); override;
+    procedure AssignTo(Dest: TPersistent); override;
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
@@ -1956,6 +1957,9 @@ begin
   // gif format
   else if (P[0] = #$47) and (P[1] = #$49) and (P[2] = #$46) then
     Result := gffGif
+  // Ico format
+  else if (P[0] = #00) and (P[1] = #00) and (P[2] = #01) and (P[3] = #00) then
+    Result := gffIco
   // bitmap format with TGraphicHeader header
   else if (P[0] = #01) and (P[1] = #00) and (P[2] = #00) and (P[3] = #01)
    and (PLongint(@p[4])^ = StreamLength - SizeOfGraphicHeader) then
@@ -3541,6 +3545,14 @@ begin
   end
   else if Assigned(Dest.Graphic) then
     Dest.Graphic := nil;
+end;
+
+procedure TInstantBlob.AssignTo(Dest: TPersistent);
+begin
+  if Dest is TPicture then
+    AssignToPicture(TPicture(Dest))
+  else
+    inherited;
 end;
 
 { TInstantMemo }
@@ -8815,12 +8827,14 @@ initialization
     TInstantObjectReference, TInstantConnectionDefs, TInstantConnectionDef]);
   ClassList := TList.Create;
 {$IFDEF MSWINDOWS}
+  GraphicClassList[gffIco] := Graphics.TIcon;
   GraphicClassList[gffBmp] := Graphics.TBitmap;
   {$IFNDEF FPC}
     GraphicClassList[gffEmf] := Graphics.TMetaFile;
   {$ENDIF}
 {$ENDIF}
 {$IFDEF LINUX}
+  GraphicClassList[gffIco] := QGraphics.TIcon;
   GraphicClassList[gffBmp] := QGraphics.TBitmap;
   GraphicClassList[gffPng] := QGraphics.TBitmap;
   GraphicClassList[gffJpeg]:= QGraphics.TBitmap;
