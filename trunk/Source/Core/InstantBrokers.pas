@@ -1448,9 +1448,15 @@ function TInstantRelationalConnector.InternalCreateScheme(
   Model: TInstantModel): TInstantScheme;
 begin
   Result := TInstantScheme.Create;
-  Result.IdDataType := IdDataType;
-  Result.IdSize     := IdSize;      
-  Result.Catalog := TInstantModelCatalog.Create(Result, Model);
+  try
+    Result.IdDataType := IdDataType;
+    Result.IdSize := IdSize;
+    Result.BlobStreamFormat := BlobStreamFormat;
+    Result.Catalog := TInstantModelCatalog.Create(Result, Model);
+  except
+    FreeAndNil(Result);
+    raise;
+  end;
 end;
 
 constructor TInstantConnectionBasedConnector.Create(AOwner: TComponent);
