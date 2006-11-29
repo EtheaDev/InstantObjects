@@ -30,6 +30,8 @@
 
 unit OFCritic;
 
+{$I ObjectFoundry.inc}
+
 interface
 
 uses Windows, SysUtils, Classes, MMEngineDefs, MMToolsApi, MMCriticsBase;

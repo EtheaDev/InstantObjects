@@ -30,6 +30,8 @@
 
 unit OFReg;
 
+{$I ObjectFoundry.inc}
+
 interface
 
 uses

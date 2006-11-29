@@ -30,21 +30,30 @@
 
 unit OFDefs;
 
+{$I ObjectFoundry.inc}
+
 interface
 
-
-{$IFDEF MM7+}
 uses
-  MMToolsAPI, MMDiagramAPI;
+  MMToolsAPI
+  {$IFDEF MM7+}
+  , MMDiagramAPI
+  {$ENDIF}
+  ;
 
 type
+{$IFDEF MM7+}
+  {$IFDEF MM9}
+  IMMUnit = IMMModule;
+  IMMUnitManager = IMMModuleManager;
+  IMMV9ClassBase = IMMClassifier;
+  IMMV9CodeModel = IMMCodeModel;
+  IMMClassBase = IMMClassifier;
+  {$ELSE}
   IMMV9ClassBase = IMMClassBase;
   IMMV9CodeModel = IMMCodeModel;
+  {$ENDIF}
 {$ELSE}
-uses
-  MMToolsAPI;
-
-type
   TMMActionData = record
     Caption: WideString; // ModelMaker provides a defaults name based on to the menu item name
     ImageIndex: Integer; // Default = -1; Only used for toolbuttons, ignored for menu items
@@ -58,7 +67,6 @@ type
   end;
 {$ENDIF}
 
-type
   IOFReference = IMMReference;
   IOFEntityReference = IMMEntityReference;
 

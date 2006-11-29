@@ -30,6 +30,8 @@
 
 unit OFOptions;
 
+{$I ObjectFoundry.inc}
+
 interface
 
 uses

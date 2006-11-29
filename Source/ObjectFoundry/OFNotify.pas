@@ -30,6 +30,8 @@
 
 unit OFNotify;
 
+{$I ObjectFoundry.inc}
+
 interface
 
 uses SysUtils, Classes, MMEngineDefs, MMToolsApi;

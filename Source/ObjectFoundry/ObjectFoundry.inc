@@ -1,0 +1,3 @@
+{$IFDEF MM9}
+  {$DEFINE MM7+}
+{$ENDIF}

@@ -30,13 +30,7 @@
 
 unit OFClasses;
 
-{ 18 Sep 2004 - Steven Mitchell
-  Modified for use in MM7.25 -
-  Use V9Visibility property inplace of Visibility
-  property in MMToolsAPI V10 IMMMember interface.
-  30 Sep 2004 - Steven Mitchell
-  Added tags for part(s) external storage params
-}
+{$I ObjectFoundry.inc}
 
 interface
 
@@ -113,10 +107,17 @@ procedure TMMCodeAttribute.ApplyArray;
     finally
       EndOld;
     end;
+    {$IFDEF MM9}
+    if Prop.Classifier.FindMember(OldCountPropName, Index) then
+    begin
+      Member := Prop.Classifier.Members[Index];
+      Result := MemberAsProperty(Member);
+    {$ELSE}
     if Prop.ClassBase.FindMember(OldCountPropName, Index) then
     begin
       Member := Prop.ClassBase.Members[Index];
       Result := MemberAsProperty(Member);
+    {$ENDIF}
     end else
       Result := nil;
   end;
@@ -130,15 +131,23 @@ procedure TMMCodeAttribute.ApplyArray;
     Result := FindCountProp;
     if not Assigned(Result) then
     begin
+      {$IFDEF MM9}
+      Result := Prop.Classifier.AddProperty;
+      {$ELSE}
       Result := Prop.ClassBase.AddProperty;
+      {$ENDIF}
       Attribute.LinkMember(Result.Id);
     end;
     Result.Name := CountPropName;
-{$IFDEF MM7+}                                      // SRM begin - 16 Mar 2005
+{$IFDEF MM7+}
+  {$IFDEF MM9}
+    Result.Visibility := InstantCodeVisibilityToMMVisibility(Visibility);
+  {$ELSE}
     Result.V9Visibility := TV9Visibility(Visibility);
+  {$ENDIF}
 {$ELSE}
     Result.Visibility := TVisibility(Visibility);
-{$ENDIF}                                          // SRM end - 16 Mar 2005
+{$ENDIF}
     Result.SetAccessSpec(rwMethod, rwNone);
     Getter := MemberAsMethod(Result.ReadMember);
     if Assigned(Getter) then
@@ -208,7 +217,11 @@ procedure TMMCodeAttribute.ApplyContainerMethods;
   begin
     BeginOld;
     try
+      {$IFDEF MM9}
+      Result := Prop.Classifier.FindMethod(GetMethodName(MT));
+      {$ELSE}
       Result := Prop.ClassBase.FindMethod(GetMethodName(MT));
+      {$ENDIF}
     finally
       EndOld;
     end;
@@ -235,7 +248,11 @@ procedure TMMCodeAttribute.ApplyContainerMethods;
   begin
     Result := FindMethod(MT);
     if not Assigned(Result) then
+      {$IFDEF MM9}
+      Result := Prop.Classifier.AddMethod;
+      {$ELSE}
       Result := Prop.ClassBase.AddMethod;
+      {$ENDIF}
     Attribute.LinkMember(Result.Id);
     Result.Name := CodeMethod.Name;
     Result.Parameters := CodeMethod.Proc.Parameters.AsString;
@@ -245,11 +262,15 @@ procedure TMMCodeAttribute.ApplyContainerMethods;
       Result.MethodKind := MMEngineDefs.mkFunction;
       Result.DataName := CodeMethod.Proc.ResultTypeName;
     end;
-{$IFDEF MM7+}                                      // SRM begin - 16 Mar 2005
+{$IFDEF MM7+}
+  {$IFDEF MM9}
+    Result.Visibility := InstantCodeVisibilityToMMVisibility(Visibility);
+  {$ELSE}
     Result.V9Visibility := TV9Visibility(Visibility);
+  {$ENDIF}
 {$ELSE}
     Result.Visibility := TVisibility(Visibility);
-{$ENDIF}                                          // SRM end - 16 Mar 2005
+{$ENDIF}
     NewBody := CodeMethod.Proc.Body.AsString;
     if Result.SectionCount = 0 then
       Result.AddSection(NewBody)
@@ -297,11 +318,15 @@ var
 begin
   Prop.Name := Name;
   Prop.DataName := PropTypeName;
-{$IFDEF MM7+}                                      // SRM begin - 16 Mar 2005
+{$IFDEF MM7+}
+  {$IFDEF MM9}
+  Prop.Visibility := InstantCodeVisibilityToMMVisibility(Visibility);
+  {$ELSE}
   Prop.V9Visibility := TV9Visibility(Visibility);
+  {$ENDIF}
 {$ELSE}
   Prop.Visibility := TVisibility(Visibility);
-{$ENDIF}                                          // SRM end - 16 Mar 2005
+{$ENDIF}
   TaggedStrings['StorageName'] := StorageName;
   // External part(s) options
   TaggedStrings['ExternalStorageName'] := ExternalStorageName;
@@ -418,7 +443,11 @@ end;
 
 function TMMCodeAttribute.HasMethod(const Name: string): Boolean;
 begin
+  {$IFDEF MM9}
+  Result := Assigned(Prop.Classifier.FindMethod(Name));
+  {$ELSE}
   Result := Assigned(Prop.ClassBase.FindMethod(Name));
+  {$ENDIF}
 end;
 
 function TMMCodeAttribute.IsOld: Boolean;
@@ -439,13 +468,23 @@ begin
   for MT := Low(MT) to High(MT) do
     if MT in MethodTypes then
     begin
+      {$IFDEF MM9}
+      Method := Prop.Classifier.FindMethod(GetMethodName(MT));
+      {$ELSE}
       Method := Prop.ClassBase.FindMethod(GetMethodName(MT));
+      {$ENDIF}
       if Assigned(Method) then
         Attribute.LinkMember(Method.Id);
     end;
+  {$IFDEF MM9}
+  if Prop.Classifier.FindMember(CountPropName, Index) then
+  begin
+    Member := Prop.Classifier.Members[Index];
+  {$ELSE}
   if Prop.ClassBase.FindMember(CountPropName, Index) then
   begin
     Member := Prop.ClassBase.Members[Index];
+  {$ENDIF}
     CountProp := MemberAsProperty(Member);
     Attribute.LinkMember(CountProp.Id);
   end;
@@ -456,7 +495,11 @@ var
   FieldTypeName: string;
 begin
   Name := Prop.Name;
-  Visibility := TInstantCodeVisibility(Prop.V9Visibility);  // SRM - 18 Sep 2004
+  {$IFDEF MM9}
+  Visibility := MMVisibilityToInstantCodeVisibility(Prop.Visibility);
+  {$ELSE}
+  Visibility := TInstantCodeVisibility(Prop.V9Visibility);
+  {$ENDIF}
   if Attribute.IsIOAttribute then
   begin
     { If the type of attribute field is Integer (which is considered

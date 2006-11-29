@@ -132,6 +132,7 @@ type
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
+    FMMUninitializedNewAttribute: Boolean;
     FModel: TInstantCodeModel;
     FOnIsClassPersistent: TInstantBooleanEvent;
     FOnLoadClasses: TInstantStringsEvent;
@@ -219,10 +220,14 @@ begin
           ObjectClassEdit.Items.Add(FModel.Classes[I].Name);
     end
     else if Assigned(ObjectClassEdit.Field) and
-        (ObjectClassEdit.Field.AsString <> '') then
+        (ObjectClassEdit.Field.AsString <> '') and
+        not FMMUninitializedNewAttribute then
       ObjectClassEdit.Items.Add(ObjectClassEdit.Field.AsString)
     else if Assigned(FOnLoadClasses) then
+    begin
       OnLoadClasses(Self, ObjectClassEdit.Items, NeedOnlyPersistentClasses);
+      FMMUninitializedNewAttribute := True;
+    end;
 
     if Assigned(ObjectClassEdit.Field) then
       ObjectClassEdit.ItemIndex :=
@@ -392,6 +397,8 @@ procedure TInstantAttributeEditorForm.ObjectClassEditChange(Sender: TObject);
 begin
   SubjectExposer.AssignFieldValue(ObjectClassEdit.Field, ObjectClassEdit.Text);
   UpdateControls;
+  if StorageKindEdit.Items.Count = 0 then
+    LoadStorageKind;
 end;
 
 procedure TInstantAttributeEditorForm.ObjectClassEditEnter(
