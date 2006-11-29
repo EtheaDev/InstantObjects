@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Steven Mitchell
+ * Steven Mitchell, David Moorhouse
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -81,6 +81,11 @@ type
     procedure LinkMembers;
     procedure Refresh;
   end;
+
+{$IFNDEF MM7+}  // i.e. redefine for MM 6.20
+type
+  IMMClassifier = IMMClassBase;
+{$ENDIF}
 
 implementation
 
@@ -495,11 +500,15 @@ var
   FieldTypeName: string;
 begin
   Name := Prop.Name;
+{$IFDEF MM7+}
   {$IFDEF MM9}
   Visibility := MMVisibilityToInstantCodeVisibility(Prop.Visibility);
   {$ELSE}
   Visibility := TInstantCodeVisibility(Prop.V9Visibility);
   {$ENDIF}
+{$ELSE}
+  Visibility :=  TInstantCodeVisibility(Prop.Visibility);
+{$ENDIF}  
   if Attribute.IsIOAttribute then
   begin
     { If the type of attribute field is Integer (which is considered
