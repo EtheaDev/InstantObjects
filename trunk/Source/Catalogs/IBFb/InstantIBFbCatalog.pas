@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Steven Mitchell
+ * Steven Mitchell, David Moorhouse
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -51,12 +51,12 @@ type
     procedure AddIndexMetadatas(TableMetadata: TInstantTableMetadata);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
     // Returns True if the TInstantDataType value that matches the supplied
-    // combination of ColumnType, BlobSubType and FieldScale is found. If 
+    // combination of ColumnType, ColumnSubType and FieldScale is found. If
     // more than one datatypes apply, alternate data types are returned in
     // AlternateDataTypes, otherwise AlternateDataTypes is [] on exit.
-    function ColumnTypeToDataType(const ColumnType: string;
-        const BlobSubType, FieldScale: Integer; out DataType: TInstantDataType;
-        out AlternateDataTypes: TInstantDataTypes): Boolean;
+    function ColumnTypeToDataType(const ColumnType: Integer;
+      const ColumnSubType, FieldScale: Integer; out DataType: TInstantDataType;
+      out AlternateDataTypes: TInstantDataTypes): Boolean;
     function GetSelectFieldsSQL(const ATableName: string): string;
     function GetSelectIndexesSQL(const ATableName: string): string;
     function GetSelectIndexFieldsSQL(const AIndexName: string): string;
@@ -70,7 +70,7 @@ implementation
 
 uses
   SysUtils, Classes, DB, InstantConsts;
-  
+
 { TInstantIBFbCatalog }
 
 procedure TInstantIBFbCatalog.AddIndexMetadatas(
@@ -141,6 +141,7 @@ var
   FieldMetadata: TInstantFieldMetadata;
   AlternateDataTypes: TInstantDataTypes;
   FieldMetaDataType: TInstantDataType;
+  FieldTypeName: string;
 begin
   Fields := Broker.AcquireDataSet(GetSelectFieldsSQL(TableMetadata.Name));
   try
@@ -151,7 +152,7 @@ begin
         FieldMetadata := TableMetadata.FieldMetadatas.Add;
         FieldMetadata.Name := Trim(Fields.FieldByName('RDB$FIELD_NAME').AsString);
         if ColumnTypeToDataType(
-          Trim(Fields.FieldByName('RDB$TYPE_NAME').AsString),
+          Fields.FieldByName('RDB$FIELD_TYPE').AsInteger,
           Fields.FieldByName('RDB$FIELD_SUB_TYPE').AsInteger,
           Fields.FieldByName('RDB$FIELD_SCALE').AsInteger,
           FieldMetaDataType,
@@ -170,9 +171,15 @@ begin
             FieldMetadata.Size := Fields.FieldByName('RDB$FIELD_LENGTH').AsInteger;
         end
         else
-          DoWarning(Format(SUnsupportedColumnSkipped,
-            [TableMetadata.Name, FieldMetadata.Name,
-             Trim(Fields.FieldByName('RDB$TYPE_NAME').AsString)]));
+          begin
+            FieldTypeName := Trim (Fields.FieldByName('RDB$TYPE_NAME').AsString);
+            if FieldTypeName = '' then
+              FieldTypeName := Format('[FieldType=%s FieldSubType=%s]',
+                [Fields.FieldByName('RDB$FIELD_TYPE').AsString,
+                Fields.FieldByName('RDB$FIELD_SUB_TYPE').AsString]);
+            DoWarning(Format(SUnsupportedColumnSkipped,
+              [TableMetadata.Name, FieldMetadata.Name, FieldTypeName]));
+          end;
         Fields.Next;
       end;
     finally
@@ -211,38 +218,47 @@ begin
   end;
 end;
 
-function TInstantIBFbCatalog.ColumnTypeToDataType(const ColumnType: string;
-    const BlobSubType, FieldScale: Integer; out DataType: TInstantDataType;
-    out AlternateDataTypes: TInstantDataTypes): Boolean;
+function TInstantIBFbCatalog.ColumnTypeToDataType(const ColumnType: Integer;
+  const ColumnSubType, FieldScale: Integer;  out DataType: TInstantDataType;
+  out AlternateDataTypes: TInstantDataTypes): Boolean;
 begin
+{RDB$FIELDS.RDB$FIELD_TYPE values
+• BLOB - 261  • BLOB_ID - 45  • BOOLEAN - 17  • CHAR - 14 • CSTRING - 40
+• D_FLOAT - 11  • DOUBLE - 27 • FLOAT - 10  • INT64 - 16  • INTEGER - 8
+• QUAD - 9  • SMALLINT - 7  • DATE - 12 (dialect 3 DATE)  • TIME - 13
+• TIMESTAMP - 35  • VARCHAR - 37
+These values are always present in table metadata,
+RDB$TYPES.RDB$TYPE_NAME is not always defined for all types }
+
   AlternateDataTypes := [];
   Result := True;
-  { TODO : How to use FieldScale? }
-  if SameText(ColumnType, 'TEXT') or SameText(ColumnType, 'VARYING') then
-    DataType := dtString
-  else if SameText(ColumnType, 'SHORT') then
-  begin
-    DataType := dtBoolean;
-    Include(AlternateDataTypes, dtInteger);
-  end
-  else if SameText(ColumnType, 'LONG') then
-    DataType := dtInteger
-  else if SameText(ColumnType, 'FLOAT') or SameText(ColumnType, 'DOUBLE') then
-    DataType := dtFloat
-  else if SameText(ColumnType, 'TIMESTAMP') or SameText(ColumnType, 'DATE')
-      or SameText(ColumnType, 'TIME')then
-    DataType := dtDateTime
-  else if SameText(ColumnType, 'BLOB') then
-  begin
-    if BlobSubType = 1 then
-      DataType := dtMemo
+  case ColumnType of
+    7: // SHORT/SMALLINT
+      begin
+        DataType := dtBoolean;
+        Include(AlternateDataTypes, dtInteger);
+      end;
+    8:   // INTEGER
+      DataType := dtInteger;
+    10, 27:  //FLOAT, DOUBLE
+      DataType := dtFloat;
+    12,13,35:  // DATE, TIME, TIMESTAMP  - will need refactoring to support proposed TDate and TTime types
+      DataType := dtDateTime;
+    14, 37:   // TEXT, VARYING
+      DataType := dtString;
+    16:  // INT64
+      if (ColumnSubType = 2) and (FieldScale >= -4) then
+        DataType := dtCurrency
+      else
+        Result := False;
+    261:  // BLOB
+      if ColumnSubType = 1 then
+        DataType := dtMemo
+      else
+        DataType := dtBlob;
     else
-      DataType := dtBlob;
-  end
-  else if SameText(ColumnType, 'INT64') then
-    DataType := dtCurrency
-  else
-    Result := False;
+      Result := False;
+  end;
 end;
 
 function TInstantIBFbCatalog.GetSelectFieldsSQL(
@@ -251,7 +267,8 @@ begin
   Result :=
     'select ' +
     '  RF.RDB$FIELD_NAME, RF.RDB$NULL_FLAG, ' +
-    '  T.RDB$TYPE_NAME, F.RDB$FIELD_SUB_TYPE, F.RDB$FIELD_LENGTH, ' +
+    '  T.RDB$TYPE_NAME, ' +
+    '  F.RDB$FIELD_TYPE, F.RDB$FIELD_SUB_TYPE, F.RDB$FIELD_LENGTH, ' +
     '  F.RDB$FIELD_SCALE, F.RDB$CHARACTER_LENGTH ' +
     'from ' +
     '  RDB$RELATION_FIELDS RF ' +
@@ -259,7 +276,7 @@ begin
     '  RDB$FIELDS F ' +
     'on ' +
     '  RF.RDB$FIELD_SOURCE = F.RDB$FIELD_NAME ' +
-    'join ' +
+    'left join ' +      //Fix [ 1603022] 
     '  RDB$TYPES T ' +
     'on ' +
     '  F.RDB$FIELD_TYPE = T.RDB$TYPE ' +
@@ -318,5 +335,63 @@ begin
   ATableMetadatas.Clear;
   AddTableMetadatas(ATableMetadatas);
 end;
+
+
+{  A. test table definition
+
+CREATE TABLE "Test"
+(
+  "Class"	VARCHAR(32) NOT NULL,
+  "Id"	VARCHAR(32) NOT NULL,
+  "UpdateCount"	INTEGER,
+  "StringAttr" VARCHAR(256),
+  "BlobAttr" BLOB,
+  "BooleanAttr" SMALLINT,
+  "CurrencyAttr" DECIMAL(14,4),
+  "DateTimeAttr" TIMESTAMP,
+  "FloatAttr" DOUBLE PRECISION,
+  "GraphicAttr" BLOB,
+  "IntegerAttr" INTEGER,
+  "MemoAttr" BLOB SUB_TYPE 1,
+  "ReferenceAttributeClass" VARCHAR(32),
+  "ReferenceAttributeId" VARCHAR(32),
+  "EmbeddedPartsAtttribute" BLOB,
+  "EmbeddedPartAttribute" BLOB,
+  "ExternalPartAttributeClass" VARCHAR(32),
+  "ExternalPartAttributeId" VARCHAR(32),
+  "EmbeddedReferencesAtttribute" BLOB,
+  "DateAttr" DATE,
+  "TimeAttr" TIME,
+ PRIMARY KEY ("Class", "Id")
+);
+
+B.  Result of "GetSelectFieldsSQL" method - run against IB 7.1 Win32 server
+
+RDB$FIELD_NAME                    RDB$NULL_FLAG   RDB$TYPE_NAME                     RDB$FIELD_TYPE   RDB$FIELD_SUB_TYPE   RDB$FIELD_LENGTH   RDB$FIELD_SCALE   RDB$CHARACTER_LENGTH
+===============================   =============   ===============================   ==============   ==================   ================   ===============   ====================
+Class                             1               VARYING                           37                                    32                 0                 32
+Id                                1               VARYING                           37                                    32                 0                 32
+UpdateCount                                       LONG                              8                                     4                  0
+StringAttr                                        VARYING                           37                                    256                0                 256
+BlobAttr                                          BLOB                              261              0                    8                  0
+BooleanAttr                                       SHORT                             7                                     2                  0
+CurrencyAttr                                                                        16               2                    8                  -4
+DateTimeAttr                                      TIMESTAMP                         35                                    8                  0
+FloatAttr                                         DOUBLE                            27                                    8                  0
+GraphicAttr                                       BLOB                              261              0                    8                  0
+IntegerAttr                                       LONG                              8                                     4                  0
+MemoAttr                                          BLOB                              261              1                    8                  0
+ReferenceAttributeClass                           VARYING                           37                                    32                 0                 32
+ReferenceAttributeId                              VARYING                           37                                    32                 0                 32
+EmbeddedPartsAtttribute                           BLOB                              261              0                    8                  0
+EmbeddedPartAttribute                             BLOB                              261              0                    8                  0
+ExternalPartAttributeClass                        VARYING                           37                                    32                 0                 32
+ExternalPartAttributeId                           VARYING                           37                                    32                 0                 32
+EmbeddedReferencesAtttribute                      BLOB                              261              0                    8                  0
+DateAttr                                          DATE                              12                                    4                  0
+TimeAttr                                          TIME                              13                                    4                  0
+
+}
+
 
 end.
