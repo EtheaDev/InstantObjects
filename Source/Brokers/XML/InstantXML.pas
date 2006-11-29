@@ -227,12 +227,13 @@ type
     function GetStatement: string; override;
     function InternalAddObject(AObject: TObject): Integer; override;
     procedure InternalClose; override;
+    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList);
+        override;
     function InternalGetObjectCount: Integer; override;
     function InternalGetObjects(Index: Integer): TObject; override;
     function InternalIndexOfObject(AObject: TObject): Integer; override;
     procedure InternalInsertObject(Index: Integer; AObject: TObject); override;
     procedure InternalOpen; override;
-    procedure InternalRefreshObjects; override;
     procedure InternalReleaseObject(AObject: TObject); override;
     function InternalRemoveObject(AObject: TObject): Integer; override;
     procedure SetParams(Value: TParams); override;
@@ -877,6 +878,16 @@ begin
   inherited;
 end;
 
+procedure TInstantXMLQuery.InternalGetInstantObjectRefs(List:
+    TInstantObjectReferenceList);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(ObjectReferenceCount) do
+    if ObjectFetched(I) and (Objects[I] is TInstantObject) then
+      List.Add(TInstantObject(Objects[I]));
+end;
+
 function TInstantXMLQuery.InternalGetObjectCount: Integer;
 begin
   Result := ObjectReferenceCount;
@@ -922,28 +933,6 @@ begin
     InitObjectReferences(vFileList);
   finally
     vFileList.Free;
-  end;
-end;
-
-procedure TInstantXMLQuery.InternalRefreshObjects;
-var
-  I: Integer;
-  BusyObjects: TObjectList;
-begin
-  BusyObjects := TObjectList.Create;
-  try
-    for I := 0 to Pred(ObjectReferenceCount) do
-    begin
-      with ObjectReferences[I] do
-        if HasInstance and (Instance.RefCount > 1) then
-          BusyObjects.Add(Instance);
-    end;
-    Close;
-    Open;
-    for I := 0 to Pred(BusyObjects.Count) do
-      TInstantObject(BusyObjects[I]).Refresh;
-  finally
-    BusyObjects.Free;
   end;
 end;
 
