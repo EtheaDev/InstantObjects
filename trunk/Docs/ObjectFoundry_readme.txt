@@ -1,11 +1,12 @@
-ObjectFoundry (for IO V2) Readme
+ObjectFoundry (for IO V2.x) Readme
 by Carlo Wolter/Steven Mitchell - 21 Mar 2005
+Revised by Steven Mitchell: 29 Nov 2006
 
 Introduction
 ------------
 This file contains instructions and information for the
 Object Foundry (OF) integration between IO version 2 and 
-ModelMaker(c).
+ModelMaker(c)[http://www.modelmakertools.com].
 
 ModelMaker (MM) is an UML designer integrated with Delphi.
 It can be used also for InstantObject design, provided
@@ -19,6 +20,8 @@ screen. It is also listed in the "Plug in expert manager"
 dialog launched from the Tools/Expert Manager menu option
 in MM.
 
+Currently MM versions 6 to 9 are supported with OF.
+
 Compiling
 ---------
 This DLL can be compiled using the project in this directory.
@@ -31,10 +34,15 @@ is in the project options search path
 This is required because in the MM experts directory there is
 a single file that is needed:
   MMToolsApi.PAS
-Also ensure that 'MM7+' is defined in the project options
-Conditional defines
-  (ie Project/Options/Directories-Conditionals/Conditional defines)
-when using version 7 or higher of MM.
+Also ensure that the appropriate compiler defines are entered
+in the project options Conditional defines (see table below).
+(ie Project/Options/Directories-Conditionals/Conditional defines)
+
+ MM Version                     Define
+ ----------                     ------
+   6.x                          [none]
+ 7.x or 8.x                     MM7+
+   9.x                          MM9
 
 Note: The MMToolsApi.PAS file is protected by copyright of 
 ModelMakerTools and cannot be put into CVS. Every legitimate 
@@ -60,5 +68,5 @@ metadata identifier tag.
 
 Feedback
 --------
-Please report any problems to the IO news groups at 
-"news.instantobjects.org".
+Please report any problems to the IO news support group at 
+"news.instantobjects.org/instantobjects.org.support".

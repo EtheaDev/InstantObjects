@@ -30,10 +30,12 @@
 
 unit OFUtils;
 
+{$I ObjectFoundry.inc}
+
 interface
 
 uses
-  MMToolsAPI, MMIOAPI, OFDefs;
+  MMToolsAPI, MMIOAPI, MMEngineDefs, OFDefs, InstantCode;
 
 function ClassAsV9ClassBase(AClass: IMMClassBase): IMMV9ClassBase;
 function CodeModelAsV9CodeModel(ACodeModel: IMMCodeModel): IMMV9CodeModel;
@@ -46,6 +48,12 @@ function MemberAsMethod(Member: IMMMember): IMMMethod;
 function AttributeAsProperty(Attribute: IMMIOAttribute): IMMProperty;
 function MemberAsAttributeProperty(Member: IMMMember): IMMProperty;
 function SameCode(const Code1, Code2: string): Boolean;
+
+function MMVisibilityToInstantCodeVisibility(const Value: TVisibility):
+    TInstantCodeVisibility;
+
+function InstantCodeVisibilityToMMVisibility(const Value:
+    TInstantCodeVisibility): TVisibility;
 
 implementation
 
@@ -133,6 +141,25 @@ end;
 function SameCode(const Code1, Code2: string): Boolean;
 begin
   Result := SameText(Trim(Code1), Trim(Code2));
+end;
+
+function MMVisibilityToInstantCodeVisibility(const Value: TVisibility):
+    TInstantCodeVisibility;
+const
+  Map: array[TVisibility] of TInstantCodeVisibility =
+    (viDefault, viPrivate, viPrivate, viProtected, viProtected, 
+     viPublic, viPublished, viPublished);
+begin
+  Result := Map[Value];
+end;
+
+function InstantCodeVisibilityToMMVisibility(const Value:
+    TInstantCodeVisibility): TVisibility;
+const
+  Map: array[TInstantCodeVisibility] of TVisibility =
+    (scDefault, scPrivate, scProtected, scPublic, scPublished);
+begin
+  Result := Map[Value];
 end;
 
 end.

@@ -30,11 +30,13 @@
 
 unit OFClassRegWizard;
 
+{$I ObjectFoundry.inc}
+
 interface
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, CheckLst, MMToolsAPI, ComCtrls;
+  StdCtrls, CheckLst, MMToolsAPI, OFDefs, ComCtrls;
 
 type
   TClassRegWizardForm = class(TForm)
@@ -206,6 +208,25 @@ procedure TClassRegWizardForm.LoadUnitList;
     Result := False;
   end;
 
+{$IFDEF MM9}
+var
+  UnitManager: IMMModuleManager;
+  AUnit: IMMModule;
+  I: Integer;
+begin
+  UnitList.Clear;
+  UnitManager := MMToolServices.ModuleManager;
+  if Assigned(UnitManager) then
+  begin
+    for I := 0 to Pred(UnitManager.ModuleCount) do
+    begin
+      AUnit := UnitManager.Modules[I];
+      if UnitHasPersistentClass(AUnit) then
+        UnitList.Add(AUnit);
+    end;
+  end;
+end;
+{$ELSE}
 var
   UnitManager: IMMUnitManager;
   AUnit: IMMUnit;
@@ -223,6 +244,7 @@ begin
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TClassRegWizardForm.OkButtonClick(Sender: TObject);
 begin
@@ -244,7 +266,11 @@ begin
         AUnit := Units[I];
         with Items.Add do
         begin
+          {$IFDEF MM9}
+          Caption := ExtractFileName(AUnit.RelModuleName);
+          {$ELSE}
           Caption := ExtractFileName(AUnit.RelUnitName);
+          {$ENDIF}
           Data := Pointer(AUnit);
           Checked := True;
         end;

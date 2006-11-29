@@ -30,6 +30,8 @@
 
 unit OFExpert;
 
+{$I ObjectFoundry.inc}
+
 interface
 
 uses
@@ -207,7 +209,11 @@ var
 begin
   if Assigned(P) and P.Valid then
   begin
+    {$IFDEF MM9}
+    lClass := P.Classifier;
+    {$ELSE}
     lClass := P.ClassBase;
+    {$ENDIF}
     Attribute := TMMCodeAttribute.Create(P);
     AttributeValidator := TMMAttributeValidator.Create(Attribute, P);
     try
@@ -615,21 +621,30 @@ begin
   if MMInterface = nil then
     Exit;
   MMProperty :=  MMInterface as IMMProperty;
-
-  if MMProperty.ClassBase.FindMember(Attribute.Name, I) then
-        raise Exception.Create('Attribute Name already used');
-
-  // check that the same attribute name is not used in an ancestor class
+  {$IFDEF MM9}
+  CodeClass :=  MMProperty.Classifier;
+  {$ELSE}
   CodeClass :=  MMProperty.ClassBase;
+  {$ENDIF}
+
+  // check that the new attribute name is not used in parent class
+  // except by itself
+  if CodeClass.FindMember(Attribute.Name, I) and
+      (CodeClass.Members[I] <> MMProperty) then
+    raise Exception.Create('Attribute Name already used');
+
+  // check that the new attribute name is not used in any child class
+  CheckChildClass(CodeClass);
+
+  // check that the new attribute name is not used in an ancestor class
+  CodeClass := CodeClass.Ancestor;
   while (CodeClass <> nil) do
   begin
     if CodeClass.FindMember(Attribute.Name, I) then
       raise Exception.CreateFmt('Attribute "%s" exists in ancestor class "%s"',
         [Attribute.Name, CodeClass.Name]);
-   CodeClass := CodeClass.Ancestor;
+    CodeClass := CodeClass.Ancestor;
   end;
-  // check that the same attribute name is not used in any child class
-  CheckChildClass(MMProperty.ClassBase);
 end;
 
 end.
