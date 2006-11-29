@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Steven Mitchell
+ * Steven Mitchell, David Moorhouse
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -146,9 +146,14 @@ end;
 function MMVisibilityToInstantCodeVisibility(const Value: TVisibility):
     TInstantCodeVisibility;
 const
+  {$IFDEF MM7+}
   Map: array[TVisibility] of TInstantCodeVisibility =
     (viDefault, viPrivate, viPrivate, viProtected, viProtected, 
      viPublic, viPublished, viPublished);
+  {$ELSE}
+  Map: array[TVisibility] of TInstantCodeVisibility =
+    (viDefault, viPrivate, viProtected, viPublic, viPublished, viPublished);
+  {$ENDIF}
 begin
   Result := Map[Value];
 end;

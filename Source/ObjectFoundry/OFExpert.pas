@@ -159,7 +159,11 @@ begin
       AClass := CodeModel.Classes[I];
       if IsInstantObjectClass(AClass) and
             (not PersistentOnly or
+            {$IFDEF MM7+}
             (PersistentOnly and (AClass.Persistency = cpPersistent))) then
+            {$ELSE}
+            (PersistentOnly and ((AClass as IMMV9ClassBase).Persistency = cpPersistent))) then
+            {$ENDIF}
         Items.Add(AClass.Name);
     end;
   end;    { if }
@@ -179,7 +183,11 @@ begin
     begin
       lClass := CodeModel.Classes[I];
       if IsInstantObjectClass(lClass) and SameText(AClassName, lClass.Name) then
+        {$IFDEF MM7+}
         IsPersistent := lClass.Persistency = cpPersistent;
+        {$ELSE}
+        IsPersistent := (lClass as IMMV9ClassBase).Persistency = cpPersistent;
+        {$ENDIF}
     end;
   end;    { if }
 end;
