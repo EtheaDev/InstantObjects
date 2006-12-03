@@ -21,6 +21,9 @@ procedure CreateInstantModel;
 
 implementation
 
+uses
+  InstantMetadata, InstantTypes;
+
 procedure CreateInstantModel;
 var
   InstantClassMetadata : TInstantClassMetadata;
