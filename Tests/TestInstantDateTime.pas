@@ -49,6 +49,8 @@ type
     procedure TestAsBoolean;
     procedure TestAsCurrency;
     procedure TestAsDateTime;
+    procedure TestAsDate;
+    procedure TestAsTime;
     procedure TestAsFloat;
     procedure TestAsInteger;
     procedure TestAsObject;
@@ -132,6 +134,20 @@ begin
   FInstantDateTime.AsDateTime := 12.45;
   AssertEquals(12.45, FInstantDateTime.Value);
   AssertEquals(12.45, FInstantDateTime.AsDateTime);
+end;
+
+procedure TestTInstantDateTime.TestAsDate;
+begin
+  FInstantDateTime.AsDate := 120.00;
+  AssertEquals(120.00, FInstantDateTime.Value);
+  AssertEquals(120.00, FInstantDateTime.AsDate);
+end;
+
+procedure TestTInstantDateTime.TestAsTime;
+begin
+  FInstantDateTime.AsTime := 0.45;
+  AssertEquals(0.45, FInstantDateTime.Value);
+  AssertEquals(0.45, FInstantDateTime.AsTime);
 end;
 
 procedure TestTInstantDateTime.TestAsFloat;

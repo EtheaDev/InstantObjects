@@ -38,6 +38,8 @@ uses
   TestInstantInteger in 'TestInstantInteger.pas',
   TestInstantString in 'TestInstantString.pas',
   TestInstantDateTime in 'TestInstantDateTime.pas',
+  TestInstantDate in 'TestInstantDate.pas',
+  TestInstantTime in 'TestInstantTime.pas',
   TestInstantBoolean in 'TestInstantBoolean.pas',
   TestInstantFloat in 'TestInstantFloat.pas',
   TestInstantCurrency in 'TestInstantCurrency.pas',
