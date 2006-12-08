@@ -237,37 +237,29 @@ type
     Picture: Blob;
     Salary: Currency;
     Employed: Boolean;
-    AL_hours: Float;
-    EmploymentDate: Date;
-    BirthTime: Time; }
+    AL_hours: Float; }
     _AL_hours: TInstantFloat;
     _BirthDate: TInstantDateTime;
-    _BirthTime: TInstantTime;
     _Emails: TInstantParts;
     _Employed: TInstantBoolean;
     _Employer: TInstantReference;
-    _EmploymentDate: TInstantDate;
     _Picture: TInstantGraphic;
     _Salary: TInstantCurrency;
   private
     function GetAL_hours: Double;
     function GetBirthDate: TDateTime;
-    function GetBirthTime: TDateTime;
     function GetEmailCount: Integer;
     function GetEmails(Index: Integer): TEmail;
     function GetEmployed: Boolean;
     function GetEmployer: TCompany;
-    function GetEmploymentDate: TDateTime;
     function GetMainEmailAddress: string;
     function GetPicture: string;
     function GetSalary: Currency;
     procedure SetAL_hours(Value: Double);
     procedure SetBirthDate(Value: TDateTime);
-    procedure SetBirthTime(Value: TDateTime);
     procedure SetEmails(Index: Integer; Value: TEmail);
     procedure SetEmployed(Value: Boolean);
     procedure SetEmployer(const Value: TCompany);
-    procedure SetEmploymentDate(Value: TDateTime);
     procedure SetMainEmailAddress(const Value: string);
     procedure SetPicture(const Value: string);
     procedure SetSalary(Value: Currency);
@@ -286,10 +278,8 @@ type
   published
     property AL_hours: Double read GetAL_hours write SetAL_hours;
     property BirthDate: TDateTime read GetBirthDate write SetBirthDate;
-    property BirthTime: TDateTime read GetBirthTime write SetBirthTime;
     property Employed: Boolean read GetEmployed write SetEmployed;
     property Employer: TCompany read GetEmployer write SetEmployer;
-    property EmploymentDate: TDateTime read GetEmploymentDate write SetEmploymentDate;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
     property Picture: string read GetPicture write SetPicture;
     property Salary: Currency read GetSalary write SetSalary;
@@ -715,11 +705,6 @@ begin
   Result := _BirthDate.Value;
 end;
 
-function TPerson.GetBirthTime: TDateTime;
-begin
-  Result := _BirthTime.Value;
-end;
-
 function TPerson.GetEmailCount: Integer;
 begin
   Result := _Emails.Count
@@ -738,11 +723,6 @@ end;
 function TPerson.GetEmployer: TCompany;
 begin
   Result := _Employer.Value as TCompany;
-end;
-
-function TPerson.GetEmploymentDate: TDateTime;
-begin
-  Result := _EmploymentDate.Value;
 end;
 
 function TPerson.GetMainEmailAddress: string;
@@ -788,11 +768,6 @@ begin
   _BirthDate.Value := Value;
 end;
 
-procedure TPerson.SetBirthTime(Value: TDateTime);
-begin
-  _BirthTime.Value := Value;
-end;
-
 procedure TPerson.SetEmails(Index: Integer; Value: TEmail);
 begin
   _Emails[Index] := Value;
@@ -806,11 +781,6 @@ end;
 procedure TPerson.SetEmployer(const Value: TCompany);
 begin
   _Employer.Value := Value;
-end;
-
-procedure TPerson.SetEmploymentDate(Value: TDateTime);
-begin
-  _EmploymentDate.Value := Value;
 end;
 
 procedure TPerson.SetMainEmailAddress(const Value: string);
