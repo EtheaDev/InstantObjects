@@ -24,8 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta: blob streaming in XML format (Part, Parts, References)
- * Carlo Barazzetta: Currency and LoginPrompt support
+ * Carlo Barazzetta, Nando Dessena
+ *
  * ***** END LICENSE BLOCK ***** *)
 
 unit InstantADOConnectionDefEdit;
@@ -52,6 +52,10 @@ type
     StreamFormatLabel: TLabel;
     StreamFormatComboBox: TComboBox;
     LoginPromptCheckBox: TCheckBox;
+    Label1: TLabel;
+    IdDataTypeComboBox: TComboBox;
+    Label2: TLabel;
+    IdSizeEdit: TEdit;
     procedure ConnectionStringButtonClick(Sender: TObject);
     procedure DataLinkButtonClick(Sender: TObject);
     procedure DataChanged(Sender: TObject);
@@ -67,10 +71,10 @@ type
 
 implementation
 
-{$R *.DFM}
+{$R *.dfm}
 
 uses
-  ADODB, InstantPersistence, InstantClasses;
+  ADODB, InstantPersistence, InstantClasses, InstantTypes, InstantConsts;
 
 { TInstantADOConnDefEditForm }
 
@@ -94,7 +98,10 @@ end;
 
 procedure TInstantADOConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
-  AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
+  AssignInstantStreamFormat(StreamFormatComboBox.Items);
+  AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
+  IdDataTypeComboBox.ItemIndex := Ord(dtString);
+  IdSizeEdit.Text := IntToStr(InstantDefaultFieldSize);
   UpdateControls;
 end;
 
@@ -121,9 +128,10 @@ begin
       DataLinkRadioButton.Checked := True;
       DataLinkEdit.Text := LinkFileName;
     end;
-    //CB
     StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat);
     LoginPromptCheckBox.Checked := LoginPrompt;
+    IdDataTypeComboBox.ItemIndex := Ord(IdDataType);
+    IdSizeEdit.Text := IntToStr(IdSize);
   end;
 end;
 
@@ -136,9 +144,10 @@ begin
       ConnectionString := 'FILE NAME=' + DataLinkEdit.Text
     else
       ConnectionString := ConnectionStringEdit.Text;
-    //CB
     BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
     LoginPrompt := LoginPromptCheckBox.Checked;
+    IdDataType := TInstantDataType(IdDataTypeComboBox.ItemIndex);
+    IdSize := StrToInt(IdSizeEdit.Text);
   end;
 end;
 
