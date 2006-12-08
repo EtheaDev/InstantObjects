@@ -4,7 +4,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
   BorderStyle = bsDialog
   Caption = 'ADO Connection'
   ClientHeight = 242
-  ClientWidth = 362
+  ClientWidth = 446
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
   object BottomBevel: TBevel
     Left = 0
     Top = 205
-    Width = 362
+    Width = 446
     Height = 2
     Align = alBottom
     Shape = bsBottomLine
@@ -27,7 +27,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
   object ClientPanel: TPanel
     Left = 0
     Top = 0
-    Width = 362
+    Width = 446
     Height = 205
     Align = alClient
     BevelOuter = bvNone
@@ -39,6 +39,22 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
+    end
+    object Label1: TLabel
+      Left = 134
+      Top = 152
+      Width = 62
+      Height = 13
+      Caption = 'Id Data Type'
+      FocusControl = IdDataTypeComboBox
+    end
+    object Label2: TLabel
+      Left = 259
+      Top = 152
+      Width = 32
+      Height = 13
+      Caption = 'Id Size'
+      FocusControl = IdDataTypeComboBox
     end
     object DataLinkRadioButton: TRadioButton
       Left = 16
@@ -97,7 +113,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
     object StreamFormatComboBox: TComboBox
       Left = 32
       Top = 168
-      Width = 145
+      Width = 97
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
@@ -112,17 +128,33 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
       Caption = '&Login Prompt'
       TabOrder = 6
     end
+    object IdDataTypeComboBox: TComboBox
+      Left = 134
+      Top = 168
+      Width = 120
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      TabOrder = 8
+    end
+    object IdSizeEdit: TEdit
+      Left = 259
+      Top = 168
+      Width = 42
+      Height = 21
+      TabOrder = 9
+    end
   end
   object BottomPanel: TPanel
     Left = 0
     Top = 207
-    Width = 362
+    Width = 446
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     object OkButton: TButton
-      Left = 204
+      Left = 288
       Top = 6
       Width = 75
       Height = 25
@@ -133,7 +165,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
       TabOrder = 0
     end
     object CancelButton: TButton
-      Left = 284
+      Left = 368
       Top = 6
       Width = 75
       Height = 25
