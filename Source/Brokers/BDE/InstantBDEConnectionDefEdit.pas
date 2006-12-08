@@ -181,9 +181,11 @@ begin
       with DriverComboBox do
         ItemIndex := Items.IndexOf(DriverName);
     end;
-    //CB
     StreamFormatComboBox.ItemIndex := Ord(BlobStreamFormat);
     LoginPromptCheckBox.Checked := LoginPrompt;
+    IdDataTypeComboBox.ItemIndex := Ord(IdDataType);
+    IdSizeEdit.Text := IntToStr(IdSize);
+
     UpdateControls;
     ParametersEdit.Text := Parameters;
   end;
