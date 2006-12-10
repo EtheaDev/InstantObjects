@@ -103,7 +103,7 @@ const
 type
   TMMAttributeValidator = class(TInstantAttributeValidator)
   public
-    procedure Validate; override;
+    function Validate: Boolean; override;
   end;
 
 
@@ -604,7 +604,7 @@ end;
 
 { TMMAttributeValidator }
 
-procedure TMMAttributeValidator.Validate;
+function TMMAttributeValidator.Validate: Boolean;
 var
   MMProperty: IMMProperty;
   CodeClass: IMMClassifier;
@@ -618,14 +618,22 @@ var
       Exit;
     for J := 0 to Pred(CurrentClass.DescendantCount) do
     begin
+      if not Result then
+        Break;
       if CurrentClass.Descendants[J].FindMember(Attribute.Name, I) then
-        raise Exception.CreateFmt('Attribute "%s" exists in descendant class "%s"',
+      begin
+        ErrorMsg := Format('Attribute "%s" exists in descendant class "%s"',
           [Attribute.Name, CurrentClass.Descendants[J].Name]);
+        Result := False;
+      end;
       CheckChildClass(CurrentClass.Descendants[J]);
     end;
   end;
 
 begin
+  Result := True;
+  ErrorMsg := '';
+  
   if MMInterface = nil then
     Exit;
   MMProperty :=  MMInterface as IMMProperty;
@@ -638,19 +646,26 @@ begin
   // check that the new attribute name is not used in parent class
   // except by itself
   if CodeClass.FindMember(Attribute.Name, I) and
-      (CodeClass.Members[I] <> MMProperty) then
-    raise Exception.Create('Attribute Name already used');
+    (CodeClass.Members[I] <> MMProperty) then
+  begin
+    ErrorMsg := 'Attribute Name already used';
+    Result := False;
+  end;
 
   // check that the new attribute name is not used in any child class
-  CheckChildClass(CodeClass);
+  if Result then
+    CheckChildClass(CodeClass);
 
   // check that the new attribute name is not used in an ancestor class
   CodeClass := CodeClass.Ancestor;
-  while (CodeClass <> nil) do
+  while Result and (CodeClass <> nil) do
   begin
     if CodeClass.FindMember(Attribute.Name, I) then
-      raise Exception.CreateFmt('Attribute "%s" exists in ancestor class "%s"',
+    begin
+      ErrorMsg := Format('Attribute "%s" exists in ancestor class "%s"',
         [Attribute.Name, CodeClass.Name]);
+      Result := False;
+    end;
     CodeClass := CodeClass.Ancestor;
   end;
 end;
