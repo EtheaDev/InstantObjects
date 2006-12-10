@@ -61,12 +61,14 @@ type
   private
     FAttribute: TInstantCodeAttribute;
     FInterface: IInterface;
+    FErrorMsg: string;
   protected
     property Attribute: TInstantCodeAttribute read FAttribute;
     property MMInterface: IInterface read FInterface;
+    property ErrorMsg: string read FErrorMsg write FErrorMsg;
   public
     constructor Create(AnAttribute: TInstantCodeAttribute; const AInterface: IInterface);
-    procedure Validate; virtual;
+    function Validate: Boolean; virtual;
   end;
 
   TInstantAttributeEditorForm = class(TInstantEditForm)
@@ -412,13 +414,13 @@ begin
   if OKButton.CanFocus then
     OKButton.SetFocus;
 
-  try
-    FValidator.Validate;
-  except
+  if not FValidator.Validate then
+  begin
     ModalResult := mrNone;
     PageControl.ActivePage := DefinitionSheet;
     NameEdit.SetFocus;
-    raise;
+    MessageDlg(FValidator.ErrorMsg, mtError, [mbOK], 0);
+    Abort;
   end;
 
   if (Subject.AttributeType = atString) and (Subject.Metadata.Size = 0) then
@@ -427,7 +429,7 @@ begin
       ModalResult := mrNone;
       PageControl.ActivePage := DefinitionSheet;
       SizeEdit.SetFocus;
-      Abort;
+      Exit;
     end;
 
   if ObjectClassEdit.Enabled then
@@ -782,7 +784,7 @@ begin
   FInterface := AInterface;
 end;
 
-procedure TInstantAttributeValidator.Validate;
+function TInstantAttributeValidator.Validate: Boolean;
 var
   TempAttribute: TInstantCodeAttribute;
   CodeClass: TInstantCodeClass;
@@ -797,45 +799,85 @@ var
     for J := 0 to Pred(CurrentClass.SubClassCount) do
     begin
       for K := 0 to Pred(CurrentClass.SubClasses[J].PropertyCount) do
+      begin
+        if not Result then
+          Break;
         if SameText(CurrentClass.SubClasses[J].Properties[K].Name, FAttribute.Name) then
-          raise Exception.CreateFmt('Attribute "%s" exists in descendant class "%s"',
+        begin
+          ErrorMsg := Format('Attribute "%s" exists in descendant class "%s"',
             [FAttribute.Name, CurrentClass.SubClasses[J].Name]);
+          Result := False;  
+        end;
+      end;
       for K := 0 to Pred(CurrentClass.SubClasses[J].MethodCount) do
+      begin
+        if not Result then
+          Break;
         if SameText(CurrentClass.SubClasses[J].Methods[K].Name, FAttribute.Name) then
-           raise Exception.CreateFmt('Attribute "%s" exists as a method in descendant class "%s"',
+        begin
+          ErrorMsg := Format('Attribute "%s" exists as a method in descendant class "%s"',
             [FAttribute.Name, CurrentClass.SubClasses[J].Name]);
+          Result := False;
+        end;
+      end;
       CheckChildClass(CurrentClass.SubClasses[J]);
     end;
   end;
 
 begin
+  Result := True;
+  ErrorMsg := '';
+
   if not Assigned(FAttribute) and not Assigned(FAttribute.Owner)
     and not Assigned(FAttribute.Owner.Owner) then
-    raise Exception.Create('Cannot validate attribute');
-
+    begin
+      ErrorMsg := 'Cannot validate attribute';
+      Result := False;
+      Exit;
+    end;
   // check that the same attribute name is not used in an ancestor class
   CodeClass := FAttribute.Owner.Owner.BaseClass;
-  while (CodeClass <> nil) do
+  while (Result) and (CodeClass <> nil) do
   begin
     for I := 0 to Pred(CodeClass.PropertyCount) do
+    begin
+      if not Result then
+        Break;
       if SameText(CodeClass.Properties[I].Name, FAttribute.Name) then
-        raise Exception.CreateFmt('Attribute "%s" exists in ancestor class "%s"',
-          [FAttribute.Name, CodeClass.Name]);
+        begin
+          ErrorMsg := Format('Attribute "%s" exists in ancestor class "%s"',
+            [FAttribute.Name, CodeClass.Name]);
+          Result := False;
+        end;
+    end;
     for I := 0 to Pred(CodeClass.MethodCount) do
+    begin
+      if not Result then
+        Break;
       if SameText(CodeClass.Methods[I].Name, FAttribute.Name) then
-        raise Exception.CreateFmt('Attribute "%s" exists as a method in ancestor class "%s"',
+      begin
+        ErrorMsg := Format('Attribute "%s" exists as a method in ancestor class "%s"',
           [FAttribute.Name, CodeClass.Name]);
+        Result := False;  
+      end;
+    end;
     CodeClass := CodeClass.BaseClass;
   end;
   // check that the same attribute name is not used in any child class
-  CheckChildClass(FAttribute.Owner.Owner);
+  if Result then
+    CheckChildClass(FAttribute.Owner.Owner);
 
-  if Assigned(FAttribute.Owner) then
+  if Result and Assigned(FAttribute.Owner) then
     for I := 0 to Pred(FAttribute.Owner.AttributeCount) do
     begin
+      if not Result then
+        Break;
       TempAttribute := FAttribute.Owner.Attributes[I];
       if (TempAttribute <> FAttribute) and SameText(TempAttribute.Name, FAttribute.Name) then
-        raise Exception.Create('Attribute Name already used');
+      begin
+        ErrorMsg := 'Attribute Name already used';
+        Result := False;
+      end;
     end;
 end;
 
