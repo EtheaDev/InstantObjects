@@ -388,7 +388,6 @@ type
     FValue: TDateTime;
     function DefaultValue: TDateTime;
   protected
-    class function AttributeType: TInstantAttributeType; override;
     function GetAsDateTime: TDateTime; override;
     function GetAsString: string; override;
     function GetAsVariant: Variant; override;
