@@ -454,7 +454,9 @@ const
     'VARCHAR',
     'BLOB SUB_TYPE 1',
     'TIMESTAMP',
-    'BLOB');
+    'BLOB',
+    'DATE',
+    'TIME');
 
 function TInstantUIBBroker.DataTypeToColumnType(
   DataType: TInstantDataType; Size: Integer): string;
