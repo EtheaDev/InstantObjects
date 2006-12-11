@@ -513,7 +513,14 @@ begin
   if Assigned(BaseClass) then
     NewClass.Persistence := BaseClass.Persistence;
   if EditClass(NewClass, True) then
-    UpdateModel
+  begin
+    if NewClass.Module.Name <> Module.Name then
+    begin
+      Module.RemoveType(NewClass);
+      NewClass.Module.InsertType(NewClass);
+    end;
+    UpdateModel;
+  end
   else
     NewClass.Free
 end;
