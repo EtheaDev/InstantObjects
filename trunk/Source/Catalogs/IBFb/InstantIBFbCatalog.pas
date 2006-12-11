@@ -242,8 +242,12 @@ RDB$TYPES.RDB$TYPE_NAME is not always defined for all types }
       DataType := dtInteger;
     10, 27:  //FLOAT, DOUBLE
       DataType := dtFloat;
-    12,13,35:  // DATE, TIME, TIMESTAMP  - will need refactoring to support proposed TDate and TTime types
+    35:  // TIMESTAMP
       DataType := dtDateTime;
+    12:  // DATE
+      DataType := dtDate;
+    13:  // TIME
+      DataType := dtTime;
     14, 37:   // TEXT, VARYING
       DataType := dtString;
     16:  // INT64
