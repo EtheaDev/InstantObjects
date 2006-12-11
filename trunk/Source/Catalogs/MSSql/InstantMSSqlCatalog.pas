@@ -167,6 +167,8 @@ begin
           FieldMetadata := TableMetadata.FieldMetadatas.Add;
           FieldMetadata.Name := Fields.FieldByName('COLUMN_NAME').AsString;
           FieldMetadata.DataType := FieldDataType;
+          if FieldDataType = dtDateTime then
+            FieldMetadata.AlternateDataTypes := [dtDate, dtTime];
           FieldMetadata.Options := [];
           if Fields.FieldByName('COLUMN_NULLABLE').AsInteger <> 1 then
             FieldMetadata.Options := FieldMetadata.Options + [foRequired];
@@ -387,6 +389,8 @@ EmbeddedPartAttribute         image          16              0           128    
 ExternalPartAttributeClass    varchar        17              0           129             167            32            32               NULL         1
 ExternalPartAttributeId       varchar        18              0           129             167            32            32               NULL         1
 EmbeddedReferencesAtttribute  image          19              0           128             34             16            NULL             NULL         1
+DateAttr                      datetime       8               0           135             61             16            23               3            1
+TimeAttr                      datetime       8               0           135             61             16            23               3            1
 *)
 
 end.

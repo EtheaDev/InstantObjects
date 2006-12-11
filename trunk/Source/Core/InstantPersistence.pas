@@ -169,6 +169,8 @@ type
     function GetAsBoolean: Boolean; virtual;
     function GetAsCurrency: Currency; virtual;
     function GetAsDateTime: TDateTime; virtual;
+    function GetAsDate: TDateTime; virtual;
+    function GetAsTime: TDateTime; virtual;
     function GetAsFloat: Double; virtual;
     function GetAsInteger: Integer; virtual;
     function GetAsObject: TInstantObject; virtual;
@@ -184,6 +186,8 @@ type
     procedure SetAsBoolean(AValue: Boolean); virtual;
     procedure SetAsCurrency(AValue: Currency); virtual;
     procedure SetAsDateTime(AValue: TDateTime); virtual;
+    procedure SetAsDate(AValue: TDateTime); virtual;
+    procedure SetAsTime(AValue: TDateTime); virtual;
     procedure SetAsFloat(AValue: Double); virtual;
     procedure SetAsInteger(AValue: Integer); virtual;
     procedure SetAsObject(AValue: TInstantObject); virtual;
@@ -203,6 +207,8 @@ type
     property AsBoolean: Boolean read GetAsBoolean write SetAsBoolean;
     property AsCurrency: Currency read GetAsCurrency write SetAsCurrency;
     property AsDateTime: TDateTime read GetAsDateTime write SetAsDateTime;
+    property AsDate: TDateTime read GetAsDate write SetAsDate;
+    property AsTime: TDateTime read GetAsTime write SetAsTime;
     property AsFloat: Double read GetAsFloat write SetAsFloat;
     property AsInteger: Integer read GetAsInteger write SetAsInteger;
     property AsObject: TInstantObject read GetAsObject write SetAsObject;
@@ -377,7 +383,7 @@ type
     property Value: string read GetValue write SetValue;
   end;
 
-  TInstantDateTime = class(TInstantSimple)
+  TInstantCustomDateTime = class(TInstantSimple)
   private
     FValue: TDateTime;
     function DefaultValue: TDateTime;
@@ -401,6 +407,32 @@ type
     procedure Reset; override;
   published
     property Value: TDateTime read GetValue write SetValue;
+  end;
+
+  TInstantDateTime = class(TInstantCustomDateTime)
+  protected
+    class function AttributeType: TInstantAttributeType; override;
+    function GetAsDate: TDateTime; override;
+    function GetAsTime: TDateTime; override;
+    procedure SetAsDate(AValue: TDateTime); override;
+    procedure SetAsTime(AValue: TDateTime); override;
+ end;
+
+  TInstantDate = class(TInstantCustomDateTime)
+  protected
+    class function AttributeType: TInstantAttributeType; override;
+    function GetAsDate: TDateTime; override;
+    procedure SetValue(AValue: TDateTime); override;
+    procedure SetAsDate(AValue: TDateTime); override;
+  end;
+
+  TInstantTime = class(TInstantCustomDateTime)
+  protected
+    class function AttributeType: TInstantAttributeType; override;
+    function GetAsString: string; override;
+    function GetAsTime: TDateTime; override;
+    procedure SetValue(AValue: TDateTime); override;
+    procedure SetAsTime(AValue: TDateTime); override;
   end;
 
   TInstantBlob = class(TInstantSimple)
@@ -1542,7 +1574,7 @@ function InstantDataTypeToFieldType(const InstantDataType: TInstantDataType): TF
 
 const
   InstantDataTypeStrings: array[TInstantDataType] of string =
-    ('Integer', 'Float', 'Currency', 'Boolean', 'String', 'Memo', 'DateTime', 'Blob');
+    ('Integer', 'Float', 'Currency', 'Boolean', 'String', 'Memo', 'DateTime', 'Blob', 'Date', 'Time');
 
 procedure AssignInstantDataTypeStrings(Strings: TStrings);
 
@@ -1569,6 +1601,7 @@ uses
 {$ELSE}
   Mask,
 {$ENDIF}
+  DateUtils,
   InstantUtils, {InstantRtti, }InstantDesignHook, InstantCode;
 
 var
@@ -1643,7 +1676,9 @@ const
     dtBlob,       //atPart
     dtString,     //atReference
     dtBlob,       //atParts
-    dtBlob);      //atReferences
+    dtBlob,       //atReferences
+    dtDate,       //atDate
+    dtTime);      //atTime
 
   DataTypesXML: array[TInstantAttributeType] of TInstantDataType = (
     dtString,     //atUnknown
@@ -1659,7 +1694,9 @@ const
     dtMemo,       //atPart
     dtString,     //atReference
     dtMemo,       //atParts
-    dtMemo);      //atReferences
+    dtMemo,       //atReferences
+    dtDate,       //atDate
+    dtTime);      //atTime
 begin
   if BlobStreamFormat = sfBinary then
     Result := DataTypesBinary[AttributeType]
@@ -1677,6 +1714,8 @@ begin
     dtString: Result := ftString;
     dtMemo: Result := ftMemo;
     dtDateTime: Result := ftDateTime;
+    dtDate: Result := ftDate;
+    dtTime: Result := ftTime;
     dtBlob: Result := ftBlob;
   else
     raise EInstantError.CreateFmt(SUnsupportedDataType,
@@ -2292,6 +2331,16 @@ begin
   raise AccessError('DateTime');
 end;
 
+function TInstantAttribute.GetAsDate: TDateTime;
+begin
+  raise AccessError('Date');
+end;
+
+function TInstantAttribute.GetAsTime: TDateTime;
+begin
+  raise AccessError('Time');
+end;
+
 function TInstantAttribute.GetAsFloat: Double;
 begin
   raise AccessError('Float');
@@ -2415,6 +2464,16 @@ end;
 procedure TInstantAttribute.SetAsDateTime(AValue: TDateTime);
 begin
   raise AccessError('DateTime');
+end;
+
+procedure TInstantAttribute.SetAsDate(AValue: TDateTime);
+begin
+  raise AccessError('Date');
+end;
+
+procedure TInstantAttribute.SetAsTime(AValue: TDateTime);
+begin
+  raise AccessError('Time');
 end;
 
 procedure TInstantAttribute.SetAsFloat(AValue: Double);
@@ -3194,19 +3253,14 @@ end;
 
 { TInstantDateTime }
 
-procedure TInstantDateTime.Assign(Source: TPersistent);
+procedure TInstantCustomDateTime.Assign(Source: TPersistent);
 begin
   inherited;
-  if Source is TInstantDateTime then
-    Value := TInstantDateTime(Source).Value
+  if Source is TInstantCustomDateTime then
+    Value := TInstantCustomDateTime(Source).Value
 end;
 
-class function TInstantDateTime.AttributeType: TInstantAttributeType;
-begin
-  Result := atDateTime;
-end;
-
-function TInstantDateTime.DefaultValue: TDateTime;
+function TInstantCustomDateTime.DefaultValue: TDateTime;
 begin
   if Assigned(Metadata) and (Metadata.DefaultValue <> '') then
     if SameText(Metadata.DefaultValue, InstantNowString) then
@@ -3226,22 +3280,22 @@ begin
     Result := 0;
 end;
 
-function TInstantDateTime.GetAsDateTime: TDateTime;
+function TInstantCustomDateTime.GetAsDateTime: TDateTime;
 begin
   Result := Value;
 end;
 
-function TInstantDateTime.GetAsString: string;
+function TInstantCustomDateTime.GetAsString: string;
 begin
   Result := DateTimeToStr(Value);
 end;
 
-function TInstantDateTime.GetAsVariant: Variant;
+function TInstantCustomDateTime.GetAsVariant: Variant;
 begin
   Result := Value;
 end;
 
-function TInstantDateTime.GetDisplayText: string;
+function TInstantCustomDateTime.GetDisplayText: string;
 begin
   if AsDateTime = 0 then
     Result := ''
@@ -3253,28 +3307,28 @@ begin
   end
 end;
 
-function TInstantDateTime.GetIsDefault: Boolean;
+function TInstantCustomDateTime.GetIsDefault: Boolean;
 begin
   Result := Value = DefaultValue;
 end;
 
-function TInstantDateTime.GetValue: TDateTime;
+function TInstantCustomDateTime.GetValue: TDateTime;
 begin
   Result := FValue;
 end;
 
-procedure TInstantDateTime.Initialize;
+procedure TInstantCustomDateTime.Initialize;
 begin
   FValue := DefaultValue;
 end;
 
-procedure TInstantDateTime.ReadObject(Reader: TInstantReader);
+procedure TInstantCustomDateTime.ReadObject(Reader: TInstantReader);
 begin
   ReadName(Reader);
   Value := Reader.ReadDate;
 end;
 
-procedure TInstantDateTime.Reset;
+procedure TInstantCustomDateTime.Reset;
 begin
   if Assigned(Metadata) then
     Initialize
@@ -3283,12 +3337,12 @@ begin
   Changed;
 end;
 
-procedure TInstantDateTime.SetAsDateTime(AValue: TDateTime);
+procedure TInstantCustomDateTime.SetAsDateTime(AValue: TDateTime);
 begin
   Value := AValue;
 end;
 
-procedure TInstantDateTime.SetAsString(const AValue: string);
+procedure TInstantCustomDateTime.SetAsString(const AValue: string);
 begin
   try
     Value := StrToDateTime(AValue)
@@ -3298,7 +3352,7 @@ begin
   end;
 end;
 
-procedure TInstantDateTime.SetAsVariant(AValue: Variant);
+procedure TInstantCustomDateTime.SetAsVariant(AValue: Variant);
 begin
   try
     Value := AValue;
@@ -3308,7 +3362,7 @@ begin
   end;
 end;
 
-procedure TInstantDateTime.SetValue(AValue: TDateTime);
+procedure TInstantCustomDateTime.SetValue(AValue: TDateTime);
 begin
   if AValue <> FValue then
   begin
@@ -3317,10 +3371,37 @@ begin
   end;
 end;
 
-procedure TInstantDateTime.WriteObject(Writer: TInstantWriter);
+procedure TInstantCustomDateTime.WriteObject(Writer: TInstantWriter);
 begin
   WriteName(Writer);
   Writer.WriteDate(Value);
+end;
+
+{ TInstantDateTime }
+
+class function TInstantDateTime.AttributeType: TInstantAttributeType;
+begin
+  Result := atDateTime;
+end;
+
+function TInstantDateTime.GetAsDate: TDateTime;
+begin
+  Result := DateOf(Value);
+end;
+
+function TInstantDateTime.GetAsTime: TDateTime;
+begin
+  Result := TimeOf(Value);
+end;
+
+procedure TInstantDateTime.SetAsDate(AValue: TDateTime);
+begin
+  Value := DateOf(AValue);
+end;
+
+procedure TInstantDateTime.SetAsTime(AValue: TDateTime);
+begin
+  Value := TimeOf(AValue);
 end;
 
 { TInstantBlob }
@@ -5407,7 +5488,7 @@ class procedure TInstantObject.ConvertToBinary(Converter: TInstantTextToBinaryCo
           Writer.WriteBoolean(SameText(Processor.ReadData, InstantTrueString));
         atString, atMemo:
           Writer.WriteString(Processor.ReadData);
-        atDateTime:
+        atDateTime, atDate, atTime:
           Writer.WriteDate(InstantStrToDateTime(Processor.ReadData));
         atBlob, atGraphic:
           begin
@@ -8820,6 +8901,62 @@ begin
   inherited Items[Index] := Value;
 end;
 
+{ TInstantDate }
+
+class function TInstantDate.AttributeType: TInstantAttributeType;
+begin
+  Result := atDate;
+end;
+
+function TInstantDate.GetAsDate: TDateTime;
+begin
+  Result := Value;
+end;
+
+procedure TInstantDate.SetAsDate(AValue: TDateTime);
+begin
+  Value := DateOf(AValue);
+end;
+
+procedure TInstantDate.SetValue(AValue: TDateTime);
+begin
+  if AValue <> FValue then
+  begin
+    FValue := DateOf(AValue);
+    Changed;
+  end;
+end;
+
+{ TInstantTime }
+
+class function TInstantTime.AttributeType: TInstantAttributeType;
+begin
+  Result := atTime;
+end;
+
+function TInstantTime.GetAsTime: TDateTime;
+begin
+  Result := Value;
+end;
+
+function TInstantTime.GetAsString: string;
+begin
+  Result := TimeToStr(Value);
+end;
+
+procedure TInstantTime.SetAsTime(AValue: TDateTime);
+begin
+  Value := TimeOf(AValue);
+end;
+
+procedure TInstantTime.SetValue(AValue: TDateTime);
+begin
+  if AValue <> FValue then
+  begin
+    FValue := TimeOf(AValue);
+    Changed;
+  end;
+end;
 
 initialization
   RegisterClasses([TInstantClassMetadatas, TInstantClassMetadata,

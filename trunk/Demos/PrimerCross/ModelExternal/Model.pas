@@ -8,7 +8,7 @@ unit Model;
 interface
 
 uses
-  InstantPersistence;
+  InstantPersistence, InstantTypes;
 
 type
   TAddress = class;
@@ -167,25 +167,29 @@ type
 
   TPerson = class(TContact)
   {IOMETADATA stored;
-    BirthDate: DateTime;
     Emails: Parts(TEmail) external 'Person_Emails';
     Employer: Reference(TCompany);
     Picture: Graphic;
-    Salary: Currency; }
-    _BirthDate: TInstantDateTime;
+    Salary: Currency;
+    BirthDate: Date;
+    BirthTime: Time; }
+    _BirthDate: TInstantDate;
+    _BirthTime: TInstantTime;
     _Emails: TInstantParts;
     _Employer: TInstantReference;
     _Picture: TInstantGraphic;
     _Salary: TInstantCurrency;
   private
-    function GetBirthDate: TDateTime;
+    function GetBirthDate: TDate;
+    function GetBirthTime: TTime;
     function GetEmailCount: Integer;
     function GetEmails(Index: Integer): TEmail;
     function GetEmployer: TCompany;
     function GetMainEmailAddress: string;
     function GetPicture: string;
     function GetSalary: Currency;
-    procedure SetBirthDate(Value: TDateTime);
+    procedure SetBirthDate(Value: TDate);
+    procedure SetBirthTime(Value: TTime);
     procedure SetEmails(Index: Integer; Value: TEmail);
     procedure SetMainEmailAddress(const Value: string);
     procedure SetPicture(const Value: string);
@@ -203,7 +207,8 @@ type
     property EmailCount: Integer read GetEmailCount;
     property Emails[Index: Integer]: TEmail read GetEmails write SetEmails;
   published
-    property BirthDate: TDateTime read GetBirthDate write SetBirthDate;
+    property BirthDate: TDate read GetBirthDate write SetBirthDate;
+    property BirthTime: TTime read GetBirthTime write SetBirthTime;
     property Employer: TCompany read GetEmployer;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
     property Picture: string read GetPicture write SetPicture;
@@ -393,9 +398,14 @@ begin
   end;
 end;
 
-function TPerson.GetBirthDate: TDateTime;
+function TPerson.GetBirthDate: TDate;
 begin
   Result := _BirthDate.Value;
+end;
+
+function TPerson.GetBirthTime: TTime;
+begin
+  Result := _BirthTime.Value;
 end;
 
 function TPerson.GetEmailCount: Integer;
@@ -446,9 +456,14 @@ begin
   Result := _Emails.Remove(Email);
 end;
 
-procedure TPerson.SetBirthDate(Value: TDateTime);
+procedure TPerson.SetBirthDate(Value: TDate);
 begin
   _BirthDate.Value := Value;
+end;
+
+procedure TPerson.SetBirthTime(Value: TTime);
+begin
+  _BirthTime.Value := Value;
 end;
 
 procedure TPerson.SetEmails(Index: Integer; Value: TEmail);

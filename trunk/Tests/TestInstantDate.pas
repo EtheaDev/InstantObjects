@@ -1,6 +1,6 @@
 (*
  *   InstantObjects Test Suite
- *   TestInstantDateTime
+ *   TestInstantDate
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
@@ -16,7 +16,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  *
- * The Original Code is: InstantObjects Test Suite/TestInstantDateTime
+ * The Original Code is: InstantObjects Test Suite/TestInstantDate
  *
  * The Initial Developer of the Original Code is: Steven Mitchell
  *
@@ -28,7 +28,7 @@
  *
  * ***** END LICENSE BLOCK ***** *)
 
-unit TestInstantDateTime;
+unit TestInstantDate;
 
 interface
 
@@ -36,11 +36,11 @@ uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
 
-  // Test methods for class TInstantDateTime
-  TestTInstantDateTime = class(TTestCase)
+  // Test methods for class TInstantDate
+  TestTInstantDate = class(TTestCase)
   private
     FConn: TInstantMockConnector;
-    FInstantDateTime: TInstantDateTime;
+    FInstantDate: TInstantDate;
     FOwner: TPerson;
   public
     procedure SetUp; override;
@@ -48,8 +48,8 @@ type
   published
     procedure TestAsBoolean;
     procedure TestAsCurrency;
-    procedure TestAsDateTime;
     procedure TestAsDate;
+    procedure TestAsDateTime;
     procedure TestAsTime;
     procedure TestAsFloat;
     procedure TestAsInteger;
@@ -67,7 +67,7 @@ implementation
 
 uses SysUtils, testregistry, InstantClasses;
 
-procedure TestTInstantDateTime.SetUp;
+procedure TestTInstantDate.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockBroker;
@@ -77,22 +77,22 @@ begin
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
 
   FOwner := TPerson.Create(FConn);
-  FInstantDateTime := FOwner._BirthDate;
-  FInstantDateTime.Value := 100.5;
+  FInstantDate := FOwner._EmploymentDate;
+  FInstantDate.Value := 100;
 end;
 
-procedure TestTInstantDateTime.TearDown;
+procedure TestTInstantDate.TearDown;
 begin
-  FInstantDateTime := nil;
+  FInstantDate := nil;
   FreeAndNil(FOwner);
   InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
 end;
 
-procedure TestTInstantDateTime.TestAsBoolean;
+procedure TestTInstantDate.TestAsBoolean;
 begin
   try
-    FInstantDateTime.AsBoolean := True;
+    FInstantDate.AsBoolean := True;
     Fail('Exception was not thrown for Set AsBoolean!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -100,7 +100,7 @@ begin
       raise;
   end;
   try
-    FInstantDateTime.AsBoolean;
+    FInstantDate.AsBoolean;
     Fail('Exception was not thrown for Get AsBoolean!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -109,10 +109,10 @@ begin
   end;
 end;
 
-procedure TestTInstantDateTime.TestAsCurrency;
+procedure TestTInstantDate.TestAsCurrency;
 begin
   try
-    FInstantDateTime.AsCurrency := 20.5;
+    FInstantDate.AsCurrency := 20.5;
     Fail('Exception was not thrown for Set AsCurrency!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -120,7 +120,7 @@ begin
       raise;
   end;
   try
-    FInstantDateTime.AsCurrency;
+    FInstantDate.AsCurrency;
     Fail('Exception was not thrown for Get AsCurrency!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -129,31 +129,44 @@ begin
   end;
 end;
 
-procedure TestTInstantDateTime.TestAsDateTime;
+procedure TestTInstantDate.TestAsDate;
 begin
-  FInstantDateTime.AsDateTime := 12.45;
-  AssertEquals(12.45, FInstantDateTime.Value);
-  AssertEquals(12.45, FInstantDateTime.AsDateTime);
+  FInstantDate.AsDate := 12;
+  AssertEquals(12, FInstantDate.Value);
+  AssertEquals(12, FInstantDate.AsDate);
 end;
 
-procedure TestTInstantDateTime.TestAsDate;
+procedure TestTInstantDate.TestAsDateTime;
 begin
-  FInstantDateTime.AsDate := 120.00;
-  AssertEquals(120.00, FInstantDateTime.Value);
-  AssertEquals(120.00, FInstantDateTime.AsDate);
+  FInstantDate.AsDateTime := 12;
+  AssertEquals(12, FInstantDate.Value);
+  AssertEquals(12, FInstantDate.AsDateTime);
 end;
 
-procedure TestTInstantDateTime.TestAsTime;
-begin
-  FInstantDateTime.AsTime := 0.45;
-  AssertEquals(0.45, FInstantDateTime.Value);
-  AssertEquals(0.45, FInstantDateTime.AsTime);
-end;
-
-procedure TestTInstantDateTime.TestAsFloat;
+procedure TestTInstantDate.TestAsTime;
 begin
   try
-    FInstantDateTime.AsFloat := 20.5;
+    FInstantDate.AsTime := 0.12;
+    Fail('Exception was not thrown for Set AsTime!'); // should never get here
+  except
+    on E: EInstantAccessError do ; // do nothing as this is expected
+    else
+      raise;
+  end;
+  try
+    FInstantDate.AsTime;
+    Fail('Exception was not thrown for Get AsTime!'); // should never get here
+  except
+    on E: EInstantAccessError do ; // do nothing as this is expected
+    else
+      raise;
+  end;
+end;
+
+procedure TestTInstantDate.TestAsFloat;
+begin
+  try
+    FInstantDate.AsFloat := 20.5;
     Fail('Exception was not thrown for Set AsFloat!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -161,7 +174,7 @@ begin
       raise;
   end;
   try
-    FInstantDateTime.AsFloat;
+    FInstantDate.AsFloat;
     Fail('Exception was not thrown for Get AsFloat!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -170,10 +183,10 @@ begin
   end;
 end;
 
-procedure TestTInstantDateTime.TestAsInteger;
+procedure TestTInstantDate.TestAsInteger;
 begin
   try
-    FInstantDateTime.AsInteger := 20;
+    FInstantDate.AsInteger := 20;
     Fail('Exception was not thrown for Set AsInteger!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -181,7 +194,7 @@ begin
       raise;
   end;
   try
-    FInstantDateTime.AsInteger;
+    FInstantDate.AsInteger;
     Fail('Exception was not thrown for Get AsInteger!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -190,14 +203,14 @@ begin
   end;
 end;
 
-procedure TestTInstantDateTime.TestAsObject;
+procedure TestTInstantDate.TestAsObject;
 var
   vObj: TInstantObject;
 begin
   vObj := TInstantObject.Create(FConn);
   try
     try
-      FInstantDateTime.AsObject := vObj;
+      FInstantDate.AsObject := vObj;
       Fail('Exception was not thrown for Set AsObject!'); // should never get here
     except
       on E: EInstantAccessError do ; // do nothing as this is expected
@@ -209,7 +222,7 @@ begin
   end;
 
   try
-    FInstantDateTime.AsObject;
+    FInstantDate.AsObject;
     Fail('Exception was not thrown for Get AsObject!'); // should never get here
   except
     on E: EInstantAccessError do ; // do nothing as this is expected
@@ -218,92 +231,92 @@ begin
   end;
 end;
 
-procedure TestTInstantDateTime.TestAssign;
+procedure TestTInstantDate.TestAssign;
 var
-  vSource: TInstantDateTime;
+  vSource: TInstantDate;
 begin
-  AssertEquals(100.5, FInstantDateTime.Value);
+  AssertEquals(100, FInstantDate.Value);
 
-  vSource := TInstantDateTime.Create;
+  vSource := TInstantDate.Create;
   try
-    VSource.Value := 115.3;
-    FInstantDateTime.Assign(vSource);
-    AssertEquals(115.3, FInstantDateTime.Value);
+    VSource.Value := 115;
+    FInstantDate.Assign(vSource);
+    AssertEquals(115, FInstantDate.Value);
   finally
     vSource.Free;
   end;
 end;
 
-procedure TestTInstantDateTime.TestAsString;
+procedure TestTInstantDate.TestAsString;
 begin
-  FInstantDateTime.AsString := DateTimeToStr(14.5);
-  AssertEquals(14.5, FInstantDateTime.Value);
-  AssertEquals(DateTimeToStr(14.5), FInstantDateTime.AsString);
+  FInstantDate.AsString := DateTimeToStr(14.5);
+  AssertEquals(14, FInstantDate.Value);
+  AssertEquals(DateTimeToStr(14), FInstantDate.AsString);
 end;
 
-procedure TestTInstantDateTime.TestAsVariant;
+procedure TestTInstantDate.TestAsVariant;
 begin                                           
-  FInstantDateTime.AsVariant := 150.6;
-  AssertEquals(150.6, FInstantDateTime.Value);
-  AssertEquals(150.6, FInstantDateTime.AsVariant);
+  FInstantDate.AsVariant := 150.6;
+  AssertEquals(150, FInstantDate.Value);
+  AssertEquals(150, FInstantDate.AsVariant);
 end;
 
-procedure TestTInstantDateTime.TestDisplayText;
+procedure TestTInstantDate.TestDisplayText;
 var
   vDateTimeStr: string;
 begin
-  AssertEquals(FInstantDateTime.AsString, FInstantDateTime.DisplayText);
+  AssertEquals(FInstantDate.AsString, FInstantDate.DisplayText);
 
-  DateTimeToString(vDateTimeStr, 'yyyymmddhhnnsszzz', FInstantDateTime.Value);
-  FInstantDateTime.Metadata.EditMask := 'yyyymmddhhnnsszzz';
-  AssertEquals(vDateTimeStr, FInstantDateTime.DisplayText);
+  DateTimeToString(vDateTimeStr, 'yyyymmdd', FInstantDate.Value);
+  FInstantDate.Metadata.EditMask := 'yyyymmdd';
+  AssertEquals(vDateTimeStr, FInstantDate.DisplayText);
 
-  FInstantDateTime.Value := 113.8;
-  DateTimeToString(vDateTimeStr, 'dd mmm yyyy hh:nn:ss ampm',
-    FInstantDateTime.Value);
-  FInstantDateTime.Metadata.EditMask := 'dd mmm yyyy hh:nn:ss ampm';
-  AssertEquals(vDateTimeStr, FInstantDateTime.DisplayText);
+  FInstantDate.Value := 113;
+  DateTimeToString(vDateTimeStr, 'dd mmm yyyy',
+    FInstantDate.Value);
+  FInstantDate.Metadata.EditMask := 'dd mmm yyyy';
+  AssertEquals(vDateTimeStr, FInstantDate.DisplayText);
 end;
 
-procedure TestTInstantDateTime.TestIsDefault;
+procedure TestTInstantDate.TestIsDefault;
 begin
-  AssertFalse(FInstantDateTime.IsDefault);
+  AssertFalse(FInstantDate.IsDefault);
 
-  FInstantDateTime.Value := 0;
-  AssertTrue(FInstantDateTime.IsDefault);
+  FInstantDate.Value := 0;
+  AssertTrue(FInstantDate.IsDefault);
 end;
 
-procedure TestTInstantDateTime.TestReset;
+procedure TestTInstantDate.TestReset;
 var
   vDateTimeStr: string;
 begin
-  AssertNotNull(FInstantDateTime.Metadata);
+  AssertNotNull(FInstantDate.Metadata);
   // Metadata.DefaultValue is '';
-  FInstantDateTime.Reset;
-  AssertEquals(0, FInstantDateTime.Value);
+  FInstantDate.Reset;
+  AssertEquals(0, FInstantDate.Value);
 
-  DateTimeToString(vDateTimeStr, 'yyyymmddhhnnsszzz', 100.5);
-  FInstantDateTime.Metadata.DefaultValue := vDateTimeStr;
-  FInstantDateTime.Reset;
-  AssertEquals(100.5, FInstantDateTime.Value);
+  DateTimeToString(vDateTimeStr, 'yyyymmdd', 100);
+  FInstantDate.Metadata.DefaultValue := vDateTimeStr;
+  FInstantDate.Reset;
+  AssertEquals(100, FInstantDate.Value);
 
-  FInstantDateTime.Metadata := nil;
-  AssertNull(FInstantDateTime.Metadata);
-  FInstantDateTime.Reset;
-  AssertEquals(0, FInstantDateTime.Value);
+  FInstantDate.Metadata := nil;
+  AssertNull(FInstantDate.Metadata);
+  FInstantDate.Reset;
+  AssertEquals(0, FInstantDate.Value);
 end;
 
-procedure TestTInstantDateTime.TestValue;
+procedure TestTInstantDate.TestValue;
 begin
-  AssertEquals(100.5, FInstantDateTime.Value);
-  FInstantDateTime.Value := 151.3;
-  AssertEquals(151.3, FInstantDateTime.Value);
+  AssertEquals(100, FInstantDate.Value);
+  FInstantDate.Value := 151;
+  AssertEquals(151, FInstantDate.Value);
 end;
 
 initialization
   // Register any test cases with the test runner
 {$IFNDEF CURR_TESTS}
-  RegisterTests([TestTInstantDateTime]);
+  RegisterTests([TestTInstantDate]);
 {$ENDIF}
 
 end.

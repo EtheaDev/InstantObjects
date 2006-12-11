@@ -160,6 +160,14 @@ type
 
   { MS SQL Server }
 
+  TInstantDBXMSSQLSQLGenerator = class(TInstantSQLGenerator)
+  protected
+    function InternalGenerateAlterFieldSQL(OldMetadata,  NewMetadata: TInstantFieldMetadata): string; override;
+    function InternalGenerateDropFieldSQL(Metadata: TInstantFieldMetadata): string; override;
+    function InternalGenerateDropIndexSQL(Metadata: TInstantIndexMetadata): string; override;
+    function EmbraceIndex(const IndexName: string): string; virtual;
+  end;
+
   TInstantDBXMSSQLBroker = class(TInstantDBXBroker)
   protected
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
@@ -169,6 +177,8 @@ type
     function GetDBMSName: string; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
+  public
+    class function GeneratorClass: TInstantSQLGeneratorClass; override;
   end;
 
   TInstantDBXMSSQLResolver = class(TInstantSQLResolver)
@@ -522,7 +532,9 @@ const
     'VARCHAR',
     'BLOB SUB_TYPE 1',
     'TIMESTAMP',
-    'BLOB');
+    'BLOB',
+    'TIMESTAMP',
+    'TIMESTAMP');
 begin
   Result := Types[DataType];
 end;
@@ -564,7 +576,9 @@ const
     'VARCHAR',
     'TEXT',
     'DATETIME',
-    'IMAGE');
+    'IMAGE',
+    'DATETIME',
+    'DATETIME');
 begin
   Result := Types[DataType];
 end;
@@ -581,6 +595,11 @@ begin
   Result := TInstantDBXMSSQLResolver.Create(Self, Map);
 end;
 
+class function TInstantDBXMSSQLBroker.GeneratorClass: TInstantSQLGeneratorClass;
+begin
+  Result := TInstantDBXMSSQLSQLGenerator;
+end;
+
 function TInstantDBXMSSQLBroker.GetDBMSName: string;
 begin
   Result := 'MS SQL Server';
@@ -594,6 +613,39 @@ end;
 function TInstantDBXMSSQLBroker.InternalCreateQuery: TInstantQuery;
 begin
   Result := TInstantDBXMSSQLQuery.Create(Connector);
+end;
+
+{ TInstantDBXMSSQLSQLGenerator }
+
+function TInstantDBXMSSQLSQLGenerator.EmbraceIndex(
+  const IndexName: string): string;
+begin
+  Result := InstantEmbrace(IndexName, Delimiters);
+end;
+
+function TInstantDBXMSSQLSQLGenerator.InternalGenerateAlterFieldSQL(
+  OldMetadata, NewMetadata: TInstantFieldMetadata): string;
+begin
+  Result := Format('ALTER TABLE %s ALTER COLUMN %s %s',
+    [EmbraceTable(OldMetadata.TableMetadata.Name),
+     EmbraceField(OldMetadata.Name),
+     Broker.DataTypeToColumnType(NewMetadata.DataType, NewMetadata.Size)]);
+end;
+
+function TInstantDBXMSSQLSQLGenerator.InternalGenerateDropFieldSQL(
+  Metadata: TInstantFieldMetadata): string;
+begin
+  Result := Format('ALTER TABLE %s DROP COLUMN %s',
+    [EmbraceTable(Metadata.TableMetadata.Name),
+     EmbraceField(Metadata.Name)]);
+end;
+
+function TInstantDBXMSSQLSQLGenerator.InternalGenerateDropIndexSQL(
+  Metadata: TInstantIndexMetadata): string;
+begin
+  Result := Format('DROP INDEX %s.%s',
+          [EmbraceTable(Metadata.TableMetadata.Name),
+           EmbraceIndex(Metadata.Name)]);
 end;
 
 { TInstantDBXOracleBroker }
@@ -621,7 +673,9 @@ const
     'VARCHAR',
     'CLOB',
     'DATE',
-    'BLOB');
+    'BLOB',
+    'DATE',
+    'DATE');
 begin
   Result := Types[DataType];
 end;
@@ -649,7 +703,9 @@ const
     'VARCHAR',
     'CLOB (1000 K)',
     'TIMESTAMP',
-    'BLOB (1000 K)');
+    'BLOB (1000 K)',
+    'TIMESTAMP',
+    'TIMESTAMP');
 begin
   Result := Types[DataType];
 end;
@@ -690,7 +746,9 @@ const
     'VARCHAR',
     'TEXT',
     'DATETIME',
-    'BLOB');
+    'BLOB',
+    'DATE',
+    'TIME');
 begin
   Result := Types[DataType];
 end;

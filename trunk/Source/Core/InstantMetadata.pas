@@ -538,9 +538,9 @@ uses SysUtils, TypInfo, InstantPersistence, InstantUtils;
 const
   AttributeClasses: array[TInstantAttributeType] of TInstantAttributeClass = (
     nil, TInstantInteger, TInstantFloat, TInstantCurrency, TInstantBoolean,
-    TInstantString, TInstantDateTime, TInstantBlob, TInstantMemo, 
+    TInstantString, TInstantDateTime, TInstantBlob, TInstantMemo,
     TInstantGraphic, TInstantPart, TInstantReference, TInstantParts, 
-    TInstantReferences);
+    TInstantReferences, TInstantDate, TInstantTime);
 
 { TInstantMetadata }
 

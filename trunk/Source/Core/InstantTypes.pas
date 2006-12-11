@@ -44,7 +44,7 @@ type
   TInstantStorageKind = (skEmbedded, skExternal);
   TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean,
     atString, atDateTime, atBlob, atMemo, atGraphic,
-    atPart, atReference, atParts, atReferences);
+    atPart, atReference, atParts, atReferences, atDate, atTime);
   TInstantAttributeCategory = (acUnknown, acSimple, acElement, acContainer);
 
   TInstantGraphicFileFormat = (gffUnknown, gffBmp, gffTiff, gffJpeg, gffPng,
@@ -53,7 +53,7 @@ type
   TInstantPersistence = (peEmbedded, peStored);
 
   TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString,
-    dtMemo, dtDateTime, dtBlob);
+    dtMemo, dtDateTime, dtBlob, dtDate, dtTime);
   TInstantDataTypes = set of TInstantDataType;
   TInstantFieldOption = (foRequired, foIndexed);
   TInstantFieldOptions = set of TInstantFieldOption;
@@ -80,6 +80,9 @@ type
 
   TInstantWarningEvent = procedure (const Sender: TObject;
     const AWarningText: string) of object;
+
+  TTime = type TDateTime;
+  TDate = type TDateTime;
 
 implementation
 

@@ -889,6 +889,9 @@ type
     procedure SetName(const Value: string); override;
     procedure VisibilityFilter(Sender: TInstantCodeObject;
       var Include: Boolean; Arg: Pointer);
+    procedure AddUses(const AUnitNames: array of string; Scope:
+      TInstantCodeScope; var Source: string; ChangeInfo:
+      TInstantCodeClassChangeInfo);
     property SubClassList: TList read GetSubClassList;
   public
     constructor Create(AOwner: TInstantCodeObject); override;
@@ -1241,15 +1244,15 @@ type
     procedure SetModuleTypeName(const Value: string);
   protected
     function GetModule: TInstantCodeModule; override;
-    procedure InsertType(AType: TInstantCodeType);
     procedure InternalRead(Reader: TInstantCodeReader); override;
     procedure InternalWrite(Writer: TInstantCodeWriter); override;
-    procedure RemoveType(AType: TInstantCodeType);
   public
     constructor Create(AOwner: TInstantCodeObject); override;
     destructor Destroy; override;
     function FindClass(const Name: string): TInstantCodeClass;
     function FindType(const Name: string): TInstantCodeType;
+    procedure InsertType(AType: TInstantCodeType);
+    procedure RemoveType(AType: TInstantCodeType);
     procedure LoadFromFile(const FileName: string; Scope: TInstantCodeScope);
     procedure LoadFromStream(Stream: TStream; Scope: TInstantCodeScope);
     procedure LoadFromString(const Str: string; Scope: TInstantCodeScope);
@@ -1413,7 +1416,7 @@ type
     function AddMethod(AClass: TInstantCodeClass; Template: TInstantCodeMethod): TInstantCodeMethod;
     function AddProc(Template: TInstantCodeProc): TInstantCodeProc;
     function AddProperty(AClass: TInstantCodeClass; Template: TInstantCodeProperty): TInstantCodeProperty;
-    procedure AddUses(const AUnitName: string; Scope: TInstantCodeScope);
+    procedure AddUses(const AUnitNames: array of string; Scope: TInstantCodeScope = scInterface);
     procedure ChangeAttribute(AClass: TInstantCodeClass; Name: string;
       Template: TInstantCodeAttribute);
     procedure ChangeClass(ChangeInfo: TInstantCodeClassChangeInfo; NewClass: TInstantCodeClass);
@@ -1570,6 +1573,10 @@ begin
       Result := 'string';
     atDateTime:
       Result := 'TDateTime';
+    atDate:
+      Result := 'TDate';
+    atTime:
+      Result := 'TTime';
   else
     Result := '';
   end;
@@ -1592,8 +1599,9 @@ const
     '', // atPart
     '', // atReference
     '', // atParts,
-    ''  // atReferences
-  );
+    '',  // atReferences
+    'TDate',
+    'TTime');
 begin
   for Result := Low(Result) to High(Result) do
     if SameText(PropType, TypeNames[Result]) then
@@ -1615,6 +1623,8 @@ begin
     AddObject('String', TStringTypeProcessor.Create);
     AddObject('Memo', TStringTypeProcessor.Create);
     AddObject('DateTime', TDateTimeTypeProcessor.Create);
+    AddObject('Date', TDateTimeTypeProcessor.Create);
+    AddObject('Time', TDateTimeTypeProcessor.Create);
     AddObject('Part', TPartTypeProcessor.Create);
     AddObject('Reference', TObjectTypeProcessor.Create);
     AddObject('Parts', TContainerTypeProcessor.Create);
@@ -4813,6 +4823,24 @@ begin
   Result := TInstantCodeProperty(AddMember(TInstantCodeProperty, Visibility));
 end;
 
+procedure TInstantCodeClass.AddUses(const AUnitNames: array of string;
+  Scope: TInstantCodeScope; var Source: string;
+  ChangeInfo: TInstantCodeClassChangeInfo);
+var
+  Modifier: TInstantCodeModifier;
+begin
+  if Assigned(ChangeInfo.Modifier) then
+    Modifier := ChangeInfo.Modifier
+  else
+    Modifier := TInstantCodeModifier.Create(Source, Self.Project);
+  try
+    Modifier.AddUses(AUnitNames, Scope);
+  finally
+    if not Assigned(ChangeInfo.Modifier) then
+      Modifier.Free;
+  end;
+end;
+
 procedure TInstantCodeClass.ApplyToSource(var Source: string;
   ChangeInfo: TInstantCodeClassChangeInfo);
 var
@@ -4825,7 +4853,6 @@ begin
     Modifier := TInstantCodeModifier.Create(Source, Self.Project);
   try
     with Modifier do
-    begin
       case ChangeInfo.ChangeType of
         ctNew:
           AddClass(Self);
@@ -4834,12 +4861,13 @@ begin
         ctDelete:
           DeleteClass(Self);
       end;
-      AddUses('InstantPersistence', scInterface);
-    end;
   finally
     if not Assigned(ChangeInfo.Modifier) then
       Modifier.Free;
   end;
+  AddUses(['InstantPersistence', 'InstantTypes'],
+      scInterface, Source, ChangeInfo);
+  AddUses(['InstantMetadata'], scImplementation, Source, ChangeInfo);
 end;
 
 procedure TInstantCodeClass.AssignAttributes(List: TList);
@@ -7488,33 +7516,56 @@ begin
   Result.Setter := AddMethod(AClass, Template.Setter);
 end;
 
-procedure TInstantCodeModifier.AddUses(const AUnitName: string;
-  Scope: TInstantCodeScope);
+procedure TInstantCodeModifier.AddUses(const AUnitNames: array of string; Scope: TInstantCodeScope);
 var
   Section: TInstantCodeSection;
   UsesClause: TInstantCodeUsesClause;
+  iNames: Integer;
+  sStr: string;
 begin
+  { check for an empty array }
+  if Length(AUnitNames) = 0 then
+    Exit;
+
   with Module do
     if Scope = scInterface then
       Section := InterfaceSection else
       Section := ImplementationSection;
   with Section do
   begin
+    sStr := '';
     UsesClause := FindUsesClause;
     if Assigned(UsesClause) then
     begin
-      if Assigned(UsesClause.Find(AUnitName)) then
-        Exit;
-      InsertMode := imBefore;
-      CursorPos := UsesClause.EndPos;
-      MoveCursor(-1);
-      InsertText(', ' + AUnitName, True);
-    end else
+      { check an existing uses clause and add missing units }
+      for iNames := Low(AUnitNames) to High(AUnitNames) do
+        { build the required string first }
+        if (AUnitNames[iNames] <> '') and
+        	  not Assigned(UsesClause.Find(AUnitNames[iNames])) then
+          sStr := sStr + ', ' + AUnitNames[iNames];
+      if sStr <> '' then
+      begin
+        InsertMode := imBefore;
+        CursorPos := UsesClause.EndPos;
+        MoveCursor(-1);
+        InsertText(sStr, True);
+      end;
+    end
+    else
     begin
+      { uses clause was not found, add all units }
       InsertMode := imAfter;
       CursorPos := StartPos;
       SkipLine;
-      InsertText(CRLF + 'uses' + CRLF + '  ' + AUnitName + ';' + CRLF);
+      for iNames := Low(AUnitNames) to High(AUnitNames) do
+      begin
+        if AUnitNames[iNames] <> ''  then
+          if sStr = '' then
+            sStr := '  ' + AUnitNames[iNames]
+          else
+            sStr := sStr + ', ' + AUnitNames[iNames];
+      end;
+      InsertText(CRLF + 'uses' + CRLF + sStr + ';' + CRLF)
     end;
   end;
 end;

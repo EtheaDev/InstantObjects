@@ -769,7 +769,8 @@ function AttributeTypeToFieldType(
 const
   FieldTypes: array[TInstantAttributeType] of TFieldType = (
     ftUnknown, ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftDateTime,
-    ftBlob, ftMemo, ftBlob, ftInteger, ftInteger, ftDataSet, ftDataSet);
+    ftBlob, ftMemo, ftBlob, ftInteger, ftInteger, ftDataSet, ftDataSet,
+    ftDate, ftTime);
 begin
   Result := FieldTypes[AttributeType];
 end;
@@ -2162,6 +2163,7 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
     ATypeInfo : PTypeInfo;
   begin
     ATypeInfo := PropInfo.PropType^;
+     
     if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
       Result := DB.ftBcd
     else
@@ -2172,7 +2174,7 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
       Result := DB.ftDate
     else if ATypeInfo = TypeInfo(TTime) then
       Result := DB.ftTime
-*)      
+*)
     else
       Result := DB.ftFloat;
   end;
@@ -2225,7 +2227,12 @@ begin
     tkInteger:
       FieldType := ftInteger;
     tkFloat:
-      FieldType := FloatFieldType;
+      if PropInfo^.PropType^^.Name = 'TTime' then
+        FieldType := DB.ftTime
+      else if PropInfo^.PropType^^.Name = 'TDate' then
+        FieldType := DB.ftDate
+      else
+        FieldType := FloatFieldType;
     tkClass:
       FieldType := ftInteger;
     tkSet:

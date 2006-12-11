@@ -405,7 +405,7 @@ procedure TInstantBDEConnector.InternalBuildDatabase(Scheme: TInstantScheme);
   procedure CreateTable(TableMetadata: TInstantTableMetadata);
   const
     FieldTypes: array[TInstantDataType] of TFieldType =
-      (ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
+      (ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob, ftDate, ftTime);
   var
     I: Integer;
     Table: TTable;
@@ -758,7 +758,7 @@ end;
 procedure TInstantDBBuildBDEAddTableCommand.InternalExecute;
 const
   FieldTypes: array[TInstantDataType] of TFieldType =
-    (ftInteger, ftFloat, ftCurrency, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob);
+    (ftInteger, ftFloat, ftCurrency, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob, ftDate, ftTime);
 var
   I: Integer;
   Table: TTable;

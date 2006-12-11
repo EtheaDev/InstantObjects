@@ -316,6 +316,8 @@ type
     procedure ClearBlob(Attribute: TInstantBlob); virtual;
     procedure ClearBoolean(Attribute: TInstantBoolean); virtual;
     procedure ClearDateTime(Attribute: TInstantDateTime); virtual;
+    procedure ClearDate(Attribute: TInstantDate); virtual;
+    procedure ClearTime(Attribute: TInstantTime); virtual;
     procedure ClearInteger(Attribute: TInstantInteger); virtual;
     procedure ClearFloat(Attribute: TInstantFloat); virtual;
     procedure ClearCurrency(Attribute: TInstantCurrency); virtual;
@@ -356,6 +358,8 @@ type
     procedure ReadBlob(Attribute: TInstantBlob); virtual;
     procedure ReadBoolean(Attribute: TInstantBoolean); virtual;
     procedure ReadDateTime(Attribute: TInstantDateTime); virtual;
+    procedure ReadDate(Attribute: TInstantDate); virtual;
+    procedure ReadTime(Attribute: TInstantTime); virtual;
     procedure ReadInteger(Attribute: TInstantInteger); virtual;
     procedure ReadFloat(Attribute: TInstantFloat); virtual;
     procedure ReadCurrency(Attribute: TInstantCurrency); virtual;
@@ -373,6 +377,8 @@ type
     procedure WriteBlob(Attribute: TInstantBlob); virtual;
     procedure WriteBoolean(Attribute: TInstantBoolean); virtual;
     procedure WriteDateTime(Attribute: TInstantDateTime); virtual;
+    procedure WriteDate(Attribute: TInstantDate); virtual;
+    procedure WriteTime(Attribute: TInstantTime); virtual;
     procedure WriteFloat(Attribute: TInstantFloat); virtual;
     procedure WriteCurrency(Attribute: TInstantCurrency); virtual;
     procedure WriteInteger(Attribute: TInstantInteger); virtual;
@@ -463,6 +469,10 @@ type
     function ReadBooleanField(DataSet: TDataSet; const FieldName: string):
       Boolean; virtual;
     function ReadDateTimeField(DataSet: TDataSet; const FieldName: string):
+      TDateTime; virtual;
+    function ReadDateField(DataSet: TDataSet; const FieldName: string):
+      TDateTime; virtual;
+    function ReadTimeField(DataSet: TDataSet; const FieldName: string):
       TDateTime; virtual;
     function ReadFloatField(DataSet: TDataSet; const FieldName: string): Double;
       virtual;
@@ -969,6 +979,7 @@ uses
 {$IFDEF D6+}
   Variants,
 {$ENDIF}
+  DateUtils,
   TypInfo, InstantUtils, InstantRtti;
 
 const
@@ -1719,6 +1730,10 @@ begin
         ClearString(Attribute as TInstantString);
       atDateTime:
         ClearDateTime(Attribute as TInstantDateTime);
+      atDate:
+        ClearDate(Attribute as TInstantDate);
+      atTime:
+        ClearTime(Attribute as TInstantTime);
       atBlob:
         ClearBlob(Attribute as TInstantBlob);
       atGraphic:
@@ -1750,6 +1765,14 @@ begin
 end;
 
 procedure TInstantNavigationalResolver.ClearDateTime(Attribute: TInstantDateTime);
+begin
+end;
+
+procedure TInstantNavigationalResolver.ClearDate(Attribute: TInstantDate);
+begin
+end;
+
+procedure TInstantNavigationalResolver.ClearTime(Attribute: TInstantTime);
 begin
 end;
 
@@ -2083,6 +2106,10 @@ begin
         ReadString(Attribute as TInstantString);
       atDateTime:
         ReadDateTime(Attribute as TInstantDateTime);
+      atDate:
+        ReadDate(Attribute as TInstantDate);
+      atTime:
+        ReadTime(Attribute as TInstantTime);
       atBlob:
         ReadBlob(Attribute as TInstantBlob);
       atGraphic:
@@ -2124,6 +2151,20 @@ procedure TInstantNavigationalResolver.ReadDateTime(
 begin
   with Attribute do
     Value := FieldByName(Metadata.FieldName).AsDateTime;
+end;
+
+procedure TInstantNavigationalResolver.ReadDate(
+  Attribute: TInstantDate);
+begin
+  with Attribute do
+    Value := DateOf(FieldByName(Metadata.FieldName).AsDateTime);
+end;
+
+procedure TInstantNavigationalResolver.ReadTime(
+  Attribute: TInstantTime);
+begin
+  with Attribute do
+    Value := TimeOf(FieldByName(Metadata.FieldName).AsDateTime);
 end;
 
 procedure TInstantNavigationalResolver.ReadFloat(Attribute: TInstantFloat);
@@ -2320,6 +2361,10 @@ begin
         WriteString(Attribute as TInstantString);
       atDateTime:
         WriteDateTime(Attribute as TInstantDateTime);
+      atDate:
+        WriteDate(Attribute as TInstantDate);
+      atTime:
+        WriteTime(Attribute as TInstantTime);
       atBlob:
         WriteBlob(Attribute as TInstantBlob);
       atGraphic:
@@ -2362,6 +2407,20 @@ end;
 
 procedure TInstantNavigationalResolver.WriteDateTime(
   Attribute: TInstantDateTime);
+begin
+  with Attribute do
+    FieldByName(Metadata.FieldName).AsDateTime := Value;
+end;
+
+procedure TInstantNavigationalResolver.WriteDate(
+  Attribute: TInstantDate);
+begin
+  with Attribute do
+    FieldByName(Metadata.FieldName).AsDateTime := Value;
+end;
+
+procedure TInstantNavigationalResolver.WriteTime(
+  Attribute: TInstantTime);
 begin
   with Attribute do
     FieldByName(Metadata.FieldName).AsDateTime := Value;
@@ -2553,6 +2612,18 @@ var
       (Attribute as TInstantDateTime).Value;
   end;
 
+  procedure AddDateAttributeParam;
+  begin
+    AddParam(Params, FieldName, ftDate).AsDateTime :=
+      (Attribute as TInstantDate).Value;
+  end;
+
+  procedure AddTimeAttributeParam;
+  begin
+    AddParam(Params, FieldName, ftTime).AsDateTime :=
+      (Attribute as TInstantTime).Value;
+  end;
+
   procedure AddFloatAttributeParam;
   begin
     AddParam(Params, FieldName, ftFloat).AsFloat :=
@@ -2664,6 +2735,10 @@ begin
       AddBooleanAttributeParam;
     atDateTime:
       AddDateTimeAttributeParam;
+    atDate:
+      AddDateAttributeParam;
+    atTime:
+      AddTimeAttributeParam;
     atFloat:
       AddFloatAttributeParam;
     atCurrency:
@@ -3236,6 +3311,18 @@ var
       ReadDateTimeField(DataSet, AFieldName);
   end;
 
+  procedure ReadDateAttribute;
+  begin
+    (Attribute as TInstantDate).Value :=
+      ReadDateField(DataSet, AFieldName);
+  end;
+
+  procedure ReadTimeAttribute;
+  begin
+    (Attribute as TInstantTime).Value :=
+      ReadTimeField(DataSet, AFieldName);
+  end;
+
   procedure ReadFloatAttribute;
   begin
     (Attribute as TInstantFloat).Value := ReadFloatField(DataSet, AFieldName);
@@ -3398,6 +3485,10 @@ begin
         ReadStringAttribute;
       atDateTime:
         ReadDateTimeAttribute;
+      atDate:
+        ReadDateAttribute;
+      atTime:
+        ReadTimeAttribute;
       atBlob, atGraphic:
         ReadBlobAttribute;
       atMemo:
@@ -3446,6 +3537,18 @@ function TInstantSQLResolver.ReadDateTimeField(DataSet: TDataSet;
   const FieldName: string): TDateTime;
 begin
   Result := DataSet.FieldByName(FieldName).AsDateTime;
+end;
+
+function TInstantSQLResolver.ReadDateField(DataSet: TDataSet;
+  const FieldName: string): TDateTime;
+begin
+  Result := DateOf(DataSet.FieldByName(FieldName).AsDateTime);
+end;
+
+function TInstantSQLResolver.ReadTimeField(DataSet: TDataSet;
+  const FieldName: string): TDateTime;
+begin
+  Result := TimeOf(DataSet.FieldByName(FieldName).AsDateTime);
 end;
 
 function TInstantSQLResolver.ReadFloatField(DataSet: TDataSet;

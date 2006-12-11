@@ -107,9 +107,12 @@ type
     function GetDataSet: TCustomADODataSet;
   protected
     function CreateDataSet: TDataSet; override;
+    function CreateNavigationalLinkResolver(const ATableName: string):
+        TInstantNavigationalLinkResolver; override;
     function Find(const AClassName, AObjectId: string): Boolean;
     function Locate(const AClassName, AObjectId: string): Boolean; override;
   public
+    function FormatTableName(const ATableName: string): string; virtual;
     property Broker: TInstantADOBroker read GetBroker;
     property DataSet: TCustomADODataSet read GetDataSet;
   end;
@@ -146,6 +149,23 @@ type
   public
     destructor Destroy; override;
     property Connector: TInstantADOConnector read GetConnector;
+  end;
+
+  TInstantADOLinkResolver = class(TInstantNavigationalLinkResolver)
+  private
+    function GetBroker: TInstantADOBroker;
+    function GetDataSet: TADODataSet;
+    function GetResolver: TInstantADOResolver;
+  protected
+    function CreateDataSet: TDataSet; override;
+    procedure SetDatasetParentRange(const AParentClass, AParentId: string);
+        override;
+  public
+    constructor Create(AResolver: TInstantNavigationalResolver; const ATableName:
+        string);
+    property Broker: TInstantADOBroker read GetBroker;
+    property DataSet: TADODataSet read GetDataSet;
+    property Resolver: TInstantADOResolver read GetResolver;
   end;
 
   { MS Jet }
@@ -331,7 +351,9 @@ procedure TInstantADOConnector.BuildDatabaseADOX(Scheme: TInstantScheme);
       (adVarChar,       adVarWChar,      adVarChar,       adVarChar,     adVarChar,       adVarChar),      // dtString
       (adLongVarChar,   adLongVarWChar,  adLongVarChar,   adVarBinary,   adLongVarChar,   adLongVarChar),  // dtMemo
       (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate),         // dtDateTime
-      (adLongVarBinary, adLongVarBinary, adLongVarBinary, adVarBinary,   adLongVarBinary, adLongVarBinary) // dtBlob
+      (adLongVarBinary, adLongVarBinary, adLongVarBinary, adVarBinary,   adLongVarBinary, adLongVarBinary), // dtBlob
+      (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate),         // dtDate
+      (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate)          // dtTime
     );
   var
     Column: _Column;
@@ -447,7 +469,9 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
         'VARCHAR',
         'MEMO',
         'DATETIME',
-        'BLOB'
+        'BLOB',
+        'DATE',
+        'TIME'
       );
     begin
       Result := Types[DataType];
@@ -467,6 +491,8 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
               Result := 'TEXT';
             dtBlob:
               Result := 'IMAGE';
+            dtDate, dtDateTime:
+              Result := 'DATETIME';
           end;
         ptOracle:
           case DataType of
@@ -474,7 +500,7 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
               Result := 'CHAR(1)';
             dtCurrency:
               Result := 'DECIMAL(14,4)';
-            dtDateTime:
+            dtDateTime, dtDate, dtTime:
               Result := 'DATE';
             dtBlob:
               Result := 'BLOB';
@@ -485,7 +511,7 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
           case DataType of
             dtCurrency:
               Result := 'DECIMAL(14,4)';
-            dtDateTime:
+            dtDateTime, dtDate, dtTime:
               Result := 'TIMESTAMP';
             dtBlob:
               Result := 'BLOB (1000 K)';
@@ -795,6 +821,12 @@ begin
   end;
 end;
 
+function TInstantADOResolver.CreateNavigationalLinkResolver(
+  const ATableName: string): TInstantNavigationalLinkResolver;
+begin
+  Result := TInstantADOLinkResolver.Create(Self, ATableName);
+end;
+
 function TInstantADOResolver.Find(const AClassName,
   AObjectId: string): Boolean;
 var
@@ -835,6 +867,12 @@ begin
       end;
     end;
   end;
+end;
+
+function TInstantADOResolver.FormatTableName(
+  const ATableName: string): string;
+begin
+  Result := TableName;
 end;
 
 function TInstantADOResolver.GetBroker: TInstantADOBroker;
@@ -1144,7 +1182,9 @@ const
     'VARCHAR',
     'TEXT',
     'DATETIME',
-    'IMAGE');
+    'IMAGE',
+    'DATETIME',
+    'DATETIME');
 begin
   Result := Types[DataType];
   if (DataType = dtString) and (Size > 0) then
@@ -1175,6 +1215,50 @@ begin
 end;
 
 { TInstantADOMSSQLQuery }
+
+{ TInstantADOLinkResolver }
+
+constructor TInstantADOLinkResolver.Create(
+  AResolver: TInstantNavigationalResolver; const ATableName: string);
+begin
+  inherited Create(AResolver, ATableName);
+end;
+
+function TInstantADOLinkResolver.CreateDataSet: TDataSet;
+begin
+  Result:= TADOTable.Create(nil);
+  with TADOTable(Result) do
+  try
+    Connection := Broker.Connector.Connection;
+    TableName := Self.TableName;
+    IndexFieldNames := InstantParentClassFieldName + ';' +
+        InstantParentIdFieldName;
+  except
+    Result.Free;
+    raise;
+  end;
+end;
+
+function TInstantADOLinkResolver.GetBroker: TInstantADOBroker;
+begin
+  Result := inherited Broker as TInstantADOBroker;
+end;
+
+function TInstantADOLinkResolver.GetDataSet: TADODataSet;
+begin
+  Result := inherited DataSet as TADODataSet;
+end;
+
+function TInstantADOLinkResolver.GetResolver: TInstantADOResolver;
+begin
+  Result := inherited Resolver as TInstantADOResolver;
+end;
+
+procedure TInstantADOLinkResolver.SetDatasetParentRange(const AParentClass,
+  AParentId: string);
+begin
+//    Dataset.SetRange([AParentClass, AParentId], [AParentClass, AParentId]);
+end;
 
 initialization
   RegisterClass(TInstantADOConnectionDef);
