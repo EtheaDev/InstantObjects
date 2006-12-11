@@ -171,8 +171,8 @@ begin
     ftBoolean:      DataType := dtBoolean;
     ftFloat:        DataType := dtFloat;
     ftCurrency:     DataType := dtCurrency;
-    ftDate,
-    ftTime,
+    ftDate:         DataType := dtDate;
+    ftTime:         DataType := dtTime;
     ftDateTime:     DataType := dtDateTime;
     ftAutoInc:      DataType := dtInteger;
     ftBlob,

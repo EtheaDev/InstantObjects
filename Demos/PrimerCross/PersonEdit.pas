@@ -41,6 +41,8 @@ type
     PicturePanel: TPanel;
     PictureImage: TImage;
     ClearButton: TButton;
+    Label1: TLabel;
+    BirthTimeEdit: TDBEdit;
     procedure EmployerClearButtonClick(Sender: TObject);
     procedure EmployerEditButtonClick(Sender: TObject);
     procedure EmployerLookupButtonClick(Sender: TObject);

@@ -59,7 +59,15 @@ inherited PersonEditForm: TPersonEditForm
           Height = 13
           Caption = 'Sa&lary'
         end
-        object PicturePanel: TPanel [13]
+        object Label1: TLabel [13]
+          Left = 136
+          Top = 264
+          Width = 44
+          Height = 13
+          Caption = 'BirthTime'
+          FocusControl = BirthTimeEdit
+        end
+        object PicturePanel: TPanel [14]
           Left = 332
           Top = 203
           Width = 76
@@ -95,7 +103,7 @@ inherited PersonEditForm: TPersonEditForm
               Visible = True
             end>
         end
-        object BirthDateEdit: TDBEdit [20]
+        object BirthDateEdit: TDBEdit [21]
           Left = 136
           Top = 200
           Width = 73
@@ -104,7 +112,7 @@ inherited PersonEditForm: TPersonEditForm
           DataSource = SubjectSource
           TabOrder = 7
         end
-        object EmployerEdit: TDBEdit [21]
+        object EmployerEdit: TDBEdit [22]
           Left = 8
           Top = 240
           Width = 129
@@ -114,7 +122,7 @@ inherited PersonEditForm: TPersonEditForm
           ReadOnly = True
           TabOrder = 8
         end
-        object EmailsGrid: TDBGrid [22]
+        object EmailsGrid: TDBGrid [23]
           Left = 240
           Top = 120
           Width = 169
@@ -135,7 +143,7 @@ inherited PersonEditForm: TPersonEditForm
               Visible = True
             end>
         end
-        object EmployerToolBar: TToolBar [23]
+        object EmployerToolBar: TToolBar [24]
           Left = 140
           Top = 237
           Width = 69
@@ -175,7 +183,7 @@ inherited PersonEditForm: TPersonEditForm
             OnClick = EmployerClearButtonClick
           end
         end
-        object PictureButton: TButton [24]
+        object PictureButton: TButton [25]
           Left = 240
           Top = 246
           Width = 81
@@ -187,7 +195,7 @@ inherited PersonEditForm: TPersonEditForm
         object SalaryEdit: TDBEdit
           Left = 8
           Top = 280
-          Width = 153
+          Width = 121
           Height = 21
           DataField = 'Salary'
           DataSource = SubjectSource
@@ -201,6 +209,15 @@ inherited PersonEditForm: TPersonEditForm
           Caption = '&Clear Picture'
           TabOrder = 15
           OnClick = ClearButtonClick
+        end
+        object BirthTimeEdit: TDBEdit
+          Left = 136
+          Top = 280
+          Width = 81
+          Height = 21
+          DataField = 'BirthTime'
+          DataSource = SubjectSource
+          TabOrder = 16
         end
       end
     end

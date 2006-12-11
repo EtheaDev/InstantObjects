@@ -184,6 +184,7 @@ begin
     Gender := TGender(Random(2));
     Result.Name := RandomFullName(Gender);
     Result.BirthDate := Date - (20 * 365 + Random(365 * 50)); // 20 - 70 years old
+    Result.BirthTime := Random;
     Result.Address := CreateRandomAddress;
 //    Result.Salary := 922337203685470;
     Result.Salary := 500 + Random(5000);

@@ -1,0 +1,122 @@
+---------- InstantDate InstantTime Release Notes -----------------
+Summary of Changes for Support of InstantDate and InstantTime Data types.
+
+Requirements
+---------------------------------
+1. Must completely rebuild IO.
+2. Must add InstantTypes to Interface Uses class of the model unit(s). if you want to use the new datatypes. 
+
+InstantType.pas defines:
+TDate = class(TDateTime);
+TTime = class(TDateTime);
+The Model Explorer has been modified to automatically or (auto-magically) add the Interface uses clause of your model file(s) with InstantType and the Implementation uses clause with InstantMetadata when you edit your model.
+
+Files affected :
+Core Files modified:
+---------------------------------
+InstantBrokers.pas
+InstantClasses.pas
+InstantCode.pas
+InstantMetadata.pas
+InstantPersistence.pas
+InstantPresentation.pas
+InstantTypes.pas
+
+
+Tests Files Modified (* new files)
+---------------------------------
+* TestInstantDate.pas
+TestInstantDateTime.pas
+* TestInstantTime.pas
+TestIO.dpr
+TestIO.mdr
+TestModel.pas
+
+Document files (Docs Directory)
+--------------------------------
+* InstantDateInstantTime_Releasenotes.txt  (this document)
+
+Demos - PrimerCross (Birthtime attribute added to TPerson and random Birthtimes are generated)
+---------------------------------
+DemoData.pas
+PersonEdit.dfm
+PersonEdit.pas
+Primer.mdr
+PrimerExternal.mdr
+Model/model.pas
+ModelExternal/model.pas
+
+Brokers (Note: I only modified the files for the standard set of Brokers which are build in RunTimePackages.bpg).
+---------------------------------
+InstantADO.pas
+InstantBDE.pas
+InstantDBX.pas
+InstantIBX.pas
+
+Note: The following brokers will also need to be modified.
+InstantADS.pas
+InstantDBISAM.pas
+InstantFlashFiler.pas
+InstantNexusDB.pas
+InstantUIB.pas
+InstantZeosDBO.pas
+
+Catalogs
+---------------------------------
+InstantBDECatalog.pas
+InstantIBFbCatalog.pas
+InstantMSSqlCatalog.pas
+
+Note: (AFIK InstantXML.pas does not need to be modified)
+
+Note:
+All brokers and catalogs must be modified to account for the two new data types. All standard brokers have been modified to map SQL datatypes for Date and Time. The default is to use DATETIME/TIMESTAMP for Date and Time Datatypes in SQL Brokers. The update has made this modification to all of the standard brokers and catalogs, but you should double check to be sure. If you have your own customized broker/catalog or you are using one of the brokers which is not part of the standard build, you will have to make similar changes as shown in the below mapping between SQL Datatypes and InstantDatatypes:
+
+function TInstantBDECatalog.ColumnTypeToDataType(const ColumnType: TFieldType;
+  out DataType: TInstantDataType): Boolean;
+begin
+  Result := True;
+  case ColumnType of
+    ftString:       DataType := dtString;
+    ftSmallint,
+    ftInteger:      DataType := dtInteger;
+    ftBoolean:      DataType := dtBoolean;
+    ftFloat:        DataType := dtFloat;
+    ftCurrency:     DataType := dtCurrency;
+    ftDate:         DataType := dtDate;           // <-  Map Date Fields
+    ftTime:         DataType := dtTime;           // <-- Map Time Fields
+    ftDateTime:     DataType := dtDateTime;
+    ftAutoInc:      DataType := dtInteger;
+    ftBlob,
+    ftGraphic:      DataType := dtBlob;
+    ftMemo:         DataType := dtMemo;
+  else
+    Result := False;
+  end;
+end;
+
+function TInstantADOMSSQLBroker.DataTypeToColumnType(
+  DataType: TInstantDataType; Size: Integer): string;
+const
+  Types: array[TInstantDataType] of string = (
+    'INTEGER',
+    'FLOAT',
+    'MONEY',
+    'BIT',
+    'VARCHAR',
+    'TEXT',
+    'DATETIME',
+    'IMAGE',
+    'DATETIME',                                   // <-  Map Date Fields
+    'DATETIME');                                  // <-  Map Time Fields
+begin
+  Result := Types[DataType];
+  if (DataType = dtString) and (Size > 0) then
+    Result := Result + InstantEmbrace(IntToStr(Size), '()');
+end;
+
+I haved removed the following that were contained in my uploads to the repository ng.
+
+1. ACR - Accuracer 
+2. DBX - Support for ASA-SqlAnyWhere (and it's Catalog 'InstantASACatalog.pas')
+3. SDAC - Corelab SQL Server Data Access Components

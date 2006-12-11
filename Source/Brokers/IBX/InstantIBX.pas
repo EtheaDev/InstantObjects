@@ -426,7 +426,9 @@ const
     'VARCHAR',
     'BLOB SUB_TYPE 1',
     'TIMESTAMP',
-    'BLOB');
+    'BLOB',
+    'DATE',
+    'TIME');
 begin
   Result := Types[DataType];
   if (DataType = dtString) and (Size > 0) then
