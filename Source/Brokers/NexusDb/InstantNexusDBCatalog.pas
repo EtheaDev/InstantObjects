@@ -239,10 +239,12 @@ begin
     DataType := dtCurrency
   else if SameText(ColumnType, 'Boolean') then
     DataType := dtBoolean
-  else if SameText(ColumnType, 'DateTime')
-          or SameText(ColumnType, 'Date')
-          or SameText(ColumnType, 'Time')then
+  else if SameText(ColumnType, 'DateTime') then
     DataType := dtDateTime
+  else if SameText(ColumnType, 'DATE') then
+    DataType := dtDate
+  else if SameText(ColumnType, 'TIME')then
+    DataType := dtTime
   else if SameText(ColumnType, 'BLOB') then
       DataType := dtBlob
   else if SameText(ColumnType, 'BLOB Memo') then
@@ -264,10 +266,12 @@ begin
     DataType := dtCurrency
   else if SameText(ColumnType, 'nxtBoolean') then
     DataType := dtBoolean
-  else if SameText(ColumnType, 'nxtDateTime')
-          or SameText(ColumnType, 'nxtDate')
-          or SameText(ColumnType, 'nxtTime')then
+  else if SameText(ColumnType, 'nxtDateTime') then
     DataType := dtDateTime
+  else if SameText(ColumnType, 'nxtDate') then
+    DataType := dtDate
+  else if SameText(ColumnType, 'nxtTime')then
+    DataType := dtTime
   else if SameText(ColumnType, 'nxtBlob') then
       DataType := dtBlob
   else if SameText(ColumnType, 'nxtBlobMemo') then

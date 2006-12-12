@@ -106,6 +106,7 @@ uses
   InstantClasses,
   InstantPersistence,
   InstantConsts,
+  InstantTypes,
   InstantNexusDBConsts;
 
 { TInstantNexusDBEmbeddedConnectionDefEditForm }
