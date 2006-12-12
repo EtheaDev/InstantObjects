@@ -793,7 +793,9 @@ const
     'VARCHAR',
     'TEXT',
     'DATETIME',
-    'BLOB');
+    'BLOB',
+    'DATE',
+    'TIME');
 begin
   Result := Types[DataType];
   if (DataType = dtString) and (Size > 0) then
@@ -824,7 +826,7 @@ begin
   Result := TInstantNexusDBSQLGenerator;
 end;
 
-{ TInstantNexusDBSQLTranslator }
+{ TInstantNexusDBTranslator }
 
 function TInstantNexusDBTranslator.GetDelimiters: string;
 begin
