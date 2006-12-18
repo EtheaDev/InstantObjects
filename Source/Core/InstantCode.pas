@@ -875,6 +875,7 @@ type
     procedure SetStorageName(const Value: string);
     procedure SetUnitName(const Value: string);
     procedure RemoveDivision(Division: TInstantCodeDivision);
+    procedure SetSubClass(Index: Integer; const Value: TInstantCodeClass);
   protected
     function AddDivision(Visibility: TInstantCodeVisibility): TInstantCodeDivision;
     procedure InsertDivision(Division: TInstantCodeDivision);
@@ -889,7 +890,7 @@ type
     procedure SetName(const Value: string); override;
     procedure VisibilityFilter(Sender: TInstantCodeObject;
       var Include: Boolean; Arg: Pointer);
-    procedure AddUses(const AUnitNames: array of string; Scope:
+    procedure AddUses(AUnitNames: array of string; Scope:
       TInstantCodeScope; var Source: string; ChangeInfo:
       TInstantCodeClassChangeInfo);
     property SubClassList: TList read GetSubClassList;
@@ -949,7 +950,8 @@ type
     property Properties[Index: Integer]: TInstantCodeProperty read GetProperties;
     property PropertyCount: Integer read GetPropertyCount;
     property SubClassCount: Integer read GetSubClassCount;
-    property SubClasses[Index: Integer]: TInstantCodeClass read GetSubClass;
+    property SubClasses[Index: Integer]: TInstantCodeClass read GetSubClass write
+        SetSubClass;
   published
     property BaseClassName: string read GetBaseClassName write SetBaseClassName;
     property Persistence: TInstantPersistence read GetPersistence write SetPersistence;
@@ -1393,6 +1395,7 @@ type
     FModule: TInstantCodeModule;
     FProject: TInstantCodeProject;
     FReader: TInstantCodeReader;
+    procedure CheckBaseClassAddUsers(AClass: TInstantCodeClass);
     procedure CreateModule;
     procedure CreateReader;
     procedure DestroyReader;
@@ -1417,6 +1420,7 @@ type
     function AddProc(Template: TInstantCodeProc): TInstantCodeProc;
     function AddProperty(AClass: TInstantCodeClass; Template: TInstantCodeProperty): TInstantCodeProperty;
     procedure AddUses(const AUnitNames: array of string; Scope: TInstantCodeScope = scInterface);
+    procedure AdjustForUnitNamesInInterface(var AUnitNames: array of string);
     procedure ChangeAttribute(AClass: TInstantCodeClass; Name: string;
       Template: TInstantCodeAttribute);
     procedure ChangeClass(ChangeInfo: TInstantCodeClassChangeInfo; NewClass: TInstantCodeClass);
@@ -1447,6 +1451,8 @@ type
     procedure MoveCursor(Count: Integer);
     function NextChar: Char;
     function ReadToken: string;
+    procedure RemoveUses(const AUnitNames: array of string; Scope:
+        TInstantCodeScope = scInterface);
     procedure ReplaceObjectText(AObject: TInstantCodeObject);
     procedure ReplaceText(Len: Integer; const Str: string);
     procedure Skip(Str: string);
@@ -4823,18 +4829,25 @@ begin
   Result := TInstantCodeProperty(AddMember(TInstantCodeProperty, Visibility));
 end;
 
-procedure TInstantCodeClass.AddUses(const AUnitNames: array of string;
+procedure TInstantCodeClass.AddUses(AUnitNames: array of string;
   Scope: TInstantCodeScope; var Source: string;
   ChangeInfo: TInstantCodeClassChangeInfo);
 var
   Modifier: TInstantCodeModifier;
 begin
+  if Length(AUnitNames) = 0 then
+    Exit;
+
   if Assigned(ChangeInfo.Modifier) then
     Modifier := ChangeInfo.Modifier
   else
     Modifier := TInstantCodeModifier.Create(Source, Self.Project);
   try
+    if Scope = scImplementation then
+      Modifier.AdjustForUnitNamesInInterface(AUnitNames);
     Modifier.AddUses(AUnitNames, Scope);
+    if Scope = scInterface then
+      Modifier.RemoveUses(AUnitNames, scImplementation);
   finally
     if not Assigned(ChangeInfo.Modifier) then
       Modifier.Free;
@@ -4913,7 +4926,12 @@ begin
 end;
 
 destructor TInstantCodeClass.Destroy;
+var
+  I: Integer;
 begin
+  if SubClassCount > 0 then
+    for I := Pred(SubClassCount) to 0 do
+        SubClasses[I].BaseClass := BaseClass;
   RemoveFromBase;
   while SubClassCount > 0 do
     SubClasses[0].BaseClass := nil;
@@ -5382,6 +5400,12 @@ end;
 procedure TInstantCodeClass.SetStorageName(const Value: string);
 begin
   MetadataInfo.StorageName := Value;
+end;
+
+procedure TInstantCodeClass.SetSubClass(Index: Integer; const Value:
+    TInstantCodeClass);
+begin
+  SubClassList[Index] := Value;
 end;
 
 procedure TInstantCodeClass.SetUnitName(const Value: string);
@@ -7368,6 +7392,7 @@ begin
     AddImplementation;
   UpdateClassRegistration(nil, AClass);
   UpdateClassForward(nil, AClass);
+  CheckBaseClassAddUsers(AClass);
 end;
 
 function TInstantCodeModifier.AddField(AClass: TInstantCodeClass;
@@ -7517,57 +7542,70 @@ begin
 end;
 
 procedure TInstantCodeModifier.AddUses(const AUnitNames: array of string; Scope: TInstantCodeScope);
+
+  procedure AddUsesClause(ASection: TInstantCodeSection;
+    AUsesClause: TInstantCodeUsesClause);
+  var
+    sStr: string;
+    iNames: Integer;
+  begin
+    sStr := '';
+    for iNames := Low(AUnitNames) to High(AUnitNames) do
+    begin
+      if AUnitNames[iNames] <> ''  then
+        if sStr = '' then
+          sStr := '  ' + AUnitNames[iNames]
+        else
+          sStr := sStr + ', ' + AUnitNames[iNames];
+    end;
+
+    if sStr <> '' then
+    begin
+      InsertMode := imAfter;
+      CursorPos := ASection.StartPos;
+      SkipLine;
+      InsertText(CRLF + 'uses' + CRLF + sStr + ';' + CRLF);
+    end;
+  end;
+
+  procedure UpdateUsesClause(ASection: TInstantCodeSection;
+    AUsesClause: TInstantCodeUsesClause);
+  var
+    sStr: string;
+    iNames: Integer;
+  begin
+    sStr := '';
+    for iNames := Low(AUnitNames) to High(AUnitNames) do
+      if (AUnitNames[iNames] <> '') and
+          not Assigned(AUsesClause.Find(AUnitNames[iNames])) then
+        sStr := sStr + ', ' + AUnitNames[iNames];
+
+    if sStr <> '' then
+    begin
+      InsertMode := imBefore;
+      CursorPos := AUsesClause.EndPos;
+      MoveCursor(-1);
+      InsertText(sStr, True);
+    end;
+  end;
+
 var
   Section: TInstantCodeSection;
   UsesClause: TInstantCodeUsesClause;
-  iNames: Integer;
-  sStr: string;
 begin
-  { check for an empty array }
   if Length(AUnitNames) = 0 then
     Exit;
 
-  with Module do
-    if Scope = scInterface then
-      Section := InterfaceSection else
-      Section := ImplementationSection;
-  with Section do
-  begin
-    sStr := '';
-    UsesClause := FindUsesClause;
-    if Assigned(UsesClause) then
-    begin
-      { check an existing uses clause and add missing units }
-      for iNames := Low(AUnitNames) to High(AUnitNames) do
-        { build the required string first }
-        if (AUnitNames[iNames] <> '') and
-        	  not Assigned(UsesClause.Find(AUnitNames[iNames])) then
-          sStr := sStr + ', ' + AUnitNames[iNames];
-      if sStr <> '' then
-      begin
-        InsertMode := imBefore;
-        CursorPos := UsesClause.EndPos;
-        MoveCursor(-1);
-        InsertText(sStr, True);
-      end;
-    end
-    else
-    begin
-      { uses clause was not found, add all units }
-      InsertMode := imAfter;
-      CursorPos := StartPos;
-      SkipLine;
-      for iNames := Low(AUnitNames) to High(AUnitNames) do
-      begin
-        if AUnitNames[iNames] <> ''  then
-          if sStr = '' then
-            sStr := '  ' + AUnitNames[iNames]
-          else
-            sStr := sStr + ', ' + AUnitNames[iNames];
-      end;
-      InsertText(CRLF + 'uses' + CRLF + sStr + ';' + CRLF)
-    end;
-  end;
+  if Scope = scInterface then
+    Section := Module.InterfaceSection
+  else
+    Section := Module.ImplementationSection;
+
+  UsesClause := Section.FindUsesClause;
+  if Assigned(UsesClause) then
+    UpdateUsesClause(Section, UsesClause)
+  else
+    AddUsesClause(Section, UsesClause);
 end;
 
 procedure TInstantCodeModifier.ChangeAttribute(AClass: TInstantCodeClass;
@@ -7649,6 +7687,7 @@ begin
   ChangeClassMetadata(OldClass, NewClass);
   UpdateClassRegistration(OldClass, NewClass);
   UpdateClassForward(OldClass, NewClass);
+  CheckBaseClassAddUsers(NewClass);
 end;
 
 procedure TInstantCodeModifier.ChangeClassBase(AClass: TInstantCodeClass;
@@ -7974,6 +8013,19 @@ procedure TInstantCodeModifier.DeleteClass(AClass: TInstantCodeClass);
     end;
   end;
 
+  procedure UpdateSubclassesBaseClass(AClass: TInstantCodeClass);
+  var
+    I: Integer;
+  begin
+    for I := 0 to Pred(AClass.SubClassCount) do
+    begin
+      if AClass.BaseClassName <> '' then
+        ChangeClassBase(AClass.SubClasses[I], AClass.BaseClassName)
+      else
+        ChangeClassBase(AClass.SubClasses[I], 'TInstantObject');
+    end;
+  end;
+
 var
   OldClass: TInstantCodeClass;
 begin
@@ -7982,6 +8034,7 @@ begin
   OldClass := Module.FindClass(AClass.Name);
   if not Assigned(OldClass) then
     Exit;
+  UpdateSubclassesBaseClass(OldClass);
   UpdateClassRegistration(OldClass, nil);
   UpdateClassForward(OldClass, nil);
   DeleteImplementation(OldClass);
@@ -8086,6 +8139,159 @@ begin
   FProject.Free;
   FReader.Free;
   inherited;
+end;
+
+procedure TInstantCodeModifier.AdjustForUnitNamesInInterface(var AUnitNames:
+    array of string);
+var
+  Section: TInstantCodeSection;
+  UsesClause: TInstantCodeUsesClause;
+  iNames: Integer;
+begin
+  if Length(AUnitNames) = 0 then
+    Exit;
+
+  Section := Module.InterfaceSection;
+  UsesClause := Section.FindUsesClause;
+  if Assigned(UsesClause) then
+  begin
+    { check the uses clause and remove names of found units from array }
+    for iNames := Low(AUnitNames) to High(AUnitNames) do
+      if (AUnitNames[iNames] <> '') and
+          Assigned(UsesClause.Find(AUnitNames[iNames])) then
+        AUnitNames[iNames] := '';
+  end;
+end;
+
+procedure TInstantCodeModifier.RemoveUses(const AUnitNames: array of string;
+    Scope: TInstantCodeScope = scInterface);
+
+  function EraseTrailingUsesItem(const AUsesItem: TInstantCodeUses;
+    const AUsesClause: TInstantCodeUsesClause): Boolean;
+  var
+    SavePos: TInstantCodePos;
+    Ch: Char;
+    Pos: TInstantCodePos;
+  begin
+    Result := False;
+    if not Assigned(AUsesItem) or not Assigned(AUsesClause) then
+      Exit;
+
+    with FReader do
+    begin
+      SavePos := Position;
+      Position := AUsesItem.StartPos;
+      Pos := Position;
+      Ch := BackChar;
+      while (Position.Offset > AUsesClause.StartPos.Offset) and
+          not IsText(Ch) do
+      begin
+        if (Ch = ',') then
+        begin
+          Pos := Position;
+          Break;
+        end;
+        Ch := BackChar;
+      end;
+      Result := not (Pos.Offset = AUsesItem.StartPos.Offset);
+      if Result then
+        DeleteTo(AUsesItem.EndPos)
+      else
+        Position := SavePos;
+    end;
+  end;
+
+  function EraseFirstUsesItem(const AUsesItem: TInstantCodeUses;
+    const AUsesClause: TInstantCodeUsesClause): Boolean;
+  var
+    SavePos: TInstantCodePos;
+    Ch: Char;
+    Pos: TInstantCodePos;
+  begin
+    Result := False;
+    if not Assigned(AUsesItem) or not Assigned(AUsesClause) then
+      Exit;
+
+    with FReader do
+    begin
+      SavePos := Position;
+      Position := AUsesItem.EndPos;
+      Pos := Position;
+      Ch := ReadChar;
+      while (Position.Offset <= AUsesClause.EndPos.Offset) and
+          not IsText(Ch) do
+      begin
+        if (Ch = ',') then
+        begin
+          SkipSpace;
+          Pos := Position;
+          Break;
+        end;
+        Ch := ReadChar;
+      end;
+      Result := not (Pos.Offset = AUsesItem.EndPos.Offset);
+      if Result then
+        DeleteFrom(AUsesItem.StartPos)
+      else
+        Position := SavePos;
+    end;
+  end;
+
+  procedure EraseUsesItem(const AUsesItem: TInstantCodeUses;
+    AUsesClause: TInstantCodeUsesClause);
+  begin
+    if not EraseTrailingUsesItem(AUsesItem, AUsesClause) then
+      EraseFirstUsesItem(AUsesItem, AUsesClause);
+  end;
+
+  procedure EraseUsesClause(AUsesClause: TInstantCodeUsesClause);
+  begin
+    EraseObject(AUsesClause);
+    CloseGap;
+    CloseGap;
+  end;
+
+var
+  Section: TInstantCodeSection;
+  UsesClause: TInstantCodeUsesClause;
+  iNames: Integer;
+  UsesItem: TInstantCodeUses;
+begin
+  if Length(AUnitNames) = 0 then
+    Exit;
+
+  if Scope = scInterface then
+    Section := Module.InterfaceSection
+  else
+    Section := Module.ImplementationSection;
+
+  UsesClause := Section.FindUsesClause;
+  if not Assigned(UsesClause) then
+    Exit;
+
+  for iNames := Low(AUnitNames) to High(AUnitNames) do
+    if (AUnitNames[iNames] <> '') then
+    begin
+      UsesItem := UsesClause.Find(AUnitNames[iNames]);
+      if Assigned(UsesItem) then
+      begin
+        if UsesClause.ObjectCount > 1 then
+          EraseUsesItem(UsesItem, UsesClause)
+        else
+        begin
+          EraseUsesClause(UsesClause);
+          Break;
+        end;
+      end;
+    end;
+end;
+
+procedure TInstantCodeModifier.CheckBaseClassAddUsers(AClass:
+    TInstantCodeClass);
+begin
+  if Assigned(AClass.BaseClass) and
+      (AClass.Module.Name <> AClass.BaseClass.Module.Name) then
+    AddUses([AClass.BaseClass.Module.Name]);
 end;
 
 procedure TInstantCodeModifier.DestroyReader;
