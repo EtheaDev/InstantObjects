@@ -4975,7 +4975,7 @@ end;
 
 function TInstantReferences.GetInstances(Index: Integer): TInstantObject;
 begin
-  Result := ObjectReferenceList[Index];
+  Result := RefItems[Index].Instance;
 end;
 
 function TInstantReferences.GetObjectReferenceList: TInstantObjectReferenceList;
