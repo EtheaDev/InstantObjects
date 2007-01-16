@@ -92,8 +92,8 @@ type
     // A -> A
     procedure TestCircularReferences9;
 
-    // This is intended to demonstrate a problem I am having in a project,
-    // but doesn't leak as expected. More investigation needed.
+    //
+    //
     procedure TestCircularReferences10;
   end;
 
@@ -268,63 +268,54 @@ end;
 
 procedure TestCircularReferences.TestCircularReferences10;
 var
-  vMainTable, vLookupTable: TDBTable;
-  vLookupTableIdField: TDBField;
-  vLookupTableDescField: TDBField;
-  vMainTableIdField: TDBField;
-  vMainTableLookupIdField: TDBField;
-  vFK: TDBForeignKey;
-  vFieldPair: TDBFieldPair;
+  vCountry: TCountry;
+  vProjectBox: TProjectBox;
 begin
-  vLookupTable := TDBTable.Create(FConn);
-  vLookupTable.Id := 'LookupTable';
-  vLookupTable.Name := 'LookupTable';
-  vLookupTable.Store;
+  // Part I: create and store the object that is going to be referenced by
+  // two other objects.
+  vCountry := TCountry.Create(FConn);
+  try
+    vCountry.Id := 'SharedCountry';
+    vCountry.Store;
+  finally
+    AssertEquals('vCountry.RefCount', 1, vCountry.RefCount);
+    vCountry.Free;
+  end;
 
-  vLookupTableIdField := TDBField.Create(FConn);
-  vLookupTableIdField.Name := 'ID';
-  vLookupTableIdField.Table := vLookupTable;
-  vLookupTableIdField.Store;
+  // Part II: build the referencing structure.
+  vProjectBox := TProjectBox.Create(FConn);
+  try
+    vProjectBox.Project := TProject.Create(FConn);
 
-  vLookupTableDescField := TDBField.Create(FConn);
-  vLookupTableDescField.Name := 'DESCRIPTION';
-  vLookupTableDescField.Table := vLookupTable;
-  vLookupTableDescField.Store;
+    vProjectBox.Project.Items.AddItem(TProjectItem.Create(FConn));
+    vCountry := TCountry.Retrieve('SharedCountry', False, False, FConn);
+    try
+      AssertEquals('vCountry.RefCount', 1, vCountry.RefCount);
+      vProjectBox.Project.Items.Items[0].Country := vCountry;
+      AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
+    finally
+      vCountry.Free;
+      AssertEquals('vCountry.RefCount', 1, vCountry.RefCount);
+    end;
 
-  vLookupTable.Free;
+    vProjectBox.Project.AddSubProject(TProject.Create(FConn));
+    vProjectBox.Project.SubProjects[0].Items.AddItem(TProjectItem.Create(FConn));
+    vCountry := TCountry.Retrieve('SharedCountry', False, False, FConn);
+    try
+      AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
+      vProjectBox.Project.SubProjects[0].Items.Items[0].Country := vCountry;
+      AssertEquals('vCountry.RefCount', 3, vCountry.RefCount);
+    finally
+      vCountry.Free;
+      // The equivalent of vCountry.RefCount is 1 at this point
+      // in the real project.
+      AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
+    end;
 
-  vMainTable := TDBTable.Create(FConn);
-  vMainTable.Name := 'MainTable';
-  vMainTable.Store;
-
-  vMainTableIdField := TDBField.Create(FConn);
-  vMainTableIdField.Name := 'ID';
-  vMainTableIdField.Table := vMainTable;
-  vMainTableIdField.Store;
-
-  vMainTableLookupIdField := TDBField.Create(FConn);
-  vMainTableLookupIdField.Name := 'LookupTable_ID';
-  vMainTableLookupIdField.Table := vMainTable;
-  vMainTableLookupIdField.Store;
-
-  vFieldPair := TDBFieldPair.Create(FConn);
-  vFieldPair.Field := vMainTableLookupIdField;
-  vFieldPair.ForeignField := vLookupTableIdField;
-
-  vFK := TDBForeignKey.Create(FConn);
-  vFK.AddFieldPair(vFieldPair);
-  vMainTable.AddForeignKey(vFK);
-
-  vMainTable.Store;
-
-  vMainTable.Free;
-
-  vLookupTableIdField.Free;
-  vLookupTableDescField.Free;
-
-  vMainTableIdField.Free;
-  vMainTableLookupIdField.Free;
-
+    vProjectBox.Store;
+  finally
+    vProjectBox.Free;
+  end;
 end;
 
 // A -> B {Parts}-> C {Parts}-> D -> A
