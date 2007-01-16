@@ -796,7 +796,9 @@ type
     procedure DoStore(ConflictAction: TInstantConflictAction);
     procedure DoUnchange;
     function FindDefaultContainer: TInstantContainer;
+{$IFDEF IO_CIRCULAR_REFERENCE_CHECK}
     procedure FreeCircularReferences;
+{$ENDIF}
     function GetClassId: string;
     function GetDefaultContainer: TInstantContainer;
     function GetHasDefaultContainer: Boolean;
@@ -1581,9 +1583,6 @@ const
   InstantClassPrefix: string = 'T';
   InstantAttributePrefix: string = '_';
 
-var
-  InstantLogProc: procedure (const AString: string) of object;
-  
 implementation
 
 uses
@@ -6059,6 +6058,7 @@ begin
   DestroyInternalFields;
 end;
 
+{$IFDEF IO_CIRCULAR_REFERENCE_CHECK}
 procedure TInstantObject.FreeCircularReferences;
 var
   CheckedObjects: TObjectList;
@@ -6114,27 +6114,35 @@ var
   I: Integer;
 begin
   if RefByCount = RefCount - 1 then
-    for I := Pred(RefByCount) downto 0 do
-    begin
-      CheckedObjects := TObjectList.Create(False);
-      try
+  begin
+    CheckedObjects := TObjectList.Create(False);
+    try
+      for I := Pred(RefByCount) downto 0 do
+      begin
         if (FRefBy[I] is TInstantComplex) and
          IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
+        begin
           case TInstantComplex(FRefBy[I]).AttributeType of
             atReference:
               TInstantReference(FRefBy[I]).ObjectReference.DestroyInstance;
             atReferences:
               TInstantReferences(FRefBy[I]).DestroyObject(Self);
           end;
-      finally
-        CheckedObjects.Free;
+        end;
+        CheckedObjects.Clear;
       end;
+    finally
+      CheckedObjects.Free;
     end;
+  end;
 end;
+{$ENDIF}
 
 procedure TInstantObject.FreeInstance;
 begin
+{$IFDEF IO_CIRCULAR_REFERENCE_CHECK}
   FreeCircularReferences;
+{$ENDIF}
   DoRelease;
   if FRefCount = 0 then
     try
@@ -6779,7 +6787,9 @@ end;
 
 function TInstantObject._Release: Integer;
 begin
+{$IFDEF IO_CIRCULAR_REFERENCE_CHECK}
   FreeCircularReferences;
+{$ENDIF}
   Result := DoRelease;
   if FRefCount = 0 then
     try

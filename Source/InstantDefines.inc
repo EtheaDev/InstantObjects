@@ -114,3 +114,21 @@
   {$WARN UNSAFE_CAST OFF}
 {$ENDIF}
 
+{
+  Define this symbol to enable logging of all SQL statements to the debug
+  console (via OutputDebugString - only on Windows) and to the procedure
+  pointed by the InstantBrokers.InstantLogProc global variable.
+}
+{.$DEFINE IO_STATEMENT_LOGGING}
+
+{
+  Whenever a TInstantObject is destroyed, a check is performed to see if there
+  are any objects that circularly refer to it, which should be destroyed as
+  well. If you are sure that your object model doesn't allow circular
+  references (as is the case with many object models, especially simple ones),
+  you can undefine this symbol to gain a little speed in programs that create
+  and destroy large quantities of objects.
+}
+{$DEFINE IO_CIRCULAR_REFERENCE_CHECK}
+
+
