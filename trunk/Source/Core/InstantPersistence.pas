@@ -6113,10 +6113,11 @@ var
 var
   I: Integer;
 begin
-  CheckedObjects := TObjectList.Create(False);
-  try
-    if RefByCount = RefCount - 1 then
-      for I := Pred(RefByCount) downto 0 do
+  if RefByCount = RefCount - 1 then
+    for I := Pred(RefByCount) downto 0 do
+    begin
+      CheckedObjects := TObjectList.Create(False);
+      try
         if (FRefBy[I] is TInstantComplex) and
          IsInsideCircularReference(TInstantComplex(FRefBy[I])) then
           case TInstantComplex(FRefBy[I]).AttributeType of
@@ -6125,9 +6126,10 @@ begin
             atReferences:
               TInstantReferences(FRefBy[I]).DestroyObject(Self);
           end;
-  finally
-    CheckedObjects.Free;
-  end;
+      finally
+        CheckedObjects.Free;
+      end;
+    end;
 end;
 
 procedure TInstantObject.FreeInstance;
