@@ -92,8 +92,8 @@ type
     // A -> A
     procedure TestCircularReferences9;
 
-    //
-    //
+    // A {Refs}-> B {Parts}-> C {Parts}-> D {Parts}-> E {Ref}-> F
+    //                                      {Parts}-> G {Parts}-> H {Ref}->F
     procedure TestCircularReferences10;
   end;
 
@@ -269,6 +269,7 @@ end;
 procedure TestCircularReferences.TestCircularReferences10;
 var
   vCountry: TCountry;
+  vMasterProjectBox: TProjectBox;
   vProjectBox: TProjectBox;
 begin
   // Part I: create and store the object that is going to be referenced by
@@ -283,38 +284,47 @@ begin
   end;
 
   // Part II: build the referencing structure.
-  vProjectBox := TProjectBox.Create(FConn);
+  vMasterProjectBox := TProjectBox.Create(FConn); // create Category
   try
-    vProjectBox.Project := TProject.Create(FConn);
-
-    vProjectBox.Project.Items.AddItem(TProjectItem.Create(FConn));
-    vCountry := TCountry.Retrieve('SharedCountry', False, False, FConn);
+    vProjectBox := TProjectBox.Create(FConn); // create Element
     try
-      AssertEquals('vCountry.RefCount', 1, vCountry.RefCount);
-      vProjectBox.Project.Items.Items[0].Country := vCountry;
-      AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
-    finally
-      vCountry.Free;
-      AssertEquals('vCountry.RefCount', 1, vCountry.RefCount);
-    end;
+      vMasterProjectBox.AddRelatedProjectBox(vProjectBox); // add Element to Category
 
-    vProjectBox.Project.AddSubProject(TProject.Create(FConn));
-    vProjectBox.Project.SubProjects[0].Items.AddItem(TProjectItem.Create(FConn));
-    vCountry := TCountry.Retrieve('SharedCountry', False, False, FConn);
-    try
-      AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
-      vProjectBox.Project.SubProjects[0].Items.Items[0].Country := vCountry;
-      AssertEquals('vCountry.RefCount', 3, vCountry.RefCount);
-    finally
-      vCountry.Free;
-      // The equivalent of vCountry.RefCount is 1 at this point
-      // in the real project.
-      AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
-    end;
+      vProjectBox.Project := TProject.Create(FConn); // add master Form
 
-    vProjectBox.Store;
+      vProjectBox.Project.AddSubProject(TProject.Create(FConn)); // add detail Form
+
+      vProjectBox.Project.SubProjects[0].Items.AddItem(TProjectItem.Create(FConn)); // add TriggerLink
+      vCountry := TCountry.Retrieve('SharedCountry', False, False, FConn);
+      try
+        AssertEquals('vCountry.RefCount', 1, vCountry.RefCount);
+        vProjectBox.Project.SubProjects[0].Items.Items[0].Country := vCountry; // add reference to Trigger
+        AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
+      finally
+        vCountry.Free;
+        AssertEquals('vCountry.RefCount', 1, vCountry.RefCount);
+      end;
+
+      vProjectBox.Project.SubProjects[0].AddSubProject(TProject.Create(FConn)); // add detail-detail Form.
+
+      vProjectBox.Project.SubProjects[0].SubProjects[0].Items.AddItem(TProjectItem.Create(FConn)); // add TriggerLink
+      vCountry := TCountry.Retrieve('SharedCountry', False, False, FConn);
+      try
+        AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
+        vProjectBox.Project.SubProjects[0].SubProjects[0].Items.Items[0].Country := vCountry; // add reference to Trigger
+        AssertEquals('vCountry.RefCount', 3, vCountry.RefCount);
+      finally
+        vCountry.Free;
+        AssertEquals('vCountry.RefCount', 2, vCountry.RefCount);
+      end;
+
+      vProjectBox.Store;
+    finally
+      vProjectBox.Free;
+    end;
+    vMasterProjectBox.Store;
   finally
-    vProjectBox.Free;
+    vMasterProjectBox.Free;
   end;
 end;
 

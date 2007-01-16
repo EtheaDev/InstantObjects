@@ -430,11 +430,25 @@ type
 
   TProjectBox = class(TInstantObject)
   {IOMETADATA stored;
-    Project: Part(TProject); }
+    Project: Part(TProject);
+    RelatedProjectBoxes: References(TProjectBox); }
     _Project: TInstantPart;
+    _RelatedProjectBoxes: TInstantReferences;
   private
     function GetProject: TProject;
+    function GetRelatedProjectBoxCount: Integer;
+    function GetRelatedProjectBoxes(Index: Integer): TProjectBox;
     procedure SetProject(Value: TProject);
+    procedure SetRelatedProjectBoxes(Index: Integer; Value: TProjectBox);
+  public
+    function AddRelatedProjectBox(RelatedProjectBox: TProjectBox): Integer;
+    procedure ClearRelatedProjectBoxes;
+    procedure DeleteRelatedProjectBox(Index: Integer);
+    function IndexOfRelatedProjectBox(RelatedProjectBox: TProjectBox): Integer;
+    procedure InsertRelatedProjectBox(Index: Integer; RelatedProjectBox: TProjectBox);
+    function RemoveRelatedProjectBox(RelatedProjectBox: TProjectBox): Integer;
+    property RelatedProjectBoxCount: Integer read GetRelatedProjectBoxCount;
+    property RelatedProjectBoxes[Index: Integer]: TProjectBox read GetRelatedProjectBoxes write SetRelatedProjectBoxes;
   published
     property Project: TProject read GetProject write SetProject;
   end;
@@ -477,7 +491,7 @@ type
 implementation
 
 uses
-  SysUtils, InstantUtils;
+  SysUtils, InstantUtils, InstantMetadata;
 
 { TAddress }
 
@@ -1411,9 +1425,49 @@ end;
 
 { TProjectBox }
 
+function TProjectBox.AddRelatedProjectBox(RelatedProjectBox: TProjectBox): Integer;
+begin
+  Result := _RelatedProjectBoxes.Add(RelatedProjectBox);
+end;
+
+procedure TProjectBox.ClearRelatedProjectBoxes;
+begin
+  _RelatedProjectBoxes.Clear;
+end;
+
+procedure TProjectBox.DeleteRelatedProjectBox(Index: Integer);
+begin
+  _RelatedProjectBoxes.Delete(Index);
+end;
+
 function TProjectBox.GetProject: TProject;
 begin
   Result := _Project.Value as TProject;
+end;
+
+function TProjectBox.GetRelatedProjectBoxCount: Integer;
+begin
+  Result := _RelatedProjectBoxes.Count;
+end;
+
+function TProjectBox.GetRelatedProjectBoxes(Index: Integer): TProjectBox;
+begin
+  Result := _RelatedProjectBoxes[Index] as TProjectBox;
+end;
+
+function TProjectBox.IndexOfRelatedProjectBox(RelatedProjectBox: TProjectBox): Integer;
+begin
+  Result := _RelatedProjectBoxes.IndexOf(RelatedProjectBox);
+end;
+
+procedure TProjectBox.InsertRelatedProjectBox(Index: Integer; RelatedProjectBox: TProjectBox);
+begin
+  _RelatedProjectBoxes.Insert(Index, RelatedProjectBox);
+end;
+
+function TProjectBox.RemoveRelatedProjectBox(RelatedProjectBox: TProjectBox): Integer;
+begin
+  Result := _RelatedProjectBoxes.Remove(RelatedProjectBox);
 end;
 
 procedure TProjectBox.SetProject(Value: TProject);
@@ -1422,6 +1476,11 @@ begin
 end;
 
 { TProjectItem }
+
+procedure TProjectBox.SetRelatedProjectBoxes(Index: Integer; Value: TProjectBox);
+begin
+  _RelatedProjectBoxes[Index] := Value;
+end;
 
 function TProjectItem.GetCountry: TCountry;
 begin
