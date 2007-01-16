@@ -967,6 +967,9 @@ type
       default True;
   end;
 
+var
+  InstantLogProc: procedure (const AString: string) of object;
+  
 implementation
 
 uses
