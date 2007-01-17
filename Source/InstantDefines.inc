@@ -128,6 +128,15 @@
   references (as is the case with many object models, especially simple ones),
   you can undefine this symbol to gain a little speed in programs that create
   and destroy large quantities of objects.
+
+  WARNING: If you disable the check, then every time your program frees an
+  object with circular references, it will leak memory. You might not notice it
+  unless you are using memory leak detection tools such as FastMM.
+  So please make sure your model doesn't allow any circular reference
+  before turning this setting off.
+
+  Also, do it only if you actually need the speed gain, which is needed only
+  in special cases.
 }
 {$DEFINE IO_CIRCULAR_REFERENCE_CHECK}
 
