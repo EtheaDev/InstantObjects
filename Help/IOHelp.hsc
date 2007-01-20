@@ -1273,15 +1273,19 @@ Imported
 
 
 FALSE
-9
-{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}}
+13
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fswiss\fcharset0 Arial;}{\f2\fnil\fcharset2 Symbol;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Associating Objects\cf1\b0\fs16 
 \par \pard\sb25\tx1435\cf2\strike Example 1\cf3\strike0\{linkID=430>example\}\cf1\tab\cf2\strike Programming with Persistent Objects\cf3\strike0\{linkID=340>main\}\{keepn\}\cf1  
-\par \pard\sb25\sa25\tx1435\fs18 Persistent object relations defined by relational attributes in the business model can be accessed just as easy as any other attribute.
+\par \pard\sb25\sa25\tx1435\fs18 Persistent object relations \lang1033\f1 are \lang1040\f0 defined by relational attributes in the business model \lang1033\f1 and \lang1040\f0 can be accessed just as easy as any other attribute.
 \par Single object relations defined by Part and Reference attributes are accessed through the corresponding object property of the class.
 \par Multiple object references defined by Parts and References attributes are accessed through the corresponding array property and the container methods defined for the attribute.
 \par 
+\par \lang1033\b\f1 Assignment to \lang1040\f0 relational attributes
+\par \lang1033\b0\f1 (A close study of the code in \cf2\strike Example 1\cf3\strike0\{linkID=430>example\}\cf1  will help to clarify the points below.)\lang1040\f0 
+\par \pard{\pntext\f2\'B7\tab}{\*\pn\pnlvlblt\pnf2\pnindent0{\pntxtb\'B7}}\fi-200\li200\sb25\sa25\tx200\lang1033\f1 O\lang1040\f0 bjects created \lang1033\f1 and\lang1040\f0  then assigned to \i part/parts attributes\i0  \lang1033\f1 SHOULD \lang1040\f0 NOT be freed after assignment. These attributes expect \lang1033\f1 the \lang1040\f0 transfer to them \lang1033\f1 of\lang1040\f0  ownership of the objects that they are assigned.\lang1033\f1  \lang1040\f0 The reference count\lang1033\f1 s\lang1040\f0  of these objects do not change during assignment.\lang1033\f1  \lang1040\f0 This means that\lang1033\f1 ,\lang1040\f0  when an object\lang1033\f1  is\lang1040\f0  create\lang1033\f1 d\lang1040\f0  and assign\lang1033\f1 ed\lang1040\f0  to a part/parts\lang1033\f1  \lang1040\f0 attribute\lang1033\f1 ,\lang1040\f0  the object that \lang1033\f1 was\lang1040\f0  created must \lang1033\f1 NOT be\lang1040\f0  free\lang1033\f1 d\lang1040\f0  unless an exception is raised during the\lang1033\f1  a\lang1040\f0 ssignment.\lang1033\f1  \lang1040\f0 
+\par \lang1033\f1{\pntext\f2\'B7\tab}O\lang1040\f0 bjects created \lang1033\f1 and\lang1040\f0  then assigned to \i reference/references\lang1033\f1  \lang1040\f0 attributes\i0  DO need to be freed after assignment. These\lang1033\f1  \lang1040\f0 attributes DO NOT expect \lang1033\f1 the\lang1040\f0  transfer \lang1033\f1 of\lang1040\f0  ownership to them of the\lang1033\f1  \lang1040\f0 objects that they are assigned. The reference count of each of these\lang1033\f1  \lang1040\f0 objects is incremented during assignment. This means that\lang1033\f1 ,\lang1040\f0  when an object \lang1033\f1 is \lang1040\f0 create\lang1033\f1 d\lang1040\f0  and assign\lang1033\f1 ed\lang1040\f0  to a reference/references attribute\lang1033\f1 ,\lang1040\f0  the object that \lang1033\f1 was\lang1040\f0  created must \lang1033\f1 be \lang1040\f0 free\lang1033\f1 d\lang1040\f0  at some point after the\lang1033\f1  \lang1040\f0 assignment\lang1033\f1  to avoid a possible memory leak\lang1040\f0 . 
 \par }
 430
 Scribble430
@@ -1295,7 +1299,7 @@ Done
 
 
 FALSE
-123
+142
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}{\f3\fnil Arial;}{\f4\fmodern\fcharset0 Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red0\green128\blue0;\red128\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 Example 1 \cf1\b0\fs16 
@@ -1355,16 +1359,35 @@ FALSE
 \par     Result.Address.Street := 'Summer Street 1';
 \par     Result.Company := Company;
 \par 
-\par     \{\- Add phones \}
+\par     \{\f4\- Add phones \}
 \par     Phone := TPhone.Create;
-\par     Phone.Name := 'Home';
-\par     Phone.Number := '12345678';
-\par     Result.AddPhone(Phone);
+\par     try
+\par       Phone.Name := 'Home';
+\par       Phone.Number := '12345678';
+\par       Result.AddPhone(Phone);
+\par     except
+\par       Phone.Free;
+\par       raise;
+\par     end;
 \par     Phone := TPhone.Create;
-\par     Phone.Name := 'Office';
-\par     Phone.Number := '32187654';
-\par     Result.AddPhone(Phone);
-\par 
+\par     try
+\par       Phone.Name := 'Office';
+\par       Phone.Number := '32187654';
+\par       Result.AddPhone(Phone);
+\par     except
+\par       Phone.Free;
+\par       raise;
+\par     end;
+\par \f1 
+\par \f4     \f1\{\- Add \lang1033\f4 new Person as a Friend\lang1040\f1  \}\f4 
+\par     Person := TPerson.Create;
+\par     try
+\par       Person.Name := 'Fred Bloggs';
+\par       Result.\f1 AddFriend\f4 (Person);
+\par     finally
+\par       Person.Free;
+\par     end;
+\par \f1 
 \par     \{\- Add colleagues\lang1033\f4  as Friends\lang1040\f1  \}
 \par     \b with \b0 TInstantSelector.Create(nil) \b do\b0 
 \par     \b try\b0 
@@ -1425,7 +1448,7 @@ Using an InstantQuery
 Using an InstantQuery;InstantQuery,Using;
 
 
-
+programming:000050
 Done
 
 
@@ -18223,17 +18246,20 @@ Imported
 main
 
 AddRef;AddRef_Method;TInstantObject_AddRef
-FALSE
-10
-{\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
+TRUE
+13
+{\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}{\f2\fswiss\fcharset0 Arial;}}
 {\colortbl ;\red0\green0\blue0;}
 \viewkind4\uc1\pard\lang1040\b\f0\fs24 TInstantObject.AddRef \cf1\b0\fs16 
 \par \pard\sb25\tx1435\strike TInstantObject\strike0\{linkID=7390>main\}\tab\ul See Also\ulnone\{linkID=7910\}\{keepn\} 
 \par \pard\sb25\sa85\tx1435\fs18 Increments the reference count for the number of references dependent on the instance.
 \par \pard\sb25\sa25\tx1435\b\f1 function\b0  AddRef: Integer;
 \par \pard\sb55\sa25\tx1435\b\f0 Description
-\par \pard\sb25\sa25\tx1435\b0 AddRef increments the reference count for the instance and returns the resulting value of the reference count. Although it should not normally be necessary to call AddRef directly, it can be called to safeguard an object before calling a method that could result in a premature destruction of the object, and after the method returns, call the \strike Release\strike0\{linkID=8920>main\} method to decrement the count.
-\par 
+\par \pard\sb25\sa25\tx1435\b0 AddRef increments the reference count for the instance and returns the resulting value of the reference count.
+\par \fs10 
+\par \fs18 Although it should not normally be necessary to call AddRef directly, it can be called\lang1033\f2  \lang1040\f0 to ensure the lifetime of an\lang1033\f2  \lang1040\f0 object\lang1033\f2  \lang1040\f0 before calling a method that could result in \lang1033\f2 the\lang1040\f0  premature destruction of the object, and after the method returns, call the \lang1033\f2 Free \lang1040\f0 method to decrement the \lang1033\f2 object's reference \lang1040\f0 count.\lang1033\f2  Note: It is generally not advisable to use the Release method in application development as this might result in memory leaks.\lang1040\f0 
+\par \fs10 
+\par \lang1033\f2\fs18 For practical examples of when to use the AddRef method study the PrimerCross demo application. One example is the TMainForm.CreateRandomContacts method in Main.pas. In that method a local Companies list is created. When an instance of TCompany is created its AddRef is called and it is added to the Companies list. However during the processing, instances of TCompany can be deleted from the list. As the list is a TObjectList, free will be called on its contained objects when items in the list are deleted or the list is destroyed. Calling AddRef when adding objects to the list ensures that the objects exist until they are deleted from the list or the list is destroyed thereby avoiding the possibility of an AV occurring.\lang1040\f0 
 \par }
 7910
 Scribble7910
@@ -20431,7 +20457,7 @@ Imported
 main
 
 Release;Release_Method;TInstantObject_Release
-FALSE
+TRUE
 10
 {\rtf1\ansi\deff0{\fonttbl{\f0\fswiss Arial;}{\f1\fmodern Courier New;}}
 {\colortbl ;\red0\green0\blue0;}
