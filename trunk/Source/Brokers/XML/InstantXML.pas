@@ -66,34 +66,54 @@ type
     procedure CreateStorageDir(const AStorageName: string);
     function GetRootFolder: string;
     procedure SetRootFolder(const AValue: string);
-    function SaveToFileXML_UTF8(AObject: TInstantObject;
-      const AFileName: string): Boolean;
-    function LoadFromFileXML_UTF8(AObject: TInstantObject; const FileName:
-      string): boolean;
-    function PlainObjectFileName(const StorageName, ClassName, Id: string):
-      string;
     function ObjectUpdateCountFromFileName(const AFileName: string): Integer;
   protected
     procedure DoConnect; override;
     procedure DoDisconnect; override;
     function GetConnected: Boolean; override;
+    // Override this method to redirect storage to different folders with a
+    // class-level or object-level granularity.
+    function GetObjectFileName(const AStorageName, AObjectClassName,
+      AObjectId: string): string; virtual;
+    function LoadInstantObjectFromXmlFile(const AObject: TInstantObject;
+      const AObjectId, AFileName: string): Boolean;
+    function SaveInstantObjectToXmlFile(const AObject: TInstantObject;
+      const AFileName: string): Boolean;
+    function LocateInstantObjectXmlFile(const AObjectClassName,
+      AObjectId, AFileName: string): Boolean;
+    function DeleteInstantObjectXmlFile(const AObject: TInstantObject;
+      const AFileName: string): Boolean;
+    // Override InternalReadInstantObject, InternalSaveInstantObject,
+    // InternalLocateInstantObject and InternalDeleteInstantObject to redirect
+    // storage to media other than the file system.
+    function InternalReadInstantObject(const AObject: TInstantObject;
+      const AStorageName, AObjectId: string;
+      out AObjectUpdateCount: Integer): Boolean; virtual;
+    function InternalWriteInstantObject(const AObject: TInstantObject;
+      const AStorageName: string; out AObjectUpdateCount: Integer): Boolean;
+      virtual;
+    function InternalLocateInstantObject(const AStorageName, AObjectClassName,
+      AObjectId: string): Boolean; virtual;
+    function InternalDeleteInstantObject(const AObject: TInstantObject;
+      const AStorageName: string): Boolean; virtual;
   public
     constructor Create(AOwner: TComponent); override;
-    function ReadInstantObject(AObject: TInstantObject; const StorageName,
+    function LocateInstantObject(const AStorageName, AObjectClassName,
+      AObjectId: string): Boolean;
+    function ReadInstantObject(const AObject: TInstantObject; const AStorageName,
       AObjectId: string; out AObjectUpdateCount: Integer): Boolean;
-    function WriteInstantObject(AObject: TInstantObject;
+    function WriteInstantObject(const AObject: TInstantObject;
       const AStorageName: string; out AObjectUpdateCount: Integer): Boolean;
-    function DeleteInstantObject(AObject: TInstantObject;
+    function DeleteInstantObject(const AObject: TInstantObject;
       const AStorageName: string): Boolean;
-    function Locate(const AStorageName, AObjectClassName, AObjectId: string): Boolean;
     function CheckConflict(AObject: TInstantObject;
       const AStorageName, AObjectId: string): Boolean;
     procedure LoadFileList(const AFileList: TStringList;
       const AStorageNames: TStrings);
   published
     property RootFolder: string read GetRootFolder write SetRootFolder;
-    property XMLFileFormat: TXMLFileFormat read FXMLFileFormat write
-      FXMLFileFormat default xffUtf8;
+    property XMLFileFormat: TXMLFileFormat
+      read FXMLFileFormat write FXMLFileFormat default xffUtf8;
   end;
 
   TInstantXMLConnectionDef = class(TInstantConnectionBasedConnectionDef)
@@ -183,7 +203,7 @@ type
         override;
     procedure ResetAttributes(AObject: TInstantObject; Map:
       TInstantAttributeMap);
-    function Locate(AObject: TObject; const AObjectId: string): Boolean;
+    function Locate(AObject: TInstantObject; const AObjectId: string): Boolean;
       virtual;
     function ReadInstantObject(AObject: TInstantObject; const AObjectId: string;
       out AObjectUpdateCount: Integer): Boolean;
@@ -570,18 +590,27 @@ begin
   end;
 end;
 
-function TInstantXMLResolver.Locate(AObject: TObject; const AObjectId: string):
+function TInstantXMLResolver.Locate(AObject: TInstantObject; const AObjectId: string):
   Boolean;
 begin
-  Result := Broker.Connector.Connection.Locate(
-    FStorageName, AObject.ClassName, AObjectId);
+  if AObject.Metadata.TableName = FStorageName then
+    Result := Broker.Connector.Connection.LocateInstantObject(
+      FStorageName, AObject.ClassName, AObjectId)
+  else
+    Result := True;
 end;
 
 function TInstantXMLResolver.ReadInstantObject(AObject: TInstantObject;
   const AObjectId: string; out AObjectUpdateCount: Integer): Boolean;
 begin
-  Result := Broker.Connector.Connection.ReadInstantObject(AObject, FStorageName,
-    AObjectId, AObjectUpdateCount);
+  if AObject.Metadata.TableName = FStorageName then
+    Result := Broker.Connector.Connection.ReadInstantObject(AObject,
+      FStorageName, AObjectId, AObjectUpdateCount)
+  else
+  begin
+    Result := True;
+    AObjectUpdateCount := 1;
+  end;
 end;
 
 procedure TInstantXMLResolver.ResetAttributes(AObject: TInstantObject;
@@ -1000,8 +1029,8 @@ begin
   end;
 end;
 
-function TXMLFilesAccessor.SaveToFileXML_UTF8(AObject: TInstantObject;
-  const AFileName: string): Boolean;
+function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
+  const AObject: TInstantObject; const AFileName: string): Boolean;
 var
   strstream: TStringStream;
   fileStream: TFileStream;
@@ -1040,14 +1069,14 @@ begin
     Result := xmlString;
 end;
 
-function TXMLFilesAccessor.LoadFromFileXML_UTF8(AObject: TInstantObject;
-  const FileName: string): boolean;
+function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
+  const AObject: TInstantObject; const AObjectId, AFileName: string): Boolean;
 var
   fileStream: TFileStream;
   strUtf8: string;
   strstream: TStringStream;
 begin
-  fileStream := TFileStream.Create(FileName, fmOpenRead);
+  fileStream := TFileStream.Create(AFileName, fmOpenRead);
   try
     SetLength(strUtf8, fileStream.Size);
     Result := fileStream.Read(strUtf8[1], fileStream.Size) <> 0;
@@ -1070,34 +1099,84 @@ begin
   end;
 end;
 
-function TXMLFilesAccessor.ReadInstantObject(AObject: TInstantObject;
-  const StorageName, AObjectId: string; out AObjectUpdateCount: Integer): Boolean;
+function TXMLFilesAccessor.LocateInstantObjectXmlFile(const AObjectClassName,
+  AObjectId, AFileName: string): Boolean;
+begin
+  Result := FileExists(AFileName);
+end;
+
+function TXMLFilesAccessor.DeleteInstantObjectXmlFile(
+  const AObject: TInstantObject; const AFileName: string): Boolean;
+begin
+  Result := SysUtils.DeleteFile(AFileName);
+end;
+
+function TXMLFilesAccessor.ReadInstantObject(const AObject: TInstantObject;
+  const AStorageName, AObjectId: string; out AObjectUpdateCount: Integer): Boolean;
+begin
+  Result := InternalReadInstantObject(AObject, AStorageName, AObjectId,
+    AObjectUpdateCount);
+end;
+
+function TXMLFilesAccessor.InternalReadInstantObject(
+  const AObject: TInstantObject; const AStorageName, AObjectId: string;
+  out AObjectUpdateCount: Integer): Boolean;
 var
   LFileName: string;
 begin
-  LFileName := PlainObjectFileName(StorageName, AObject.ClassName, AObjectId);
-  Result := LoadFromFileXML_UTF8(AObject, LFileName);
+  LFileName := GetObjectFileName(AStorageName, AObject.ClassName, AObjectId);
+  Result := LoadInstantObjectFromXmlFile(AObject, AObjectId, LFileName);
   AObjectUpdateCount := ObjectUpdateCountFromFileName(LFileName);
 end;
 
-function TXMLFilesAccessor.WriteInstantObject(AObject: TInstantObject;
+function TXMLFilesAccessor.WriteInstantObject(const AObject: TInstantObject;
   const AStorageName: string; out AObjectUpdateCount: Integer): Boolean;
+begin
+  Result := InternalWriteInstantObject(AObject, AStorageName,
+    AObjectUpdateCount);
+end;
+
+function TXMLFilesAccessor.InternalWriteInstantObject(
+  const AObject: TInstantObject; const AStorageName: string;
+  out AObjectUpdateCount: Integer): Boolean;
 var
   LFileName: string;
 begin
+  LFileName := GetObjectFileName(AStorageName, AObject.ClassName, AObject.Id);
   CreateStorageDir(AStorageName);
-  LFileName := PlainObjectFileName(AStorageName, AObject.ClassName, AObject.Id);
-  Result := SavetoFileXML_UTF8(AObject, LFileName);
+  Result := SaveInstantObjectToXmlFile(AObject, LFileName);
   AObjectUpdateCount := ObjectUpdateCountFromFileName(LFileName);
 end;
 
-function TXMLFilesAccessor.Locate(const AStorageName, AObjectClassName,
-  AObjectId: string): Boolean;
-var
-  filename: string;
+function TXMLFilesAccessor.LocateInstantObject(const AStorageName,
+  AObjectClassName, AObjectId: string): Boolean;
 begin
-  filename := PlainObjectFileName(AStorageName, AObjectClassName, AObjectId);
-  Result := FileExists(filename);
+  Result := InternalLocateInstantObject(AStorageName, AObjectClassName,
+    AObjectId);
+end;
+
+function TXMLFilesAccessor.InternalLocateInstantObject(const AStorageName,
+  AObjectClassName, AObjectId: string): Boolean;
+var
+  LFileName: string;
+begin
+  LFileName := GetObjectFileName(AStorageName, AObjectClassName, AObjectId);
+  Result := LocateInstantObjectXmlFile(AObjectClassName, AObjectId, LFileName);
+end;
+
+function TXMLFilesAccessor.DeleteInstantObject(const AObject: TInstantObject;
+  const AStorageName: string): Boolean;
+begin
+  Result := InternalDeleteInstantObject(AObject, AStorageName);
+end;
+
+function TXMLFilesAccessor.InternalDeleteInstantObject(
+  const AObject: TInstantObject; const AStorageName: string): Boolean;
+var
+  LFileName: string;
+begin
+  LFileName := GetObjectFileName(AStorageName, AObject.ClassName, AObject.Id);
+  Result := DeleteInstantObjectXmlFile(AObject, LFileName);
 end;
 
 procedure TXMLFilesAccessor.CreateStorageDir(const AStorageName: string);
@@ -1112,24 +1191,17 @@ begin
   Result := GetObjectUpdateCount(ExtractFileName(AFileName));
 end;
 
-function TXMLFilesAccessor.DeleteInstantObject(AObject: TInstantObject;
-  const AStorageName: string): Boolean;
-begin
-  Result := SysUtils.DeleteFile(PlainObjectFileName(AStorageName,
-    AObject.ClassName, AObject.Id));
-end;
-
 constructor TXMLFilesAccessor.Create(AOwner: TComponent);
 begin
   inherited;
   FXMLFileFormat := xffUtf8;
 end;
 
-function TXMLFilesAccessor.PlainObjectFileName(const StorageName,
-  ClassName, Id: string): string;
+function TXMLFilesAccessor.GetObjectFileName(const AStorageName,
+  AObjectClassName, AObjectId: string): string;
 begin
-  Result := RootFolder + StorageName + PathDelim + ClassName + '.' + Id + '.1' +
-    DOT_XML_EXT;
+  Result := RootFolder + AStorageName + PathDelim + AObjectClassName + '.'
+    + AObjectId + '.1' + DOT_XML_EXT;
 end;
 
 function TXMLFilesAccessor.CheckConflict(AObject: TInstantObject;
