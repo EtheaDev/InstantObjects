@@ -188,7 +188,12 @@ uses
 {$IFDEF LINUX}
   QDialogs,
 {$ENDIF}
-  TypInfo, InstantClassEditor, InstantClasses, DeskUtil, InstantModelExpert,
+  TypInfo, InstantClassEditor, InstantClasses, DeskUtil, 
+{$IFNDEF D7+}
+  InstantModelExpertOld,
+{$ELSE}
+  InstantModelExpert,
+{$ENDIF}
   InstantDesignUtils, InstantPersistence, InstantDesignHook, InstantAbout,
   InstantImageUtils;
 
