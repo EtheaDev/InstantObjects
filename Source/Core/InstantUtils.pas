@@ -87,6 +87,11 @@ procedure InstantStrToList(const Str: string; List: TStrings;
 function InstantStrToTime(const Str: string): TDateTime;
 function InstantUnquote(const Str: string; Quote: Char): string;
 
+{$IFDEF D5}
+function DateOf(const AValue: TDateTime): TDateTime;
+function TimeOf(const AValue: TDateTime): TDateTime;
+{$ENDIF}
+
 implementation
 
 uses
@@ -602,5 +607,17 @@ begin
   else
     Result := AnsiExtractQuotedStr(S, Quote);
 end;
+
+{$IFDEF D5}
+function DateOf(const AValue: TDateTime): TDateTime;
+begin
+  Result := Trunc(AValue);
+end;
+
+function TimeOf(const AValue: TDateTime): TDateTime;
+begin
+  Result := Frac(AValue);
+end;
+{$ENDIF}
 
 end.

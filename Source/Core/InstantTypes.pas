@@ -41,6 +41,11 @@ unit InstantTypes;
 interface
 
 type
+  {$IFNDEF D6+}
+  IInterface = interface (IUnknown)
+  end;
+  {$ENDIF}
+
   TInstantStorageKind = (skEmbedded, skExternal);
   TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean,
     atString, atDateTime, atBlob, atMemo, atGraphic,
