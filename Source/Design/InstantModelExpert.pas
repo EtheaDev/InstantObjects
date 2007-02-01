@@ -1,6 +1,6 @@
 (*
  *   InstantObjects
- *   IDE Model Expert
+ *   IDE Model Expert for D7+
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
@@ -36,15 +36,11 @@ unit InstantModelExpert;
 {$I '..\InstantDefines.inc'}
 {$ENDIF}
 
-{$IFDEF D7+}
-{$WARN UNIT_DEPRECATED OFF}
-{$ENDIF}
-
 interface
 
 uses
-  Classes, ToolsAPI, ToolIntf, EditIntf, InstantOTA, Menus, ImgList,
-  InstantDesignResources, InstantModelExplorer, InstantCode, ExtCtrls, Forms,
+  Classes, ToolsAPI, InstantOTA, Menus, ImgList, ExtCtrls, Forms,
+  InstantDesignResources, InstantModelExplorer, InstantCode, 
   InstantConsts;
 
 type
@@ -122,15 +118,14 @@ type
     procedure CheckIOMetadataKeyword(const FileName, Source: string);
     procedure ExplorerItemClick(Sender: TObject);
     procedure GetModelModules(Modules: TInterfaceList);
-    procedure IDEAfterCompilation(Sender: TObject; Succeeded: Boolean);
+    procedure IDEAfterCompilation(Sender: TObject; const Project: IOTAProject;
+        Succeeded: Boolean; IsCodeInsight: Boolean);
     procedure IDEBeforeCompilation(Sender: TObject; Project: IOTAProject;
       IsCodeInsight: Boolean; var Cancel: Boolean);
-    procedure IDEEventNotification(Sender: TObject;
-      NotifyCode: TEventNotification; var Cancel: Boolean);
     procedure IDEFileNotification(Sender: TObject;
-      NotifyCode: TFileNotification; const FileName: string;
+      NotifyCode: TOTAFileNotification; const FileName: string;
       var Cancel: Boolean);
-    procedure IDEModuleNotification(Sender: TObject; NotifyCode: TNotifyCode;
+    procedure IDEModuleNotification(Sender: TObject; NotifyCode: TModuleNotifyCode;
       const FileName: string);
     function IsProjectUnit(FileName: string): Boolean;
     function IsModelUnit(FileName: string): Boolean;
@@ -666,9 +661,8 @@ begin
   Result := TInstantOTAIDEInterface.Create;
   with Result do
   begin
-    AfterCompilation := IDEAfterCompilation;
-    BeforeCompilation := IDEBeforeCompilation;
-    OnEventNotification := IDEEventNotification;
+    OnAfterCompilation := IDEAfterCompilation;
+    OnBeforeCompilation := IDEBeforeCompilation;
     OnFileNotification := IDEFileNotification;
     OnModuleNotification := IDEModuleNotification;
   end;
@@ -857,8 +851,11 @@ begin
   Result := [];
 end;
 
-procedure TInstantModelExpert.IDEAfterCompilation(Sender: TObject; Succeeded: Boolean);
+procedure TInstantModelExpert.IDEAfterCompilation(Sender: TObject; const
+    Project: IOTAProject; Succeeded: Boolean; IsCodeInsight: Boolean);
 begin
+  if IsCodeInsight then
+    Exit;
   if FMustUpdateAfterCompile then
   begin
     FMustUpdateAfterCompile := False;
@@ -888,34 +885,28 @@ begin
   end;
 end;
 
-procedure TInstantModelExpert.IDEEventNotification(Sender: TObject;
-  NotifyCode: TEventNotification; var Cancel: Boolean);
-begin
-end;
-
 procedure TInstantModelExpert.IDEFileNotification(Sender: TObject;
-  NotifyCode: TFileNotification; const FileName: string; var Cancel: Boolean);
+  NotifyCode: TOTAFileNotification; const FileName: string; var Cancel: Boolean);
 begin
   case NotifyCode of
-    fnFileOpened:
+    ofnFileOpened:
       if IsProjectUnit(FileName) then
         MetaDataCheckState := mcNeverChecked;
-    fnFileClosing:
+    ofnFileClosing:
       if IsModelUnit(FileName) then
         IsDirty := True;
   end;
 end;
 
 procedure TInstantModelExpert.IDEModuleNotification(Sender: TObject;
-  NotifyCode: TNotifyCode; const FileName: string);
+  NotifyCode: TModuleNotifyCode; const FileName: string);
 begin
   case NotifyCode of
-    ncAfterSave,
-    ncEditorModified:
+    mncAfterSave,
+    mncEditorModified:
       if IsModelUnit(FileName) then
         IsDirty := True;
-    ncEditorSelected:
-      Exit;
+    mncEditorSelected: ;
   end;
 end;
 
