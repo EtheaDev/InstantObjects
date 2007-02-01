@@ -1596,10 +1596,10 @@ uses
 {$IFDEF D6+}
   MaskUtils,
   Variants,
+  DateUtils,
 {$ELSE}
   Mask,
 {$ENDIF}
-  DateUtils,
   InstantUtils, {InstantRtti, }InstantDesignHook, InstantCode;
 
 var

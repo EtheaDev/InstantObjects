@@ -48,7 +48,7 @@ uses
 {$IFDEF LINUX}
   QImgList, QStdCtrls, QDBCtrls, QMask, QControls, QComCtrls, QExtCtrls,
 {$ENDIF}
-  InstantPresentation;
+  InstantPresentation, InstantTypes;
 
 type
   TInstantStringsEvent = procedure(Sender: TObject; Items: TStrings;
@@ -175,7 +175,7 @@ implementation
 
 uses
   InstantRtti, InstantPersistence, InstantDesignUtils, InstantImageUtils,
-  InstantClasses, InstantMetadata, InstantTypes;
+  InstantClasses, InstantMetadata;
 
 {$R *.dfm}
 

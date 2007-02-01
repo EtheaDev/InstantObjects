@@ -981,8 +981,8 @@ uses
 {$ENDIF}
 {$IFDEF D6+}
   Variants,
-{$ENDIF}
   DateUtils,
+{$ENDIF}
   TypInfo, InstantUtils, InstantRtti;
 
 const
