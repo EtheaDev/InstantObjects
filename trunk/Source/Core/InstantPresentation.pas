@@ -4077,14 +4077,20 @@ end;
 
 procedure TInstantCustomExposer.SetFiltered(Value: Boolean);
 begin
-  if Value <> Filtered then
+  if Active then
   begin
-    inherited;
-    if Filtered then
-      First
-    else
-      Refresh;
-  end;
+    CheckBrowseMode;
+    if Filtered <> Value then
+    begin
+      inherited SetFiltered(Value);
+      if Value then
+        First
+      else
+        Refresh;
+    end;
+  end
+  else
+    inherited SetFiltered(Value);
 end;
 
 procedure TInstantCustomExposer.SetLimited(Value: Boolean);
