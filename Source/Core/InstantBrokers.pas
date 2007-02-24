@@ -3993,15 +3993,13 @@ begin
     Resolver.AddIdParam(Params, InstantParentIdFieldName, AttributeOwner.Id);
     Resolver.AddStringParam(Params, InstantParentClassFieldName,
         AttributeOwner.ClassName);
-    Resolver.AddStringParam(Params, InstantChildClassFieldName,
-        Attribute.Metadata.ObjectClassName);
     DataSet := Broker.AcquireDataSet(Statement, Params);
     try
       DataSet.Open;
       try
         while not DataSet.Eof do
         begin
-          Obj := Attribute.Metadata.ObjectClass.Retrieve(
+          Obj := InstantFindClass(DataSet.FieldByName(InstantChildClassFieldName).AsString).Retrieve(
 //            DataSet.Fields[1].AsString, False, False, AObject.Connector);
               DataSet.FieldByName(InstantChildIdFieldName).AsString,
               False, False, Attribute.Connector) as TInstantObject;
@@ -4039,8 +4037,6 @@ begin
     Resolver.AddIdParam(Params, InstantParentIdFieldName, AObjectId);
     Resolver.AddStringParam(Params, InstantParentClassFieldName,
         AttributeOwner.ClassName);
-    Resolver.AddStringParam(Params, InstantChildClassFieldName,
-        Attribute.Metadata.ObjectClassName);
     DataSet := Broker.AcquireDataSet(Statement, Params);
     try
       DataSet.Open;
@@ -4680,10 +4676,9 @@ var
 begin
   FieldStr := Format('%s, %s, %s', [EmbraceField(InstantChildClassFieldName),
     EmbraceField(InstantChildIdFieldName), EmbraceField(InstantSequenceNoFieldName)]);
-  WhereStr := Format('%s = :%s AND %s = :%s AND %s = :%s',
+  WhereStr := Format('%s = :%s AND %s = :%s',
     [EmbraceField(InstantParentClassFieldName), InstantParentClassFieldName,
-    EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName,
-    EmbraceField(InstantChildClassFieldName), InstantChildClassFieldName]);
+    EmbraceField(InstantParentIdFieldName), InstantParentIdFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s ORDER BY %s',
     [FieldStr, EmbraceTable('%s'), WhereStr, EmbraceField(InstantSequenceNoFieldName)]);
 end;
