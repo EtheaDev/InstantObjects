@@ -4227,7 +4227,7 @@ begin
   if Assigned(Metadata) and (Metadata.StorageKind = skEmbedded) then
     raise EInstantError.CreateFmt(SUnsupportedAttributeOperation,
         ['AddReference', ClassName, Name, 'StorageKind = skEmbedded']);
-  if RequiredClassName <> AObjectClassName then
+  if not InstantFindClass(AObjectClassName).InheritsFrom(RequiredClass) then
     raise EInstantValidationError.CreateFmt(SInvalidObjectClass,
         [AObjectClassName, ClassName, Name, RequiredClass.ClassName]);
 
