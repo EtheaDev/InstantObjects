@@ -660,7 +660,6 @@ type
     function GetObjectReferences(Index: Integer): TInstantObjectReference;
     procedure SetObjectReferences(Index: Integer; Value: TInstantObjectReference);
     property ObjectReferenceList: TObjectList read GetObjectReferenceList;
-    property ObjectReferences[Index: Integer]: TInstantObjectReference read GetObjectReferences write SetObjectReferences;
   protected
     class function AttributeType: TInstantAttributeType; override;
     function GetAllowOwned: Boolean; override;
@@ -683,6 +682,7 @@ type
     procedure SetAllowOwned(Value: Boolean); virtual;
     procedure ValidateObject(AObject: TInstantObject); override;
     procedure WriteObject(Writer: TInstantWriter); override;
+    property ObjectReferences[Index: Integer]: TInstantObjectReference read GetObjectReferences write SetObjectReferences;
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
