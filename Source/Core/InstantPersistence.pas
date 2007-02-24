@@ -901,11 +901,7 @@ type
     procedure Changed; virtual;
     function ChangesDisabled: Boolean;
     procedure CheckId;
-{$IFDEF FPC}
-    class function ClassType: TInstantObjectClass;
-{$ELSE}
-    function ClassType: TInstantObjectClass;
-{$ENDIF}
+    {$IFDEF FPC}class{$ENDIF} function ClassType: TInstantObjectClass;
     procedure ClearObjects;
     function Clone(AConnector: TInstantConnector = nil): TInstantObject; overload;
     function ContainerByName(const ContainerName: string): TInstantContainer;
@@ -5412,11 +5408,7 @@ begin
   end;
 end;
 
-{$IFDEF FPC}
-class function TInstantObject.ClassType: TInstantObjectClass;
-{$ELSE}
-function TInstantObject.ClassType: TInstantObjectClass;
-{$ENDIF}
+{$IFDEF FPC}class{$ENDIF} function TInstantObject.ClassType: TInstantObjectClass;
 begin
   Result := TInstantObjectClass(inherited ClassType);
 end;
