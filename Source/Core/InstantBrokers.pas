@@ -1294,6 +1294,9 @@ function TInstantSQLBroker.AcquireDataSet(const AStatement: string;
 var
   CachedStatement: TInstantStatement;
 begin
+  {$IFDEF IO_STATEMENT_LOGGING}
+  InstantLogStatement('Before: ', AStatement, AParams);
+  {$ENDIF}
   Result := nil;
   if FStatementCacheCapacity <> 0 then
   begin
@@ -2855,9 +2858,6 @@ function TInstantSQLResolver.ExecuteStatement(const AStatement: string;
 var
   TransError: Exception;
 begin
-  {$IFDEF IO_STATEMENT_LOGGING}
-  InstantLogStatement('Before: ', AStatement, AParams);
-  {$ENDIF}
   try
     Result := Broker.Execute(AStatement, AParams);
     Info.Success := Result >= 1;
