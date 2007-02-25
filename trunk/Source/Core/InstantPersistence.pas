@@ -1113,7 +1113,6 @@ type
     property Connector: TInstantConnector read GetConnector;
     // Executes the database build step.
     procedure Execute;
-  published
     property Enabled: Boolean read FEnabled write FEnabled;
   end;
   TInstantDBBuildCommandClass = class of TInstantDBBuildCommand;

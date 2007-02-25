@@ -367,7 +367,11 @@ type
   protected
     { IProviderSupport }
     procedure PSGetAttributes(List: TList); override;
+    {$IFDEF D10+}
+    function PSGetTableNameW: WideString; override;
+    {$ELSE}
     function PSGetTableName: string; override;
+    {$ENDIF}
     procedure PSReset; override;
   protected
     procedure AddClassFieldDefs(const FieldName: string; AClass: TClass); overload;
@@ -3748,7 +3752,11 @@ procedure TInstantCustomExposer.PSGetAttributes(List: TList);
 begin
 end;
 
+{$IFDEF D10+}
+function TInstantCustomExposer.PSGetTableNameW: WideString;
+{$ELSE}
 function TInstantCustomExposer.PSGetTableName: string;
+{$ENDIF}
 begin
   Result := ObjectClassName;
 end;
