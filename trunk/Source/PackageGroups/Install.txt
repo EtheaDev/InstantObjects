@@ -1,10 +1,9 @@
 ------------------------------------------------------------------
 
-  InstantObjects 2.0 Beta 2 (1.9.2.1) for Delphi, Kylix, FPC
+  InstantObjects for Delphi, Kylix, FPC
 
   Mozilla Public License 1.1 Edition
-  January 2006 release
-
+  
   Based on Seleqt InstantObjects.
   Portions created by Seleqt are Copyright (c) 2001-2003 Seleqt.
   Other portions and changes are Copyright (c) the authors.

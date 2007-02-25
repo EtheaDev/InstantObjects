@@ -1,6 +1,77 @@
 VERSION HISTORY
 ---------------
 
+Version 2.1 (2.1.0.0) (2007-02-26)
+
+- Support for SQL Server 2005; catalog support for SQL Server 7;
+  better support for SQL Server in general.
+
+- Support for ModelMaker 6.20 to 9; better ModelMaker support
+  in general in ObjectFoundry.
+
+- Support for InstantDate and InstantTime for date-only and
+  time-only attribute types.
+  
+- Instant Model Explorer enhancements:
+  - Class B has a base class A and subclasses C, D, etc.
+    making a three tier class hierarchy. If Class B is deleted
+    classes C, D, etc. will become subclasses of class A.
+    Previously they would become subclasses of TInstantObject.
+  - New class B in model unit X has a base class A in model unit Y.
+    When adding new class B, unit Y will be automatically
+    added to the Interface uses clause of unit X.  
+  - Whenever a unit is added to the uses clause of an interface
+    section, that unit is removed from the implementation
+    section uses clause if present. Whenever a unit is added to the
+    implementation section uses clause, check the interface section
+    uses clause and if the unit is there then don't add anything.
+
+- Instant model Explorer now uses the newer ToolsAPI on Delphi 7+.
+
+- Improved object circular reference detection.
+
+- Added ability to disable circular reference checking
+  by undefining IO_CIRCULAR_REFERENCE_CHECK.
+
+- Enhanced SQL statement logging: now logs all statements,
+  including select statements.
+  
+- BDE broker: fixed incomplete implementation of IdDataType
+  and IdSize.
+
+- ADO broker: fixed incomplete implementation of IdDataType
+  and IdSize.
+
+- XML broker: now only creates one file for each object,
+  in the concrete class' folder.
+
+- XML broker: removed support for versioning and
+  utf-8 "BOT" encoding.
+  
+- XML broker: fixed failure on query refresh.
+
+- XML broker restructured for easier customization.
+
+- Refactored InstantPersistence.pas into:
+  InstantPersistence.pas - Remains the main 'IO interface' unit.
+  InstantBrokers.pas - Contains the descendant brokers, connectors classes.
+  InstantMetadata.pas - Contains the metadata, scheme, etc. classes.
+  InstantTypes - Contains some type declarations.
+
+- Ubmock and fpcunit integrated into the source tree
+  for easier test development.
+
+- Help file has been greatly improved.
+
+- Added explanatory document for IO to InterBase
+  and Firebird data type mappings.
+  
+- Various fixes and enhancements (see tracker).
+
+Version 2.0 (2.0.0.0) (2006-08-07)
+
+- All 2.0 RC changes.
+
 Version 2.0 RC 1 (1.9.2.1) (2006-05-07)
 
 - Help file has been improved.

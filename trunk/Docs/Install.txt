@@ -1,6 +1,6 @@
 ------------------------------------------------------------------
 
-  InstantObjects 2.0 for Delphi, Kylix, FPC
+  InstantObjects for Delphi, Kylix, FPC
 
   Mozilla Public License 1.1
   Based on Seleqt InstantObjects.
