@@ -54,7 +54,8 @@ uses
   TestInstantParts in 'TestInstantParts.pas',
   TestInstantReferences in 'TestInstantReferences.pas',
   TestInstantCircularReferences in 'TestInstantCircularReferences.pas',
-  TestInstantObjectReference in 'TestInstantObjectReference.pas';
+  TestInstantObjectReference in 'TestInstantObjectReference.pas',
+  MinimalModel in 'MinimalModel.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
@@ -62,8 +63,8 @@ uses
 begin
   Application.Initialize;
   InstantModel.ClassMetadatas.Clear;
-//  Application.CreateForm(TGUITestRunner, TestRunner);
   Application.CreateForm(TGUITestRunner, TestRunner);
+  //Application.CreateForm(TTestRunner, TestRunner);
   Application.Run;
 end.
 
