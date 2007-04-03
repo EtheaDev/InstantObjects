@@ -33,6 +33,12 @@ unit InstantDBXConnectionDefEdit;
 
 interface
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 uses
 {$IFDEF MSWINDOWS}
   Forms, Dialogs, StdCtrls, Controls, ExtCtrls,
@@ -40,7 +46,9 @@ uses
 {$IFDEF LINUX}
   QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
 {$ENDIF}
-  SysUtils, Classes, InstantDBX, DBXpress, DB, SQLExpr;
+  SysUtils, Classes, InstantDBX,
+  {$IFNDEF D11+}DBXpress,{$ENDIF}
+  DB, SQLExpr;
 
 type
   TInstantDBXConnectionDefEditForm = class(TForm)

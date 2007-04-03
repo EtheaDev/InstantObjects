@@ -1,0 +1,98 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{541830bc-f093-438e-b0f8-7606626e64ed}</ProjectGuid>
+    <MainSource>IntroIW.dpr</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>IntroIW.exe</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+    <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_ResourcePath>
+    <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_ObjPath>
+    <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_Define>DEBUG</DCC_Define>
+    <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_ResourcePath>
+    <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_ObjPath>
+    <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_IncludePath>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>VCLApplication</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject xmlns=""> <Delphi.Personality>   <Parameters>
+      <Parameters Name="UseLauncher">False</Parameters>
+      <Parameters Name="LoadAllSymbols">True</Parameters>
+      <Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
+    </Parameters>
+    <VersionInfo>
+      <VersionInfo Name="IncludeVerInfo">False</VersionInfo>
+      <VersionInfo Name="AutoIncBuild">False</VersionInfo>
+      <VersionInfo Name="MajorVer">1</VersionInfo>
+      <VersionInfo Name="MinorVer">0</VersionInfo>
+      <VersionInfo Name="Release">0</VersionInfo>
+      <VersionInfo Name="Build">0</VersionInfo>
+      <VersionInfo Name="Debug">False</VersionInfo>
+      <VersionInfo Name="PreRelease">False</VersionInfo>
+      <VersionInfo Name="Special">False</VersionInfo>
+      <VersionInfo Name="Private">False</VersionInfo>
+      <VersionInfo Name="DLL">False</VersionInfo>
+      <VersionInfo Name="Locale">1040</VersionInfo>
+      <VersionInfo Name="CodePage">1252</VersionInfo>
+    </VersionInfo>
+    <VersionInfoKeys>
+      <VersionInfoKeys Name="CompanyName"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileDescription"></VersionInfoKeys>
+      <VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="InternalName"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys>
+      <VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys>
+      <VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductName"></VersionInfoKeys>
+      <VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+      <VersionInfoKeys Name="Comments"></VersionInfoKeys>
+    </VersionInfoKeys>
+    <Source>
+      <Source Name="MainSource">IntroIW.dpr</Source>
+    </Source>
+  </Delphi.Personality> </BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="IntroIW.dpr">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="CompanyEditIW.pas">
+      <Form>CompanyEditForm</Form>
+    </DCCReference>
+    <DCCReference Include="ContactEditIW.pas">
+      <Form>ContactEditForm</Form>
+    </DCCReference>
+    <DCCReference Include="MainIW.pas">
+      <Form>MainForm</Form>
+    </DCCReference>
+    <DCCReference Include="Model.pas" />
+    <DCCReference Include="PersonEditIW.pas">
+      <Form>PersonEditForm</Form>
+    </DCCReference>
+    <DCCReference Include="QueryIW.pas">
+      <Form>QueryForm</Form>
+    </DCCReference>
+    <DCCReference Include="ServerController.pas">
+      <Form>IWServerController</Form>
+    </DCCReference>
+    <DCCReference Include="UserSessionUnit.pas">
+      <Form>IWUserSession</Form>
+    </DCCReference>
+  </ItemGroup>
+</Project>

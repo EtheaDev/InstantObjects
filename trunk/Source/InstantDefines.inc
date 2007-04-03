@@ -34,6 +34,16 @@
   {$DEFINE D10+}
 {$ENDIF}
 
+{$IFDEF VER185}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10+}
+  {$DEFINE D11}
+  {$DEFINE D11+}
+{$ENDIF}
+
 {$IFDEF FPC}
   {$DEFINE D5+}
   {$DEFINE D6+}

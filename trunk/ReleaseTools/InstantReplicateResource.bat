@@ -62,6 +62,10 @@ copy "InstantVersion.res" "..\Source\Brokers\XML\D2006\IOXML.res" > nul
 echo ..\Source\Brokers\XML\D2006\IOXML.res
 copy "InstantVersion.res" "..\Source\Brokers\XML\D2006\DclIOXML.res" > nul
 echo ..\Source\Brokers\XML\D2006\DclIOXML.res
+copy "InstantVersion.res" "..\Source\Brokers\XML\D2007\IOXML.res" > nul
+echo ..\Source\Brokers\XML\D2007\IOXML.res
+copy "InstantVersion.res" "..\Source\Brokers\XML\D2007\DclIOXML.res" > nul
+echo ..\Source\Brokers\XML\D2007\DclIOXML.res
 copy "InstantVersion.res" "..\Source\Brokers\XML\k3\IOXML.res" > nul
 echo ..\Source\Brokers\XML\k3\IOXML.res
 copy "InstantVersion.res" "..\Source\Brokers\XML\k3\DclIOXML.res" > nul
@@ -86,6 +90,10 @@ copy "InstantVersion.res" "..\Source\Brokers\IBX\D2006\IOIBX.res" > nul
 echo ..\Source\Brokers\IBX\D2006\IOIBX.res
 copy "InstantVersion.res" "..\Source\Brokers\IBX\D2006\DclIOIBX.res" > nul
 echo ..\Source\Brokers\IBX\D2006\DclIOIBX.res
+copy "InstantVersion.res" "..\Source\Brokers\IBX\D2007\IOIBX.res" > nul
+echo ..\Source\Brokers\IBX\D2007\IOIBX.res
+copy "InstantVersion.res" "..\Source\Brokers\IBX\D2007\DclIOIBX.res" > nul
+echo ..\Source\Brokers\IBX\D2007\DclIOIBX.res
 copy "InstantVersion.res" "..\Source\Brokers\ADO\D5\DclIOADO_D5.res" > nul
 echo ..\Source\Brokers\ADO\D5\DclIOADO_D5.res
 copy "InstantVersion.res" "..\Source\Brokers\ADO\D5\IOADO_D5.res" > nul
@@ -106,6 +114,10 @@ copy "InstantVersion.res" "..\Source\Brokers\ADO\D2006\IOADO.res" > nul
 echo ..\Source\Brokers\ADO\D2006\IOADO.res
 copy "InstantVersion.res" "..\Source\Brokers\ADO\D2006\DclIOADO.res" > nul
 echo ..\Source\Brokers\ADO\D2006\DclIOADO.res
+copy "InstantVersion.res" "..\Source\Brokers\ADO\D2007\IOADO.res" > nul
+echo ..\Source\Brokers\ADO\D2007\IOADO.res
+copy "InstantVersion.res" "..\Source\Brokers\ADO\D2007\DclIOADO.res" > nul
+echo ..\Source\Brokers\ADO\D2007\DclIOADO.res
 copy "InstantVersion.res" "..\Source\Brokers\ZeosDBO\D5\DclIOZeosDBO_D5.res" > nul
 echo ..\Source\Brokers\ZeosDBO\D5\DclIOZeosDBO_D5.res
 copy "InstantVersion.res" "..\Source\Brokers\ZeosDBO\D5\IOZeosDBO_D5.res" > nul
@@ -170,6 +182,10 @@ copy "InstantVersion.res" "..\Source\Brokers\BDE\D2006\IOBDE.res" > nul
 echo ..\Source\Brokers\BDE\D2006\IOBDE.res
 copy "InstantVersion.res" "..\Source\Brokers\BDE\D2006\DclIOBDE.res" > nul
 echo ..\Source\Brokers\BDE\D2006\DclIOBDE.res
+copy "InstantVersion.res" "..\Source\Brokers\BDE\D2007\IOBDE.res" > nul
+echo ..\Source\Brokers\BDE\D2007\IOBDE.res
+copy "InstantVersion.res" "..\Source\Brokers\BDE\D2007\DclIOBDE.res" > nul
+echo ..\Source\Brokers\BDE\D2007\DclIOBDE.res
 copy "InstantVersion.res" "..\Source\Brokers\DBX\D6\IODBX.res" > nul
 echo ..\Source\Brokers\DBX\D6\IODBX.res
 copy "InstantVersion.res" "..\Source\Brokers\DBX\D6\DclIODBX.res" > nul
@@ -186,6 +202,10 @@ copy "InstantVersion.res" "..\Source\Brokers\DBX\D2006\IODBX.res" > nul
 echo ..\Source\Brokers\DBX\D2006\IODBX.res
 copy "InstantVersion.res" "..\Source\Brokers\DBX\D2006\DclIODBX.res" > nul
 echo ..\Source\Brokers\DBX\D2006\DclIODBX.res
+copy "InstantVersion.res" "..\Source\Brokers\DBX\D2007\IODBX.res" > nul
+echo ..\Source\Brokers\DBX\D2007\IODBX.res
+copy "InstantVersion.res" "..\Source\Brokers\DBX\D2007\DclIODBX.res" > nul
+echo ..\Source\Brokers\DBX\D2007\DclIODBX.res
 copy "InstantVersion.res" "..\Source\Brokers\DBX\K3\IODBX.res" > nul
 echo ..\Source\Brokers\DBX\K3\IODBX.res
 copy "InstantVersion.res" "..\Source\Brokers\DBX\K3\DclIODBX.res" > nul
@@ -194,6 +214,8 @@ copy "InstantVersion.res" "..\Source\Core\D2005\IOCore.res" > nul
 echo ..\Source\Core\D2005\IOCore.res
 copy "InstantVersion.res" "..\Source\Core\D2006\IOCore.res" > nul
 echo ..\Source\Core\D2006\IOCore.res
+copy "InstantVersion.res" "..\Source\Core\D2007\IOCore.res" > nul
+echo ..\Source\Core\D2007\IOCore.res
 copy "InstantVersion.res" "..\Source\Core\K3\IOCore.res" > nul
 echo ..\Source\Core\K3\IOCore.res
 copy "InstantVersion.res" "..\Source\Core\D5\IOCore_D5.res" > nul
@@ -206,6 +228,8 @@ copy "InstantVersion.res" "..\Source\Design\D2005\DclIOCore.res" > nul
 echo ..\Source\Design\D2005\DclIOCore.res
 copy "InstantVersion.res" "..\Source\Design\D2006\DclIOCore.res" > nul
 echo ..\Source\Design\D2006\DclIOCore.res
+copy "InstantVersion.res" "..\Source\Design\D2007\DclIOCore.res" > nul
+echo ..\Source\Design\D2007\DclIOCore.res
 copy "InstantVersion.res" "..\Source\Design\K3\DclIOCore.res" > nul
 echo ..\Source\Design\K3\DclIOCore.res
 copy "InstantVersion.res" "..\Source\Design\D5\DclIOCore_D5.res" > nul
@@ -224,6 +248,8 @@ copy "InstantVersion.res" "..\Source\Catalogs\MSSql\D7\IOMSSqlCatalog.res" > nul
 echo ..\Source\Catalogs\MSSql\D7\IOMSSqlCatalog.res
 copy "InstantVersion.res" "..\Source\Catalogs\MSSql\D2006\IOMSSqlCatalog.res" > nul
 echo ..\Source\Catalogs\MSSql\D2006\IOMSSqlCatalog.res
+copy "InstantVersion.res" "..\Source\Catalogs\MSSql\D2007\IOMSSqlCatalog.res" > nul
+echo ..\Source\Catalogs\MSSql\D2007\IOMSSqlCatalog.res
 copy "InstantVersion.res" "..\Source\Catalogs\MSSql\K3\IOMSSqlCatalog.res" > nul
 echo ..\Source\Catalogs\MSSql\K3\IOMSSqlCatalog.res
 copy "InstantVersion.res" "..\Source\Catalogs\IBFb\D5\IOIBFbCatalog_D5.res" > nul
@@ -236,6 +262,8 @@ copy "InstantVersion.res" "..\Source\Catalogs\IBFb\D7\IOIBFbCatalog.res" > nul
 echo ..\Source\Catalogs\IBFb\D7\IOIBFbCatalog.res
 copy "InstantVersion.res" "..\Source\Catalogs\IBFb\D2006\IOIBFbCatalog.res" > nul
 echo ..\Source\Catalogs\IBFb\D2006\IOIBFbCatalog.res
+copy "InstantVersion.res" "..\Source\Catalogs\IBFb\D2007\IOIBFbCatalog.res" > nul
+echo ..\Source\Catalogs\IBFb\D2007\IOIBFbCatalog.res
 copy "InstantVersion.res" "..\Source\Catalogs\IBFb\K3\IOIBFbCatalog.res" > nul
 echo ..\Source\Catalogs\IBFb\K3\IOIBFbCatalog.res
 echo.

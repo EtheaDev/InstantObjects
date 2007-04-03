@@ -1,0 +1,118 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{aa24332a-6806-448c-ab3d-ab0790ceec13}</ProjectGuid>
+  </PropertyGroup>
+  <ItemGroup />
+  <ItemGroup />
+  <ProjectExtensions>
+    <Borland.Personality>Default.Personality</Borland.Personality>
+    <Borland.ProjectType />
+    <BorlandProject>
+<BorlandProject xmlns=""><Default.Personality></Default.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Target Name="IOCore">
+    <MSBuild Projects="..\..\Core\D2007\IOCore.dproj" Targets="" />
+    <MSBuild Projects="..\..\Core\D2007\IOCore.dproj" Targets="" />
+  </Target>
+  <Target Name="IOCore:Clean">
+    <MSBuild Projects="..\..\Core\D2007\IOCore.dproj" Targets="Clean" />
+    <MSBuild Projects="..\..\Core\D2007\IOCore.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="IOCore:Rebuild">
+    <MSBuild Projects="..\..\Core\D2007\IOCore.dproj" Targets="Rebuild" />
+    <MSBuild Projects="..\..\Core\D2007\IOCore.dproj" Targets="Rebuild" />
+  </Target>
+  <Target Name="IOIBFbCatalog">
+    <MSBuild Projects="..\..\Catalogs\IBFb\D2007\IOIBFbCatalog.dproj" Targets="" />
+    <MSBuild Projects="..\..\Catalogs\IBFb\D2007\IOIBFbCatalog.dproj" Targets="" />
+  </Target>
+  <Target Name="IOIBFbCatalog:Clean">
+    <MSBuild Projects="..\..\Catalogs\IBFb\D2007\IOIBFbCatalog.dproj" Targets="Clean" />
+    <MSBuild Projects="..\..\Catalogs\IBFb\D2007\IOIBFbCatalog.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="IOIBFbCatalog:Rebuild">
+    <MSBuild Projects="..\..\Catalogs\IBFb\D2007\IOIBFbCatalog.dproj" Targets="Rebuild" />
+    <MSBuild Projects="..\..\Catalogs\IBFb\D2007\IOIBFbCatalog.dproj" Targets="Rebuild" />
+  </Target>
+  <Target Name="IOMSSqlCatalog">
+    <MSBuild Projects="..\..\Catalogs\MSSql\D2007\IOMSSqlCatalog.dproj" Targets="" />
+    <MSBuild Projects="..\..\Catalogs\MSSql\D2007\IOMSSqlCatalog.dproj" Targets="" />
+  </Target>
+  <Target Name="IOMSSqlCatalog:Clean">
+    <MSBuild Projects="..\..\Catalogs\MSSql\D2007\IOMSSqlCatalog.dproj" Targets="Clean" />
+    <MSBuild Projects="..\..\Catalogs\MSSql\D2007\IOMSSqlCatalog.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="IOMSSqlCatalog:Rebuild">
+    <MSBuild Projects="..\..\Catalogs\MSSql\D2007\IOMSSqlCatalog.dproj" Targets="Rebuild" />
+    <MSBuild Projects="..\..\Catalogs\MSSql\D2007\IOMSSqlCatalog.dproj" Targets="Rebuild" />
+  </Target>
+  <Target Name="IOADO">
+    <MSBuild Projects="..\..\Brokers\ADO\D2007\IOADO.dproj" Targets="" />
+    <MSBuild Projects="..\..\Brokers\ADO\D2007\IOADO.dproj" Targets="" />
+  </Target>
+  <Target Name="IOADO:Clean">
+    <MSBuild Projects="..\..\Brokers\ADO\D2007\IOADO.dproj" Targets="Clean" />
+    <MSBuild Projects="..\..\Brokers\ADO\D2007\IOADO.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="IOADO:Rebuild">
+    <MSBuild Projects="..\..\Brokers\ADO\D2007\IOADO.dproj" Targets="Rebuild" />
+    <MSBuild Projects="..\..\Brokers\ADO\D2007\IOADO.dproj" Targets="Rebuild" />
+  </Target>
+  <Target Name="IOBDE">
+    <MSBuild Projects="..\..\Brokers\BDE\D2007\IOBDE.dproj" Targets="" />
+    <MSBuild Projects="..\..\Brokers\BDE\D2007\IOBDE.dproj" Targets="" />
+  </Target>
+  <Target Name="IOBDE:Clean">
+    <MSBuild Projects="..\..\Brokers\BDE\D2007\IOBDE.dproj" Targets="Clean" />
+    <MSBuild Projects="..\..\Brokers\BDE\D2007\IOBDE.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="IOBDE:Rebuild">
+    <MSBuild Projects="..\..\Brokers\BDE\D2007\IOBDE.dproj" Targets="Rebuild" />
+    <MSBuild Projects="..\..\Brokers\BDE\D2007\IOBDE.dproj" Targets="Rebuild" />
+  </Target>
+  <Target Name="IODBX">
+    <MSBuild Projects="..\..\Brokers\DBX\D2007\IODBX.dproj" Targets="" />
+    <MSBuild Projects="..\..\Brokers\DBX\D2007\IODBX.dproj" Targets="" />
+  </Target>
+  <Target Name="IODBX:Clean">
+    <MSBuild Projects="..\..\Brokers\DBX\D2007\IODBX.dproj" Targets="Clean" />
+    <MSBuild Projects="..\..\Brokers\DBX\D2007\IODBX.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="IODBX:Rebuild">
+    <MSBuild Projects="..\..\Brokers\DBX\D2007\IODBX.dproj" Targets="Rebuild" />
+    <MSBuild Projects="..\..\Brokers\DBX\D2007\IODBX.dproj" Targets="Rebuild" />
+  </Target>
+  <Target Name="IOIBX">
+    <MSBuild Projects="..\..\Brokers\IBX\D2007\IOIBX.dproj" Targets="" />
+    <MSBuild Projects="..\..\Brokers\IBX\D2007\IOIBX.dproj" Targets="" />
+  </Target>
+  <Target Name="IOIBX:Clean">
+    <MSBuild Projects="..\..\Brokers\IBX\D2007\IOIBX.dproj" Targets="Clean" />
+    <MSBuild Projects="..\..\Brokers\IBX\D2007\IOIBX.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="IOIBX:Rebuild">
+    <MSBuild Projects="..\..\Brokers\IBX\D2007\IOIBX.dproj" Targets="Rebuild" />
+    <MSBuild Projects="..\..\Brokers\IBX\D2007\IOIBX.dproj" Targets="Rebuild" />
+  </Target>
+  <Target Name="IOXML">
+    <MSBuild Projects="..\..\Brokers\XML\D2007\IOXML.dproj" Targets="" />
+    <MSBuild Projects="..\..\Brokers\XML\D2007\IOXML.dproj" Targets="" />
+  </Target>
+  <Target Name="IOXML:Clean">
+    <MSBuild Projects="..\..\Brokers\XML\D2007\IOXML.dproj" Targets="Clean" />
+    <MSBuild Projects="..\..\Brokers\XML\D2007\IOXML.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="IOXML:Rebuild">
+    <MSBuild Projects="..\..\Brokers\XML\D2007\IOXML.dproj" Targets="Rebuild" />
+    <MSBuild Projects="..\..\Brokers\XML\D2007\IOXML.dproj" Targets="Rebuild" />
+  </Target>
+  <Target Name="Build">
+    <CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOADO;IOBDE;IODBX;IOIBX;IOXML" />
+  </Target>
+  <Target Name="Clean">
+    <CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOADO:Clean;IOBDE:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean" />
+  </Target>
+  <Target Name="Rebuild">
+    <CallTarget Targets="IOCore:Rebuild;IOIBFbCatalog:Rebuild;IOMSSqlCatalog:Rebuild;IOADO:Rebuild;IOBDE:Rebuild;IODBX:Rebuild;IOIBX:Rebuild;IOXML:Rebuild" />
+  </Target>
+</Project>
