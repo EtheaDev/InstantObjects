@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, Db, InstantPresentation, InstantPersistence, Grids, DBGrids,
-  ExtCtrls, DBCtrls, Model, DBTables, InstantBDE;
+  ExtCtrls, DBCtrls, Model, DBTables, InstantBDE, InstantBrokers;
 
 type
   TMainForm = class(TForm)

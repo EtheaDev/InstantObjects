@@ -45,7 +45,9 @@ uses
 {$IFDEF LINUX}
   QControls,
 {$ENDIF}
-  Classes, DB, DBXpress, SqlExpr, InstantPersistence, InstantCommand,
+  Classes, DB,
+  {$IFNDEF D11+}DBXpress,{$ENDIF}
+  SqlExpr, InstantPersistence, InstantCommand,
   InstantBrokers, InstantMetadata, InstantTypes;
 
 type

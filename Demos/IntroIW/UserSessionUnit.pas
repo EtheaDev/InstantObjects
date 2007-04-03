@@ -9,7 +9,7 @@ interface
 
 uses
   IWUserSessionBase, SysUtils, Classes, InstantPersistence, DB,
-  InstantADO, ADODB;
+  InstantADO, ADODB, InstantBrokers;
 
 type
   TIWUserSession = class(TIWUserSessionBase)

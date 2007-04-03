@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProjectGuid>{9b758a49-d140-45db-8681-01e49660a560}</ProjectGuid>
+    <MainSource>DclIOCore.dpk</MainSource>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
+    <DCC_DependencyCheckOutputName>C:\Documents and Settings\nandod\Documenti\RAD Studio\5.0\Bpl\DclIOCore_D11.bpl</DCC_DependencyCheckOutputName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_DebugInformation>False</DCC_DebugInformation>
+    <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
+    <DCC_TypedAtParameter>True</DCC_TypedAtParameter>
+    <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
+    <DCC_Define>RELEASE</DCC_Define>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <Version>7.0</Version>
+    <DCC_TypedAtParameter>True</DCC_TypedAtParameter>
+    <DCC_Define>DEBUG</DCC_Define>
+  </PropertyGroup>
+  <ProjectExtensions>
+    <Borland.Personality>Delphi.Personality</Borland.Personality>
+    <Borland.ProjectType>Package</Borland.ProjectType>
+    <BorlandProject>
+<BorlandProject><Delphi.Personality><Compiler><Compiler Name="UsePackages">False</Compiler><Compiler Name="Packages"></Compiler></Compiler><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><Package_Options><Package_Options Name="PackageDescription">InstantObjects Design-Time Package (Delphi 2007)</Package_Options><Package_Options Name="ImplicitBuild">False</Package_Options><Package_Options Name="DesigntimeOnly">True</Package_Options><Package_Options Name="RuntimeOnly">False</Package_Options><Package_Options Name="LibSuffix">_D11</Package_Options></Package_Options><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">1</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1040</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">www.instantobjects.org</VersionInfoKeys><VersionInfoKeys Name="FileDescription">InstantObjects</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.1.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright"></VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName">InstantObjects</VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.1.0.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">DclIOCore.dpk</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
+  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
+  <ItemGroup>
+    <DelphiCompile Include="DclIOCore.dpk">
+      <MainSource>MainSource</MainSource>
+    </DelphiCompile>
+    <DCCReference Include="..\..\Core\InstantPresentation.dcr" />
+    <DCCReference Include="..\..\Core\InstantPresentation.dcr" />
+    <DCCReference Include="..\..\PackageGroups\D2007\dbrtl.dcp" />
+    <DCCReference Include="..\..\PackageGroups\D2007\designide.dcp" />
+    <DCCReference Include="..\..\PackageGroups\D2007\IOCore.dcp" />
+    <DCCReference Include="..\..\PackageGroups\D2007\rtl.dcp" />
+    <DCCReference Include="..\..\PackageGroups\D2007\vcl.dcp" />
+    <DCCReference Include="..\..\PackageGroups\D2007\vcldb.dcp" />
+    <DCCReference Include="..\InstantAbout.pas">
+      <Form>InstantAboutForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantAttributeEditor.pas">
+      <Form>InstantAttributeEditorForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantClassEditor.pas">
+      <Form>InstantClassEditorForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantCommandEditor.pas">
+      <Form>InstantCommandEditorForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantDesignResources.pas">
+      <Form>InstantDesignResourceModule</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantDesignTools.pas" />
+    <DCCReference Include="..\InstantDesignUtils.pas" />
+    <DCCReference Include="..\InstantDialog.pas">
+      <Form>InstantDialogForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantDualList.pas">
+      <Form>InstantDualListForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantEdit.pas">
+      <Form>InstantEditForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantModelExpert.pas" />
+    <DCCReference Include="..\InstantModelExplorer.pas">
+      <Form>InstantModelExplorerForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantOTA.pas" />
+    <DCCReference Include="..\InstantReg.pas" />
+    <DCCReference Include="..\InstantUnitSelect.pas">
+      <Form>InstantUnitSelectForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantWizard.pas" />
+  </ItemGroup>
+</Project>
