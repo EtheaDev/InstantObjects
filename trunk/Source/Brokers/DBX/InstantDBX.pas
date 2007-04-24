@@ -216,13 +216,16 @@ type
     function ColumnTypeByDataType(DataType: TInstantDataType): string; override;
     function GetDBMSName: string; override;
     function GetSQLQuote: Char; override;
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
+  public
+    function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
   end;
 
 implementation
 
 uses
   SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math,
-  InstantDBBuild, InstantIBFbCatalog, InstantMSSqlCatalog;
+  InstantDBBuild, InstantIBFbCatalog, InstantMSSqlCatalog, InstantMySQLCatalog;
 
 { TInstantDBXConnector }
 
@@ -285,7 +288,14 @@ end;
 
 procedure TInstantDBXConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
-  inherited;
+  StartTransaction;
+  try
+    inherited;
+    CommitTransaction;
+  except
+    RollbackTransaction;
+    raise;
+  end;
 end;
 
 procedure TInstantDBXConnector.InternalCommitTransaction;
@@ -753,6 +763,20 @@ const
     'TIME');
 begin
   Result := Types[DataType];
+end;
+
+function TInstantDBXMySQLBroker.CreateCatalog(
+  const AScheme: TInstantScheme): TInstantCatalog;
+begin
+  Result := TInstantMySQLCatalog.Create(AScheme, Self);
+end;
+
+function TInstantDBXMySQLBroker.DataTypeToColumnType(DataType: TInstantDataType;
+  Size: Integer): string;
+begin
+  if (DataType = dtString) and (Size > 255) then
+    DataType := dtMemo;
+  Result := inherited DataTypeToColumnType(DataType, Size);
 end;
 
 function TInstantDBXMySQLBroker.GetDBMSName: string;

@@ -12,83 +12,74 @@
   </ProjectExtensions>
   <Target Name="DclIOCore">
     <MSBuild Projects="..\..\Design\D2007\DclIOCore.dproj" Targets="" />
-    <MSBuild Projects="..\..\Design\D2007\DclIOCore.dproj" Targets="" />
   </Target>
   <Target Name="DclIOCore:Clean">
     <MSBuild Projects="..\..\Design\D2007\DclIOCore.dproj" Targets="Clean" />
-    <MSBuild Projects="..\..\Design\D2007\DclIOCore.dproj" Targets="Clean" />
   </Target>
-  <Target Name="DclIOCore:Rebuild">
-    <MSBuild Projects="..\..\Design\D2007\DclIOCore.dproj" Targets="Rebuild" />
-    <MSBuild Projects="..\..\Design\D2007\DclIOCore.dproj" Targets="Rebuild" />
+  <Target Name="DclIOCore:Make">
+    <MSBuild Projects="..\..\Design\D2007\DclIOCore.dproj" Targets="Make" />
   </Target>
   <Target Name="DclIOADO">
-    <MSBuild Projects="..\..\Brokers\ADO\D2007\DclIOADO.dproj" Targets="" />
     <MSBuild Projects="..\..\Brokers\ADO\D2007\DclIOADO.dproj" Targets="" />
   </Target>
   <Target Name="DclIOADO:Clean">
     <MSBuild Projects="..\..\Brokers\ADO\D2007\DclIOADO.dproj" Targets="Clean" />
-    <MSBuild Projects="..\..\Brokers\ADO\D2007\DclIOADO.dproj" Targets="Clean" />
   </Target>
-  <Target Name="DclIOADO:Rebuild">
-    <MSBuild Projects="..\..\Brokers\ADO\D2007\DclIOADO.dproj" Targets="Rebuild" />
-    <MSBuild Projects="..\..\Brokers\ADO\D2007\DclIOADO.dproj" Targets="Rebuild" />
+  <Target Name="DclIOADO:Make">
+    <MSBuild Projects="..\..\Brokers\ADO\D2007\DclIOADO.dproj" Targets="Make" />
   </Target>
   <Target Name="DclIOBDE">
-    <MSBuild Projects="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" Targets="" />
     <MSBuild Projects="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" Targets="" />
   </Target>
   <Target Name="DclIOBDE:Clean">
     <MSBuild Projects="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" Targets="Clean" />
-    <MSBuild Projects="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" Targets="Clean" />
   </Target>
-  <Target Name="DclIOBDE:Rebuild">
-    <MSBuild Projects="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" Targets="Rebuild" />
-    <MSBuild Projects="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" Targets="Rebuild" />
+  <Target Name="DclIOBDE:Make">
+    <MSBuild Projects="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" Targets="Make" />
   </Target>
   <Target Name="DclIODBX">
-    <MSBuild Projects="..\..\Brokers\DBX\D2007\DclIODBX.dproj" Targets="" />
     <MSBuild Projects="..\..\Brokers\DBX\D2007\DclIODBX.dproj" Targets="" />
   </Target>
   <Target Name="DclIODBX:Clean">
     <MSBuild Projects="..\..\Brokers\DBX\D2007\DclIODBX.dproj" Targets="Clean" />
-    <MSBuild Projects="..\..\Brokers\DBX\D2007\DclIODBX.dproj" Targets="Clean" />
   </Target>
-  <Target Name="DclIODBX:Rebuild">
-    <MSBuild Projects="..\..\Brokers\DBX\D2007\DclIODBX.dproj" Targets="Rebuild" />
-    <MSBuild Projects="..\..\Brokers\DBX\D2007\DclIODBX.dproj" Targets="Rebuild" />
+  <Target Name="DclIODBX:Make">
+    <MSBuild Projects="..\..\Brokers\DBX\D2007\DclIODBX.dproj" Targets="Make" />
   </Target>
   <Target Name="DclIOIBX">
-    <MSBuild Projects="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" Targets="" />
     <MSBuild Projects="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" Targets="" />
   </Target>
   <Target Name="DclIOIBX:Clean">
     <MSBuild Projects="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" Targets="Clean" />
-    <MSBuild Projects="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" Targets="Clean" />
   </Target>
-  <Target Name="DclIOIBX:Rebuild">
-    <MSBuild Projects="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" Targets="Rebuild" />
-    <MSBuild Projects="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" Targets="Rebuild" />
+  <Target Name="DclIOIBX:Make">
+    <MSBuild Projects="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" Targets="Make" />
   </Target>
   <Target Name="DclIOXML">
-    <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="" />
     <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="" />
   </Target>
   <Target Name="DclIOXML:Clean">
     <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="Clean" />
-    <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="Clean" />
   </Target>
-  <Target Name="DclIOXML:Rebuild">
-    <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="Rebuild" />
-    <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="Rebuild" />
+  <Target Name="DclIOXML:Make">
+    <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="Make" />
+  </Target>
+  <Target Name="DclIOZeosDBO">
+    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="" />
+  </Target>
+  <Target Name="DclIOZeosDBO:Clean">
+    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="DclIOZeosDBO:Make">
+    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="Make" />
   </Target>
   <Target Name="Build">
-    <CallTarget Targets="DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML" />
+    <CallTarget Targets="DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML;DclIOZeosDBO" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean" />
+    <CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean;DclIOZeosDBO:Clean" />
   </Target>
-  <Target Name="Rebuild">
-    <CallTarget Targets="DclIOCore:Rebuild;DclIOADO:Rebuild;DclIOBDE:Rebuild;DclIODBX:Rebuild;DclIOIBX:Rebuild;DclIOXML:Rebuild" />
+  <Target Name="Make">
+    <CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIOBDE:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make;DclIOZeosDBO:Make" />
   </Target>
 </Project>
