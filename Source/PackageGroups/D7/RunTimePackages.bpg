@@ -9,8 +9,9 @@ MAKE = $(ROOT)\bin\make.exe -$(MAKEFLAGS) -f$**
 DCC = $(ROOT)\bin\dcc32.exe $**
 BRCC = $(ROOT)\bin\brcc32.exe $**
 #------------------------------------------------------------------------------
-PROJECTS = IOCore_D7.bpl IOMSSqlCatalog_D7.bpl IOIBFbCatalog_D7.bpl IOADO_D7.bpl IOBDE_D7.bpl \
-  IODBX_D7.bpl IOIBX_D7.bpl IOXML_D7.bpl
+PROJECTS = IOCore_D7.bpl IOMSSqlCatalog_D7.bpl IOIBFbCatalog_D7.bpl \
+  IOMySQLCatalog_D7.bpl IOADO_D7.bpl IOBDE_D7.bpl IODBX_D7.bpl IOIBX_D7.bpl \
+  IOXML_D7.bpl IOZeosDBO_D7.bpl
 #------------------------------------------------------------------------------
 default: $(PROJECTS)
 #------------------------------------------------------------------------------
@@ -37,6 +38,12 @@ IOMSSqlCatalog_D7.bpl: ..\..\Catalogs\MSSql\D7\IOMSSqlCatalog.dpk
   $(DCC)
 
 IOIBFbCatalog_D7.bpl: ..\..\Catalogs\IBFb\D7\IOIBFbCatalog.dpk
+  $(DCC)
+
+IOMySQLCatalog_D7.bpl: ..\..\Catalogs\MySQL\D7\IOMySQLCatalog.dpk
+  $(DCC)
+
+IOZeosDBO_D7.bpl: ..\..\Brokers\ZeosDBO\D7\IOZeosDBO.dpk
   $(DCC)
 
 

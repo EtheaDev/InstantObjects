@@ -39,7 +39,8 @@ unit InstantZeosDBOCatalog;
 interface
 
 uses
-  DB, ZDbcIntfs, InstantPersistence, InstantZeosDBO;
+  DB, ZDbcIntfs, InstantPersistence, InstantZeosDBO, InstantBrokers,
+  InstantMetadata, InstantTypes;
 
 type
   // A TInstantCatalog that reads catalog information from a ZeosDBO

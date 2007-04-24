@@ -49,7 +49,9 @@ unit InstantZeosDBO;
 interface
 
 uses
-  Classes, Db, InstantPersistence, InstantCommand, InstantDBBuild, ZConnection;
+  Classes, Db, InstantPersistence, InstantCommand, InstantDBBuild, InstantBrokers,
+  InstantMetadata, InstantTypes, ZConnection
+  {$IFDEF D10+}, DBCommonTypes{$ENDIF};
 
 type
   TInstantZeosDBOConnectionDef = class(TInstantRelationalConnectionDef)
@@ -907,7 +909,9 @@ const
     'VARCHAR',
     'TEXT',
     'DATETIME',
-    'IMAGE');
+    'IMAGE',
+    'DATETIME',
+    'DATETIME');
 begin
   Result := Types[DataType];
 end;
@@ -932,7 +936,9 @@ const
     'VARCHAR',
     'TEXT',
     'DATETIME',
-    'IMAGE');
+    'IMAGE',
+    'DATETIME',
+    'DATETIME');
 begin
   Result := Types[DataType];
 end;
@@ -982,7 +988,9 @@ const
     'VARCHAR',
     'BLOB SUB_TYPE 1',
     'TIMESTAMP',
-    'BLOB');
+    'BLOB',
+    'TIMESTAMP',
+    'TIMESTAMP');
 begin
   Result := Types[DataType];
 end;
@@ -1012,7 +1020,9 @@ const
     'VARCHAR2',
     'CLOB',
     'DATE',
-    'BLOB');
+    'BLOB',
+    'DATE',
+    'DATE');
 begin
   Result := Types[DataType];
 end;
@@ -1037,7 +1047,9 @@ const
     'VARCHAR',
     'TEXT',
     'TIMESTAMP',
-    'BYTEA');
+    'BYTEA',
+    'TIMESTAMP',
+    'TIMESTAMP');
 begin
   Result := Types[DataType];
 end;
@@ -1105,7 +1117,9 @@ const
     'VARCHAR',
     'TEXT',
     'DATETIME',
-    'BLOB');
+    'BLOB',
+    'DATE',
+    'TIME');
 begin
   Result := Types[DataType];
 end;
@@ -1342,7 +1356,9 @@ const
     'VARCHAR',
     'TEXT',
     'TIMESTAMP',
-    'BLOB');
+    'BLOB',
+    'TIMESTAMP',
+    'TIMESTAMP');
 begin
   Result := Types[DataType];
 end;

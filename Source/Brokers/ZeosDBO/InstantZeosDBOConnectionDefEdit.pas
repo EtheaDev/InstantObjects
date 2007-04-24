@@ -89,7 +89,7 @@ implementation
 {$R *.dfm}
 
 uses
-  InstantPersistence, InstantClasses;
+  InstantPersistence, InstantClasses, InstantTypes;
 
 { TInstantZeosDBOConnectionDefEditForm }
 
