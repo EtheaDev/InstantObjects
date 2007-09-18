@@ -368,6 +368,7 @@ var
   Session: TnxSession;
   Database: TnxDatabase;
 begin
+  inherited;
   SavedCursor := Screen.Cursor;
   try
     Screen.Cursor := crHourGlass;
