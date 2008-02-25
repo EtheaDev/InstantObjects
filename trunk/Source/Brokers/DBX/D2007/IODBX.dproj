@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-    <DCC_DependencyCheckOutputName>C:\Documents and Settings\nandod\Documenti\RAD Studio\Projects\Bpl\IODBX_D11.bpl</DCC_DependencyCheckOutputName>
+    <DCC_DependencyCheckOutputName>C:\Users\nandod\Documents\RAD Studio\5.0\Bpl\IODBX_D11.bpl</DCC_DependencyCheckOutputName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Version>7.0</Version>
@@ -28,13 +28,14 @@
     <DelphiCompile Include="IODBX.dpk">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
-    <DCCReference Include="..\..\..\PackageGroups\D2007\dbexpress.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\dbrtl.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\IOCore.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\IOIBFbCatalog.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\IOMSSqlCatalog.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\rtl.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\vcl.dcp" />
+    <DCCReference Include="..\..\..\Catalogs\MySQL\D2007\dbexpress.dcp" />
+    <DCCReference Include="..\..\..\Catalogs\MySQL\D2007\dbrtl.dcp" />
+    <DCCReference Include="..\..\..\Catalogs\MySQL\D2007\IOCore.dcp" />
+    <DCCReference Include="..\..\..\Catalogs\MySQL\D2007\IOIBFbCatalog.dcp" />
+    <DCCReference Include="..\..\..\Catalogs\MySQL\D2007\IOMSSqlCatalog.dcp" />
+    <DCCReference Include="..\..\..\Catalogs\MySQL\D2007\IOMySQLCatalog.dcp" />
+    <DCCReference Include="..\..\..\Catalogs\MySQL\D2007\rtl.dcp" />
+    <DCCReference Include="..\..\..\Catalogs\MySQL\D2007\vcl.dcp" />
     <DCCReference Include="..\InstantDBX.pas" />
     <DCCReference Include="..\InstantDBXConnectionDefEdit.pas">
       <Form>InstantDBXConnectionDefEditForm</Form>

@@ -234,7 +234,7 @@ type
 implementation
 
 uses
-  SysUtils, InstantUtils;
+  SysUtils, InstantUtils, InstantMetadata;
 
 { TAddress }
 

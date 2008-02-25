@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-    <DCC_DependencyCheckOutputName>C:\Documents and Settings\nandod\Documenti\RAD Studio\5.0\Bpl\DclIOIBX_D11.bpl</DCC_DependencyCheckOutputName>
+    <DCC_DependencyCheckOutputName>..\..\..\..\..\..\..\..\Documents\RAD Studio\5.0\Bpl\DclIOIBX_D11.bpl</DCC_DependencyCheckOutputName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Version>7.0</Version>
@@ -28,11 +28,11 @@
     <DelphiCompile Include="DclIOIBX.dpk">
       <MainSource>MainSource</MainSource>
     </DelphiCompile>
-    <DCCReference Include="..\..\..\PackageGroups\D2007\ibxpress.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\IOCore.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\IOIBX.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\vcl.dcp" />
-    <DCCReference Include="..\..\..\PackageGroups\D2007\vcldb.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\ibxpress.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\IOCore.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\IOIBX.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\vcl.dcp" />
+    <DCCReference Include="$(SystemRoot)\system32\vcldb.dcp" />
     <DCCReference Include="..\InstantIBX.dcr" />
     <DCCReference Include="..\InstantIBX.dcr" />
     <DCCReference Include="..\InstantIBXReg.pas" />

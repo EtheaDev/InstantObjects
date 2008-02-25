@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<PersonalityInfo>
+		<Option>
+			<Option Name="Personality">Default.Personality</Option>
+			<Option Name="ProjectType"></Option>
+			<Option Name="Version">1.0</Option>
+			<Option Name="GUID">{9D2F7B27-7598-419D-BC5F-96591A910DEF}</Option>
+		</Option>
+	</PersonalityInfo>
+	<Default.Personality>  <Projects>
+      <Projects Name="IOCore_D10.bpl">..\..\Core\D2006\IOCore.bdsproj</Projects>
+      <Projects Name="IOMSSqlCatalog_D10.bpl">..\..\Catalogs\MSSql\D2006\IOMSSqlCatalog.bdsproj</Projects>
+      <Projects Name="IOIBFbCatalog_D10.bpl">..\..\Catalogs\IBFb\D2006\IOIBFbCatalog.bdsproj</Projects>
+      <Projects Name="IOADO_D10.bpl">..\..\Brokers\ADO\D2006\IOADO.bdsproj</Projects>
+      <Projects Name="IOBDE_D10.bpl">..\..\Brokers\BDE\D2006\IOBDE.bdsproj</Projects>
+      <Projects Name="IODBX_D10.bpl">..\..\Brokers\DBX\D2006\IODBX.bdsproj</Projects>
+      <Projects Name="IOIBX_D10.bpl">..\..\Brokers\IBX\D2006\IOIBX.bdsproj</Projects>
+      <Projects Name="IOXML_D10.bpl">..\..\Brokers\XML\D2006\IOXML.bdsproj</Projects>
+      <Projects Name="DclIOCore_D10.bpl">..\..\Design\D2006\DclIOCore.bdsproj</Projects>
+      <Projects Name="DclIOADO_D10.bpl">..\..\Brokers\ADO\D2006\DclIOADO.bdsproj</Projects>
+      <Projects Name="DclIOBDE_D10.bpl">..\..\Brokers\BDE\D2006\DclIOBDE.bdsproj</Projects>
+      <Projects Name="DclIODBX_D10.bpl">..\..\Brokers\DBX\D2006\DclIODBX.bdsproj</Projects>
+      <Projects Name="DclIOIBX_D10.bpl">..\..\Brokers\IBX\D2006\DclIOIBX.bdsproj</Projects>
+      <Projects Name="DclIOXML_D10.bpl">..\..\Brokers\XML\D2006\DclIOXML.bdsproj</Projects>
+      <Projects Name="Targets">IOCore_D10.bpl IOMSSqlCatalog_D10.bpl IOIBFbCatalog_D10.bpl IOADO_D10.bpl IOBDE_D10.bpl IODBX_D10.bpl IOIBX_D10.bpl IOXML_D10.bpl DclIOCore_D10.bpl DclIOADO_D10.bpl DclIOBDE_D10.bpl DclIODBX_D10.bpl DclIOIBX_D10.bpl DclIOXML_D10.bpl</Projects>
+    </Projects>
+    <Dependencies/>
+  </Default.Personality>
+</BorlandProject>
