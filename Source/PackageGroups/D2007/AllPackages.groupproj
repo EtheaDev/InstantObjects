@@ -91,15 +91,6 @@
   <Target Name="IOXML:Make">
     <MSBuild Projects="..\..\Brokers\XML\D2007\IOXML.dproj" Targets="Make" />
   </Target>
-  <Target Name="IOZeosDBO">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\IOZeosDBO.dproj" Targets="" />
-  </Target>
-  <Target Name="IOZeosDBO:Clean">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\IOZeosDBO.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="IOZeosDBO:Make">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\IOZeosDBO.dproj" Targets="Make" />
-  </Target>
   <Target Name="DclIOCore">
     <MSBuild Projects="..\..\Design\D2007\DclIOCore.dproj" Targets="" />
   </Target>
@@ -154,22 +145,13 @@
   <Target Name="DclIOXML:Make">
     <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="Make" />
   </Target>
-  <Target Name="DclIOZeosDBO">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="" />
-  </Target>
-  <Target Name="DclIOZeosDBO:Clean">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="DclIOZeosDBO:Make">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="Make" />
-  </Target>
   <Target Name="Build">
-    <CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IOBDE;IODBX;IOIBX;IOXML;IOZeosDBO;DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML;DclIOZeosDBO" />
+    <CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IOBDE;IODBX;IOIBX;IOXML;DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IOBDE:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean;IOZeosDBO:Clean;DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean;DclIOZeosDBO:Clean" />
+    <CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IOBDE:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean;DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IOBDE:Make;IODBX:Make;IOIBX:Make;IOXML:Make;IOZeosDBO:Make;DclIOCore:Make;DclIOADO:Make;DclIOBDE:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make;DclIOZeosDBO:Make" />
+    <CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IOBDE:Make;IODBX:Make;IOIBX:Make;IOXML:Make;DclIOCore:Make;DclIOADO:Make;DclIOBDE:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make" />
   </Target>
 </Project>

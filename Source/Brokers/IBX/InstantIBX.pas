@@ -97,7 +97,7 @@ type
     property OnLogin: TIBDatabaseLoginEvent read FOnLogin write FOnLogin;
   end;
 
-  TInstantIBXBroker= class(TInstantSQLBroker)
+  TInstantIBXBroker = class(TInstantSQLBroker)
   private
     function GetDialect: Integer;
     function GetConnector: TInstantIBXConnector;

@@ -1,7 +1,6 @@
 package IODBX;
 
 {$R *.res}
-
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -35,7 +34,8 @@ requires
   dbexpress,
   IOCore,
   IOIBFbCatalog,
-  IOMSSqlCatalog;
+  IOMSSqlCatalog,
+  IOMySQLCatalog;
 
 contains
   InstantDBXConnectionDefEdit in '..\InstantDBXConnectionDefEdit.pas' {InstantDBXConnectionDefEditForm},
