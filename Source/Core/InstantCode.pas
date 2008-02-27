@@ -625,6 +625,8 @@ type
     procedure SetStorageKind(const Value: TInstantStorageKind);
     function GetCanHaveStorageName: boolean;
     function GetCanBeExternal: boolean;
+    function GetUseNull: Boolean;
+    procedure SetUseNull(const Value: Boolean);
   protected
     function GetIsDefault: Boolean; virtual;
     function GetMethodName(MethodType: TInstantCodeContainerMethodType): string;
@@ -692,6 +694,7 @@ type
     property IncludeRemoveMethod: Boolean read GetIncludeRemoveMethod
       write SetIncludeRemoveMethod;
     property IsDefault: Boolean read GetIsDefault write SetIsDefault;
+    property UseNull: Boolean read GetUseNull write SetUseNull;
     property StorageKind: TInstantStorageKind read GetStorageKind
       write SetStorageKind;
     property IsIndexed: Boolean read GetIsIndexed write SetIsIndexed;
@@ -1548,6 +1551,7 @@ const
 
   MetadataInfoID = 'IOMETADATA';
   MetaKeyDefault = 'default';
+  MetaKeyUseNull = 'usenull';
   MetaKeyExternal = 'external';
   MetaKeyFormat = 'format';
   MetaKeyIndex = 'index';
@@ -3949,6 +3953,11 @@ begin
   Result := FTailor;
 end;
 
+function TInstantCodeAttribute.GetUseNull: Boolean;
+begin
+  Result := Metadata.UseNull;
+end;
+
 function TInstantCodeAttribute.GetValueGetterCode: string;
 begin
   Result := Tailor.ValueGetterCode;
@@ -4002,6 +4011,8 @@ begin
       Metadata.StorageName := Reader.ReadStringValue
     else if Token = MetaKeyDefault then
       Metadata.DefaultValue := Reader.ReadStringValue
+    else if Token = MetaKeyUseNull then
+      Metadata.UseNull := True
     else if Token = MetaKeyIndex then
       IsIndexed := True
     else if Token = MetaKeyRequired then
@@ -4055,6 +4066,8 @@ begin
     Writer.Write(' ' + MetaKeyIndex);
   if IsRequired then
     Writer.Write(' ' + MetaKeyRequired);
+  if Metadata.UseNull then
+    Writer.Write(' ' + MetaKeyUseNull);
   if IsDefault then
     Writer.Write(' ' + MetaKeyDefault);
   Writer.Write(';');
@@ -4203,6 +4216,11 @@ end;
 procedure TInstantCodeAttribute.SetStorageName(const Value: string);
 begin
   Metadata.FieldName := Value;
+end;
+
+procedure TInstantCodeAttribute.SetUseNull(const Value: Boolean);
+begin
+  Metadata.UseNull := Value;
 end;
 
 procedure TInstantCodeAttribute.SetVisibility(

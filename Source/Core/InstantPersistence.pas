@@ -179,6 +179,7 @@ type
     function GetDisplayText: string; virtual;
     function GetIsChanged: Boolean; virtual;
     function GetIsDefault: Boolean; virtual;
+    function GetIsNull: Boolean; virtual;
     function GetIsMandatory: Boolean; virtual;
     function GetOwner: TInstantObject; reintroduce; virtual;
     procedure Initialize; override;
@@ -220,6 +221,7 @@ type
     property IsIndexed: Boolean read GetIsIndexed;
     property IsMandatory: Boolean read GetIsMandatory;
     property IsRequired: Boolean read GetIsRequired;
+    property IsNull: Boolean read GetIsNull;
     property Name: string read GetName;
     property Metadata: TInstantAttributeMetadata read GetMetadata write SetMetadata;
     property Owner: TInstantObject read GetOwner;
@@ -239,6 +241,7 @@ type
     function GetAsDateTime: TDateTime; override;
     function GetDisplayText: string; override;
     function GetIsDefault: Boolean; override;
+    function GetIsNull: Boolean; override;
     procedure SetAsBoolean(AValue: Boolean); override;
     procedure SetAsDateTime(AValue: TDateTime); override;
   end;
@@ -335,6 +338,7 @@ type
     function GetAsString: string; override;
     function GetAsVariant: Variant; override;
     function GetIsDefault: Boolean; override;
+    function GetIsNull: Boolean; override;
     function GetValue: Boolean; virtual;
     procedure Initialize; override;
     procedure ReadObject(Reader: TInstantReader); override;
@@ -393,6 +397,7 @@ type
     function GetAsVariant: Variant; override;
     function GetDisplayText: string; override;
     function GetIsDefault: Boolean; override;
+    function GetIsNull: Boolean; override;
     function GetValue: TDateTime; virtual;
     procedure Initialize; override;
     procedure ReadObject(Reader: TInstantReader); override;
@@ -507,6 +512,7 @@ type
     function GetValue: TInstantObject; virtual; abstract;
     procedure SetAsObject(AValue: TInstantObject); override;
     procedure SetValue(AValue: TInstantObject); virtual;
+    function GetIsNull: Boolean; override;
   public
     function AttachObject(AObject: TInstantObject): Boolean; override;
     function DetachObject(AObject: TInstantObject): Boolean; override;
@@ -2389,7 +2395,8 @@ begin
       //Result := CompareMem(@DefaultStr[1], @ValueStr[1], L);
       Result := CompareStr(DefaultStr, ValueStr) = 0;
     end;
-  end else
+  end
+  else
     Result := L = 0;
 end;
 
@@ -2401,6 +2408,13 @@ end;
 function TInstantAttribute.GetIsMandatory: Boolean;
 begin
   Result := IsRequired or IsIndexed;
+end;
+
+function TInstantAttribute.GetIsNull: Boolean;
+begin
+  Result := False;
+  if Assigned(Metadata) then
+    Result := Metadata.UseNull and (AsString = '');
 end;
 
 function TInstantAttribute.GetIsRequired: Boolean;
@@ -2568,10 +2582,18 @@ end;
 
 function TInstantNumeric.GetIsDefault: Boolean;
 begin
-  if Assigned(Metadata) and (Metadata.Defaultvalue <> '') then
+  if Assigned(Metadata) and (Metadata.DefaultValue <> '') then
     Result := inherited GetIsDefault
   else
     Result := AsFloat = 0;
+end;
+
+function TInstantNumeric.GetIsNull: Boolean;
+begin
+  if Assigned(Metadata) and (Metadata.UseNull) then
+    Result := AsFloat = 0
+  else
+    Result := inherited GetIsNull;
 end;
 
 procedure TInstantNumeric.SetAsBoolean(AValue: Boolean);
@@ -3005,6 +3027,14 @@ begin
     Result := False;
 end;
 
+function TInstantBoolean.GetIsNull: Boolean;
+begin
+  if Assigned(Metadata) and Metadata.UseNull then
+    Result := AsBoolean = False
+  else
+    Result := inherited GetIsNull;
+end;
+
 function TInstantBoolean.GetValue: Boolean;
 begin
   Result := FValue;
@@ -3303,6 +3333,14 @@ end;
 function TInstantCustomDateTime.GetIsDefault: Boolean;
 begin
   Result := Value = DefaultValue;
+end;
+
+function TInstantCustomDateTime.GetIsNull: Boolean;
+begin
+  if Assigned(Metadata) and Metadata.UseNull then
+    Result := AsDateTime = 0
+  else
+    Result := inherited GetIsNull;
 end;
 
 function TInstantCustomDateTime.GetValue: TDateTime;
@@ -3732,6 +3770,14 @@ end;
 function TInstantElement.GetAsObject: TInstantObject;
 begin
   Result := Value;
+end;
+
+function TInstantElement.GetIsNull: Boolean;
+begin
+  if Assigned(Metadata) and Metadata.UseNull then
+    Result := not HasValue
+  else
+    Result := inherited GetIsNull;
 end;
 
 function TInstantElement.HasValue: Boolean;
