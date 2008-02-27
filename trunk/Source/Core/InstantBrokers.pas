@@ -417,9 +417,9 @@ type
     FSelectExternalPartSQL: string;
     FDeleteExternalSQL: string;
     FInsertExternalSQL: string;
-    procedure AddIntegerParam(Params: TParams; const ParamName: string;
-      Value: Integer);
-    procedure AddStringParam(Params: TParams; const ParamName, Value: string);
+    function AddIntegerParam(Params: TParams; const ParamName: string;
+      Value: Integer): TParam;
+    function AddStringParam(Params: TParams; const ParamName, Value: string): TParam;
     // Adds an "Id" param, whose data type and size depends on connector
     // settings.
     procedure AddIdParam(Params: TParams; const ParamName, Value: string);
@@ -2391,57 +2391,81 @@ end;
 
 procedure TInstantNavigationalResolver.WriteBlob(Attribute: TInstantBlob);
 begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsString := Value;
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
+      AsString := Attribute.Value;
 end;
 
 procedure TInstantNavigationalResolver.WriteBoolean(Attribute: TInstantBoolean);
 begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsBoolean := Value;
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
+      AsBoolean := Attribute.Value;
 end;
 
 procedure TInstantNavigationalResolver.WriteCurrency(Attribute: TInstantCurrency);
 begin
-  with Attribute do
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
 {$IFDEF FPC}
-    FieldByName(Metadata.FieldName).AsFloat := Value;
+      AsFloat := Value;
 {$ELSE}
-    FieldByName(Metadata.FieldName).AsCurrency := Value;
+      AsCurrency := Value;
 {$ENDIF}
 end;
 
 procedure TInstantNavigationalResolver.WriteDateTime(
   Attribute: TInstantDateTime);
 begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsDateTime := Value;
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
+      AsDateTime := Attribute.Value;
 end;
 
 procedure TInstantNavigationalResolver.WriteDate(
   Attribute: TInstantDate);
 begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsDateTime := Value;
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
+      AsDateTime := Attribute.Value;
 end;
 
 procedure TInstantNavigationalResolver.WriteTime(
   Attribute: TInstantTime);
 begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsDateTime := Value;
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
+      AsDateTime := Attribute.Value;
 end;
 
 procedure TInstantNavigationalResolver.WriteFloat(Attribute: TInstantFloat);
 begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsFloat := Value;
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
+      AsFloat := Attribute.Value;
 end;
 
 procedure TInstantNavigationalResolver.WriteInteger(Attribute: TInstantInteger);
 begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsInteger := Value;
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
+      AsInteger := Attribute.Value;
 end;
 
 procedure TInstantNavigationalResolver.WriteMemo(Attribute: TInstantMemo);
@@ -2563,8 +2587,11 @@ end;
 
 procedure TInstantNavigationalResolver.WriteString(Attribute: TInstantString);
 begin
-  with Attribute do
-    FieldByName(Metadata.FieldName).AsString := Value;
+  with FieldByName(Attribute.Metadata.FieldName) do
+    if Attribute.IsNull then
+      Clear
+    else
+      AsString := Attribute.Value;
 end;
 
 constructor TInstantSQLResolver.Create(ABroker: TInstantSQLBroker;
@@ -2602,60 +2629,102 @@ var
   end;
 
   procedure AddBlobAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddBlobParam(FieldName, (Attribute as TInstantBlob).Value);
+    LParam := AddParam(Params, FieldName, ftBlob);
+    if Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.AsBlob := (Attribute as TInstantBlob).Value;
   end;
 
   procedure AddBooleanAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddParam(Params, FieldName, ftBoolean).AsBoolean :=
-      (Attribute as TInstantBoolean).Value;
+    LParam := AddParam(Params, FieldName, ftBoolean);
+    if Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.AsBoolean := (Attribute as TInstantBoolean).Value;
   end;
 
   procedure AddDateTimeAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddParam(Params, FieldName, ftDateTime).AsDateTime :=
-      (Attribute as TInstantDateTime).Value;
+    LParam := AddParam(Params, FieldName, ftDateTime);
+    if Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.AsDateTime := (Attribute as TInstantDateTime).Value;
   end;
 
   procedure AddDateAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddParam(Params, FieldName, ftDate).AsDateTime :=
-      (Attribute as TInstantDate).Value;
+    LParam := AddParam(Params, FieldName, ftDate);
+    if Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.AsDateTime := (Attribute as TInstantDate).Value;
   end;
 
   procedure AddTimeAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddParam(Params, FieldName, ftTime).AsDateTime :=
-      (Attribute as TInstantTime).Value;
+    LParam := AddParam(Params, FieldName, ftTime);
+    if Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.AsDateTime := (Attribute as TInstantTime).Value;
   end;
 
   procedure AddFloatAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddParam(Params, FieldName, ftFloat).AsFloat :=
-      (Attribute as TInstantFloat).Value;
+    LParam := AddParam(Params, FieldName, ftFloat);
+    if Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.AsFloat := (Attribute as TInstantFloat).Value;
   end;
 
   procedure AddCurrencyAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddParam(Params, FieldName, ftBCD).AsCurrency :=
-      (Attribute as TInstantCurrency).Value;
+    LParam := AddParam(Params, FieldName, ftBCD);
+    if Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.AsCurrency := (Attribute as TInstantCurrency).Value;
   end;
 
   procedure AddIntegerAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddIntegerParam(Params, FieldName, (Attribute as TInstantInteger).Value);
+    LParam := AddIntegerParam(Params, FieldName, (Attribute as TInstantInteger).Value);
+    if Attribute.IsNull then
+      LParam.Clear;
   end;
 
   procedure AddMemoAttributeParam;
   var
-    Param: TParam;
+    LParam: TParam;
     MemoAttrib: TInstantMemo;
   begin
-    Param := AddParam(Params, FieldName, ftMemo);
+    LParam := AddParam(Params, FieldName, ftMemo);
     MemoAttrib := (Attribute as TInstantMemo);
-    if MemoAttrib.Size <> 0 then
-      Param.AsMemo := MemoAttrib.Value;
+    if (MemoAttrib.Size = 0) or Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.AsMemo := MemoAttrib.Value;
   end;
 
   procedure AddPartAttributeParam;
@@ -2728,8 +2797,12 @@ var
   end;
 
   procedure AddStringAttributeParam;
+  var
+    LParam: TParam;
   begin
-    AddStringParam(Params, FieldName, (Attribute as TInstantString).Value);
+    LParam := AddStringParam(Params, FieldName, (Attribute as TInstantString).Value);
+    if Attribute.IsNull then
+      LParam.Clear;
   end;
 
 begin
@@ -2810,10 +2883,11 @@ begin
     Param.Value := Value;
 end;
 
-procedure TInstantSQLResolver.AddIntegerParam(Params: TParams;
-  const ParamName: string; Value: Integer);
+function TInstantSQLResolver.AddIntegerParam(Params: TParams;
+  const ParamName: string; Value: Integer): TParam;
 begin
-  AddParam(Params, ParamName, ftInteger).AsInteger := Value;
+  Result := AddParam(Params, ParamName, ftInteger);
+  Result.AsInteger := Value;
 end;
 
 function TInstantSQLResolver.AddParam(Params: TParams;
@@ -2830,18 +2904,12 @@ begin
   AddIdParam(Params, PersistentIdParamName, APersistentId);
 end;
 
-procedure TInstantSQLResolver.AddStringParam(Params: TParams;
-  const ParamName, Value: string);
-var
-  Param: TParam;
+function TInstantSQLResolver.AddStringParam(Params: TParams;
+  const ParamName, Value: string): TParam;
 begin
-  Param := AddParam(Params, ParamName, ftString);
+  Result := AddParam(Params, ParamName, ftString);
   if Value <> '' then
-  begin
-    Param.AsString := Value;
-    // Update the length string to avoid the MBCS Bug.
-//    Param.Size := Length(Value);
-  end;
+    Result.AsString := Value;
 end;
 
 procedure TInstantSQLResolver.CheckConflict(Info: PInstantOperationInfo;
