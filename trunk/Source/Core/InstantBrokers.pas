@@ -3308,7 +3308,11 @@ var
       begin
         Attribute := TInstantContainer(AObject.AttributeByName(
             AttributeMetadata.Name));
-        if Attribute.IsChanged and
+
+        { TODO : Attribute.Owner.IsPersistent is used (below) because Dispose
+          doesn't change the state of changed attributes to IsChanged.
+          Perhaps ObjStore.DisposeObject is the right place to fix (JM) }
+        if (Attribute.IsChanged or not Attribute.Owner.IsPersistent) and
             (AttributeMetadata.StorageKind = skExternal) then
         begin
           LinkResolver := TInstantSQLLinkResolver.Create(Self,
