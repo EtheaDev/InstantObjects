@@ -6194,7 +6194,7 @@ begin
   if IsAbandoned then
     Result := InstantGenerateId
   else
-    Result := Connector.GenerateId;
+    Result := Connector.GenerateId(Self);
 end;
 
 function TInstantObject.GetCaption: string;
