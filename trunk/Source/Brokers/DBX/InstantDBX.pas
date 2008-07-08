@@ -669,6 +669,10 @@ begin
       TargetParam.AsString := IntToStr(Integer(SourceParam.AsBoolean));
     ftInteger:
       TargetParam.AsString := IntToStr(SourceParam.AsInteger);
+    ftCurrency:
+      TargetParam.AsString := CurrToStr(SourceParam.AsCurrency);
+    ftFloat:
+      TargetParam.AsString := CurrToStr(SourceParam.AsFloat);
   else
     inherited;
   end;
