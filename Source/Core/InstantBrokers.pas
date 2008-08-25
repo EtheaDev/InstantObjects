@@ -26,7 +26,7 @@
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
  * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor, Hanedi Salas,
- * Riceball Lee, David Moorhouse
+ * Riceball Lee, David Moorhouse, Andrea Magni
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -778,60 +778,126 @@ type
     property Query: TInstantQuery read GetQuery;
   end;
 
-  TInstantRelationalTranslator = class(TInstantQueryTranslator)
+  // Holds all information pertaining to a class used in a command. A command
+  // may use several classes (because of subqueries), and a relational translator
+  // has a tree of class context objects.
+  TInstantTranslationContext = class
   private
+    FChildContexts: TObjectList;
+    FClassRef: TInstantIQLClassRef;
     FCriteriaList: TStringList;
+    FDelimiters: string;
+    FObjectClassName: string;
+    FObjectClassMetadata: TInstantClassMetadata;
+    FQuote: Char;
+    FSpecifier: TInstantIQLSpecifier;
+    FStatement: TInstantIQLObject;
     FTablePathList: TStringList;
+    FParentContext: TInstantTranslationContext;
+
     procedure AddJoin(const FromPath, FromField, ToPath, ToField: string);
-    function ConcatPath(const APathText, AttribName: string): string;
-    procedure DestroyCriteriaList;
-    procedure DestroyTablePathList;
-    function ExtractTarget(const PathStr: string): string;
-    function RootAttribToFieldName(const AttribName: string): string;
     function GetClassTablePath: string;
+    function GetChildContext(const AIndex: Integer): TInstantTranslationContext;
+    function GetChildContextCount: Integer;
     function GetCriteriaCount: Integer;
     function GetCriteriaList: TStringList;
     function GetCriterias(Index: Integer): string;
     function GetObjectClassMetadata: TInstantClassMetadata;
-    function GetQuery: TInstantCustomRelationalQuery;
+    function GetTableAlias: string;
+    function GetTableName: string;
     function GetTablePathAliases(Index: Integer): string;
     function GetTablePathCount: Integer;
     function GetTablePathList: TStringList;
     function GetTablePaths(Index: Integer): string;
     function PathToTablePath(const PathText: string): string;
     function PathToTarget(const PathText: string;
-      out TablePath, FieldName: string): TInstantAttributeMetadata;
-    function Qualify(const TablePath, FieldName: string): string;
-    function QualifyPath(const PathText: string): string;
-    function ReplaceWildcard(const Str: string): string;
+      out TablePath, FieldName: string; const AClassMetadata: TInstantClassMetadata = nil): TInstantAttributeMetadata;
+    procedure SetClassRef(const Value: TInstantIQLClassRef);
+    procedure SetObjectClassName(const Value: string);
+    procedure SetSpecifier(const Value: TInstantIQLSpecifier);
     function TablePathToAlias(const TablePath: string): string;
-    procedure WriteAnd(Writer: TInstantIQLWriter);
-    function WriteCriterias(Writer: TInstantIQLWriter; IncludeWhere: Boolean):
-      Boolean;
-    procedure WriteTables(Writer: TInstantIQLWriter);
-    property CriteriaList: TStringList read GetCriteriaList;
-    property TablePathList: TStringList read GetTablePathList;
-    function GetConnector: TInstantRelationalConnector;
+    function GetChildContextIndex: Integer;
+    function GetChildContextLevel: Integer;
   protected
     function AddCriteria(const Criteria: string): Integer;
     function AddTablePath(const TablePath: string): Integer;
+    procedure CollectPaths(AObject: TInstantIQLObject; APathList: TList);
+    function IndexOfCriteria(const Criteria: string): Integer;
+    function IndexOfTablePath(const TablePath: string): Integer;
+    procedure Initialize;
+    procedure MakeJoins(Path: TInstantIQLPath);
+    procedure MakeTablePaths(Path: TInstantIQLPath);
+    function QuoteString(const Str: string): string;
+
+    property CriteriaList: TStringList read GetCriteriaList;
+    property TablePathList: TStringList read GetTablePathList;
+  public
+    constructor Create(const AStatement: TInstantIQLObject; const AQuote: Char;
+      const ADelimiters: string; const AParentContext: TInstantTranslationContext = nil);
+    destructor Destroy; override;
+
+    procedure AfterConstruction; override;
+    procedure Clear;
+    function AddChildContext(const AContext: TInstantTranslationContext): Integer;
+    function CreateChildContext(const AStatement: TInstantIQLObject): TInstantTranslationContext;
+    function FindAttributeMetadata(const PathText: string): TInstantAttributeMetadata;
+    function GetTablePathAlias(const ATablePath: string): string;
+    function GetSubqueryContext(const ASubQuery: TInstantIQLSubquery): TInstantTranslationContext;
+    function HasParentContext: Boolean;
+    function IndexOfChildContext(const AChildContext: TInstantTranslationContext): Integer;
+    function Qualify(const TablePath, FieldName: string): string;
+    function QualifyPath(const PathText: string): string;
+    function WriteCriterias(Writer: TInstantIQLWriter; IncludeWhere: Boolean): Boolean;
+    procedure WriteTables(Writer: TInstantIQLWriter);
+
+    property ChildContext[const AIndex: Integer]: TInstantTranslationContext read GetChildContext;
+    property ChildContextCount: Integer read GetChildContextCount;
+    property ChildContextIndex: Integer read GetChildContextIndex;
+    property ChildContextLevel: Integer read GetChildContextLevel;
+    property ClassRef: TInstantIQLClassRef read FClassRef write SetClassRef;
+    property ClassTablePath: string read GetClassTablePath;
+    property CriteriaCount: Integer read GetCriteriaCount;
+    property Criterias[Index: Integer]: string read GetCriterias;
+    property Delimiters: string read FDelimiters;
+    property ObjectClassName: string read FObjectClassName write SetObjectClassName;
+    property ObjectClassMetadata: TInstantClassMetadata read GetObjectClassMetadata;
+    property ParentContext: TInstantTranslationContext read FParentContext;
+    property Quote: Char read FQuote;
+    property Specifier: TInstantIQLSpecifier read FSpecifier write SetSpecifier;
+    property Statement: TInstantIQLObject read FStatement;
+    property TableName: string read GetTableName;
+    property TableAlias: string read GetTableAlias;
+    property TablePathAliases[Index: Integer]: string read GetTablePathAliases;
+    property TablePathCount: Integer read GetTablePathCount;
+    property TablePaths[Index: Integer]: string read GetTablePaths;
+  end;
+
+
+  TInstantRelationalTranslator = class(TInstantQueryTranslator)
+  private
+    FContext: TInstantTranslationContext;
+    function GetQuery: TInstantCustomRelationalQuery;
+    function ReplaceWildcard(const Str: string): string;
+    function GetConnector: TInstantRelationalConnector;
+  protected
     procedure BeforeTranslate; override;
     procedure Clear; override;
     procedure CollectObjects(AObject: TInstantIQLObject;
-      AClassType: TInstantIQLObjectClass; AList: TList);
-    procedure CollectPaths(AObject: TInstantIQLObject; APathList: TList);
+      AClassType: TInstantIQLObjectClass; AList: TList;
+      const AStopClassTypes: array of TInstantIQLObjectClass);
     function GetDelimiters: string; virtual;
     function GetQuote: Char; virtual;
     function GetWildcard: string; virtual;
     function HasConnector: Boolean;
     function IncludeOrderFields: Boolean; virtual;
-    function IndexOfCriteria(const Criteria: string): Integer;
-    function IndexOfTablePath(const TablePath: string): Integer;
     function InternalGetObjectClassMetadata: TInstantClassMetadata; virtual;
-    function IsRootAttribute(const AttributeName: string): Boolean;
+    function InSubquery(const AObject: TInstantIQLObject; out ASubQuery: TInstantIQLSubquery): Boolean;
+    // Returns True if the given attribute is a "root" attribute. Root
+    // attributes are Class and Id.
+    function IsRootAttribute(const AttributeName: string): Boolean; // funzione non membro
     function IsPrimary(AObject: TInstantIQLObject): Boolean;
-    procedure MakeJoins(Path: TInstantIQLPath);
-    procedure MakeTablePaths(Path: TInstantIQLPath);
+    function TranslateObject(AObject: TInstantIQLObject;
+      Writer: TInstantIQLWriter): Boolean; override;
     function TranslateClassRef(ClassRef: TInstantIQLClassRef;
       Writer: TInstantIQLWriter): Boolean; virtual;
     function TranslateClause(Clause: TInstantIQLClause;
@@ -840,31 +906,26 @@ type
       Writer: TInstantIQLWriter): Boolean; virtual;
     function TranslateFunction(AFunction: TInstantIQLFunction;
       Writer: TInstantIQLWriter): Boolean; virtual;
+    function TranslateSubqueryFunction(ASubqueryFunction: TInstantIQLSubqueryFunction;
+      Writer: TInstantIQLWriter): Boolean; virtual;
     function TranslateFunctionName(const FunctionName: string;
+      Writer: TInstantIQLWriter): Boolean; virtual;
+    function TranslateSubqueryFunctionName(const ASubqueryFunctionName: string;
       Writer: TInstantIQLWriter): Boolean; virtual;
     function TranslateKeyword(const Keyword: string; Writer: TInstantIQLWriter):
       Boolean; override;
-    function TranslateObject(AObject: TInstantIQLObject;
-      Writer: TInstantIQLWriter): Boolean; override;
     function TranslatePath(Path: TInstantIQLPath; Writer: TInstantIQLWriter):
       Boolean; virtual;
     function TranslateSpecifier(Specifier: TInstantIQLSpecifier;
       Writer: TInstantIQLWriter): Boolean; virtual;
-    property ClassTablePath: string read GetClassTablePath;
     property Connector: TInstantRelationalConnector read GetConnector;
-    property CriteriaCount: Integer read GetCriteriaCount;
-    property Criterias[Index: Integer]: string read GetCriterias;
     property Delimiters: string read GetDelimiters;
-    property ObjectClassMetadata: TInstantClassMetadata
-      read GetObjectClassMetadata;
     property Quote: Char read GetQuote;
-    property TablePathAliases[Index: Integer]: string read GetTablePathAliases;
-    property TablePathCount: Integer read GetTablePathCount;
-    property TablePaths[Index: Integer]: string read GetTablePaths;
     property Wildcard: string read GetWildcard;
   public
+    property Context: TInstantTranslationContext read FContext;
     destructor Destroy; override;
-    function QuoteString(const Str: string): string;
+    function QuoteString(const Str: string): string; // funzione non membro
     property Query: TInstantCustomRelationalQuery read GetQuery;
   end;
 
@@ -967,9 +1028,18 @@ type
       default True;
   end;
 
+  function ConcatPath(const APathText, AttribName: string): string; 
+  function ExtractTarget(const PathStr: string): string;
+  function RootAttribToFieldName(const AttribName: string): string;
+  function IsRootAttribute(const AttributeName: string): Boolean;
+  procedure CollectObjects(
+    AObject: TInstantIQLObject; AClassType: TInstantIQLObjectClass; AList: TList;
+    const AStopClassTypes: array of TInstantIQLObjectClass);
+  procedure WriteAnd(Writer: TInstantIQLWriter);
+
 var
   InstantLogProc: procedure (const AString: string) of object;
-  
+
 implementation
 
 uses
@@ -1031,6 +1101,71 @@ begin
       DataSet.Fields[I].FieldName, '_', '.', [rfReplaceAll]);
     InstantSetProperty(Result, FieldName, DataSet.Fields[I].Value);
   end;
+end;
+
+
+function ConcatPath(const APathText, AttribName: string): string;
+begin
+  Result := Format('%s%s%s', [APathText, InstantDot, AttribName]);
+end;
+
+function ExtractTarget(const PathStr: string): string;
+var
+  I: Integer;
+begin
+  I := InstantRightPos(InstantDot, PathStr);
+  Result := Copy(PathStr, I + 1, Length(PathStr) - I)
+end;
+
+function RootAttribToFieldName(const AttribName: string): string;
+begin
+  if SameText(AttribName, InstantClassFieldName) then
+    Result := InstantClassFieldName
+  else if SameText(AttribName, InstantIdFieldName) then
+    Result := InstantIdFieldName;
+end;
+
+function IsRootAttribute(const AttributeName: string): Boolean;
+begin
+  Result := SameText(AttributeName, InstantClassFieldName) or
+    SameText(AttributeName, InstantIdFieldName);
+end;
+
+procedure CollectObjects(
+  AObject: TInstantIQLObject; AClassType: TInstantIQLObjectClass; AList: TList;
+  const AStopClassTypes: array of TInstantIQLObjectClass);
+var
+  I: Integer;
+  LObject: TInstantIQLObject;
+
+  function IsStopClassType(const AClassType: TClass): Boolean;
+  var
+    LClassTypeIndex: Integer;
+  begin
+    Result := True;
+    for LClassTypeIndex := Low(AStopClassTypes) to High(AStopClassTypes) do
+      if AClassType = AStopClassTypes[LClassTypeIndex] then
+        Exit;
+    Result := False;
+  end;
+
+begin
+  if not (Assigned(AObject) and Assigned(AList)) then
+    Exit;
+  for I := 0 to Pred(AObject.ObjectCount) do
+  begin
+    LObject := AObject[I];
+    if IsStopClassType(LObject.ClassType) then
+      Continue;
+    if LObject is AClassType then
+      AList.Add(LObject);
+    CollectObjects(LObject, AClassType, AList, AStopClassTypes)
+  end;
+end;
+
+procedure WriteAnd(Writer: TInstantIQLWriter);
+begin
+  Writer.WriteString(' AND ');
 end;
 
 { TInstantCustomRelationalBroker }
@@ -1295,7 +1430,7 @@ var
   CachedStatement: TInstantStatement;
 begin
   {$IFDEF IO_STATEMENT_LOGGING}
-  InstantLogStatement('Before: ', AStatement, AParams);
+  InstantLogStatement(InstantLogStatementBefore, AStatement, AParams);
   {$ENDIF}
   Result := nil;
   if FStatementCacheCapacity <> 0 then
@@ -4925,162 +5060,57 @@ end;
 
 destructor TInstantRelationalTranslator.Destroy;
 begin
-  DestroyTablePathList;
-  DestroyCriteriaList;
+  FreeAndNil(FContext);
   inherited;
 end;
 
 { TInstantRelationalTranslator }
 
-function TInstantRelationalTranslator.AddCriteria(
-  const Criteria: string): Integer;
-begin
-  if IndexOfCriteria(Criteria) = -1 then
-    Result := CriteriaList.Add(Criteria)
-  else
-    Result := -1;
-end;
-
-procedure TInstantRelationalTranslator.AddJoin(const FromPath, FromField,
-  ToPath, ToField: string);
-begin
-  AddCriteria(Format('%s = %s', [Qualify(FromPath, FromField),
-    Qualify(ToPath, ToField)]));
-end;
-
-function TInstantRelationalTranslator.AddTablePath(
-  const TablePath: string): Integer;
-begin
-  if IndexOfTablePath(TablePath) = -1 then
-    Result := TablePathList.Add(TablePath)
-  else
-    Result := -1;
-end;
-
 procedure TInstantRelationalTranslator.BeforeTranslate;
-
-  procedure InitClassTablePath(List: TList);
-
-    function FindAttributePath: TInstantIQLPath;
-    var
-     I: Integer;
-    begin
-      for I := 0 to Pred(List.Count) do
-      begin
-        Result := List[I];
-        if not IsRootAttribute(Result.Text) then
-          Exit;
-      end;
-      Result := nil;
-    end;
-
-  var
-   TablePath: string;
-   Path: TInstantIQLPath;
-  begin
-    if Command.ClassRef.Any then
-      TablePath := ObjectClassMetadata.TableName
-    else begin
-      Path := FindAttributePath;
-      if Assigned(Path) then
-        TablePath := PathToTablePath(Path.Attributes[0])
-      else
-        TablePath := ObjectClassMetadata.TableName;
-    end;
-    AddTablePath(TablePath);
-  end;
-
-  procedure InitCommandCriterias;
-  begin
-    if not Command.ClassRef.Any then
-      AddCriteria(Format('%s = %s',
-        [Qualify(ClassTablePath, InstantClassFieldName),
-        QuoteString(Command.ClassRef.ObjectClassName)]));
-    if Command.Specifier.IsPath then
-      AddCriteria(Format('%s <> %s%s',
-        [QualifyPath(ConcatPath(Command.Specifier.Text, InstantIdFieldName)),
-          Quote, Quote]));
-  end;
-
-var
-  I: Integer;
-  PathList: TList;
 begin
   if not Assigned(Command.ClassRef) then
     Exit;
-  PathList := TList.Create;
-  try
-    CollectPaths(Command, PathList);
-    InitClassTablePath(PathList);
-    for I := 0 to Pred(PathList.Count) do
-    begin
-      MakeTablePaths(PathList[I]);
-      MakeJoins(PathList[I]);
-    end;
-    InitCommandCriterias;
-  finally
-    PathList.Free;
-  end;
+
+  FContext := TInstantTranslationContext.Create(Command, Quote, Delimiters);
 end;
 
 procedure TInstantRelationalTranslator.Clear;
 begin
   inherited;
-  DestroyTablePathList;
-  DestroyCriteriaList;
+  if Assigned(Context) then
+    Context.Clear;
 end;
 
 procedure TInstantRelationalTranslator.CollectObjects(
-  AObject: TInstantIQLObject; AClassType: TInstantIQLObjectClass; AList: TList);
+  AObject: TInstantIQLObject; AClassType: TInstantIQLObjectClass; AList: TList;
+  const AStopClassTypes: array of TInstantIQLObjectClass);
 var
   I: Integer;
-  Obj: TInstantIQLObject;
+  LObject: TInstantIQLObject;
+
+  function IsStopClassType(const AClassType: TClass): Boolean;
+  var
+    LClassTypeIndex: Integer;
+  begin
+    Result := True;
+    for LClassTypeIndex := Low(AStopClassTypes) to High(AStopClassTypes) do
+      if AClassType = AStopClassTypes[LClassTypeIndex] then
+        Exit;
+    Result := False;
+  end;
+
 begin
   if not (Assigned(AObject) and Assigned(AList)) then
     Exit;
   for I := 0 to Pred(AObject.ObjectCount) do
   begin
-    Obj := AObject[I];
-    if Obj is AClassType then
-      AList.Add(Obj);
-    CollectObjects(Obj, AClassType, AList)
+    LObject := AObject[I];
+    if IsStopClassType(LObject.ClassType) then
+      Continue;
+    if LObject is AClassType then
+      AList.Add(LObject);
+    CollectObjects(LObject, AClassType, AList, AStopClassTypes)
   end;
-end;
-
-procedure TInstantRelationalTranslator.CollectPaths(
-  AObject: TInstantIQLObject; APathList: TList);
-begin
-  CollectObjects(AObject, TInstantIQLPath, APathList);
-end;
-
-function TInstantRelationalTranslator.ConcatPath(const APathText,
-  AttribName: string): string;
-begin
-  Result := Format('%s%s%s', [APathText, InstantDot, AttribName]);
-end;
-
-procedure TInstantRelationalTranslator.DestroyCriteriaList;
-begin
-  FreeAndNil(FCriteriaList);
-end;
-
-procedure TInstantRelationalTranslator.DestroyTablePathList;
-begin
-  FreeAndNil(FTablePathList)
-end;
-
-function TInstantRelationalTranslator.ExtractTarget(
-  const PathStr: string): string;
-var
-  I: Integer;
-begin
-  I := InstantRightPos(InstantDot, PathStr);
-  Result := Copy(PathStr, I + 1, Length(PathStr) - I)
-end;
-
-function TInstantRelationalTranslator.GetClassTablePath: string;
-begin
-  Result := TablePaths[0];
 end;
 
 function TInstantRelationalTranslator.GetConnector: TInstantRelationalConnector;
@@ -5091,37 +5121,12 @@ begin
     Result := nil;
 end;
 
-function TInstantRelationalTranslator.GetCriteriaCount: Integer;
-begin
-  Result := CriteriaList.Count;
-end;
-
-function TInstantRelationalTranslator.GetCriteriaList: TStringList;
-begin
-  if not Assigned(FCriteriaList) then
-    FCriteriaList := TStringList.Create;
-  Result := FCriteriaList;
-end;
-
-function TInstantRelationalTranslator.GetCriterias(Index: Integer): string;
-begin
-  Result := CriteriaList.Strings[Index];
-end;
-
 function TInstantRelationalTranslator.GetDelimiters: string;
 begin
   if HasConnector then
     Result := Connector.Broker.SQLDelimiters
   else
     Result := '';
-end;
-
-function TInstantRelationalTranslator.GetObjectClassMetadata: TInstantClassMetadata;
-begin
-  Result := InternalGetObjectClassMetadata;
-  if not Assigned(Result) then
-    raise EInstantError.CreateFmt(SUnassignedClassMetadata,
-     [Command.ObjectClassName]);
 end;
 
 function TInstantRelationalTranslator.GetQuery: TInstantCustomRelationalQuery;
@@ -5135,33 +5140,6 @@ begin
     Result := Connector.Broker.SQLQuote
   else
     Result := '"';
-end;
-
-function TInstantRelationalTranslator.GetTablePathAliases(
-  Index: Integer): string;
-begin
-  if Index < TablePathList.Count then
-    Result := Format('t%d', [Succ(Index)])
-  else
-    Result := '';
-end;
-
-function TInstantRelationalTranslator.GetTablePathCount: Integer;
-begin
-  Result := TablePathList.Count;
-end;
-
-function TInstantRelationalTranslator.GetTablePathList: TStringList;
-begin
-  if not Assigned(FTablePathList) then
-    FTablePathList := TStringList.Create;
-  Result := FTablePathList;
-end;
-
-function TInstantRelationalTranslator.GetTablePaths(
-  Index: Integer): string;
-begin
-  Result := TablePathList[Index];
 end;
 
 function TInstantRelationalTranslator.GetWildcard: string;
@@ -5182,16 +5160,19 @@ begin
   Result := False;
 end;
 
-function TInstantRelationalTranslator.IndexOfCriteria(
-  const Criteria: string): Integer;
+function TInstantRelationalTranslator.InSubquery(
+  const AObject: TInstantIQLObject;
+  out ASubQuery: TInstantIQLSubquery): Boolean;
 begin
-  Result := CriteriaList.IndexOf(Criteria);
-end;
+  if AObject is TInstantIQLSubquery then begin
+    Result := True;
+    ASubQuery := TInstantIQLSubquery(AObject);
+  end
+  else
+    Result := False;
 
-function TInstantRelationalTranslator.IndexOfTablePath(
-  const TablePath: string): Integer;
-begin
-  Result := TablePathList.IndexOf(TablePath);
+  if not Result and Assigned(AObject.Owner) then
+    Result := InSubquery(AObject.Owner, ASubQuery);
 end;
 
 function TInstantRelationalTranslator.InternalGetObjectClassMetadata: TInstantClassMetadata;
@@ -5216,160 +5197,6 @@ begin
     SameText(AttributeName, InstantIdFieldName);
 end;
 
-procedure TInstantRelationalTranslator.MakeJoins(Path: TInstantIQLPath);
-
-  procedure MakePathJoins(Path: TInstantIQLPath);
-  var
-    I: Integer;
-    PathText, FromPath, ToPath, FromField, ToField: string;
-  begin
-    if Path.AttributeCount > 1 then
-    begin
-      PathToTarget(Path.SubPath[0], FromPath, FromField);
-      for I := 1 to Pred(Path.AttributeCount) do
-      begin
-        PathText := Path.SubPath[I];
-        if not IsRootAttribute(ExtractTarget(PathText)) then
-        begin
-          PathToTarget(PathText, ToPath, ToField);
-          AddJoin(FromPath, FromField + InstantClassFieldName, ToPath,
-            InstantClassFieldName);
-          AddJoin(FromPath, FromField + InstantIdFieldName, ToPath,
-            InstantIdFieldName);
-          FromPath := ToPath;
-          FromField := ToField;
-        end;
-      end;
-    end;
-  end;
-
-  procedure MakeClassJoin(Path: TInstantIQLPath);
-  var
-    TablePath: string;
-  begin
-    if Path.HasAttributes then
-    begin
-      TablePath := PathToTablePath(Path.SubPath[0]);
-      if TablePath <> ClassTablePath then
-      begin
-        AddJoin(ClassTablePath, InstantClassFieldName,
-          TablePath, InstantClassFieldName);
-        AddJoin(ClassTablePath, InstantIdFieldName,
-          TablePath, InstantIdFieldName);
-      end;
-    end;
-  end;
-
-begin
-  if not Assigned(Path) then
-    Exit;
-  MakeClassJoin(Path);
-  MakePathJoins(Path);
-end;
-
-procedure TInstantRelationalTranslator.MakeTablePaths(Path: TInstantIQLPath);
-var
-  I: Integer;
-  TablePath: string;
-begin
-  if not Assigned(Path) or IsRootAttribute(Path.Text) then
-    Exit;
-  for I := 0 to Pred(Path.AttributeCount) do
-  begin
-    TablePath := PathToTablePath(Path.SubPath[I]);
-    if IndexOfTablePath(TablePath) = -1 then
-      AddTablePath(TablePath);
-  end;
-end;
-
-function TInstantRelationalTranslator.PathToTablePath(
-  const PathText: string): string;
-var
-  FieldName: string;
-begin
-  PathToTarget(Pathtext, Result, FieldName);
-end;
-
-function TInstantRelationalTranslator.PathToTarget(const PathText: string;
-  out TablePath, FieldName: string): TInstantAttributeMetadata;
-var
-  I: Integer;
-  AttribList: TStringList;
-  ClassMeta: TInstantClassMetadata;
-  AttribName: string;
-  Map: TInstantAttributeMap;
-begin
-  Result := nil;
-  if IsRootAttribute(PathText) then
-  begin
-    TablePath := ClassTablePath;
-    FieldName := RootAttribToFieldName(PathText);
-  end else
-  begin
-    ClassMeta := ObjectClassMetadata;
-    AttribList := TStringList.Create;
-    try
-      InstantStrToList(PathText, AttribList, [InstantDot]);
-      for I := 0 to Pred(AttribList.Count) do
-      begin
-        AttribName := AttribList[I];
-        if IsRootAttribute(AttribName) then
-        begin
-          if Assigned(Result) and
-            not Result.IsAttributeClass(TInstantReference) then
-            raise EInstantError.CreateFmt(SUnableToQueryAttribute,
-              [Result.ClassMetadataName, Result.Name]);
-          FieldName := FieldName + RootAttribToFieldName(AttribName);
-        end else
-        begin
-          Result := ClassMeta.MemberMap.Find(AttribName);
-          if Assigned(Result) then
-          begin
-            while Assigned(ClassMeta) and not ClassMeta.IsStored do
-              ClassMeta := ClassMeta.Parent;
-            if Assigned(ClassMeta) then
-            begin
-              Map := ClassMeta.StorageMaps.FindMap(AttribName);
-              if Assigned(Map) then
-              begin
-                if I > 0 then
-                  TablePath := TablePath + InstantDot;
-                TablePath := TablePath + Map.Name;
-                FieldName := Result.FieldName;
-                ClassMeta := Result.ObjectClassMetadata;
-              end else
-                raise EInstantError.CreateFmt(SAttributeNotQueryable,
-                  [Result.ClassName, Result.Name, Result.ClassMetadataName]);
-            end else
-              raise EInstantError.CreateFmt(SClassNotQueryable,
-                [Result.ClassMetadataName]);
-          end else
-            raise EInstantError.CreateFmt(SAttributeNotFound,
-              [AttribName, ClassMeta.Name]);
-        end;
-      end;
-    finally
-      AttribList.Free;
-    end;
-  end;
-end;
-
-function TInstantRelationalTranslator.Qualify(const TablePath,
-  FieldName: string): string;
-begin
-  Result := Format('%s.%s', [TablePathToAlias(TablePath),
-    InstantEmbrace(FieldName, Delimiters)]);
-end;
-
-function TInstantRelationalTranslator.QualifyPath(const
-  PathText: string): string;
-var
-  TablePath, FieldName: string;
-begin
-  PathToTarget(PathText, TablePath, FieldName);
-  Result := Qualify(TablePath, FieldName);
-end;
-
 function TInstantRelationalTranslator.QuoteString(const Str: string): string;
 begin
   Result := InstantQuote(Str, Quote);
@@ -5389,51 +5216,70 @@ begin
     Result := Str;
 end;
 
-function TInstantRelationalTranslator.RootAttribToFieldName(
-  const AttribName: string): string;
-begin
-  if SameText(AttribName, InstantClassFieldName) then
-    Result := InstantClassFieldName
-  else if SameText(AttribName, InstantIdFieldName) then
-    Result := InstantIdFieldName;
-end;
-
-function TInstantRelationalTranslator.TablePathToAlias(
-  const TablePath: string): string;
-begin
-  Result := TablePathAliases[IndexOfTablePath(TablePath)];
-end;
-
 function TInstantRelationalTranslator.TranslateClassRef(
   ClassRef: TInstantIQLClassRef; Writer: TInstantIQLWriter): Boolean;
+var
+  LSubContext: TInstantTranslationContext;
+  LSubQuery: TInstantIQLSubquery;
 begin
-  Result := Assigned(ClassRef) and IsPrimary(ClassRef) and Assigned(Writer);
+  Result := Assigned(ClassRef) and Assigned(Writer);
   if Result then
-  begin
-    WriteTables(Writer);
-    if not Assigned(Command.Clause) then
-      WriteCriterias(Writer, True);
-  end;
+    if IsPrimary(ClassRef) then
+    begin
+      Context.WriteTables(Writer);
+      if not Assigned(Command.Clause) then
+        Context.WriteCriterias(Writer, True);
+    end
+    else if Assigned(ClassRef.Owner) and (ClassRef.Owner is TInstantIQLSubquery) then
+    begin
+      LSubQuery := TInstantIQLSubQuery(ClassRef.Owner);
+      LSubContext := Context.GetSubqueryContext(LSubQuery);
+
+      LSubContext.WriteTables(Writer);
+      if not Assigned(LSubQuery.Clause) then
+        LSubContext.WriteCriterias(Writer, True);
+    end
+    else
+      Result := False;
 end;
 
 function TInstantRelationalTranslator.TranslateClause(
   Clause: TInstantIQLClause; Writer: TInstantIQLWriter): Boolean;
+var
+  LSubQuery: TInstantIQLSubquery;
+  LSubContext: TInstantTranslationContext;
 begin
-  Result := Assigned(Clause) and IsPrimary(Clause) and Assigned(Writer);
+  Result := Assigned(Clause) and Assigned(Writer);
   if Result then
   begin
-    if WriteCriterias(Writer, False) then
-      WriteAnd(Writer);
-    Writer.WriteString('(');
-    WriteObject(Clause, Writer);
-    Writer.WriteString(')');
-  end
+    if IsPrimary(Clause) then begin
+      if Context.WriteCriterias(Writer, False) then
+        WriteAnd(Writer);
+      Writer.WriteString('(');
+      WriteObject(Clause, Writer);
+      Writer.WriteString(')');
+    end
+    else if Assigned(Clause.Owner) and (Clause.Owner is TInstantIQLSubquery) then begin
+      LSubQuery := TInstantIQLSubQuery(Clause.Owner);
+      LSubContext := Context.GetSubqueryContext(LSubQuery);
+
+      if LSubContext.WriteCriterias(Writer, False) then
+        WriteAnd(Writer);
+      Writer.WriteString('(');
+      WriteObject(Clause, Writer);
+      Writer.WriteString(')');
+    end
+    else
+      Result := False;
+  end;
 end;
 
 function TInstantRelationalTranslator.TranslateConstant(
   Constant: TInstantIQLConstant; Writer: TInstantIQLWriter): Boolean;
 var
   S: string;
+  LSubContext: TInstantTranslationContext;
+  LSubQuery: TInstantIQLSubquery;
 begin
   if Assigned(Constant) and Assigned(Writer) then
   begin
@@ -5444,8 +5290,18 @@ begin
       Result := True;
     end else if SameText(S, 'SELF') then
     begin
-      Writer.WriteString(Qualify(ClassTablePath, InstantIdFieldName));
-      Result := True;
+      if InSubquery(Constant, LSubQuery) then
+      begin
+        LSubContext := Context.GetSubqueryContext(LSubQuery);
+        Writer.WriteString(LSubContext.Qualify(LSubContext.ClassTablePath, InstantIdFieldName));
+        Result := True;
+      end
+      else
+      begin
+        Writer.WriteString(Context.Qualify(Context.ClassTablePath, InstantIdFieldName));
+        Result := True;
+      end
+
     end else if (Length(S) > 0) and (S[1] = '"') then
     begin
       S := InstantUnquote(S, S[1]);
@@ -5498,6 +5354,10 @@ begin
     Result := TranslatePath(TInstantIQLPath(AObject), Writer)
   else if AObject is TInstantIQLConstant then
     Result := TranslateConstant(TInstantIQLConstant(AObject), Writer)
+{  else if AObject is TInstantIQLSubquery then
+    Result := TranslateSubquery(TInstantIQLSubquery(AObject), Writer)}
+  else if AObject is TInstantIQLSubqueryFunction then
+    Result := TranslateSubqueryFunction(TInstantIQLSubqueryFunction(AObject), Writer)
   else if AObject is TInstantIQLFunction then
     Result := TranslateFunction(TInstantIQLFunction(AObject), Writer)
   else
@@ -5509,16 +5369,24 @@ function TInstantRelationalTranslator.TranslatePath(Path: TInstantIQLPath;
 var
   PathText, TablePath, FieldName: string;
   AttribMeta: TInstantAttributeMetadata;
+  LSubQuery: TInstantIQLSubquery;
+  LContext: TInstantTranslationContext;
 begin
   Result := Assigned(Path) and Assigned(Writer);
   if Result then
   begin
     PathText := Path.Text;
-    AttribMeta := PathToTarget(PathText, TablePath, FieldName);
+    if InSubquery(Path, LSubQuery) then
+      LContext := Context.GetSubqueryContext(LSubQuery)
+    else
+      LContext := Context;
+
+    AttribMeta := LContext.PathToTarget(PathText, TablePath, FieldName);
+
     if Assigned(AttribMeta) and (AttribMeta.Category = acElement) and
       not IsRootAttribute(ExtractTarget(PathText)) then
       FieldName := FieldName + InstantIdFieldName;
-    Writer.WriteString(Qualify(TablePath, FieldName));
+    Writer.WriteString(LContext.Qualify(TablePath, FieldName));
   end;
 end;
 
@@ -5547,7 +5415,7 @@ function TInstantRelationalTranslator.TranslateSpecifier(
   begin
     PathList := TList.Create;
     try
-      CollectObjects(Command.Order, TInstantIQLOperand, PathList);
+      CollectObjects(Command.Order, TInstantIQLOperand, PathList, [TInstantIQLSubquery]);
       for I := 0 to Pred(PathList.Count) do
       begin
         Operand := PathList[I];
@@ -5567,19 +5435,28 @@ function TInstantRelationalTranslator.TranslateSpecifier(
 
 var
   ClassQual, IdQual, PathText: string;
+  LContext: TInstantTranslationContext;
+  LSubQuery: TInstantIQLSubquery;
 begin
-  Result := Assigned(Specifier) and IsPrimary(Specifier) and Assigned(Writer);
+  Result := Assigned(Specifier) and Assigned(Writer);
   if Result then
   begin
+    LContext := Context;
+    if (not IsPrimary(Specifier)) and Assigned(Specifier.Owner) and (Specifier.Owner is TInstantIQLSubquery) then
+    begin
+      LSubQuery := TInstantIQLSubQuery(Specifier.Owner);
+      LContext := Context.GetSubqueryContext(LSubQuery);
+    end;
+
     if Specifier.Operand is TInstantIQLPath then
     begin
       PathText := TInstantIQLPath(Specifier.Operand).Text;
-      ClassQual := QualifyPath(ConcatPath(PathText, InstantClassFieldName));
-      IdQual := QualifyPath(ConcatPath(PathText, InstantIdFieldName));
+      ClassQual := LContext.QualifyPath(ConcatPath(PathText, InstantClassFieldName));
+      IdQual := LContext.QualifyPath(ConcatPath(PathText, InstantIdFieldName));
     end else
     begin
-      ClassQual := QualifyPath(InstantClassFieldName);
-      IdQual := QualifyPath(InstantIdFieldName);
+      ClassQual := LContext.QualifyPath(InstantClassFieldName);
+      IdQual := LContext.QualifyPath(InstantIdFieldName);
     end;
     Writer.WriteString(Format('%s AS %s, %s AS %s', [ClassQual,
       InstantClassFieldName, IdQual, InstantIdFieldName]));
@@ -5588,44 +5465,30 @@ begin
   end;
 end;
 
-procedure TInstantRelationalTranslator.WriteAnd(Writer: TInstantIQLWriter);
+function TInstantRelationalTranslator.TranslateSubqueryFunction(
+  ASubqueryFunction: TInstantIQLSubqueryFunction;
+  Writer: TInstantIQLWriter): Boolean;
+var
+  LContext: TInstantTranslationContext;
+  LSubQuery: TInstantIQLSubquery;
 begin
-  Writer.WriteString(' AND ');
+  TranslateSubqueryFunctionName(ASubqueryFunction.FunctionName, Writer);
+  Writer.WriteString(ASubqueryFunction.FunctionName + '(');
+
+  LContext := Context;
+  if InSubquery(ASubqueryFunction, LSubQuery) then
+    LContext := Context.GetSubqueryContext(LSubQuery);
+
+  LContext.CreateChildContext(ASubqueryFunction.Subquery);
+  ASubqueryFunction.Subquery.Write(Writer);
+  Writer.WriteChar(')');
+  Result := True;
 end;
 
-function TInstantRelationalTranslator.WriteCriterias(
-  Writer: TInstantIQLWriter; IncludeWhere: Boolean): Boolean;
-var
-  I: Integer;
+function TInstantRelationalTranslator.TranslateSubqueryFunctionName(
+  const ASubqueryFunctionName: string; Writer: TInstantIQLWriter): Boolean;
 begin
-  Result := CriteriaCount > 0;
-  if Result then
-  begin
-    if IncludeWhere then
-      Writer.WriteString(' WHERE ');
-    Writer.WriteChar('(');
-    for I := 0 to Pred(CriteriaCount) do
-    begin
-      if I > 0 then
-        WriteAnd(Writer);
-      Writer.WriteString(Criterias[I]);
-    end;
-    Writer.WriteChar(')');
-  end;
-end;
-
-procedure TInstantRelationalTranslator.WriteTables(
-  Writer: TInstantIQLWriter);
-var
-  I: Integer;
-begin
-  for I := 0 to Pred(TablePathCount) do
-  begin
-    if I > 0 then
-      Writer.WriteString(', ');
-    Writer.WriteString(Format('%s %s',[InstantEmbrace(
-      ExtractTarget(TablePaths[I]), Delimiters), TablePathAliases[I]]));
-  end;
+  Result := False;
 end;
 
 destructor TInstantNavigationalQuery.Destroy;
@@ -6130,5 +5993,568 @@ begin
   end;
 end;
 
+{ TInstantTranslationContext }
+
+function TInstantTranslationContext.AddChildContext(const AContext: TInstantTranslationContext): Integer;
+begin
+  Result := FChildContexts.Add(AContext);
+end;
+
+function TInstantTranslationContext.AddCriteria(
+  const Criteria: string): Integer;
+begin
+  if IndexOfCriteria(Criteria) = -1 then
+    Result := CriteriaList.Add(Criteria)
+  else
+    Result := -1;
+end;
+
+procedure TInstantTranslationContext.AddJoin(const FromPath, FromField, ToPath,
+  ToField: string);
+begin
+  AddCriteria(Format('%s = %s', [Qualify(FromPath, FromField),
+    Qualify(ToPath, ToField)]));
+end;
+
+function TInstantTranslationContext.AddTablePath(
+  const TablePath: string): Integer;
+begin
+  if IndexOfTablePath(TablePath) = -1 then
+    Result := TablePathList.Add(TablePath)
+  else
+    Result := -1;
+end;
+
+procedure TInstantTranslationContext.AfterConstruction;
+begin
+  inherited;
+  FChildContexts := TObjectList.Create(True);
+end;
+
+procedure TInstantTranslationContext.Clear;
+begin
+  FreeAndNil(FCriteriaList);
+  FreeAndNil(FTablePathList);
+end;
+
+procedure TInstantTranslationContext.CollectPaths(AObject: TInstantIQLObject;
+  APathList: TList);
+begin
+  CollectObjects(AObject, TInstantIQLPath, APathList, [TInstantIQLSubquery]);
+end;
+
+constructor TInstantTranslationContext.Create(
+  const AStatement: TInstantIQLObject; const AQuote: Char;
+  const ADelimiters: string; const AParentContext: TInstantTranslationContext = nil);
+begin
+  inherited Create;
+  FParentContext := AParentContext;
+
+  if Assigned(FParentContext) then 
+    FParentContext.AddChildContext(Self);
+
+  FStatement := AStatement;
+  FQuote := AQuote;
+  FDelimiters := ADelimiters;
+
+  Initialize;
+end;
+
+function TInstantTranslationContext.CreateChildContext(
+  const AStatement: TInstantIQLObject): TInstantTranslationContext;
+begin
+  Result := TInstantTranslationContext.Create(AStatement, Quote, Delimiters, Self);
+end;
+
+destructor TInstantTranslationContext.Destroy;
+begin
+  FreeAndNil(FTablePathList);
+  FreeAndNil(FCriteriaList);
+  FreeAndNil(FChildContexts);
+  inherited;
+end;
+
+function TInstantTranslationContext.FindAttributeMetadata(
+  const PathText: string): TInstantAttributeMetadata;
+var
+  I: Integer;
+  AClassMetadata: TInstantClassMetadata;
+  List: TStringList;
+  AttribName: string;
+begin
+  List := TStringList.Create;
+  try
+    AClassMetadata := ObjectClassMetadata;
+    Result := nil;
+    InstantStrToList(PathText, List, [InstantDot]);
+    for I := 0 to Pred(List.Count) do
+    begin
+      AttribName := List[I];
+      Result := AClassMetadata.MemberMap.Find(AttribName);
+      if not Assigned(Result) then
+        raise EInstantError.CreateFmt(SAttributeNotFound,
+          [AttribName, AClassMetadata.Name]);
+      if Result.Category = acElement then
+        AClassMetadata := Result.ObjectClassMetadata;
+    end;
+  finally
+    List.Free;
+  end;
+end;
+
+function TInstantTranslationContext.GetChildContext(
+  const AIndex: Integer): TInstantTranslationContext;
+begin
+  Result := TInstantTranslationContext(FChildContexts[AIndex]);
+end;
+
+
+function TInstantTranslationContext.GetChildContextCount: Integer;
+begin
+  Result := FChildContexts.Count;
+end;
+
+function TInstantTranslationContext.GetChildContextIndex: Integer;
+begin
+  if not HasParentContext then
+    Result := -1
+  else
+    Result := ParentContext.IndexOfChildContext(Self);
+end;
+
+function TInstantTranslationContext.GetChildContextLevel: Integer;
+begin
+  if not HasParentContext then
+    Result := -1
+  else
+    Result := 1 + ParentContext.GetChildContextLevel;
+end;
+
+function TInstantTranslationContext.GetClassTablePath: string;
+begin
+  Result := TablePaths[0];
+end;
+
+function TInstantTranslationContext.GetCriteriaCount: Integer;
+begin
+  Result := CriteriaList.Count;
+end;
+
+function TInstantTranslationContext.GetCriteriaList: TStringList;
+begin
+  if not Assigned(FCriteriaList) then
+    FCriteriaList := TStringList.Create;
+  Result := FCriteriaList;
+end;
+
+function TInstantTranslationContext.GetCriterias(Index: Integer): string;
+begin
+  Result := CriteriaList.Strings[Index];
+end;
+
+function TInstantTranslationContext.GetObjectClassMetadata: TInstantClassMetadata;
+begin
+{  if not Assigned(FObjectClassMetadata) then
+    FObjectClassMetadata := InstantFindClassMetadata(FObjectClassName);}
+
+  Result := FObjectClassMetadata;
+end;
+
+function TInstantTranslationContext.GetSubqueryContext(
+  const ASubQuery: TInstantIQLSubquery): TInstantTranslationContext;
+var
+  LChildIndex: Integer;
+  LChildContext: TInstantTranslationContext;
+begin
+  Result := nil;
+  for LChildIndex := 0 to FChildContexts.Count - 1 do
+  begin
+    LChildContext := GetChildContext(LChildIndex);
+    if LChildContext.Statement = ASubQuery then
+    begin
+      Result := LChildContext;
+      Exit;
+    end
+    else
+      Result := LChildContext.GetSubqueryContext(ASubQuery);
+  end;
+end;
+
+function TInstantTranslationContext.GetTableAlias: string;
+begin
+  Result := TablePathToAlias(TableName);
+end;
+
+function TInstantTranslationContext.GetTableName: string;
+begin
+  Result := ObjectClassMetadata.TableName;
+end;
+
+function TInstantTranslationContext.GetTablePathAlias(
+  const ATablePath: string): string;
+begin
+  Result := TablePathToAlias(ATablePath);
+end;
+
+function TInstantTranslationContext.GetTablePathAliases(Index: Integer): string;
+begin
+  if Index < TablePathList.Count then
+  begin
+    if not HasParentContext then
+      Result := Format('t%d', [Succ(Index)])
+    else
+      Result := Format('l%ds%dt%d', [Succ(ChildContextLevel), Succ(ChildContextIndex), Succ(Index)]);
+  end
+  else
+    Result := '';
+end;
+
+function TInstantTranslationContext.GetTablePathCount: Integer;
+begin
+  Result := TablePathList.Count;
+end;
+
+function TInstantTranslationContext.GetTablePathList: TStringList;
+begin
+  if not Assigned(FTablePathList) then
+    FTablePathList := TStringList.Create;
+  Result := FTablePathList;
+end;
+
+function TInstantTranslationContext.GetTablePaths(Index: Integer): string;
+begin
+  Result := TablePathList[Index];
+end;
+
+function TInstantTranslationContext.HasParentContext: Boolean;
+begin
+  Result := Assigned(FParentContext);
+end;
+
+function TInstantTranslationContext.IndexOfChildContext(
+  const AChildContext: TInstantTranslationContext): Integer;
+begin
+  Result := FChildContexts.IndexOf(AChildContext);
+end;
+
+function TInstantTranslationContext.IndexOfCriteria(
+  const Criteria: string): Integer;
+begin
+  Result := CriteriaList.IndexOf(Criteria);
+end;
+
+function TInstantTranslationContext.IndexOfTablePath(
+  const TablePath: string): Integer;
+begin
+  Result := TablePathList.IndexOf(TablePath);
+end;
+
+procedure TInstantTranslationContext.Initialize;
+
+  procedure InitClassTablePath(List: TList);
+
+    function FindAttributePath: TInstantIQLPath;
+    var
+      I: Integer;
+    begin
+      for I := 0 to Pred(List.Count) do
+      begin
+        Result := List[I];
+        if not IsRootAttribute(Result.Text) then
+          Exit;
+      end;
+      Result := nil;
+    end;
+
+  var
+   TablePath: string;
+   Path: TInstantIQLPath;
+  begin
+    if ClassRef.Any then
+      TablePath := ObjectClassMetadata.TableName
+    else begin
+      Path := FindAttributePath;
+      if Assigned(Path) then
+        TablePath := PathToTablePath(Path.Attributes[0])
+      else
+        TablePath := ObjectClassMetadata.TableName;
+    end;
+    AddTablePath(TablePath);
+  end;
+
+  procedure InitCommandCriterias;
+  begin
+    if not ClassRef.Any then
+      AddCriteria(Format('%s = %s',
+        [Qualify(ClassTablePath, InstantClassFieldName),
+        QuoteString(ClassRef.ObjectClassName)]));
+    if Specifier.IsPath then
+      AddCriteria(Format('%s <> %s%s',
+        [QualifyPath(ConcatPath(Specifier.Text, InstantIdFieldName)),
+          Quote, Quote]));
+  end;
+
+var
+  I: Integer;
+  PathList: TList;
+begin
+  if (FStatement is TInstantIQLCommand) then
+  begin
+    ClassRef := TInstantIQLCommand(FStatement).ClassRef;
+    Specifier := TInstantIQLCommand(FStatement).Specifier;
+  end
+  else if (FStatement is TInstantIQLSubquery) then
+  begin
+    ClassRef := TInstantIQLSubquery(FStatement).ClassRef;
+    Specifier := TInstantIQLSubquery(FStatement).Specifier;
+  end;
+
+  // da TInstantIQLRelationalTranslator.BeforeTranslate
+
+  PathList := TList.Create;
+  try
+    CollectPaths(FStatement, PathList);
+    InitClassTablePath(PathList);
+    for I := 0 to Pred(PathList.Count) do
+    begin
+      MakeTablePaths(PathList[I]);
+      MakeJoins(PathList[I]);
+    end;
+    InitCommandCriterias;
+  finally
+    PathList.Free;
+  end;
+end;
+
+procedure TInstantTranslationContext.MakeJoins(Path: TInstantIQLPath);
+
+  procedure MakePathJoins(Path: TInstantIQLPath);
+  var
+    I: Integer;
+    PathText, FromPath, ToPath, FromField, ToField: string;
+  begin
+    if Path.AttributeCount > 1 then
+    begin
+      PathToTarget(Path.SubPath[0], FromPath, FromField);
+      for I := 1 to Pred(Path.AttributeCount) do
+      begin
+        PathText := Path.SubPath[I];
+        if not IsRootAttribute(ExtractTarget(PathText)) then
+        begin
+          PathToTarget(PathText, ToPath, ToField);
+          AddJoin(FromPath, FromField + InstantClassFieldName, ToPath,
+            InstantClassFieldName);
+          AddJoin(FromPath, FromField + InstantIdFieldName, ToPath,
+            InstantIdFieldName);
+          FromPath := ToPath;
+          FromField := ToField;
+        end;
+      end;
+    end;
+  end;
+
+  procedure MakeClassJoin(Path: TInstantIQLPath);
+  var
+    TablePath: string;
+  begin
+    if Path.HasAttributes then
+    begin
+      TablePath := PathToTablePath(Path.SubPath[0]);
+      if TablePath <> ClassTablePath then
+      begin
+        AddJoin(ClassTablePath, InstantClassFieldName,
+          TablePath, InstantClassFieldName);
+        AddJoin(ClassTablePath, InstantIdFieldName,
+          TablePath, InstantIdFieldName);
+      end;
+    end;
+  end;
+
+begin
+  if not Assigned(Path) then
+    Exit;
+  MakeClassJoin(Path);
+  MakePathJoins(Path);
+end;
+
+procedure TInstantTranslationContext.MakeTablePaths(Path: TInstantIQLPath);
+var
+  I: Integer;
+  TablePath: string;
+begin
+  if not Assigned(Path) or IsRootAttribute(Path.Text) then
+    Exit;
+
+  for I := 0 to Pred(Path.AttributeCount) do
+  begin
+    TablePath := PathToTablePath(Path.SubPath[I]);
+    if IndexOfTablePath(TablePath) = -1 then
+      AddTablePath(TablePath);
+  end;
+end;
+
+function TInstantTranslationContext.PathToTablePath(
+  const PathText: string): string;
+var
+  FieldName: string;
+begin
+  PathToTarget(PathText, Result, FieldName);
+end;
+
+function TInstantTranslationContext.PathToTarget(const PathText: string;
+  out TablePath, FieldName: string;
+  const AClassMetadata: TInstantClassMetadata): TInstantAttributeMetadata;
+var
+  I: Integer;
+  AttribList: TStringList;
+  ClassMeta: TInstantClassMetadata;
+  AttribName: string;
+  Map: TInstantAttributeMap;
+begin
+  Result := nil;
+  if IsRootAttribute(PathText) then
+  begin
+    TablePath := ClassTablePath;
+    FieldName := RootAttribToFieldName(PathText);
+  end else
+  begin
+    if AClassMetadata = nil then
+      ClassMeta := ObjectClassMetadata
+    else
+      ClassMeta := AClassMetadata;
+    AttribList := TStringList.Create;
+    try
+      InstantStrToList(PathText, AttribList, [InstantDot]);
+      for I := 0 to Pred(AttribList.Count) do
+      begin
+        AttribName := AttribList[I];
+        if IsRootAttribute(AttribName) then
+        begin
+          if Assigned(Result) and
+            not Result.IsAttributeClass(TInstantReference) then
+            raise EInstantError.CreateFmt(SUnableToQueryAttribute,
+              [Result.ClassMetadataName, Result.Name]);
+          FieldName := FieldName + RootAttribToFieldName(AttribName);
+        end else
+        begin
+          Result := ClassMeta.MemberMap.Find(AttribName);
+          if Assigned(Result) then
+          begin
+            while Assigned(ClassMeta) and not ClassMeta.IsStored do
+              ClassMeta := ClassMeta.Parent;
+            if Assigned(ClassMeta) then
+            begin
+              Map := ClassMeta.StorageMaps.FindMap(AttribName);
+              if Assigned(Map) then
+              begin
+                if I > 0 then
+                  TablePath := TablePath + InstantDot;
+                TablePath := TablePath + Map.Name;
+                FieldName := Result.FieldName;
+                ClassMeta := Result.ObjectClassMetadata;
+              end else
+                raise EInstantError.CreateFmt(SAttributeNotQueryable,
+                  [Result.ClassName, Result.Name, Result.ClassMetadataName]);
+            end else
+              raise EInstantError.CreateFmt(SClassNotQueryable,
+                [Result.ClassMetadataName]);
+          end else
+            raise EInstantError.CreateFmt(SAttributeNotFound,
+              [AttribName, ClassMeta.Name]);
+        end;
+      end;
+    finally
+      AttribList.Free;
+    end;
+  end;
+end;
+
+function TInstantTranslationContext.Qualify(const TablePath,
+  FieldName: string): string;
+begin
+  Result := Format('%s.%s', [TablePathToAlias(TablePath),
+    InstantEmbrace(FieldName, Delimiters)]);
+end;
+
+function TInstantTranslationContext.QualifyPath(const PathText: string): string;
+var
+  TablePath, FieldName: string;
+begin
+  PathToTarget(PathText, TablePath, FieldName);
+  Result := Qualify(TablePath, FieldName);
+end;
+
+function TInstantTranslationContext.QuoteString(const Str: string): string;
+begin
+  Result := InstantQuote(Str, Quote);
+end;
+
+procedure TInstantTranslationContext.SetClassRef(
+  const Value: TInstantIQLClassRef);
+begin
+  if FClassRef <> Value then
+  begin
+    FClassRef := Value;
+    ObjectClassName := FClassRef.ObjectClassName;
+
+
+  end;
+end;
+
+procedure TInstantTranslationContext.SetObjectClassName(const Value: string);
+begin
+  if FObjectClassName <> Value then
+  begin
+    FObjectClassName := Value;
+    FObjectClassMetadata := InstantFindClassMetadata(FObjectClassName);
+
+  end;
+end;
+
+procedure TInstantTranslationContext.SetSpecifier(
+  const Value: TInstantIQLSpecifier);
+begin
+  FSpecifier := Value;
+end;
+
+function TInstantTranslationContext.TablePathToAlias(
+  const TablePath: string): string;
+begin
+  Result := TablePathAliases[IndexOfTablePath(TablePath)];
+end;
+
+function TInstantTranslationContext.WriteCriterias(Writer: TInstantIQLWriter;
+  IncludeWhere: Boolean): Boolean;
+var
+  I: Integer;
+begin
+  Result := CriteriaCount > 0;
+  if Result then
+  begin
+    if IncludeWhere then
+      Writer.WriteString(' WHERE ');
+    Writer.WriteChar('(');
+    for I := 0 to Pred(CriteriaCount) do
+    begin
+      if I > 0 then
+        WriteAnd(Writer);
+      Writer.WriteString(Criterias[I]);
+    end;
+    Writer.WriteChar(')');
+  end;
+end;
+
+procedure TInstantTranslationContext.WriteTables(Writer: TInstantIQLWriter);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(TablePathCount) do
+  begin
+    if I > 0 then
+      Writer.WriteString(', ');
+    Writer.WriteString(Format('%s %s',[InstantEmbrace(
+      ExtractTarget(TablePaths[I]), Delimiters), TablePathAliases[I]]));
+  end;
+end;
 
 end.

@@ -18,7 +18,7 @@ uses
   QGraphics, QControls, QForms, QDialogs, QMask,
   QGrids, QDBGrids, QStdCtrls, QExtCtrls, QActnList, QMenus, QButtons,
 {$ENDIF}
-  BasicView, Db, InstantPresentation;
+  BasicView, Db, InstantPresentation, ComCtrls;
 
 type
   TQueryViewForm = class(TBasicViewForm)
@@ -31,29 +31,42 @@ type
     ExecuteAction: TAction;
     ExecuteButton: TButton;
     ResultGrid: TDBGrid;
-    ResultPanel: TPanel;
+    ResultPageControl: TPageControl;
     Splitter: TSplitter;
     TestSelector: TInstantSelector;
     TestSource: TDataSource;
     MaxCountEdit: TMaskEdit;
     NumberLabel: TLabel;
+    ResultTabSheet: TTabSheet;
+    TranslatedQueryTabSheet: TTabSheet;
+    TranslatedQueryMemo: TMemo;
     procedure ExecuteActionExecute(Sender: TObject);
     procedure ExampleComboBoxClick(Sender: TObject);
     procedure TestSelectorAfterScroll(DataSet: TDataSet);
     procedure ActionsUpdate(Action: TBasicAction; var Handled: Boolean);
+    procedure TestSelectorAfterClose(DataSet: TDataSet);
+  private
+    procedure LogStatement(const AString: string);
+    procedure UpdateTabSheets;
   protected
     procedure LoadExamples;
   public
     procedure FormCreate(Sender: TObject); override;
+    procedure FormShow(Sender: TObject); override;
     procedure Disconnect; override;
+    procedure Connect; override;
+    destructor Destroy; override;
   end;
 
 implementation
 
 {$R *.dfm}
 
+uses
+  InstantPersistence, InstantBrokers, InstantConsts;
+  
 const
-  Examples: array[0..9, 0..1] of string = (
+  Examples: array[0..10, 0..1] of string = (
     ('All contacts',
     'SELECT * FROM ANY TContact'),
     ('All companies',
@@ -73,8 +86,18 @@ const
     ('Corporations ordered descending by city',
     'SELECT * FROM TCompany WHERE Name LIKE "%Corp%" ORDER BY City DESC'),
     ('Employees from same city as their employer',
-    'SELECT * FROM TPerson WHERE City = Employer.City')
+    'SELECT * FROM TPerson WHERE City = Employer.City'),
+    ('Categories of contacts in cities with names starting by A',
+    'SELECT DISTINCT * FROM TCategory WHERE EXISTS(SELECT * FROM ANY TContact WHERE City LIKE ''A%'' USING Category)'),
+    ('Companies with at least one employee living in San Diego',
+    'SELECT * FROM TCompany WHERE EXISTS(SELECT * FROM TPerson WHERE City = ''San Diego'' USING Employer)')
   );
+
+destructor TQueryViewForm.Destroy;
+begin
+  InstantLogProc := nil;
+  inherited;
+end;
 
 procedure TQueryViewForm.Disconnect;
 begin
@@ -104,6 +127,15 @@ procedure TQueryViewForm.FormCreate(Sender: TObject);
 begin
   Caption := 'Query';
   LoadExamples;
+  ResultPageControl.ActivePage := ResultTabSheet;
+end;
+
+procedure TQueryViewForm.LogStatement(const AString: string);
+begin
+  //Log only first statement
+  if TranslatedQueryMemo.Lines.Count = 0 then
+    TranslatedQueryMemo.Lines.Text :=
+      Copy(AString, Length(InstantLogStatementBefore) + 1, MaxInt);
 end;
 
 procedure TQueryViewForm.LoadExamples;
@@ -133,6 +165,35 @@ procedure TQueryViewForm.ActionsUpdate(Action: TBasicAction;
 begin
   inherited;
   ExecuteAction.Enabled := IsConnected and (CommandEdit.Text <> '') and Visible;
+end;
+
+procedure TQueryViewForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  UpdateTabSheets;
+end;
+
+procedure TQueryViewForm.UpdateTabSheets;
+begin
+{$IFDEF IO_STATEMENT_LOGGING}
+  TranslatedQueryTabSheet.TabVisible := Assigned(Connector) and (Connector.Broker is TInstantSQLBroker);
+  InstantLogProc := LogStatement;
+{$ELSE}
+  TranslatedQueryTabSheet.TabVisible := False;
+  InstantLogProc := nil;
+{$ENDIF}
+end;
+
+procedure TQueryViewForm.Connect;
+begin
+  inherited;
+  UpdateTabSheets;
+end;
+
+procedure TQueryViewForm.TestSelectorAfterClose(DataSet: TDataSet);
+begin
+  inherited;
+  TranslatedQueryMemo.Clear;
 end;
 
 end.

@@ -86,6 +86,7 @@ procedure InstantStrToList(const Str: string; List: TStrings;
   Delimiters: TChars);
 function InstantStrToTime(const Str: string): TDateTime;
 function InstantUnquote(const Str: string; Quote: Char): string;
+function InstantStrArrayToString(const StrArray: array of string; Delimiter: Char): string;
 
 {$IFDEF D5}
 function DateOf(const AValue: TDateTime): TDateTime;
@@ -606,6 +607,18 @@ begin
     Result := Str
   else
     Result := AnsiExtractQuotedStr(S, Quote);
+end;
+
+function InstantStrArrayToString(const StrArray: array of string; Delimiter: Char): string;
+var
+  I: Integer;
+begin
+  Result := '';
+  for I := Low(StrArray) to High(StrArray) do
+    if Result = '' then
+      Result := StrArray[I]
+    else
+      Result := Result + Delimiter + StrArray[I];
 end;
 
 {$IFDEF D5}

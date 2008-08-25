@@ -455,7 +455,7 @@ type
       Options: TInstantCompareOptions): Boolean; overload;
     function LocateObject(AObject: TObject): Boolean; overload;
     procedure PostField(Field: TField);
-    function ReadProperty(Field: TField; Instance: TObject): Variant;
+    function ReadProperty(Field: TField; Instance: TObject): Variant; virtual;
     function RefreshObjectBuffer(AObject: TObject): Boolean;
     procedure SaveField(Field: TField); virtual;
     procedure SaveFieldValue(Field: TField; Buffer: Pointer; AObject: TObject);
@@ -599,9 +599,9 @@ type
     function GetMasterSource: TDataSource;
     procedure SetMasterProperty(const Value: string);
     procedure SetMasterSource(Value: TDataSource);
-    procedure SetSubject(Value: TObject);
     procedure SyncWithParent(Field: TDataSetField);
   protected
+    procedure SetSubject(Value: TObject); virtual;
     procedure DataEvent(Event: TDataEvent; Info: Longint); override;
     function GetSubject: TObject; override;
     procedure MasterChanged(Sender: TObject);

@@ -22,7 +22,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Marco Cantù,
- * Steven Mitchell
+ * Steven Mitchell, Andrea Magni
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -63,11 +63,11 @@ type
     FConnected: Boolean;
     FRootFolder: string;
     FXMLFileFormat: TXMLFileFormat;
-    procedure CreateStorageDir(const AStorageName: string);
     function GetRootFolder: string;
     procedure SetRootFolder(const AValue: string);
     function ObjectUpdateCountFromFileName(const AFileName: string): Integer;
   protected
+    procedure CreateStorageDir(const AStorageName: string);
     procedure DoConnect; override;
     procedure DoDisconnect; override;
     function GetConnected: Boolean; override;
@@ -109,7 +109,7 @@ type
     function CheckConflict(AObject: TInstantObject;
       const AStorageName, AObjectId: string): Boolean;
     procedure LoadFileList(const AFileList: TStringList;
-      const AStorageNames: TStrings);
+      const AStorageNames: TStrings); virtual;
   published
     property RootFolder: string read GetRootFolder write SetRootFolder;
     property XMLFileFormat: TXMLFileFormat
@@ -259,6 +259,7 @@ type
     procedure SetParams(Value: TParams); override;
     function ObjectFetched(Index: Integer): Boolean; override;
     procedure SetStatement(const Value: string); override;
+    function InternalGetObjectReferenceId(Index: Integer) : string; override;
     property ObjectReferenceCount: Integer read GetObjectReferenceCount;
     property ObjectReferenceList: TObjectList read GetObjectReferenceList;
     property ObjectReferences[Index: Integer]: TInstantObjectReference read
@@ -311,6 +312,8 @@ type
   public
     property TableMetadata: TInstantTableMetadata read GetTableMetadata;
   end;
+
+procedure GlobalLoadFileList(const Path: string; FileList: TStringList);
 
 implementation
 
@@ -922,6 +925,13 @@ begin
   Result := ObjectReferenceCount;
 end;
 
+function TInstantXMLQuery.InternalGetObjectReferenceId(
+  Index: Integer): string;
+begin
+  Result := inherited InternalGetObjectReferenceId(Index)+
+    '['+TInstantObjectReference(ObjectReferenceList[Index]).ObjectId+']';
+end;
+
 function TInstantXMLQuery.InternalGetObjects(Index: Integer): TObject;
 begin
   Result := ObjectReferences[Index].Dereference(Connector);
@@ -1245,9 +1255,9 @@ var
   I: Integer;
 begin
   Result := inherited TranslateClassRef(ClassRef, Writer);
-  if TablePathCount > 0 then
+  if Context.TablePathCount > 0 then
   begin
-    (Query as TInstantXMLQuery).StorageNames.Text := TablePaths[0];
+    (Query as TInstantXMLQuery).StorageNames.Text := Context.TablePaths[0];
     (Query as TInstantXMLQuery).ObjectClassNames.Text := ClassRef.ObjectClassName;
     if ClassRef.Any then
     begin

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <ProjectGuid>{0d607f9b-9c2b-445d-84fd-7072bc53deff}</ProjectGuid>
     <MainSource>PrimerExternal.dpr</MainSource>
-    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
     <DCC_DependencyCheckOutputName>PrimerExternal.exe</DCC_DependencyCheckOutputName>
@@ -13,25 +13,25 @@
     <DCC_DebugInformation>False</DCC_DebugInformation>
     <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
     <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-    <DCC_Define>RELEASE</DCC_Define>
-    <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_UnitSearchPath>
-    <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_ResourcePath>
-    <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_ObjPath>
-    <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_IncludePath>
+    <DCC_Define>RELEASE;IO_STATEMENT_LOGGING</DCC_Define>
+    <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql</DCC_ResourcePath>
+    <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql</DCC_ObjPath>
+    <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql</DCC_IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Version>7.0</Version>
-    <DCC_Define>DEBUG</DCC_Define>
-    <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_UnitSearchPath>
-    <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_ResourcePath>
-    <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_ObjPath>
-    <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql</DCC_IncludePath>
+    <DCC_Define>DEBUG;IO_STATEMENT_LOGGING</DCC_Define>
+    <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql</DCC_ResourcePath>
+    <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql</DCC_ObjPath>
+    <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql</DCC_IncludePath>
   </PropertyGroup>
   <ProjectExtensions>
     <Borland.Personality>Delphi.Personality</Borland.Personality>
     <Borland.ProjectType>VCLApplication</Borland.ProjectType>
     <BorlandProject>
-<BorlandProject><Delphi.Personality><Compiler><Compiler Name="UsePackages">False</Compiler><Compiler Name="Packages"></Compiler></Compiler><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">False</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">1</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">2057</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">InstantObjects.org</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Primer Demo</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.1.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright">MPL public license</VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.1</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">PrimerExternal.dpr</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
+<BorlandProject><Delphi.Personality><Compiler><Compiler Name="UsePackages">False</Compiler><Compiler Name="Packages"></Compiler></Compiler><Parameters><Parameters Name="UseLauncher">False</Parameters><Parameters Name="LoadAllSymbols">True</Parameters><Parameters Name="LoadUnspecifiedSymbols">False</Parameters></Parameters><VersionInfo><VersionInfo Name="IncludeVerInfo">True</VersionInfo><VersionInfo Name="AutoIncBuild">False</VersionInfo><VersionInfo Name="MajorVer">2</VersionInfo><VersionInfo Name="MinorVer">0</VersionInfo><VersionInfo Name="Release">0</VersionInfo><VersionInfo Name="Build">0</VersionInfo><VersionInfo Name="Debug">False</VersionInfo><VersionInfo Name="PreRelease">False</VersionInfo><VersionInfo Name="Special">False</VersionInfo><VersionInfo Name="Private">False</VersionInfo><VersionInfo Name="DLL">False</VersionInfo><VersionInfo Name="Locale">1030</VersionInfo><VersionInfo Name="CodePage">1252</VersionInfo></VersionInfo><VersionInfoKeys><VersionInfoKeys Name="CompanyName">InstantObjects.org</VersionInfoKeys><VersionInfoKeys Name="FileDescription">Primer Demo</VersionInfoKeys><VersionInfoKeys Name="FileVersion">2.0.0.0</VersionInfoKeys><VersionInfoKeys Name="InternalName"></VersionInfoKeys><VersionInfoKeys Name="LegalCopyright">MPL public license</VersionInfoKeys><VersionInfoKeys Name="LegalTrademarks"></VersionInfoKeys><VersionInfoKeys Name="OriginalFilename"></VersionInfoKeys><VersionInfoKeys Name="ProductName"></VersionInfoKeys><VersionInfoKeys Name="ProductVersion">2.0</VersionInfoKeys><VersionInfoKeys Name="Comments"></VersionInfoKeys></VersionInfoKeys><Source><Source Name="MainSource">PrimerExternal.dpr</Source></Source></Delphi.Personality></BorlandProject></BorlandProject>
   </ProjectExtensions>
   <Import Project="$(MSBuildBinPath)\Borland.Delphi.Targets" />
   <ItemGroup>
@@ -46,6 +46,7 @@
     </DCCReference>
     <DCCReference Include="BasicView.pas">
       <Form>BasicViewForm</Form>
+      <DesignClass>TFrame</DesignClass>
     </DCCReference>
     <DCCReference Include="CategoryBrowse.pas">
       <Form>CategoryBrowseForm</Form>
@@ -70,6 +71,7 @@
     </DCCReference>
     <DCCReference Include="ContactView.pas">
       <Form>ContactViewForm</Form>
+      <DesignClass>TFrame</DesignClass>
     </DCCReference>
     <DCCReference Include="CountryBrowse.pas">
       <Form>CountryBrowseForm</Form>
@@ -80,16 +82,19 @@
     </DCCReference>
     <DCCReference Include="HelpView.pas">
       <Form>HelpViewForm</Form>
+      <DesignClass>TFrame</DesignClass>
     </DCCReference>
     <DCCReference Include="Main.pas">
       <Form>MainForm</Form>
     </DCCReference>
     <DCCReference Include="MainData.pas">
       <Form>MainDataModule</Form>
+      <DesignClass>TDataModule</DesignClass>
     </DCCReference>
     <DCCReference Include="ModelExternal\Model.pas" />
     <DCCReference Include="PerformanceView.pas">
       <Form>PerformanceViewForm</Form>
+      <DesignClass>TFrame</DesignClass>
     </DCCReference>
     <DCCReference Include="PersonBrowse.pas">
       <Form>PersonBrowseForm</Form>
@@ -99,6 +104,7 @@
     </DCCReference>
     <DCCReference Include="QueryView.pas">
       <Form>QueryViewForm</Form>
+      <DesignClass>TFrame</DesignClass>
     </DCCReference>
     <DCCReference Include="RandomData.pas" />
     <DCCReference Include="Stopwatch.pas" />
