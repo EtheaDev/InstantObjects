@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena, Steven Mitchell, Joao Morais
+ * Nando Dessena, Steven Mitchell, Joao Morais, Andrea Magni
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -68,6 +68,7 @@ const
   InstantChildIdFieldName = 'ChildId';
   InstantSequenceNoFieldName = 'SequenceNo';
   InstantChildClassFieldName = 'ChildClass';
+  InstantLogStatementBefore = 'Before: ';
 
 {$IFNDEF D6+}
 const
@@ -155,6 +156,7 @@ resourcestring
   SSpecifierMissing = 'Specifier missing';
   SSplashScreenTitle = 'InstantObjects - Object Persistence Framework';
   SSQLStatementIndexOutOfBounds = 'SQL statement index out of bounds.';
+  SSubqueryMissing = 'Subquery missing';
   STransactionInProgress = 'Transaction in progress';
   STrueString = 'True';
   SUnableToQueryAttribute = 'Unable to query on attribute %s.%s';
@@ -190,6 +192,12 @@ resourcestring
   SUnsupportedOperation = 'Unsupported operation: %s';
   SUnsupportedType = 'Unsupported type: %s';
   SUpdateConflict = 'Object %s(''%s'') was updated by another session';
+  SUsingAttributeMissing = 'USING attribute missing';
+  SUsingAttributeNotInitialized = 'Error initializing USING attribute';
+  SSubContextNotFoundForSubQuery = 'SubContext object not found for subquery (''%s'')';
+  SParentContextNotFoundForSubQuery = 'Parent context object not found for subquery (''%s'')';
+  SUsingAttributeMustBeAReference = 'Attribute (''%s'') is not a reference: USING attribute must be a reference.';  
+  SUsingAttributeMetadataNotFound = 'Cannot get metadata for USING attribute (''%s'')';
 
 implementation
 

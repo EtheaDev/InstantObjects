@@ -62,10 +62,10 @@ uses
   ContactSort in 'ContactSort.pas' {ContactSortForm},
   CategoryBrowse in 'CategoryBrowse.pas' {CategoryBrowseForm},
   HelpView in 'HelpView.pas' {HelpViewForm: TFrame},
-  QueryView in 'QueryView.pas' {QueryViewForm: TFrame},
   RandomData in 'RandomData.pas',
   Stopwatch in 'Stopwatch.pas',
-  Utility in 'Utility.pas';
+  Utility in 'Utility.pas',
+  QueryView in 'QueryView.pas' {QueryViewForm: TFrame};
 
 {$R *.res}
 {$R *.mdr} {Model}

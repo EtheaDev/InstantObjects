@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena
+ * Nando Dessena, Andrea Magni
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -42,7 +42,7 @@ uses
   Classes, SysUtils, Contnrs, InstantClasses, InstantTextFiler, InstantMetadata;
 
 type
-  TInstantIQLObject= class;
+  TInstantIQLObject = class;
 
   TInstantIQLReader = class(TInstantTextReader)
   private
@@ -85,6 +85,8 @@ type
     procedure CheckIsIdentifierToken(const Token: string);
     procedure CheckToken(const ActualToken, ExpectedToken: string;
       IgnoreCase: Boolean = True);
+    procedure CheckTokens(const ActualToken: string;
+      const ExpectedTokens: array of string; IgnoreCase: Boolean = True);
     class function InternalAtInstance(Reader: TInstantIQLReader): Boolean; virtual;
     procedure InternalClear; virtual;
     procedure InvalidTokenError(const Token: string);
@@ -238,18 +240,49 @@ type
     property Value: string read FValue;
   end;
 
-  TInstantIQLFunction = class(TInstantIQLOperand)
+  {
+    Ancestor for subquery functions (that have a subquery as only parameter)
+    and other functions (that have zero or more expression parameters).
+  }
+  TInstantIQLBaseFunction = class(TInstantIQLOperand)
   private
-    FParameters: TInstantIQLParameters;
     FFunctionName: string;
   protected
     class function InternalAtInstance(Reader: TInstantIQLReader): Boolean; override;
+    procedure InternalClear; override;
+  published
+    property FunctionName: string read FFunctionName;
+  end;
+
+  {
+    All functions that have a set of zero or more expressions as parameters.
+  }
+  TInstantIQLFunction = class(TInstantIQLBaseFunction)
+  private
+    FParameters: TInstantIQLParameters;
+  protected
     procedure InternalClear; override;
     procedure ReadObject(Reader: TInstantIQLReader); override;
     procedure WriteObject(Writer: TInstantIQLWriter); override;
   published
     property Parameters: TInstantIQLParameters read FParameters;
-    property FunctionName: string read FFunctionName;
+  end;
+
+  TInstantIQLSubquery = class;
+
+  {
+    All functions that have a subquery as parameter. Currently only the
+    EXISTS() function.
+  }
+  TInstantIQLSubqueryFunction = class(TInstantIQLBaseFunction)
+  private
+    FSubquery: TInstantIQLSubquery;
+  protected
+    class function InternalAtInstance(Reader: TInstantIQLReader): Boolean; override;
+    procedure ReadObject(Reader: TInstantIQLReader); override;
+    procedure WriteObject(Writer: TInstantIQLWriter); override;
+  published
+    property Subquery: TInstantIQLSubquery read FSubquery;
   end;
 
   TInstantIQLParam = class(TInstantIQLOperand)
@@ -463,10 +496,37 @@ type
     property ObjectClassMetadata: TInstantClassMetadata read GetObjectClassMetadata;
   end;
 
+  TInstantIQLSubquery = class(TInstantIQLObject)
+  private
+    FClassRef: TInstantIQLClassRef;
+    FClause: TInstantIQLClause;
+    FDistinct: Boolean;
+    FSpecifier: TInstantIQLSpecifier;
+    FUsingAttribute: TInstantIQLPath;
+    function GetAny: Boolean;
+  protected
+    class function InternalAtInstance(Reader: TInstantIQLReader): Boolean; override;
+    procedure InternalClear; override;
+    procedure ReadObject(Reader: TInstantIQLReader); override;
+    procedure WriteObject(Writer: TInstantIQLWriter); override;
+    procedure GetUsingAttributeInfo(const AUsingAttribute: TInstantIQLPath;
+      const Writer: TInstantIQLWriter; out ASubContext: TObject;
+      out AParentContext: TObject; out AAttributeMetadata: TInstantAttributeMetadata);
+  public
+  published
+    property Any: Boolean read GetAny;
+    property Clause: TInstantIQLClause read FClause;
+    property ClassRef: TInstantIQLClassRef read FClassRef;
+    property Distinct: Boolean read FDistinct;
+    property Specifier: TInstantIQLSpecifier read FSpecifier;
+    property UsingAttribute: TInstantIQLPath read FUsingAttribute;
+  end;
+
 implementation
 
 uses
-  InstantPersistence, InstantUtils, InstantConsts, InstantTypes;
+  StrUtils,
+  InstantPersistence, InstantUtils, InstantConsts, InstantTypes, InstantBrokers;
 
 const
   OperatorTokens: array[TInstantIQLOperatorType] of string = ('=', '>', '<',
@@ -587,6 +647,23 @@ procedure TInstantIQLObject.CheckToken(const ActualToken,
 begin
   if not InstantSameText(ActualToken, ExpectedToken, IgnoreCase) then
     UnexpectedTokenError(ActualToken, ExpectedToken);
+end;
+
+procedure TInstantIQLObject.CheckTokens(const ActualToken: string;
+  const ExpectedTokens: array of string; IgnoreCase: Boolean);
+var
+  I: Integer;
+  Found: Boolean;
+begin
+  Found := False;
+  for I := Low(ExpectedTokens) to High(ExpectedTokens) do
+  begin
+    Found := InstantSameText(ActualToken, ExpectedTokens[I], IgnoreCase);
+    if Found then
+      Break;
+  end;
+  if not Found then
+    UnexpectedTokenError(ActualToken, InstantStrArrayToString(ExpectedTokens, '|'));
 end;
 
 procedure TInstantIQLObject.Clear;
@@ -1095,17 +1172,10 @@ end;
 
 { TInstantIQLFunction }
 
-class function TInstantIQLFunction.InternalAtInstance(
-  Reader: TInstantIQLReader): Boolean;
-begin
-  Result := InstantIsIdentifier(Reader.ReadToken) and (Reader.ReadToken = '(');
-end;
-
 procedure TInstantIQLFunction.InternalClear;
 begin
   inherited;
   FParameters := nil;
-  FFunctionname := '';
 end;
 
 procedure TInstantIQLFunction.ReadObject(Reader: TInstantIQLReader);
@@ -1167,7 +1237,8 @@ end;
 class function TInstantIQLTerm.InternalAtInstance(
   Reader: TInstantIQLReader): Boolean;
 begin
-  Result := TInstantIQLFunction.AtInstance(Reader) or
+  Result := TInstantIQLSubqueryFunction.AtInstance(Reader) or
+    TInstantIQLFunction.AtInstance(Reader) or
     TInstantIQLConstant.AtInstance(Reader) or
     TInstantIQLPath.AtInstance(Reader) or
     TInstantIQLParam.AtInstance(Reader) or
@@ -1186,8 +1257,8 @@ end;
 procedure TInstantIQLTerm.ReadObject(Reader: TInstantIQLReader);
 begin
   inherited;
-  if ReadChild(@FFactor, Reader, [TInstantIQLNotFactor, TInstantIQLFunction,
-    TInstantIQLConstant, TInstantIQLPath, TInstantIQLParam,
+  if ReadChild(@FFactor, Reader, [TInstantIQLNotFactor, TInstantIQLSubqueryFunction,
+    TInstantIQLFunction, TInstantIQLConstant, TInstantIQLPath, TInstantIQLParam,
     TInstantIQLClauseFactor]) and
     ReadChild(@FMulOp, Reader, [TInstantIQLMulOp]) then
     ReadChild(@FNextTerm, Reader, [TInstantIQLTerm]);
@@ -1516,7 +1587,7 @@ begin
       Token := ReadToken;
     end;
     if Token <> '' then
-      InvalidTokenError(Token);
+      InvalidTokenError(Token)
   end;
 end;
 
@@ -1587,9 +1658,9 @@ begin
     try
       FCommand.Text := Value;
       Clear;
-      Beforetranslate;
+      BeforeTranslate;
       Translate;
-      AfterTransLate;
+      AfterTranslate;
       FCommandText := Value;
     finally
       FreeAndNil(FCommand);
@@ -1627,7 +1698,7 @@ begin
     inherited;
 end;
 
-{ TInstantIQLTranslator }         
+{ TInstantIQLTranslator }
 
 procedure TInstantIQLTranslator.Translate;
 var
@@ -1718,5 +1789,222 @@ begin
   Result := inherited GetResultClassName;
 end;
 
+{ TInstantIQLSubqueryFunction }
+
+const
+  SubqueryFunctionNames: array[0..0] of string = ('EXISTS');
+
+class function TInstantIQLSubqueryFunction.InternalAtInstance(
+  Reader: TInstantIQLReader): Boolean;
+var
+  I : integer;
+  AText : string;
+begin
+  Result := False;
+  AText := Reader.ReadToken;
+  for I := Low(SubqueryFunctionNames) to High(SubqueryFunctionNames) do
+  begin
+    if SameText(AText, SubqueryFunctionNames[I]) then
+    begin
+      Result := (Reader.ReadToken = '(');
+      Break;
+    end;
+  end;
+end;
+
+procedure TInstantIQLSubqueryFunction.ReadObject(Reader: TInstantIQLReader);
+var
+  Token: string;
+begin
+  inherited;
+  Token := Reader.ReadToken;
+  CheckTokens(Token, SubqueryFunctionNames);
+  FFunctionName := Token;
+  CheckToken(Reader.ReadToken, '(');
+  if not ReadChild(@FSubquery, Reader, [TInstantIQLSubquery]) then
+    raise EInstantIQLError.Create(SSubqueryMissing);
+  CheckToken(Reader.ReadToken, ')');
+end;
+
+procedure TInstantIQLSubqueryFunction.WriteObject(Writer: TInstantIQLWriter);
+begin
+  with Writer do
+  begin
+    WriteString(FFunctionName);
+    Writer.WriteChar('(');
+    if Assigned(FSubquery) then
+      FSubquery.Write(Writer);
+    Writer.WriteChar(')');
+  end;
+end;
+
+{ TInstantIQLBaseFunction }
+
+class function TInstantIQLBaseFunction.InternalAtInstance(
+  Reader: TInstantIQLReader): Boolean;
+begin
+  Result := InstantIsIdentifier(Reader.ReadToken) and (Reader.ReadToken = '(');
+end;
+
+procedure TInstantIQLBaseFunction.InternalClear;
+begin
+  inherited;
+  FFunctionName := '';
+end;
+
+{ TInstantIQLSubqueryCommand }
+
+function TInstantIQLSubquery.GetAny: Boolean;
+begin
+  Result := Assigned(ClassRef) and ClassRef.Any;
+end;
+
+procedure TInstantIQLSubquery.GetUsingAttributeInfo(
+  const AUsingAttribute: TInstantIQLPath; const Writer: TInstantIQLWriter;
+  out ASubContext: TObject; out AParentContext: TObject; out AAttributeMetadata: TInstantAttributeMetadata);
+var
+  LStatementWriter: TInstantIQLStatementWriter;
+  LRelationalTranslator: TInstantRelationalTranslator;
+begin
+  if (Writer is TInstantIQLStatementWriter) then
+  begin
+    LStatementWriter := TInstantIQLStatementWriter(Writer);
+    if (LStatementWriter.Translator is TInstantRelationalTranslator) then
+    begin
+      LRelationalTranslator := TInstantRelationalTranslator(LStatementWriter.Translator);
+      ASubContext := LRelationalTranslator.Context.GetSubqueryContext(Self);
+      if not Assigned(ASubContext) then
+        raise EInstantIQLError.CreateFmt(SSubContextNotFoundForSubQuery, [Self.Text]);
+      AParentContext := (ASubContext as TInstantTranslationContext).ParentContext;
+      { TODO -oAndrea Magni : We should implement a better strategy to retrieve the right translation context that has to be used to translate the USING attribute. This because not always it is the parent context of the subquery, we should look further in the context chain (may be checking the ClassRef attribute of the context that should match the class to which the USING attribute refers }
+      AAttributeMetadata := (ASubContext as TInstantTranslationContext).FindAttributeMetadata(FUsingAttribute.Text);
+    end;
+  end;
+end;
+
+class function TInstantIQLSubquery.InternalAtInstance(
+  Reader: TInstantIQLReader): Boolean;
+begin
+  Result := SameText(Reader.ReadToken, 'SELECT');
+end;
+
+procedure TInstantIQLSubquery.InternalClear;
+begin
+  inherited;
+  FClassRef := nil;
+  FClause := nil;
+end;
+
+procedure TInstantIQLSubquery.ReadObject(Reader: TInstantIQLReader);
+var
+  Token: string;
+begin
+  inherited;
+  with Reader do
+  begin
+    Token := ReadToken;
+    if not SameText(Token, 'SELECT') then
+      UnexpectedTokenError(Token, 'SELECT');
+    if SameText(ReadToken, 'DISTINCT') then
+      FDistinct := True
+    else
+      UnreadToken;
+    if not ReadChild(@FSpecifier, Reader, [TInstantIQLSpecifier]) then
+      raise EInstantIQLError.Create(SSpecifierMissing);
+    Token := ReadToken;
+    if not SameText(Token, 'FROM') then
+      UnexpectedTokenError(Token, 'FROM');
+    if not ReadChild(@FClassRef, Reader, [TInstantIQLClassRef]) then
+      raise EInstantIQLError.Create(SClassReferenceMissing);
+    Token := ReadToken;
+    if SameText(Token, 'WHERE') then
+      ReadChild(@FClause, Reader, [TInstantIQLClause])
+    else
+      UnreadToken;    
+    Token := ReadToken;
+    if not SameText(Token, 'USING') then
+      UnexpectedTokenError(Token, 'USING');
+    if not ReadChild(@FUsingAttribute, Reader, [TInstantIQLPath, TInstantIQLConstant]) then
+      raise EInstantIQLError.Create(SUsingAttributeMissing);
+      
+    Token := ReadToken;
+    // Subqueries are enclosed in round brackets because they are currently
+    // function arguments.
+    if Token <> ')' then
+      InvalidTokenError(Token)
+    else begin
+      // We need to preserve the round bracket for the parser.
+      UnreadToken;
+    end;
+  end;
+end;
+
+procedure TInstantIQLSubquery.WriteObject(Writer: TInstantIQLWriter);
+var
+  LSubContext, LParentContext: TInstantTranslationContext;
+  LAttributeMetadata: TInstantAttributeMetadata;
+begin
+  if Assigned(FSpecifier) then
+    with Writer do
+    begin
+      WriteKeyword('SELECT');
+      if Distinct then
+        WriteKeyword('DISTINCT');
+      FSpecifier.Write(Writer);
+      WriteSpace;
+      WriteKeyword('FROM');
+      if Assigned(FClassRef) then
+        FClassRef.Write(Writer);
+      if Assigned(FClause) then
+      begin
+        WriteSpace;
+        WriteKeyword('WHERE');
+        WriteString('(');
+        FClause.Write(Writer);
+        WriteString(')');
+      end;
+      if Assigned(FUsingAttribute) then
+      begin
+        WriteSpace;
+{ TODO -oAndrea Magni : Maybe it would be better to check also TInstantTranslationContext.CriteriaCount, in order to determine if there is already a where condition used to perform join with other tables }
+        if Assigned(FClause) or (not FClassRef.Any) then
+          WriteKeyword('AND')
+        else
+          WriteKeyword('WHERE');
+
+        LParentContext := nil;
+        LAttributeMetadata := nil;
+        LSubContext := nil;
+        GetUsingAttributeInfo(FUsingAttribute, Writer, TObject(LSubContext), TObject(LParentContext), LAttributeMetadata);
+
+        if not Assigned(LAttributeMetadata) then
+          raise EInstantIQLError.CreateFmt(SUsingAttributeMetadataNotFound, [FUsingAttribute.Text]);
+
+        if LAttributeMetadata.AttributeType <> atReference then
+          raise EInstantIQLError.CreateFmt(SUsingAttributeMustBeAReference, [FUsingAttribute.Text]);
+
+        if not Assigned(LSubContext) then
+          raise EInstantIQLError.CreateFmt(SSubContextNotFoundForSubQuery, [Self.Text]);
+
+        if not Assigned(LParentContext) then
+          raise EInstantIQLError.CreateFmt(SParentContextNotFoundForSubQuery, [Self.Text]);
+
+        WriteString('((');
+
+        WriteString(LSubContext.QualifyPath(LAttributeMetadata.FieldName ) + InstantClassFieldName +
+          ' = ' + InstantQuote(LParentContext.ClassRef.ObjectClassName, LParentContext.Quote));
+
+        WriteString(') AND (');
+
+        FUsingAttribute.Write(Writer);
+        WriteString(' = ');
+        WriteString(LParentContext.QualifyPath(InstantIdFieldName));
+
+        WriteString('))');
+      end;
+      
+    end;
+
+end;
 
 end.

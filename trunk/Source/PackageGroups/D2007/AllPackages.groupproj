@@ -3,7 +3,24 @@
     <ProjectGuid>{b0beaee6-5b6a-420d-a1e5-7be9568cd5a2}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup />
-  <ItemGroup />
+  <ItemGroup>
+    <Projects Include="..\..\..\Demos\PrimerCross\PrimerExternal.dproj" />
+    <Projects Include="..\..\Brokers\ADO\D2007\DclIOADO.dproj" />
+    <Projects Include="..\..\Brokers\ADO\D2007\IOADO.dproj" />
+    <Projects Include="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" />
+    <Projects Include="..\..\Brokers\BDE\D2007\IOBDE.dproj" />
+    <Projects Include="..\..\Brokers\DBX\D2007\DclIODBX.dproj" />
+    <Projects Include="..\..\Brokers\DBX\D2007\IODBX.dproj" />
+    <Projects Include="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" />
+    <Projects Include="..\..\Brokers\IBX\D2007\IOIBX.dproj" />
+    <Projects Include="..\..\Brokers\XML\D2007\DclIOXML.dproj" />
+    <Projects Include="..\..\Brokers\XML\D2007\IOXML.dproj" />
+    <Projects Include="..\..\Catalogs\IBFb\D2007\IOIBFbCatalog.dproj" />
+    <Projects Include="..\..\Catalogs\MSSql\D2007\IOMSSqlCatalog.dproj" />
+    <Projects Include="..\..\Catalogs\MySQL\D2007\IOMySQLCatalog.dproj" />
+    <Projects Include="..\..\Core\D2007\IOCore.dproj" />
+    <Projects Include="..\..\Design\D2007\DclIOCore.dproj" />
+  </ItemGroup>
   <ProjectExtensions>
     <Borland.Personality>Default.Personality</Borland.Personality>
     <Borland.ProjectType />
@@ -145,13 +162,23 @@
   <Target Name="DclIOXML:Make">
     <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="Make" />
   </Target>
+  <Target Name="PrimerExternal">
+    <MSBuild Projects="..\..\..\Demos\PrimerCross\PrimerExternal.dproj" Targets="" />
+  </Target>
+  <Target Name="PrimerExternal:Clean">
+    <MSBuild Projects="..\..\..\Demos\PrimerCross\PrimerExternal.dproj" Targets="Clean" />
+  </Target>
+  <Target Name="PrimerExternal:Make">
+    <MSBuild Projects="..\..\..\Demos\PrimerCross\PrimerExternal.dproj" Targets="Make" />
+  </Target>
   <Target Name="Build">
-    <CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IOBDE;IODBX;IOIBX;IOXML;DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML" />
+    <CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IOBDE;IODBX;IOIBX;IOXML;DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML;PrimerExternal" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IOBDE:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean;DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean" />
+    <CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IOBDE:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean;DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean;PrimerExternal:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IOBDE:Make;IODBX:Make;IOIBX:Make;IOXML:Make;DclIOCore:Make;DclIOADO:Make;DclIOBDE:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make" />
+    <CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IOBDE:Make;IODBX:Make;IOIBX:Make;IOXML:Make;DclIOCore:Make;DclIOADO:Make;DclIOBDE:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make;PrimerExternal:Make" />
   </Target>
+  <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
 </Project>

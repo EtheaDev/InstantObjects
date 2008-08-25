@@ -1,10 +1,10 @@
 inherited QueryViewForm: TQueryViewForm
-  Width = 600
+  Width = 772
   Height = 320
   object Splitter: TSplitter
     Left = 0
     Top = 147
-    Width = 600
+    Width = 772
     Height = 6
     Cursor = crVSplit
     Align = alTop
@@ -12,7 +12,7 @@ inherited QueryViewForm: TQueryViewForm
   object CommandPanel: TPanel
     Left = 0
     Top = 0
-    Width = 600
+    Width = 772
     Height = 147
     Align = alTop
     BevelOuter = bvNone
@@ -35,7 +35,7 @@ inherited QueryViewForm: TQueryViewForm
       FocusControl = ExampleComboBox
     end
     object NumberLabel: TLabel
-      Left = 443
+      Left = 614
       Top = 126
       Width = 77
       Height = 13
@@ -47,7 +47,7 @@ inherited QueryViewForm: TQueryViewForm
     object CommandEdit: TMemo
       Left = 30
       Top = 30
-      Width = 540
+      Width = 712
       Height = 87
       Align = alClient
       Font.Charset = ANSI_CHARSET
@@ -69,15 +69,16 @@ inherited QueryViewForm: TQueryViewForm
     object ExampleComboBox: TComboBox
       Left = 168
       Top = 121
-      Width = 281
+      Width = 461
       Height = 21
       Style = csDropDownList
+      DropDownCount = 11
       ItemHeight = 13
       TabOrder = 1
       OnClick = ExampleComboBoxClick
     end
     object MaxCountEdit: TMaskEdit
-      Left = 524
+      Left = 695
       Top = 122
       Width = 44
       Height = 21
@@ -87,31 +88,53 @@ inherited QueryViewForm: TQueryViewForm
       Text = '0        '
     end
   end
-  object ResultPanel: TPanel
+  object ResultPageControl: TPageControl
     Left = 0
     Top = 153
-    Width = 600
+    Width = 772
     Height = 167
+    ActivePage = ResultTabSheet
     Align = alClient
-    BevelOuter = bvNone
     TabOrder = 1
-    object ResultGrid: TDBGrid
-      Left = 0
-      Top = 0
-      Width = 600
-      Height = 167
-      Align = alClient
-      DataSource = TestSource
-      TabOrder = 0
-      TitleFont.Charset = DEFAULT_CHARSET
-      TitleFont.Color = clWindowText
-      TitleFont.Height = -11
-      TitleFont.Name = 'MS Sans Serif'
-      TitleFont.Style = []
+    object ResultTabSheet: TTabSheet
+      Caption = 'Result'
+      object ResultGrid: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 764
+        Height = 139
+        Align = alClient
+        DataSource = TestSource
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
+      end
+    end
+    object TranslatedQueryTabSheet: TTabSheet
+      Caption = 'Translated Query'
+      ImageIndex = 1
+      object TranslatedQueryMemo: TMemo
+        Left = 0
+        Top = 0
+        Width = 764
+        Height = 139
+        Align = alClient
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Courier New'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+      end
     end
   end
   object TestSelector: TInstantSelector
     AfterScroll = TestSelectorAfterScroll
+    AfterClose = TestSelectorAfterClose
     Left = 32
     Top = 192
   end

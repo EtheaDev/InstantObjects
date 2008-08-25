@@ -711,6 +711,7 @@ type
     function GetConnector: TInstantConnector; override;
     function GetCount: Integer; override;
     function GetInstances(Index: Integer): TInstantObject; override;
+    function HasInstance(Index: Integer): boolean;
     function InternalAdd(AObject: TInstantObject): Integer; override;
     function InternalAddReference(const AObjectClassName, AObjectId: string):
         Integer; override;
@@ -1158,6 +1159,7 @@ type
     function ObjectFetched(Index: Integer): Boolean; virtual;
     procedure SetParams(Value: TParams); virtual;
     procedure TranslateCommand; virtual;
+    function InternalGetObjectReferenceId(Index: Integer) : string; virtual;
   public
     constructor Create(AConnector: TInstantConnector); virtual;
     function AddObject(AObject: TObject): Integer;
@@ -3733,7 +3735,7 @@ begin
   if Assigned(AObject) then
   begin
     ValidateObjectClassType(AObject.ClassType);
-    if (AObject.Connector <> Connector) then
+    if Assigned(Owner) and (AObject.Connector <> Connector) then
       raise EInstantValidationError.CreateFmt(SInvalidConnector,
         [AObject.ClassName, AObject.Id, ClassName, Name]);
   end;
@@ -3999,7 +4001,7 @@ begin
     with TInstantReference(Source) do
     begin
       // cross-connector object assignment must be supported for InstantPump.
-      if Self.Connector <> Connector then
+      if (Self.FConnector <> FConnector) then
       begin
         if Assigned(Value) then
           Self.Value := Value.Clone(Self.Connector)
@@ -5029,6 +5031,11 @@ end;
 function TInstantReferences.GetRefItems(Index: Integer): TInstantObjectReference;
 begin
   Result := ObjectReferenceList.RefItems[Index];
+end;
+
+function TInstantReferences.HasInstance(Index: Integer): boolean;
+begin
+  Result := ObjectReferenceList.RefItems[Index].HasInstance;
 end;
 
 function TInstantReferences.InternalAdd(AObject: TInstantObject): Integer;
@@ -7612,7 +7619,7 @@ begin
   Result := InternalGetObjects(Index);
   if not Assigned(Result) then
     raise EInstantAccessError.CreateFmt(SErrorRetrievingObject,
-      [ObjectClassName, 'Query.Object[' + IntToStr(Index) + ']',
+      [ObjectClassName, InternalGetObjectReferenceId(Index),
       SObjectNotAvailable]);
 end;
 
@@ -7708,6 +7715,11 @@ end;
 function TInstantQuery.InternalGetObjectCount: Integer;
 begin
   Result := 0;
+end;
+
+function TInstantQuery.InternalGetObjectReferenceId(Index: Integer): string;
+begin
+  Result := 'Query.Object[' + IntToStr(Index) + ']';
 end;
 
 function TInstantQuery.InternalGetObjects(Index: Integer): TObject;
