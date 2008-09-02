@@ -132,7 +132,6 @@ var
   FieldMetadata: TInstantFieldMetadata;
   AlternateDataTypes: TInstantDataTypes;
   FieldMetaDataType: TInstantDataType;
-  FieldTypeName: string;
 begin
   Fields := Broker.AcquireDataSet(GetSelectFieldsSQL(TableMetadata.Name));
   try
