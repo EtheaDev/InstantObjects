@@ -498,7 +498,7 @@ type
       write SetAttributeTypeName stored False;
     property ClassMetadata: TInstantClassMetadata read GetClassMetadata;
     property DefaultValue: string read FDefaultValue write FDefaultValue;
-    property UseNull: Boolean read FUseNull write FUseNull;
+    property UseNull: Boolean read FUseNull write FUseNull default False;
     property DisplayWidth: Integer read FDisplayWidth write FDisplayWidth
       default 0;
     property EditMask: string read FEditMask write FEditMask;
