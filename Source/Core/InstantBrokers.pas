@@ -2549,9 +2549,9 @@ begin
       Clear
     else
 {$IFDEF FPC}
-      AsFloat := Value;
+      AsFloat := Attribute.Value;
 {$ELSE}
-      AsCurrency := Value;
+      AsCurrency := Attribute.Value;
 {$ENDIF}
 end;
 
