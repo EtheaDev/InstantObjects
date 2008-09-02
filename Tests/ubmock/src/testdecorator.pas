@@ -28,9 +28,10 @@ type
   TTestDecorator = class(TAssert)
   private
     FTest: TTest;
+  protected
+    procedure SetTestSuiteName(const aName: string); override;
     function GetTestName: string; override;
     function GetTestSuiteName: string; override;
-    procedure SetTestSuiteName(const aName: string); override;
   public
     function CountTestCases: integer; override;
     constructor Create(aTest: TTest); reintroduce; overload;
