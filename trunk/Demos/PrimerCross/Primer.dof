@@ -94,9 +94,9 @@ OutputDir=
 UnitOutputDir=
 PackageDLLOutputDir=
 PackageDCPOutputDir=
-SearchPath=$(DELPHI)\Lib\Debug;..\..\Source\Core;..\..\Source\Brokers\DBX;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Brokers\UIB;..\..\Source\Brokers\ZeosDBO;..\..\Source\Catalogs\BDE;..\..\Source\Catalogs\MsSql;..\..\Source\Catalogs\IbFb;..\..\Source\Catalogs\XML
+SearchPath=$(DELPHI)\Lib\Debug;..\..\Source\Core;..\..\Source\Brokers\DBX;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Brokers\UIB;..\..\Source\Brokers\ZeosDBO;..\..\Source\Catalogs\MySQL;..\..\Source\Catalogs\MsSql;..\..\Source\Catalogs\IbFb
 Packages=
-Conditionals=
+Conditionals=IO_STATEMENT_LOGGING
 DebugSourceDirs=
 UsePackages=0
 [Parameters]

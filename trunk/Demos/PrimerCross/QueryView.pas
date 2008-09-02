@@ -66,7 +66,7 @@ uses
   InstantPersistence, InstantBrokers, InstantConsts;
   
 const
-  Examples: array[0..10, 0..1] of string = (
+  Examples: array[0..11, 0..1] of string = (
     ('All contacts',
     'SELECT * FROM ANY TContact'),
     ('All companies',
