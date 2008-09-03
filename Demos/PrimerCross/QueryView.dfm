@@ -72,7 +72,7 @@ inherited QueryViewForm: TQueryViewForm
       Width = 461
       Height = 21
       Style = csDropDownList
-      DropDownCount = 11
+      DropDownCount = 12
       ItemHeight = 13
       TabOrder = 1
       OnClick = ExampleComboBoxClick
