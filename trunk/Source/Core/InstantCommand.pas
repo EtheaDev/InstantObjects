@@ -1991,8 +1991,9 @@ begin
 
         WriteString('((');
 
-        WriteString(LSubContext.QualifyPath(LAttributeMetadata.FieldName ) + InstantClassFieldName +
-          ' = ' + InstantQuote(LParentContext.ClassRef.ObjectClassName, LParentContext.Quote));
+        WriteString( LSubContext.QualifyClassPath(LAttributeMetadata.FieldName));
+        WriteString(' = ');
+        WriteString(InstantQuote(LParentContext.ClassRef.ObjectClassName, LParentContext.Quote));
 
         WriteString(') AND (');
 

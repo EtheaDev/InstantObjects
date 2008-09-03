@@ -847,6 +847,7 @@ type
     function IndexOfChildContext(const AChildContext: TInstantTranslationContext): Integer;
     function Qualify(const TablePath, FieldName: string): string;
     function QualifyPath(const PathText: string): string;
+    function QualifyClassPath(const PathText: string): string;
     function WriteCriterias(Writer: TInstantIQLWriter; IncludeWhere: Boolean): Boolean;
     procedure WriteTables(Writer: TInstantIQLWriter);
 
@@ -6482,6 +6483,14 @@ var
 begin
   PathToTarget(PathText, TablePath, FieldName);
   Result := Qualify(TablePath, FieldName);
+end;
+
+function TInstantTranslationContext.QualifyClassPath(const PathText: string): string;
+var
+  TablePath, FieldName: string;
+begin
+  PathToTarget(PathText, TablePath, FieldName);
+  Result := Qualify(TablePath, FieldName+InstantClassFieldName);
 end;
 
 function TInstantTranslationContext.QuoteString(const Str: string): string;
