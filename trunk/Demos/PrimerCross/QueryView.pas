@@ -114,6 +114,9 @@ end;
 
 procedure TQueryViewForm.ExecuteActionExecute(Sender: TObject);
 begin
+{$IFDEF IO_STATEMENT_LOGGING}
+  TranslatedQueryMemo.Clear;
+{$ENDIF}
   with TestSelector do
   begin
     Close;
@@ -193,7 +196,9 @@ end;
 procedure TQueryViewForm.TestSelectorAfterClose(DataSet: TDataSet);
 begin
   inherited;
+{$IFDEF IO_STATEMENT_LOGGING}
   TranslatedQueryMemo.Clear;
+{$ENDIF}
 end;
 
 end.
