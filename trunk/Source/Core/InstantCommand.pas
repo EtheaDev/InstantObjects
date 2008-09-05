@@ -1991,9 +1991,8 @@ begin
 
         WriteString('((');
 
-        WriteString( LSubContext.QualifyClassPath(LAttributeMetadata.FieldName));
-        WriteString(' = ');
-        WriteString(InstantQuote(LParentContext.ClassRef.ObjectClassName, LParentContext.Quote));
+        WriteString(LSubContext.Qualify(LSubContext.TableName,  LAttributeMetadata.FieldName + InstantClassFieldName) +
+          ' = ' + InstantQuote(LParentContext.ClassRef.ObjectClassName, LParentContext.Quote));
 
         WriteString(') AND (');
 
@@ -2003,7 +2002,7 @@ begin
 
         WriteString('))');
       end;
-      
+
     end;
 
 end;
