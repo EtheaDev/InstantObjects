@@ -7197,10 +7197,10 @@ procedure TInstantCache.Remove(AObject: TInstantObject);
 var
   ANode, Delete, Child: TInstantCacheNode;
 begin
+  ANode := FindNode(AObject.PersistentId);
   if ANode = Leaf then
     Exit;
 
-  ANode := FindNode(AObject.PersistentId);
   if (ANode.Left = Leaf) or (ANode.Right = Leaf) then
     Delete := ANode
   else
