@@ -627,6 +627,7 @@ begin
   Result := TPanel.Create(AOwner);
   Result.BevelInner := bvNone;
   Result.BevelOuter := bvNone;
+  Result.Parent := Self;
 end;
 
 procedure TInstantExplorer.CreateSplitter;
