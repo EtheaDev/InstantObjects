@@ -1621,8 +1621,8 @@ var
   I: Integer;
 begin
   Result := True;
-  for I := 0 to Pred(BufferLength) do
-    if not (Buffer[I] in ValidChars + [#8, #10, #13]) then
+  for I := 0 to Pred(BufferLength div SizeOf(Char)) do
+    if (ValidChars <> []) and not (Buffer[I] in ValidChars + [#8, #10, #13]) then
     begin
       Result := False;
       InvalidChar := Buffer[I];
@@ -1955,7 +1955,7 @@ const
   SizeOfGraphicHeader = 8;
   MinimumBytesToRead = 10;
 var
-  P: array [0..MinimumBytesToRead - 1] of Char;
+  P: array [0..MinimumBytesToRead - 1] of Byte;
   StreamLength: Longint;
   BytesRetrieved: Integer;
 begin
@@ -1964,44 +1964,44 @@ begin
     Exit;
   StreamLength := AStream.Size;
   AStream.Position := 0;
-  FillChar(P, SizeOf(P), #0);
+  FillChar(P, SizeOf(P), 0);
   BytesRetrieved := AStream.Read(P[0], SizeOf(P));
   AStream.Position := 0;
   if BytesRetrieved < MinimumBytesToRead then
     Exit;
   // bitmap format
-  if (P[0] = #66) and (P[1] = #77) then
+  if (P[0] = 66) and (P[1] = 77) then
     Result := gffBmp
   // tiff format
-  else if ((P[0] = #73) and (P[1] = #73) and (P[2] = #42) and (P[3] = #0))
-   or ((P[0] = #77) and (P[1] = #77) and (P[2] = #42) and (P[3] = #0)) then
+  else if ((P[0] = 73) and (P[1] = 73) and (P[2] = 42) and (P[3] = 0))
+   or ((P[0] = 77) and (P[1] = 77) and (P[2] = 42) and (P[3] = 0)) then
     Result := gffTiff
   // jpg format
-  else if (P[6] = #74) and (P[7] = #70) and (P[8] = #73) and (P[9] = #70)
-   or (P[6] = #69) and (P[7] = #120) and (P[8] = #105) and (P[9] = #102) then
+  else if (P[6] = 74) and (P[7] = 70) and (P[8] = 73) and (P[9] = 70)
+   or (P[6] = 69) and (P[7] = 120) and (P[8] = 105) and (P[9] = 102) then
     Result := gffJpeg
   // png format
-  else if (P[0] = #137 ) and (P[1] = #80) and (P[2] = #78) and (P[3] = #71)
-   and (P[4] = #13) and (P[5] = #10) and (P[6] = #26) and (P[7] = #10) then
+  else if (P[0] = 137 ) and (P[1] = 80) and (P[2] = 78) and (P[3] = 71)
+   and (P[4] = 13) and (P[5] = 10) and (P[6] = 26) and (P[7] = 10) then
     Result := gffPng
   // dcx format
-  else if (P[0] = #177) and (P[1] = #104) and (P[2] = #222) and (P[3] = #58) then
+  else if (P[0] = 177) and (P[1] = 104) and (P[2] = 222) and (P[3] = 58) then
     Result := gffDcx
   // pcx format
-  else if p[0] = #10 then
+  else if p[0] = 10 then
     Result := gffPcx
   // emf format
-  else if ((P[0] = #215) and (P[1] = #205) and (P[2] = #198) and (P[3] = #154))
-   or ((P[0] = #1) and (P[1] = #0) and (P[2] = #0) and (P[3] = #0)) then
+  else if ((P[0] = 215) and (P[1] = 205) and (P[2] = 198) and (P[3] = 154))
+   or ((P[0] = 1) and (P[1] = 0) and (P[2] = 0) and (P[3] = 0)) then
     Result := gffEmf
   // gif format
-  else if (P[0] = #$47) and (P[1] = #$49) and (P[2] = #$46) then
+  else if (P[0] = $47) and (P[1] = $49) and (P[2] = $46) then
     Result := gffGif
   // Ico format
-  else if (P[0] = #00) and (P[1] = #00) and (P[2] = #01) and (P[3] = #00) then
+  else if (P[0] = 00) and (P[1] = 00) and (P[2] = 01) and (P[3] = 00) then
     Result := gffIco
   // bitmap format with TGraphicHeader header
-  else if (P[0] = #01) and (P[1] = #00) and (P[2] = #00) and (P[3] = #01)
+  else if (P[0] = 01) and (P[1] = 00) and (P[2] = 00) and (P[3] = 01)
    and (PLongint(@p[4])^ = StreamLength - SizeOfGraphicHeader) then
   begin
     Result := gffBmp;
@@ -3489,7 +3489,7 @@ function TInstantBlob.GetValue: string;
 begin
   if Size > 0 then
   begin
-    SetLength(Result, Size);
+    SetLength(Result, Size div SizeOf(Char));
     Read(Result[1], 0, Size);
   end else
     Result := '';
@@ -3501,7 +3501,7 @@ begin
     if (Metadata.Defaultvalue <> '') then
     begin
       try
-        Write(Metadata.DefaultValue[1], 0, Length(Metadata.DefaultValue));
+        Write(Metadata.DefaultValue[1], 0, Length(Metadata.DefaultValue) * SizeOf(Char));
       except
         on E: Exception do
           raise ConversionError(E);
@@ -3571,9 +3571,10 @@ procedure TInstantBlob.SetValue(const AValue: string);
 var
   L: Integer;
 begin
-  L := Length(AValue);
+  L := Length(AValue) * SizeOf(Char);
   if L > 0 then
   begin
+    Stream.Clear;
     WriteBuffer(AValue[1], 0, L);
     Stream.Size := L;
   end else

@@ -2329,7 +2329,7 @@ end;
 procedure TInstantNavigationalResolver.ReadPart(Attribute: TInstantPart);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStringStream;
   PartClassName: string;
   ObjID: string;
 begin
@@ -2356,7 +2356,7 @@ begin
       Field := FieldByName(Metadata.FieldName);
       if not FieldHasObjects(Field) then
         Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
+      Stream := TStringStream.Create(Field.AsString);
       try
         LoadObjectFromStream(Stream);
       finally
@@ -2369,7 +2369,7 @@ end;
 procedure TInstantNavigationalResolver.ReadParts(Attribute: TInstantParts);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStringStream;
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
@@ -2386,7 +2386,7 @@ begin
       Field := FieldByName(Metadata.FieldName);
       if not FieldHasObjects(Field) then
         Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
+      Stream := TStringStream.Create(Field.AsString);
       try
         LoadObjectsFromStream(Stream);
       finally
@@ -2413,7 +2413,7 @@ procedure TInstantNavigationalResolver.ReadReferences(
   Attribute: TInstantReferences);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStringStream;
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
@@ -2430,7 +2430,7 @@ begin
       Field := FieldByName(Metadata.FieldName);
       if not FieldHasObjects(Field) then
         Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
+      Stream := TStringStream.Create(Field.AsString);
       try
         LoadReferencesFromStream(Stream);
       finally
@@ -2611,7 +2611,7 @@ end;
 procedure TInstantNavigationalResolver.WritePart(Attribute: TInstantPart);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStringStream;
 begin
   with Attribute do
   begin
@@ -2628,7 +2628,7 @@ begin
     else
     begin
       Field := FieldByName(Metadata.FieldName);
-      Stream := TInstantStringStream.Create('');
+      Stream := TStringStream.Create('');
       try
         SaveObjectToStream(Stream);
         Field.AsString := Stream.DataString;
@@ -2642,7 +2642,7 @@ end;
 procedure TInstantNavigationalResolver.WriteParts(Attribute: TInstantParts);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStringStream;
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
@@ -2663,7 +2663,7 @@ begin
     else
     begin
       Field := FieldByName(Metadata.FieldName);
-      Stream := TInstantStringStream.Create('');
+      Stream := TStringStream.Create('');
       try
         SaveObjectsToStream(Stream);
         Field.AsString := Stream.DataString;
@@ -2689,7 +2689,7 @@ procedure TInstantNavigationalResolver.WriteReferences(
   Attribute: TInstantReferences);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStringStream;
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
@@ -2709,7 +2709,7 @@ begin
     else
     begin
       Field := FieldByName(Metadata.FieldName);
-      Stream := TInstantStringStream.Create('');
+      Stream := TStringStream.Create('');
       try
         SaveReferencesToStream(Stream);
         Field.AsString := Stream.DataString;
@@ -2751,7 +2751,7 @@ var
   begin
     Param := AddParam(Params, AFieldName, ftBlob);
     if Value <> '' then
-      Param.AsBlob := Value
+      Param.AsMemo := Value
   end;
 
   procedure AddMemoParam(const AFieldName, Value: string);
@@ -2771,7 +2771,7 @@ var
     if Attribute.IsNull then
       LParam.Clear
     else
-      LParam.AsBlob := (Attribute as TInstantBlob).Value;
+      LParam.AsMemo := (Attribute as TInstantBlob).Value;
   end;
 
   procedure AddBooleanAttributeParam;
@@ -2864,7 +2864,7 @@ var
 
   procedure AddPartAttributeParam;
   var
-    Stream: TInstantStringStream;
+    Stream: TStringStream;
     Part: TInstantPart;
   begin
     if Attribute.Metadata.StorageKind = skExternal then
@@ -2876,7 +2876,7 @@ var
     end
     else
     begin
-      Stream := TInstantStringStream.Create('');
+      Stream := TStringStream.Create('');
       try
         (Attribute as TInstantPart).SaveObjectToStream(Stream);
         if Broker.Connector.BlobStreamFormat = sfBinary then
@@ -2891,9 +2891,9 @@ var
 
   procedure AddPartsAttributeParam;
   var
-    Stream: TInstantStringStream;
+    Stream: TStringStream;
   begin
-    Stream := TInstantStringStream.Create('');
+    Stream := TStringStream.Create('');
     try
       (Attribute as TInstantParts).SaveObjectsToStream(Stream);
       if Broker.Connector.BlobStreamFormat = sfBinary then
@@ -2917,9 +2917,9 @@ var
 
   procedure AddReferencesAttributeParam;
   var
-    Stream: TInstantStringStream;
+    Stream: TStringStream;
   begin
-    Stream := TInstantStringStream.Create('');
+    Stream := TStringStream.Create('');
     try
       (Attribute as TInstantReferences).SaveReferencesToStream(Stream);
       if Broker.Connector.BlobStreamFormat = sfBinary then
@@ -3557,7 +3557,7 @@ var
 
   procedure ReadPartAttribute;
   var
-    Stream: TInstantStringStream;
+    Stream: TStringStream;
     LPartClassName: string;
     LPartId: string;
   begin
@@ -3583,7 +3583,7 @@ var
     end
     else
     begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet,
+      Stream := TStringStream.Create(ReadBlobField(DataSet,
         AFieldName));
       try
         if Stream.Size = 0 then
@@ -3598,7 +3598,7 @@ var
 
   procedure ReadPartsAttribute;
   var
-    Stream: TInstantStringStream;
+    Stream: TStringStream;
     LinkResolver: TInstantSQLLinkResolver;
   begin
     if AttributeMetadata.StorageKind = skExternal then
@@ -3618,7 +3618,7 @@ var
     end
     else
     begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
+      Stream := TStringStream.Create(ReadBlobField(DataSet, AFieldName));
       try
         if Stream.Size = 0 then
           (Attribute as TInstantParts).Reset
@@ -3639,7 +3639,7 @@ var
 
   procedure ReadReferencesAttribute;
   var
-    Stream: TInstantStringStream;
+    Stream: TStringStream;
     LinkResolver: TInstantSQLLinkResolver;
   begin
     if AttributeMetadata.StorageKind = skExternal then
@@ -3659,7 +3659,7 @@ var
     end
     else
     begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
+      Stream := TStringStream.Create(ReadBlobField(DataSet, AFieldName));
       try
         if Stream.Size = 0 then
           (Attribute as TInstantReferences).Reset

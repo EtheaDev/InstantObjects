@@ -81,7 +81,7 @@ function InstantRightPos(const SubStr, Str: string; IgnoreCase: Boolean = False)
 function InstantSameText(const S1, S2: string; IgnoreCase: Boolean): Boolean;
 function InstantStrToDate(const Str: string): TDateTime;
 function InstantStrToDateTime(const Str: string): TDateTime;
-function InstantStrToCharSet(const Str: string): TChars;
+function InstantStrToCharSet(const Str: AnsiString): TChars;
 procedure InstantStrToList(const Str: string; List: TStrings;
   Delimiters: TChars);
 function InstantStrToTime(const Str: string): TDateTime;
@@ -533,7 +533,7 @@ begin
   end;
 end;
 
-function InstantStrToCharSet(const Str: string): TChars;
+function InstantStrToCharSet(const Str: AnsiString): TChars;
 const
   Dots: array[0..1] of Char = '..';
 var
@@ -547,7 +547,7 @@ begin
       (I > 1) and (Length(Str) > I + 1) then
     begin
       for J := Ord(Str[I - 1]) to Ord(Str[I + 2]) do
-        Include(Result, Chr(J));
+        Result := Result + [Chr(J)];
       Inc(I, Length(Dots));
     end
     else

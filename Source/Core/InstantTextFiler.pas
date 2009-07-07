@@ -45,7 +45,7 @@ type
   PInstantTextPos = ^TInstantTextPos;
   TInstantTextPos = record
     Column, Line: Integer;
-    Offset: Integer;
+    Offset: Int64;
   end;
 
   EInstantTextPosError = class(EInstantError)
@@ -68,12 +68,12 @@ type
     procedure DescendPosition(Ch: Char);
     function GetBof: Boolean; virtual;
     function GetEof: Boolean; virtual;
-    function GetStreamPos: Integer; virtual;
+    function GetStreamPos: Int64; virtual;
     procedure Initialize; virtual;
     function IsSpace(Ch: Char): Boolean; virtual;
     function IsText(Ch: Char): Boolean; virtual;
-    procedure SetStreamPos(Value: Integer); virtual;
-    property StreamPos: Integer read GetStreamPos write SetStreamPos;
+    procedure SetStreamPos(Value: Int64); virtual;
+    property StreamPos: Int64 read GetStreamPos write SetStreamPos;
   public
     constructor Create(AStream: TStream; FreeStream: Boolean = False); overload;
     constructor Create(AText: string); overload;
@@ -128,48 +128,42 @@ uses
 
 procedure AdvanceTextPos(var Pos: TInstantTextPos; Ch: Char);
 begin
-  with Pos do
-  begin
-    case Ch of
-      {$IFDEF MSWINDOWS}
-      #13: Column := 1;
-      #10: Inc(Line);
-      {$ENDIF}
+  case Ch of
+    {$IFDEF MSWINDOWS}
+    #13: Pos.Column := 1;
+    #10: Inc(Pos.Line);
+    {$ENDIF}
 
-      {$IFDEF LINUX}
-      #10:begin
-          Inc(Line);
-          Column := 1;
-          end;
-      {$ENDIF}
-    else
-      Inc(Column);
+    {$IFDEF LINUX}
+    #10: begin
+      Inc(Pos.Line);
+      Pos.Column := 1;
     end;
-    Inc(Offset);
+    {$ENDIF}
+  else
+    Inc(Pos.Column);
   end;
+  Inc(Pos.Offset, SizeOf(Char));
 end;
 
 procedure DescendTextPos(var Pos: TInstantTextPos; Ch: Char);
 begin
-  with Pos do
-  begin
-    case Ch of
-      {$IFDEF MSWINDOWS}
-      #13: Column := 0; { Unknown }
-      #10: Dec(Line);
-      {$ENDIF}
+  case Ch of
+    {$IFDEF MSWINDOWS}
+    #13: Pos.Column := 0; { Unknown }
+    #10: Dec(Pos.Line);
+    {$ENDIF}
 
-      {$IFDEF LINUX}
-      #10:begin
-          Dec(Line);
-          Column := 0;
-          end;
-      {$ENDIF}
-    else
-      Dec(Column);
+    {$IFDEF LINUX}
+    #10: begin
+      Dec(Pos.Line);
+      Pos.Column := 0;
     end;
-    Dec(Offset);
+    {$ENDIF}
+  else
+    Dec(Pos.Column);
   end;
+  Dec(Pos.Offset, SizeOf(Char));
 end;
 
 { EInstantTextPosError }
@@ -200,7 +194,7 @@ end;
 
 constructor TInstantTextFiler.Create(AText: string);
 begin
-  Create(TStringStream.Create(AText), True);
+  Create(TInstantStringStream.Create(AText), True);
 end;
 
 procedure TInstantTextFiler.DescendPosition(Ch: Char);
@@ -231,7 +225,7 @@ begin
   Result := FPosition;
 end;
 
-function TInstantTextFiler.GetStreamPos: Integer;
+function TInstantTextFiler.GetStreamPos: Int64;
 begin
   Result := FStream.Position;
 end;
@@ -247,7 +241,10 @@ end;
 
 function TInstantTextFiler.IsText(Ch: Char): Boolean;
 begin
-  Result := Ch in ['a'..'z', 'A'..'Z', '0'..'9', '#', '_'];
+  Result := ((Ch >= 'a') and (Ch <= 'z'))
+    or ((Ch >= 'A') and (Ch <= 'Z'))
+    or ((Ch >= '0') and (Ch <= '9'))
+    or (Ch in ['#', '_']);
 end;
 
 procedure TInstantTextFiler.Reset;
@@ -267,7 +264,7 @@ begin
   StreamPos := FPosition.Offset;
 end;
 
-procedure TInstantTextFiler.SetStreamPos(Value: Integer);
+procedure TInstantTextFiler.SetStreamPos(Value: Int64);
 begin
   FStream.Position := Value;
 end;
@@ -281,14 +278,11 @@ end;
 
 function TInstantTextReader.BackChar: Char;
 begin
-  with FStream do
-  begin
-    if Position > 0 then
-      Position := Position - 1;
-    Read(Result, SizeOf(Result));
-    Position := Position - 1;
-    DescendPosition(Result);
-  end;
+  if FStream.Position > 0 then
+    FStream.Position := FStream.Position - SizeOf(Char);
+  FStream.Read(Result, SizeOf(Char));
+  FStream.Position := FStream.Position - SizeOf(Char);
+  DescendPosition(Result);
 end;
 
 function TInstantTextReader.GetBof: Boolean;
@@ -325,7 +319,8 @@ end;
 
 function TInstantTextReader.IsNumericPrefix(Ch: Char): Boolean;
 begin
-  Result := ConstAware and (Ch in ['0'..'9', '.'])
+  Result := ConstAware and
+    (((Ch >= '0') and (Ch <= '9')) or (Ch = '.'));
 end;
 
 function TInstantTextReader.IsStringDelimiter(Ch: Char): Boolean;
@@ -335,11 +330,11 @@ end;
 
 function TInstantTextReader.NextChar: Char;
 var
-  SavePos: Integer;
+  SavePos: Int64;
 begin
   SavePos := FStream.Position;
   try
-    FStream.Read(Result, SizeOf(Result));
+    FStream.Read(Result, SizeOf(Char));
   finally
     FStream.Position := SavePos;
   end;
@@ -353,7 +348,7 @@ end;
 
 function TInstantTextReader.ReadChar: Char;
 begin
-  FStream.Read(Result, SizeOf(Result));
+  FStream.Read(Result, SizeOf(Char));
   AdvancePosition(Result);
 end;
 
@@ -426,7 +421,7 @@ begin
   if IsNumericPrefix(Ch) then
   begin
     Result := Ch;
-    while not EOF and InstantIsNumeric(Result + NextChar) do
+    while not Eof and InstantIsNumeric(Result + NextChar) do
       Result := Result + ReadChar;
   end;
   if Result = '' then

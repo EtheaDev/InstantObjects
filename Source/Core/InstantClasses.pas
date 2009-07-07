@@ -193,7 +193,8 @@ type
     procedure WriteCharSet(CharSet: TChars);
     procedure WriteObject(AObject: TPersistent); virtual;
     procedure WriteProperties(AObject: TPersistent);
-    procedure WriteString(const Value: string);
+    // Might be needed for versions of Delphi <7?
+    //procedure WriteString(const Value: string);
     procedure WriteValue(Value: TValueType);
     property Stream: TStream read FStream;
   end;
@@ -240,13 +241,20 @@ type
     constructor Create(const FileName: string; Mode: Word);
   end;
 
-  TInstantStringStream = class(TInstantStream)
-  private
-    function GetDataString: string;
+  {$IFDEF UNICODE}
+  TInstantStringStream = class(TStringStream)
   public
     constructor Create(AString: string);
-    property DataString: string read GetDataString;
   end;
+  {$ELSE}
+  TInstantStringStream = class(TInstantStream)
+  private
+    function GetDataString: AnsiString;
+  public
+    constructor Create(AString: string);
+    property DataString: AnsiString read GetDataString;
+  end;
+  {$ENDIF}
 
   TInstantXMLProducer = class(TObject)
   private
@@ -260,6 +268,7 @@ type
     function GetWriter: TAbstractWriter;
     procedure SetPosition(Value: Integer);
     procedure WriteString(const S: string);
+    procedure WriteWideString(const S: WideString);
   protected
     property TagStack: TStringList read GetTagStack;
     property Writer: TAbstractWriter read GetWriter;
@@ -286,12 +295,12 @@ type
     function GetPosition: Integer;
     function GetReader: TAbstractReader;
     function GetToken: TInstantXMLToken;
-    function ReadEscapedChar: Char;
+    function ReadEscapedChar: AnsiChar;
     procedure SetPosition(const Value: Integer);
   protected
     procedure CheckToken(AToken: TInstantXMLToken);
-    function PeekChar: Char;
-    function ReadChar: Char;
+    function PeekChar: AnsiChar;
+    function ReadChar: AnsiChar;
     procedure SkipBlanks;
     property Reader: TAbstractReader read GetReader;
   public
@@ -769,13 +778,10 @@ class procedure TInstantCollection.ConvertToBinary(Converter: TInstantTextToBina
 var
   ObjectEnd: string;
 begin
-  with Converter do
-  begin
-    ObjectEnd := InstantBuildEndTag(ObjectClassName);
-    while not SameText(Processor.PeekTag, ObjectEnd) do
-      Convert;
-    Writer.WriteListEnd;
-  end;
+  ObjectEnd := InstantBuildEndTag(Converter.ObjectClassName);
+  while not SameText(Converter.Processor.PeekTag, ObjectEnd) do
+    Converter.Convert;
+  Converter.Writer.WriteListEnd;
 end;
 
 class procedure TInstantCollection.ConvertToText(Converter: TInstantBinaryToTextConverter);
@@ -1052,6 +1058,7 @@ begin
   WriteListEnd;
 end;
 
+(* Might be needed for versions of Delphi <7?
 procedure TInstantWriter.WriteString(const Value: string);
 var
   L: Integer;
@@ -1068,6 +1075,7 @@ begin
   end;
   Write(Pointer(Value)^, L);
 end;
+*)
 
 procedure TInstantWriter.WriteValue(Value: TValueType);
 begin
@@ -1272,13 +1280,18 @@ end;
 
 constructor TInstantStringStream.Create(AString: string);
 begin
+  {$IFDEF UNICODE}
+  inherited Create(AString, TEncoding.Unicode);
+  {$ELSE}
   inherited Create(TMemoryStream.Create, True);
   if Length(AString) > 0 then
     Write(AString[1], Length(AString));
   Position := 0;
+  {$ENDIF}
 end;
 
-function TInstantStringStream.GetDataString: string;
+{$IFNDEF UNICODE}
+function TInstantStringStream.GetDataString: AnsiString;
 var
   Pos: Integer;
 begin
@@ -1292,9 +1305,11 @@ begin
     finally
       Position := Pos;
     end;
-  end else
+  end
+  else
     Result := '';
 end;
+{$ENDIF}
 
 { TInstantXMLProducer }
 
@@ -1405,8 +1420,19 @@ begin
 end;
 
 procedure TInstantXMLProducer.WriteString(const S: string);
+var
+  U: UTF8String;
 begin
-  Writer.Write(S[1], Length(S));
+  U := UTF8String(S);
+  Writer.Write(U[1], Length(U));
+end;
+
+procedure TInstantXMLProducer.WriteWideString(const S: WideString);
+var
+  U : UTF8String;
+begin
+  U := UTF8Encode(S);
+  Writer.Write(U[1], Length(U));
 end;
 
 { TInstantXMLProcessor }
@@ -1455,7 +1481,7 @@ begin
     Result := xtData;
 end;
 
-function TInstantXMLProcessor.PeekChar: Char;
+function TInstantXMLProcessor.PeekChar: AnsiChar;
 var
   Pos: Integer;
 begin
@@ -1491,9 +1517,9 @@ begin
   end;
 end;
 
-function TInstantXMLProcessor.ReadChar: Char;
+function TInstantXMLProcessor.ReadChar: AnsiChar;
 begin
-  Reader.Read(Result, SizeOf(Char));
+  Reader.Read(Result, SizeOf(AnsiChar));
 end;
 
 function TInstantXMLProcessor.ReadData: string;
@@ -1507,11 +1533,11 @@ end;
 
 procedure TInstantXMLProcessor.ReadData(Stream: TStream);
 var
-  C: Char;
+  C: AnsiChar;
   CharSize: Integer;
 begin
   CheckToken(xtData);
-  CharSize := SizeOf(Char);
+  CharSize := SizeOf(AnsiChar);
   while not (PeekChar = InstantTagStart) do
   begin
     C := ReadEscapedChar;
@@ -1519,7 +1545,7 @@ begin
   end;
 end;
 
-function TInstantXMLProcessor.ReadEscapedChar: Char;
+function TInstantXMLProcessor.ReadEscapedChar: AnsiChar;
 
   procedure UnEscape;
   var
@@ -1533,7 +1559,7 @@ function TInstantXMLProcessor.ReadEscapedChar: Char;
       Result := ReadChar;
     end;
     if S[1] = '#' then
-      Result := Char(StrToInt(Copy(S, 2, Length(S) - 1)))
+      Result := AnsiChar(StrToInt(Copy(S, 2, Length(S) - 1)))
     else if S = 'quot' then
       Result := #34
     else if S = 'amp' then
@@ -1554,7 +1580,7 @@ end;
 
 function TInstantXMLProcessor.ReadTag: string;
 var
-  C: Char;
+  C: AnsiChar;
   Pos: Integer;
 begin
   Pos := Position;
@@ -1722,6 +1748,8 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
         Producer.WriteData(InstantDateTimeToStr(Reader.ReadDate));
       vaString, vaLString:
         Producer.WriteEscapedData(Reader.ReadString);
+      vaUTF8String:
+        Producer.WriteWideString(Reader.ReadWideString);
       vaSet:
         begin
           Reader.ReadValue;
@@ -1817,7 +1845,7 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
   procedure ConvertProperty(PropInfo: PPropInfo);
   var
     I: Integer;
-    PropName, ValueStr: string;
+    PropName, ValueStr: String;
     S: TStringList;
   begin
     PropName := Processor.ReadTagName;
@@ -1841,6 +1869,10 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
       {$ENDIF}
       tkString, tkLString, tkChar:
         Writer.WriteString(ValueStr);
+      {$IFDEF D12+}
+      tkUString:
+        Writer.WriteString(ValueStr);
+      {$ENDIF}
       tkEnumeration:
         Writer.WriteIdent(ValueStr);
       tkSet:

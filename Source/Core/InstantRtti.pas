@@ -318,6 +318,9 @@ const
 {$IFDEF FPC}
     tkAString, tkBool,
 {$ENDIF}
+{$IFDEF UNICODE}
+    tkUString,
+{$ENDIF}
     tkVariant, tkArray, tkRecord, tkInt64, tkDynArray];
 begin
   DestroyPropList;

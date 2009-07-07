@@ -14,6 +14,8 @@
  **********************************************************************}
 unit testutils;
 
+{$I '..\InstantDefines.inc'}
+
 interface
 
 uses
@@ -36,6 +38,11 @@ procedure GetMethodList( AClass: TClass; AList: TStrings ); overload;
 
 implementation
 
+{$IFDEF D12+}
+uses
+  TestFramework;
+{$ENDIF}
+
 function TNoRefCountObject.QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
 begin
   if GetInterface(IID, Obj) then Result := 0
@@ -50,7 +57,7 @@ end;
 function TNoRefCountObject._Release: Integer;stdcall;
 begin
   Result := -1;
-end;  
+end;
 
 // been to the dentist and suffered a lot
 // Hack Alert! see objpas.inc
@@ -60,6 +67,28 @@ begin
   GetMethodList( AObject.ClassType, AList );
 end;
 
+{$IFDEF D12+}
+procedure GetMethodList(AClass: TClass; AList: TStrings);
+var
+  MethodEnumerator: TMethodEnumerator;
+  MethodName : string;
+  MethodCode : Pointer;
+  i : integer;
+begin
+  MethodEnumerator := TMethodEnumerator.create(AClass);
+  try
+    AList.Clear;
+    for i := 0 to MethodEnumerator.MethodCount - 1 do
+    begin
+      MethodName := MethodEnumerator.NameOfMethod[i];
+      MethodCode := AClass.MethodAddress(MethodName);
+      AList.AddObject(MethodName, MethodCode);
+    end;
+  finally
+    MethodEnumerator.Free;
+  end;
+end;
+{$ELSE}
 procedure GetMethodList(AClass: TClass; AList: TStrings);
 type
   PPointer = ^Pointer;
@@ -98,6 +127,7 @@ begin
     vmt := vmt.ClassParent;
   end;
 end;
+{$ENDIF}
 
 procedure FreeObjects(List: TList);
 var
@@ -109,4 +139,4 @@ end;
 
 end.
 
- 
+
