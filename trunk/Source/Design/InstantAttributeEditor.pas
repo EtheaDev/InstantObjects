@@ -115,6 +115,7 @@ type
     StorageKindEdit: TDBComboBox;
     StorageKindLabel: TLabel;
     AutoExternalStorageNameCheckBox: TCheckBox;
+    OptionUseNullCheckBox: TCheckBox;
     procedure NameEditKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure NameEditChange(Sender: TObject);
@@ -247,6 +248,7 @@ procedure TInstantAttributeEditorForm.LoadData;
     OptionRequiredCheckBox.Checked := Subject.IsRequired;
     OptionReadOnlyCheckBox.Checked := Subject.ReadOnly;
     OptionDefaultCheckBox.Checked := Subject.IsDefault;
+    OptionUseNullCheckBox.Checked := Subject.UseNull;
   end;
 
   procedure LoadMethods;
@@ -473,6 +475,8 @@ procedure TInstantAttributeEditorForm.SaveData;
       Result := True;
     if SetChangedField('IsDefault', OptionDefaultCheckBox.Checked) then
       Result := True;
+    if SetChangedField('UseNull', OptionUseNullCheckBox.Checked) then
+      Result := True;
   end;
 
   function SaveMethods: Boolean;
@@ -657,6 +661,7 @@ begin
     EnableCtrl(SingularNameLabel, IsContainer);
     EnableCtrl(SingularNameEdit, IsContainer);
     EnableCtrl(OptionDefaultCheckBox, IsContainer);
+    EnableCtrl(OptionUseNullCheckBox, not IsContainer);
     EnableCtrl(MethodsGroupBox, IsContainer);
     EnableCtrl(MethodAddCheckBox, IsContainer);
     EnableCtrl(MethodClearCheckBox, IsContainer);
@@ -683,6 +688,7 @@ begin
   EnableCtrl(OptionsGroupBox, True);
   EnableCtrl(OptionIndexedCheckBox, True);
   EnableCtrl(OptionRequiredCheckBox, True);
+  EnableCtrl(OptionUseNullCheckBox, not IsContainer);
   EnableCtrl(OkButton, IsValid);
   PresentationSheet.TabVisible := IsMaskable;
 end;

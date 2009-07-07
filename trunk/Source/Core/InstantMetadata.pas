@@ -1800,10 +1800,7 @@ end;
 
 function TInstantAttributeMetadata.GetValidChars: TChars;
 begin
-  if FValidChars = [] then
-    Result := [#0..#255]
-  else
-    Result := FValidChars;
+  Result := FValidChars;
 end;
 
 function TInstantAttributeMetadata.GetValidCharsString: string;

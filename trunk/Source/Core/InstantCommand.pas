@@ -716,10 +716,10 @@ end;
 
 function TInstantIQLObject.GetText: string;
 var
-  Stream: TStringStream;
+  Stream: TInstantStringStream;
   Writer: TInstantIQLWriter;
 begin
-  Stream := TStringStream.Create('');
+  Stream := TInstantStringStream.Create('');
   try
     Writer := TInstantIQLWriter.Create(Stream);
     try
@@ -1702,10 +1702,10 @@ end;
 
 procedure TInstantIQLTranslator.Translate;
 var
-  Stream: TStringStream;
+  Stream: TInstantStringStream;
   Writer: TInstantIQLStatementWriter;
 begin
-  Stream := TStringStream.Create('');
+  Stream := TInstantStringStream.Create('');
   try
     Writer := TInstantIQLStatementWriter.Create(Self, Stream);
     try

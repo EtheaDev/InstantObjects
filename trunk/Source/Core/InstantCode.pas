@@ -1341,8 +1341,8 @@ type
     FOrigin: TInstantCodePos;
     procedure SetOrigin(Value: TInstantCodePos);
   protected
-    function GetStreamPos: Integer; override;
-    procedure SetStreamPos(Value: Integer); override;
+    function GetStreamPos: Int64; override;
+    procedure SetStreamPos(Value: Int64); override;
   public
     procedure Indent;
     procedure Unindent;
@@ -5620,7 +5620,7 @@ begin
       begin
         if I > 0 then
           Writer.Write(', ');
-        Items[0].Write(Writer);
+        Items[I].Write(Writer);
       end;
       Writer.WriteLn(';');
     finally
@@ -6456,7 +6456,7 @@ end;
 
 { TInstantCodeWriter }
 
-function TInstantCodeWriter.GetStreamPos: Integer;
+function TInstantCodeWriter.GetStreamPos: Int64;
 begin
   Result := inherited GetStreamPos + Origin.Offset;
 end;
@@ -6472,7 +6472,7 @@ begin
   Position := FOrigin;
 end;
 
-procedure TInstantCodeWriter.SetStreamPos(Value: Integer);
+procedure TInstantCodeWriter.SetStreamPos(Value: Int64);
 begin
   inherited SetStreamPos(Value - Origin.Offset);
 end;

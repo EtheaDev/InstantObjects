@@ -106,11 +106,11 @@ type
     function CurrentModule: IOTAModule;
     function FindModule(const Name: string): IOTAModule;
     procedure GotoFilePos(const FileName: string; Line, Column: Integer);
-    function ReadEditorSource(Editor: IOTASourceEditor): string;
-    function ReadModuleSource(Module: IOTAModule): string;
+    function ReadEditorSource(Editor: IOTASourceEditor): AnsiString;
+    function ReadModuleSource(Module: IOTAModule): AnsiString;
     procedure ShowMessages;
     function SourceEditor(Module: IOTAModule): IOTASourceEditor;
-    procedure WriteEditorSource(Editor: IOTASourceEditor; const Source: string;
+    procedure WriteEditorSource(Editor: IOTASourceEditor; const Source: AnsiString;
       ReplaceLen: Integer; Undoable: Boolean = False);
     property EditActions: IOTAEditActions read GetEditActions;
     property MessageServices: IOTAMessageServices read GetMessageServices;
@@ -496,10 +496,10 @@ begin
 end;
 
 function TInstantOTAIDEInterface.ReadEditorSource(
-  Editor: IOTASourceEditor): string;
+  Editor: IOTASourceEditor): AnsiString;
 var
   Reader: IOTAEditReader;
-  Buffer: string;
+  Buffer: AnsiString;
   BufferLen, ReadLen, Position: Integer;
 begin
   if Assigned(Editor) then
@@ -510,7 +510,7 @@ begin
     Position := 0;
     repeat
       SetLength(Buffer, BufferLen);
-      ReadLen := Reader.GetText(Position, PChar(Buffer), BufferLen);
+      ReadLen := Reader.GetText(Position, PAnsiChar(Buffer), BufferLen);
       if ReadLen < BufferLen then
         Dec(ReadLen, 2);
       SetLength(Buffer, ReadLen);
@@ -522,7 +522,7 @@ begin
 end;
 
 function TInstantOTAIDEInterface.ReadModuleSource(
-  Module: IOTAModule): string;
+  Module: IOTAModule): AnsiString;
 begin
   Result := ReadEditorSource(SourceEditor(Module));
 end;
@@ -585,7 +585,7 @@ begin
 end;
 
 procedure TInstantOTAIDEInterface.WriteEditorSource(
-  Editor: IOTASourceEditor; const Source: string; ReplaceLen: Integer;
+  Editor: IOTASourceEditor; const Source: AnsiString; ReplaceLen: Integer;
   Undoable: Boolean);
 var
   Writer: IOTAEditWriter;
@@ -596,7 +596,7 @@ begin
     Writer := Editor.CreateUndoableWriter else
     Writer := Editor.CreateWriter;
   Writer.DeleteTo(ReplaceLen);
-  Writer.Insert(PChar(Source));
+  Writer.Insert(PAnsiChar(Source));
 end;
 
 { TInstantOTAIDENotifier5 }

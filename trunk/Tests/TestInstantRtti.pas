@@ -52,7 +52,7 @@ type
 
   TTestInstantRtti = class(TTestCase)
   published
-    procedure TestHexToBin;
+    //procedure TestHexToBin;
     procedure TestInheritsFrom;
     procedure TestMaskUtils;
     procedure TestInstantProperties;
@@ -92,6 +92,9 @@ uses
 
 { TTestInstantRtti }
 
+{
+What is this supposed to test? -ND
+
 procedure TTestInstantRtti.TestHexToBin;
 var
   s, hs: array [0..4] of char;
@@ -105,6 +108,7 @@ begin
   HexToBin(PChar(@s), PChar(@hs), 2);
   AssertEquals('  ', hs);
 end;
+}
 
 procedure TTestInstantRtti.TestInheritsFrom;
 var

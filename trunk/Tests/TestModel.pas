@@ -1,3 +1,4 @@
+unit TestModel;
 (*
  *   InstantObjects Test Suite
  *   TestModel
@@ -28,7 +29,6 @@
  *
  * ***** END LICENSE BLOCK ***** *)
 
-unit TestModel;
 
 interface
 
@@ -233,7 +233,7 @@ type
     Emails: Parts(TEmail);
     Employer: Reference(TCompany);
     Picture: Blob;
-    Salary: Currency;
+    Salary: Currency valid ',.0..9€';
     Employed: Boolean;
     AL_hours: Float;
     EmploymentDate: Date;

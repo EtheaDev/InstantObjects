@@ -302,6 +302,14 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
             Caption = 'Req&uired'
             TabOrder = 1
           end
+          object OptionUseNullCheckBox: TCheckBox
+            Left = 8
+            Top = 80
+            Width = 73
+            Height = 17
+            Caption = 'Use &Null'
+            TabOrder = 4
+          end
         end
       end
       object PresentationSheet: TTabSheet
