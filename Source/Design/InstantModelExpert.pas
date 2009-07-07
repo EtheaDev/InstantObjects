@@ -998,9 +998,16 @@ function TInstantModelExpert.LoadModel(Model: TInstantCodeModel;
     begin
       Module := Modules[I] as IOTAModule;
       Editor := FIDEInterface.SourceEditor(Module);
+
+{$IFDEF D12+}
       Source := UTF8ToUnicodeString(FIDEInterface.ReadEditorSource(Editor));
       Stream := TStringStream.Create(Source, TEncoding.Unicode);
-      try
+{$ELSE}
+      Source := FIDEInterface.ReadEditorSource(Editor);
+      Stream := TStringStream.Create(Source);
+{$ENDIF}
+
+      try                                    
         Model.LoadModule(Stream, Editor.FileName);
       finally
         Stream.Free;
