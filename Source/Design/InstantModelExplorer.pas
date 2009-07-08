@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
+ * Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -120,6 +121,8 @@ type
     ViewRelationsAction: TAction;
     ViewSourceAction: TAction;
     ViewSourceItem: TMenuItem;
+    ImportModelItem: TMenuItem;
+    ImportModelAction: TAction;
     procedure AboutActionExecute(Sender: TObject);
     procedure BuildDatabaseActionExecute(Sender: TObject);
     procedure CollapseAllActionExecute(Sender: TObject);
@@ -138,6 +141,7 @@ type
     procedure ViewInheritanceActionExecute(Sender: TObject);
     procedure ViewRelationsActionExecute(Sender: TObject);
     procedure ViewSourceActionExecute(Sender: TObject);
+    procedure ImportModelActionExecute(Sender: TObject);
   private
     FError: TInstantModelError;
     FModel: TInstantCodeModel;
@@ -195,7 +199,7 @@ uses
   InstantModelExpert,
 {$ENDIF}
   InstantDesignUtils, InstantPersistence, InstantDesignHook, InstantAbout,
-  InstantImageUtils;
+  InstantImageUtils, InstantMetadata, InstantModelImport;
 
 resourcestring
   SDeleteClass = 'Delete Class ''%s''?';
@@ -379,6 +383,93 @@ procedure TInstantModelExplorerForm.ExpandAllActionExecute(
 begin
   if Assigned(SelectedNode) then
     SelectedNode.Expand(True);
+end;
+
+procedure TInstantModelExplorerForm.ImportModelActionExecute(Sender: TObject);
+var
+  ClassIndex, AttributeIndex: Integer;
+  ImportModule: TInstantCodeModule;
+  ImportFileName: string;
+  ImportFileType: TInstantStreamFormat;
+  ImportModel: TInstantModel;
+  ImportClassMetadata: TInstantClassMetadata;
+  ImportBaseClassName: string;
+  ImportAttributeMetadata: TInstantAttributeMetadata;
+  NewClasses: TInstantCodeClassList;
+  NewClass: TInstantCodeClass;
+  NewAttribute: TInstantCodeAttribute;
+begin
+  with TInstantImportModelForm.Create(nil) do
+    try
+      if Execute(FModel) then
+      begin
+        ImportModule := SelectedModule;
+        ImportFileName := SelectedFileName;
+        ImportFileType := SelectedFileType;
+      end else
+        Exit;
+    finally
+      Free;
+    end;
+
+  ImportModel := TInstantModel.Create;
+  try
+    if ImportFileType = sfBinary then
+      ImportModel.LoadFromResFile(ImportFileName) else
+      ImportModel.LoadFromFile(ImportFileName);
+
+    FModelView.Items.BeginUpdate;
+    try
+      NewClasses := TInstantCodeClassList.Create;
+      try
+        for ClassIndex := 0 to ImportModel.ClassMetadatas.Count - 1 do
+        begin
+          ImportClassMetadata := ImportModel.ClassMetadatas[ClassIndex];
+
+          NewClass := ImportModule.InterfaceSection.AddClass;
+          ImportBaseClassName := ImportClassMetadata.ParentName;
+          if ImportBaseClassName = '' then
+            ImportBaseClassName := TInstantObject.ClassName;
+          NewClass.BaseClassName := ImportBaseClassName;
+          NewClass.Name := ImportClassMetadata.Name;
+          NewClass.Metadata.Assign(ImportClassMetadata);
+
+          for AttributeIndex := 0 to ImportClassMetadata.AttributeMetadatas.Count - 1 do
+          begin
+            ImportAttributeMetadata := ImportClassMetadata.AttributeMetadatas[AttributeIndex];
+
+            NewAttribute := NewClass.AddAttribute;
+            NewAttribute.IsIndexed := ImportAttributeMetadata.IsIndexed;
+            NewAttribute.IsRequired := ImportAttributeMetadata.IsRequired;
+            NewAttribute.IsDefault := ImportAttributeMetadata.IsDefault;
+            NewAttribute.AttributeType := ImportAttributeMetadata.AttributeType;
+            NewAttribute.AttributeTypeName := ImportAttributeMetadata.AttributeTypeName;
+            NewAttribute.Name := ImportAttributeMetadata.FieldName;
+            NewAttribute.StorageKind := ImportAttributeMetadata.StorageKind;
+            NewAttribute.StorageName := ImportAttributeMetadata.StorageName;
+            NewAttribute.ObjectClassName := ImportAttributeMetadata.ObjectClassName;
+            NewAttribute.Realize;
+          end;
+          NewClasses.Add(NewClass)
+        end;
+
+        // Classes needs to be sorted with base classes first or else the code
+        // generation might not be done correct.
+        NewClasses.SortByBaseClass;
+
+        for ClassIndex := 0 to NewClasses.Count - 1 do
+          ApplyClass(NewClasses[ClassIndex], ctNew, '');
+      finally
+        NewClasses.Free;
+      end;
+    finally
+      FModelView.Items.EndUpdate;
+    end;
+  finally
+    ImportModel.Free;
+  end;
+
+  Refresh;
 end;
 
 procedure TInstantModelExplorerForm.ExportModelActionExecute(
@@ -590,6 +681,7 @@ begin
   SelectUnitsAction.Enabled := HasProject;
   BuildDatabaseAction.Enabled := HasClasses;
   NewClassAction.Enabled := HasModel;
+  ImportModelAction.Enabled := HasModel;
   ExportModelAction.Enabled := HasModel;
   EditClassAction.Enabled := AtClass;
   ViewSourceAction.Enabled := AtClass;

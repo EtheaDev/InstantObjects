@@ -7,7 +7,6 @@ package DclIOCore;
 {$R '..\..\Core\InstantConnectionManager.dcr'}
 {$R '..\..\Core\InstantPump.dcr'}
 {$R '..\..\Core\InstantDBEvolution.dcr'}
-
 {$ALIGN 8}
 {$ASSERTIONS ON}
 {$BOOLEVAL OFF}
@@ -58,7 +57,8 @@ contains
   InstantReg in '..\InstantReg.pas',
   InstantUnitSelect in '..\InstantUnitSelect.pas' {InstantUnitSelectForm},
   InstantAttributeEditor in '..\InstantAttributeEditor.pas' {InstantAttributeEditorForm},
-  InstantAbout in '..\InstantAbout.pas' {InstantAboutForm};
+  InstantAbout in '..\InstantAbout.pas' {InstantAboutForm},
+  InstantModelImport in '..\InstantModelImport.pas' {InstantImportModelForm};
 
 end.
 
