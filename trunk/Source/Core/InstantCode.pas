@@ -962,6 +962,19 @@ type
     property UnitName: string read GetUnitName write SetUnitName;
   end;
 
+  TInstantCodeClassList = class(TList)
+  private
+    function GetItem(Index: Integer): TInstantCodeClass;
+    procedure SetItem(Index: Integer; const Value: TInstantCodeClass);
+  public
+    function Add(Item: TInstantCodeClass): Integer;
+    procedure Insert(Index: Integer; Item: TInstantCodeClass);
+
+    procedure SortByBaseClass;
+
+    property Items[Index: Integer]: TInstantCodeClass read GetItem write SetItem; default;
+  end;
+
   TInstantCodeClassRef = class(TInstantCodeType)
   protected
     class function InternalAtInstance(Reader: TInstantCodeReader; out Name: string): Boolean; override;
@@ -5459,6 +5472,55 @@ begin
   Visibilities := TInstantCodeVisibilities(Arg^);
   Include := (Sender is TInstantCodeMember) and
     (TInstantCodeMember(Sender).Visibility in Visibilities)
+end;
+
+{ TInstantCodeClassList }
+
+function CompareCodeClasses(Item1, Item2: Pointer): Integer;
+var
+  CodeClass1, CodeClass2: TInstantCodeClass;
+begin
+  CodeClass1 := Item1;
+  CodeClass2 := Item2;
+
+  if (CodeClass1.BaseClass = nil) and (CodeClass2.BaseClass <> nil) then
+    Result := -1 else
+  if (CodeClass2.BaseClass = nil) and (CodeClass1.BaseClass <> nil) then
+    Result := 1 else
+  if CodeClass1.BaseClass = CodeClass2.BaseClass then
+    Result := 0 else
+  if CodeClass1.DerivesFrom(CodeClass2) then
+    Result := 1 else
+  if CodeClass2.DerivesFrom(CodeClass1) then
+    Result := -1 else
+    // CodeClass1.BaseClass <> CodeClass2.BaseClass
+    Result := CompareCodeClasses(CodeClass1.BaseClass, CodeClass2.BaseClass);
+end;
+
+function TInstantCodeClassList.Add(Item: TInstantCodeClass): Integer;
+begin
+  Result := inherited Add(Item);
+end;
+
+procedure TInstantCodeClassList.Insert(Index: Integer; Item: TInstantCodeClass);
+begin
+  inherited Insert(Index, Item);
+end;
+
+procedure TInstantCodeClassList.SortByBaseClass;
+begin
+  Sort(CompareCodeClasses);
+end;
+
+function TInstantCodeClassList.GetItem(Index: Integer): TInstantCodeClass;
+begin
+  Result := inherited Items[Index];
+end;
+
+procedure TInstantCodeClassList.SetItem(Index: Integer;
+  const Value: TInstantCodeClass);
+begin
+  inherited Items[Index] := Value;
 end;
 
 { TInstantCodeClassRef }

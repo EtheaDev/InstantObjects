@@ -4,7 +4,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   Width = 259
   Height = 433
   VertScrollBar.Range = 20
-  AutoScroll = False
   Caption = 'InstantObjects Model Explorer'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -23,7 +22,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     Left = 0
     Top = 27
     Width = 251
-    Height = 379
+    Height = 372
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -35,8 +34,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     Height = 27
     BorderWidth = 1
     ButtonHeight = 23
-    EdgeBorders = []
-    Flat = True
     Images = ActionImages
     ParentShowHint = False
     ShowHint = True
@@ -103,6 +100,9 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     end
     object N3: TMenuItem
       Caption = '-'
+    end
+    object ImportModelItem: TMenuItem
+      Action = ImportModelAction
     end
     object ExportModelItem: TMenuItem
       Action = ExportModelAction
@@ -188,6 +188,12 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       Caption = '&Collapse All'
       Hint = 'Collapse All'
       OnExecute = CollapseAllActionExecute
+    end
+    object ImportModelAction: TAction
+      Caption = '&Import Model...'
+      Hint = 'Import model'
+      ImageIndex = 11
+      OnExecute = ImportModelActionExecute
     end
     object ExportModelAction: TAction
       Caption = '&Export Model...'
