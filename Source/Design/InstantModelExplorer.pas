@@ -399,7 +399,7 @@ var
   NewClass: TInstantCodeClass;
   NewAttribute: TInstantCodeAttribute;
 begin
-  with TInstantImportModelForm.Create(nil) do
+  with TInstantModelImportForm.Create(nil) do
     try
       if Execute(FModel) then
       begin

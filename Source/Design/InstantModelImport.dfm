@@ -1,4 +1,4 @@
-inherited InstantImportModelForm: TInstantImportModelForm
+inherited InstantModelImportForm: TInstantModelImportForm
   Caption = 'Import Model'
   ClientHeight = 120
   ClientWidth = 416
