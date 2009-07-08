@@ -37,7 +37,7 @@ uses
   Dialogs, InstantDialog, ExtCtrls, StdCtrls, InstantCode, InstantClasses;
 
 type
-  TInstantImportModelForm = class(TInstantDialogForm)
+  TInstantModelImportForm = class(TInstantDialogForm)
     ImportButton: TButton;
     ImportModuleCombo: TComboBox;
     Label1: TLabel;
@@ -67,7 +67,7 @@ type
   end;
 
 var
-  InstantImportModelForm: TInstantImportModelForm;
+  InstantModelImportForm: TInstantModelImportForm;
 
 implementation
 
@@ -75,7 +75,7 @@ implementation
 
 { TInstantImportModelForm }
 
-function TInstantImportModelForm.Execute(AModel: TInstantCodeModel): Boolean;
+function TInstantModelImportForm.Execute(AModel: TInstantCodeModel): Boolean;
 begin
   FModel := AModel;
 
@@ -96,7 +96,7 @@ begin
   end;
 end;
 
-procedure TInstantImportModelForm.FileNameButtonClick(Sender: TObject);
+procedure TInstantModelImportForm.FileNameButtonClick(Sender: TObject);
 begin
   inherited;
 
@@ -105,7 +105,7 @@ begin
     FileNameEdit.Text := OpenDialog.FileName;
 end;
 
-procedure TInstantImportModelForm.LoadModules;
+procedure TInstantModelImportForm.LoadModules;
 var
   I: Integer;
   Module: TInstantCodeModule;
@@ -118,25 +118,25 @@ begin
   end;
 end;
 
-procedure TInstantImportModelForm.UpdateControls;
+procedure TInstantModelImportForm.UpdateControls;
 begin
   ImportButton.Enabled := (FileNameEdit.Text <> '') and (ImportModuleCombo.ItemIndex <> -1);
 end;
 
-function TInstantImportModelForm.GetSelectedFileType: TInstantStreamFormat;
+function TInstantModelImportForm.GetSelectedFileType: TInstantStreamFormat;
 begin
   if CompareText(ExtractFileExt(SelectedFileName), '.mdr') = 0 then
     Result := sfBinary else
     Result := sfXML;
 end;
 
-procedure TInstantImportModelForm.ImportModuleComboChange(Sender: TObject);
+procedure TInstantModelImportForm.ImportModuleComboChange(Sender: TObject);
 begin
   inherited;
   UpdateControls;
 end;
 
-procedure TInstantImportModelForm.FileNameEditChange(Sender: TObject);
+procedure TInstantModelImportForm.FileNameEditChange(Sender: TObject);
 begin
   inherited;
   UpdateControls;
