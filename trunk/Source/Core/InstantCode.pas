@@ -2689,7 +2689,12 @@ class function TInstantCodeSymbol.InternalAtInstance(Reader: TInstantCodeReader;
 begin
   Name := Reader.ReadToken;
   Reader.SkipSpace;
+
+{$IFDEF D12+}
+  Result := CharInSet(Reader.ReadChar, [':', ',']);
+{$ELSE}
   Result := Reader.ReadChar in [':', ','];
+{$ENDIF}
 end;
 
 procedure TInstantCodeSymbol.InternalRead(Reader: TInstantCodeReader);
@@ -3933,14 +3938,28 @@ begin
     if Copy(Result, i, 1) = 's' then
     begin
       If (i > 3) and (Copy(Result, i - 2, 3) = 'ies') and
+{$IFDEF D12+}
+        not (CharInSet(Result[i - 3], Vowels)) then
+{$ELSE}
         not (Result[i - 3] in Vowels) then
+{$ENDIF}
       begin
         Result := Copy(Result, 1, i - 3) + 'y';
       end
       else If (i > 3) and (Copy(Result, i - 1, 2) = 'es') and
+{$IFDEF D12+}
+        (CharInSet(Result[i - 2], SpChars)) then
+{$ELSE}
         (Result[i - 2] in SpChars) then
+{$ENDIF}
       begin
-       if (Result[i - 2] = 'h') and not (Result[i - 3] in ['c', 's']) then
+       if (Result[i - 2] = 'h') and
+{$IFDEF D12+}
+       not (CharInSet(Result[i - 3], ['c', 's'])) then
+{$ELSE}
+       not (Result[i - 3] in ['c', 's']) then
+{$ENDIF}
+
        begin
          //not ch or sh
          Result := Copy(Result, 1, i - 1);
@@ -5761,7 +5780,11 @@ begin
     Reader.SkipSpace;
     Reader.ReadToken;
     Reader.SkipSpace;
+{$IFDEF D12+}
+    Result := CharInSet(Reader.NextChar, [':', '=']);
+{$ELSE}
     Result := Reader.NextChar in [':', '='];
+{$ENDIF}
   finally
     Reader.Position := SavePos;
   end;
@@ -8688,7 +8711,11 @@ begin
       if FCode^[I] = #10 then
       begin
         Inc(I);
+{$IFDEF D12+}
+        while CharInSet(FCode^[I], [' ', #9]) do
+{$ELSE}
         while FCode^[I] in [' ', #9] do
+{$ENDIF}
         begin
           Result := Result + FCode^[I];
           Inc(I);

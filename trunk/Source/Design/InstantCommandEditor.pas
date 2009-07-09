@@ -177,7 +177,11 @@ function TInstantCommandEditorForm.FindArgument(
 
   function IsSpace(Ch: Char): Boolean;
   begin
+{$IFDEF D12+}
+    Result := CharInSet(Ch, [' ', #9, #10, #13]);
+{$ELSE}
     Result := Ch in [' ', #9, #10, #13];
+{$ENDIF}
   end;
 
 var

@@ -50,7 +50,12 @@ const
   InstantBufferSize = 4096;
 
 type
+{$IFDEF D12+}
+  TChars = set of AnsiChar;
+{$ELSE}
   TChars = set of Char;
+{$ENDIF}
+
 {$IFDEF LINUX}
     TDate = type TDateTime;
     TTime = type TDateTime;
@@ -1386,7 +1391,11 @@ begin
   for I := 1 to Length(Data) do
   begin
     C := Data[I];
+{$IFDEF D12+}
+    if CharInSet(C, [#34, #38, #39, #60, #62]) then
+{$ELSE}
     if C in [#34, #38, #39, #60, #62] then
+{$ENDIF}
     begin
       case C of
         #34:
