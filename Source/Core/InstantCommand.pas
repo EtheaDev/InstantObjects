@@ -1121,7 +1121,12 @@ var
 begin
   Token := Reader.ReadToken;
   Result := IsConstantToken(Token) or InstantIsNumeric(Token) or
-    ((Length(Token) > 0) and (Token[1] in ['"', '''', '[']));
+    ((Length(Token) > 0) and
+{$IFDEF D12+}
+    (CharInSet(Token[1], ['"', '''', '['])));
+{$ELSE}
+    (Token[1] in ['"', '''', '[']));
+{$ENDIF}
 end;
 
 procedure TInstantIQLConstant.InternalClear;
