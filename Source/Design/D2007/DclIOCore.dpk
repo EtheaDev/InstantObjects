@@ -23,8 +23,8 @@ package DclIOCore;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects Design-Time Package (Delphi 2007)'}
-{$LIBSUFFIX '_D11'}
+{$DESCRIPTION 'InstantObjects Design-Time Package (Delphi 2009)'}
+{$LIBSUFFIX '_D12'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}
 {$DEFINE DEBUG}
@@ -53,7 +53,8 @@ contains
   InstantReg in '..\InstantReg.pas',
   InstantUnitSelect in '..\InstantUnitSelect.pas' {InstantUnitSelectForm},
   InstantAttributeEditor in '..\InstantAttributeEditor.pas' {InstantAttributeEditorForm},
-  InstantAbout in '..\InstantAbout.pas' {InstantAboutForm};
+  InstantAbout in '..\InstantAbout.pas' {InstantAboutForm},
+  InstantModelImport in '..\InstantModelImport.pas' {InstantModelImportForm};
 
 end.
 
