@@ -236,11 +236,7 @@ end;
 
 function TInstantTextFiler.IsSpace(Ch: Char): Boolean;
 begin
-{$IFDEF D12+}
-  Result := CharInSet(Ch, [' ', #9, #10, #13]);
-{$ELSE}
   Result := Ch in [' ', #9, #10, #13];
-{$ENDIF}
 end;
 
 function TInstantTextFiler.IsText(Ch: Char): Boolean;
@@ -248,11 +244,7 @@ begin
   Result := ((Ch >= 'a') and (Ch <= 'z'))
     or ((Ch >= 'A') and (Ch <= 'Z'))
     or ((Ch >= '0') and (Ch <= '9'))
-{$IFDEF D12+}
-    or (CharInSet(Ch, ['#', '_']));
-{$ELSE}
     or (Ch in ['#', '_']);
-{$ENDIF}
 end;
 
 procedure TInstantTextFiler.Reset;
@@ -333,12 +325,7 @@ end;
 
 function TInstantTextReader.IsStringDelimiter(Ch: Char): Boolean;
 begin
-  Result := ConstAware and
-{$IFDEF D12+}
-    (CharInSet(Ch, ['''', '"']));
-{$ELSE}
-    (Ch in ['''', '"']);
-{$ENDIF}
+  Result := ConstAware and (Ch in ['''', '"']);
 end;
 
 function TInstantTextReader.NextChar: Char;
