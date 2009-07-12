@@ -22,8 +22,8 @@ package IOCore;
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DESCRIPTION 'InstantObjects Run-Time Package (Delphi 2009)'}
-{$LIBSUFFIX '_D12'}
+{$DESCRIPTION 'InstantObjects Run-Time Package (Delphi 2007)'}
+{$LIBSUFFIX '_D11'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 

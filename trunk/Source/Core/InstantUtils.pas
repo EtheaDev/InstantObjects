@@ -112,11 +112,7 @@ var
 begin
   Result := '';
   for I := 0 to 255 do
-{$IFDEF D12+}
-    if CharInSet(Chr(I), C) then
-{$ELSE}
     if Chr(I) in C then
-{$ENDIF}
       S := S + Chr(I);
   I := 1;
   L := Length(S);
@@ -570,7 +566,7 @@ procedure InstantStrToList(const Str: string; List: TStrings;
     I: Integer;
   begin
     I := Pos;
-    while (I <= Length(Str)) and not {$IFDEF D12+}CharInSet(Str[I], Delimiters){$ELSE}(Str[I] in Delimiters){$ENDIF} do
+    while (I <= Length(Str)) and not (Str[I] in Delimiters) do
       Inc(I);
     Result := Copy(Str, Pos, I - Pos);
     if I <= Length(Str) then

@@ -67,7 +67,7 @@ type
   protected
     function InternalEquals(const Other: TInstantMetadata): Boolean; virtual;
   public
-    function Equals(const Other: TInstantMetadata): Boolean; {$IFDEF D12+} reintroduce; {$ENDIF}
+    function Equals(const Other: TInstantMetadata): Boolean;
     property Collection: TInstantMetadatas read GetCollection
       write SetCollection;
   end;
