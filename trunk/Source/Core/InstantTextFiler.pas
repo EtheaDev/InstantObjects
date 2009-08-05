@@ -45,7 +45,7 @@ type
   PInstantTextPos = ^TInstantTextPos;
   TInstantTextPos = record
     Column, Line: Integer;
-    Offset: Int64;
+    Offset: Int64; // In characters, not bytes.
   end;
 
   EInstantTextPosError = class(EInstantError)
@@ -143,7 +143,7 @@ begin
   else
     Inc(Pos.Column);
   end;
-  Inc(Pos.Offset, SizeOf(Char));
+  Inc(Pos.Offset);
 end;
 
 procedure DescendTextPos(var Pos: TInstantTextPos; Ch: Char);
@@ -163,7 +163,7 @@ begin
   else
     Dec(Pos.Column);
   end;
-  Dec(Pos.Offset, SizeOf(Char));
+  Dec(Pos.Offset);
 end;
 
 { EInstantTextPosError }
@@ -194,7 +194,7 @@ end;
 
 constructor TInstantTextFiler.Create(AText: string);
 begin
-  Create(TInstantStringStream.Create(AText), True);
+  Create(TStringStream.Create(AText), True);
 end;
 
 procedure TInstantTextFiler.DescendPosition(Ch: Char);
@@ -221,7 +221,7 @@ end;
 
 function TInstantTextFiler.GetPosition: TInstantTextPos;
 begin
-  FPosition.Offset := StreamPos;
+  FPosition.Offset := StreamPos div SizeOf(Char);
   Result := FPosition;
 end;
 
@@ -261,7 +261,7 @@ end;
 procedure TInstantTextFiler.SetPosition(const Value: TInstantTextPos);
 begin
   FPosition := Value;
-  StreamPos := FPosition.Offset;
+  StreamPos := FPosition.Offset * SizeOf(Char);
 end;
 
 procedure TInstantTextFiler.SetStreamPos(Value: Int64);

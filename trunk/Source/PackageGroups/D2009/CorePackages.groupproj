@@ -24,15 +24,6 @@
 			<Projects Include="..\..\..\Tests\TestIO_D2009.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="S:\InstantObjectsUnicode\Source\Catalogs\MSSql\D2009\IOMSSqlCatalog.dproj">
-				<Dependencies/>
-			</Projects>
-			<Projects Include="S:\InstantObjectsUnicode\Source\Brokers\ADO\D2009\IOADO.dproj">
-				<Dependencies/>
-			</Projects>
-			<Projects Include="S:\InstantObjectsUnicode\Source\Brokers\ADO\D2009\DclIOADO.dproj">
-				<Dependencies/>
-			</Projects>
 		</ItemGroup>
 		<ProjectExtensions>
 			<Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -104,41 +95,14 @@
 		<Target Name="TestIO_D2009:Make">
 			<MSBuild Targets="Make" Projects="..\..\..\Tests\TestIO_D2009.dproj"/>
 		</Target>
-		<Target Name="IOMSSqlCatalog">
-			<MSBuild Projects="S:\InstantObjectsUnicode\Source\Catalogs\MSSql\D2009\IOMSSqlCatalog.dproj"/>
-		</Target>
-		<Target Name="IOMSSqlCatalog:Clean">
-			<MSBuild Targets="Clean" Projects="S:\InstantObjectsUnicode\Source\Catalogs\MSSql\D2009\IOMSSqlCatalog.dproj"/>
-		</Target>
-		<Target Name="IOMSSqlCatalog:Make">
-			<MSBuild Targets="Make" Projects="S:\InstantObjectsUnicode\Source\Catalogs\MSSql\D2009\IOMSSqlCatalog.dproj"/>
-		</Target>
-		<Target Name="IOADO">
-			<MSBuild Projects="S:\InstantObjectsUnicode\Source\Brokers\ADO\D2009\IOADO.dproj"/>
-		</Target>
-		<Target Name="IOADO:Clean">
-			<MSBuild Targets="Clean" Projects="S:\InstantObjectsUnicode\Source\Brokers\ADO\D2009\IOADO.dproj"/>
-		</Target>
-		<Target Name="IOADO:Make">
-			<MSBuild Targets="Make" Projects="S:\InstantObjectsUnicode\Source\Brokers\ADO\D2009\IOADO.dproj"/>
-		</Target>
-		<Target Name="DclIOADO">
-			<MSBuild Projects="S:\InstantObjectsUnicode\Source\Brokers\ADO\D2009\DclIOADO.dproj"/>
-		</Target>
-		<Target Name="DclIOADO:Clean">
-			<MSBuild Targets="Clean" Projects="S:\InstantObjectsUnicode\Source\Brokers\ADO\D2009\DclIOADO.dproj"/>
-		</Target>
-		<Target Name="DclIOADO:Make">
-			<MSBuild Targets="Make" Projects="S:\InstantObjectsUnicode\Source\Brokers\ADO\D2009\DclIOADO.dproj"/>
-		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="IOCore;DclIOCore;IOBDE;DclIOBDE;IOXML;DclIOXML;TestIO_D2009;IOMSSqlCatalog;IOADO;DclIOADO"/>
+			<CallTarget Targets="IOCore;DclIOCore;IOBDE;DclIOBDE;IOXML;DclIOXML;TestIO_D2009"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="IOCore:Clean;DclIOCore:Clean;IOBDE:Clean;DclIOBDE:Clean;IOXML:Clean;DclIOXML:Clean;TestIO_D2009:Clean;IOMSSqlCatalog:Clean;IOADO:Clean;DclIOADO:Clean"/>
+			<CallTarget Targets="IOCore:Clean;DclIOCore:Clean;IOBDE:Clean;DclIOBDE:Clean;IOXML:Clean;DclIOXML:Clean;TestIO_D2009:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="IOCore:Make;DclIOCore:Make;IOBDE:Make;DclIOBDE:Make;IOXML:Make;DclIOXML:Make;TestIO_D2009:Make;IOMSSqlCatalog:Make;IOADO:Make;DclIOADO:Make"/>
+			<CallTarget Targets="IOCore:Make;DclIOCore:Make;IOBDE:Make;DclIOBDE:Make;IOXML:Make;DclIOXML:Make;TestIO_D2009:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>
