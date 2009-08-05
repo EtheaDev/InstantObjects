@@ -8628,23 +8628,25 @@ begin
   if not Assigned(AObject) then
     Exit;
   Stream := TInstantStringStream.Create('');
-  Writer := TInstantCodeWriter.Create(Stream);
   try
-    Writer.Origin := CursorPos;
-    while IndentLevel > 0 do
-    begin
-      Writer.Indent;
-      Dec(IndentLevel);
-    end;
-    AObject.Write(Writer);
-    AObject.Lock;
+    Writer := TInstantCodeWriter.Create(Stream);
     try
-      InsertText(Stream.DataString);
+      while IndentLevel > 0 do
+      begin
+        Writer.Indent;
+        Dec(IndentLevel);
+      end;
+      AObject.Write(Writer);
+      AObject.Lock;
+      try
+        InsertText(Stream.DataString);
+      finally
+        AObject.Unlock;
+      end;
     finally
-      AObject.Unlock;
+      Writer.Free;
     end;
   finally
-    Writer.Free;
     Stream.Free;
   end;
 end;

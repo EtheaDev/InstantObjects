@@ -22,7 +22,7 @@ type
   TPhone = class;
 
   TAddress = class(TInstantObject)
-  {IOMETADATA stored;
+    {IOMETADATA stored;
     City: String(30) index;
     Country: Reference(TCountry);
     State: String(4);
@@ -95,7 +95,7 @@ type
   end;
 
   TCategory = class(TInstantObject)
-  {IOMETADATA stored;
+    {IOMETADATA stored;
     Name: String(30); }
     _Name: TInstantString;
   private
@@ -236,7 +236,7 @@ type
 implementation
 
 uses
-  SysUtils, InstantUtils;
+  SysUtils, InstantUtils, InstantMetadata;
 
 { TAddress }
 

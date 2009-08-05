@@ -136,8 +136,8 @@
 						<Parameters Name="LoadAllSymbols">True</Parameters>
 						<Parameters Name="LoadUnspecifiedSymbols">False</Parameters>
 						<Parameters Name="HostApplication">C:\Program Files\CodeGear\RAD Studio\6.0\bin\bds.exe</Parameters>
-						<Parameters Name="DebugSourceDirs">S:\InstantObjectsUnicode\Source\Core\</Parameters>
-						<Parameters Name="RunParams">S:\InstantObjectsUnicode\Tests\TestIO.dproj</Parameters>
+						<Parameters Name="DebugSourceDirs">W:\projects\instantobjects\Source\Core\</Parameters>
+						<Parameters Name="RunParams">&quot;C:\Users\nandod\Documents\RAD Studio\Projects\TestInstantCode\TestInstantCode.dproj&quot;</Parameters>
 					</Parameters>
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>

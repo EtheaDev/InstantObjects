@@ -124,7 +124,7 @@ type
   end;
 
   TCategory = class(TInstantObject)
-  {IOMETADATA stored 'Categories';
+    {IOMETADATA stored 'Categories';
     Name: String(30); }
     _Name: TInstantString;
   private
@@ -137,7 +137,7 @@ type
   end;
 
   TContact = class(TInstantObject)
-  {IOMETADATA stored;
+    {IOMETADATA stored;
     Address: Part(TAddress);
     Category: Reference(TCategory);
     City: String(30) index;
