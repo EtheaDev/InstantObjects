@@ -1,11 +1,11 @@
 ﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
 			<ProjectGuid>{015d41df-eb42-4172-b75c-3e0f464f00cc}</ProjectGuid>
-			<MainSource>TestIO.dpr</MainSource>
+			<MainSource>TestIO_D2009.dpr</MainSource>
 			<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 			<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-			<DCC_DependencyCheckOutputName>TestIO.exe</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>TestIO_D2009.exe</DCC_DependencyCheckOutputName>
 			<ProjectVersion>12.0</ProjectVersion>
 			<Config Condition="'$(Config)'==''">Debug</Config>
 		</PropertyGroup>
@@ -23,8 +23,9 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_UnitSearchPath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src;.\DUnit\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_DebugDCUs>true</DCC_DebugDCUs>
-			<DCC_DependencyCheckOutputName>TestIO.exe</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>TestIO_D2009.exe</DCC_DependencyCheckOutputName>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1)'!=''">
 			<Version>7.0</Version>
@@ -34,7 +35,6 @@
 			<DCC_TypedAtParameter>True</DCC_TypedAtParameter>
 			<DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
 			<DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-			<DCC_UnitSearchPath>..\Source\Core;.\ubmock\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_ResourcePath>..\Source\Core;.\ubmock\src;$(DCC_ResourcePath)</DCC_ResourcePath>
 			<DCC_ObjPath>..\Source\Core;.\ubmock\src;$(DCC_ObjPath)</DCC_ObjPath>
 			<DCC_IncludePath>..\Source\Core;.\ubmock\src;$(DCC_IncludePath)</DCC_IncludePath>
@@ -45,23 +45,19 @@
 			<DCC_Optimize>False</DCC_Optimize>
 			<DCC_TypedAtParameter>True</DCC_TypedAtParameter>
 			<DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
-			<DCC_UnitSearchPath>..\Source\Core;.\ubmock\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_ResourcePath>..\Source\Core;.\ubmock\src;$(DCC_ResourcePath)</DCC_ResourcePath>
 			<DCC_ObjPath>..\Source\Core;.\ubmock\src;$(DCC_ObjPath)</DCC_ObjPath>
 			<DCC_IncludePath>..\Source\Core;.\ubmock\src;$(DCC_IncludePath)</DCC_IncludePath>
 			<DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
 		</PropertyGroup>
 		<ItemGroup>
-			<DelphiCompile Include="TestIO.dpr">
+			<DelphiCompile Include="TestIO_D2009.dpr">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
 			<DCCReference Include="InstantMock.pas"/>
 			<DCCReference Include="TestMockConnector.pas"/>
 			<DCCReference Include="TestMockBroker.pas"/>
 			<DCCReference Include="TestModel.pas"/>
-			<DCCReference Include="TestInstantCodeM.pas">
-				<ModuleName>TestInstantCode</ModuleName>
-			</DCCReference>
 			<DCCReference Include="TestInstantMetadata.pas"/>
 			<DCCReference Include="TestInstantFieldMetadata.pas"/>
 			<DCCReference Include="TestInstantClassMetadata.pas"/>
@@ -96,6 +92,7 @@
 			<DCCReference Include="TestInstantCircularReferences.pas"/>
 			<DCCReference Include="TestInstantObjectReference.pas"/>
 			<DCCReference Include="MinimalModel.pas"/>
+			<DCCReference Include="TestXMLBroker.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
@@ -152,7 +149,7 @@
 						<VersionInfoKeys Name="Comments"/>
 					</VersionInfoKeys>
 					<Source>
-						<Source Name="MainSource">TestIO.dpr</Source>
+						<Source Name="MainSource">TestIO_D2009.dpr</Source>
 					</Source>
 				</Delphi.Personality>
 			</BorlandProject>

@@ -1,4 +1,4 @@
-program TestIO;
+program TestIO_D2009;
 
 {$I '..\Source\InstantDefines.inc'}
 
@@ -7,12 +7,6 @@ program TestIO;
 {$ENDIF}
 
 uses
-{$IFNDEF D9+}
-  FastMM4,
-{$ENDIF}
-{$IFDEF FPC}
-  Interfaces,
-{$ENDIF}
   Forms,
   guitestrunner,
   fpcunit,

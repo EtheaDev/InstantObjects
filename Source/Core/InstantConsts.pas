@@ -52,6 +52,7 @@ const
   InstantNowString = 'NOW';
   InstantTagEnd = '>';
   InstantTagStart = '<';
+  InstantProcessingInstructionStart = '?';
   InstantTimeString = 'TIME';
   InstantTrueString = 'TRUE';
   InstantEndTagFormat= InstantTagStart + '/%s' + InstantTagEnd;
@@ -182,6 +183,7 @@ resourcestring
   SUnexpectedAttributeClass = 'Unexpected attribute class for %s(''%s'') in class %s. Expected attribute class %s';
   SUnexpectedClass = 'Unexpected class %s. Expected class %s';
   SUnexpectedToken = 'Unexpected token ''%s''. Expected token ''%s''';
+  SUnexpectedTagName = 'Unexpected tag name ''%s''';
   SUnknownAttributeClass = 'Unknown attribute class for attribute %s(''%s'')';
   SUnspecifiedCommand = 'Command is not specified';
   SUnsupportedColumnSkipped = 'Skipped column %s.%s. Unsupported type %s.';

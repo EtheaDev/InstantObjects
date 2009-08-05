@@ -16,10 +16,10 @@
     <DCC_TypedAtParameter>True</DCC_TypedAtParameter>
     <DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
     <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
-    <DCC_UnitSearchPath>..\Source\Core;.\ubmock\src</DCC_UnitSearchPath>
-    <DCC_ResourcePath>..\Source\Core;.\ubmock\src</DCC_ResourcePath>
-    <DCC_ObjPath>..\Source\Core;.\ubmock\src</DCC_ObjPath>
-    <DCC_IncludePath>..\Source\Core;.\ubmock\src</DCC_IncludePath>
+    <DCC_UnitSearchPath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src</DCC_ResourcePath>
+    <DCC_ObjPath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src</DCC_ObjPath>
+    <DCC_IncludePath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src</DCC_IncludePath>
     <DCC_Define>RELEASE</DCC_Define>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -27,10 +27,10 @@
     <DCC_Optimize>False</DCC_Optimize>
     <DCC_TypedAtParameter>True</DCC_TypedAtParameter>
     <DCC_GenerateStackFrames>True</DCC_GenerateStackFrames>
-    <DCC_UnitSearchPath>..\Source\Core;.\ubmock\src</DCC_UnitSearchPath>
-    <DCC_ResourcePath>..\Source\Core;.\ubmock\src</DCC_ResourcePath>
-    <DCC_ObjPath>..\Source\Core;.\ubmock\src</DCC_ObjPath>
-    <DCC_IncludePath>..\Source\Core;.\ubmock\src</DCC_IncludePath>
+    <DCC_UnitSearchPath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src</DCC_UnitSearchPath>
+    <DCC_ResourcePath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src</DCC_ResourcePath>
+    <DCC_ObjPath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src</DCC_ObjPath>
+    <DCC_IncludePath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src</DCC_IncludePath>
     <DCC_Define>DEBUG</DCC_Define>
   </PropertyGroup>
   <ProjectExtensions>
@@ -82,5 +82,6 @@
     <DCCReference Include="TestMockBroker.pas" />
     <DCCReference Include="TestMockConnector.pas" />
     <DCCReference Include="TestModel.pas" />
+    <DCCReference Include="TestXMLBroker.pas" />
   </ItemGroup>
 </Project>

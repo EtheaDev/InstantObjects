@@ -5632,6 +5632,8 @@ class procedure TInstantObject.ConvertToText(
           Producer.WriteData(InstantDateTimeToStr(Reader.ReadDate));
         vaString, vaLString:
           Producer.WriteEscapedData(Reader.ReadString);
+       vaUTF8String:
+          Producer.WriteEscapedData(Reader.ReadString);
         vaCurrency:
           Producer.WriteEscapedData(CurrToStr(Reader.ReadCurrency));
         vaIdent:
