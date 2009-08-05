@@ -1182,17 +1182,6 @@ begin
 end;
 {$ENDIF}
 
-function RemoveXmlDeclaration(const xmlString: string): string;
-var
-  nPos: Integer;
-begin
-  nPos := Pos('<?xml', xmlString);
-  if nPos > 0 then
-    Result := Copy(xmlString, Pos('?>', xmlString) + 2, maxint)
-  else
-    Result := xmlString;
-end;
-
 {$IFDEF UNICODE}
 function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
   const AObject: TInstantObject; const AObjectId, AFileName: string): Boolean;
