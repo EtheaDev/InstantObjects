@@ -1,8 +1,6 @@
 object MainForm: TMainForm
   Left = 254
   Top = 225
-  Width = 521
-  Height = 372
   Caption = 'InstantObjects Primer'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -12,25 +10,24 @@ object MainForm: TMainForm
   Font.Style = []
   Menu = MainMenu
   OldCreateOrder = False
-  WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object SideBarSplitter: TSplitter
     Left = 88
-    Top = 28
-    Height = 271
+    Top = 26
+    Height = 458
     ResizeStyle = rsLine
   end
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 513
-    Height = 28
+    Width = 624
+    Height = 26
     AutoSize = True
     BorderWidth = 1
-    Flat = True
     Images = ActionImages
     ParentShowHint = False
     ShowHint = True
@@ -48,8 +45,8 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 299
-    Width = 513
+    Top = 484
+    Width = 624
     Height = 19
     Panels = <
       item
@@ -62,9 +59,9 @@ object MainForm: TMainForm
   end
   object SideBarPanel: TPanel
     Left = 0
-    Top = 28
+    Top = 26
     Width = 88
-    Height = 271
+    Height = 458
     Align = alLeft
     BevelOuter = bvNone
     BorderStyle = bsSingle
@@ -82,7 +79,7 @@ object MainForm: TMainForm
       Left = 0
       Top = 8
       Width = 84
-      Height = 259
+      Height = 446
       Align = alClient
       BorderStyle = bsNone
       Color = clAppWorkSpace
@@ -100,16 +97,16 @@ object MainForm: TMainForm
   end
   object WorkPanel: TPanel
     Left = 91
-    Top = 28
-    Width = 422
-    Height = 271
+    Top = 26
+    Width = 533
+    Height = 458
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
     object WorkTitleSpacer: TBevel
       Left = 0
       Top = 27
-      Width = 422
+      Width = 533
       Height = 4
       Align = alTop
       Shape = bsSpacer
@@ -117,7 +114,7 @@ object MainForm: TMainForm
     object WorkTitlePanel: TPanel
       Left = 0
       Top = 0
-      Width = 422
+      Width = 533
       Height = 27
       Align = alTop
       BevelInner = bvLowered
@@ -140,8 +137,8 @@ object MainForm: TMainForm
     object WorkClientPanel: TPanel
       Left = 0
       Top = 31
-      Width = 422
-      Height = 240
+      Width = 533
+      Height = 427
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1

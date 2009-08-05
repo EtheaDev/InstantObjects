@@ -193,8 +193,9 @@ type
     procedure WriteCharSet(CharSet: TChars);
     procedure WriteObject(AObject: TPersistent); virtual;
     procedure WriteProperties(AObject: TPersistent);
-    // Might be needed for versions of Delphi <7?
-    //procedure WriteString(const Value: string);
+    {$IFNDEF UNICODE}
+    procedure WriteString(const Value: string);
+    {$ENDIF}
     procedure WriteValue(Value: TValueType);
     property Stream: TStream read FStream;
   end;
@@ -249,10 +250,10 @@ type
   {$ELSE}
   TInstantStringStream = class(TInstantStream)
   private
-    function GetDataString: AnsiString;
+    function GetDataString: string;
   public
     constructor Create(AString: string);
-    property DataString: AnsiString read GetDataString;
+    property DataString: string read GetDataString;
   end;
   {$ENDIF}
 
@@ -268,7 +269,6 @@ type
     function GetWriter: TAbstractWriter;
     procedure SetPosition(Value: Integer);
     procedure WriteString(const S: string);
-    procedure WriteWideString(const S: WideString);
   protected
     property TagStack: TStringList read GetTagStack;
     property Writer: TAbstractWriter read GetWriter;
@@ -295,14 +295,15 @@ type
     function GetPosition: Integer;
     function GetReader: TAbstractReader;
     function GetToken: TInstantXMLToken;
-    function ReadEscapedChar: AnsiChar;
+    function ReadEscapedChar: Char;
     procedure SetPosition(const Value: Integer);
   protected
     procedure CheckToken(AToken: TInstantXMLToken);
-    function PeekChar: AnsiChar;
-    function ReadChar: AnsiChar;
+    function PeekChar: Char;
+    function ReadChar: Char;
     procedure SkipBlanks;
     property Reader: TAbstractReader read GetReader;
+    function IsProcessingInstruction(const ATagName: string): Boolean;
   public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
@@ -313,6 +314,7 @@ type
     function ReadTag: string;
     function ReadTagName: string;
     procedure Skip;
+    procedure SkipProcessingInstruction;
     property Eof: Boolean read GetEof;
     property Position: Integer read GetPosition write SetPosition;
     property Stream: TStream read FStream;
@@ -503,6 +505,7 @@ procedure InstantObjectTextToBinary(Input, Output: TStream);
 begin
   with TInstantTextToBinaryConverter.Create(Input, Output) do
   try
+    Processor.SkipProcessingInstruction;
     Convert;
   finally
     Free;
@@ -513,15 +516,37 @@ function InstantReadObject(Stream: TStream; Format: TInstantStreamFormat;
   AObject: TPersistent = nil): TPersistent;
 var
   MemoryStream: TMemoryStream;
+  {$IFDEF UNICODE}
+  StringStream: TStringStream;
+  UStringStream: TStringStream;
+  {$ENDIF}
 begin
   if Format = sfBinary then
     Result := InstantReadObjectFromStream(Stream, AObject)
   else begin
     MemoryStream := TMemoryStream.Create;
     try
+      {$IFDEF UNICODE}
+      StringStream := TStringStream.Create('', TEncoding.UTF8);
+      try
+        StringStream.CopyFrom(Stream, Stream.Size);
+        UStringStream := TStringStream.Create(StringStream.DataString, TEncoding.Unicode);
+        try
+          UStringStream.Position := 0;
+          InstantObjectTextToBinary(UStringStream, MemoryStream);
+          MemoryStream.Position := 0;
+          Result := InstantReadObjectFromStream(MemoryStream, AObject);
+        finally
+          UStringStream.Free;
+        end;
+      finally
+        StringStream.Free;
+      end;
+      {$ELSE}
       InstantObjectTextToBinary(Stream, MemoryStream);
       MemoryStream.Position := 0;
       Result := InstantReadObjectFromStream(MemoryStream, AObject);
+      {$ENDIF}
     finally
       MemoryStream.Free;
     end;
@@ -1058,7 +1083,7 @@ begin
   WriteListEnd;
 end;
 
-(* Might be needed for versions of Delphi <7?
+{$IFNDEF UNICODE}
 procedure TInstantWriter.WriteString(const Value: string);
 var
   L: Integer;
@@ -1075,7 +1100,7 @@ begin
   end;
   Write(Pointer(Value)^, L);
 end;
-*)
+{$ENDIF}
 
 procedure TInstantWriter.WriteValue(Value: TValueType);
 begin
@@ -1291,7 +1316,7 @@ begin
 end;
 
 {$IFNDEF UNICODE}
-function TInstantStringStream.GetDataString: AnsiString;
+function TInstantStringStream.GetDataString: string;
 var
   Pos: Integer;
 begin
@@ -1424,15 +1449,7 @@ var
   U: UTF8String;
 begin
   U := UTF8String(S);
-  Writer.Write(U[1], Length(U));
-end;
-
-procedure TInstantXMLProducer.WriteWideString(const S: WideString);
-var
-  U : UTF8String;
-begin
-  U := UTF8Encode(S);
-  Writer.Write(U[1], Length(U));
+  Writer.Write(Pointer(U)^, Length(U));
 end;
 
 { TInstantXMLProcessor }
@@ -1481,7 +1498,7 @@ begin
     Result := xtData;
 end;
 
-function TInstantXMLProcessor.PeekChar: AnsiChar;
+function TInstantXMLProcessor.PeekChar: Char;
 var
   Pos: Integer;
 begin
@@ -1517,9 +1534,9 @@ begin
   end;
 end;
 
-function TInstantXMLProcessor.ReadChar: AnsiChar;
+function TInstantXMLProcessor.ReadChar: Char;
 begin
-  Reader.Read(Result, SizeOf(AnsiChar));
+  Reader.Read(Result, SizeOf(Char));
 end;
 
 function TInstantXMLProcessor.ReadData: string;
@@ -1533,11 +1550,11 @@ end;
 
 procedure TInstantXMLProcessor.ReadData(Stream: TStream);
 var
-  C: AnsiChar;
+  C: Char;
   CharSize: Integer;
 begin
   CheckToken(xtData);
-  CharSize := SizeOf(AnsiChar);
+  CharSize := SizeOf(Char);
   while not (PeekChar = InstantTagStart) do
   begin
     C := ReadEscapedChar;
@@ -1545,7 +1562,7 @@ begin
   end;
 end;
 
-function TInstantXMLProcessor.ReadEscapedChar: AnsiChar;
+function TInstantXMLProcessor.ReadEscapedChar: Char;
 
   procedure UnEscape;
   var
@@ -1559,7 +1576,7 @@ function TInstantXMLProcessor.ReadEscapedChar: AnsiChar;
       Result := ReadChar;
     end;
     if S[1] = '#' then
-      Result := AnsiChar(StrToInt(Copy(S, 2, Length(S) - 1)))
+      Result := Char(StrToInt(Copy(S, 2, Length(S) - 1)))
     else if S = 'quot' then
       Result := #34
     else if S = 'amp' then
@@ -1580,7 +1597,7 @@ end;
 
 function TInstantXMLProcessor.ReadTag: string;
 var
-  C: AnsiChar;
+  C: Char;
   Pos: Integer;
 begin
   Pos := Position;
@@ -1595,7 +1612,16 @@ begin
   repeat
     C := ReadChar;
     Result := Result + C;
-  until C = InstantTagEnd;
+  until (C = InstantTagEnd) or (C = ' ');
+  // Skip attributes.
+  if C = ' ' then
+  begin
+    Delete(Result, Length(Result), 1);
+    Result := Result + InstantTagEnd;
+    repeat
+      C := ReadChar;
+    until C = InstantTagEnd;
+  end;
 end;
 
 function TInstantXMLProcessor.ReadTagName: string;
@@ -1635,6 +1661,20 @@ procedure TInstantXMLProcessor.SkipBlanks;
 begin
   while PeekChar in [#1..#32] do
     ReadChar;
+end;
+
+procedure TInstantXMLProcessor.SkipProcessingInstruction;
+var
+  LNextTagName: string;
+begin
+  LNextTagName := PeekTagName;
+  if IsProcessingInstruction(LNextTagName) then
+    ReadTag;
+end;
+
+function TInstantXMLProcessor.IsProcessingInstruction(const ATagName: string): Boolean;
+begin
+  Result := (ATagName <> '') and (ATagName[1] = InstantProcessingInstructionStart);
 end;
 
 { TInstantConverter }
@@ -1749,7 +1789,7 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
       vaString, vaLString:
         Producer.WriteEscapedData(Reader.ReadString);
       vaUTF8String:
-        Producer.WriteWideString(Reader.ReadWideString);
+        Producer.WriteEscapedData(Reader.ReadString);
       vaSet:
         begin
           Reader.ReadValue;
@@ -1845,7 +1885,7 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
   procedure ConvertProperty(PropInfo: PPropInfo);
   var
     I: Integer;
-    PropName, ValueStr: String;
+    PropName, ValueStr: string;
     S: TStringList;
   begin
     PropName := Processor.ReadTagName;
@@ -1906,7 +1946,7 @@ begin
   begin
     TagName := Processor.PeekTagName;
     PropInfo := InstantGetPropInfo(ObjectClass, TagName);
-    if Assigned(Propinfo) then
+    if Assigned(PropInfo) then
       ConvertProperty(PropInfo)
     else
       Processor.Skip;
@@ -1918,7 +1958,6 @@ function TInstantTextToBinaryConverter.GetInput: TStream;
 begin
   Result := Processor.Stream;
 end;
-
 
 function TInstantTextToBinaryConverter.GetOutput: TStream;
 begin

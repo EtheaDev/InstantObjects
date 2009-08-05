@@ -72,6 +72,7 @@
     <DCCReference Include="..\InstantModelExplorer.pas">
       <Form>InstantModelExplorerForm</Form>
     </DCCReference>
+    <DCCReference Include="..\InstantModelImport.pas" />
     <DCCReference Include="..\InstantOTA.pas" />
     <DCCReference Include="..\InstantReg.pas" />
     <DCCReference Include="..\InstantUnitSelect.pas">

@@ -109,7 +109,6 @@ type
     function CreateDataSet: TDataSet; override;
     function CreateNavigationalLinkResolver(const ATableName: string):
         TInstantNavigationalLinkResolver; override;
-    function Find(const AClassName, AObjectId: string): Boolean;
     function Locate(const AClassName, AObjectId: string): Boolean; override;
   public
     function FormatTableName(const ATableName: string): string; virtual;
@@ -827,48 +826,6 @@ begin
   Result := TInstantADOLinkResolver.Create(Self, ATableName);
 end;
 
-function TInstantADOResolver.Find(const AClassName,
-  AObjectId: string): Boolean;
-var
-  LocateSet: _RecordSet;
-  Criteria: string;
-  Bm: OleVariant;
-  SkipCount: Integer;
-begin
-  with DataSet do
-  begin
-    LocateSet := RecordSet.Clone(adLockReadOnly);
-    Criteria := Format('%s=%s', [InstantIdFieldName, InstantQuote(AObjectId,'''')]);
-    SkipCount := 0;
-    Result := False;
-    if not LocateSet.EOF then
-    begin
-      Bm := LocateSet.Bookmark;
-      while not LocateSet.EOF do
-      begin
-        LocateSet.Find(Criteria, SkipCount, adSearchForward, Bm);
-        Result := not LocateSet.EOF;
-        if Result then
-        begin
-          Bm := LocateSet.Bookmark;
-          Result := LocateSet.Fields[InstantClassFieldName].Value = AClassName;
-          if Result then
-          begin
-            GotoBookmark(@Bm);
-            if Recordset.BOF then
-            begin
-              Result := False;
-              CursorPosChanged;
-            end;
-            Break;
-          end;
-        end;
-        SkipCount := 1;
-      end;
-    end;
-  end;
-end;
-
 function TInstantADOResolver.FormatTableName(
   const ATableName: string): string;
 begin
@@ -894,8 +851,6 @@ begin
   with DataSet do
     if Supports([coSeek]) then
       Result := Seek(KeyVals)
-    else if Supports([coFind]) then
-      Result := Find(AClassName, AObjectId)
     else
       Result := Locate(InstantIndexFieldNames, KeyVals, []);
 end;

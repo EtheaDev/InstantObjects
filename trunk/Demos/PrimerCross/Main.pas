@@ -75,6 +75,7 @@ type
     procedure ExportItemClick(Sender: TObject);
     procedure ImportItemClick(Sender: TObject);
     procedure ExportModelItemClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FActiveSubView: TBasicViewForm;
     FConnectionDef: TInstantConnectionDef;
@@ -539,6 +540,11 @@ begin
 
   CreateSubViews;
   UpdateStatus;
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+  WindowState := wsMaximized;
 end;
 
 function TMainForm.GetConnectionName: string;

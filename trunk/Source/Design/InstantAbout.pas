@@ -79,7 +79,7 @@ begin
 {$IFDEF MSWINDOWS}
   with InstantFileVersion(InstantModuleFileName) do
   begin
-    S := Format('Version %d.%d', [Major, Minor]);
+    S := Format('Version %d.%d.%d', [Major, Minor, Release]);
     if Release > 0 then
       S := S +'.'+ IntToStr(Release);
     Suffix := InstantFileVersionValue(InstantModuleFileName, 'VersionSuffix');
@@ -97,7 +97,7 @@ begin
   TitleLabel.Font.Size := 18;
   TitleLabel.Font.Style := [fsBold];
   //Package version for Kylix
-  S := Format('Version %d.%d.%d %s', [2,0,0,'MPL']);
+  S := Format('Version %d.%d.%d %s', [2,1,1,'MPL']);
 {$ENDIF}
   VersionLabel.Caption := S;
 end;

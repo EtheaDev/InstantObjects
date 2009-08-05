@@ -3,7 +3,14 @@
     <ProjectGuid>{b0beaee6-5b6a-420d-a1e5-7be9568cd5a2}</ProjectGuid>
   </PropertyGroup>
   <ItemGroup />
-  <ItemGroup />
+  <ItemGroup>
+    <Projects Include="..\..\Brokers\ADO\D2007\DclIOADO.dproj" />
+    <Projects Include="..\..\Brokers\BDE\D2007\DclIOBDE.dproj" />
+    <Projects Include="..\..\Brokers\DBX\D2007\DclIODBX.dproj" />
+    <Projects Include="..\..\Brokers\IBX\D2007\DclIOIBX.dproj" />
+    <Projects Include="..\..\Brokers\XML\D2007\DclIOXML.dproj" />
+    <Projects Include="..\..\Design\D2007\DclIOCore.dproj" />
+  </ItemGroup>
   <ProjectExtensions>
     <Borland.Personality>Default.Personality</Borland.Personality>
     <Borland.ProjectType />
@@ -64,22 +71,14 @@
   <Target Name="DclIOXML:Make">
     <MSBuild Projects="..\..\Brokers\XML\D2007\DclIOXML.dproj" Targets="Make" />
   </Target>
-  <Target Name="DclIOZeosDBO">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="" />
-  </Target>
-  <Target Name="DclIOZeosDBO:Clean">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="Clean" />
-  </Target>
-  <Target Name="DclIOZeosDBO:Make">
-    <MSBuild Projects="..\..\Brokers\ZeosDBO\D2007\DclIOZeosDBO.dproj" Targets="Make" />
-  </Target>
   <Target Name="Build">
-    <CallTarget Targets="DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML;DclIOZeosDBO" />
+    <CallTarget Targets="DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML" />
   </Target>
   <Target Name="Clean">
-    <CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean;DclIOZeosDBO:Clean" />
+    <CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean" />
   </Target>
   <Target Name="Make">
-    <CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIOBDE:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make;DclIOZeosDBO:Make" />
+    <CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIOBDE:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make" />
   </Target>
+  <Import Condition="Exists('$(MSBuildBinPath)\Borland.Group.Targets')" Project="$(MSBuildBinPath)\Borland.Group.Targets" />
 </Project>

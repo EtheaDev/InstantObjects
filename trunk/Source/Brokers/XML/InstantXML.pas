@@ -229,6 +229,7 @@ type
     FParamsObject: TParams;
     FStorageNames: TStringList;
     FObjectClassNames: TStringList;
+    FIQLCommand: TInstantIQLCommand;
     procedure DestroyObjectReferenceList;
     function GetObjectReferenceCount: Integer;
     function GetObjectReferenceList: TObjectList;
@@ -236,10 +237,16 @@ type
     // Creates an object reference for each item in AFileList that represents
     // an object of a class included in FObjectClassNames.
     procedure InitObjectReferences(const AFileList: TStrings);
+
+    procedure SortObjectReferences;
     function GetParamsObject: TParams;
     function GetConnector: TInstantXMLConnector;
     procedure SetStorageNames(const Value: TStringList);
     procedure SetObjectClassNames(const Value: TStringList);
+    function SortCompareMethod(Holder, Obj1, Obj2: TInstantObject): Integer;
+    procedure CreateIQLCommand;
+    procedure QuickSortObjectReferenceList(List: TList; L, R: Integer;
+      Compare: TInstantSortCompare);
   protected
     class function TranslatorClass: TInstantRelationalTranslatorClass; override;
     function GetActive: Boolean; override;
@@ -319,7 +326,7 @@ implementation
 
 uses
   SysUtils, InstantConsts, InstantClasses, TypInfo, InstantXMLCatalog,
-  InstantXMLConnectionDefEdit,
+  InstantXMLConnectionDefEdit, InstantUtils,
 {$IFDEF MSWINDOWS}
 {$IFNDEF D6+}
   FileCtrl,
@@ -799,6 +806,7 @@ begin
   FObjectClassNames := TStringList.Create;
   FObjectClassNames.Sorted := True;
   FObjectClassNames.Duplicates := dupIgnore;
+  FIQLCommand := TInstantIQLCommand.Create(nil);
 end;
 
 destructor TInstantXMLQuery.Destroy;
@@ -807,6 +815,7 @@ begin
   FParamsObject.Free;
   FreeAndNil(FStorageNames);
   FreeAndNil(FObjectClassNames);
+  FreeAndNil(FIQLCommand);
   inherited;
 end;
 
@@ -965,13 +974,30 @@ var
   vFileList: TStringList;
 begin
   inherited;
+  CreateIQLCommand;
+
   vFileList := TStringList.Create;
   try
     Connector.Connection.Open;
     Connector.Connection.LoadFileList(vFileList, FStorageNames);
     InitObjectReferences(vFileList);
+
+    if Assigned(FIQLCommand.Order) then
+      SortObjectReferences;
   finally
     vFileList.Free;
+  end;
+end;
+
+procedure TInstantXMLQuery.CreateIQLCommand;
+var
+  LReader: TInstantIQLReader;
+begin
+  LReader := TInstantIQLReader.Create(TStringStream.Create(Command{$IFDEF D12+}, TEncoding.Unicode{$ENDIF}), True);
+  try
+    LReader.ReadObject(FIQLCommand);
+  finally
+    FreeAndNil(LReader);
   end;
 end;
 
@@ -1018,6 +1044,70 @@ begin
   FStorageNames.Assign(Value);
 end;
 
+procedure TInstantXMLQuery.QuickSortObjectReferenceList(List: TList;
+  L, R: Integer; Compare: TInstantSortCompare);
+var
+  I, J, P: Integer;
+begin
+  repeat
+    I := L;
+    J := R;
+    P := (L + R) shr 1;
+    repeat
+      while Compare(nil,
+          TInstantObjectReference(List[I]).Dereference,
+          TInstantObjectReference(List[P]).Dereference) < 0 do
+        Inc(I);
+      while Compare(nil,
+          TInstantObjectReference(List[J]).Dereference,
+          TInstantObjectReference(List[P]).Dereference) > 0 do
+        Dec(J);
+      if I <= J then
+      begin
+        List.Exchange(I, J);
+        if P = I then
+          P := J
+        else if P = J then
+          P := I;
+        Inc(I);
+        Dec(J);
+      end;
+    until I > J;
+    if L < J then
+      QuickSortObjectReferenceList(List, L, J, Compare);
+    L := I;
+  until I >= R;
+end;
+
+procedure TInstantXMLQuery.SortObjectReferences;
+begin
+  if ObjectReferenceList.Count > 0 then
+    QuickSortObjectReferenceList(ObjectReferenceList, 0,
+      Pred(ObjectReferenceList.Count), SortCompareMethod);
+end;
+
+function TInstantXMLQuery.SortCompareMethod(Holder, Obj1,
+  Obj2: TInstantObject): Integer;
+var
+  LOrder: TInstantIQLOrder;
+begin
+  Assert(Assigned(FIQLCommand.Order));
+
+  Result := 0;
+  LOrder := FIQLCommand.Order;
+  Assert(Assigned(LOrder.OrderSpec));
+  while Assigned(LOrder) do
+  begin
+    Result := InstantCompareObjects(Obj1, Obj2,
+      LOrder.OrderSpec.Expression.Text, []);
+    if LOrder.OrderSpec.OrderDirection = odDesc then
+      Result := -Result;
+    if Result <> 0 then
+      Break;
+    LOrder := LOrder.NextOrder;
+  end;
+end;
+
 class function TInstantXMLQuery.TranslatorClass:
   TInstantRelationalTranslatorClass;
 begin
@@ -1039,6 +1129,29 @@ begin
   end;
 end;
 
+{$IFDEF UNICODE}
+function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
+  const AObject: TInstantObject; const AFileName: string): Boolean;
+var
+  strstream: TStringStream;
+  fileStream: TFileStream;
+  DataStr: UTF8String;
+begin
+  strstream := TStringStream.Create('', TEncoding.UTF8);
+  try
+    InstantWriteObject(strStream, sfXML, AObject);
+    DataStr := XML_UTF8_HEADER + UTF8String(strStream.DataString);
+  finally
+    strStream.Free;
+  end;
+  fileStream := TFileStream.Create(AFileName, fmCreate);
+  try
+    Result := fileStream.Write(DataStr[1], Length(DataStr)) <> 0;
+  finally
+    fileStream.Free;
+  end;
+end;
+{$ELSE}
 function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
   const AObject: TInstantObject; const AFileName: string): Boolean;
 var
@@ -1067,6 +1180,7 @@ begin
     fileStream.Free;
   end;
 end;
+{$ENDIF}
 
 function RemoveXmlDeclaration(const xmlString: string): string;
 var
@@ -1079,6 +1193,26 @@ begin
     Result := xmlString;
 end;
 
+{$IFDEF UNICODE}
+function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
+  const AObject: TInstantObject; const AObjectId, AFileName: string): Boolean;
+var
+  fileStream: TFileStream;
+begin
+  if FileExists(AFileName) then
+  begin
+    fileStream := TFileStream.Create(AFileName, fmOpenRead);
+    try
+      InstantReadObject(fileStream, sfXML, AObject);
+      Result := True;
+    finally
+      fileStream.Free;
+    end;
+  end
+  else
+    Result := False;
+end;
+{$ELSE}
 function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
   const AObject: TInstantObject; const AObjectId, AFileName: string): Boolean;
 var
@@ -1090,8 +1224,6 @@ begin
   try
     SetLength(strUtf8, fileStream.Size);
     Result := fileStream.Read(strUtf8[1], fileStream.Size) <> 0;
-    // skip XML HEADER (until the parser is "dumb")
-    strUtf8 := RemoveXmlDeclaration(strUtf8);
   finally
     fileStream.Free;
   end;
@@ -1108,6 +1240,7 @@ begin
     strstream.Free;
   end;
 end;
+{$ENDIF}
 
 function TXMLFilesAccessor.LocateInstantObjectXmlFile(const AObjectClassName,
   AObjectId, AFileName: string): Boolean;

@@ -215,6 +215,10 @@ function InstantCompareValues(V1, V2: Variant;
         Result := CompareNumbers(V1, V2);
       varString, varOleStr:
         Result := CompareStrings(V1, V2);
+      {$IFDEF UNICODE}
+      varUString:
+        Result := CompareStrings(V1, V2);
+      {$ENDIF}
     else
       Result := 0;
     end
