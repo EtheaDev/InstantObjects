@@ -139,7 +139,7 @@ resourcestring
   SInvalidOperator = 'Invalid operator: %s';
   SInvalidPropertyValue = 'Invalid property value';
   SInvalidToken = 'Invalid token ''%s''';
-  SInvalidValueType = 'Invalid value type';
+  SInvalidValueType = 'Invalid value type ''%s''';
   SKeyViolation = 'Key violation for object %s(''%s'')';
   SLoginPromptFailure = 'Couldn''t find login dialog. Please use unit DBLogDlg or set LoginPrompt to False';
   SMetadataMismatch = 'Metadata mismatch for attribute %s(''%s'')';
