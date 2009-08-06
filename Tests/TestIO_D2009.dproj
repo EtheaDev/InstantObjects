@@ -93,6 +93,7 @@
 			<DCCReference Include="TestInstantObjectReference.pas"/>
 			<DCCReference Include="MinimalModel.pas"/>
 			<DCCReference Include="TestXMLBroker.pas"/>
+			<DCCReference Include="TestInstantCode.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

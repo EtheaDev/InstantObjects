@@ -444,10 +444,10 @@ type
     FStream: TMemoryStream;
     function GetSize: Integer;
     function GetStream: TMemoryStream;
-    function GetValue: string;
-    procedure SetValue(const AValue: string);
     property Stream: TMemoryStream read GetStream;
   protected
+    function GetValue: AnsiString; virtual;
+    procedure SetValue(const AValue: AnsiString); virtual;
     class function AttributeType: TInstantAttributeType; override;
     function GetAsString: string; override;
     function GetAsVariant: Variant; override;
@@ -472,7 +472,7 @@ type
     function WriteBuffer(const Buffer; Position, Count: Integer): Integer;
     property Size: Integer read GetSize;
   published
-    property Value: string read GetValue write SetValue;
+    property Value: AnsiString read GetValue write SetValue;
   end;
 
   TInstantMemo = class(TInstantBlob)
@@ -3485,13 +3485,14 @@ begin
   Result := FStream;
 end;
 
-function TInstantBlob.GetValue: string;
+function TInstantBlob.GetValue: AnsiString;
 begin
   if Size > 0 then
   begin
-    SetLength(Result, Size div SizeOf(Char));
+    SetLength(Result, Size div SizeOf(AnsiChar));
     Read(Result[1], 0, Size);
-  end else
+  end
+  else
     Result := '';
 end;
 
@@ -3567,17 +3568,18 @@ begin
   end;
 end;
 
-procedure TInstantBlob.SetValue(const AValue: string);
+procedure TInstantBlob.SetValue(const AValue: AnsiString);
 var
   L: Integer;
 begin
-  L := Length(AValue) * SizeOf(Char);
+  L := Length(AValue) * SizeOf(AnsiChar);
   if L > 0 then
   begin
     Stream.Clear;
     WriteBuffer(AValue[1], 0, L);
     Stream.Size := L;
-  end else
+  end
+  else
     Clear;
 end;
 

@@ -52,7 +52,8 @@ uses
   TestInstantCircularReferences in 'TestInstantCircularReferences.pas',
   TestInstantObjectReference in 'TestInstantObjectReference.pas',
   MinimalModel in 'MinimalModel.pas',
-  TestXMLBroker in 'TestXMLBroker.pas';
+  TestXMLBroker in 'TestXMLBroker.pas',
+  TestInstantCode in 'TestInstantCode.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}

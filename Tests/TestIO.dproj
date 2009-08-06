@@ -55,6 +55,7 @@
     <DCCReference Include="TestInstantCircularReferences.pas" />
     <DCCReference Include="TestInstantClasses.pas" />
     <DCCReference Include="TestInstantClassMetadata.pas" />
+    <DCCReference Include="TestInstantCode.pas" />
     <DCCReference Include="TestInstantComplex.pas" />
     <DCCReference Include="TestInstantCurrency.pas" />
     <DCCReference Include="TestInstantDate.pas" />
