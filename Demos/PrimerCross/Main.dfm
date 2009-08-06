@@ -10,21 +10,21 @@ object MainForm: TMainForm
   Font.Style = []
   Menu = MainMenu
   OldCreateOrder = False
+  OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
-  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object SideBarSplitter: TSplitter
     Left = 88
     Top = 26
-    Height = 458
+    Height = 139
     ResizeStyle = rsLine
   end
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 624
+    Width = 304
     Height = 26
     AutoSize = True
     BorderWidth = 1
@@ -45,8 +45,8 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 484
-    Width = 624
+    Top = 165
+    Width = 304
     Height = 19
     Panels = <
       item
@@ -61,7 +61,7 @@ object MainForm: TMainForm
     Left = 0
     Top = 26
     Width = 88
-    Height = 458
+    Height = 139
     Align = alLeft
     BevelOuter = bvNone
     BorderStyle = bsSingle
@@ -79,7 +79,7 @@ object MainForm: TMainForm
       Left = 0
       Top = 8
       Width = 84
-      Height = 446
+      Height = 127
       Align = alClient
       BorderStyle = bsNone
       Color = clAppWorkSpace
@@ -89,6 +89,7 @@ object MainForm: TMainForm
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       Font.Style = []
+      IconOptions.AutoArrange = True
       ReadOnly = True
       ParentFont = False
       TabOrder = 0
@@ -98,15 +99,15 @@ object MainForm: TMainForm
   object WorkPanel: TPanel
     Left = 91
     Top = 26
-    Width = 533
-    Height = 458
+    Width = 213
+    Height = 139
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
     object WorkTitleSpacer: TBevel
       Left = 0
       Top = 27
-      Width = 533
+      Width = 213
       Height = 4
       Align = alTop
       Shape = bsSpacer
@@ -114,7 +115,7 @@ object MainForm: TMainForm
     object WorkTitlePanel: TPanel
       Left = 0
       Top = 0
-      Width = 533
+      Width = 213
       Height = 27
       Align = alTop
       BevelInner = bvLowered
@@ -137,8 +138,8 @@ object MainForm: TMainForm
     object WorkClientPanel: TPanel
       Left = 0
       Top = 31
-      Width = 533
-      Height = 427
+      Width = 213
+      Height = 108
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1

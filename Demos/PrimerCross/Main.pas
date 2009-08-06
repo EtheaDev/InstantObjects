@@ -75,7 +75,7 @@ type
     procedure ExportItemClick(Sender: TObject);
     procedure ImportItemClick(Sender: TObject);
     procedure ExportModelItemClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
   private
     FActiveSubView: TBasicViewForm;
     FConnectionDef: TInstantConnectionDef;
@@ -501,6 +501,11 @@ begin
   end;
 end;
 
+procedure TMainForm.FormActivate(Sender: TObject);
+begin
+  WindowState := wsMaximized;
+end;
+
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Disconnect;
@@ -519,7 +524,6 @@ begin
     BorderWidth := 4;
     HoverTime := 0;
     HotTrackStyles := [htHandPoint];
-    IconOptions.Arrangement := iaLeft;
     LargeImages := SideBarImages;
   end;
 {$ENDIF}
@@ -537,14 +541,8 @@ begin
 //  ConnectionManager.FileFormat := sfBinary;
 //  ConnectionManager.FileName := ChangeFileExt(Application.ExeName, '.con');
 
-
   CreateSubViews;
   UpdateStatus;
-end;
-
-procedure TMainForm.FormShow(Sender: TObject);
-begin
-  WindowState := wsMaximized;
 end;
 
 function TMainForm.GetConnectionName: string;

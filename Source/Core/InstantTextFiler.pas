@@ -194,7 +194,7 @@ end;
 
 constructor TInstantTextFiler.Create(AText: string);
 begin
-  Create(TStringStream.Create(AText), True);
+  Create(TInstantStringStream.Create(AText), True);
 end;
 
 procedure TInstantTextFiler.DescendPosition(Ch: Char);
