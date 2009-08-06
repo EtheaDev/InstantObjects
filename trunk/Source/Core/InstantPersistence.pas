@@ -5620,19 +5620,19 @@ class procedure TInstantObject.ConvertToText(
   var
     Count: Integer;
     Bin, Hex: string;
+    LNextValueType: TValueType;
   begin
     with Converter do
     begin
-      case Reader.NextValue of
+      LNextValueType := Reader.NextValue;
+      case LNextValueType of
         vaInt8, vaInt16, vaInt32:
           Producer.WriteData(IntToStr(Reader.ReadInteger));
         vaExtended:
           Producer.WriteData(FloatToStr(Reader.ReadFloat));
         vaDate:
           Producer.WriteData(InstantDateTimeToStr(Reader.ReadDate));
-        vaString, vaLString:
-          Producer.WriteEscapedData(Reader.ReadString);
-       vaUTF8String:
+        vaString, vaLString, vaUTF8String, vaWString:
           Producer.WriteEscapedData(Reader.ReadString);
         vaCurrency:
           Producer.WriteEscapedData(CurrToStr(Reader.ReadCurrency));
@@ -5669,7 +5669,8 @@ class procedure TInstantObject.ConvertToText(
              Reader.ReadListEnd;
           end;
       else
-        raise EInstantStreamError.Create(SInvalidValueType);
+        raise EInstantStreamError.CreateFmt(SInvalidValueType,
+          [GetEnumName(TypeInfo(TValueType), Ord(LNextValueType))]);
       end;
     end;
   end;

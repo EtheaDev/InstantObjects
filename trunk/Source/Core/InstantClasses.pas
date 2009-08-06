@@ -1786,9 +1786,7 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
         Producer.WriteData(CurrToStr(Reader.ReadCurrency));
       vaDate:
         Producer.WriteData(InstantDateTimeToStr(Reader.ReadDate));
-      vaString, vaLString:
-        Producer.WriteEscapedData(Reader.ReadString);
-      vaUTF8String:
+      vaString, vaLString, vaUTF8String, vaWString:
         Producer.WriteEscapedData(Reader.ReadString);
       vaSet:
         begin
