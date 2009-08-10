@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Uberto Barbini, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Uberto Barbini, Nando Dessena,
+ * Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -77,6 +78,7 @@ function InstantGetPropInfo(AClass: TClass; PropPath: string;
 procedure InstantSetProperty(AObject: TObject; PropPath: string; Value: Variant);
 function InstantIsDefaultPropertyValue(Instance: TObject;
   PropInfo: PPropInfo): Boolean;
+function InstantGetPropName(PropInfo: PPropInfo): string;
 
 implementation
 
@@ -134,18 +136,18 @@ begin
                                 Value := 1;
               end;
               {$ENDIF}
-              SetPropValue(AObject, PropInfo^.Name, Value);
+              SetPropValue(AObject, InstantGetPropName(PropInfo), Value);
             end;
           tkSet:
             if VarToStr(Value) = '' then
-              SetPropValue(AObject, PropInfo^.Name, '[]')
+              SetPropValue(AObject, InstantGetPropName(PropInfo), '[]')
             else
-              SetPropValue(AObject, PropInfo^.Name, Value);
+              SetPropValue(AObject, InstantGetPropName(PropInfo), Value);
         else
-          SetPropValue(AObject, PropInfo^.Name, Value);
+          SetPropValue(AObject, InstantGetPropName(PropInfo), Value);
         end;
       end;
-      Result := GetPropValue(AObject, PropInfo^.Name);
+      Result := GetPropValue(AObject, InstantGetPropName(PropInfo));
     end else
       Result := Null;
   end else
@@ -294,6 +296,15 @@ begin
   end;
 end;
 
+function InstantGetPropName(PropInfo: PPropInfo): string;
+begin
+{$IFNDEF D12+}
+  Result := PropInfo^.Name;
+{$ELSE}
+  Result := GetPropName(PropInfo);
+{$ENDIF}
+end;
+
 { TInstantProperties }
 
 constructor TInstantProperties.Create(AInstance: TObject);
@@ -363,7 +374,7 @@ end;
 
 function TInstantProperties.GetNames(Index: Integer): string;
 begin
-  Result := PropInfos[Index]^.Name;
+  Result := InstantGetPropName(PropInfos[Index]);
 end;
 
 function TInstantProperties.GetPropInfos(Index: Integer): PPropInfo;

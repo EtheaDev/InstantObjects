@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Joao Morais, 
- * Steven Mitchell
+ * Steven Mitchell, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -1006,13 +1006,13 @@ procedure InstantGetPropertyList(AClass: TClass; Items: TStrings;
           Items.AddObject(Prefix + Names[I], Pointer(PropInfo));
         if Traverse then
         begin
-          Path := AClass.ClassName + '.' + PropInfo.Name;
+          Path := AClass.ClassName + '.' + InstantGetPropName(PropInfo);
           if Circular or (Paths.IndexOf(Path) = -1) then
           begin
             PathIndex := Paths.Add(Path);
             try
               TypeData := GetTypeData(PropInfo.PropType^);
-              AddProperties(Prefix + PropInfo.Name + '.', TypeData.ClassType,
+              AddProperties(Prefix + InstantGetPropName(PropInfo) + '.', TypeData.ClassType,
                 Items, Paths);
             finally
               Paths.Delete(PathIndex);
@@ -2037,12 +2037,12 @@ const
     Relation: string;
     Index: Integer;
   begin
-    Relation := AClass.ClassName + '.' + PropInfo.Name;
-      if BreakThorough(Prefix + PropInfo.Name) then
+    Relation := AClass.ClassName + '.' + InstantGetPropName(PropInfo);
+      if BreakThorough(Prefix + InstantGetPropName(PropInfo)) then
         Exit;
 
     if (Relations.IndexOf(Relation) = -1) or
-      IncludeField(Prefix + '.' + PropInfo.Name, False) then
+      IncludeField(Prefix + '.' + InstantGetPropName(PropInfo), False) then
     begin
       Relations.Add(Relation);
       try
@@ -2256,7 +2256,7 @@ begin
   Result := nil;
   if not Assigned(PropInfo) then
     Exit;
-  FieldName := Prefix + PropInfo^.Name;
+  FieldName := Prefix + InstantGetPropName(PropInfo);
   FieldSize := 0;
   FieldAttribs := [];
   TypeKind := PropInfo^.PropType^^.Kind;

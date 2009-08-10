@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli, Marco Cantù, Nando Dessena, Uberto Barbini,
- * Riceball Lee
+ * Riceball Lee, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -50,7 +50,12 @@ const
   InstantBufferSize = 4096;
 
 type
+{$IFDEF D12+}
+  TChars = set of AnsiChar; // Avoid WideChar reduced to byte warning
+{$ELSE}
   TChars = set of Char;
+{$ENDIF}
+
 {$IFDEF LINUX}
     TDate = type TDateTime;
     TTime = type TDateTime;
@@ -1411,7 +1416,7 @@ begin
   for I := 1 to Length(Data) do
   begin
     C := Data[I];
-    if C in [#34, #38, #39, #60, #62] then
+    if InstantCharInSet(C, [#34, #38, #39, #60, #62]) then
     begin
       case C of
         #34:
@@ -1659,7 +1664,7 @@ end;
 
 procedure TInstantXMLProcessor.SkipBlanks;
 begin
-  while PeekChar in [#1..#32] do
+  while InstantCharInSet(PeekChar, [#1..#32]) do
     ReadChar;
 end;
 

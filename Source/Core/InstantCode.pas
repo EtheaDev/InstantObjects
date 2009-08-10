@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
- * Uberto Barbini, Joao Morais, Riceball Lee
+ * Uberto Barbini, Joao Morais, Riceball Lee, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -2689,7 +2689,7 @@ class function TInstantCodeSymbol.InternalAtInstance(Reader: TInstantCodeReader;
 begin
   Name := Reader.ReadToken;
   Reader.SkipSpace;
-  Result := Reader.ReadChar in [':', ','];
+  Result := InstantCharInSet(Reader.ReadChar, [':', ',']);
 end;
 
 procedure TInstantCodeSymbol.InternalRead(Reader: TInstantCodeReader);
@@ -3933,14 +3933,14 @@ begin
     if Copy(Result, i, 1) = 's' then
     begin
       If (i > 3) and (Copy(Result, i - 2, 3) = 'ies') and
-        not (Result[i - 3] in Vowels) then
+        not (InstantCharInSet(Result[i - 3], Vowels)) then
       begin
         Result := Copy(Result, 1, i - 3) + 'y';
       end
       else If (i > 3) and (Copy(Result, i - 1, 2) = 'es') and
-        (Result[i - 2] in SpChars) then
+        (InstantCharInSet(Result[i - 2], SpChars)) then
       begin
-       if (Result[i - 2] = 'h') and not (Result[i - 3] in ['c', 's']) then
+       if (Result[i - 2] = 'h') and not (InstantCharInSet(Result[i - 3], ['c', 's'])) then
        begin
          //not ch or sh
          Result := Copy(Result, 1, i - 1);
@@ -5761,7 +5761,7 @@ begin
     Reader.SkipSpace;
     Reader.ReadToken;
     Reader.SkipSpace;
-    Result := Reader.NextChar in [':', '='];
+    Result := InstantCharInSet(Reader.NextChar, [':', '=']);
   finally
     Reader.Position := SavePos;
   end;
@@ -8690,7 +8690,7 @@ begin
       if FCode^[I] = #10 then
       begin
         Inc(I);
-        while FCode^[I] in [' ', #9] do
+        while InstantCharInSet(FCode^[I], [' ', #9]) do
         begin
           Result := Result + FCode^[I];
           Inc(I);

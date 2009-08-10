@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Uberto Barbini
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Uberto Barbini,
+ * Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -39,7 +40,7 @@ unit InstantUtils;
 interface
 
 uses
-  Classes, InstantClasses;
+  Classes, InstantClasses, SysUtils;
 
 type
   TInstantCompareOption = (coCaseInsensitive, coPartial);
@@ -93,6 +94,10 @@ function DateOf(const AValue: TDateTime): TDateTime;
 function TimeOf(const AValue: TDateTime): TDateTime;
 {$ENDIF}
 
+function InstantCharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean; overload;
+function InstantCharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean; overload;
+
+
 implementation
 
 uses
@@ -102,8 +107,7 @@ uses
 {$IFDEF FPC}
   InstantFpcUtils,
 {$ENDIF}
-  {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti,
-  SysUtils;
+  {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti;
 
 function InstantCharSetToStr(C: TChars): string;
 var
@@ -112,7 +116,7 @@ var
 begin
   Result := '';
   for I := 0 to 255 do
-    if Chr(I) in C then
+    if InstantCharInSet(Chr(I), C) then
       S := S + Chr(I);
   I := 1;
   L := Length(S);
@@ -570,7 +574,7 @@ procedure InstantStrToList(const Str: string; List: TStrings;
     I: Integer;
   begin
     I := Pos;
-    while (I <= Length(Str)) and not (Str[I] in Delimiters) do
+    while (I <= Length(Str)) and not (InstantCharInSet(Str[I], Delimiters)) do
       Inc(I);
     Result := Copy(Str, Pos, I - Pos);
     if I <= Length(Str) then
@@ -636,5 +640,23 @@ begin
   Result := Frac(AValue);
 end;
 {$ENDIF}
+
+function InstantCharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean;
+begin
+{$IFNDEF D12+}
+  Result := C in CharSet;
+{$ELSE}
+  Result := CharInSet(C, CharSet);
+{$ENDIF}
+end;
+
+function InstantCharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean;
+begin
+{$IFNDEF D12+}
+  Result := (C < #$0100) and (AnsiChar(C) in CharSet);
+{$ELSE}
+  Result := CharInSet(C, CharSet);
+{$ENDIF}
+end;
 
 end.

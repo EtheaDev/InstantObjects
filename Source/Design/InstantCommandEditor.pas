@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -114,7 +114,8 @@ type
 implementation
 
 uses
-  InstantPersistence, InstantPresentation, InstantMetadata, InstantTypes;
+  InstantPersistence, InstantPresentation, InstantMetadata, InstantTypes,
+  InstantUtils;
 
 {$R *.dfm}
 
@@ -177,7 +178,7 @@ function TInstantCommandEditorForm.FindArgument(
 
   function IsSpace(Ch: Char): Boolean;
   begin
-    Result := Ch in [' ', #9, #10, #13];
+    Result := InstantCharInSet(Ch, [' ', #9, #10, #13]);
   end;
 
 var

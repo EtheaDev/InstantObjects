@@ -26,7 +26,7 @@
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
  * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor, Hanedi Salas,
- * Riceball Lee, David Moorhouse
+ * Riceball Lee, David Moorhouse, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -129,8 +129,8 @@ type
     function Dereference(Connector: TInstantConnector = nil;
       AOwnsInstance: Boolean = True; Retry: Boolean = False): TInstantObject;
     procedure DestroyInstance;
-    function Equals(const AObjectClassName, AObjectId: string): Boolean; overload;
-    function Equals(AObject: TInstantObject): Boolean; overload;
+    function Equals(const AObjectClassName, AObjectId: string): Boolean; {$IFDEF D12+}reintroduce;{$ENDIF} overload;
+    function Equals(AObject: TInstantObject): Boolean; {$IFDEF D12+}reintroduce;{$ENDIF} overload;
     function HasInstance: Boolean;
     function HasReference: Boolean;
     function IsBroken: Boolean;
@@ -1622,7 +1622,7 @@ var
 begin
   Result := True;
   for I := 0 to Pred(BufferLength div SizeOf(Char)) do
-    if (ValidChars <> []) and not (Buffer[I] in ValidChars + [#8, #10, #13]) then
+    if (ValidChars <> []) and not (InstantCharInSet(Buffer[I], ValidChars + [#8, #10, #13])) then
     begin
       Result := False;
       InvalidChar := Buffer[I];
