@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -236,7 +236,7 @@ end;
 
 function TInstantTextFiler.IsSpace(Ch: Char): Boolean;
 begin
-  Result := Ch in [' ', #9, #10, #13];
+  Result := InstantCharInSet(Ch, [' ', #9, #10, #13]);
 end;
 
 function TInstantTextFiler.IsText(Ch: Char): Boolean;
@@ -244,7 +244,7 @@ begin
   Result := ((Ch >= 'a') and (Ch <= 'z'))
     or ((Ch >= 'A') and (Ch <= 'Z'))
     or ((Ch >= '0') and (Ch <= '9'))
-    or (Ch in ['#', '_']);
+    or (InstantCharInSet(Ch, ['#', '_']));
 end;
 
 procedure TInstantTextFiler.Reset;
@@ -325,7 +325,7 @@ end;
 
 function TInstantTextReader.IsStringDelimiter(Ch: Char): Boolean;
 begin
-  Result := ConstAware and (Ch in ['''', '"']);
+  Result := ConstAware and (InstantCharInSet(Ch, ['''', '"']));
 end;
 
 function TInstantTextReader.NextChar: Char;

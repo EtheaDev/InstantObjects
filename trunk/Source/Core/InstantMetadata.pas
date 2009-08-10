@@ -26,7 +26,7 @@
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
  * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor, Hanedi Salas,
- * Riceball Lee, David Moorhouse
+ * Riceball Lee, David Moorhouse, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -67,7 +67,7 @@ type
   protected
     function InternalEquals(const Other: TInstantMetadata): Boolean; virtual;
   public
-    function Equals(const Other: TInstantMetadata): Boolean;
+    function Equals(const Other: TInstantMetadata): Boolean; {$IFDEF D12+} reintroduce; {$ENDIF} overload;
     property Collection: TInstantMetadatas read GetCollection
       write SetCollection;
   end;

@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena, Andrea Magni
+ * Nando Dessena, Andrea Magni, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -1121,7 +1121,7 @@ var
 begin
   Token := Reader.ReadToken;
   Result := IsConstantToken(Token) or InstantIsNumeric(Token) or
-    ((Length(Token) > 0) and (Token[1] in ['"', '''', '[']));
+    ((Length(Token) > 0) and (InstantCharInSet(Token[1], ['"', '''', '['])));
 end;
 
 procedure TInstantIQLConstant.InternalClear;

@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
- * Joao Morais
+ * Joao Morais, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -561,7 +561,7 @@ function TInstantExplorer.CreateObjectEditor(AOwner: TComponent;
       Width := AParent.Width - Left - 8;
       Anchors := [akLeft, akTop, akRight];
       Parent := AParent;
-      DataField := PropInfo.Name;
+      DataField := InstantGetPropName(PropInfo);
       DataSource := ADataSource;
       if not Assigned(PropInfo.SetProc) then
       begin
@@ -574,7 +574,7 @@ function TInstantExplorer.CreateObjectEditor(AOwner: TComponent;
       Left := 8;
       Top := ATop + 3;
       Parent := AParent;
-      Caption := PropInfo.Name;
+      Caption := InstantGetPropName(PropInfo);
       FocusControl := Edit;
     end;
     Inc(ATop, Edit.Height);
