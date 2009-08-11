@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena, Steven Mitchell
+ * Nando Dessena, Steven Mitchell, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -1000,7 +1000,7 @@ function TInstantModelExpert.LoadModel(Model: TInstantCodeModel;
       Editor := FIDEInterface.SourceEditor(Module);
 
 {$IFDEF D12+}
-      Source := UTF8ToUnicodeString(FIDEInterface.ReadEditorSource(Editor));
+      Source := FIDEInterface.ReadEditorSource(Editor);
       Stream := TStringStream.Create(Source, TEncoding.Unicode);
 {$ELSE}
       Source := FIDEInterface.ReadEditorSource(Editor);
