@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Nando Dessena, Steven Mitchell
+ * Nando Dessena, Steven Mitchell, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -42,6 +42,13 @@ uses
   Classes, ToolsAPI, InstantTypes, Forms;
 
 type
+{$IFDEF D12+}
+  InstantOTAString = UTF8String;
+{$ELSE}
+  InstantOTAString = string;
+{$ENDIF}
+  PInstantOTAString = ^InstantOTAString;
+
   TInstantOTAIDEInterface = class;
 {$IFDEF D9+}
   TInstantOTAIDENotifier8 = class;
@@ -106,11 +113,11 @@ type
     function CurrentModule: IOTAModule;
     function FindModule(const Name: string): IOTAModule;
     procedure GotoFilePos(const FileName: string; Line, Column: Integer);
-    function ReadEditorSource(Editor: IOTASourceEditor): AnsiString;
-    function ReadModuleSource(Module: IOTAModule): AnsiString;
+    function ReadEditorSource(Editor: IOTASourceEditor): string;
+    function ReadModuleSource(Module: IOTAModule): string;
     procedure ShowMessages;
     function SourceEditor(Module: IOTAModule): IOTASourceEditor;
-    procedure WriteEditorSource(Editor: IOTASourceEditor; const Source: AnsiString;
+    procedure WriteEditorSource(Editor: IOTASourceEditor; const Source: string;
       ReplaceLen: Integer; Undoable: Boolean = False);
     property EditActions: IOTAEditActions read GetEditActions;
     property MessageServices: IOTAMessageServices read GetMessageServices;
@@ -496,10 +503,10 @@ begin
 end;
 
 function TInstantOTAIDEInterface.ReadEditorSource(
-  Editor: IOTASourceEditor): AnsiString;
+  Editor: IOTASourceEditor): string;
 var
   Reader: IOTAEditReader;
-  Buffer: AnsiString;
+  Buffer: InstantOTAString;
   BufferLen, ReadLen, Position: Integer;
 begin
   if Assigned(Editor) then
@@ -511,18 +518,19 @@ begin
     repeat
       SetLength(Buffer, BufferLen);
       ReadLen := Reader.GetText(Position, PAnsiChar(Buffer), BufferLen);
-      if ReadLen < BufferLen then
-        Dec(ReadLen, 2);
+      if ReadLen < BufferLen then // ?? What does these two lines do??
+        Dec(ReadLen, 2);          // ??
       SetLength(Buffer, ReadLen);
-      Result := Result + Buffer;
+      Result := Result + string(Buffer);
       Inc(Position, ReadLen);
     until ReadLen < BufferLen - 1;
   end else
     Result := '';
+//  ShowMessage(Result);
 end;
 
 function TInstantOTAIDEInterface.ReadModuleSource(
-  Module: IOTAModule): AnsiString;
+  Module: IOTAModule): string;
 begin
   Result := ReadEditorSource(SourceEditor(Module));
 end;
@@ -585,7 +593,7 @@ begin
 end;
 
 procedure TInstantOTAIDEInterface.WriteEditorSource(
-  Editor: IOTASourceEditor; const Source: AnsiString; ReplaceLen: Integer;
+  Editor: IOTASourceEditor; const Source: string; ReplaceLen: Integer;
   Undoable: Boolean);
 var
   Writer: IOTAEditWriter;
@@ -596,7 +604,7 @@ begin
     Writer := Editor.CreateUndoableWriter else
     Writer := Editor.CreateWriter;
   Writer.DeleteTo(ReplaceLen);
-  Writer.Insert(PAnsiChar(Source));
+  Writer.Insert(PAnsiChar(InstantOTAString(Source)));
 end;
 
 { TInstantOTAIDENotifier5 }
