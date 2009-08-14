@@ -3465,7 +3465,7 @@ end;
 
 function TInstantBlob.GetAsString: string;
 begin
-  Result := Value;
+  Result := string(Value);
 end;
 
 function TInstantBlob.GetAsVariant: Variant;
@@ -5226,7 +5226,7 @@ begin
     Try
       XMLReferencesTag := Self.ClassName;
       InstantXMLProducer.WriteStartTag(XMLReferencesTag);
-      InstantXMLProducer.WriteEscapedData(sLineBreak);
+      InstantXMLProducer.WriteData(sLineBreak);
       for I := 0 to Pred(Count) do
       begin
         InstantXMLProducer.WriteStartTag(
@@ -5235,6 +5235,7 @@ begin
         InstantXMLProducer.WriteEndTag;
       end;
       InstantXMLProducer.WriteEndTag;
+      InstantXMLProducer.WriteData(sLineBreak);
     Finally
       InstantXMLProducer.Free;
     End;
@@ -5641,7 +5642,9 @@ class procedure TInstantObject.ConvertToText(
         vaIdent:
           begin
             Reader.ReadIdent;
+            Producer.Indent;
             Convert;
+            Producer.Unindent;
           end;
         vaFalse:
           begin
@@ -5666,8 +5669,10 @@ class procedure TInstantObject.ConvertToText(
         vaCollection:
           begin
             Reader.ReadValue;
+            Producer.Indent;
              while not Reader.EndOfList do
                Convert;
+            Producer.Unindent;
              Reader.ReadListEnd;
           end;
       else

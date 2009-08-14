@@ -267,6 +267,7 @@ type
     FStream: TStream;
     FTagStack: TStringList;
     FWriter: TAbstractWriter;
+    FCurrentIndentationSize: Integer;
     function GetCurrentTag: string;
     function GetEof: Boolean;
     function GetPosition: Integer;
@@ -278,6 +279,10 @@ type
     property TagStack: TStringList read GetTagStack;
     property Writer: TAbstractWriter read GetWriter;
   public
+    procedure Indent;
+    procedure Unindent;
+    procedure WriteIndentation;
+    procedure WriteLineBreak;
     constructor Create(Stream: TStream);
     destructor Destroy; override;
     procedure WriteEscapedData(const Data: string);
@@ -452,7 +457,7 @@ procedure InstantWriteObjects(Stream: TStream; Format: TInstantStreamFormat; Obj
 implementation
 
 uses
-  TypInfo, InstantUtils, InstantRtti;
+  TypInfo, StrUtils, InstantUtils, InstantRtti;
 
 const
   ResourceHeader : packed array[0..31] of Byte = ($00,$00,$00,$00,$20,$00,$00,
@@ -1343,6 +1348,22 @@ end;
 
 { TInstantXMLProducer }
 
+procedure TInstantXMLProducer.Indent;
+begin
+  Inc(FCurrentIndentationSize, InstantXMLIndentationSize);
+end;
+
+procedure TInstantXMLProducer.Unindent;
+begin
+  Dec(FCurrentIndentationSize, InstantXMLIndentationSize);
+  if InstantXMLIndentationSize >= 0 then
+  begin
+    WriteLineBreak;
+    WriteIndentation;
+  end;
+end;
+
+
 constructor TInstantXMLProducer.Create(Stream: TStream);
 begin
   inherited Create;
@@ -1445,8 +1466,24 @@ end;
 
 procedure TInstantXMLProducer.WriteStartTag(const Tag: string);
 begin
+  if InstantXMLIndentationSize >= 0 then
+  begin
+    WriteLineBreak;
+    WriteIndentation;
+  end;
   WriteString(InstantBuildStartTag(Tag));
   TagStack.Add(Tag);
+end;
+
+procedure TInstantXMLProducer.WriteLineBreak;
+begin
+  WriteString(sLineBreak);
+end;
+
+procedure TInstantXMLProducer.WriteIndentation;
+begin
+  if FCurrentIndentationSize > 0 then
+    WriteString(DupeString(' ' , FCurrentIndentationSize));
 end;
 
 procedure TInstantXMLProducer.WriteString(const S: string);
@@ -1763,6 +1800,7 @@ begin
   PushObjectClass(FindClass(Reader.ReadStr));
   try
     Producer.WriteStartTag(ObjectClassName);
+    Producer.Indent;
     if ObjectClass.InheritsFrom(TInstantStreamable) then
       TInstantStreamableClass(ObjectClass).ConvertToText(Self)
     else if ObjectClass.InheritsFrom(TInstantCollection) then
@@ -1770,6 +1808,7 @@ begin
     else if ObjectClass.InheritsFrom(TInstantCollectionItem) then
       TInstantCollectionItemClass(ObjectClass).ConvertToText(Self);
     Reader.ReadListEnd;
+    Producer.Unindent;
     Producer.WriteEndTag;
   finally
     PopObjectClass;
@@ -1839,6 +1878,7 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
   end;
 
 begin
+  Producer.Indent;
   while not Reader.EndOfList do
   begin
     Producer.WriteStartTag(Reader.ReadStr);
@@ -1846,6 +1886,7 @@ begin
     Producer.WriteEndTag;
   end;
   Reader.ReadListEnd;
+  Producer.Unindent;
 end;
 
 { TInstantToTextToBinaryConverter }
