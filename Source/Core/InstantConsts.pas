@@ -70,11 +70,16 @@ const
   InstantSequenceNoFieldName = 'SequenceNo';
   InstantChildClassFieldName = 'ChildClass';
   InstantLogStatementBefore = 'Before: ';
+  InstantLogStatementSelect = 'Select: ';
+  InstantLogStatementExecute = 'Execute: ';
 
 {$IFNDEF D6+}
 const
   sLineBreak = #13#10;
 {$ENDIF}
+
+var
+  InstantXMLIndentationSize: Integer = 2;
 
 resourcestring
   SAccessError = 'Cannot access attribute %s(''%s'') as type: %s';
