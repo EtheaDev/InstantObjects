@@ -2265,8 +2265,8 @@ procedure TInstantObjectReference.WriteAsObject(Writer: TInstantWriter);
 begin
   with Writer do
   begin
-    WriteStr(ObjectClassName);
-    WriteStr(ObjectId);
+    WriteUTF8Str(ObjectClassName);
+    WriteUTF8Str(ObjectId);
     WriteListEnd;
     WriteListEnd;
   end;
@@ -2277,8 +2277,8 @@ begin
   inherited;
   Writer.WriteStr('');
   Writer.WriteStr('');
-  Writer.WriteStr(ObjectClassName);
-  Writer.WriteStr(ObjectId);
+  Writer.WriteUTF8Str(ObjectClassName);
+  Writer.WriteUTF8Str(ObjectId);
 end;
 
 { TInstantAttribute }
@@ -2550,7 +2550,7 @@ end;
 
 procedure TInstantAttribute.WriteName(Writer: TInstantWriter);
 begin
-  Writer.WriteStr(Name);
+  Writer.WriteUTF8Str(Name);
 end;
 
 { TInstantSimple }
@@ -5522,7 +5522,7 @@ class procedure TInstantObject.ConvertToBinary(Converter: TInstantTextToBinaryCo
     with Converter do
     begin
       AttributeName := Processor.ReadTagName;
-      Writer.WriteStr(AttributeName);
+      Writer.WriteUTF8Str(AttributeName);
       case AttributeMetadata.AttributeType of
         atInteger:
           Writer.WriteInteger(StrToInt(Processor.ReadData));
@@ -5599,11 +5599,11 @@ class procedure TInstantObject.ConvertToBinary(Converter: TInstantTextToBinaryCo
       if Processor.PeekTagName = InstantIdFieldName then
       begin
         Processor.ReadTag;
-        if (Processor.Token = xtTag) and SameText(Processor.ReadTagName,
+        if (Processor.Token = xtAnyTag) and SameText(Processor.ReadTagName,
           InstantBuildEndTag(InstantIdFieldName)) then
           Writer.WriteStr('')
         else begin
-          Writer.WriteStr(Processor.ReadData);
+          Writer.WriteUTF8Str(Processor.ReadData);
           Processor.ReadTag;
         end;
       end else
@@ -5642,9 +5642,7 @@ class procedure TInstantObject.ConvertToText(
         vaIdent:
           begin
             Reader.ReadIdent;
-            Producer.Indent;
             Convert;
-            Producer.Unindent;
           end;
         vaFalse:
           begin
@@ -5669,11 +5667,9 @@ class procedure TInstantObject.ConvertToText(
         vaCollection:
           begin
             Reader.ReadValue;
-            Producer.Indent;
-             while not Reader.EndOfList do
-               Convert;
-            Producer.Unindent;
-             Reader.ReadListEnd;
+            while not Reader.EndOfList do
+              Convert;
+            Reader.ReadListEnd;
           end;
       else
         raise EInstantStreamError.CreateFmt(SInvalidValueType,
@@ -6831,7 +6827,7 @@ end;
 
 procedure TInstantObject.WriteObject(Writer: TInstantWriter);
 begin
-  Writer.WriteStr(Id);
+  Writer.WriteUTF8Str(Id);
   WriteAttributes(Writer);
 end;
 
