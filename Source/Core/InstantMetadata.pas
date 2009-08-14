@@ -623,8 +623,8 @@ begin
   with Converter do
   begin
     ConvertProperties(InstantBuildStartTag(InstantAttributeMetadatasTagName));
-    Processor.ReadTag;
-    if (Processor.Token = xtTag) and not SameText(Processor.PeekTag,
+    Assert(Processor.ReadTagName = InstantAttributeMetadatasTagName);
+    if (Processor.Token = xtAnyTag) and not SameText(Processor.PeekTag,
       InstantBuildEndTag(InstantAttributeMetadatasTagName)) then
       Convert;
     Processor.ReadTag;
@@ -1942,28 +1942,5 @@ begin
   inherited Items[Index] := Value;
 end;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 end.
+

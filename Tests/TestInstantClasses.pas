@@ -71,9 +71,10 @@ type
     property PigName: string read FPigName write SetPigName;
   end;
 
-
-
 implementation
+
+uses
+  StrUtils, InstantConsts;
 
 { TTestInstantClasses }
 
@@ -379,7 +380,15 @@ var
   outs: TStringStream;
   c: TInstantGuineaPig;
   ic: TInstantBinaryToTextConverter;
+  LLineBreak: string;
+  LIndentation: string;
 begin
+  if InstantXMLIndentationSize > 0 then
+    LLineBreak := sLineBreak
+  else
+    LLineBreak := '';
+  LIndentation := DupeString(' ', InstantXMLIndentationSize);
+
   ins := TStringStream.Create('');
   outs := TStringStream.Create('');
   c := TInstantGuineaPig.Create(nil);
@@ -391,8 +400,8 @@ begin
     AssertEquals('TInstantGuineaPig', ic.Reader.ReadStr); //la stringa con il classname
     c.ConvertToText(ic);
     ic.Producer.eof; //to flush the buffer
-    AssertEquals('ConvertToText', '<Age>2</Age><Weight>1' + DecimalSeparator +
-      '123</Weight><PigName>Miss piggy</PigName>', outs.DataString);
+    AssertEquals('ConvertToText', '<Age>2</Age>' + LLineBreak + '<Weight>1' + DecimalSeparator +
+      '123</Weight>' + LLineBreak + '<PigName>Miss piggy</PigName>' + LLineBreak, outs.DataString);
   finally
     ic.Free;
     c.Free;
@@ -410,8 +419,9 @@ begin
 
     InstantObjectBinaryToText(ins, outs);
     AssertEquals('InstantObjectBinaryToText',
-      '<TInstantGuineaPig><Age>2</Age><Weight>1' + DecimalSeparator +
-      '123</Weight><PigName>Miss piggy</PigName></TInstantGuineaPig>',
+      '<TInstantGuineaPig>' + LLineBreak + LIndentation + '<Age>2</Age>' + LLineBreak + LIndentation +
+      '<Weight>1' + DecimalSeparator + '123</Weight>' + LLineBreak + LIndentation +
+      '<PigName>Miss piggy</PigName>' + LLineBreak + '</TInstantGuineaPig>' + LLineBreak,
       outs.DataString);
   finally
     ic.Free;
@@ -426,15 +436,26 @@ var
   ms: TStringStream;
   s: string;
   c: TInstantGuineaPig;
+  LLineBreak: string;
+  LIndentation: string;
 begin
+  if InstantXMLIndentationSize > 0 then
+    LLineBreak := sLineBreak
+  else
+    LLineBreak := '';
+  LIndentation := DupeString(' ', InstantXMLIndentationSize);
+
   s := '';
   ms := TStringStream.Create(s);
   c := TInstantGuineaPig.Create(nil);
   try
     InstantWriteObject(ms, sfXML, c);
-    AssertEquals(102, ms.Position);
-    AssertEquals('<TInstantGuineaPig><Age>2</Age><Weight>1' + DecimalSeparator +
-      '123</Weight><PigName>Miss piggy</PigName></TInstantGuineaPig>',
+    AssertEquals(102 + (Length(LLineBreak) * 5) + (Length(LIndentation) * 3), ms.Position);
+
+    AssertEquals('InstantWriteObject(sfXML)',
+      '<TInstantGuineaPig>' + LLineBreak + LIndentation + '<Age>2</Age>' + LLineBreak + LIndentation +
+      '<Weight>1' + DecimalSeparator + '123</Weight>' + LLineBreak + LIndentation +
+      '<PigName>Miss piggy</PigName>' + LLineBreak + '</TInstantGuineaPig>' + LLineBreak,
       ms.DataString);
   finally
     c.Free;

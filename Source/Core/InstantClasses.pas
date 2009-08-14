@@ -200,6 +200,7 @@ type
     procedure WriteProperties(AObject: TPersistent);
     {$IFNDEF UNICODE}
     procedure WriteString(const Value: string);
+    procedure WriteUTF8Str(const Value: string); inline;
     {$ENDIF}
     procedure WriteValue(Value: TValueType);
     property Stream: TStream read FStream;
@@ -262,27 +263,29 @@ type
   end;
   {$ENDIF}
 
+  TInstantXMLToken = (xtNone, xtStartTag, xtEndTag, xtAnyTag, xtData);
+
   TInstantXMLProducer = class(TObject)
   private
     FStream: TStream;
     FTagStack: TStringList;
     FWriter: TAbstractWriter;
-    FCurrentIndentationSize: Integer;
+    FIndentationSize: Integer;
+    FLastToken: TInstantXMLToken;
     function GetCurrentTag: string;
     function GetEof: Boolean;
     function GetPosition: Integer;
     function GetTagStack: TStringList;
     function GetWriter: TAbstractWriter;
     procedure SetPosition(Value: Integer);
-    procedure WriteString(const S: string);
   protected
+    function IsPrettyXMLEnabled: Boolean;
+    procedure WriteString(const S: string);
     property TagStack: TStringList read GetTagStack;
     property Writer: TAbstractWriter read GetWriter;
-  public
-    procedure Indent;
-    procedure Unindent;
     procedure WriteIndentation;
     procedure WriteLineBreak;
+  public
     constructor Create(Stream: TStream);
     destructor Destroy; override;
     procedure WriteEscapedData(const Data: string);
@@ -294,8 +297,6 @@ type
     property Position: Integer read GetPosition write SetPosition;
     property Stream: TStream read FStream;
   end;
-
-  TInstantXMLToken = (xtTag, xtData);
 
   TInstantXMLProcessor = class(TObject)
   private
@@ -310,6 +311,7 @@ type
   protected
     procedure CheckToken(AToken: TInstantXMLToken);
     function PeekChar: Char;
+    function PeekCharSkippingBlanks: Char;
     function ReadChar: Char;
     procedure SkipBlanks;
     property Reader: TAbstractReader read GetReader;
@@ -1073,7 +1075,7 @@ end;
 
 procedure TInstantWriter.WriteObject(AObject: TPersistent);
 begin
-  WriteStr(AObject.ClassName);
+  WriteUTF8Str(AObject.ClassName);
   if AObject is TInstantStreamable then
     TInstantStreamable(AObject).WriteObject(Self)
   else if AObject is TInstantCollection then
@@ -1093,6 +1095,11 @@ begin
   WriteListEnd;
 end;
 
+procedure TInstantWriter.WriteValue(Value: TValueType);
+begin
+  inherited WriteValue(Value);
+end;
+
 {$IFNDEF UNICODE}
 procedure TInstantWriter.WriteString(const Value: string);
 var
@@ -1110,12 +1117,22 @@ begin
   end;
   Write(Pointer(Value)^, L);
 end;
-{$ENDIF}
 
-procedure TInstantWriter.WriteValue(Value: TValueType);
+procedure TInstantWriter.WriteUTF8Str(const Value: string);
+var
+  U: UTF8String;
+  L: Integer;
 begin
-  inherited;
+  // Note: in versions of Delphi that don't have AnsiToUtf8, just use:
+  // WriteStr(Value);
+  // as the body for this function.
+  U := AnsiToUtf8(Value);
+  L := Length(U);
+  if L > 255 then L := 255;
+  Write(L, SizeOf(Byte));
+  Write(U[1], L);
 end;
+{$ENDIF}
 
 { TInstantStream }
 
@@ -1348,26 +1365,17 @@ end;
 
 { TInstantXMLProducer }
 
-procedure TInstantXMLProducer.Indent;
+function TInstantXMLProducer.IsPrettyXMLEnabled: Boolean;
 begin
-  Inc(FCurrentIndentationSize, InstantXMLIndentationSize);
+  Result := FIndentationSize > 0;
 end;
-
-procedure TInstantXMLProducer.Unindent;
-begin
-  Dec(FCurrentIndentationSize, InstantXMLIndentationSize);
-  if InstantXMLIndentationSize >= 0 then
-  begin
-    WriteLineBreak;
-    WriteIndentation;
-  end;
-end;
-
 
 constructor TInstantXMLProducer.Create(Stream: TStream);
 begin
   inherited Create;
   FStream := Stream;
+  FLastToken := xtNone;
+  FIndentationSize := InstantXMLIndentationSize;
 end;
 
 destructor TInstantXMLProducer.Destroy;
@@ -1415,15 +1423,39 @@ end;
 procedure TInstantXMLProducer.WriteData(const Data: string);
 begin
   WriteString(Data);
+  FLastToken := xtData;
+end;
+
+procedure TInstantXMLProducer.WriteStartTag(const Tag: string);
+begin
+  if IsPrettyXMLEnabled then
+  begin
+    if FLastToken = xtStartTag then
+      WriteLineBreak;
+    WriteIndentation;
+  end;
+  WriteString(InstantBuildStartTag(Tag));
+  TagStack.Add(Tag);
+  FLastToken := xtStartTag;
 end;
 
 procedure TInstantXMLProducer.WriteEndTag;
 var
-  Index: Integer;
+  LTagName: string;
 begin
-  Index := TagStack.Count - 1;
-  WriteString(InstantBuildEndTag(TagStack[Index]));
-  TagStack.Delete(Index);
+  LTagName := TagStack[TagStack.Count - 1];
+  TagStack.Delete(TagStack.Count - 1);
+  if IsPrettyXMLEnabled then
+  begin
+    if FLastToken = xtStartTag then
+      WriteLineBreak;
+    if FLastToken in [xtStartTag, xtEndTag] then
+      WriteIndentation;
+  end;
+  WriteString(InstantBuildEndTag(LTagName));
+  if IsPrettyXMLEnabled then
+    WriteLineBreak;
+  FLastToken := xtEndTag;
 end;
 
 procedure TInstantXMLProducer.WriteEscapedData(const Data: string);
@@ -1453,26 +1485,11 @@ begin
       end;
       Esc := Format(EscStr, [Esc]);
       WriteString(Esc);
-    end else//MC if C in [#32..#126] then
+    end
+    else
       WriteString(C);
-(* MC
-    else begin
-      Esc := Format(EscStr, [Format('#%d', [Ord(C)])]);
-      WriteString(Esc);
-    end;
-*)
   end;
-end;
-
-procedure TInstantXMLProducer.WriteStartTag(const Tag: string);
-begin
-  if InstantXMLIndentationSize >= 0 then
-  begin
-    WriteLineBreak;
-    WriteIndentation;
-  end;
-  WriteString(InstantBuildStartTag(Tag));
-  TagStack.Add(Tag);
+  FLastToken := xtData;
 end;
 
 procedure TInstantXMLProducer.WriteLineBreak;
@@ -1482,8 +1499,7 @@ end;
 
 procedure TInstantXMLProducer.WriteIndentation;
 begin
-  if FCurrentIndentationSize > 0 then
-    WriteString(DupeString(' ' , FCurrentIndentationSize));
+  WriteString(DupeString(' ' , TagStack.Count * FIndentationSize));
 end;
 
 procedure TInstantXMLProducer.WriteString(const S: string);
@@ -1534,8 +1550,8 @@ end;
 
 function TInstantXMLProcessor.GetToken: TInstantXMLToken;
 begin
-  if PeekChar = InstantTagStart then
-    Result := xtTag
+  if PeekCharSkippingBlanks = InstantTagStart then
+    Result := xtAnyTag
   else
     Result := xtData;
 end;
@@ -1546,6 +1562,19 @@ var
 begin
   Pos := Position;
   try
+    Result := ReadChar;
+  finally
+    Position := Pos;
+  end;
+end;
+
+function TInstantXMLProcessor.PeekCharSkippingBlanks: Char;
+var
+  Pos: Integer;
+begin
+  Pos := Position;
+  try
+    SkipBlanks;
     Result := ReadChar;
   finally
     Position := Pos;
@@ -1645,7 +1674,7 @@ begin
   Pos := Position;
   try
     SkipBlanks;
-    CheckToken(xtTag);
+    CheckToken(xtAnyTag);
   except
     Position := Pos;
     raise;
@@ -1687,7 +1716,7 @@ begin
   EndTag := InstantBuildEndTag(TagName);
   Level := 1;
   repeat
-    if Token = xtTag then
+    if Token = xtAnyTag then
     begin
       TagName := ReadTag;
       if SameText(TagName, StartTag) then
@@ -1789,7 +1818,6 @@ begin
   Result := Reader.Stream;
 end;
 
-
 function TInstantBinaryToTextConverter.GetOutput: TStream;
 begin
   Result := Producer.Stream;
@@ -1800,7 +1828,6 @@ begin
   PushObjectClass(FindClass(Reader.ReadStr));
   try
     Producer.WriteStartTag(ObjectClassName);
-    Producer.Indent;
     if ObjectClass.InheritsFrom(TInstantStreamable) then
       TInstantStreamableClass(ObjectClass).ConvertToText(Self)
     else if ObjectClass.InheritsFrom(TInstantCollection) then
@@ -1808,7 +1835,6 @@ begin
     else if ObjectClass.InheritsFrom(TInstantCollectionItem) then
       TInstantCollectionItemClass(ObjectClass).ConvertToText(Self);
     Reader.ReadListEnd;
-    Producer.Unindent;
     Producer.WriteEndTag;
   finally
     PopObjectClass;
@@ -1878,7 +1904,6 @@ procedure TInstantBinaryToTextConverter.InternalConvertProperties;
   end;
 
 begin
-  Producer.Indent;
   while not Reader.EndOfList do
   begin
     Producer.WriteStartTag(Reader.ReadStr);
@@ -1886,7 +1911,6 @@ begin
     Producer.WriteEndTag;
   end;
   Reader.ReadListEnd;
-  Producer.Unindent;
 end;
 
 { TInstantToTextToBinaryConverter }
@@ -1934,7 +1958,7 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
   begin
     PropName := Processor.ReadTagName;
     ValueStr := Processor.ReadData;
-    Writer.WriteStr(PropName);
+    Writer.WriteUTF8Str(PropName);
     case GetTypeInfo(PropInfo)^.Kind of //PropInfo^.PropType^^.Kind of
       tkInteger:
         Writer.WriteInteger(StrToInt(ValueStr));
@@ -1966,7 +1990,7 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
           try
             InstantStrToList(ValueStr, S, [',']);
             for I := 0 to Pred(S.Count) do
-              Writer.WriteStr(S[I]);
+              Writer.WriteUTF8Str(S[I]);
           finally
             S.Free;
           end;
@@ -2012,7 +2036,7 @@ procedure TInstantTextToBinaryConverter.InternalConvert;
 begin
   PushObjectClass(FindClass(Processor.ReadTagName));
   try
-    Writer.WriteStr(ObjectClassName);
+    Writer.WriteUTF8Str(ObjectClassName);
     if ObjectClass.InheritsFrom(TInstantStreamable) then
       TInstantStreamableClass(ObjectClass).ConvertToBinary(Self)
     else if ObjectClass.InheritsFrom(TInstantCollection) then

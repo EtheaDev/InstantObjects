@@ -61,7 +61,7 @@ implementation
 
 uses
   InstantPersistence, testregistry, MinimalModel, InstantClasses,
-  InstantMetadata, InstantTypes;
+  InstantMetadata, InstantTypes, InstantConsts;
 
 { TTestMinimalModel }
 
@@ -112,6 +112,7 @@ procedure TTestMinimalModel.TestSaveModelMdx;
 var
   Stream: TStringStream;
   s, r: string;
+  LSaveIndentation: Byte;
 begin
   CreateMinimalModel;
 {$IFNDEF FPC}
@@ -134,12 +135,19 @@ begin
   r := r + '</TInstantAttributeMetadatas></AttributeMetadatas></TInstantClassMetadata></TInstantClassMetadatas>';
 {$ENDIF}
   s := '';
+
+  LSaveIndentation := InstantXMLIndentationSize;
+  InstantXMLIndentationSize := 0;
+  try
   Stream := TStringStream.Create(s);
   try
     InstantWriteObject(Stream, sfXML, InstantModel.ClassMetadatas);
     AssertEquals(r, Stream.DataString);
   finally
     Stream.Free;
+  end;
+  finally
+    InstantXMLIndentationSize := LSaveIndentation;
   end;
 end;
 

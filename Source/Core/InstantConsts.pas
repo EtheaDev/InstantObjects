@@ -79,7 +79,7 @@ const
 {$ENDIF}
 
 var
-  InstantXMLIndentationSize: Integer = 2;
+  InstantXMLIndentationSize: Byte = 2;
 
 resourcestring
   SAccessError = 'Cannot access attribute %s(''%s'') as type: %s';
