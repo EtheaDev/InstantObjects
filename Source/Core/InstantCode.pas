@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
+ * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
  * Uberto Barbini, Joao Morais, Riceball Lee, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
@@ -6520,7 +6520,7 @@ end;
 
 function TInstantCodeWriter.GetStreamPos: Int64;
 begin
-  Result := inherited GetStreamPos + Origin.Offset;
+  Result := inherited GetStreamPos + (Origin.Offset * SizeOf(Char));
 end;
 
 procedure TInstantCodeWriter.Indent;
@@ -6536,7 +6536,7 @@ end;
 
 procedure TInstantCodeWriter.SetStreamPos(Value: Int64);
 begin
-  inherited SetStreamPos(Value - Origin.Offset);
+  inherited SetStreamPos(Value - (Origin.Offset * SizeOf(Char)));
 end;
 
 procedure TInstantCodeWriter.Unindent;
@@ -8631,6 +8631,7 @@ begin
   try
     Writer := TInstantCodeWriter.Create(Stream);
     try
+      Writer.Origin := CursorPos;
       while IndentLevel > 0 do
       begin
         Writer.Indent;
