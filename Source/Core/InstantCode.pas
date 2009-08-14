@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
- * Uberto Barbini, Joao Morais, Riceball Lee, Brian Andersen
+ * Uberto Barbini, Joao Morais, Riceball Lee, Brian Andersen, David Taylor
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -8880,15 +8880,22 @@ const
 
 var
   Section: TInstantCodeInitializationSection;
+  Origin: TInstantCodePos; 
   Pos: TInstantCodePos;
 begin
   Section := Module.InitializationSection;
   if not Section.IsFiled then
   begin
     CursorPos := Module.ImplementationSection.EndPos;
+    Origin := CursorPos;
     InsertMode := imAfter;
     InsertObjectText(Section);
+
+    // Set position of newly added Initialization section
+    Section.StartPos := Origin;
+    Section.EndPos := CursorPos;
   end;
+
   CursorPos := Section.StartPos;
   SkipLine;
   if FindText(RegisterProcName) then
