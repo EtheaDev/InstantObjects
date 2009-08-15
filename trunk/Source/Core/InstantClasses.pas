@@ -1465,7 +1465,9 @@ var
   I: Integer;
   Esc: string;
   C: Char;
+  LString: string;
 begin
+  LString := '';
   for I := 1 to Length(Data) do
   begin
     C := Data[I];
@@ -1484,11 +1486,12 @@ begin
           Esc := 'gt';
       end;
       Esc := Format(EscStr, [Esc]);
-      WriteString(Esc);
+      LString := LString + EscStr;
     end
     else
-      WriteString(C);
+      LString := LString + C;
   end;
+  WriteString(LString);
   FLastToken := xtData;
 end;
 

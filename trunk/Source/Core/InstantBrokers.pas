@@ -267,6 +267,11 @@ type
     procedure InternalStoreMap(AObject: TInstantObject;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
       Info: PInstantOperationInfo); virtual;
+    function CreateEmbeddedObjectInputStream(const AConnector: TInstantConnector;
+      const AField: TField): TStream;
+    function CreateEmbeddedObjectOutputStream(const AConnector: TInstantConnector): TStream;
+    procedure AssignEmbeddedObjectStreamToField(const AConnector: TInstantConnector;
+      const AStream: TStream; const AField: TField);
   public
     constructor Create(ABroker: TInstantCustomRelationalBroker);
     procedure DisposeMap(AObject: TInstantObject; Map: TInstantAttributeMap;
@@ -389,8 +394,8 @@ type
     procedure WriteReferences(Attribute: TInstantReferences); virtual;
     procedure WriteString(Attribute: TInstantString); virtual;
     property DataSet: TDataset read GetDataSet write SetDataSet;
-    property NavigationalLinkResolvers: TObjectList read
-        GetNavigationalLinkResolvers;
+    property NavigationalLinkResolvers: TObjectList
+      read GetNavigationalLinkResolvers;
   public
     constructor Create(ABroker: TInstantNavigationalBroker;
       const ATableName: string);
@@ -488,6 +493,8 @@ type
     procedure RemovePersistentIdParam(Params: TParams);
     function TranslateError(AObject: TInstantObject;
       E: Exception): Exception; virtual;
+    procedure AddEmbeddedObjectOutputParam(const AConnector: TInstantConnector;
+      const AParams: TParams; const AParamName: string; const AStream: TStream);
   public
     constructor Create(ABroker: TInstantSQLBroker; AMap: TInstantAttributeMap);
     property Broker: TInstantSQLBroker read GetBroker;
@@ -1430,7 +1437,7 @@ var
   CachedStatement: TInstantStatement;
 begin
   {$IFDEF IO_STATEMENT_LOGGING}
-  InstantLogStatement(InstantLogStatementBefore, AStatement, AParams);
+  InstantLogStatement(InstantLogStatementSelect, AStatement, AParams);
   {$ENDIF}
   Result := nil;
   if FStatementCacheCapacity <> 0 then
@@ -1737,6 +1744,58 @@ begin
     raise EInstantError.Create(SUnassignedBroker);
   inherited Create;
   FBroker := ABroker;
+end;
+
+function TInstantCustomResolver.CreateEmbeddedObjectInputStream(
+  const AConnector: TInstantConnector; const AField: TField): TStream;
+{$IFDEF D12+}
+var
+  LEncoding: TEncoding;
+{$ENDIF}
+begin
+  Assert(Assigned(AConnector));
+  Assert(Assigned(AField));
+
+  {$IFDEF D12+}
+  if AConnector.BlobStreamFormat = sfBinary then
+    Result := TBytesStream.Create(AField.AsBytes)
+  else
+  begin
+    TEncoding.GetBufferEncoding(AField.AsBytes, LEncoding);
+    Result := TInstantStringStream.Create(LEncoding.GetString(AField.AsBytes));
+  end;
+  {$ELSE}
+  Result := TInstantStringStream.Create(AField.AsString);
+  {$ENDIF}
+end;
+
+function TInstantCustomResolver.CreateEmbeddedObjectOutputStream(
+  const AConnector: TInstantConnector): TStream;
+begin
+  Assert(Assigned(AConnector));
+
+  {$IFDEF D12+}
+  if AConnector.BlobStreamFormat = sfBinary then
+    Result := TBytesStream.Create
+  else
+    Result := TStringStream.Create('', TEncoding.UTF8);
+  {$ELSE}
+  Result := TStringStream.Create('');
+  {$ENDIF}
+end;
+
+procedure TInstantCustomResolver.AssignEmbeddedObjectStreamToField(
+  const AConnector: TInstantConnector; const AStream: TStream; const AField: TField);
+begin
+  Assert(Assigned(AConnector));
+  Assert(Assigned(AStream));
+  Assert(Assigned(AField));
+  Assert(AField is TBlobField);
+
+  if AConnector.BlobStreamFormat = sfBinary then
+    TBlobField(AField).LoadFromStream(AStream)
+  else
+    AField.AsString := (AStream as TStringStream).DataString;
 end;
 
 procedure TInstantCustomResolver.DisposeMap(AObject: TInstantObject;
@@ -2329,7 +2388,7 @@ end;
 procedure TInstantNavigationalResolver.ReadPart(Attribute: TInstantPart);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStream;
   PartClassName: string;
   ObjID: string;
 begin
@@ -2356,7 +2415,7 @@ begin
       Field := FieldByName(Metadata.FieldName);
       if not FieldHasObjects(Field) then
         Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
+      Stream := CreateEmbeddedObjectInputStream(Connector, Field);
       try
         LoadObjectFromStream(Stream);
       finally
@@ -2369,7 +2428,7 @@ end;
 procedure TInstantNavigationalResolver.ReadParts(Attribute: TInstantParts);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStream;
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
@@ -2386,7 +2445,7 @@ begin
       Field := FieldByName(Metadata.FieldName);
       if not FieldHasObjects(Field) then
         Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
+      Stream := CreateEmbeddedObjectInputStream(Connector, Field);
       try
         LoadObjectsFromStream(Stream);
       finally
@@ -2413,7 +2472,7 @@ procedure TInstantNavigationalResolver.ReadReferences(
   Attribute: TInstantReferences);
 var
   Field: TField;
-  Stream: TInstantStringStream;
+  Stream: TStream;
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
@@ -2430,7 +2489,7 @@ begin
       Field := FieldByName(Metadata.FieldName);
       if not FieldHasObjects(Field) then
         Exit;
-      Stream := TInstantStringStream.Create(Field.AsString);
+      Stream := CreateEmbeddedObjectInputStream(Connector, Field);
       try
         LoadReferencesFromStream(Stream);
       finally
@@ -2611,7 +2670,7 @@ end;
 procedure TInstantNavigationalResolver.WritePart(Attribute: TInstantPart);
 var
   Field: TField;
-  Stream: TStringStream;
+  Stream: TStream;
 begin
   with Attribute do
   begin
@@ -2622,16 +2681,15 @@ begin
           Value.ClassName;
       FieldByName(Metadata.FieldName + InstantIdFieldName).AsString :=
           Value.Id;
-//      Value.ObjectStore.StoreObject(Value, caIgnore);
       StoreObject(Value, caIgnore);
     end
     else
     begin
       Field := FieldByName(Metadata.FieldName);
-      Stream := TStringStream.Create('');
+      Stream := CreateEmbeddedObjectOutputStream(Attribute.Connector);
       try
         SaveObjectToStream(Stream);
-        Field.AsString := Stream.DataString;
+        AssignEmbeddedObjectStreamToField(Attribute.Connector, Stream, Field);
       finally
         Stream.Free;
       end;
@@ -2642,7 +2700,7 @@ end;
 procedure TInstantNavigationalResolver.WriteParts(Attribute: TInstantParts);
 var
   Field: TField;
-  Stream: TStringStream;
+  Stream: TStream;
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
@@ -2663,10 +2721,10 @@ begin
     else
     begin
       Field := FieldByName(Metadata.FieldName);
-      Stream := TStringStream.Create('');
+      Stream := CreateEmbeddedObjectOutputStream(Attribute.Connector);
       try
         SaveObjectsToStream(Stream);
-        Field.AsString := Stream.DataString;
+        AssignEmbeddedObjectStreamToField(Attribute.Connector, Stream, Field);
       finally
         Stream.Free;
       end;
@@ -2689,7 +2747,7 @@ procedure TInstantNavigationalResolver.WriteReferences(
   Attribute: TInstantReferences);
 var
   Field: TField;
-  Stream: TStringStream;
+  Stream: TStream;
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
   with Attribute do
@@ -2709,10 +2767,10 @@ begin
     else
     begin
       Field := FieldByName(Metadata.FieldName);
-      Stream := TStringStream.Create('');
+      Stream := CreateEmbeddedObjectOutputStream(Attribute.Connector);
       try
         SaveReferencesToStream(Stream);
-        Field.AsString := Stream.DataString;
+        AssignEmbeddedObjectStreamToField(Attribute.Connector, Stream, Field);
       finally
         Stream.Free;
       end;
@@ -2745,6 +2803,7 @@ procedure TInstantSQLResolver.AddAttributeParam(Attribute: TInstantAttribute;
 var
   FieldName: string;
 
+  (* No longer used. To be removed when things stabilize with D2009.
   procedure AddBlobParam(const AFieldName, Value: string);
   var
     Param: TParam;
@@ -2762,6 +2821,7 @@ var
     if Value <> '' then
       Param.AsMemo := Value
   end;
+  *)
 
   procedure AddBlobAttributeParam;
   var
@@ -2864,7 +2924,7 @@ var
 
   procedure AddPartAttributeParam;
   var
-    Stream: TStringStream;
+    Stream: TStream;
     Part: TInstantPart;
   begin
     if Attribute.Metadata.StorageKind = skExternal then
@@ -2876,13 +2936,10 @@ var
     end
     else
     begin
-      Stream := TStringStream.Create('');
+      Stream := CreateEmbeddedObjectOutputStream(Broker.Connector);
       try
         (Attribute as TInstantPart).SaveObjectToStream(Stream);
-        if Broker.Connector.BlobStreamFormat = sfBinary then
-          AddBlobParam(FieldName, Stream.DataString)
-        else
-          AddMemoParam(FieldName, Stream.DataString);
+        AddEmbeddedObjectOutputParam(Broker.Connector, Params, FieldName, Stream);
       finally
         Stream.Free;
       end;
@@ -2891,15 +2948,12 @@ var
 
   procedure AddPartsAttributeParam;
   var
-    Stream: TStringStream;
+    Stream: TStream;
   begin
-    Stream := TStringStream.Create('');
+    Stream := CreateEmbeddedObjectOutputStream(Broker.Connector);
     try
       (Attribute as TInstantParts).SaveObjectsToStream(Stream);
-      if Broker.Connector.BlobStreamFormat = sfBinary then
-        AddBlobParam(FieldName, Stream.DataString)
-      else
-        AddMemoParam(FieldName, Stream.DataString);
+      AddEmbeddedObjectOutputParam(Broker.Connector, Params, FieldName, Stream);
     finally
       Stream.Free;
     end;
@@ -2917,15 +2971,12 @@ var
 
   procedure AddReferencesAttributeParam;
   var
-    Stream: TStringStream;
+    Stream: TStream;
   begin
-    Stream := TStringStream.Create('');
+    Stream := CreateEmbeddedObjectOutputStream(Broker.Connector);
     try
       (Attribute as TInstantReferences).SaveReferencesToStream(Stream);
-      if Broker.Connector.BlobStreamFormat = sfBinary then
-        AddBlobParam(FieldName, Stream.DataString)
-      else
-        AddMemoParam(FieldName, Stream.DataString);
+      AddEmbeddedObjectOutputParam(Broker.Connector, Params, FieldName, Stream);
     finally
       Stream.Free;
     end;
@@ -3008,6 +3059,37 @@ begin
   AddIntegerParam(Params, ConcurrencyParamName, AUpdateCount);
 end;
 
+procedure TInstantSQLResolver.AddEmbeddedObjectOutputParam(
+  const AConnector: TInstantConnector; const AParams: TParams;
+  const AParamName: string; const AStream: TStream);
+var
+  LParam: TParam;
+begin
+  Assert(Assigned(AConnector));
+  Assert(Assigned(AParams));
+  Assert(AParamName <> '');
+  Assert(Assigned(AStream));
+
+  // Look in TInstantCustomResolver.CreateEmbeddedObjectOutputStream
+  // to see the stream type. Change there need to be propagated here.
+  if AConnector.BlobStreamFormat = sfBinary then
+  begin
+    LParam := AddParam(AParams, AParamName, ftBlob);
+    if AStream.Size > 0 then
+      {$IFDEF D12+}
+      LParam.AsBytes := (AStream as TBytesStream).Bytes;
+      {$ELSE}
+      LParam.AsMemo := (AStream as TStringStream).DataString;
+      {$ENDIF}
+  end
+  else
+  begin
+    LParam := AddParam(AParams, AParamName, ftMemo);
+    if AStream.Size > 0 then
+      LParam.AsMemo := (AStream as TStringStream).DataString;
+  end;
+end;
+
 procedure TInstantSQLResolver.AddIdParam(Params: TParams;
   const ParamName, Value: string);
 var
@@ -3062,6 +3144,9 @@ var
   TransError: Exception;
 begin
   try
+    {$IFDEF IO_STATEMENT_LOGGING}
+    InstantLogStatement(InstantLogStatementExecute, AStatement, AParams);
+    {$ENDIF}
     Result := Broker.Execute(AStatement, AParams);
     Info.Success := Result >= 1;
     Info.Conflict := not (Info.Success or (ConflictAction = caIgnore));
@@ -3557,7 +3642,7 @@ var
 
   procedure ReadPartAttribute;
   var
-    Stream: TInstantStringStream;
+    Stream: TStream;
     LPartClassName: string;
     LPartId: string;
   begin
@@ -3583,8 +3668,9 @@ var
     end
     else
     begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet,
-        AFieldName));
+      Stream := CreateEmbeddedObjectInputStream(
+        (Attribute as TInstantPart).Connector,
+        DataSet.FieldByName(AFieldName));
       try
         if Stream.Size = 0 then
           (Attribute as TInstantPart).Reset
@@ -3598,7 +3684,7 @@ var
 
   procedure ReadPartsAttribute;
   var
-    Stream: TInstantStringStream;
+    Stream: TStream;
     LinkResolver: TInstantSQLLinkResolver;
   begin
     if AttributeMetadata.StorageKind = skExternal then
@@ -3618,7 +3704,9 @@ var
     end
     else
     begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
+      Stream := CreateEmbeddedObjectInputStream(
+        (Attribute as TInstantParts).Connector,
+        DataSet.FieldByName(AFieldName));
       try
         if Stream.Size = 0 then
           (Attribute as TInstantParts).Reset
@@ -3639,7 +3727,7 @@ var
 
   procedure ReadReferencesAttribute;
   var
-    Stream: TInstantStringStream;
+    Stream: TStream;
     LinkResolver: TInstantSQLLinkResolver;
   begin
     if AttributeMetadata.StorageKind = skExternal then
@@ -3659,7 +3747,9 @@ var
     end
     else
     begin
-      Stream := TInstantStringStream.Create(ReadBlobField(DataSet, AFieldName));
+      Stream := CreateEmbeddedObjectInputStream(
+        (Attribute as TInstantReferences).Connector,
+        DataSet.FieldByName(AFieldName));
       try
         if Stream.Size = 0 then
           (Attribute as TInstantReferences).Reset
@@ -3728,7 +3818,7 @@ end;
 function TInstantSQLResolver.ReadBlobField(DataSet: TDataSet;
   const FieldName: string): string;
 begin
-  Result := DataSet.FieldByName(FieldName).AsString
+  Result := DataSet.FieldByName(FieldName).AsString;
 end;
 
 function TInstantSQLResolver.ReadBooleanField(DataSet: TDataSet;
