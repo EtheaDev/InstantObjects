@@ -446,8 +446,8 @@ type
     function GetStream: TMemoryStream;
     property Stream: TMemoryStream read GetStream;
   protected
-    function GetValue: AnsiString; virtual;
-    procedure SetValue(const AValue: AnsiString); virtual;
+    function GetValue: string; virtual;
+    procedure SetValue(const AValue: string); virtual;
     class function AttributeType: TInstantAttributeType; override;
     function GetAsString: string; override;
     function GetAsVariant: Variant; override;
@@ -472,7 +472,7 @@ type
     function WriteBuffer(const Buffer; Position, Count: Integer): Integer;
     property Size: Integer read GetSize;
   published
-    property Value: AnsiString read GetValue write SetValue;
+    property Value: string read GetValue write SetValue;
   end;
 
   TInstantMemo = class(TInstantBlob)
@@ -3485,12 +3485,15 @@ begin
   Result := FStream;
 end;
 
-function TInstantBlob.GetValue: AnsiString;
+function TInstantBlob.GetValue: string;
+var
+  LValue: AnsiString;
 begin
   if Size > 0 then
   begin
-    SetLength(Result, Size div SizeOf(AnsiChar));
-    Read(Result[1], 0, Size);
+    SetLength(LValue, Size div SizeOf(AnsiChar));
+    Read(LValue[1], 0, Size);
+    Result := string(LValue);
   end
   else
     Result := '';
@@ -3568,15 +3571,17 @@ begin
   end;
 end;
 
-procedure TInstantBlob.SetValue(const AValue: AnsiString);
+procedure TInstantBlob.SetValue(const AValue: string);
 var
   L: Integer;
+  LValue: AnsiString;
 begin
-  L := Length(AValue) * SizeOf(AnsiChar);
+  LValue := AnsiString(AValue);
+  L := Length(LValue) * SizeOf(AnsiChar);
   if L > 0 then
   begin
     Stream.Clear;
-    WriteBuffer(AValue[1], 0, L);
+    WriteBuffer(LValue[1], 0, L);
     Stream.Size := L;
   end
   else
@@ -4433,9 +4438,11 @@ begin
   begin
     MemoryStream := TMemoryStream.Create;
     try
-      //CB: I don't know why MS-SQL via ADO or via DBX returns a stream with wrong size (+1)
-      //so I've changed this test adding -1 (for other brokers this is not a problem)
-      while AStream.Position < AStream.Size -1 do
+      // After reading the last object, the XML stream may still contain a few
+      // bytes for the final line break (in case the XML cose is beautified),
+      // so we go ahead and read another object ony if there's more bytes in the
+      // buffer.
+      while AStream.Position < AStream.Size - (Length(sLineBreak) * SizeOf(Char)) do
       begin
         MemoryStream.Clear;
         InstantObjectTextToBinary(AStream, MemoryStream);
