@@ -196,8 +196,8 @@ type
     procedure SetAsVariant(AValue: Variant); virtual;
     procedure SetIsChanged(Value: Boolean);
     procedure SetOwner(AOwner: TInstantObject); virtual;
-    procedure StringValidationError(InvalidChar: Char);
     procedure WriteName(Writer: TInstantWriter);
+    procedure Validate(const AValue: string); virtual;
   public
     constructor Create(AOwner: TInstantAbstractObject = nil; AMetadata:
       TInstantCollectionItem = nil); override;
@@ -1613,23 +1613,6 @@ var
   ObjectNotifiers: TInstantObjectNotifiers;
   DefaultConnector: TInstantConnector;
 
-{ Local Routines }
-
-function ValidateChars(Buffer: PChar; BufferLength: Integer;
-  ValidChars: TChars; var InvalidChar: Char): Boolean;
-var
-  I: Integer;
-begin
-  Result := True;
-  for I := 0 to Pred(BufferLength div SizeOf(Char)) do
-    if (ValidChars <> []) and not (InstantCharInSet(Buffer[I], ValidChars + [#8, #10, #13])) then
-    begin
-      Result := False;
-      InvalidChar := Buffer[I];
-      Break;
-    end;
-end;
-
 { Global routines }
 
 procedure AssignInstantStreamFormat(Strings: TStrings);
@@ -2537,15 +2520,15 @@ begin
   AsVariant := AValue;
 end;
 
-procedure TInstantAttribute.StringValidationError(InvalidChar: Char);
-begin
-  raise EInstantValidationError.CreateFmt(SInvalidChar,
-    [InvalidChar, Ord(InvalidChar), ClassName, Name]);
-end;
-
 procedure TInstantAttribute.Unchanged;
 begin
   IsChanged := False;
+end;
+
+procedure TInstantAttribute.Validate(const AValue: string);
+begin
+  if Assigned(Metadata) then
+    Metadata.ValidateAttribute(Self, AValue);
 end;
 
 procedure TInstantAttribute.WriteName(Writer: TInstantWriter);
@@ -3257,12 +3240,8 @@ begin
 end;
 
 procedure TInstantString.SetValue(const AValue: string);
-var
-  InvalidChar: Char;
 begin
-  if Assigned(Metadata) and not ValidateChars(PChar(AValue), Length(AValue),
-    Metadata.ValidChars, InvalidChar) then
-    StringValidationError(InvalidChar);
+  Validate(AValue);
   if AValue <> FValue then
   begin
     FValue:= AValue;
@@ -3590,16 +3569,18 @@ end;
 
 function TInstantBlob.Write(const Buffer; Position, Count: Integer): Integer;
 var
-  C: Char;
+  LValue: AnsiString;
+  LBufferPointer: {$IFDEF D12+}PByte{$ELSE}PChar{$ENDIF};
 
   function CompareBuffers: Boolean;
   var
     I: Integer;
+    B: {$IFDEF D12+}Byte{$ELSE}Char{$ENDIF};
   begin
     Stream.Position := Position;
-    for I := 0 to Pred(Count) do
+    for I := Position to Pred(Position + Count) do
     begin
-      Result := (Stream.Read(C, 1) = 1) and (C = PChar(@Buffer)[I]);
+      Result := (Stream.Read(B, 1) = 1) and (B = {$IFDEF D12+}PByte{$ELSE}PChar{$ENDIF}(@Buffer)[I]);
       if not Result then
         Exit;
     end;
@@ -3607,13 +3588,17 @@ var
   end;
 
 begin
-  if not ValidateChars(PChar(@Buffer), Count, Metadata.ValidChars, C) then
-    StringValidationError(C);
+  SetLength(LValue, Count);
+  LBufferPointer := @Buffer;
+  Inc(LBufferPointer, Position);
+  StrLCopy(PAnsiChar(LValue), PAnsiChar(LBufferPointer), Count);
+  Validate(string(LValue));
   if not CompareBuffers then
   begin
     Stream.Position := Position;
     Result := Stream.Write(Buffer, Count);
-  end else
+  end
+  else
     Result := 0;
 end;
 

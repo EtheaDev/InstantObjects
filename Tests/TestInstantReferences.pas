@@ -100,7 +100,8 @@ type
 
 implementation
 
-uses SysUtils, Classes, testregistry, InstantClasses, InstantMetadata;
+uses
+  SysUtils, Windows, Classes, testregistry, InstantClasses, InstantMetadata;
 
 function TestTInstantEmbReferences.RefsEmbeddedCompare(Holder, Obj1, Obj2:
     TInstantObject): Integer;

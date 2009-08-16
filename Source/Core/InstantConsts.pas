@@ -132,7 +132,7 @@ resourcestring
   SInitializationFailed = 'Initialization failed for object of class %s: "%s"';
   SInvalidArgument = 'Invalid argument for object of class %s. Expected argument of class %s';
   SInvalidAttributeValue = 'Invalid value "%s" for attribute %s(''%s'')';
-  SInvalidChar = 'Invalid character ''%s'' (#%d) for attribute %s(''%s'')';
+  SInvalidChar = 'Invalid character ''%s'' (#%d). Valid characters are ''%s''';
   SInvalidClass = 'Invalid class %s. Expected %s';
   SInvalidConnector = 'Invalid connector for object %s(''%s'') in attribute %s(''%s'')';
   SInvalidDataType = 'Invalid data type';

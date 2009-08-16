@@ -114,7 +114,7 @@ begin
   for I := 0 to FModel.ModuleCount - 1 do
   begin
     Module := FModel.Modules[I];
-    ImportModuleCombo.Items.AddObject(Module.UnitName, Module)
+    ImportModuleCombo.Items.AddObject(Module.PascalUnitName, Module)
   end;
 end;
 

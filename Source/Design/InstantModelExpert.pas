@@ -504,7 +504,7 @@ var
   Editor: IOTASourceEditor;
   OldLen: Integer;
 begin
-  Module := FIDEInterface.FindModule(AClass.Module.UnitName);
+  Module := FIDEInterface.FindModule(AClass.Module.PascalUnitName);
   if not Assigned(Module) then
     Exit;
   Editor := FIDEInterface.SourceEditor(Module);

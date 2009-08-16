@@ -50,7 +50,6 @@ type
     Major, Minor, Release, Build: Word;
   end;
 
-function InstantCharSetToStr(C: TChars): string;
 function InstantCompareObjects(Obj1, Obj2: TObject; PropName: string;
   Options: TInstantCompareOptions): Integer; overload;
 function InstantCompareObjects(Obj1, Obj2: TObject; PropNames: TStrings;
@@ -82,7 +81,6 @@ function InstantRightPos(const SubStr, Str: string; IgnoreCase: Boolean = False)
 function InstantSameText(const S1, S2: string; IgnoreCase: Boolean): Boolean;
 function InstantStrToDate(const Str: string): TDateTime;
 function InstantStrToDateTime(const Str: string): TDateTime;
-function InstantStrToCharSet(const Str: AnsiString): TChars;
 procedure InstantStrToList(const Str: string; List: TStrings;
   Delimiters: TChars);
 function InstantStrToTime(const Str: string): TDateTime;
@@ -108,37 +106,6 @@ uses
   InstantFpcUtils,
 {$ENDIF}
   {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti;
-
-function InstantCharSetToStr(C: TChars): string;
-var
-  I, J, L: Integer;
-  S: string;
-begin
-  Result := '';
-  for I := 0 to 255 do
-    if InstantCharInSet(Chr(I), C) then
-      S := S + Chr(I);
-  I := 1;
-  L := Length(S);
-  Result := '';
-  while I <= L do
-  begin
-    J := 1;
-    Result := Result + S[I];
-    while ((I + J) <= L) and (Ord(S[I]) + J = Ord(S[I + J])) do
-      Inc(J);
-    if J > 3 then
-      Result := Result + '..' + S[I + J - 1]
-    else
-      while J > 1 do
-      begin
-        Inc(I);
-        Dec(J);
-        Result := Result + S[I];
-      end;
-    I := I + J;
-  end;
-end;
 
 function InstantCompareObjects(Obj1, Obj2: TObject; PropName: string;
   Options: TInstantCompareOptions): Integer;
@@ -538,31 +505,6 @@ begin
         Length(InstantTimeFormat)));
   else
     raise EInstantConversionError.CreateFmt(SInvalidDateTime, [Str]);
-  end;
-end;
-
-function InstantStrToCharSet(const Str: AnsiString): TChars;
-const
-  Dots: array[0..1] of Char = '..';
-var
-  I, J: Integer;
-begin
-  Result := [];
-  I := 1;
-  while I <= Length(Str) do
-  begin
-    if CompareMem(@Str[I], @Dots, Length(Dots)) and
-      (I > 1) and (Length(Str) > I + 1) then
-    begin
-      for J := Ord(Str[I - 1]) to Ord(Str[I + 2]) do
-        Result := Result + [Chr(J)];
-      Inc(I, Length(Dots));
-    end
-    else
-    begin
-      Include(Result, Str[I]);
-      Inc(I);
-    end;
   end;
 end;
 

@@ -3654,6 +3654,32 @@ procedure TInstantCustomExposer.LoadFieldParams(AObject: TObject;
   Field: TField);
 var
   Metadata: TInstantAttributeMetadata;
+
+  function InstantStrToCharSet(const Str: AnsiString): TFieldChars;
+  const
+    Dots: array[0..1] of Char = '..';
+  var
+    I, J: Integer;
+  begin
+    Result := [];
+    I := 1;
+    while I <= Length(Str) do
+    begin
+      if CompareMem(@Str[I], @Dots, Length(Dots)) and
+        (I > 1) and (Length(Str) > I + 1) then
+      begin
+        for J := Ord(Str[I - 1]) to Ord(Str[I + 2]) do
+          Result := Result + [Chr(J)];
+        Inc(I, Length(Dots));
+      end
+      else
+      begin
+        Include(Result, Str[I]);
+        Inc(I);
+      end;
+    end;
+  end;
+
 begin
   if AObject is TInstantObject then
   begin
@@ -3663,8 +3689,8 @@ begin
     begin
       if Field.EditMask <> Metadata.EditMask then
         Field.EditMask := Metadata.EditMask;
-      if Metadata.ValidChars <> [] then
-        Field.ValidChars := Metadata.ValidChars;
+      if Metadata.ValidCharsString <> '' then
+        Field.ValidChars := InstantStrToCharSet(AnsiString(Metadata.ValidCharsString));
     end;
   end;
 end;
@@ -3712,7 +3738,7 @@ begin
         FillChar(Buffer^, Field.DataSize, 0);
         if not Empty then
         begin
-          S := Value;
+          S := AnsiString(Value);
           Len := Length(S);
           if Len >= Field.DataSize then
             Len := Pred(Field.DataSize);

@@ -40,7 +40,8 @@ unit InstantMetadata;
 
 interface
 
-uses Classes, Contnrs, Db, InstantClasses, InstantTypes, InstantConsts;
+uses
+  Classes, Contnrs, Db, InstantClasses, InstantTypes, InstantConsts;
 
 type
   TInstantAttributeMap = class;
@@ -430,6 +431,33 @@ type
       write SetItems; default;
   end;
 
+  TInstantValidator = class
+  private
+    FMetadata: TInstantAttributeMetadata;
+  public
+    // A reference to the metadata. Should be set by CreateValidator on
+    // the created instance.
+    property Metadata: TInstantAttributeMetadata read FMetadata write FMetadata;
+    // Creates and returns a validator instance suitable for the specified
+    // metadata, or nil if the class doesn't apply to the metadata.
+    { TODO : extend this to support class-level validation? }
+    class function CreateValidator(const AMetadata: TInstantAttributeMetadata):
+      TInstantValidator; virtual;
+    // Should check the value against the validation settings
+    // that are specific for each derived class, and return
+    // True if the value is valid for the attribute.
+    // Otherwise, this method should return False and set an appropriate
+    // error message in AValidationErrorText.
+    // When this method is called, AAttribute is guaranteed to be assigned.
+    function IsValid(const AAttribute: TInstantAbstractAttribute;
+      const AValue: string; out AValidationErrorText: string): Boolean; virtual; abstract;
+    // Raises an exception if the proposed value is not valid for
+    // the attribute.
+    procedure Validate(const AAttribute: TInstantAbstractAttribute; const AValue: string);
+  end;
+
+  TInstantValidatorClass = class of TInstantValidator;
+
   TInstantAttributeMetadata = class(TInstantMetadata)
   private
     FAttributeType: TInstantAttributeType;
@@ -442,9 +470,10 @@ type
     FObjectClassName: string;
     FSize: Integer;
     FStorageName: string;
-    FValidChars: TChars;
+    FValidCharsString: string;
     FStorageKind: TInstantStorageKind;
     FExternalStorageName: string;
+    FValidator: TInstantValidator;
     function GetAttributeClass: TInstantAbstractAttributeClass;
     function GetAttributeClassName: string;
     function GetAttributeTypeName: string;
@@ -458,7 +487,6 @@ type
     function GetObjectClass: TInstantAbstractObjectClass;
     function GetObjectClassMetadata: TInstantClassMetadata;
     function GetTableName: string;
-    function GetValidChars: TChars;
     function GetValidCharsString: string;
     procedure SetAttributeClass(const AClass: TInstantAbstractAttributeClass);
     procedure SetAttributeClassName(const Value: string);
@@ -466,15 +494,22 @@ type
     procedure SetCollection(Value: TInstantAttributeMetadatas);
     procedure SetFieldName(const Value: string);
     procedure SetIsDefault(const Value: Boolean);
-    procedure SetValidCharsString(const Value: string);
+    procedure SetValidCharsString(const AValue: string);
+    function GetValidator: TInstantValidator;
+    // Should be called whenever a validation-related property,
+    // such as ValidCharsString, changes.
+    procedure FreeValidator;
+  protected
+    property Validator: TInstantValidator read GetValidator;
   public
-    function CreateAttribute(AObject: TInstantAbstractObject):
-        TInstantAbstractAttribute;
+    function CreateAttribute(
+      AObject: TInstantAbstractObject): TInstantAbstractAttribute;
     procedure Assign(Source: TPersistent); override;
     procedure CheckAttributeClass(AClass: TInstantAbstractAttributeClass);
     procedure CheckCategory(ACategory: TInstantAttributeCategory);
     procedure CheckIsIndexed;
     function IsAttributeClass(AClass: TInstantAbstractAttributeClass): Boolean;
+    destructor Destroy; override;
     property AttributeClass: TInstantAbstractAttributeClass 
       read GetAttributeClass  write SetAttributeClass;
     property AttributeClassName: string read GetAttributeClassName
@@ -490,7 +525,8 @@ type
     property FieldName: string read GetFieldName write SetFieldName;
     property HasValidChars: Boolean read GetHasValidChars;
     property TableName: string read GetTableName;
-    property ValidChars: TChars read GetValidChars write FValidChars;
+    procedure ValidateAttribute(const AAttribute: TInstantAbstractAttribute;
+      const AValue: string);
   published
     property AttributeType: TInstantAttributeType read FAttributeType
       write FAttributeType default atUnknown;
@@ -535,7 +571,9 @@ type
 
 implementation
 
-uses SysUtils, TypInfo, InstantPersistence, InstantUtils;
+uses
+  SysUtils, TypInfo, InstantPersistence, InstantUtils, InstantValidation,
+  InstantStandardValidators {registers the standard validators - do not remove};
 
 const
   AttributeClasses: array[TInstantAttributeType] of TInstantAttributeClass = (
@@ -1655,7 +1693,7 @@ begin
       Self.FStorageName := FStorageName;
       Self.FStorageKind := FStorageKind;
       Self.FExternalStorageName := FExternalStorageName;
-      Self.FValidChars := FValidChars;
+      Self.FValidCharsString := FValidCharsString;
     end;
 end;
 
@@ -1698,6 +1736,17 @@ begin
   if not Assigned(AClass) then
     raise EInstantError.CreateFmt(SUnsupportedType, [AttributeTypeName]);
   Result := AClass.Create(TInstantObject(AObject), Self);
+end;
+
+destructor TInstantAttributeMetadata.Destroy;
+begin
+  FreeAndNil(FValidator);
+  inherited;
+end;
+
+procedure TInstantAttributeMetadata.FreeValidator;
+begin
+  FreeAndNil(FValidator);
 end;
 
 function TInstantAttributeMetadata.GetAttributeClass:
@@ -1766,7 +1815,7 @@ end;
 
 function TInstantAttributeMetadata.GetHasValidChars: Boolean;
 begin
-  Result := FValidChars <> [];
+  Result := FValidCharsString <> '';
 end;
 
 function TInstantAttributeMetadata.GetIsDefault: Boolean;
@@ -1798,14 +1847,16 @@ begin
     Result := '';
 end;
 
-function TInstantAttributeMetadata.GetValidChars: TChars;
+function TInstantAttributeMetadata.GetValidator: TInstantValidator;
 begin
-  Result := FValidChars;
+  if not Assigned(FValidator) then
+    FValidator := InstantValidatorFactory.CreateValidator(Self);
+  Result := FValidator;
 end;
 
 function TInstantAttributeMetadata.GetValidCharsString: string;
 begin
-  Result := InstantCharSetToStr(FValidChars);
+  Result := FValidCharsString;
 end;
 
 function TInstantAttributeMetadata.IsAttributeClass(AClass:
@@ -1883,9 +1934,19 @@ begin
   end;
 end;
 
-procedure TInstantAttributeMetadata.SetValidCharsString(const Value: string);
+procedure TInstantAttributeMetadata.SetValidCharsString(const AValue: string);
 begin
-  FValidChars := InstantStrToCharSet(Value);
+  if AValue <> FValidCharsString then
+  begin
+    FreeValidator;
+    FValidCharsString := AValue;
+  end;
+end;
+
+procedure TInstantAttributeMetadata.ValidateAttribute(
+  const AAttribute: TInstantAbstractAttribute; const AValue: string);
+begin
+  Validator.Validate(AAttribute, AValue);
 end;
 
 constructor TInstantAttributeMetadatas.Create(AOwner: TInstantClassMetadata);
@@ -1940,6 +2001,24 @@ procedure TInstantAttributeMetadatas.SetItems(Index: Integer;
   Value: TInstantAttributeMetadata);
 begin
   inherited Items[Index] := Value;
+end;
+
+{ TInstantValidator }
+
+class function TInstantValidator.CreateValidator(
+  const AMetadata: TInstantAttributeMetadata): TInstantValidator;
+begin
+  Result := Create;
+  Result.Metadata := AMetadata;
+end;
+
+procedure TInstantValidator.Validate(
+  const AAttribute: TInstantAbstractAttribute; const AValue: string);
+var
+  LValidationErrorText: string;
+begin
+  if not IsValid(AAttribute, AValue, LValidationErrorText) then
+    raise EInstantValidationError.Create(LValidationErrorText);
 end;
 
 end.

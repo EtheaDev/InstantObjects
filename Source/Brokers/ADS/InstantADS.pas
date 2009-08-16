@@ -178,13 +178,13 @@ end;
 
 function TInstantADSConnectionDef.GetDatabaseName: string;
 const
-  ValidChars = ['a'..'z', 'A'..'Z', '0'..'9', '_'];
+  LValidChars = ['a'..'z', 'A'..'Z', '0'..'9', '_'];
 var
   I: Integer;
 begin
   Result := Name;
   for I := 1 to Length(Result) do
-    if not (Result[I] in ValidChars) then
+    if not (Result[I] in LValidChars) then
       Result[I] := '_';
 end;
 
