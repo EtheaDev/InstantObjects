@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
- * Brian Andersen
+ * Brian Andersen, David Moorhouse, David Taylor
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -48,7 +48,7 @@ uses
 {$IFDEF LINUX}
   QForms, QActnList, QMenus, QTypes, QImgList, QComCtrls, QControls, QExtCtrls,
 {$ENDIF}
-  InstantCode;
+  InstantCode, InstantAttributeView;
 
 type
   TInstantModelStyle = (msInheritance, msRelations);
@@ -123,6 +123,14 @@ type
     ViewSourceItem: TMenuItem;
     ImportModelItem: TMenuItem;
     ImportModelAction: TAction;
+    AttributePanel: TPanel;
+    AttributeSplitter: TSplitter;
+    AttributeCaptionPanel: TPanel;
+    AttributeCaptionLabel: TLabel;
+    ToolSep2: TToolButton;
+    ViewAttributeButton: TToolButton;
+    ViewAttributesAction: TAction;
+    ViewAttributes: TMenuItem;
     procedure AboutActionExecute(Sender: TObject);
     procedure BuildDatabaseActionExecute(Sender: TObject);
     procedure CollapseAllActionExecute(Sender: TObject);
@@ -138,6 +146,7 @@ type
     procedure RefreshActionExecute(Sender: TObject);
     procedure SelectUnitsActionExecute(Sender: TObject);
     procedure TreeMenuPopup(Sender: TObject);
+    procedure ViewAttributesActionExecute(Sender: TObject);
     procedure ViewInheritanceActionExecute(Sender: TObject);
     procedure ViewRelationsActionExecute(Sender: TObject);
     procedure ViewSourceActionExecute(Sender: TObject);
@@ -146,15 +155,21 @@ type
     FError: TInstantModelError;
     FModel: TInstantCodeModel;
     FModelView: TModelTreeView;
+    FAttributeFrame: TInstantAttributeViewFrame;
     FSelectedNode: TTreeNode;
     FStyle: TInstantModelStyle;
     FOnApplyClass: TInstantCodeClassApplyEvent;
     FOnGotoSource: TInstantGotoSourceEvent;
     FOnLoadModel: TInstantCodeModelEvent;
+    FViewUpdateDisableCount: Integer;
     function GetFocusedClass: TInstantCodeClass;
     function GetSelectedNode: TTreeNode;
     procedure SetError(E: Exception);
     procedure SetStyle(const Value: TInstantModelStyle);
+    procedure ViewClassAttributes(AClass: TInstantCodeClass);
+    procedure SetAttributePanelVisible(Visible: Boolean);
+    procedure RestoreLayout;
+    procedure StoreLayout;
   protected
     procedure ApplyClass(AClass: TInstantCodeClass;
       ChangeType: TInstantCodeChangeType; OldName: string = '';
@@ -162,6 +177,9 @@ type
     function ClassFromNode(Node: TTreeNode): TInstantCodeClass;
     procedure DoApplyClass(AClass: TInstantCodeClass;
       ChangeInfo: TInstantCodeClassChangeInfo);
+    procedure DisableViewUpdate;
+    procedure EnableViewUpdate;
+    function ViewUpdateEnabled: boolean;
     function EditClass(AClass: TInstantCodeClass; New: Boolean): Boolean;
     procedure GotoNodeSource(Node: TTreeNode);
     procedure GotoSource(const FileName: string; Pos: TInstantCodePos);
@@ -199,7 +217,7 @@ uses
   InstantModelExpert,
 {$ENDIF}
   InstantDesignUtils, InstantPersistence, InstantDesignHook, InstantAbout,
-  InstantImageUtils, InstantMetadata, InstantModelImport;
+  InstantImageUtils, InstantMetadata, InstantModelImport, Registry;
 
 resourcestring
   SDeleteClass = 'Delete Class ''%s''?';
@@ -305,6 +323,7 @@ begin
     Images := ModelImages;
     PopupMenu := TreeMenu;
     ReadOnly := True;
+    HideSelection := False;
 {$IFDEF MSWINDOWS}
     RightClickSelect := True;
 {$ENDIF}
@@ -312,6 +331,14 @@ begin
     OnNodeDblClick := ModelViewNodeDblClick;
     OnGetImageIndex := ModelViewGetImageIndex;
   end;
+
+  FAttributeFrame := TInstantAttributeViewFrame.Create(Self);
+  with FAttributeFrame do
+  begin
+    Parent := AttributePanel;
+    Align := alClient;
+  end;
+
   FModel := TInstantCodeModel.Create;
   DesignModel := @FModel;
 {$IFDEF MSWINDOWS}
@@ -319,6 +346,8 @@ begin
   AutoSave := True;
 {$ENDIF}
   ModelExplorer := Self;
+  SetAttributePanelVisible(True);
+  RestoreLayout;
   Refresh;
 end;
 
@@ -337,6 +366,7 @@ end;
 
 destructor TInstantModelExplorerForm.Destroy;
 begin
+  StoreLayout;
   ModelExplorer := nil;
   FModel.Free;
   FError.Free;
@@ -349,6 +379,22 @@ begin
   if Assigned(FOnApplyClass) then
     FOnApplyClass(Self, AClass, ChangeInfo);
 end;
+
+procedure TInstantModelExplorerForm.DisableViewUpdate;
+  begin
+    inc(FViewUpdateDisableCount);
+  end;
+
+procedure TInstantModelExplorerForm.EnableViewUpdate;
+  begin
+    if (FViewUpdateDisableCount > 0) then
+      dec(FViewUpdateDisableCount);
+  end;
+
+function TInstantModelExplorerForm.ViewUpdateEnabled: boolean;
+  begin
+    Result := (FViewUpdateDisableCount = 0);
+  end;
 
 function TInstantModelExplorerForm.EditClass(AClass: TInstantCodeClass;
   New: Boolean): Boolean;
@@ -365,8 +411,9 @@ begin
     Subject := AClass;
     Result := ShowModal = mrOk;
     if Result then
-      ApplyClass(AClass, ChangeTypes[New], OldName, ChangedAttributes,
-        NewAttributes);
+      ApplyClass(AClass, ChangeTypes[New], OldName,
+        FAttributeFrame.ChangedAttributes,
+        FAttributeFrame.NewAttributes);
   finally
     Free;
   end;
@@ -520,7 +567,7 @@ procedure TInstantModelExplorerForm.GotoSource(const FileName: string;
   Pos: TInstantCodePos);
 begin
   if Assigned(FOnGotoSource) then
-    FOnGotoSource(Self, FileName, Pos); 
+    FOnGotoSource(Self, FileName, Pos);
 end;
 
 procedure TInstantModelExplorerForm.LoadModel;
@@ -548,6 +595,8 @@ procedure TInstantModelExplorerForm.ModelViewChange(Sender: TObject;
   Node: TTreeNode);
 begin
   FSelectedNode := nil;
+  if (ViewUpdateEnabled) then
+    ViewClassAttributes(FocusedClass);
 end;
 
 procedure TInstantModelExplorerForm.ModelViewGetImageIndex(Sender: TObject;
@@ -639,6 +688,13 @@ begin
   ModelExpert.SelectUnits;
 end;
 
+procedure TInstantModelExplorerForm.SetAttributePanelVisible(Visible: Boolean);
+begin
+  AttributePanel.Visible := Visible;
+  AttributeSplitter.Visible := Visible;
+  ViewAttributeButton.Down := Visible;
+end;
+
 procedure TInstantModelExplorerForm.SetError(E: Exception);
 begin
   FreeAndNil(FError);
@@ -666,7 +722,7 @@ end;
 
 procedure TInstantModelExplorerForm.TreeMenuPopup(Sender: TObject);
 begin
-  FSelectedNode := ModelView.Selected; 
+  FSelectedNode := ModelView.Selected;
 end;
 
 procedure TInstantModelExplorerForm.UpdateActions;
@@ -797,42 +853,50 @@ var
   I: Integer;
   Level: Integer;
 begin
-  Level := 0;
-  FSelectedNode := nil;
-  ModelView.Items.BeginUpdate;
+  FAttributeFrame.Clear;
+
+  DisableViewUpdate;
+
   try
-    if Assigned(FError) then
-    begin
-      ModelView.Items.Clear;
-{$IFDEF MSWINDOWS}
-      ModelView.ShowRoot := False;
-{$ENDIF}
-      ModelView.Items.AddObject(nil, FError.Text, FError)
-    end else
-    begin
-      Nodes := TList.Create;
-      try
-{$IFDEF MSWINDOWS}
-        ModelView.ShowRoot := True;
-{$ENDIF}
-        for I := 0 to Pred(Model.ClassCount) do
-        begin
-          AClass := Model.Classes[I];
-          if (Style = msRelations) or not Assigned(AClass.BaseClass) then
-            Nodes.Add(AddClass(nil, AClass, '', Level));
+    Level := 0;
+    FSelectedNode := nil;
+    ModelView.Items.BeginUpdate;
+    try
+      if Assigned(FError) then
+      begin
+        ModelView.Items.Clear;
+  {$IFDEF MSWINDOWS}
+        ModelView.ShowRoot := False;
+  {$ENDIF}
+        ModelView.Items.AddObject(nil, FError.Text, FError)
+      end else
+      begin
+        Nodes := TList.Create;
+        try
+  {$IFDEF MSWINDOWS}
+          ModelView.ShowRoot := True;
+  {$ENDIF}
+          for I := 0 to Pred(Model.ClassCount) do
+          begin
+            AClass := Model.Classes[I];
+            if (Style = msRelations) or not Assigned(AClass.BaseClass) then
+              Nodes.Add(AddClass(nil, AClass, '', Level));
+          end;
+          ModelView.AlphaSort;
+          RemoveInvalidNodes(nil, Nodes);
+          FirstNode := ModelView.Items.GetFirstNode;
+          if Assigned(FirstNode) and (FirstNode.GetNextSibling = nil) then
+            FirstNode.Expand(False);
+        finally
+          Nodes.Free;
         end;
-        ModelView.AlphaSort;
-        RemoveInvalidNodes(nil, Nodes);
-        FirstNode := ModelView.Items.GetFirstNode;
-        if Assigned(FirstNode) and (FirstNode.GetNextSibling = nil) then
-          FirstNode.Expand(False);
-      finally
-        Nodes.Free;
       end;
+    finally;
+      ModelView.Items.EndUpdate;
+      ModelView.Repaint;
     end;
-  finally;
-    ModelView.Items.EndUpdate;
-    ModelView.Repaint;
+  finally
+    EnableViewUpdate;
   end;
 end;
 
@@ -855,6 +919,49 @@ procedure TInstantModelExplorerForm.ViewSourceActionExecute(
 begin
   GotoNodeSource(SelectedNode);
 end;
+
+procedure TInstantModelExplorerForm.ViewAttributesActionExecute(Sender: TObject);
+begin
+  SetAttributePanelVisible(not AttributePanel.Visible);
+end;
+
+procedure TInstantModelExplorerForm.ViewClassAttributes(AClass: TInstantCodeClass);
+begin
+  FAttributeFrame.Subject := AClass;
+end;
+
+procedure TInstantModelExplorerForm.RestoreLayout;
+begin
+  try
+    with TRegistry.Create do try
+      RootKey := HKEY_CURRENT_USER;
+      if OpenKey('Software\InstantObjects.org\Layout\ClassAttributes', False) then begin
+        SetAttributePanelVisible(ReadBool('ShowAttributes'));
+        AttributePanel.Height := ReadInteger('AttributePanelHeight');
+        FAttributeFrame.InheritedAttributesPanel.Height := ReadInteger('InheritedAttributeHeight');
+      end;
+    finally
+      Free;
+    end;
+  except
+  // silently swallow exception
+  end;
+end;
+
+procedure TInstantModelExplorerForm.StoreLayout;
+begin
+  with TRegistry.Create do try
+    RootKey := HKEY_CURRENT_USER;
+    if OpenKey('Software\InstantObjects.org\Layout\ClassAttributes', True) then begin
+      WriteBool('ShowAttributes', ViewAttributeButton.Down);
+      WriteInteger('AttributePanelHeight', AttributePanel.Height);
+      WriteInteger('InheritedAttributeHeight', FAttributeFrame.InheritedAttributesPanel.Height);
+    end;
+  finally
+    Free;
+  end;
+end;
+
 
 initialization
   ModelExplorer := nil;
