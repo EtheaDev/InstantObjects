@@ -111,7 +111,8 @@ type
 
 implementation
 
-uses SysUtils, Classes, testregistry, InstantClasses, InstantMetadata,
+uses
+  SysUtils, Windows, Classes, testregistry, InstantClasses, InstantMetadata,
   InstantTypes;
 
 procedure TestTInstantExtParts.SetUp;

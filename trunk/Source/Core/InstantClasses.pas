@@ -50,11 +50,7 @@ const
   InstantBufferSize = 4096;
 
 type
-{$IFDEF D12+}
-  TChars = set of AnsiChar; // Avoid WideChar reduced to byte warning
-{$ELSE}
-  TChars = set of Char;
-{$ENDIF}
+  TChars = set of AnsiChar;
 
 {$IFDEF LINUX}
     TDate = type TDateTime;
@@ -179,7 +175,6 @@ type
   public
     constructor Create(Stream: TStream; BufSize: Integer = InstantBufferSize);
     procedure ReadBinary(ReadData: TStreamProc);
-    function ReadCharSet: TChars;
     function ReadObject(AObject: TPersistent = nil;
       Arg: Pointer = nil): TPersistent; virtual;
     procedure ReadProperties(AObject: TPersistent);
@@ -195,7 +190,6 @@ type
   public
     constructor Create(Stream: TStream; BufSize: Integer = InstantBufferSize);
     procedure WriteBinary(WriteData: TStreamProc);
-    procedure WriteCharSet(CharSet: TChars);
     procedure WriteObject(AObject: TPersistent); virtual;
     procedure WriteProperties(AObject: TPersistent);
     {$IFNDEF UNICODE}
@@ -976,11 +970,6 @@ begin
   end;
 end;
 
-function TInstantReader.ReadCharSet: TChars;
-begin
-  Result := InstantStrToCharSet(ReadStr);
-end;
-
 function TInstantReader.ReadObject(AObject: TPersistent;
   Arg: Pointer): TPersistent;
 
@@ -1066,11 +1055,6 @@ end;
 procedure TInstantWriter.WriteBinary(WriteData: TStreamProc);
 begin
   inherited WriteBinary(WriteData);
-end;
-
-procedure TInstantWriter.WriteCharSet(CharSet: TChars);
-begin
-  WriteStr(InstantCharSetToStr(CharSet));
 end;
 
 procedure TInstantWriter.WriteObject(AObject: TPersistent);

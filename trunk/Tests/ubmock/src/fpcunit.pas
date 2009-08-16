@@ -107,7 +107,7 @@ type
     class procedure AssertException(AExceptionClass: ExceptClass; AMethod: TRunMethod); overload;
   end;
 
-  TTestFailure = class(TObject)
+  TTestFailure = class(TPersistent)
   private
     FTestName: string;
     FTestSuiteName: string;
@@ -207,7 +207,7 @@ type
 
   { TTestResult }
 
-  TTestResult = class(TObject)
+  TTestResult = class(TPersistent)
   private
   protected
     FRunTests: integer;
@@ -254,7 +254,7 @@ Resourcestring
 implementation
 
 uses
-  testutils;
+  Windows, testutils;
 
 type
 
@@ -942,7 +942,7 @@ end;
 
 procedure TTestResult.RunProtected(ATestCase: TTest; protect: TProtect);
 var
-  func, source: shortstring;
+  func, source: string;
   line: longint;
 begin
   func := '';

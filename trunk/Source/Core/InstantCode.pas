@@ -871,12 +871,12 @@ type
     function GetSubClass(Index: Integer): TInstantCodeClass;
     function GetSubClassCount: Integer;
     function GetSubClassList: TList;
-    function GetUnitName: string;
+    function GetPascalUnitName: string;
     procedure SetBaseClass(const Value: TInstantCodeClass);
     procedure SetBaseClassName(const Value: string);
     procedure SetPersistence(const Value: TInstantPersistence);
     procedure SetStorageName(const Value: string);
-    procedure SetUnitName(const Value: string);
+    procedure SetPascalUnitName(const Value: string);
     procedure RemoveDivision(Division: TInstantCodeDivision);
     procedure SetSubClass(Index: Integer; const Value: TInstantCodeClass);
   protected
@@ -959,7 +959,7 @@ type
     property BaseClassName: string read GetBaseClassName write SetBaseClassName;
     property Persistence: TInstantPersistence read GetPersistence write SetPersistence;
     property StorageName: string read GetStorageName write SetStorageName;
-    property UnitName: string read GetUnitName write SetUnitName;
+    property PascalUnitName: string read GetPascalUnitName write SetPascalUnitName;
   end;
 
   TInstantCodeClassList = class(TList)
@@ -1258,7 +1258,7 @@ type
     function GetProgramSection: TInstantCodeProgramSection;
     function GetTypeCount: Integer;
     function GetTypes(Index: Integer): TInstantCodeType;
-    function GetUnitName: string;
+    function GetPascalUnitName: string;
     procedure SetModuleTypeName(const Value: string);
   protected
     function GetModule: TInstantCodeModule; override;
@@ -1291,7 +1291,7 @@ type
     property TypeCount: Integer read GetTypeCount;
     property Types[Index: Integer]: TInstantCodeType read GetTypes;
   published
-    property UnitName: string read GetUnitName;
+    property PascalUnitName: string read GetPascalUnitName;
   end;
 
   TInstantCodeProject = class(TInstantCodeObject)
@@ -5251,9 +5251,9 @@ begin
   Result := FSubClassList;
 end;
 
-function TInstantCodeClass.GetUnitName: string;
+function TInstantCodeClass.GetPascalUnitName: string;
 begin
-  Result := Module.UnitName;
+  Result := Module.PascalUnitName;
 end;
 
 class function TInstantCodeClass.Identifier: string;
@@ -5439,7 +5439,7 @@ begin
   SubClassList[Index] := Value;
 end;
 
-procedure TInstantCodeClass.SetUnitName(const Value: string);
+procedure TInstantCodeClass.SetPascalUnitName(const Value: string);
 var
   NewModule: TInstantCodeModule;
 begin
@@ -6986,7 +6986,7 @@ begin
   Result := TInstantCodeType(FTypes[Index]);
 end;
 
-function TInstantCodeModule.GetUnitName: string;
+function TInstantCodeModule.GetPascalUnitName: string;
 begin
   Result := ChangeFileExt(ExtractFileName(Name), '');
 end;
@@ -7006,7 +7006,7 @@ end;
 
 procedure TInstantCodeModule.InternalWrite(Writer: TInstantCodeWriter);
 begin
-  Writer.WriteLnFmt('%s %s;', [ModuleTypeName, UnitName]);
+  Writer.WriteLnFmt('%s %s;', [ModuleTypeName, PascalUnitName]);
   Writer.WriteLn;
   InterfaceSection.Write(Writer);
   ImplementationSection.Write(Writer);

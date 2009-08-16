@@ -233,6 +233,7 @@ begin
     vReturnValue := FInstantBlob.WriteBuffer(vBlobReadStr[1], vPosition,
       vCount);
     AssertEquals(vCount, vReturnValue);
+    AssertTrue(FInstantBlob.IsChanged);
     vReturnValue := FInstantBlob.ReadBuffer(vBlobReadStr[1], vPosition,
       vCount);
     AssertEquals(vCount, vReturnValue);

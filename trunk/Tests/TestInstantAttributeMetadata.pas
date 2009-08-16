@@ -41,6 +41,8 @@ type
 
   // Extended test methods for class TTestCase
   TTestCaseEx = class(TTestCase)
+  private
+    FTempAttr: TInstantAttribute;
   public
     class procedure AssertException(const AMessage: string;
                                     AExceptionClass: ExceptClass;
@@ -85,6 +87,7 @@ type
   private
     FConn: TInstantMockConnector;
     FInstantAttributeMetadata: TInstantAttributeMetadata;
+    procedure SetInvalidValueInTempAttr;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -95,6 +98,7 @@ type
     procedure TestCheckCategory;
     procedure TestCheckIsIndexed;
     procedure TestIsAttributeClass;
+    procedure TestAttributeValidation;
   end;
 
   // Test methods for class TInstantAttributeMetadatas
@@ -235,7 +239,7 @@ begin
   FInstantAttributeMetadata.StorageName := 'StorageName';
   FInstantAttributeMetadata.StorageKind := skEmbedded;
   FInstantAttributeMetadata.ExternalStorageName := 'ExternalStorageName';
-  FInstantAttributeMetadata.ValidChars := ['a'..'z'];
+  FInstantAttributeMetadata.ValidCharsString := 'a..y0..9€ ';
 end;
 
 procedure TestTInstantAttributeMetadata.TearDown;
@@ -266,7 +270,7 @@ begin
     vSource.StorageName := 'StorageName';
     vSource.StorageKind := skEmbedded;
     vSource.ExternalStorageName := 'ExternalStorageName';
-    vSource.ValidChars := ['a'..'z'];
+    vSource.ValidCharsString := 'a..z';
     vDest.Assign(vSource);
 
     vStr := GetEnumName(TypeInfo(TInstantAttributeType),
@@ -286,7 +290,7 @@ begin
     AssertEquals('StorageKind incorrect', 'skEmbedded', vStr);
     AssertEquals('ExternalStorageName incorrect', 'ExternalStorageName',
       vDest.ExternalStorageName);
-    AssertTrue('ValidChars incorrect', 'i' in vDest.ValidChars);
+    AssertEquals('ValidChars incorrect', 'a..z', vDest.ValidCharsString);
   finally
     vSource.Free;
     vDest.Free;
@@ -323,11 +327,14 @@ begin
   try
     vReturnValue := FInstantAttributeMetadata.CreateAttribute(vObject)
         as TInstantAttribute;
-    AssertNotNull('vReturnValue', vReturnValue);
-    AssertEquals('AsString', 'Default', vReturnValue.AsString);
-    AssertNotNull('Metadata ', vReturnValue.Metadata);
-    AssertEquals('Classname', 'TInstantString', vReturnValue.ClassName);
-    vReturnValue.Free;
+    try
+      AssertNotNull('vReturnValue', vReturnValue);
+      AssertEquals('AsString', 'Default', vReturnValue.AsString);
+      AssertNotNull('Metadata ', vReturnValue.Metadata);
+      AssertEquals('Classname', 'TInstantString', vReturnValue.ClassName);
+    finally
+      vReturnValue.Free;
+    end;
   finally
     vObject.Free;
   end;
@@ -341,6 +348,32 @@ begin
   AssertTrue('IsAttributeClass error for TInstantAttribute!', vReturnValue);
   vReturnValue := FInstantAttributeMetadata.IsAttributeClass(TInstantSimple);
   AssertTrue('IsAttributeClass error for TInstantMetadata!', vReturnValue);
+end;
+
+procedure TestTInstantAttributeMetadata.TestAttributeValidation;
+var
+  vObject: TInstantObject;
+begin
+  vObject := TInstantObject.Create(FConn);
+  try
+    FTempAttr := FInstantAttributeMetadata.CreateAttribute(vObject)
+      as TInstantAttribute;
+    try
+      FTempAttr.AsString := 'only valid chars';
+      AssertException(EInstantValidationError, SetInvalidValueInTempAttr);
+      AssertEquals('AsString', 'only valid chars', FTempAttr.AsString);
+    finally
+      FreeAndNil(FTempAttr);
+    end;
+  finally
+    vObject.Free;
+  end;
+end;
+
+procedure TestTInstantAttributeMetadata.SetInvalidValueInTempAttr;
+begin
+  Assert(Assigned(FTempAttr));
+  FTempAttr.AsString := 'char z not allowed';
 end;
 
 { TestTInstantAttributeMetadatas }

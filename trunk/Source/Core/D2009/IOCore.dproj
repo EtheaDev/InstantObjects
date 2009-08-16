@@ -86,6 +86,8 @@
 			<DCCReference Include="..\InstantTypes.pas"/>
 			<DCCReference Include="..\InstantBrokers.pas"/>
 			<DCCReference Include="..\InstantMetadata.pas"/>
+			<DCCReference Include="..\InstantStandardValidators.pas"/>
+			<DCCReference Include="..\InstantValidation.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
