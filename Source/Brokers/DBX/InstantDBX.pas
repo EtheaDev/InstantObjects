@@ -46,7 +46,7 @@ uses
   QControls,
 {$ENDIF}
   Classes, DB,
-  {$IFNDEF D11+}DBXpress,{$ENDIF}
+  {$IFNDEF D11+}DBXpress,{$ELSE}DBXCommon,{$ENDIF}
   SqlExpr, InstantPersistence, InstantCommand,
   InstantBrokers, InstantMetadata, InstantTypes;
 
@@ -74,17 +74,21 @@ type
     property VendorLib: string read FVendorLib write FVendorLib;
   end;
 
+  TInstantDBXTransaction = class;
+   
   TInstantDBXConnector = class(TInstantConnectionBasedConnector)
   private
-    FTransactionDesc: TTransactionDesc;
+    FTransaction: TInstantDBXTransaction;
     FOnLogin: TSQLConnectionLoginEvent;
     function GetConnection: TSQLConnection;
     procedure SetConnection(Value: TSQLConnection);
     function GetCanTransaction: Boolean;
+    function GetTransaction: TInstantDBXTransaction;
+    function CreateTransaction: TInstantDBXTransaction;
+    property Transaction: TInstantDBXTransaction read GetTransaction;
   protected
-    procedure AssignLoginOptions; override;//CB
+    procedure AssignLoginOptions; override;
     function CreateBroker: TInstantBroker; override;
-    procedure InitTransactionDesc(var ATransactionDesc: TTransactionDesc); virtual;
     procedure InternalCommitTransaction; override;
     procedure InternalRollbackTransaction; override;
     procedure InternalStartTransaction; override;
@@ -92,6 +96,7 @@ type
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
   public
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
+    destructor Destroy; override;
     property CanTransaction: Boolean read GetCanTransaction;
   published
     property Connection: TSQLConnection read GetConnection write SetConnection;
@@ -221,6 +226,50 @@ type
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
   end;
 
+  {
+    Base class for handling transactions. Concrete descendants handle
+    transactions differently in different versions of DBX.
+  }
+  TInstantDBXTransaction = class
+  private
+    FConnector: TInstantDBXConnector;
+  protected
+    property Connector: TInstantDBXConnector read FConnector;
+  public
+    constructor Create(const AConnector: TInstantDBXConnector); virtual;
+    procedure Start; virtual; abstract;
+    procedure Commit; virtual; abstract;
+    procedure Rollback; virtual; abstract;
+  end;
+
+  {
+    Handles transactions in DBX3.
+  }
+  {$IFNDEF D11+}
+  TInstantDBX3Transaction = class(TInstantDBXTransaction)
+  private
+    FTransactionDesc: TTransactionDesc;
+  public
+    procedure Start; override;
+    procedure Commit; override;
+    procedure Rollback; override;
+  end;
+  {$ENDIF}
+
+  {
+    Handles transactions in DBX4.
+  }
+  {$IFDEF D11+}
+  TInstantDBX4Transaction = class(TInstantDBXTransaction)
+  private
+    FTransaction: TDBXTransaction;
+  public
+    procedure Start; override;
+    procedure Commit; override;
+    procedure Rollback; override;
+  end;
+  {$ENDIF}
+
 implementation
 
 uses
@@ -279,11 +328,26 @@ begin
   Result := inherited Connection as TSQLConnection;
 end;
 
-procedure TInstantDBXConnector.InitTransactionDesc(
-  var ATransactionDesc: TTransactionDesc);
+function TInstantDBXConnector.GetTransaction: TInstantDBXTransaction;
 begin
-  ATransactionDesc.TransactionID := 1;
-  ATransactionDesc.GlobalID := 0;
+  if not Assigned(FTransaction) then
+    FTransaction := CreateTransaction;
+  Result := FTransaction;
+end;
+
+function TInstantDBXConnector.CreateTransaction: TInstantDBXTransaction;
+begin
+  {$IFDEF D11+}
+  Result := TInstantDBX4Transaction.Create(Self);
+  {$ELSE}
+  Result := TInstantDBX3Transaction.Create(Self);
+  {$ENDIF}
+end;
+
+destructor TInstantDBXConnector.Destroy;
+begin
+  FreeAndNil(FTransaction);
+  inherited;
 end;
 
 procedure TInstantDBXConnector.InternalBuildDatabase(Scheme: TInstantScheme);
@@ -301,22 +365,19 @@ end;
 procedure TInstantDBXConnector.InternalCommitTransaction;
 begin
   if CanTransaction then
-    Connection.Commit(FTransactionDesc);
+    Transaction.Commit;
 end;
 
 procedure TInstantDBXConnector.InternalRollbackTransaction;
 begin
   if CanTransaction then
-    Connection.Rollback(FTransactionDesc);
+    Transaction.Rollback;
 end;
 
 procedure TInstantDBXConnector.InternalStartTransaction;
 begin
   if CanTransaction then
-  begin
-    InitTransactionDesc(FTransactionDesc);
-    Connection.StartTransaction(FTransactionDesc);
-  end;
+    Transaction.Start;
 end;
 
 function TInstantDBXConnector.ParamByName(const AName: string): string;
@@ -806,6 +867,60 @@ function TInstantDBXFirebirdUIBBroker.GetDBMSName: string;
 begin
   Result := 'Firebird';
 end;
+
+{ TInstantDBXTransaction }
+
+constructor TInstantDBXTransaction.Create(const AConnector: TInstantDBXConnector);
+begin
+  Assert(Assigned(AConnector));
+
+  inherited Create;
+  FConnector := AConnector;
+end;
+
+{ TInstantDBX3Transaction }
+
+{$IFNDEF D11+}
+procedure TInstantDBX3Transaction.Commit;
+begin
+  Connector.Connection.Commit(FTransactionDesc);
+end;
+
+procedure TInstantDBX3Transaction.Rollback;
+begin
+  Connector.Connection.Rollback(FTransactionDesc);
+end;
+
+procedure TInstantDBX3Transaction.Start;
+begin
+  if FTransactionDesc.TransactionID = MAXLONG then
+    FTransactionDesc.TransactionID := 1
+  else
+    FTransactionDesc.TransactionID := FTransactionDesc.TransactionID + 1;
+  FTransactionDesc.IsolationLevel :=
+    TransIsolationLevelMap[Database.TransIsolation];
+  Connector.Connection.StartTransaction(FTransactionDesc);
+end;
+{$ENDIF}
+
+{ TInstantDBX4Transaction }
+
+{$IFDEF D11+}
+procedure TInstantDBX4Transaction.Commit;
+begin
+  Connector.Connection.CommitFreeAndNil(FTransaction);
+end;
+
+procedure TInstantDBX4Transaction.Rollback;
+begin
+  Connector.Connection.RollbackFreeAndNil(FTransaction);
+end;
+
+procedure TInstantDBX4Transaction.Start;
+begin
+  FTransaction := Connector.Connection.BeginTransaction;
+end;
+{$ENDIF}
 
 initialization
   RegisterClass(TInstantDBXConnectionDef);
