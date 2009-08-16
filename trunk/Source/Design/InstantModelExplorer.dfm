@@ -1,8 +1,8 @@
 object InstantModelExplorerForm: TInstantModelExplorerForm
   Left = 385
   Top = 186
-  Width = 259
-  Height = 433
+  Width = 418
+  Height = 536
   VertScrollBar.Range = 20
   Caption = 'InstantObjects Model Explorer'
   Color = clBtnFace
@@ -18,19 +18,30 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
+  object AttributeSplitter: TSplitter
+    Left = 0
+    Top = 255
+    Width = 410
+    Height = 4
+    Cursor = crVSplit
+    Align = alBottom
+    Constraints.MinHeight = 4
+    Visible = False
+  end
   object ModelPanel: TPanel
     Left = 0
     Top = 27
-    Width = 251
-    Height = 372
+    Width = 410
+    Height = 228
     Align = alClient
     BevelOuter = bvNone
+    Constraints.MinHeight = 20
     TabOrder = 0
   end
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 251
+    Width = 410
     Height = 27
     BorderWidth = 1
     ButtonHeight = 23
@@ -61,6 +72,56 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       Top = 0
       Action = ViewRelationsAction
     end
+    object ToolSep2: TToolButton
+      Left = 77
+      Top = 0
+      Width = 8
+      Caption = 'ToolSep2'
+      ImageIndex = 4
+      Style = tbsSeparator
+    end
+    object ViewAttributeButton: TToolButton
+      Left = 85
+      Top = 0
+      Action = ViewAttributesAction
+    end
+  end
+  object AttributePanel: TPanel
+    Left = 0
+    Top = 259
+    Width = 410
+    Height = 243
+    Align = alBottom
+    BevelOuter = bvNone
+    Constraints.MinHeight = 45
+    Padding.Left = 3
+    Padding.Right = 3
+    Padding.Bottom = 3
+    TabOrder = 2
+    Visible = False
+    object AttributeCaptionPanel: TPanel
+      Left = 3
+      Top = 0
+      Width = 404
+      Height = 25
+      Align = alTop
+      BevelOuter = bvLowered
+      TabOrder = 0
+      object AttributeCaptionLabel: TLabel
+        Left = 12
+        Top = 6
+        Width = 89
+        Height = 13
+        Caption = 'Class Attributes'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = 11
+        Font.Name = 'MS Sans Serif'
+        Font.Pitch = fpVariable
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+    end
   end
   object ModelImages: TImageList
     Left = 104
@@ -82,6 +143,9 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     end
     object ViewSourceItem: TMenuItem
       Action = ViewSourceAction
+    end
+    object ViewAttributes: TMenuItem
+      Action = ViewAttributesAction
     end
     object N1: TMenuItem
       Caption = '-'
@@ -205,6 +269,12 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       Caption = '&About InstantObjects...'
       Hint = 'About InstantObjects'
       OnExecute = AboutActionExecute
+    end
+    object ViewAttributesAction: TAction
+      Caption = 'View Attributes'
+      Hint = 'View Class Attributes'
+      ImageIndex = 11
+      OnExecute = ViewAttributesActionExecute
     end
   end
   object AttributeImages: TImageList

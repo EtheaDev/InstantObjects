@@ -103,6 +103,10 @@
 			<DCCReference Include="..\InstantAbout.pas">
 				<Form>InstantAboutForm</Form>
 			</DCCReference>
+			<DCCReference Include="..\InstantAttributeView.pas">
+				<Form>InstantAttributeViewFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="..\..\Core\InstantPresentation.dcr"/>
 			<DCCReference Include="..\..\Core\InstantExplorer.dcr"/>
 			<DCCReference Include="..\..\Core\InstantPersistence.dcr"/>

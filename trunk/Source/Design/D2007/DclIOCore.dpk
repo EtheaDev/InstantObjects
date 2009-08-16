@@ -54,7 +54,8 @@ contains
   InstantUnitSelect in '..\InstantUnitSelect.pas' {InstantUnitSelectForm},
   InstantAttributeEditor in '..\InstantAttributeEditor.pas' {InstantAttributeEditorForm},
   InstantAbout in '..\InstantAbout.pas' {InstantAboutForm},
-  InstantModelImport in '..\InstantModelImport.pas';
+  InstantModelImport in '..\InstantModelImport.pas',
+  InstantAttributeView in '..\InstantAttributeView.pas' {InstantAttributeViewFrame: TFrame};
 
 end.
 
