@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Nando Dessena
+ * Carlo Barazzetta, Nando Dessena, David Taylor
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -182,6 +182,9 @@ implementation
 uses
   InstantImageUtils, InstantConsts, InstantDBEvolverFormUnit,
   InstantDBBuilderFormUnit;
+
+const
+  SNoConnectorsFound = '< No Brokers Installed >';
 
 procedure DefaultConnectionManagerExecutor(ConnectionManager: TInstantConnectionManager);
 var
@@ -715,6 +718,13 @@ begin
       Item.Caption := ConnectorClassList[I];
       Item.Tag := Integer(ConnectorClassList.Objects[I]);
       Item.OnClick := NewMenuItemClick;
+      NewMenu.Add(Item);
+    end;
+
+    if (ConnectorClassList.Count < 1) then
+    begin
+      Item := TMenuItem.Create(NewMenu);
+      Item.Caption := SNoConnectorsFound;
       NewMenu.Add(Item);
     end;
   finally
