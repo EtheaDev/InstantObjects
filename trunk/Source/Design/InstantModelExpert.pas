@@ -77,8 +77,6 @@ type
     FMustUpdateAfterCompile: Boolean;
     FResourceModule: TInstantDesignResourceModule;
     FSaveApplicationIdle: TIdleEvent;
-    FToolImageCount: Integer;
-    FToolImageOffset: Integer;
     FUpdateDisableCount: Integer;
     FUpdateTimer: TTimer;
     MetaDataCheckState : TIOMetaDataCheckState;
@@ -113,8 +111,13 @@ type
     function CreateIDEInterface: TInstantOTAIDEInterface;
     function CreateUpdateTimer: TTimer;
     procedure DetachMenus;
+    procedure DetachMenuActionEvent(AName: string);
     procedure EnumSources(Modules: TInterfaceList;
       Enumerator: TSourceEnumerator);
+    function FindMenuAction(AName: string; out AAction: TContainedAction): boolean;
+    function FindOrCreateMenuAction(AName, ACaption: string;
+      AEventHandler: TNotifyEvent; AImageIndex : integer = -1;
+      AShortCut: TShortCut = 0): TContainedAction;
     procedure CheckIOMetadataKeyword(const FileName, Source: string);
     procedure ExplorerItemClick(Sender: TObject);
     procedure GetModelModules(Modules: TInterfaceList);
@@ -132,6 +135,7 @@ type
     procedure ShowExplorer;
     procedure UpdateModel;
     procedure UpdateTimerTick(Sender: TObject);
+    procedure UpdateMenuActions;
     property CurrentSource: string read GetCurrentSource;
     property Explorer: TInstantModelExplorerForm read GetExplorer;
   public
@@ -162,17 +166,16 @@ implementation
 
 uses
   SysUtils, TypInfo, InstantDesignUtils, InstantUtils, InstantUnitSelect,
-  InstantConnectionManager, Dialogs;
+  InstantConnectionManager, Dialogs, Graphics;
 
 const
   SIOIdeMenuCategory = 'InstantObjects';
   SBuilderItemCaption = 'InstantObjects Database &Builder...';
-  SBuilderItemName = 'InstantBuilderItem'; // Do not localize
   SExplorerItemCaption = 'InstantObjects &Model Explorer';
+  SBuilderItemName = 'InstantBuilderItem'; // Do not localize
   SExplorerItemName = 'InstantExplorerItem'; // Do not localize
   SExplorerItemActionName = 'InstantExplorerItemAction'; // Do not localize
   SBuilderItemActionName = 'InstantBuilderItemAction'; // Do not localize
-  SModelCompiler = 'Model Compiler';
   SResFileExt = '.mdr';
   UpdateInterval = 500;
 
@@ -187,81 +190,6 @@ begin
   ModelExpert := TInstantModelExpert.Create;
   RegisterPackageWizard(ModelExpert);
   InstantCodeReaderIdle := ReaderIdle;
-end;
-
-function FindOrCreateMenuAction(AName, ACaption: string;
-  AEventHandler: TNotifyEvent; AImageIndex : integer = -1;
-  AShortCut: TShortCut = 0): TContainedAction;
-var
-  IdeMainForm: TCustomForm;
-  IdeActionList: TCustomActionList;
-  NTAServices: INTAServices;
-  NewAction: TAction;
-  I: integer;
-begin
-  // Get the IDE's action list
-  NTAServices := BorlandIDEServices as INTAServices;
-  Assert(Assigned(NTAServices));
-  IdeActionList := NTAServices.ActionList;
-  Assert(Assigned(IdeActionList));
-
-  // Search for an existing IDE action
-  Result := nil;
-  for I := 0 to IdeActionList.ActionCount-1 do
-    begin
-      if (not SameText(IdeActionList.Actions[I].Name, AName)) then
-        continue;
-      Result := IdeActionList.Actions[I];
-      // Reconnect/enable the event handler (package reload)
-      Result.OnExecute := AEventHandler;
-      if (Result is TCustomAction) then
-        TCustomAction(Result).Enabled := true;
-      break;
-    end;
-
-  // Create a new action if not found
-  if (not assigned(Result)) then
-    begin
-      // Get the IDE's main form
-      Assert(Assigned(Application));
-      IdeMainForm := Application.FindComponent('AppBuilder') as TCustomForm;
-
-      // Create and initialize the action
-      NewAction := TAction.Create(IdeMainForm);
-      NewAction.ActionList := IdeActionList;
-      NewAction.Name := AName;
-      NewAction.Caption := ACaption;
-      NewAction.Category := SIOIdeMenuCategory;
-      NewAction.ImageIndex := AImageIndex;
-      NewAction.ShortCut := AShortCut;
-      NewAction.OnExecute := AEventHandler;
-      Result := NewAction;
-    end;
-end;
-
-// Searches for an IDE action matching the given name and
-// diables its OnExecute event handlers This avoids an AV
-// if the expert is unloaded (e.g. during a package rebuild)
-procedure DisableMenuAction(AName: string);
-var
-  IdeActionList: TCustomActionList;
-  NTAServices: INTAServices;
-  I: integer;
-begin
-  // Get the IDE's action list
-  NTAServices := BorlandIDEServices as INTAServices;
-  Assert(Assigned(NTAServices));
-  IdeActionList := NTAServices.ActionList;
-  Assert(Assigned(IdeActionList));
-
-  // Search for and diable IDE action
-  for I := 0 to IdeActionList.ActionCount-1 do
-    begin
-      if (not SameText(IdeActionList.Actions[I].Name, AName)) then
-        continue;
-      IdeActionList.Actions[I].OnExecute := nil;
-      break;
-    end;
 end;
 
 function FindText(const SubStr, Str: string;
@@ -546,8 +474,7 @@ procedure TInstantModelExpert.AttachMenus;
     FBuilderItem.Action := FindOrCreateMenuAction(
       SBuilderItemActionName,
       SBuilderItemCaption,
-      BuilderItemClick,
-      FToolImageOffset + 1,
+      BuilderItemClick, 1,
       Menus.ShortCut(Word('B'), [ssCtrl, ssShift]));
   end;
 
@@ -557,17 +484,11 @@ var
 begin
   if not Assigned(BorlandIDEServices) then
     Exit;
+
   MainMenu := (BorlandIDEServices as INTAServices40).MainMenu;
+
   if not Assigned(MainMenu) then
     Exit;
-
-  { Add images }
-  with MainMenu.Images do
-  begin
-    FToolImageOffset := Count;
-    FToolImageCount := FResourceModule.ToolImages.Count;
-    AddImages(TCustomImageList(FResourceModule.ToolImages));
-  end;
 
   { Add 'Model Explorer' to View-menu }
   Menu := ItemByName(MainMenu.Items, 'ViewsMenu');
@@ -578,8 +499,7 @@ begin
     FExplorerItem.Action := FindOrCreateMenuAction(
       SExplorerItemActionName,
       SExplorerItemCaption,
-      ExplorerItemClick,
-      FToolImageOffset,
+      ExplorerItemClick, 0,
       Menus.ShortCut(Word('M'), [ssCtrl, ssShift]));
 
 {$IFDEF D9+}
@@ -658,6 +578,8 @@ begin
       UpdateModel;
       FActiveProjectName := '';
     end;
+
+  UpdateMenuActions;
 end;
 
 procedure TInstantModelExpert.CollectModules(Project: IOTAProject;
@@ -758,8 +680,6 @@ end;
 
 destructor TInstantModelExpert.Destroy;
 begin
-  DisableMenuAction(SBuilderItemActionName);
-  DisableMenuAction(SExplorerItemActionName);
   Application.OnIdle := FSaveApplicationIdle;
   DetachMenus;
   FUpdateTimer.Free;
@@ -770,23 +690,30 @@ begin
 end;
 
 procedure TInstantModelExpert.DetachMenus;
-var
-  MainMenu: TMainMenu;
-  I: Integer;
 begin
-  if not Application.Terminated then
-  begin
-    { Remove images }
-    MainMenu := (BorlandIDEServices as INTAServices40).MainMenu;
-    if Assigned(MainMenu) and Assigned(MainMenu.Images) then
-      with MainMenu.Images do
-        for I := 0 to Pred(FToolImageCount) do
-          Delete(FToolImageOffset);
-  end;
+  { Unhook action event handlers }
+  DetachMenuActionEvent(SBuilderItemActionName);
+  DetachMenuActionEvent(SExplorerItemActionName);
 
   { Remove items }
   FBuilderItem.Free;
   FExplorerItem.Free;
+end;
+
+// Searches for an IDE action matching the given name and disables its
+// OnExecute event handler and sets Visible to False. This disables
+// the action and avoids an AV if the expert is unloaded and the
+// event handler becomes invalid (e.g. during a package rebuild)
+procedure TInstantModelExpert.DetachMenuActionEvent(AName: string);
+var
+  LAction : TContainedAction;
+begin
+  if (FindMenuAction(AName, LAction)) then
+  begin
+    LAction.OnExecute := nil;
+    if (LAction is TCustomAction) then
+      TCustomAction(LAction).Visible := False;
+  end;
 end;
 
 procedure TInstantModelExpert.DisableUpdate;
@@ -853,6 +780,91 @@ procedure TInstantModelExpert.ExplorerLoadModel(Sender: TObject;
   Model: TInstantCodeModel);
 begin
   LoadModel(Model);
+end;
+
+// Searches for an IDE action matching the given name
+function TInstantModelExpert.FindMenuAction(AName: string;
+  out AAction: TContainedAction): boolean;
+var
+  IdeActionList: TCustomActionList;
+  NTAServices: INTAServices;
+  I: integer;
+begin
+  // Get the IDE's action list
+  NTAServices := BorlandIDEServices as INTAServices;
+  Assert(Assigned(NTAServices));
+  IdeActionList := NTAServices.ActionList;
+  Assert(Assigned(IdeActionList));
+
+  // Search for and diable IDE action
+  AAction := nil;
+
+  for I := 0 to IdeActionList.ActionCount-1 do
+  begin
+    if (not SameText(IdeActionList.Actions[I].Name, AName)) then
+      continue;
+    AAction := IdeActionList.Actions[I];
+    break;
+  end;
+
+  Result := assigned(AAction);
+end;
+
+function TInstantModelExpert.FindOrCreateMenuAction(AName, ACaption: string;
+  AEventHandler: TNotifyEvent; AImageIndex : integer = -1;
+  AShortCut: TShortCut = 0): TContainedAction;
+var
+  NTAServices: INTAServices;
+  IdeMainForm: TCustomForm;
+  IdeActionList: TCustomActionList;
+  NewAction: TAction;
+  ActionImage: TBitmap;
+begin
+  if (FindMenuAction(AName, Result)) then
+  begin
+    // Enable action and connect the event handler
+    Result.OnExecute := AEventHandler;
+    if (Result is TCustomAction) then
+    begin
+      TCustomAction(Result).Enabled := true;
+      TCustomAction(Result).Visible := true;
+    end;
+  end else
+  begin
+    // Get the IDE's main form
+    Assert(Assigned(Application));
+    IdeMainForm := Application.FindComponent('AppBuilder') as TCustomForm;
+
+    // Get the IDE's action list
+    NTAServices := (BorlandIDEServices as INTAServices);
+    Assert(Assigned(NTAServices));
+    IdeActionList := NTAServices.ActionList;
+    Assert(Assigned(IdeActionList));
+
+    // Create and initialize the action
+    NewAction := TAction.Create(IdeMainForm);
+    NewAction.ActionList := IdeActionList;
+    NewAction.Name := AName;
+    NewAction.Caption := ACaption;
+    NewAction.Category := SIOIdeMenuCategory;
+    NewAction.ShortCut := AShortCut;
+    NewAction.OnExecute := AEventHandler;
+    Result := NewAction;
+
+    if (AImageIndex >= 0) and (AImageIndex < FResourceModule.ToolImages.Count) then
+    begin
+      ActionImage := TBitmap.Create;
+
+      try
+        FResourceModule.ToolImages.GetBitmap(AImageIndex,ActionImage);
+        Assert(Assigned(ActionImage));
+        NewAction.ImageIndex := NTAServices.AddMasked(ActionImage,
+          ActionImage.TransparentColor,AName);
+      finally
+        FreeAndNil(ActionImage);
+      end;
+    end;
+  end;
 end;
 
 function TInstantModelExpert.GetActiveProject: IOTAProject;
@@ -1271,6 +1283,25 @@ procedure TInstantModelExpert.UpdateTimerTick(Sender: TObject);
 begin
   if UpdateEnabled then
     UpdateModel;
+end;
+
+procedure TInstantModelExpert.UpdateMenuActions;
+
+  procedure EnableMenuItem(const AMenuItem: TMenuItem; AEnable: boolean);
+  begin
+    if (assigned(AMenuItem)) then
+      if (AMenuItem.Action is TCustomAction) then
+        TCustomAction(AMenuItem.Action).Enabled := AEnable;
+  end;
+
+var
+  HaveProject: boolean;
+  HaveModel: boolean;
+begin
+  HaveProject := Assigned(ActiveProject);
+  HaveModel := Explorer.Model.ModuleCount > 0;
+  EnableMenuItem(FExplorerItem, HaveProject);
+  EnableMenuItem(FBuilderItem, HaveModel);
 end;
 
 procedure TInstantModelExpert.CheckIOMetadataKeyword(const FileName, Source: string);
