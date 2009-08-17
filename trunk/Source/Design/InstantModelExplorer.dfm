@@ -84,6 +84,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       Left = 85
       Top = 0
       Action = ViewAttributesAction
+      ImageIndex = 12
     end
   end
   object AttributePanel: TPanel
