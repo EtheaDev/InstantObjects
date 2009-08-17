@@ -692,17 +692,16 @@ procedure TInstantModelExpert.CompileProject(Project: IOTAProject);
 var
   Model: TInstantCodeModel;
   ResFileName: string;
-  ResFileAge: Integer;
   ResFileTime: TDateTime;
 begin
   DisableUpdate;
   Model := TInstantCodeModel.Create;
   try
     ResFileName := ChangeFileExt(Project.FileName, SResFileExt);
-    ResFileAge := FileAge(ResFileName);
-    if ResFileAge = -1 then
-      ResFileTime := 0 else
-      ResFileTime := FileDateToDateTime(ResFileAge);
+
+    if (not InstantFileAge(ResFileName, ResFileTime)) then
+      ResFileTime := 0;
+
     try
       if LoadModel(Model, Project, ResFileTime) then
         Model.SaveToResFile(ResFileName);
@@ -1037,13 +1036,12 @@ function TInstantModelExpert.LoadModel(Model: TInstantCodeModel;
 
   function FileModified(const FileName: string; Since: TDateTime): Boolean;
   var
-    Age: Integer;
+    FileTime: TDateTime;
   begin
-    Age := FileAge(FileName);
-    if Age = -1 then
+    if (not InstantFileAge(FileName, FileTime)) then
       Result := False
     else
-      Result := FileDateToDateTime(Age) > Since;
+      Result := (FileTime > Since);
   end;
 
   function ModuleModified(Module: IOTAModule; Since: TDateTime): Boolean;
