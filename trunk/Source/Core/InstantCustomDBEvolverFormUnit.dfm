@@ -2,7 +2,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   Left = 244
   Top = 191
   Width = 601
-  Height = 360
+  Height = 370
   Caption = 'InstantCustomDBEvolverForm'
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
