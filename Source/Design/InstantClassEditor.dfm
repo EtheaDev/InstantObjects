@@ -89,7 +89,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Width = 353
           Height = 21
           Style = csDropDownList
-          DataField = 'UnitName'
+          DataField = 'PascalUnitName'
           DataSource = SubjectSource
           ItemHeight = 13
           TabOrder = 2
