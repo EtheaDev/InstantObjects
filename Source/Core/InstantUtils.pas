@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Uberto Barbini,
- * Brian Andersen
+ * Brian Andersen, David Taylor
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -60,6 +60,7 @@ function InstantCompareText(const S1, S2: string; IgnoreCase: Boolean): Integer;
 function InstantConstArrayToVariant(AValues : array of const) : Variant;
 function InstantDateTimeToStr(DateTime: TDateTime): string;
 function InstantEmbrace(const S, Delimiters: string): string;
+function InstantFileAge(const FileName: string; out FileDateTime: TDateTime): boolean;
 {$IFDEF MSWINDOWS}
 function InstantFileVersionValue(const FileName, ValueName: string): string;
 function InstantFileVersion(const FileName: string): TInstantVersion;
@@ -267,6 +268,22 @@ function InstantEmbrace(const S, Delimiters: string): string;
 
 begin
   Result := LeftDelimiter + S + RightDelimiter;
+end;
+
+function InstantFileAge(const FileName: string; out FileDateTime: TDateTime): boolean;
+{$IFNDEF D10+}
+var
+  LFileAge : integer;
+{$ENDIF}
+begin
+  {$IFDEF D10+} // Single param FileAge deprecated in D2006
+     Result := FileAge(FileName, FileDateTime);
+  {$ELSE}
+    LFileAge := FileAge(FileName);
+    Result := (LFileAge <> -1);
+    if (Result) then
+      FileDateTime := FileDateToDateTime(LFileAge);
+  {$ENDIF}
 end;
 
 {$IFDEF MSWINDOWS}
