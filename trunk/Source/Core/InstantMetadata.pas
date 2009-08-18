@@ -1688,6 +1688,7 @@ begin
       Self.FEditMask := FEditMask;
       Self.FIsIndexed := FIsIndexed;
       Self.FIsRequired := FIsRequired;
+      Self.FUseNull := FUseNull;
       Self.FObjectClassName := FObjectClassName;
       Self.FSize := FSize;
       Self.FStorageName := FStorageName;
