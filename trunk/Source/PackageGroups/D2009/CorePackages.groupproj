@@ -9,7 +9,19 @@
 			<Projects Include="..\..\Design\D2009\DclIOCore.dproj">
 				<Dependencies/>
 			</Projects>
+			<Projects Include="..\..\Catalogs\IBFb\D2009\IOIBFbCatalog.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="..\..\Catalogs\MSSql\D2009\IOMSSqlCatalog.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="..\..\Catalogs\MySQL\D2009\IOMySQLCatalog.dproj">
+				<Dependencies/>
+			</Projects>
 			<Projects Include="..\..\Brokers\BDE\D2009\IOBDE.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="..\..\Brokers\IBX\D2009\IOIBX.dproj">
 				<Dependencies/>
 			</Projects>
 			<Projects Include="..\..\Brokers\BDE\D2009\DclIOBDE.dproj">
@@ -21,7 +33,13 @@
 			<Projects Include="..\..\Brokers\XML\D2009\DclIOXML.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\..\Tests\TestIO_D2009.dproj">
+			<Projects Include="..\..\Brokers\DBX\D2009\IODBX.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="..\..\Brokers\DBX\D2009\DclIODBX.dproj">
+				<Dependencies/>
+			</Projects>
+			<Projects Include="..\..\Brokers\IBX\D2009\DclIOIBX.dproj">
 				<Dependencies/>
 			</Projects>
 		</ItemGroup>
@@ -50,6 +68,33 @@
 		<Target Name="DclIOCore:Make">
 			<MSBuild Targets="Make" Projects="..\..\Design\D2009\DclIOCore.dproj"/>
 		</Target>
+		<Target Name="IOIBFbCatalog">
+			<MSBuild Projects="..\..\Catalogs\IBFb\D2009\IOIBFbCatalog.dproj"/>
+		</Target>
+		<Target Name="IOIBFbCatalog:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\Catalogs\IBFb\D2009\IOIBFbCatalog.dproj"/>
+		</Target>
+		<Target Name="IOIBFbCatalog:Make">
+			<MSBuild Targets="Make" Projects="..\..\Catalogs\IBFb\D2009\IOIBFbCatalog.dproj"/>
+		</Target>
+		<Target Name="IOMSSqlCatalog">
+			<MSBuild Projects="..\..\Catalogs\MSSql\D2009\IOMSSqlCatalog.dproj"/>
+		</Target>
+		<Target Name="IOMSSqlCatalog:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\Catalogs\MSSql\D2009\IOMSSqlCatalog.dproj"/>
+		</Target>
+		<Target Name="IOMSSqlCatalog:Make">
+			<MSBuild Targets="Make" Projects="..\..\Catalogs\MSSql\D2009\IOMSSqlCatalog.dproj"/>
+		</Target>
+		<Target Name="IOMySQLCatalog">
+			<MSBuild Projects="..\..\Catalogs\MySQL\D2009\IOMySQLCatalog.dproj"/>
+		</Target>
+		<Target Name="IOMySQLCatalog:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\Catalogs\MySQL\D2009\IOMySQLCatalog.dproj"/>
+		</Target>
+		<Target Name="IOMySQLCatalog:Make">
+			<MSBuild Targets="Make" Projects="..\..\Catalogs\MySQL\D2009\IOMySQLCatalog.dproj"/>
+		</Target>
 		<Target Name="IOBDE">
 			<MSBuild Projects="..\..\Brokers\BDE\D2009\IOBDE.dproj"/>
 		</Target>
@@ -58,6 +103,15 @@
 		</Target>
 		<Target Name="IOBDE:Make">
 			<MSBuild Targets="Make" Projects="..\..\Brokers\BDE\D2009\IOBDE.dproj"/>
+		</Target>
+		<Target Name="IOIBX">
+			<MSBuild Projects="..\..\Brokers\IBX\D2009\IOIBX.dproj"/>
+		</Target>
+		<Target Name="IOIBX:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\IBX\D2009\IOIBX.dproj"/>
+		</Target>
+		<Target Name="IOIBX:Make">
+			<MSBuild Targets="Make" Projects="..\..\Brokers\IBX\D2009\IOIBX.dproj"/>
 		</Target>
 		<Target Name="DclIOBDE">
 			<MSBuild Projects="..\..\Brokers\BDE\D2009\DclIOBDE.dproj"/>
@@ -86,23 +140,41 @@
 		<Target Name="DclIOXML:Make">
 			<MSBuild Targets="Make" Projects="..\..\Brokers\XML\D2009\DclIOXML.dproj"/>
 		</Target>
-		<Target Name="TestIO_D2009">
-			<MSBuild Projects="..\..\..\Tests\TestIO_D2009.dproj"/>
+		<Target Name="IODBX">
+			<MSBuild Projects="..\..\Brokers\DBX\D2009\IODBX.dproj"/>
 		</Target>
-		<Target Name="TestIO_D2009:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\..\Tests\TestIO_D2009.dproj"/>
+		<Target Name="IODBX:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\DBX\D2009\IODBX.dproj"/>
 		</Target>
-		<Target Name="TestIO_D2009:Make">
-			<MSBuild Targets="Make" Projects="..\..\..\Tests\TestIO_D2009.dproj"/>
+		<Target Name="IODBX:Make">
+			<MSBuild Targets="Make" Projects="..\..\Brokers\DBX\D2009\IODBX.dproj"/>
+		</Target>
+		<Target Name="DclIODBX">
+			<MSBuild Projects="..\..\Brokers\DBX\D2009\DclIODBX.dproj"/>
+		</Target>
+		<Target Name="DclIODBX:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\DBX\D2009\DclIODBX.dproj"/>
+		</Target>
+		<Target Name="DclIODBX:Make">
+			<MSBuild Targets="Make" Projects="..\..\Brokers\DBX\D2009\DclIODBX.dproj"/>
+		</Target>
+		<Target Name="DclIOIBX">
+			<MSBuild Projects="..\..\Brokers\IBX\D2009\DclIOIBX.dproj"/>
+		</Target>
+		<Target Name="DclIOIBX:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\IBX\D2009\DclIOIBX.dproj"/>
+		</Target>
+		<Target Name="DclIOIBX:Make">
+			<MSBuild Targets="Make" Projects="..\..\Brokers\IBX\D2009\DclIOIBX.dproj"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="IOCore;DclIOCore;IOBDE;DclIOBDE;IOXML;DclIOXML;TestIO_D2009"/>
+			<CallTarget Targets="IOCore;DclIOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOBDE;IOIBX;DclIOBDE;IOXML;DclIOXML;IODBX;DclIODBX;DclIOIBX"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="IOCore:Clean;DclIOCore:Clean;IOBDE:Clean;DclIOBDE:Clean;IOXML:Clean;DclIOXML:Clean;TestIO_D2009:Clean"/>
+			<CallTarget Targets="IOCore:Clean;DclIOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOBDE:Clean;IOIBX:Clean;DclIOBDE:Clean;IOXML:Clean;DclIOXML:Clean;IODBX:Clean;DclIODBX:Clean;DclIOIBX:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="IOCore:Make;DclIOCore:Make;IOBDE:Make;DclIOBDE:Make;IOXML:Make;DclIOXML:Make;TestIO_D2009:Make"/>
+			<CallTarget Targets="IOCore:Make;DclIOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOBDE:Make;IOIBX:Make;DclIOBDE:Make;IOXML:Make;DclIOXML:Make;IODBX:Make;DclIODBX:Make;DclIOIBX:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>

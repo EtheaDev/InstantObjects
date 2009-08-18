@@ -192,6 +192,7 @@ type
   end;
 
   TInstantDBXMSSQLQuery = class(TInstantSQLQuery)
+    class function TranslatorClass: TInstantRelationalTranslatorClass; override;
   end;
 
   { Oracle }
@@ -448,16 +449,27 @@ procedure TInstantDBXBroker.AssignParam(SourceParam, TargetParam: TParam);
 begin
   case SourceParam.DataType of
     ftBoolean:
-      TargetParam.AsInteger := Integer(SourceParam.AsBoolean);
+      begin
+        if SourceParam.IsNull then
+          TargetParam.Clear
+        else
+          TargetParam.AsInteger := Integer(SourceParam.AsBoolean);
+      end;
     ftDateTime:
       begin
         TargetParam.DataType := ftTimeStamp;
-        TargetParam.Value := SourceParam.AsDateTime;
+        if SourceParam.IsNull then
+          TargetParam.Clear
+        else
+          TargetParam.Value := SourceParam.AsDateTime;
       end;
     ftCurrency:
       begin
         TargetParam.DataType := ftBCD;
-        TargetParam.Value := SourceParam.AsCurrency;
+        if SourceParam.IsNull then
+          TargetParam.Clear
+        else
+          TargetParam.Value := SourceParam.AsCurrency;
       end;
   else
     TargetParam.Assign(SourceParam);
@@ -721,19 +733,26 @@ begin
            EmbraceIndex(Metadata.Name)]);
 end;
 
+{ TInstantDBXMSSQLQuery }
+
+class function TInstantDBXMSSQLQuery.TranslatorClass: TInstantRelationalTranslatorClass;
+begin
+  Result := TInstantDBXTranslator;
+end;
+
 { TInstantDBXOracleBroker }
 
 procedure TInstantDBXOracleBroker.AssignParam(SourceParam, TargetParam: TParam);
 begin
   case SourceParam.DataType of
     ftBoolean:
-      TargetParam.AsString := IntToStr(Integer(SourceParam.AsBoolean));
+      TargetParam.AsInteger := Integer(SourceParam.AsBoolean);
     ftInteger:
-      TargetParam.AsString := IntToStr(SourceParam.AsInteger);
+      TargetParam.AsFloat := SourceParam.AsInteger;
     ftCurrency:
-      TargetParam.AsString := CurrToStr(SourceParam.AsCurrency);
+      TargetParam.AsCurrency := SourceParam.AsCurrency;
     ftFloat:
-      TargetParam.AsString := CurrToStr(SourceParam.AsFloat);
+      TargetParam.AsFloat := SourceParam.AsFloat;
   else
     inherited;
   end;
