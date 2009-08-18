@@ -1,0 +1,42 @@
+package IOAnyDAC;
+
+{$R *.res}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO ON}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS ON}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DESCRIPTION 'InstantObjects AnyDAC Run-Time Support (Delphi 7)'}
+{$LIBSUFFIX '_D7'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  IOCore,
+  xmlrtl,
+  AnyDAC_Phys_D7,
+  AnyDAC_ComI_D7,
+  AnyDAC_Comp_D7;
+
+contains
+  InstantAnyDAC in '..\InstantAnyDAC.pas',
+  InstantAnyDACCatalog in '..\InstantAnyDACCatalog.pas',
+  InstantAnyDACConnectionDefEdit in '..\InstantAnyDACConnectionDefEdit.pas' {InstantAnyDACConnectionDefEditForm};
+
+end.
