@@ -35,7 +35,7 @@ unit InstantAnyDAC;
 {$I '..\..\InstantDefines.inc'}
 {$ENDIF}
 
-// Supported databases  (only MSSQL has been tested as of 3/21/2009)
+// Supported databases  (only MSSQL and Firebird have been tested as of 8/18/2009)
 
 {$DEFINE SYBASE_SUPPORT}
 {$DEFINE MSSQL_SUPPORT}
@@ -50,8 +50,8 @@ interface
 uses
   Classes, Db, InstantPersistence, InstantCommand, InstantDBBuild,
   InstantBrokers, InstantMetadata, InstantTypes, uADCompClient,
-  uADStanOption, uADStanParam, uADStanIntf, uADStanConst
-  {$IFDEF D10+}, DBCommonTypes{$ENDIF};
+  uADStanOption, uADStanParam, uADStanIntf, uADStanConst,
+  {$IFDEF D10+}DBCommonTypes{$ENDIF};
 
 type
   TInstantAnyDACConnectionDef = class(TInstantRelationalConnectionDef)
@@ -306,6 +306,9 @@ uses
   SysUtils, {$IFDEF D7+}Types,{$ENDIF} Controls, {$IFDEF D5}DBLogDlg,{$ENDIF}
   InstantConsts, InstantClasses, InstantAnyDACConnectionDefEdit,
   InstantAnyDACCatalog, InstantUtils;
+
+resourcestring
+  SInvalidDatabasePageSize = 'Invalid database PageSize value: "%s"';
 
 {$IFDEF SQLITE_SUPPORT}
 const
@@ -698,6 +701,12 @@ begin
     else
       TargetParam.Assign(SourceParam);
   end;
+  
+  if (SourceParam.IsNull) then
+    begin
+      TargetParam.Clear;
+      TargetParam.Bound := true;
+    end;
 end;
 
 function TInstantAnyDACBroker.CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
@@ -936,8 +945,11 @@ procedure TInstantAnyDACIbFbBroker.InternalCreateDatabase;
 var
   OldProperties : string;
   CharacterSet  : string;
+  PageSizeStr   : string;
+  PageSize      : integer;
+const
+  DEFAULT_DB_PAGESIZE = 8192;
 begin
-  // TODO Quick first pass at using built-in AnyDAC database creation logic (not tested)
   // do not call inherited
   with Connector do
     begin
@@ -945,13 +957,29 @@ begin
 
       try
         CharacterSet := trim(Connection.Params.Values['CharacterSet']);
+        PageSizeStr := trim(Connection.Params.Values['PageSize']);
 
         if (CharacterSet = '') then
-          CharacterSet := 'ISO8859_1';
+          CharacterSet := 'UTF8';
+
+        if (PageSizeStr <> '') then
+          begin
+            PageSize := StrToIntDef(PageSizeStr,-1);
+            if (PageSize <> 1024) and // Deprecated for FB 2.1+
+               (PageSize <> 2048) and // Deprecated for FB 2.1+
+               (PageSize <> 4096) and
+               (PageSize <> 8192) and
+               (PageSize <> 16384) then // Available FB 2.0 and later
+              raise EInstantError.CreateFmt(SInvalidDatabasePageSize, [PageSizeStr]);
+          end else
+          begin
+            PageSize := DEFAULT_DB_PAGESIZE;
+          end;
 
         Connection.Params.Values['CharacterSet'] := CharacterSet;
         Connection.Params.Values['CreateDatabase'] := 'Yes';
-        Connection.Params.Values['PageSize'] := '4096';
+        Connection.Params.Values['SQLDialect'] := '3';
+        Connection.Params.Values['PageSize'] := IntToStr(PageSize);
         Connect;
         Disconnect;
       finally
