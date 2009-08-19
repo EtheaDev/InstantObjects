@@ -1,9 +1,7 @@
 inherited InstantModelImportForm: TInstantModelImportForm
+  Width = 424
+  Height = 154
   Caption = 'Import Model'
-  ClientHeight = 120
-  ClientWidth = 416
-  ExplicitWidth = 424
-  ExplicitHeight = 154
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel [0]
@@ -23,11 +21,8 @@ inherited InstantModelImportForm: TInstantModelImportForm
   inherited ButtonPanel: TPanel
     Top = 79
     Width = 416
-    ExplicitTop = 79
-    ExplicitWidth = 416
     inherited ButtonBevel: TBevel
       Width = 416
-      ExplicitWidth = 416
     end
     object ImportButton: TButton
       Left = 246

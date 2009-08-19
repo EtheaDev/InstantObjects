@@ -42,9 +42,10 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     Left = 0
     Top = 0
     Width = 410
-    Height = 27
+    Height = 29
     BorderWidth = 1
     ButtonHeight = 23
+    Flat = True
     Images = ActionImages
     ParentShowHint = False
     ShowHint = True
@@ -95,15 +96,12 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     Align = alBottom
     BevelOuter = bvNone
     Constraints.MinHeight = 45
-    Padding.Left = 3
-    Padding.Right = 3
-    Padding.Bottom = 3
     TabOrder = 2
     Visible = False
     object AttributeCaptionPanel: TPanel
-      Left = 3
+      Left = 0
       Top = 0
-      Width = 404
+      Width = 410
       Height = 25
       Align = alTop
       BevelOuter = bvLowered

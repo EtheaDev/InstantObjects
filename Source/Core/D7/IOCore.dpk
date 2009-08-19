@@ -58,6 +58,8 @@ contains
   InstantDBBuilderFormUnit in '..\InstantDBBuilderFormUnit.pas' {InstantDBBuilderForm},
   InstantTypes in '..\InstantTypes.pas',
   InstantBrokers in '..\InstantBrokers.pas',
-  InstantMetadata in '..\InstantMetadata.pas';
+  InstantMetadata in '..\InstantMetadata.pas',
+  InstantValidation in '..\InstantValidation.pas',
+  InstantStandardValidators in '..\InstantStandardValidators.pas';
 
 end.
