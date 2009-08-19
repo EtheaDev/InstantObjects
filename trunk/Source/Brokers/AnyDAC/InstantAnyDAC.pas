@@ -50,8 +50,8 @@ interface
 uses
   Classes, Db, InstantPersistence, InstantCommand, InstantDBBuild,
   InstantBrokers, InstantMetadata, InstantTypes, uADCompClient,
-  uADStanOption, uADStanParam, uADStanIntf, uADStanConst,
-  {$IFDEF D10+}DBCommonTypes{$ENDIF};
+  uADStanOption, uADStanParam, uADStanIntf, uADStanConst
+  {$IFDEF D10+}, DBCommonTypes{$ENDIF};
 
 type
   TInstantAnyDACConnectionDef = class(TInstantRelationalConnectionDef)
