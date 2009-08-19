@@ -447,12 +447,14 @@ end;
 
 procedure TInstantAttributeViewFrame.PopulateInheritedAttributes;
 begin
-  LoadAttributeView(InheritedAttributesView, Subject.BaseClass, True);
+  if (assigned(Subject)) then
+    LoadAttributeView(InheritedAttributesView, Subject.BaseClass, True);
 end;
 
 procedure TInstantAttributeViewFrame.PopulateIntroducedAttributes;
 begin
-  LoadAttributeView(IntroducedAttributesView, Subject, False);
+  if (assigned(Subject)) then
+    LoadAttributeView(IntroducedAttributesView, Subject, False);
 end;
 
 procedure TInstantAttributeViewFrame.RestoreLayout;

@@ -263,8 +263,11 @@ procedure TInstantAttributeEditorForm.LoadData;
 
 begin
   inherited;
-  LoadOptions;
-  LoadMethods;
+  if (assigned(Subject)) then
+  begin
+    LoadOptions;
+    LoadMethods;
+  end;
 end;
 
 procedure TInstantAttributeEditorForm.LoadEnums(TypeInfo: PTypeInfo;

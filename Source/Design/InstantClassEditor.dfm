@@ -6,15 +6,11 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   ClientWidth = 400
   OldCreateOrder = True
   OnCreate = FormCreate
-  ExplicitWidth = 408
-  ExplicitHeight = 399
   PixelsPerInch = 96
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 400
     Height = 334
-    ExplicitWidth = 400
-    ExplicitHeight = 334
     object PageControl: TPageControl
       Left = 4
       Top = 4
@@ -131,21 +127,16 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Height = 290
           Align = alClient
           TabOrder = 0
-          ExplicitHeight = 290
           inherited AttributesSplitter: TSplitter
             Top = 186
-            ExplicitTop = 186
           end
           inherited InheritedAttributesPanel: TPanel
             Top = 190
-            ExplicitTop = 190
           end
           inherited IntroducedAttributesPanel: TPanel
             Height = 186
-            ExplicitHeight = 186
             inherited IntroducedAttributesView: TListView
               Height = 170
-              ExplicitHeight = 170
             end
           end
         end
@@ -155,16 +146,11 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   inherited BottomPanel: TPanel
     Top = 334
     Width = 400
-    ExplicitTop = 334
-    ExplicitWidth = 400
     inherited ButtonPanel: TPanel
       Left = 240
-      ExplicitLeft = 240
       inherited OkButton: TButton
         Left = 1
         Top = 6
-        ExplicitLeft = 1
-        ExplicitTop = 6
       end
     end
   end
