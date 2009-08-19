@@ -608,6 +608,7 @@ begin
     NewModel.AssignComponents(FModel);
     FModel.Free;
     FModel := NewModel;
+    InstantAttributeViewFrame.Model := FModel;
   except
     on E: Exception do
     begin

@@ -474,6 +474,7 @@ type
     FStorageKind: TInstantStorageKind;
     FExternalStorageName: string;
     FValidator: TInstantValidator;
+    FEnumName: string;
     function GetAttributeClass: TInstantAbstractAttributeClass;
     function GetAttributeClassName: string;
     function GetAttributeTypeName: string;
@@ -550,6 +551,7 @@ type
     property StorageName: string read FStorageName write FStorageName;
     property ValidCharsString: string read GetValidCharsString
       write SetValidCharsString;
+    property EnumName: string read FEnumName write FEnumName;
   end;
 
   TInstantAttributeMetadatas = class(TInstantMetadatas)
@@ -579,8 +581,8 @@ const
   AttributeClasses: array[TInstantAttributeType] of TInstantAttributeClass = (
     nil, TInstantInteger, TInstantFloat, TInstantCurrency, TInstantBoolean,
     TInstantString, TInstantDateTime, TInstantBlob, TInstantMemo,
-    TInstantGraphic, TInstantPart, TInstantReference, TInstantParts, 
-    TInstantReferences, TInstantDate, TInstantTime);
+    TInstantGraphic, TInstantPart, TInstantReference, TInstantParts,
+    TInstantReferences, TInstantDate, TInstantTime, TInstantEnum);
 
 { TInstantMetadata }
 
@@ -1695,6 +1697,7 @@ begin
       Self.FStorageKind := FStorageKind;
       Self.FExternalStorageName := FExternalStorageName;
       Self.FValidCharsString := FValidCharsString;
+      Self.FEnumName := FEnumName;
     end;
 end;
 

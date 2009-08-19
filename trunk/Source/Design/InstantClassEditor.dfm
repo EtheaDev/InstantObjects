@@ -139,6 +139,11 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
               Height = 170
             end
           end
+          inherited AttributesMenu: TPopupMenu
+            inherited AttributeNewItem: TMenuItem
+              OnClick = nil
+            end
+          end
         end
       end
     end

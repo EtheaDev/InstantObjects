@@ -281,6 +281,7 @@ begin
   if Value <> FModel then
   begin
     FModel := Value;
+    InstantAttributeViewFrame.Model := Value;
     PopulateBaseClasses;
     PopulateUnits;
   end;
