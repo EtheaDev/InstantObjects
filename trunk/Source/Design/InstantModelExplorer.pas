@@ -168,7 +168,6 @@ type
     FOnApplyClass: TInstantCodeClassApplyEvent;
     FOnGotoSource: TInstantGotoSourceEvent;
     FOnLoadModel: TInstantCodeModelEvent;
-    FViewUpdateDisableCount: Integer;
     function GetFocusedClass: TInstantCodeClass;
     function GetSelectedNode: TTreeNode;
     procedure SetError(E: Exception);
@@ -185,14 +184,12 @@ type
     function ClassFromNode(Node: TTreeNode): TInstantCodeClass;
     procedure DoApplyClass(AClass: TInstantCodeClass;
       ChangeInfo: TInstantCodeClassChangeInfo);
-    procedure DisableViewUpdate;
-    procedure EnableViewUpdate;
-    function ViewUpdateEnabled: boolean;
     function EditClass(AClass: TInstantCodeClass; New: Boolean): Boolean;
     procedure GotoNodeSource(Node: TTreeNode);
     procedure GotoSource(const FileName: string; Pos: TInstantCodePos);
     procedure LoadModel;
     procedure UpdateActions; override;
+    procedure RefreshAttributeView;
     property SelectedNode: TTreeNode read GetSelectedNode;
   public
     constructor Create(AOwner: TComponent); override;
@@ -396,22 +393,6 @@ begin
   if Assigned(FOnApplyClass) then
     FOnApplyClass(Self, AClass, ChangeInfo);
 end;
-
-procedure TInstantModelExplorerForm.DisableViewUpdate;
-  begin
-    inc(FViewUpdateDisableCount);
-  end;
-
-procedure TInstantModelExplorerForm.EnableViewUpdate;
-  begin
-    if (FViewUpdateDisableCount > 0) then
-      dec(FViewUpdateDisableCount);
-  end;
-
-function TInstantModelExplorerForm.ViewUpdateEnabled: boolean;
-  begin
-    Result := (FViewUpdateDisableCount = 0);
-  end;
 
 function TInstantModelExplorerForm.EditClass(AClass: TInstantCodeClass;
   New: Boolean): Boolean;
@@ -640,8 +621,7 @@ procedure TInstantModelExplorerForm.ModelViewChange(Sender: TObject;
   Node: TTreeNode);
 begin
   FSelectedNode := nil;
-  if (ViewUpdateEnabled) then
-    ViewClassAttributes(FocusedClass);
+  RefreshAttributeView;
 end;
 
 procedure TInstantModelExplorerForm.ModelViewGetImageIndex(Sender: TObject;
@@ -738,6 +718,7 @@ begin
   AttributePanel.Visible := Visible;
   AttributeSplitter.Visible := Visible;
   ViewAttributeButton.Down := Visible;
+  RefreshAttributeView;
 end;
 
 procedure TInstantModelExplorerForm.SetError(E: Exception);
@@ -790,6 +771,12 @@ begin
   ExpandAllAction.Enabled := AtClass;
   CollapseAllAction.Enabled := AtClass;
 end;
+
+procedure TInstantModelExplorerForm.RefreshAttributeView;
+  begin
+    if (AttributePanel.Visible) then
+      ViewClassAttributes(FocusedClass);
+  end;
 
 procedure TInstantModelExplorerForm.UpdateModel;
 
@@ -901,49 +888,44 @@ begin
   //FAttributeFrame.Clear;
   InstantAttributeViewFrame.Clear;
 
-  DisableViewUpdate;
-
+  Level := 0;
+  FSelectedNode := nil;
+  ModelView.Items.BeginUpdate;
   try
-    Level := 0;
-    FSelectedNode := nil;
-    ModelView.Items.BeginUpdate;
-    try
-      if Assigned(FError) then
-      begin
-        ModelView.Items.Clear;
-  {$IFDEF MSWINDOWS}
-        ModelView.ShowRoot := False;
-  {$ENDIF}
-        ModelView.Items.AddObject(nil, FError.Text, FError)
-      end else
-      begin
-        Nodes := TList.Create;
-        try
-  {$IFDEF MSWINDOWS}
-          ModelView.ShowRoot := True;
-  {$ENDIF}
-          for I := 0 to Pred(Model.ClassCount) do
-          begin
-            AClass := Model.Classes[I];
-            if (Style = msRelations) or not Assigned(AClass.BaseClass) then
-              Nodes.Add(AddClass(nil, AClass, '', Level));
-          end;
-          ModelView.AlphaSort;
-          RemoveInvalidNodes(nil, Nodes);
-          FirstNode := ModelView.Items.GetFirstNode;
-          if Assigned(FirstNode) and (FirstNode.GetNextSibling = nil) then
-            FirstNode.Expand(False);
-        finally
-          Nodes.Free;
+    if Assigned(FError) then
+    begin
+      ModelView.Items.Clear;
+{$IFDEF MSWINDOWS}
+      ModelView.ShowRoot := False;
+{$ENDIF}
+      ModelView.Items.AddObject(nil, FError.Text, FError)
+    end else
+    begin
+      Nodes := TList.Create;
+      try
+{$IFDEF MSWINDOWS}
+        ModelView.ShowRoot := True;
+{$ENDIF}
+        for I := 0 to Pred(Model.ClassCount) do
+        begin
+          AClass := Model.Classes[I];
+          if (Style = msRelations) or not Assigned(AClass.BaseClass) then
+            Nodes.Add(AddClass(nil, AClass, '', Level));
         end;
+        ModelView.AlphaSort;
+        RemoveInvalidNodes(nil, Nodes);
+        FirstNode := ModelView.Items.GetFirstNode;
+        if Assigned(FirstNode) and (FirstNode.GetNextSibling = nil) then
+          FirstNode.Expand(False);
+      finally
+        Nodes.Free;
       end;
-    finally;
-      ModelView.Items.EndUpdate;
-      ModelView.Repaint;
     end;
-  finally
-    EnableViewUpdate;
+  finally;
+    ModelView.Items.EndUpdate;
+    ModelView.Repaint;
   end;
+  RefreshAttributeView;
 end;
 
 procedure TInstantModelExplorerForm.ViewInheritanceActionExecute(

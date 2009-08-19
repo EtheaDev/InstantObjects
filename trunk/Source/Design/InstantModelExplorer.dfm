@@ -127,44 +127,30 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       Height = 218
       Align = alClient
       TabOrder = 1
-      ExplicitTop = 25
-      ExplicitWidth = 410
-      ExplicitHeight = 218
       inherited AttributesSplitter: TSplitter
         Top = 114
         Width = 410
-        ExplicitTop = 114
-        ExplicitWidth = 410
       end
       inherited InheritedAttributesPanel: TPanel
         Top = 118
         Width = 410
-        ExplicitTop = 118
-        ExplicitWidth = 410
         inherited InheritedAttributesLabel: TLabel
           Width = 410
-          ExplicitWidth = 410
         end
         inherited InheritedAttributesView: TListView
           Width = 410
           Font.Pitch = fpVariable
-          ExplicitWidth = 410
         end
       end
       inherited IntroducedAttributesPanel: TPanel
         Width = 410
         Height = 114
-        ExplicitWidth = 410
-        ExplicitHeight = 114
         inherited IntroducedAttributesLabel: TLabel
           Width = 410
-          ExplicitWidth = 410
         end
         inherited IntroducedAttributesView: TListView
           Width = 410
           Height = 98
-          ExplicitWidth = 410
-          ExplicitHeight = 98
         end
       end
       inherited Actions: TActionList
