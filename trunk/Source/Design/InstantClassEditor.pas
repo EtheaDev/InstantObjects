@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Steven Mitchell, Nando Dessena
+ * Carlo Barazzetta, Adrea Petrelli, Steven Mitchell, Nando Dessena,
+ * Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -44,7 +45,7 @@ uses
 {$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls, Mask, DBCtrls,
-  ImgList, ActnList, Menus;
+  ImgList, ActnList, Menus, InstantAttributeView;
 {$ENDIF}
 {$IFDEF LINUX}
   QActnList, QMenus, QTypes, QImgList, QComCtrls, QControls, QExtCtrls,
@@ -53,17 +54,6 @@ uses
 
 type
   TInstantClassEditorForm = class(TInstantEditForm)
-    AttributeImages: TImageList;
-    StateImages: TImageList;
-    AttributesMenu: TPopupMenu;
-    Actions: TActionList;
-    ActionImages: TImageList;
-    AttributeNewAction: TAction;
-    AttributeDeleteAction: TAction;
-    AttributeNewItem: TMenuItem;
-    AttributeDeleteItem: TMenuItem;
-    AttributeEditAction: TAction;
-    AttributeEditItem: TMenuItem;
     PageControl: TPageControl;
     ClassSheet: TTabSheet;
     ClassNameLabel: TLabel;
@@ -74,23 +64,11 @@ type
     UnitEdit: TDBComboBox;
     StorageEdit: TDBEdit;
     AttributeSheet: TTabSheet;
-    AttributesSplitter: TSplitter;
-    InheritedAttributesPanel: TPanel;
-    InheritedAttributesLabel: TLabel;
-    InheritedAttributesView: TListView;
-    IntroducedAttributesPanel: TPanel;
-    IntroducedAttributesView: TListView;
-    IntroducedAttributesLabel: TLabel;
     StorageLabel: TLabel;
     PersistenceComboBox: TDBComboBox;
     PersistenceLabel: TLabel;
-    procedure AttributeNewActionExecute(Sender: TObject);
-    procedure AttributeDeleteActionExecute(Sender: TObject);
-    procedure AttributeEditActionExecute(Sender: TObject);
+    InstantAttributeViewFrame: TInstantAttributeViewFrame;
     procedure FormCreate(Sender: TObject);
-    procedure IntroducedAttributesViewDblClick(Sender: TObject);
-    procedure IntroducedAttributesViewEdited(Sender: TObject; Item: TListItem;
-      var S: String);
     procedure ClassNameEditChange(Sender: TObject);
     procedure SubjectExposerAfterPostField(Sender: TObject; Field: TField);
     procedure PersistenceComboBoxChange(Sender: TObject);
@@ -98,47 +76,32 @@ type
       var Value: Variant; Write: Boolean);
     procedure OkButtonClick(Sender: TObject);
     procedure CancelButtonClick(Sender: TObject);
-    procedure AttributesMenuPopup(Sender: TObject);
     procedure ClassSheetResize(Sender: TObject);
   private
-    FBackupAttributes: TObjectList;
-    FChangedAttributes: TStringList;
-    FNewAttributes: TList;
     FModel: TInstantCodeModel;
-    FNameAttribute: TInstantCodeAttribute;
     FTitle: string;
     FIsNew: Boolean;
-    procedure DeleteAttribute(Attribute: TInstantCodeAttribute);
-    procedure FitColumns(View: TListView);
-    function GetNameAttribute: TInstantCodeAttribute;
     function GetSubject: TInstantCodeClass;
-    procedure LoadAttributeView(View: TListView; AClass: TInstantCodeClass;
-      Recursive: Boolean);
     procedure SetModel(const Value: TInstantCodeModel);
     procedure SetSubject(const Value: TInstantCodeClass);
-    function GetFocusedAttribute: TInstantCodeAttribute;
     procedure SetIsNew(const Value: Boolean);
+    function GetChangedAttributes: TStringList;
+    function GetNewAttributes: TList;
   protected
-    function AddAttributeToView(View: TListView;
-      Attribute: TInstantCodeAttribute): TListItem;
     function EditAttribute(Attribute: TInstantCodeAttribute;
       Exists: Boolean; const Title: string = ''): Boolean;
-    procedure PopulateInheritedAttributes;
-    procedure PopulateIntroducedAttributes;
     procedure PopulateBaseClasses;
     procedure PopulateUnits;
     procedure UpdateActions; override;
     procedure UpdateCaption;
     procedure UpdateControls;
-    property NameAttribute: TInstantCodeAttribute read GetNameAttribute;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    property ChangedAttributes: TStringList read FChangedAttributes;
-    property FocusedAttribute: TInstantCodeAttribute read GetFocusedAttribute;
+    property ChangedAttributes: TStringList read GetChangedAttributes;
     property IsNew: Boolean read FIsNew write SetIsNew;
     property Model: TInstantCodeModel read FModel write SetModel;
-    property NewAttributes: TList read FNewAttributes;
+    property NewAttributes: TList read GetNewAttributes;
     property Subject: TInstantCodeClass read GetSubject write SetSubject;
   end;
 
@@ -155,112 +118,10 @@ resourcestring
 
 { TInstantClassDesigner }
 
-function TInstantClassEditorForm.AddAttributeToView(
-  View: TListView; Attribute: TInstantCodeAttribute): TListItem;
-begin
-  Result := View.Items.Add;
-  with Result do
-  begin
-    with Attribute do
-      if (HostClass = Subject) or not Assigned(HostClass) then
-        Caption := Name else
-        Caption := HostClass.Name + '.' + Name;
-    Data := Attribute;
-    //Add Attribute Type
-    SubItems.Add(Attribute.AttributeTypeText);
-    //Add StorageName or ExternalStorageName
-    if Attribute.CanBeExternal and not Attribute.CanHaveStorageName then
-      SubItems.Add(Attribute.ExternalStorageName)
-    else
-      SubItems.Add(Attribute.StorageName);
-    case Attribute.AttributeType of
-      atReference: ImageIndex := 1;
-      atPart: ImageIndex := 2;
-      atReferences: ImageIndex := 3;
-      atParts: ImageIndex := 4;
-    else
-      ImageIndex := 0;
-    end;
-    if Attribute.HostClass <> Subject then
-      ImageIndex := ImageIndex + 5;
-  end;
-  FitColumns(View);
-end;
-
-procedure TInstantClassEditorForm.AttributeDeleteActionExecute(Sender: TObject);
-var
-  Attribute: TInstantCodeAttribute;
-begin
-  with IntroducedAttributesView do
-    if Assigned(ItemFocused) then
-    begin
-      Attribute := ItemFocused.Data;
-      if not Confirm(Format(SConfirmDeleteAttribute, [Attribute.Name])) then
-        Exit;
-      DeleteAttribute(Attribute);
-      ItemFocused.Delete;
-      if Assigned(ItemFocused) then
-        ItemFocused.Selected := True;
-      FitColumns(IntroducedAttributesView);
-    end;
-end;
-
-procedure TInstantClassEditorForm.AttributeEditActionExecute(Sender: TObject);
-var
-  OldName: string;
-  Attribute: TInstantCodeAttribute;
-  Exists: Boolean;
-begin
-  Attribute := FocusedAttribute;
-  if not Assigned(Attribute) then
-    Exit;
-  OldName := Attribute.Name;
-  Exists := FNewAttributes.IndexOf(Attribute) = -1;
-  if Exists then
-    Attribute.DetectMethodTypes;
-  if EditAttribute(Attribute, Exists) then
-  begin
-    if Exists and (FChangedAttributes.IndexOfObject(Attribute) = -1) then
-      FChangedAttributes.AddObject(OldName, Attribute);
-    PopulateIntroducedAttributes;
-  end;
-end;
-
-procedure TInstantClassEditorForm.AttributeNewActionExecute(
-  Sender: TObject);
-var
-  Attribute: TInstantCodeAttribute;
-  NewItem: TListItem;
-begin
-  Attribute := Subject.AddAttribute;
-  if not EditAttribute(Attribute, False, 'New Attribute') then
-    Attribute.Free
-  else begin
-    FNewAttributes.Add(Attribute);
-    with IntroducedAttributesView do
-    begin
-      Items.BeginUpdate;
-      try
-        NewItem := AddAttributeToView(IntroducedAttributesView, Attribute);
-        NewItem.Focused := True;
-        Selected := NewItem;
-      finally
-        Items.EndUpdate;
-      end;
-      NewItem.MakeVisible{$IFDEF MSWINDOWS}(False){$ENDIF};
-    end;
-  end;
-end;
-
-procedure TInstantClassEditorForm.AttributesMenuPopup(Sender: TObject);
-begin
-  UpdateActions;
-end;
-
 procedure TInstantClassEditorForm.CancelButtonClick(Sender: TObject);
 begin
   inherited;
-  Subject.AssignAttributes(FBackupAttributes);
+  Subject.AssignAttributes(InstantAttributeViewFrame.BackupAttributes);
 end;
 
 procedure TInstantClassEditorForm.ClassNameEditChange(Sender: TObject);
@@ -274,30 +135,11 @@ end;
 constructor TInstantClassEditorForm.Create(AOwner: TComponent);
 begin
   inherited;
-  FBackupAttributes := TObjectList.Create;
-  FChangedAttributes := TStringList.Create;
-  FNewAttributes := TList.Create;
-end;
-
-procedure TInstantClassEditorForm.DeleteAttribute(
-  Attribute: TInstantCodeAttribute);
-var
-  Index: Integer;
-begin
-  Index := FChangedAttributes.IndexOfObject(Attribute);
-  if Index <> -1 then
-    FChangedAttributes.Delete(Index);
-  FNewAttributes.Remove(Attribute);
-  Attribute.Delete;
-  Attribute.Free;
+  InstantAttributeViewFrame.Subject := Subject;
 end;
 
 destructor TInstantClassEditorForm.Destroy;
 begin
-  FNewAttributes.Free;
-  FChangedAttributes.Free;
-  FBackupAttributes.Free;
-  FNameAttribute.Free;
   inherited;
 end;
 
@@ -331,123 +173,19 @@ begin
   end;
 end;
 
-procedure TInstantClassEditorForm.FitColumns(View: TListView);
-var
-  i : integer;
+function TInstantClassEditorForm.GetChangedAttributes: TStringList;
 begin
-  //adjust Columns size to window width
-  for i := View.Columns.Count-1 downto 0 do
-  begin
-{$IFDEF MSWINDOWS}
-    View.Columns[i].AutoSize := True;
-{$ENDIF}
-{$IFDEF LINUX}
-    View.Columns[i].Width := View.Width div View.Columns.Count;
-{$ENDIF}
-  end;
+  Result := InstantAttributeViewFrame.ChangedAttributes;
 end;
 
-function TInstantClassEditorForm.GetFocusedAttribute: TInstantCodeAttribute;
+function TInstantClassEditorForm.GetNewAttributes: TList;
 begin
-  with IntroducedAttributesView do
-    if Assigned(ItemFocused) then
-      Result := ItemFocused.Data
-    else
-      Result := nil;
-end;
-
-function TInstantClassEditorForm.GetNameAttribute: TInstantCodeAttribute;
-begin
-  if not Assigned(FNameAttribute) and
-    Subject.DerivesFrom(TInstantObject.ClassName) then
-  begin
-    FNameAttribute := TInstantCodeAttribute.Create(nil);
-    FNameAttribute.Name := TInstantObject.ClassName + '.' +
-      InstantIdFieldName;
-    FNameAttribute.AttributeTypeName := 'String';
-  end;
-  Result := FNameAttribute;
+  Result := InstantAttributeViewFrame.NewAttributes;
 end;
 
 function TInstantClassEditorForm.GetSubject: TInstantCodeClass;
 begin
   Result := inherited Subject as TInstantCodeClass;
-end;
-
-procedure TInstantClassEditorForm.IntroducedAttributesViewDblClick(
-  Sender: TObject);
-begin
-  AttributeEditAction.Execute;
-end;
-
-procedure TInstantClassEditorForm.IntroducedAttributesViewEdited(
-  Sender: TObject; Item: TListItem; var S: String);
-var
-  Attribute: TInstantCodeAttribute;
-begin
-  Attribute := TInstantCodeAttribute(Item.Data);
-  if Assigned(Attribute) then
-  begin
-    Attribute.Name := S;
-    S := Attribute.Name;
-  end;
-end;
-
-procedure TInstantClassEditorForm.LoadAttributeView(View: TListView;
-  AClass: TInstantCodeClass; Recursive: Boolean);
-var
-  FocusedData: Pointer;
-
-  procedure LoadClass(AClass: TInstantCodeClass);
-  var
-    I: Integer;
-    NewItem: TListItem;
-    FocusItem: TListItem;
-  begin
-    FocusItem := nil;
-    if Assigned(AClass) then
-      with AClass do
-      begin
-        for I := 0 to Pred(AttributeCount) do
-        begin
-          NewItem := AddAttributeToView(View, Attributes[I]);
-          if NewItem.Data = FocusedData then
-            FocusItem := NewItem;
-        end;
-        if Recursive then
-          LoadClass(BaseClass)
-        else begin
-          if not Assigned(FocusedData) and (View.Items.Count > 0) then
-            FocusItem := View.Items[0];
-          if Assigned(FocusItem) then
-          begin
-            FocusItem.Focused := True;
-            View.Selected := FocusItem;
-          end;
-        end;
-      end;
-  end;
-
-begin
-  with View do
-  begin
-    if Assigned(ItemFocused) then
-      FocusedData := ItemFocused.Data else
-      FocusedData := nil;
-    with Items do
-    begin
-      BeginUpdate;
-      try
-        Clear;
-        if Recursive and Assigned(NameAttribute) then
-          AddAttributeToView(View, NameAttribute);
-        LoadClass(AClass);
-      finally
-        EndUpdate;
-        FitColumns(View);
-      end;
-    end;
-  end;
 end;
 
 procedure TInstantClassEditorForm.OkButtonClick(Sender: TObject);
@@ -511,16 +249,6 @@ begin
   end;
 end;
 
-procedure TInstantClassEditorForm.PopulateInheritedAttributes;
-begin
-  LoadAttributeView(InheritedAttributesView, Subject.BaseClass, True);
-end;
-
-procedure TInstantClassEditorForm.PopulateIntroducedAttributes;
-begin
-  LoadAttributeView(IntroducedAttributesView, Subject, False);
-end;
-
 procedure TInstantClassEditorForm.PopulateUnits;
 var
   I: Integer;
@@ -563,12 +291,12 @@ begin
   if Value <> Subject then
   begin
     inherited Subject := Value;
-    Subject.CloneAttributes(FBackupAttributes);
+    InstantAttributeViewFrame.Subject := Subject;
+//    Subject.CloneAttributes(FBackupAttributes);
+    Subject.CloneAttributes(InstantAttributeViewFrame.BackupAttributes);
     with PersistenceComboBox do
       ItemIndex := SubjectExposer.GetFieldStrings(Field, Items);
     PopulateBaseClasses;
-    PopulateIntroducedAttributes;
-    PopulateInheritedAttributes;
     UpdateCaption;
     UpdateControls;
   end;
@@ -579,8 +307,8 @@ procedure TInstantClassEditorForm.SubjectExposerAfterPostField(
 begin
   if Field.FieldName = 'BaseClassName' then
   begin
-    FreeAndNil(FNameAttribute);
-    PopulateInheritedAttributes;
+//    FreeAndNil(FNameAttribute);
+    InstantAttributeViewFrame.PopulateInheritedAttributes;
   end;
 end;
 
@@ -600,13 +328,8 @@ begin
 end;
 
 procedure TInstantClassEditorForm.UpdateActions;
-var
-  Attribute: TInstantCodeAttribute;
 begin
   inherited;
-  Attribute := FocusedAttribute;
-  AttributeEditAction.Enabled := Assigned(Attribute);
-  AttributeDeleteAction.Enabled := Assigned(Attribute);
 end;
 
 procedure TInstantClassEditorForm.UpdateCaption;
@@ -630,19 +353,6 @@ end;
 
 procedure TInstantClassEditorForm.FormCreate(Sender: TObject);
 begin
-  LoadMultipleImages(AttributeImages, 'IO_CLASSEDITORATTRIBUTEIMAGES', HInstance);
-  LoadMultipleImages(StateImages, 'IO_CLASSEDITORSTATEIMAGES', HInstance);
-  LoadMultipleImages(ActionImages, 'IO_CLASSEDITORACTIONIMAGES', HInstance);
-{$IFDEF MSWINDOWS}
-  BorderStyle := bsSizeable;
-  IntroducedAttributesView.SmallImages := AttributeImages;
-  InheritedAttributesView.SmallImages := AttributeImages;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsSizeable;
-  IntroducedAttributesView.Images := AttributeImages;
-  InheritedAttributesView.Images := AttributeImages;
-{$ENDIF}
   FTitle := Caption;
   PageControl.ActivePage := ClassSheet;
   ActiveControl := ClassNameEdit;

@@ -1,21 +1,25 @@
 inherited InstantClassEditorForm: TInstantClassEditorForm
   Left = 319
   Top = 196
-  Width = 408
-  Height = 399
   Caption = 'Class Editor'
+  ClientHeight = 365
+  ClientWidth = 400
   OldCreateOrder = True
   OnCreate = FormCreate
+  ExplicitWidth = 408
+  ExplicitHeight = 399
   PixelsPerInch = 96
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 400
-    Height = 341
+    Height = 334
+    ExplicitWidth = 400
+    ExplicitHeight = 334
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 392
-      Height = 333
+      Height = 326
       ActivePage = ClassSheet
       Align = alClient
       TabOrder = 0
@@ -120,108 +124,48 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         BorderWidth = 4
         Caption = 'Attributes'
         ImageIndex = 1
-        object AttributesSplitter: TSplitter
-          Left = 0
-          Top = 165
-          Width = 376
-          Height = 3
-          Cursor = crVSplit
-          Align = alBottom
-        end
-        object InheritedAttributesPanel: TPanel
-          Left = 0
-          Top = 168
-          Width = 376
-          Height = 129
-          Align = alBottom
-          BevelOuter = bvNone
-          TabOrder = 1
-          object InheritedAttributesLabel: TLabel
-            Left = 0
-            Top = 0
-            Width = 376
-            Height = 16
-            Align = alTop
-            AutoSize = False
-            Caption = 'Inherited'
-          end
-          object InheritedAttributesView: TListView
-            Left = 0
-            Top = 16
-            Width = 376
-            Height = 113
-            Align = alClient
-            Columns = <
-              item
-                Caption = 'Name'
-                Width = 124
-              end
-              item
-                Caption = 'Type'
-                Width = 124
-              end
-              item
-                Caption = 'Storage Name'
-                Width = 124
-              end>
-            ReadOnly = True
-            TabOrder = 0
-            ViewStyle = vsReport
-            OnEdited = IntroducedAttributesViewEdited
-          end
-        end
-        object IntroducedAttributesPanel: TPanel
+        inline InstantAttributeViewFrame: TInstantAttributeViewFrame
           Left = 0
           Top = 0
           Width = 376
-          Height = 165
+          Height = 290
           Align = alClient
-          BevelOuter = bvNone
           TabOrder = 0
-          object IntroducedAttributesLabel: TLabel
-            Left = 0
-            Top = 0
-            Width = 376
-            Height = 16
-            Align = alTop
-            AutoSize = False
-            Caption = 'Introduced'
+          ExplicitHeight = 290
+          inherited AttributesSplitter: TSplitter
+            Top = 186
+            ExplicitTop = 186
           end
-          object IntroducedAttributesView: TListView
-            Left = 0
-            Top = 16
-            Width = 376
-            Height = 149
-            Align = alClient
-            Columns = <
-              item
-                Caption = 'Name'
-                Width = 124
-              end
-              item
-                Caption = 'Type'
-                Width = 124
-              end
-              item
-                Caption = 'Storage Name'
-                Width = 124
-              end>
-            ReadOnly = True
-            PopupMenu = AttributesMenu
-            TabOrder = 0
-            ViewStyle = vsReport
-            OnDblClick = IntroducedAttributesViewDblClick
-            OnEdited = IntroducedAttributesViewEdited
+          inherited InheritedAttributesPanel: TPanel
+            Top = 190
+            ExplicitTop = 190
+          end
+          inherited IntroducedAttributesPanel: TPanel
+            Height = 186
+            ExplicitHeight = 186
+            inherited IntroducedAttributesView: TListView
+              Height = 170
+              ExplicitHeight = 170
+            end
           end
         end
       end
     end
   end
   inherited BottomPanel: TPanel
-    Top = 341
+    Top = 334
     Width = 400
+    ExplicitTop = 334
+    ExplicitWidth = 400
     inherited ButtonPanel: TPanel
       Left = 240
+      ExplicitLeft = 240
+      inherited OkButton: TButton
+        Left = 1
+        Top = 6
+        ExplicitLeft = 1
+        ExplicitTop = 6
+      end
     end
   end
   inherited SubjectExposer: TInstantExposer
@@ -230,59 +174,6 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
     Top = 268
   end
   inherited SubjectSource: TDataSource
-    Top = 268
-  end
-  object AttributeImages: TImageList
-    Left = 68
-    Top = 268
-  end
-  object StateImages: TImageList
-    Left = 100
-    Top = 268
-  end
-  object AttributesMenu: TPopupMenu
-    Images = ActionImages
-    OnPopup = AttributesMenuPopup
-    Left = 164
-    Top = 268
-    object AttributeNewItem: TMenuItem
-      Action = AttributeNewAction
-      ShortCut = 45
-    end
-    object AttributeDeleteItem: TMenuItem
-      Action = AttributeDeleteAction
-      ShortCut = 46
-    end
-    object AttributeEditItem: TMenuItem
-      Action = AttributeEditAction
-      ShortCut = 32781
-    end
-  end
-  object Actions: TActionList
-    Images = ActionImages
-    Left = 196
-    Top = 268
-    object AttributeNewAction: TAction
-      Caption = '&New'
-      Hint = 'New Attribute'
-      ImageIndex = 0
-      OnExecute = AttributeNewActionExecute
-    end
-    object AttributeDeleteAction: TAction
-      Caption = '&Delete'
-      Hint = 'Delete'
-      ImageIndex = 1
-      OnExecute = AttributeDeleteActionExecute
-    end
-    object AttributeEditAction: TAction
-      Caption = '&Edit'
-      Hint = 'Edit'
-      ImageIndex = 2
-      OnExecute = AttributeEditActionExecute
-    end
-  end
-  object ActionImages: TImageList
-    Left = 132
     Top = 268
   end
 end
