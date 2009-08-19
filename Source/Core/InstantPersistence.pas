@@ -743,6 +743,9 @@ type
     property RefItems[Index: Integer]: TInstantObjectReference read GetRefItems;
   end;
 
+  TInstantEnum = class(TInstantInteger)
+  end;
+
   TInstantObjectState = class(TPersistent)
   private
     FIsChanged: Boolean;
@@ -1578,7 +1581,8 @@ function InstantDataTypeToFieldType(const InstantDataType: TInstantDataType): TF
 
 const
   InstantDataTypeStrings: array[TInstantDataType] of string =
-    ('Integer', 'Float', 'Currency', 'Boolean', 'String', 'Memo', 'DateTime', 'Blob', 'Date', 'Time');
+    ('Integer', 'Float', 'Currency', 'Boolean', 'String', 'Memo', 'DateTime',
+     'Blob', 'Date', 'Time', 'Integer');
 
 procedure AssignInstantDataTypeStrings(Strings: TStrings);
 
@@ -1662,7 +1666,8 @@ const
     dtBlob,       //atParts
     dtBlob,       //atReferences
     dtDate,       //atDate
-    dtTime);      //atTime
+    dtTime,       //atTime
+    dtEnum);      //atEnum
 
   DataTypesXML: array[TInstantAttributeType] of TInstantDataType = (
     dtString,     //atUnknown
@@ -1680,7 +1685,8 @@ const
     dtMemo,       //atParts
     dtMemo,       //atReferences
     dtDate,       //atDate
-    dtTime);      //atTime
+    dtTime,       //atTime
+    dtEnum);      //atEnum
 begin
   if BlobStreamFormat = sfBinary then
     Result := DataTypesBinary[AttributeType]

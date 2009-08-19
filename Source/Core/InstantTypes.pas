@@ -26,7 +26,7 @@
  * Contributor(s):
  * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Steven Mitchell,
  * Joao Morais, Cesar Coll, Uberto Barbini, David Taylor, Hanedi Salas,
- * Riceball Lee, David Moorhouse
+ * Riceball Lee, David Moorhouse, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -49,7 +49,7 @@ type
   TInstantStorageKind = (skEmbedded, skExternal);
   TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean,
     atString, atDateTime, atBlob, atMemo, atGraphic,
-    atPart, atReference, atParts, atReferences, atDate, atTime);
+    atPart, atReference, atParts, atReferences, atDate, atTime, atEnum);
   TInstantAttributeCategory = (acUnknown, acSimple, acElement, acContainer);
 
   TInstantGraphicFileFormat = (gffUnknown, gffBmp, gffTiff, gffJpeg, gffPng,
@@ -58,7 +58,7 @@ type
   TInstantPersistence = (peEmbedded, peStored);
 
   TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString,
-    dtMemo, dtDateTime, dtBlob, dtDate, dtTime);
+    dtMemo, dtDateTime, dtBlob, dtDate, dtTime, dtEnum);
   TInstantDataTypes = set of TInstantDataType;
   TInstantFieldOption = (foRequired, foIndexed);
   TInstantFieldOptions = set of TInstantFieldOption;

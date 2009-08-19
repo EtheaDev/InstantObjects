@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Nando Dessena, Steven Mitchell
+ * Carlo Barazzetta, Nando Dessena, Steven Mitchell, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -405,7 +405,7 @@ procedure TInstantBDEConnector.InternalBuildDatabase(Scheme: TInstantScheme);
   procedure CreateTable(TableMetadata: TInstantTableMetadata);
   const
     FieldTypes: array[TInstantDataType] of TFieldType =
-      (ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob, ftDate, ftTime);
+      (ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob, ftDate, ftTime, ftInteger);
   var
     I: Integer;
     Table: TTable;
@@ -758,7 +758,7 @@ end;
 procedure TInstantDBBuildBDEAddTableCommand.InternalExecute;
 const
   FieldTypes: array[TInstantDataType] of TFieldType =
-    (ftInteger, ftFloat, ftCurrency, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob, ftDate, ftTime);
+    (ftInteger, ftFloat, ftCurrency, ftBoolean, ftString, ftMemo, ftDateTime, ftBlob, ftDate, ftTime, ftInteger);
 var
   I: Integer;
   Table: TTable;

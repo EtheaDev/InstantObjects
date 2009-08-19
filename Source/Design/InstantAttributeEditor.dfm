@@ -1,9 +1,9 @@
 inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   Left = 78
   Top = 485
-  Width = 249
-  Height = 358
   Caption = 'Attribute Editor'
+  ClientHeight = 371
+  ClientWidth = 241
   ParentFont = True
   OldCreateOrder = True
   OnCreate = FormCreate
@@ -11,12 +11,12 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 241
-    Height = 293
+    Height = 340
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 233
-      Height = 285
+      Height = 332
       ActivePage = DefinitionSheet
       Align = alClient
       TabOrder = 0
@@ -25,7 +25,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object NameLabel: TLabel
           Left = 8
           Top = 8
-          Width = 28
+          Width = 27
           Height = 13
           Caption = '&Name'
           FocusControl = NameEdit
@@ -41,14 +41,14 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object ObjectClassLabel: TLabel
           Left = 8
           Top = 88
-          Width = 59
+          Width = 60
           Height = 13
           Caption = 'Object &Class'
           FocusControl = ObjectClassEdit
         end
         object StorageNameLabel: TLabel
           Left = 8
-          Top = 128
+          Top = 176
           Width = 68
           Height = 13
           Caption = '&Storage Name'
@@ -57,26 +57,34 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object SizeLabel: TLabel
           Left = 160
           Top = 48
-          Width = 20
+          Width = 19
           Height = 13
           Caption = 'Si&ze'
           FocusControl = SizeEdit
         end
         object ExternalStorageNameLabel: TLabel
           Left = 8
-          Top = 214
-          Width = 109
+          Top = 262
+          Width = 111
           Height = 13
           Caption = '&External Storage Name'
           FocusControl = ExternalStorageNameEdit
         end
         object StorageKindLabel: TLabel
           Left = 8
-          Top = 168
+          Top = 216
           Width = 61
           Height = 13
           Caption = 'Storage &Kind'
           FocusControl = StorageKindEdit
+        end
+        object EnumeratedTypeLabel: TLabel
+          Left = 7
+          Top = 132
+          Width = 83
+          Height = 13
+          Caption = '&Enumerated type'
+          FocusControl = EnumeratedTypeEdit
         end
         object NameEdit: TDBEdit
           Left = 7
@@ -117,7 +125,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         end
         object StorageNameEdit: TDBEdit
           Left = 7
-          Top = 144
+          Top = 192
           Width = 210
           Height = 21
           DataField = 'StorageName'
@@ -136,7 +144,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         end
         object ExternalStorageNameEdit: TDBEdit
           Left = 7
-          Top = 231
+          Top = 279
           Width = 210
           Height = 21
           DataField = 'ExternalStorageName'
@@ -146,7 +154,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         end
         object StorageKindEdit: TDBComboBox
           Left = 7
-          Top = 184
+          Top = 232
           Width = 210
           Height = 21
           Style = csDropDownList
@@ -159,13 +167,25 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         end
         object AutoExternalStorageNameCheckBox: TCheckBox
           Left = 172
-          Top = 212
+          Top = 260
           Width = 45
           Height = 17
           Alignment = taLeftJustify
           Caption = 'Auto'
           TabOrder = 7
           OnClick = AutoExternalStorageNameCheckBoxClick
+        end
+        object EnumeratedTypeEdit: TDBComboBox
+          Left = 7
+          Top = 149
+          Width = 210
+          Height = 21
+          DataField = 'Metadata.EnumName'
+          DataSource = SubjectSource
+          ItemHeight = 13
+          TabOrder = 8
+          OnChange = EnumeratedTypeEditChange
+          OnEnter = EnumeratedTypeEditEnter
         end
       end
       object AccessSheet: TTabSheet
@@ -174,7 +194,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object VisibilityLabel: TLabel
           Left = 8
           Top = 8
-          Width = 36
+          Width = 37
           Height = 13
           Caption = '&Visibility'
           FocusControl = VisibilityEdit
@@ -182,7 +202,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object SingularNameLabel: TLabel
           Left = 120
           Top = 8
-          Width = 69
+          Width = 68
           Height = 13
           Caption = '&Singular Name'
           FocusControl = SingularNameEdit
@@ -195,7 +215,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Style = csDropDownList
           DataField = 'Visibility'
           DataSource = SubjectSource
-          ItemHeight = 13
+          ItemHeight = 0
           TabOrder = 0
         end
         object MethodsGroupBox: TGroupBox
@@ -318,7 +338,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object EdtMaskLabel: TLabel
           Left = 8
           Top = 8
-          Width = 47
+          Width = 45
           Height = 13
           Caption = 'Edit &Mask'
           FocusControl = EditMaskEdit
@@ -334,7 +354,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object ValidCharsLabel: TLabel
           Left = 8
           Top = 48
-          Width = 77
+          Width = 78
           Height = 13
           Caption = '&Valid Characters'
           FocusControl = ValidCharsEdit
@@ -387,7 +407,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 293
+    Top = 340
     Width = 241
     inherited ButtonPanel: TPanel
       Left = 81

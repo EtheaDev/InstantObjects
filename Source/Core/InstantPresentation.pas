@@ -816,7 +816,7 @@ const
   FieldTypes: array[TInstantAttributeType] of TFieldType = (
     ftUnknown, ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftDateTime,
     ftBlob, ftMemo, ftBlob, ftInteger, ftInteger, ftDataSet, ftDataSet,
-    ftDate, ftTime);
+    ftDate, ftTime, ftInteger);
 begin
   Result := FieldTypes[AttributeType];
 end;

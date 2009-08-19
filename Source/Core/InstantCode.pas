@@ -589,6 +589,7 @@ type
     function GetIncludeRemoveMethod: Boolean;
     function GetIsComplex: Boolean;
     function GetIsContainer: Boolean;
+    function GetIsEnum: Boolean;
     function GetIsIndexed: Boolean;
     function GetIsRequired: Boolean;
     function GetMetadata: TInstantAttributeMetadata;
@@ -669,6 +670,7 @@ type
     property Owner: TInstantCodeMetadataInfo read GetOwner;
     property IsComplex: Boolean read GetIsComplex;
     property IsContainer: Boolean read GetIsContainer;
+    property IsEnum: Boolean read GetIsEnum;
     property PropTypeName: string read GetPropTypeName write SetPropTypeName;
     property ValueGetterCode: string read GetValueGetterCode;
     property ValuePropName: string read GetValuePropName;
@@ -1554,6 +1556,12 @@ type
     procedure InternalRead; override;
   end;
 
+  TEnumTypeProcessor = class(TSimpleTypeProcessor)
+  protected
+    procedure InternalRead; override;
+    procedure HandleArgument(Index: Integer; const Argument: string); override;
+  end;
+
 const
 {$IFDEF MSWINDOWS}
   CRLF = #13#10;
@@ -1616,15 +1624,16 @@ const
     'Boolean',
     'string',
     'TDateTime',
-    '', // atBlob
-    '', // atMemo
-    '', // atGraphic
-    '', // atPart
-    '', // atReference
-    '', // atParts,
+    '',  // atBlob
+    '',  // atMemo
+    '',  // atGraphic
+    '',  // atPart
+    '',  // atReference
+    '',  // atParts,
     '',  // atReferences
     'TDate',
-    'TTime');
+    'TTime',
+    ''); // atEnum
 begin
   for Result := Low(Result) to High(Result) do
     if SameText(PropType, TypeNames[Result]) then
@@ -1652,6 +1661,7 @@ begin
     AddObject('Reference', TObjectTypeProcessor.Create);
     AddObject('Parts', TContainerTypeProcessor.Create);
     AddObject('References', TContainerTypeProcessor.Create);
+    AddObject('Enum', TEnumTypeProcessor.Create);
   end;
 end;
 
@@ -3582,15 +3592,24 @@ end;
 
 function TInstantCodeAttributeTailor.GetValueGetterCode: string;
 begin
-  Result := 'Result := ' + FieldValueName;
-  if Attribute.IsComplex then
-    Result := Result + ' as ' + Attribute.PropTypeName;
+  Result := 'Result := ';
+  if not Attribute.IsEnum then
+  begin
+    Result := Result + FieldValueName;
+    if Attribute.IsComplex then
+      Result := Result + ' as ' + Attribute.PropTypeName;
+  end else
+    Result := Result + Attribute.Metadata.EnumName + '(' + FieldValueName + ')';
+
   Result := Result + ';';
 end;
 
 function TInstantCodeAttributeTailor.GetValueSetterCode: string;
+const
+  SetterText: array[Boolean] of string =
+    ('Value;', 'Ord(Value)');
 begin
-  Result := FieldValueName + ' := Value;';
+  Result := FieldValueName + ' := ' + SetterText[Attribute.IsEnum] + ';';
 end;
 
 procedure TInstantCodeAttributeTailor.SetIsArray(Value: Boolean);
@@ -3757,6 +3776,8 @@ begin
       Params := ObjectClassName
     else if (AttributeType in [atString, atMemo]) and (Size > 0) then
       Params := IntToStr(Size)
+    else if AttributeType = atEnum then
+      Params := EnumName
     else
       Exit;
     Result := Result + '(' + Params + ')';
@@ -3826,6 +3847,12 @@ function TInstantCodeAttribute.GetIsContainer: Boolean;
 begin
   Result := Assigned(Metadata.AttributeClass) and
     Metadata.AttributeClass.InheritsFrom(TInstantContainer);
+end;
+
+function TInstantCodeAttribute.GetIsEnum: Boolean;
+begin
+  Result := Assigned(Metadata.AttributeClass) and
+    Metadata.AttributeClass.InheritsFrom(TInstantEnum);
 end;
 
 function TInstantCodeAttribute.GetIsDefault: Boolean;
@@ -3907,9 +3934,13 @@ begin
   Result := InstantAttributeTypeToPropertyType(AttributeType);
   if Result = '' then
     with Metadata do
-      if Assigned(AttributeClass) and
-        AttributeClass.InheritsFrom(TInstantComplex) then
-          Result := ObjectClassName;
+      if Assigned(AttributeClass) then
+      begin
+        if AttributeClass.InheritsFrom(TInstantComplex) then
+          Result := ObjectClassName else
+        if AttributeClass.InheritsFrom(TInstantEnum) then
+          Result := EnumName;
+      end;
 end;
 
 function TInstantCodeAttribute.GetReadOnly: Boolean;
@@ -8950,6 +8981,48 @@ begin
         FMetadata.StorageName := ReadStringValue;
     end;
   end;
+end;
+
+{ TEnumTypeProcessor }
+
+procedure TEnumTypeProcessor.HandleArgument(Index: Integer;
+  const Argument: string);
+//var
+//  CodeObject: TInstantCodeObject;
+begin
+  case Index of
+    1:
+      if IsValidIdent(Argument) then
+      begin
+// Code disabled: This checks if the Enumerated type exists. But it
+//                only works if the type exists in the same unit as the
+//                model.
+//        Assert(FModule = nil, 'xxx');
+//        if FModule <> nil then
+//        begin
+//          CodeObject := FModule.InterfaceSection.FindTypes.Find(Argument);
+//          CodeObject := FModule.FindType(Argument);
+
+//          if not Assigned(CodeObject)  then
+//            Error(Format('Identifier not found: %s', [Argument])) else
+//          if CodeObject is TInstantCodeEnum then
+//          begin
+            FMetadata.EnumName := Argument;
+//            FMetadata.EnumValues := (CodeObject as TInstantCodeEnum).FItems;
+//          end else
+//            Error(Format('Enumerated type expected: %s', [Argument]));
+//        end else
+//          Error(Format('Invalid identifier name: %s', [Argument]));
+      end
+  else
+    inherited;
+  end;
+end;
+
+procedure TEnumTypeProcessor.InternalRead;
+begin
+  inherited;
+
 end;
 
 initialization

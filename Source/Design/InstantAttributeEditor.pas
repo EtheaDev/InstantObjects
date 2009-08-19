@@ -24,7 +24,8 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell, David Moorhouse
+ * Carlo Barazzetta, Adrea Petrelli, Nando Dessena, Steven Mitchell,
+ * David Moorhouse, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -116,6 +117,8 @@ type
     StorageKindLabel: TLabel;
     AutoExternalStorageNameCheckBox: TCheckBox;
     OptionUseNullCheckBox: TCheckBox;
+    EnumeratedTypeLabel: TLabel;
+    EnumeratedTypeEdit: TDBComboBox;
     procedure NameEditKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure NameEditChange(Sender: TObject);
@@ -132,6 +135,8 @@ type
     procedure ExternalStorageNameEditChange(Sender: TObject);
     procedure AutoExternalStorageNameCheckBoxClick(Sender: TObject);
     procedure StorageNameEditChange(Sender: TObject);
+    procedure EnumeratedTypeEditChange(Sender: TObject);
+    procedure EnumeratedTypeEditEnter(Sender: TObject);
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
@@ -148,8 +153,10 @@ type
   protected
     procedure LoadClasses;
     procedure LoadData; override;
-    procedure LoadEnums(TypeInfo: PTypeInfo; Items: TStrings;
-      Values: Pointer);
+// Do not delete
+//    procedure LoadEnums(TypeInfo: PTypeInfo; Items: TStrings;
+//      Values: Pointer);
+    procedure LoadEnum;
     procedure LoadTypes;
     procedure LoadVisibilities;
     procedure LoadStorageKind;
@@ -268,9 +275,10 @@ begin
     LoadOptions;
     LoadMethods;
   end;
+  LoadEnum;
 end;
 
-procedure TInstantAttributeEditorForm.LoadEnums(TypeInfo: PTypeInfo;
+{procedure TInstantAttributeEditorForm.LoadEnums(TypeInfo: PTypeInfo;
   Items: TStrings; Values: Pointer);
 type
   PByteSet = ^TByteSet;
@@ -302,12 +310,37 @@ begin
   finally
     Names.Free;
   end;
-end;
+end; }
 
 procedure TInstantAttributeEditorForm.LoadStorageKind;
 begin
   StorageKindEdit.ItemIndex :=
     SubjectExposer.GetFieldStrings(StorageKindEdit.Field, StorageKindEdit.Items);
+end;
+
+procedure TInstantAttributeEditorForm.LoadEnum;
+var
+  I: Integer;
+  CodeType: TInstantCodeType;
+begin
+  EnumeratedTypeEdit.Items.BeginUpdate;
+  try
+    EnumeratedTypeEdit.Clear;
+    if Assigned(FModel) then
+    begin
+      for I := 0 to Pred(FModel.TypeCount) do
+      begin
+        CodeType := FModel.Types[I];
+        if CodeType is TInstantCodeEnum then
+          EnumeratedTypeEdit.Items.AddObject(CodeType.Name, CodeType);
+      end;
+    end;
+
+    EnumeratedTypeEdit.ItemIndex :=
+      EnumeratedTypeEdit.Items.IndexOf(SubjectExposer.FieldByName('Metadata.EnumName').AsString);
+  finally
+    EnumeratedTypeEdit.Items.EndUpdate;
+  end;
 end;
 
 procedure TInstantAttributeEditorForm.LoadTypes;
@@ -547,6 +580,7 @@ begin
   LoadTypes;
   LoadVisibilities;
   LoadStorageKind;
+  LoadEnum;
   UpdateControls;
   ComputeExternalStorageName;
 end;
@@ -631,7 +665,7 @@ procedure TInstantAttributeEditorForm.UpdateControls;
   end;
 
 var
-  HasName, HasClass, IsComplex, IsContainer, CanBeExternal,
+  HasName, HasClass, HasEnum, IsComplex, IsContainer, IsEnum, CanBeExternal,
     CanHaveStorageName, IsMaskable, IsString, IsValid: Boolean;
 begin
   CanBeExternal := False;
@@ -640,6 +674,7 @@ begin
   IsMaskable := False;
   IsContainer := False;
   IsString := False;
+  IsEnum := False;
 
   if Assigned(Subject) then
   begin
@@ -654,12 +689,14 @@ begin
     IsContainer := Subject.IsContainer;
     CanHaveStorageName := Subject.CanHaveStorageName;
     IsString := Subject.AttributeType in [atString, atMemo];
+    IsEnum := Subject.IsEnum;
   end;
 
   HasName := NameEdit.Text <> '';
   HasClass := ObjectClassEdit.Text <> '';
+  HasEnum := EnumeratedTypeEdit.Text <> '';
 
-  IsValid := HasName and (not IsComplex or HasClass);
+  IsValid := HasName and ((not IsComplex or HasClass)) or ((IsEnum) and (HasEnum));
 
   DisableSubControls(DefinitionSheet, Limited);
   DisableSubControls(AccessSheet, Limited);
@@ -681,6 +718,8 @@ begin
 
     EnableCtrl(StorageKindEdit, CanBeExternal and IsObjectClassPersistent);
     EnableCtrl(StorageKindLabel, CanBeExternal and IsObjectClassPersistent);
+    EnableCtrl(EnumeratedTypeLabel, IsEnum);
+    EnableCtrl(EnumeratedTypeEdit, IsEnum);
   end;
   EnableCtrl(StorageNameLabel, CanHaveStorageName);
   EnableCtrl(StorageNameEdit, CanHaveStorageName);
@@ -709,6 +748,18 @@ begin
       StorageKindEdit.Text);
   UpdateControls;
   ComputeExternalStorageName;
+end;
+
+procedure TInstantAttributeEditorForm.EnumeratedTypeEditChange(Sender: TObject);
+begin
+  inherited;
+  UpdateControls;
+end;
+
+procedure TInstantAttributeEditorForm.EnumeratedTypeEditEnter(Sender: TObject);
+begin
+  inherited;
+  LoadEnum;
 end;
 
 procedure TInstantAttributeEditorForm.ExternalStorageNameEditChange(Sender:
