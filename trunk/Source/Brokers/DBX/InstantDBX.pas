@@ -912,12 +912,11 @@ end;
 
 procedure TInstantDBX3Transaction.Start;
 begin
-  if FTransactionDesc.TransactionID = MAXLONG then
+  if FTransactionDesc.TransactionID = high(FTransactionDesc.TransactionID) then
     FTransactionDesc.TransactionID := 1
   else
     FTransactionDesc.TransactionID := FTransactionDesc.TransactionID + 1;
-  FTransactionDesc.IsolationLevel :=
-    TransIsolationLevelMap[Database.TransIsolation];
+  FTransactionDesc.IsolationLevel := xilREADCOMMITTED;
   Connector.Connection.StartTransaction(FTransactionDesc);
 end;
 {$ENDIF}

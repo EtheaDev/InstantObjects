@@ -194,7 +194,7 @@ type
     procedure WriteProperties(AObject: TPersistent);
     {$IFNDEF UNICODE}
     procedure WriteString(const Value: string);
-    procedure WriteUTF8Str(const Value: string); inline;
+    procedure WriteUTF8Str(const Value: string); {$IFDEF D10+}inline;{$ENDIF}
     {$ENDIF}
     procedure WriteValue(Value: TValueType);
     property Stream: TStream read FStream;

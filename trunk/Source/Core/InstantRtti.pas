@@ -78,7 +78,7 @@ function InstantGetPropInfo(AClass: TClass; PropPath: string;
 procedure InstantSetProperty(AObject: TObject; PropPath: string; Value: Variant);
 function InstantIsDefaultPropertyValue(Instance: TObject;
   PropInfo: PPropInfo): Boolean;
-function InstantGetPropName(PropInfo: PPropInfo): string; {$IFNDEF D12+}inline;{$ENDIF}
+function InstantGetPropName(PropInfo: PPropInfo): string; {$IFDEF D10+}{$IFNDEF D12+}inline;{$ENDIF}{$ENDIF}
 
 implementation
 
