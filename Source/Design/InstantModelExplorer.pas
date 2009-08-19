@@ -131,6 +131,7 @@ type
     ViewAttributeButton: TToolButton;
     ViewAttributesAction: TAction;
     ViewAttributes: TMenuItem;
+    InstantAttributeViewFrame: TInstantAttributeViewFrame;
     procedure AboutActionExecute(Sender: TObject);
     procedure BuildDatabaseActionExecute(Sender: TObject);
     procedure CollapseAllActionExecute(Sender: TObject);
@@ -151,11 +152,17 @@ type
     procedure ViewRelationsActionExecute(Sender: TObject);
     procedure ViewSourceActionExecute(Sender: TObject);
     procedure ImportModelActionExecute(Sender: TObject);
+    procedure InstantAttributeViewFrameAttributeNewActionExecute(
+      Sender: TObject);
+    procedure InstantAttributeViewFrameAttributeDeleteActionExecute(
+      Sender: TObject);
+    procedure InstantAttributeViewFrameAttributeEditActionExecute(
+      Sender: TObject);
   private
     FError: TInstantModelError;
     FModel: TInstantCodeModel;
     FModelView: TModelTreeView;
-    FAttributeFrame: TInstantAttributeViewFrame;
+//    FAttributeFrame: TInstantAttributeViewFrame;
     FSelectedNode: TTreeNode;
     FStyle: TInstantModelStyle;
     FOnApplyClass: TInstantCodeClassApplyEvent;
@@ -174,6 +181,7 @@ type
     procedure ApplyClass(AClass: TInstantCodeClass;
       ChangeType: TInstantCodeChangeType; OldName: string = '';
       ChangedAttributes: TStringList = nil; NewAttributes: TList = nil);
+    procedure ApplyClassFromView(AView: TInstantAttributeViewFrame);
     function ClassFromNode(Node: TTreeNode): TInstantCodeClass;
     procedure DoApplyClass(AClass: TInstantCodeClass;
       ChangeInfo: TInstantCodeClassChangeInfo);
@@ -272,6 +280,15 @@ begin
   end;
 end;
 
+procedure TInstantModelExplorerForm.ApplyClassFromView(
+  AView: TInstantAttributeViewFrame);
+begin
+  if InstantAttributeViewFrame.WasAccepted then
+    ApplyClass(FocusedClass, ctEdit, InstantAttributeViewFrame.OldSubjectName,
+      InstantAttributeViewFrame.ChangedAttributes,
+      InstantAttributeViewFrame.NewAttributes);
+end;
+
 procedure TInstantModelExplorerForm.BuildDatabaseActionExecute(
   Sender: TObject);
 begin
@@ -332,12 +349,12 @@ begin
     OnGetImageIndex := ModelViewGetImageIndex;
   end;
 
-  FAttributeFrame := TInstantAttributeViewFrame.Create(Self);
-  with FAttributeFrame do
-  begin
-    Parent := AttributePanel;
-    Align := alClient;
-  end;
+//  FAttributeFrame := TInstantAttributeViewFrame.Create(Self);
+//  with FAttributeFrame do
+//  begin
+//    Parent := AttributePanel;
+//    Align := alClient;
+//  end;
 
   FModel := TInstantCodeModel.Create;
   DesignModel := @FModel;
@@ -402,20 +419,23 @@ const
   ChangeTypes: array[Boolean] of TInstantCodeChangeType = (ctEdit, ctNew);
 var
   OldName: string;
+  EditorForm: TInstantClassEditorForm;
 begin
   OldName := AClass.Name;
-  with TInstantClassEditorForm.Create(nil) do
+  EditorForm := TInstantClassEditorForm.Create(nil);
   try
-    IsNew := New;
-    Model := Self.Model;
-    Subject := AClass;
-    Result := ShowModal = mrOk;
+    EditorForm.IsNew := New;
+    EditorForm.Model := Self.Model;
+    EditorForm.Subject := AClass;
+    Result := EditorForm.ShowModal = mrOk;
     if Result then
       ApplyClass(AClass, ChangeTypes[New], OldName,
-        FAttributeFrame.ChangedAttributes,
-        FAttributeFrame.NewAttributes);
+//        FAttributeFrame.ChangedAttributes,
+//        FAttributeFrame.NewAttributes);
+        EditorForm.ChangedAttributes,
+        EditorForm.NewAttributes);
   finally
-    Free;
+    EditorForm.Free;
   end;
 end;
 
@@ -517,6 +537,31 @@ begin
   end;
 
   Refresh;
+end;
+
+procedure TInstantModelExplorerForm.InstantAttributeViewFrameAttributeDeleteActionExecute(
+  Sender: TObject);
+begin
+  InstantAttributeViewFrame.AttributeDeleteActionExecute(Sender);
+  ApplyClassFromView(InstantAttributeViewFrame);
+end;
+
+procedure TInstantModelExplorerForm.InstantAttributeViewFrameAttributeEditActionExecute(
+  Sender: TObject);
+begin
+  InstantAttributeViewFrame.AttributeEditActionExecute(Sender);
+  ApplyClassFromView(InstantAttributeViewFrame);
+end;
+
+procedure TInstantModelExplorerForm.InstantAttributeViewFrameAttributeNewActionExecute(
+  Sender: TObject);
+//var
+//  AClass: TInstantCodeClass;
+//  OldName: string;
+begin
+//  OldName := AClass.Name;
+  InstantAttributeViewFrame.AttributeNewActionExecute(Sender);
+  ApplyClassFromView(InstantAttributeViewFrame);
 end;
 
 procedure TInstantModelExplorerForm.ExportModelActionExecute(
@@ -853,7 +898,8 @@ var
   I: Integer;
   Level: Integer;
 begin
-  FAttributeFrame.Clear;
+  //FAttributeFrame.Clear;
+  InstantAttributeViewFrame.Clear;
 
   DisableViewUpdate;
 
@@ -927,7 +973,8 @@ end;
 
 procedure TInstantModelExplorerForm.ViewClassAttributes(AClass: TInstantCodeClass);
 begin
-  FAttributeFrame.Subject := AClass;
+//  FAttributeFrame.Subject := AClass;
+  InstantAttributeViewFrame.Subject := AClass;
 end;
 
 procedure TInstantModelExplorerForm.RestoreLayout;
@@ -938,7 +985,8 @@ begin
       if OpenKey('Software\InstantObjects.org\Layout\ClassAttributes', False) then begin
         SetAttributePanelVisible(ReadBool('ShowAttributes'));
         AttributePanel.Height := ReadInteger('AttributePanelHeight');
-        FAttributeFrame.InheritedAttributesPanel.Height := ReadInteger('InheritedAttributeHeight');
+//        FAttributeFrame.InheritedAttributesPanel.Height := ReadInteger('InheritedAttributeHeight');
+        InstantAttributeViewFrame.InheritedAttributesPanel.Height := ReadInteger('InheritedAttributeHeight');
       end;
     finally
       Free;
@@ -955,7 +1003,8 @@ begin
     if OpenKey('Software\InstantObjects.org\Layout\ClassAttributes', True) then begin
       WriteBool('ShowAttributes', ViewAttributeButton.Down);
       WriteInteger('AttributePanelHeight', AttributePanel.Height);
-      WriteInteger('InheritedAttributeHeight', FAttributeFrame.InheritedAttributesPanel.Height);
+//      WriteInteger('InheritedAttributeHeight', FAttributeFrame.InheritedAttributesPanel.Height);
+      WriteInteger('InheritedAttributeHeight', InstantAttributeViewFrame.InheritedAttributesPanel.Height);
     end;
   finally
     Free;

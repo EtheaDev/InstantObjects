@@ -25,7 +25,7 @@
  *
  * Contributor(s):
  * David Moorhouse, Carlo Barazzetta, Adrea Petrelli, Steven Mitchell,
- * Nando Dessena, David Taylor
+ * Nando Dessena, David Taylor, Brian Andersen
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -88,6 +88,8 @@ type
     FNewAttributes: TList;
     FModel: TInstantCodeModel;
     FNameAttribute: TInstantCodeAttribute;
+    FWasAccepted: Boolean;
+    FOldSubjectName: string;
     procedure DeleteAttribute(Attribute: TInstantCodeAttribute);
     procedure FitColumns(View: TListView);
     function GetNameAttribute: TInstantCodeAttribute;
@@ -97,26 +99,30 @@ type
     procedure SetSubject(const Value: TInstantCodeClass);
     function GetFocusedAttribute: TInstantCodeAttribute;
   protected
+    property FocusedAttribute: TInstantCodeAttribute read GetFocusedAttribute;
+    property NameAttribute: TInstantCodeAttribute read GetNameAttribute;
     function AddAttributeToView(View: TListView;
       Attribute: TInstantCodeAttribute): TListItem;
     function EditAttribute(Attribute: TInstantCodeAttribute;
       Exists: Boolean; const Title: string = ''): Boolean;
-    procedure PopulateInheritedAttributes;
-    procedure PopulateIntroducedAttributes;
-    property NameAttribute: TInstantCodeAttribute read GetNameAttribute;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Clear;
+    procedure PopulateInheritedAttributes;
+    procedure PopulateIntroducedAttributes;
     procedure RestoreAttributes;
-    procedure UpdateActions; 
+    procedure UpdateActions;
     procedure RestoreLayout;
     procedure StoreLayout;
+    property BackupAttributes: TObjectList read FBackupAttributes;
     property ChangedAttributes: TStringList read FChangedAttributes;
-    property FocusedAttribute: TInstantCodeAttribute read GetFocusedAttribute;
     property Model: TInstantCodeModel read FModel write SetModel;
     property NewAttributes: TList read FNewAttributes;
     property Subject: TInstantCodeClass read FSubject write SetSubject;
+
+    property WasAccepted: Boolean read FWasAccepted;
+    property OldSubjectName: string read FOldSubjectName;
   end;
 
 implementation
@@ -169,12 +175,18 @@ procedure TInstantAttributeViewFrame.AttributeDeleteActionExecute(
 var
   Attribute: TInstantCodeAttribute;
 begin
+  FWasAccepted := False;
+  FOldSubjectName := Subject.Name;
+
   with IntroducedAttributesView do
     if Assigned(ItemFocused) then
     begin
       Attribute := ItemFocused.Data;
       if not Confirm(Format(SConfirmDeleteAttribute, [Attribute.Name])) then
         Exit;
+
+      FWasAccepted := True;
+
       DeleteAttribute(Attribute);
       ItemFocused.Delete;
       if Assigned(ItemFocused) then
@@ -183,13 +195,15 @@ begin
     end;
 end;
 
-procedure TInstantAttributeViewFrame.AttributeEditActionExecute(
-  Sender: TObject);
+procedure TInstantAttributeViewFrame.AttributeEditActionExecute(Sender: TObject);
 var
   OldName: string;
   Attribute: TInstantCodeAttribute;
   Exists: Boolean;
 begin
+  FWasAccepted := False;
+  FOldSubjectName := Subject.Name;
+
   Attribute := FocusedAttribute;
   if not Assigned(Attribute) then
     Exit;
@@ -199,6 +213,8 @@ begin
     Attribute.DetectMethodTypes;
   if EditAttribute(Attribute, Exists) then
   begin
+    FWasAccepted := True;
+
     if Exists and (FChangedAttributes.IndexOfObject(Attribute) = -1) then
       FChangedAttributes.AddObject(OldName, Attribute);
     PopulateIntroducedAttributes;
@@ -210,10 +226,15 @@ var
   Attribute: TInstantCodeAttribute;
   NewItem: TListItem;
 begin
+  FWasAccepted := False;
+  FOldSubjectName := Subject.Name;
+
   Attribute := Subject.AddAttribute;
   if not EditAttribute(Attribute, False, 'New Attribute') then
     Attribute.Free
   else begin
+    FWasAccepted := True;
+
     FNewAttributes.Add(Attribute);
     with IntroducedAttributesView do
     begin
@@ -239,6 +260,8 @@ procedure TInstantAttributeViewFrame.Clear;
 begin
   InheritedAttributesView.Clear;
   IntroducedAttributesView.Clear;
+  FChangedAttributes.Clear;
+  FNewAttributes.Clear;
 end;
 
 constructor TInstantAttributeViewFrame.Create(AOwner: TComponent);

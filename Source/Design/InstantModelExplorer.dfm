@@ -30,9 +30,9 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   end
   object ModelPanel: TPanel
     Left = 0
-    Top = 27
+    Top = 29
     Width = 410
-    Height = 228
+    Height = 226
     Align = alClient
     BevelOuter = bvNone
     Constraints.MinHeight = 20
@@ -45,7 +45,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     Height = 29
     BorderWidth = 1
     ButtonHeight = 23
-    Flat = True
     Images = ActionImages
     ParentShowHint = False
     ShowHint = True
@@ -119,6 +118,65 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
         Font.Pitch = fpVariable
         Font.Style = [fsBold]
         ParentFont = False
+      end
+    end
+    inline InstantAttributeViewFrame: TInstantAttributeViewFrame
+      Left = 0
+      Top = 25
+      Width = 410
+      Height = 218
+      Align = alClient
+      TabOrder = 1
+      ExplicitTop = 25
+      ExplicitWidth = 410
+      ExplicitHeight = 218
+      inherited AttributesSplitter: TSplitter
+        Top = 114
+        Width = 410
+        ExplicitTop = 114
+        ExplicitWidth = 410
+      end
+      inherited InheritedAttributesPanel: TPanel
+        Top = 118
+        Width = 410
+        ExplicitTop = 118
+        ExplicitWidth = 410
+        inherited InheritedAttributesLabel: TLabel
+          Width = 410
+          ExplicitWidth = 410
+        end
+        inherited InheritedAttributesView: TListView
+          Width = 410
+          Font.Pitch = fpVariable
+          ExplicitWidth = 410
+        end
+      end
+      inherited IntroducedAttributesPanel: TPanel
+        Width = 410
+        Height = 114
+        ExplicitWidth = 410
+        ExplicitHeight = 114
+        inherited IntroducedAttributesLabel: TLabel
+          Width = 410
+          ExplicitWidth = 410
+        end
+        inherited IntroducedAttributesView: TListView
+          Width = 410
+          Height = 98
+          ExplicitWidth = 410
+          ExplicitHeight = 98
+        end
+      end
+      inherited Actions: TActionList
+        inherited AttributeNewAction: TAction
+          OnExecute = InstantAttributeViewFrameAttributeNewActionExecute
+        end
+        inherited AttributeDeleteAction: TAction
+          OnExecute = InstantAttributeViewFrameAttributeDeleteActionExecute
+        end
+        inherited AttributeEditAction: TAction
+          OnExecute = InstantAttributeViewFrameAttributeEditActionExecute
+        end
       end
     end
   end
