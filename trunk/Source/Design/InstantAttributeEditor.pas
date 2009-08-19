@@ -343,6 +343,7 @@ procedure TInstantAttributeEditorForm.LoadVisibilities;
 var
   I: Integer;
   S: String;
+  CodeProperty: TInstantCodeProperty;
 begin
   VisibilityEdit.Items.BeginUpdate;
   try
@@ -360,10 +361,15 @@ begin
 
     if Limited then
     begin
-      S := GetEnumName(TypeInfo(TInstantCodeVisibility),
-        Ord(Subject.FindValueProp.Visibility));
-      VisibilityEdit.ItemIndex :=
-        VisibilityEdit.Items.IndexOf(Copy(S, 3, length(S)));
+      CodeProperty := Subject.FindValueProp;
+      if CodeProperty <> nil then
+      begin
+        S := GetEnumName(TypeInfo(TInstantCodeVisibility),
+          Ord(CodeProperty.Visibility));
+        VisibilityEdit.ItemIndex :=
+          VisibilityEdit.Items.IndexOf(Copy(S, 3, length(S)));
+      end else
+        VisibilityEdit.ItemIndex := -1;
     end
     else if Assigned(VisibilityEdit.Field) then
       VisibilityEdit.ItemIndex :=
