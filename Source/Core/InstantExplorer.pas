@@ -46,7 +46,7 @@ uses
 {$IFDEF LINUX}
   QControls, QForms, QComCtrls, QExtCtrls, QDBGrids, QImgList,
 {$ENDIF}
-  Classes, Db, InstantPersistence, InstantPresentation;
+  Classes, DB, TypInfo, InstantPersistence, InstantPresentation, DbCtrls;
 
 type
   TInstantExplorer = class;
@@ -87,13 +87,45 @@ type
     const Value: string; var NodeData: TInstantExplorerNodeData) of object;
   TInstantExplorerGetNodeTextEvent = procedure(Sender: TInstantExplorer;
     NodeData: TInstantExplorerNodeData; var Text: string) of object;
-    
+  TInstantExplorerGetAllowedValuesEvent = procedure (Sender: TInstantExplorer;
+    const AObject: TObject; const APropName: string;
+    const AAllowedValues: TStrings) of object;
+  TInstantExplorerGetFieldNamesEvent = procedure (Sender: TInstantExplorer;
+    const AObject: TObject; const AFieldNames: TStrings) of object;
+
   TInstantExplorerLayout = (loTreeOnly, loDetailOnly, loVertical, loHorizontal);
+
+  TInstantExplorerDBComboBox = class(TDBComboBox)
+  private
+    procedure ApplyToRecord;
+  protected
+    procedure Change; override;
+    procedure Click; override;
+  end;
+
+  TInstantExplorerDBGrid = class(TDBGrid)
+  private
+    procedure UpdateLastColumnWidth;
+  protected
+    procedure Resize; override;
+  end;
+
+  TInstantExplorerContentEditor = class(TPanel)
+  private
+    FGrid: TInstantExplorerDBGrid;
+    function GetDataSource: TDataSource;
+    procedure SetDataSource(const AValue: TDataSource);
+    function GetGrid: TDBGrid;
+  public
+    constructor Create(AOwner: TComponent); override;
+    property Grid: TDBGrid read GetGrid;
+    property DataSource: TDataSource read GetDataSource write SetDataSource;
+  end;
 
   TInstantExplorer = class(TCustomControl)
   private
     FAutoAdjust: Boolean;
-    FContentEditor: TDBGrid;
+    FContentEditor: TInstantExplorerContentEditor;
     FContentView: TPanel;
     FDetailPanel: TPanel;
     FDetailView: TPanel;
@@ -115,6 +147,8 @@ type
     FOnGetImageIndex: TInstantExplorerNodeEvent;
     FOnGetNodeText: TInstantExplorerGetNodeTextEvent;
     FOnIncludeNode: TInstantExplorerIncludeNodeEvent;
+    FOnGetAllowedValues: TInstantExplorerGetAllowedValuesEvent;
+    FOnGetFieldNames: TInstantExplorerGetFieldNamesEvent;
     function AddNode(NodeType: TInstantExplorerNodeType; Parent: TTreeNode;
       Name: string; AObject: TObject; Value: string = ''): TTreeNode;
     procedure ArrangeControls;
@@ -130,12 +164,15 @@ type
     procedure DestroyObjectEditor;
     procedure ExpandNode(Node: TTreeNode);
     function GetCurrentObject: TObject;
+    procedure GetAllowedValues(const AObject: TObject;
+      const APropName: string; const AAllowedValues: TStrings);
     function GetImages: TCustomImageList;
     procedure LoadContainerNode(Node: TTreeNode; Container: TInstantContainer);
     procedure LoadNode(Node: TTreeNode; LoadChildren: Boolean);
     procedure LoadObjectNode(Node: TTreeNode; Instance: TObject;
       var ChildCount: Integer; LoadChildren: Boolean);
     function NodeIsLoaded(Node: TTreeNode): Boolean;
+    procedure ObjectExposerAfterDelete(Sender: TDataSet);
     procedure ObjectExposerAfterPost(Sender: TDataSet);
     procedure ResizeControls;
     procedure SetAutoAdjust(const Value: Boolean);
@@ -146,10 +183,13 @@ type
       var AllowExpansion: Boolean);
     procedure TreeViewGetImageIndex(Sender: TObject; Node: TTreeNode);
     procedure TreeViewNodeDeletion(Sender: TObject; Node: TTreeNode);
+    procedure SetCurrentObject(const AValue: TObject);
+    function GetContentEditor: TWinControl;
+    function CreateFieldList: TStrings;
   protected
     procedure ChangeNode(Node: TTreeNode); virtual;
     function CreateContentEditor(AOwner: TComponent;
-      DataSource: TDataSource): TDBGrid; virtual;
+      DataSource: TDataSource): TInstantExplorerContentEditor; virtual;
     function CreateExposer: TInstantExposer; virtual;
     function CreateNode(Nodes: TTreeNodes; Parent: TTreeNode;
       NodeData: TInstantExplorerNodeData): TTreeNode; virtual;
@@ -170,13 +210,15 @@ type
     procedure SetRootObject(const Value: TObject); virtual;
     procedure UpdateDetails;
   public
+    procedure SetupContentEditor;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Clear;
     procedure Refresh;
     procedure RefreshNode(Node: TTreeNode);
+    property ContentEditor: TWinControl read GetContentEditor;
     property ContentView: TPanel read FContentView;
-    property CurrentObject: TObject read GetCurrentObject;
+    property CurrentObject: TObject read GetCurrentObject write SetCurrentObject;
     property DetailPanel: TPanel read FDetailPanel;
     property DetailView: TPanel read FDetailView write SetDetailView;
     property ObjectExposer: TInstantExposer read FObjectExposer;
@@ -206,6 +248,10 @@ type
     property OnCreateNodeData: TInstantExplorerCreateNodeDataEvent read FOnCreateNodeData write FOnCreateNodeData;
     property OnClick;
     property OnDblClick;
+    property OnGetAllowedValues: TInstantExplorerGetAllowedValuesEvent
+      read FOnGetAllowedValues write FOnGetAllowedValues;
+    property OnGetFieldNames: TInstantExplorerGetFieldNamesEvent
+      read FOnGetFieldNames write FOnGetFieldNames;
     property OnGetImageIndex: TInstantExplorerNodeEvent read FOnGetImageIndex write FOnGetImageIndex;
     property OnGetNodeText: TInstantExplorerGetNodeTextEvent read FOnGetNodeText write FOnGetNodeText;
     property OnIncludeNode: TInstantExplorerIncludeNodeEvent read FOnIncludeNode write FOnIncludeNode;
@@ -220,10 +266,10 @@ procedure InstantExploreObject(AObject: TObject);
 implementation
 
 uses
-  SysUtils, InstantClasses, InstantRtti, TypInfo, InstantMetadata,
+  SysUtils, Math, InstantClasses, InstantRtti, InstantMetadata,
   InstantTypes,
 {$IFDEF MSWINDOWS}
-  Graphics, StdCtrls, DbCtrls, Windows;
+  Graphics, StdCtrls, Windows;
 {$ENDIF}
 {$IFDEF LINUX}
   QGraphics, QStdCtrls, QDbCtrls;
@@ -231,6 +277,8 @@ uses
 
 const
   NotLoaded = Pointer(-1);
+
+  MAX_DROPDOWN_ITEMS = 10;
 
 procedure InstantExploreObject(AObject: TObject);
 var
@@ -260,6 +308,28 @@ begin
     Form.Free;
   end;
 end;
+
+// Converts CamelCaps to words with spaces among them.
+function Beautify(const APropName: string): string;
+var
+  LCharIndex: Integer;
+  LLastWasSpace: Boolean;
+begin
+  Result := '';
+  LLastWasSpace := False;
+  for LCharIndex := 1 to Length(APropName) do
+  begin
+    if (APropName[LCharIndex] = AnsiUpperCase(APropName[LCharIndex])[1]) and not LLastWasSpace then
+    begin
+      Result := Result + ' ';
+      LLastWasSpace := True;
+    end
+    else
+      LLastWasSpace := False;
+    Result := Result + APropName[LCharIndex];
+  end;
+end;
+
 
 { TInstantExplorerNodeData }
 
@@ -394,21 +464,19 @@ end;
 procedure TInstantExplorer.AssignRootObject(Value: TObject);
 var
   Node: TTreeNode;
-  ItemIndex: Integer;
+  LCurrentObject: TObject;
   SaveOnChange: TTVChangedEvent;
   ChildCount: Integer;
-
 begin
-  ItemIndex := 0;
+  LCurrentObject := nil;
   with TreeView do
   begin
     SaveOnChange := OnChange;
     OnChange := nil;
     Items.BeginUpdate;
     try
-
       if Assigned(Selected) then
-        ItemIndex := Selected.AbsoluteIndex;
+        LCurrentObject := TinstantExplorerNodeData(Selected.Data).Instance;
       Items.Clear;
       FRootObject := Value;
       if Assigned(FRootObject) then
@@ -427,12 +495,8 @@ begin
     finally
       Items.EndUpdate;
       OnChange := SaveOnChange;
-      if Items.Count > ItemIndex then
-        Selected := Items[ItemIndex]
-      else begin
-        Selected := nil;
-        TreeViewChange(TreeView, nil);
-      end;
+      CurrentObject := LCurrentObject;
+      TreeView.FullExpand;
     end;
   end;
 end;
@@ -466,26 +530,22 @@ begin
 end;
 
 function TInstantExplorer.CreateContentEditor(AOwner: TComponent;
-  DataSource: TDataSource): TDBGrid;
-var
-  Grid: TDBGrid;
+  DataSource: TDataSource): TInstantExplorerContentEditor;
 begin
-  Grid := TDBGrid.Create(AOwner);
-  Grid.DataSource := DataSource;
-  Grid.BorderStyle := bsNone;
-  Result := Grid;
+  Result := TInstantExplorerContentEditor.Create(AOwner);
+  Result.DataSource := DataSource;
 end;
 
 procedure TInstantExplorer.CreateContentView;
 begin
   FContentView := CreatePanel(Self);
+  FContentView.Parent := DetailPanel;
   FContentEditor := CreateContentEditor(FContentView, ObjectSource);
   if Assigned(FContentEditor) then
     with FContentEditor do
     begin
       Align := alClient;
       Parent := FContentView;
-      Show;
     end;
 end;
 
@@ -494,6 +554,7 @@ begin
   FDetailPanel := CreatePanel(Self);
   with FDetailPanel do
   begin
+    Parent := Self;
     BorderStyle := bsSingle;
     Height := Self.Height div 2;
     Align := alClient;
@@ -545,74 +606,170 @@ end;
 
 function TInstantExplorer.CreateObjectEditor(AOwner: TComponent;
   DataSource: TDataSource): TControl;
+const
+  LABEL_WIDTH = 132;
+  LABEL_LEFT = 8;
+  VERT_SPACING = 4;
+  MIN_CONTROL_WIDTH = 24;
 
   procedure CreateEditControl(AParent: TWinControl; var ATop: Integer;
     PropInfo: PPropInfo; ADataSource: TDataSource);
   var
-    Edit: TDBEdit;
+    LControl: TWinControl;
+    LAllowedValues: TStrings;
   begin
-    Edit := TDBEdit.Create(AParent);
-    with Edit do
-    begin
-      Left := 108;
-      Top := ATop;
-      Anchors := [akLeft, akTop, akRight];
-      Constraints.MinWidth := 8;
-      Width := AParent.Width - Left - 8;
-      Anchors := [akLeft, akTop, akRight];
-      Parent := AParent;
-      DataField := InstantGetPropName(PropInfo);
-      DataSource := ADataSource;
-      if not Assigned(PropInfo.SetProc) then
+    case DataSource.DataSet.FieldByName(InstantGetPropName(PropInfo)).DataType of
+      ftMemo:
       begin
-        ReadOnly := True;
-        Color := clBtnFace;
+        LControl := TDBMemo.Create(AParent);
+        with TDBMemo(LControl) do
+        begin
+          Left := LABEL_LEFT + LABEL_WIDTH;
+          Top := ATop;
+          Anchors := [akLeft, akTop, akRight];
+          Constraints.MinWidth := MIN_CONTROL_WIDTH;
+          Parent := AParent;
+          Anchors := [akLeft, akTop, akRight];
+          Width := Parent.Width - Left - 8;
+          DataField := InstantGetPropName(PropInfo);
+          DataSource := ADataSource;
+          if not Assigned(PropInfo.SetProc) then
+          begin
+            ReadOnly := True;
+            Color := clBtnFace;
+          end;
+        end;
+      end;
+      ftBoolean:
+      begin
+        LControl := TDBCheckBox.Create(AParent);
+        with TDBCheckBox(LControl) do
+        begin
+          Left := LABEL_LEFT + LABEL_WIDTH;
+          Top := ATop;
+          Width := 16;
+          Parent := AParent;
+          DataField := InstantGetPropName(PropInfo);
+          DataSource := ADataSource;
+          if not Assigned(PropInfo.SetProc) then
+          begin
+            ReadOnly := True;
+            Color := clBtnFace;
+          end;
+        end;
+      end
+      else
+      begin
+        LAllowedValues := TStringList.Create;
+        try
+          GetAllowedValues(ObjectExposer.CurrentObject, InstantGetPropName(PropInfo), LAllowedValues);
+          if LAllowedValues.Count > 0 then
+          begin
+            LControl := TInstantExplorerDBComboBox.Create(AParent);
+            with TInstantExplorerDBComboBox(LControl) do
+            begin
+              Left := LABEL_LEFT + LABEL_WIDTH;
+              Top := ATop;
+              Anchors := [akLeft, akTop, akRight];
+              Constraints.MinWidth := MIN_CONTROL_WIDTH;
+              Width := AParent.Width - Left - 8;
+              Anchors := [akLeft, akTop, akRight];
+              Parent := AParent;
+              Items := LAllowedValues;
+              Style := csDropDownList;
+              DataField := InstantGetPropName(PropInfo);
+              DataSource := ADataSource;
+              if not Assigned(PropInfo.SetProc) then
+              begin
+                ReadOnly := True;
+                Color := clBtnFace;
+              end;
+            end;
+          end
+          else
+          begin
+            LControl := TDBEdit.Create(AParent);
+            with TDBEdit(LControl) do
+            begin
+              Left := LABEL_LEFT + LABEL_WIDTH;
+              Top := ATop;
+              Anchors := [akLeft, akTop, akRight];
+              Constraints.MinWidth := MIN_CONTROL_WIDTH;
+              Width := AParent.Width - Left - 8;
+              Anchors := [akLeft, akTop, akRight];
+              Parent := AParent;
+              DataField := InstantGetPropName(PropInfo);
+              DataSource := ADataSource;
+              if not Assigned(PropInfo.SetProc) then
+              begin
+                ReadOnly := True;
+                Color := clBtnFace;
+              end;
+            end;
+          end;
+        finally
+          FreeAndNil(LAllowedValues);
+        end;
       end;
     end;
+
     with TLabel.Create(AParent) do
     begin
-      Left := 8;
+      Left := LABEL_LEFT;
       Top := ATop + 3;
       Parent := AParent;
-      Caption := InstantGetPropName(PropInfo);
-      FocusControl := Edit;
+      Caption := Beautify(InstantGetPropName(PropInfo));
+      FocusControl := LControl;
     end;
-    Inc(ATop, Edit.Height);
+    Inc(ATop, LControl.Height);
   end;
 
 var
   I, Top: Integer;
   AObject: TObject;
   Editor: TScrollBox;
+  LProperties: TInstantProperties;
+  LFieldNames: TStrings;
+  LFieldIndex: Integer;
 begin
   Editor := TScrollBox.Create(AOwner);
   with Editor do
   begin
     BorderStyle := bsNone;
     Align := alClient;
+    Parent := ObjectView;
   end;
   AObject := ObjectExposer.CurrentObject;
-  Top := 4;
-  with TInstantProperties.Create(AObject) do
+  Top := VERT_SPACING;
+  LProperties := TInstantProperties.Create(AObject);
   try
-    for I := 0 to Pred(Count) do
-      if Types[I] <> tkClass then
+    LFieldNames := CreateFieldList;
+    try
+      for LFieldIndex := 0 to LFieldNames.Count - 1 do
       begin
-        Inc(Top, 4);
-        CreateEditControl(Editor, Top, PropInfos[I], DataSource);
+        for I := 0 to Pred(LProperties.Count) do
+        begin
+          if (LProperties.Types[I] <> tkClass) and (LProperties.Names[I] = LFieldNames[LFieldIndex]) then
+          begin
+            Inc(Top, VERT_SPACING);
+            CreateEditControl(Editor, Top, LProperties.PropInfos[I], DataSource);
+          end;
+        end;
       end;
+    finally
+      LFieldNames.Free;
+    end;
   finally
-    Free;
+    LProperties.Free;
   end;
-  Editor.Parent := ObjectView;
   Result := Editor;
 end;
 
 procedure TInstantExplorer.CreateObjectExposer;
 begin
   FObjectExposer := CreateExposer;
-  if Assigned(FObjectExposer) then
-    FObjectExposer.AfterPost := ObjectExposerAfterPost;
+  FObjectExposer.AfterPost := ObjectExposerAfterPost;
+  FObjectExposer.AfterDelete := ObjectExposerAfterDelete;
   FObjectSource := TDataSource.Create(Self);
   FObjectSource.DataSet := FObjectExposer;
 end;
@@ -620,6 +777,7 @@ end;
 procedure TInstantExplorer.CreateObjectView;
 begin
   FObjectView := CreatePanel(Self);
+  FObjectView.Parent := DetailPanel;
 end;
 
 function TInstantExplorer.CreatePanel(AOwner: TComponent): TPanel;
@@ -634,6 +792,9 @@ begin
   FSplitter := TSplitter.Create(Self);
   with FSplitter do
   begin
+    Parent := Self;
+    AutoSnap := False;
+    MinSize := 30;
     Top := FTreePanel.Top + FTreePanel.Height + 1;
     Align := alTop;
   end;
@@ -644,6 +805,7 @@ begin
   FTreePanel := CreatePanel(Self);
   with FTreePanel do
   begin
+    Parent := Self;
     Align := alTop;
     FTreeView := CreateTreeView(FTreePanel);
     with FTreeView do
@@ -687,6 +849,18 @@ procedure TInstantExplorer.ExpandNode(Node: TTreeNode);
 begin
   if not NodeIsLoaded(Node) then
     LoadNode(Node, True);
+end;
+
+procedure TInstantExplorer.GetAllowedValues(const AObject: TObject;
+  const APropName: string; const AAllowedValues: TStrings);
+begin
+  if Assigned(FOnGetAllowedValues) then
+    FOnGetAllowedValues(Self, AObject, APropName, AAllowedValues);
+end;
+
+function TInstantExplorer.GetContentEditor: TWinControl;
+begin
+  Result := FContentEditor;
 end;
 
 function TInstantExplorer.GetCurrentObject: TObject;
@@ -855,7 +1029,12 @@ end;
 
 procedure TInstantExplorer.ObjectExposerAfterPost(Sender: TDataSet);
 begin
-  RefreshNode(TreeView.Selected);
+  Refresh;
+end;
+
+procedure TInstantExplorer.ObjectExposerAfterDelete(Sender: TDataSet);
+begin
+  Refresh;
 end;
 
 procedure TInstantExplorer.Refresh;
@@ -902,21 +1081,32 @@ begin
   end;
 end;
 
+procedure TInstantExplorer.SetCurrentObject(const AValue: TObject);
+var
+  LNodeIndex: Integer;
+begin
+  for LNodeIndex := 0 to TreeView.Items.Count - 1 do
+  begin
+    if Integer(TreeView.Items[LNodeIndex].Data) > 0 then
+      if TInstantExplorerNodeData(TreeView.Items[LNodeIndex].Data).Instance = AValue then
+      begin
+        TreeView.Selected := TreeView.Items[LNodeIndex];
+        Break;
+      end;
+  end;
+end;
+
 procedure TInstantExplorer.SetDetailView(const Value: TPanel);
 begin
   if Value <> FDetailView then
   begin
     if Assigned(FDetailView) then
-    begin
-      FDetailView.Hide;
-      FDetailView.Parent := nil;
-    end;
+      FDetailView.Visible := False;
     FDetailView := Value;
     if Assigned(FDetailView) then
     begin
       FDetailView.Align := alClient;
-      FDetailView.Parent := DetailPanel;
-      FDetailView.Show;
+      FDetailView.Visible := True;
     end;
   end;
 end;
@@ -1007,7 +1197,9 @@ begin
     ObjectExposer.ContainerName := Container.Name;
     ObjectExposer.Subject := Container.Owner;
     DetailView := ContentView;
-  end else if Assigned(AObject) then
+    SetupContentEditor;
+  end
+  else if Assigned(AObject) then
   begin
     if AObject.ClassType <> ObjectExposer.ObjectClass then
       DestroyObjectEditor;
@@ -1023,6 +1215,156 @@ begin
     ObjectExposer.Subject := nil;
     DetailView := nil;
   end;
+  // Reduces a treeview painting problem in D2007 with runtime themes enabled
+  // and checkboxes in the object editor.
+  Update;
+end;
+
+procedure TInstantExplorer.SetupContentEditor;
+var
+  LColumnIndex: Integer;
+  LField: TField;
+  LFieldNames: TStrings;
+  LFieldIndex: Integer;
+
+begin
+  // Arrange columns.
+  LFieldNames := CreateFieldList;
+  try
+    FContentEditor.Grid.Columns.Clear;
+    for LFieldIndex := 0 to LFieldNames.Count - 1 do
+      with FContentEditor.Grid.Columns.Add do
+      begin
+        FieldName := LFieldNames[LFieldIndex];
+        Width := DefaultWidth;
+      end;
+  finally
+    LFieldNames.Free;
+  end;
+
+  for LColumnIndex := 0 to FContentEditor.Grid.Columns.Count - 1 do
+  begin
+    LField := FContentEditor.Grid.Columns[LColumnIndex].Field;
+    // Beautify caption.
+    FContentEditor.Grid.Columns[LColumnIndex].Title.Caption := Beautify(LField.DisplayLabel);
+    // Add combo box for boolean fields.
+    if LField.DataType = ftBoolean then
+    begin
+      FContentEditor.Grid.Columns[LColumnIndex].PickList.Clear;
+      FContentEditor.Grid.Columns[LColumnIndex].PickList.Add(BoolToStr(True, True));
+      FContentEditor.Grid.Columns[LColumnIndex].PickList.Add(BoolToStr(False, True));
+    end
+    else
+    // Add picklist for all columns.
+    begin
+      FContentEditor.Grid.Columns[LColumnIndex].PickList.Clear;
+      GetAllowedValues(ObjectExposer.CurrentObject,
+        FContentEditor.Grid.Columns[LColumnIndex].FieldName,
+        FContentEditor.Grid.Columns[LColumnIndex].PickList);
+    end;
+    FContentEditor.Grid.Columns[LColumnIndex].DropDownRows :=
+      Min(MAX_DROPDOWN_ITEMS, FContentEditor.Grid.Columns[LColumnIndex].PickList.Count);
+    // Hide detail and memo columns, useless in standard grids.
+    if LField.DataType in [ftBlob, ftMemo, ftDataSet] then
+      FContentEditor.Grid.Columns[LColumnIndex].Visible := False;
+  end;
+end;
+
+function TInstantExplorer.CreateFieldList: TStrings;
+var
+  LFieldIndex: Integer;
+begin
+  Result := TStringList.Create;
+  try
+    for LFieldIndex := 0 to FObjectExposer.FieldCount - 1 do
+      Result.Add(FObjectExposer.Fields[LFieldIndex].FieldName);
+    if Assigned(FOnGetFieldNames) then
+      FOnGetFieldNames(Self, ObjectExposer.CurrentObject, Result);
+  except
+    Result.Free;
+    raise;
+  end;
+end;
+
+{ TInstantExplorerDBGrid }
+
+procedure TInstantExplorerDBGrid.Resize;
+begin
+  inherited;
+  UpdateLastColumnWidth;
+end;
+
+procedure TInstantExplorerDBGrid.UpdateLastColumnWidth;
+
+  function GetAllColumnsWidth(const AMinus: Integer): Integer;
+  var
+    LColumnIndex: Integer;
+  begin
+    Result := 0;
+    for LColumnIndex := 0 to Columns.Count - 1 - AMinus do
+      Inc(Result, Columns[LColumnIndex].Width);
+  end;
+
+begin
+  if Columns.Count >= 1 then
+    Columns[Columns.Count - 1].Width := ClientWidth - GetAllColumnsWidth(1);
+end;
+
+{ TInstantExplorerContentEditor }
+
+constructor TInstantExplorerContentEditor.Create(AOwner: TComponent);
+begin
+  inherited;
+  BevelInner := bvNone;
+  BevelOuter := bvNone;
+
+  FGrid := TInstantExplorerDBGrid.Create(Self);
+  FGrid.Parent := Self;
+  FGrid.Align := alClient;
+end;
+
+function TInstantExplorerContentEditor.GetDataSource: TDataSource;
+begin
+  Result := FGrid.DataSource;
+end;
+
+function TInstantExplorerContentEditor.GetGrid: TDBGrid;
+begin
+  Result := FGrid;
+end;
+
+procedure TInstantExplorerContentEditor.SetDataSource(const AValue: TDataSource);
+begin
+  FGrid.DataSource := AValue;
+end;
+
+{ TInstantExplorerDBComboBox }
+
+procedure TInstantExplorerDBComboBox.ApplyToRecord;
+var
+  LDataLink: TDataLink;
+begin
+  // Provides the auto-apply feature.
+  LDataLink := TDataLink(Perform(CM_GETDATALINK, 0, 0));
+  try
+    LDataLink.UpdateRecord;
+  except
+    SelectAll;
+    SetFocus;
+    raise;
+  end;
+end;
+
+procedure TInstantExplorerDBComboBox.Change;
+begin
+  inherited;
+  ApplyToRecord;
+end;
+
+procedure TInstantExplorerDBComboBox.Click;
+begin
+  inherited;
+  ApplyToRecord;
 end;
 
 end.
