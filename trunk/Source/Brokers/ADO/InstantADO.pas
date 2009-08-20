@@ -343,16 +343,17 @@ procedure TInstantADOConnector.BuildDatabaseADOX(Scheme: TInstantScheme);
   const
     ColumnTypes: array[TInstantDataType, TInstantADOProviderType] of Integer = (
       {Unknown,         Jet,             SQL,             Oracle         MySQL            DB2}
-      (adInteger,       adInteger,       adInteger,       adNumeric,     adInteger,       adInteger),      // dtInteger
-      (adDouble,        adDouble,        adDouble,        adDouble,      adDouble,        adDouble),       // dtFloat
-      (adCurrency,      adCurrency,      adCurrency,      adCurrency,    adCurrency,      adCurrency),     // dtCurrency
-      (adBoolean,       adBoolean,       adBoolean,       adChar,        adBoolean,       adBoolean),      // dtBoolean
-      (adVarChar,       adVarWChar,      adVarChar,       adVarChar,     adVarChar,       adVarChar),      // dtString
-      (adLongVarChar,   adLongVarWChar,  adLongVarChar,   adVarBinary,   adLongVarChar,   adLongVarChar),  // dtMemo
-      (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate),         // dtDateTime
+      (adInteger,       adInteger,       adInteger,       adNumeric,     adInteger,       adInteger),       // dtInteger
+      (adDouble,        adDouble,        adDouble,        adDouble,      adDouble,        adDouble),        // dtFloat
+      (adCurrency,      adCurrency,      adCurrency,      adCurrency,    adCurrency,      adCurrency),      // dtCurrency
+      (adBoolean,       adBoolean,       adBoolean,       adChar,        adBoolean,       adBoolean),       // dtBoolean
+      (adVarChar,       adVarWChar,      adVarChar,       adVarChar,     adVarChar,       adVarChar),       // dtString
+      (adLongVarChar,   adLongVarWChar,  adLongVarChar,   adVarBinary,   adLongVarChar,   adLongVarChar),   // dtMemo
+      (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate),          // dtDateTime
       (adLongVarBinary, adLongVarBinary, adLongVarBinary, adVarBinary,   adLongVarBinary, adLongVarBinary), // dtBlob
-      (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate),         // dtDate
-      (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate)          // dtTime
+      (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate),          // dtDate
+      (adDate,          adDate,          adDBTimeStamp,   adDBTimeStamp, adDate,          adDate),          // dtTime
+      (adInteger,       adInteger,       adInteger,       adNumeric,     adInteger,       adInteger)        // dtEnum
     );
   var
     Column: _Column;
@@ -470,7 +471,8 @@ procedure TInstantADOConnector.BuildDatabaseSQL(Scheme: TInstantScheme);
         'DATETIME',
         'BLOB',
         'DATE',
-        'TIME'
+        'TIME',
+        'INTEGER'
       );
     begin
       Result := Types[DataType];
@@ -1139,7 +1141,8 @@ const
     'DATETIME',
     'IMAGE',
     'DATETIME',
-    'DATETIME');
+    'DATETIME',
+    'INTEGER');
 begin
   Result := Types[DataType];
   if (DataType = dtString) and (Size > 0) then

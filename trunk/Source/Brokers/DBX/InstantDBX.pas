@@ -619,7 +619,9 @@ const
     'TIMESTAMP',
     'BLOB',
     'TIMESTAMP',
-    'TIMESTAMP');
+    'TIMESTAMP',
+    'INTEGER'
+    );
 begin
   Result := Types[DataType];
 end;
@@ -663,7 +665,8 @@ const
     'DATETIME',
     'IMAGE',
     'DATETIME',
-    'DATETIME');
+    'DATETIME',
+    'INTEGER');
 begin
   Result := Types[DataType];
 end;
@@ -771,7 +774,8 @@ const
     'DATE',
     'BLOB',
     'DATE',
-    'DATE');
+    'DATE',
+    'INTEGER');
 begin
   Result := Types[DataType];
 end;
@@ -801,7 +805,8 @@ const
     'TIMESTAMP',
     'BLOB (1000 K)',
     'TIMESTAMP',
-    'TIMESTAMP');
+    'TIMESTAMP',
+    'INTEGER');
 begin
   Result := Types[DataType];
 end;
@@ -844,7 +849,8 @@ const
     'DATETIME',
     'BLOB',
     'DATE',
-    'TIME');
+    'TIME',
+    'INTEGER');
 begin
   Result := Types[DataType];
 end;
