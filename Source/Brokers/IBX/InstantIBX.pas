@@ -428,7 +428,8 @@ const
     'TIMESTAMP',
     'BLOB',
     'DATE',
-    'TIME');
+    'TIME',
+    'INTEGER');
 begin
   Result := Types[DataType];
   if (DataType = dtString) and (Size > 0) then
