@@ -1,4 +1,4 @@
-(*
+  (*
  *   InstantObjects
  *   Attribute Editor
  *)
@@ -376,6 +376,20 @@ begin
 end;
 
 procedure TInstantAttributeEditorForm.LoadVisibilities;
+
+  function FindVisibility(ACodeClass: TInstantCodeClass;
+    AValuePropName: string): TInstantCodeProperty;
+  begin
+    if ACodeClass <> nil then
+    begin
+      Result := ACodeClass.FindProperty(AValuePropName);
+
+      if Result = nil then
+        Result := FindVisibility(ACodeClass.BaseClass, AValuePropName);
+    end else
+      Result := nil;
+  end;
+
 var
   I: Integer;
   S: String;
@@ -397,7 +411,7 @@ begin
 
     if Limited then
     begin
-      CodeProperty := Subject.FindValueProp;
+      CodeProperty := FindVisibility(Subject.HostClass, Subject.ValuePropName);
       if CodeProperty <> nil then
       begin
         S := GetEnumName(TypeInfo(TInstantCodeVisibility),
