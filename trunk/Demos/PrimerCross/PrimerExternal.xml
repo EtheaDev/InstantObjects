@@ -1,2 +1,2 @@
 <TInstantConnectionDefs><TInstantIBXConnectionDef><Name>FirebirdDBExternal</Name><IsBuilt>TRUE</IsBuilt><LoginPrompt>FALSE</LoginPrompt><ConnectionString>.\FirebirdDB\PRIMERDB.FDB</ConnectionString><Options>ibxUseDelimitedIdents</Options><Params>User_Name=SYSDBA
-Password=masterkey</Params></TInstantIBXConnectionDef><TInstantXMLConnectionDef><Name>XMLDB</Name><IsBuilt>TRUE</IsBuilt><RootFolder>W:\Projects\instantobjects\Demos\PrimerCross\XMLDB</RootFolder></TInstantXMLConnectionDef></TInstantConnectionDefs>
+Password=masterkey</Params></TInstantIBXConnectionDef><TInstantXMLConnectionDef><Name>XMLDB</Name><IsBuilt>TRUE</IsBuilt><RootFolder>.\XMLDB\</RootFolder></TInstantXMLConnectionDef></TInstantConnectionDefs>
