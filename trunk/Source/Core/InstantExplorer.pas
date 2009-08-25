@@ -540,6 +540,7 @@ procedure TInstantExplorer.CreateContentView;
 begin
   FContentView := CreatePanel(Self);
   FContentView.Parent := DetailPanel;
+  FContentView.Visible := False;
   FContentEditor := CreateContentEditor(FContentView, ObjectSource);
   if Assigned(FContentEditor) then
     with FContentEditor do
@@ -778,6 +779,7 @@ procedure TInstantExplorer.CreateObjectView;
 begin
   FObjectView := CreatePanel(Self);
   FObjectView.Parent := DetailPanel;
+  FObjectView.Visible := False;
 end;
 
 function TInstantExplorer.CreatePanel(AOwner: TComponent): TPanel;
