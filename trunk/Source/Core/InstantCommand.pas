@@ -1505,7 +1505,11 @@ begin
   FAny := SameText(Token, 'ANY');
   if FAny then
     Token := Reader.ReadToken;
-  FObjectClassName := Token;
+  // This call has the double effect of checking that the class exists early
+  // during statement parsing, and correcting the class name if it's written
+  // with wrong capitalization (something that would create problems with
+  // case-sensitive databases).
+  FObjectClassName := FindClass(Token).ClassName;
 end;
 
 procedure TInstantIQLClassRef.WriteObject(Writer: TInstantIQLWriter);

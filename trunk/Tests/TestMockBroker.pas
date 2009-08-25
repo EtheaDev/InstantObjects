@@ -38,7 +38,6 @@ uses
 
 type
   TTestMockBroker = class(TTestCase)
-  private
   protected
     FConn: TInstantMockConnector;
     procedure SetUp; override;
@@ -53,7 +52,6 @@ type
   end;
 
   TTestMockRelationalBroker = class(TTestCase)
-  private
   protected
     FConn: TInstantMockConnector;
     procedure SetUp; override;
@@ -62,6 +60,15 @@ type
     procedure TestGetBroker;
     procedure TestParts;
     procedure TestStoreAndRetrieveContact;
+  end;
+
+  TTestMockSQLbroker = class(TTestCase)
+  protected
+    FConn: TInstantMockConnector;
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestQuery;
   end;
 
 implementation
@@ -285,8 +292,40 @@ begin
   brok.MockManager.Verify;
 end;
 
+{ TTestMockSQLbroker }
+
+procedure TTestMockSQLbroker.SetUp;
+begin
+  FConn := TInstantMockConnector.Create(nil);
+  FConn.BrokerClass := TInstantMockSQLBroker;
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+end;
+
+procedure TTestMockSQLbroker.TearDown;
+begin
+  InstantModel.ClassMetadatas.Clear;
+  FreeAndNil(FConn);
+end;
+
+procedure TTestMockSQLbroker.TestQuery;
+var
+  LQuery: TInstantQuery;
+begin
+  LQuery := FConn.CreateQuery;
+  try
+    LQuery.Command := 'select * from tcountry';
+    AssertTrue(LQuery.ObjectClass = TCountry);
+    AssertTrue(LQuery.ObjectClassName = 'TCountry');
+  finally
+    LQuery.Free;
+  end;
+end;
+
 initialization
 {$IFNDEF CURR_TESTS}
-  RegisterTests([TTestMockBroker, TTestMockRelationalBroker]);
+  RegisterTests([TTestMockBroker, TTestMockRelationalBroker, TTestMockSQLbroker]);
 {$ENDIF}
 end.
