@@ -91,7 +91,7 @@ function InstantValidatorFactory: TInstantValidatorFactory;
 implementation
 
 uses
-  SysUtils;
+  Classes, SysUtils;
 
 var
   _InstantValidatorFactory: TInstantValidatorFactory;
