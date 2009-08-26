@@ -1499,17 +1499,20 @@ end;
 procedure TInstantIQLClassRef.ReadObject(Reader: TInstantIQLReader);
 var
   Token: string;
+  LClass: TPersistentClass;
 begin
   inherited;
   Token := Reader.ReadToken;
   FAny := SameText(Token, 'ANY');
   if FAny then
     Token := Reader.ReadToken;
-  // This call has the double effect of checking that the class exists early
-  // during statement parsing, and correcting the class name if it's written
-  // with wrong capitalization (something that would create problems with
-  // case-sensitive databases).
-  FObjectClassName := FindClass(Token).ClassName;
+  // Fix the class name in case it's written with wrong capitalization
+  // (something that would create problems with case-sensitive databases).
+  LClass := GetClass(Token);
+  if Assigned(LClass) then
+    FObjectClassName := LClass.ClassName
+  else
+    FObjectClassName := Token;
 end;
 
 procedure TInstantIQLClassRef.WriteObject(Writer: TInstantIQLWriter);
