@@ -97,7 +97,7 @@ type
 implementation
 
 uses
-  SysUtils, InstantConsts;
+  Classes, SysUtils, InstantConsts;
 
 { TInstantCharSetValidator }
 
