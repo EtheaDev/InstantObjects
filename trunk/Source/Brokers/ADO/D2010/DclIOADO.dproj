@@ -24,7 +24,7 @@
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DllSuffix>_D14</DllSuffix>
-			<DCC_DependencyCheckOutputName>C:\Documents and Settings\All Users\Documents\RAD Studio\7.0\Bpl\DclIOADO_D14.bpl</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>C:\Users\Public\Documents\RAD Studio\7.0\Bpl\DclIOADO_D14.bpl</DCC_DependencyCheckOutputName>
 			<DCC_RangeChecking>true</DCC_RangeChecking>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<DCC_Description>InstantObjects ADO Design-Time Support (Delphi 2010)</DCC_Description>
