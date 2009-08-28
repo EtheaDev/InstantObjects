@@ -112,10 +112,12 @@ type
 
   TInstantExplorerContentEditor = class(TPanel)
   private
-    FGrid: TInstantExplorerDBGrid;
-    function GetDataSource: TDataSource;
-    procedure SetDataSource(const AValue: TDataSource);
+    FGrid: TDBGrid;
     function GetGrid: TDBGrid;
+  protected
+    function GetDataSource: TDataSource; virtual;
+    procedure SetDataSource(const AValue: TDataSource); virtual;
+    function CreateGrid: TDBGrid; virtual;
   public
     constructor Create(AOwner: TComponent); override;
     property Grid: TDBGrid read GetGrid;
@@ -1320,9 +1322,14 @@ begin
   BevelInner := bvNone;
   BevelOuter := bvNone;
 
-  FGrid := TInstantExplorerDBGrid.Create(Self);
+  FGrid := CreateGrid;
   FGrid.Parent := Self;
   FGrid.Align := alClient;
+end;
+
+function TInstantExplorerContentEditor.CreateGrid: TDBGrid;
+begin
+  Result := TInstantExplorerDBGrid.Create(Self);
 end;
 
 function TInstantExplorerContentEditor.GetDataSource: TDataSource;
