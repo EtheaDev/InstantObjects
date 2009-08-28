@@ -325,8 +325,8 @@ procedure GlobalLoadFileList(const Path: string; FileList: TStringList);
 implementation
 
 uses
-  SysUtils, InstantConsts, InstantClasses, TypInfo, InstantXMLCatalog,
-  InstantXMLConnectionDefEdit, InstantUtils,
+  SysUtils, InstantConsts, InstantClasses,
+  TypInfo, InstantXMLCatalog, InstantXMLConnectionDefEdit, InstantUtils,
 {$IFDEF MSWINDOWS}
 {$IFNDEF D6+}
   FileCtrl,
@@ -419,6 +419,14 @@ begin
   // Drop Id.
   Delete(S, 1, RightPos('.', S));
   Result := StrToIntDef(S, 0);
+end;
+
+function GetXMLLineBreak: string;
+begin
+  if InstantXMLIndentationSize > 0 then
+    Result := sLineBreak
+  else
+    Result := '';
 end;
 
 { TInstantXMLConnectionDef }
@@ -1055,12 +1063,12 @@ begin
     P := (L + R) shr 1;
     repeat
       while Compare(nil,
-          TInstantObjectReference(List[I]).Dereference,
-          TInstantObjectReference(List[P]).Dereference) < 0 do
+          TInstantObjectReference(List[I]).Dereference(Connector),
+          TInstantObjectReference(List[P]).Dereference(Connector)) < 0 do
         Inc(I);
       while Compare(nil,
-          TInstantObjectReference(List[J]).Dereference,
-          TInstantObjectReference(List[P]).Dereference) > 0 do
+          TInstantObjectReference(List[J]).Dereference(Connector),
+          TInstantObjectReference(List[P]).Dereference(Connector)) > 0 do
         Dec(J);
       if I <= J then
       begin
@@ -1140,7 +1148,7 @@ begin
   strstream := TStringStream.Create('', TEncoding.UTF8);
   try
     InstantWriteObject(strStream, sfXML, AObject);
-    DataStr := XML_UTF8_HEADER + UTF8String(strStream.DataString);
+    DataStr := XML_UTF8_HEADER + UTF8String(GetXMLLineBreak) + UTF8String(strStream.DataString);
   finally
     strStream.Free;
   end;
@@ -1164,9 +1172,9 @@ begin
     InstantWriteObject(strStream, sfXML, AObject);
 {$IFDEF D6+}
     if FXMLFileFormat = xffUtf8 then
-      DataStr := AnsiToUtf8(XML_UTF8_HEADER + strStream.DataString)
+      DataStr := AnsiToUtf8(XML_UTF8_HEADER + GetXMLLineBreak + strStream.DataString)
     else
-      DataStr := XML_ISO_HEADER + strStream.DataString;
+      DataStr := XML_ISO_HEADER + GetXMLLineBreak + strStream.DataString;
 {$ELSE}
     DataStr := strStream.DataString;
 {$ENDIF}

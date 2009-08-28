@@ -45,19 +45,21 @@ type
     procedure TearDown; override;
   published
     procedure TestStoreAndRetrieveContact;
+    procedure TestOrderBy;
   end;
 
 implementation
 
 uses
-  SysUtils, InstantPersistence, TestModel;
+  SysUtils, ShellAPI, InstantPersistence, TestModel;
 
 { TTestXMLBroker }
 
 procedure TTestXMLBroker.SetUp;
 begin
   FAcc := TXMLFilesAccessor.Create(nil);
-  FAcc.RootFolder := ExtractFilePath(ParamStr(0));
+  FAcc.RootFolder := ExtractFilePath(ParamStr(0)) + 'XMLDB';
+  ForceDirectories(FAcc.RootFolder);
   FConn := TInstantXMLConnector.Create(nil);
   FConn.Connection := FAcc;
 
@@ -67,11 +69,97 @@ begin
 end;
 
 procedure TTestXMLBroker.TearDown;
+
+  function DelTree(DirName: string): Boolean;
+  var
+    SHFileOpStruct : TSHFileOpStruct;
+  begin
+    try
+      Fillchar(SHFileOpStruct,Sizeof(SHFileOpStruct),0) ;
+      with SHFileOpStruct do begin
+        Wnd := 0;
+        pFrom := PChar(ExcludeTrailingPathDelimiter(DirName) + #0);
+        wFunc := FO_DELETE;
+        fFlags := FOF_ALLOWUNDO;
+        fFlags := fFlags or FOF_NOCONFIRMATION;
+        fFlags := fFlags or FOF_SILENT;
+       end;
+       Result := (SHFileOperation(SHFileOpStruct) = 0) ;
+    except
+      Result := False;
+    end;
+  end;
+
 begin
   inherited;
   InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FConn);
+  DelTree(FAcc.RootFolder);
   FreeAndNil(FAcc);
+end;
+
+procedure TTestXMLBroker.TestOrderBy;
+var
+  c1, c2: TContact;
+  t: TPhone;
+  LQuery: TInstantQuery;
+begin
+  FConn.IsDefault := True;
+
+  c1 := TContact.Create;
+  try
+    c1.Name := 'ZZTop';
+    c1.Address.City := 'Dallas';
+    t := TPhone.Create;
+    t.Name := 'Home';
+    t.Number := '012 12345678';
+    c1.AddPhone(t);
+    AssertEquals(1, c1.PhoneCount);
+    t := TPhone.Create;
+    t.Name := 'Office';
+    t.Number := '012 23456781';
+    c1.AddPhone(t);
+    AssertEquals(2, c1.PhoneCount);
+    c1.Store;
+  finally
+    FreeAndNil(c1);
+  end;
+
+  c2 := TContact.Create;
+  try
+    c2.Name := 'Aaronson';
+    c2.Address.City := 'Las Vegas';
+    t := TPhone.Create;
+    t.Name := 'Home';
+    t.Number := '012 12345678';
+    c2.AddPhone(t);
+    AssertEquals(1, c2.PhoneCount);
+    t := TPhone.Create;
+    t.Name := 'Office';
+    t.Number := '012 23456781';
+    c2.AddPhone(t);
+    AssertEquals(2, c2.PhoneCount);
+    c2.Store;
+  finally
+    FreeAndNil(c2);
+  end;
+
+  LQuery := InstantDefaultConnector.CreateQuery;
+  try
+    LQuery.Command := 'select * from TContact order by Name';
+    LQuery.Open;
+    AssertEquals(LQuery.ObjectCount, 2);
+    AssertEquals((LQuery.Objects[0] as TContact).Name, 'Aaronson');
+    LQuery.Close;
+
+    LQuery.Command := 'select * from TContact order by Name desc';
+    LQuery.Open;
+    AssertEquals(LQuery.ObjectCount, 2);
+    AssertEquals((LQuery.Objects[0] as TContact).Name, 'ZZTop');
+    LQuery.Close;
+  finally
+    FreeAndNil(LQuery);
+  end;
 end;
 
 procedure TTestXMLBroker.TestStoreAndRetrieveContact;
