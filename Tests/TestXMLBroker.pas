@@ -164,7 +164,7 @@ end;
 
 procedure TTestXMLBroker.TestStoreAndRetrieveContact;
 const
-  DEF_NAME = 'Mike Artù';
+  DEF_NAME = 'Mike "Artù"';
   DEF_CITY = 'Milan (€)';
 var
   c: TContact;
@@ -196,8 +196,8 @@ begin
   try
     AssertNotNull('Object not retrieved', c);
     AssertEquals(old_id, c.Id);
-    AssertEquals(c.Name, DEF_NAME);
-    AssertEquals(c.Address.City, DEF_CITY);
+    AssertEquals(DEF_NAME, c.Name);
+    AssertEquals(DEF_CITY, c.Address.City);
     AssertNotNull(c.Address);
     AssertEquals(2, c.PhoneCount);
   finally

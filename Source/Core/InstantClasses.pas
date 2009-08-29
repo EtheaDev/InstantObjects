@@ -1470,7 +1470,7 @@ begin
           Esc := 'gt';
       end;
       Esc := Format(EscStr, [Esc]);
-      LString := LString + EscStr;
+      LString := LString + Esc;
     end
     else
       LString := LString + C;
