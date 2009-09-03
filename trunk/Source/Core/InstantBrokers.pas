@@ -2831,7 +2831,11 @@ var
     if Attribute.IsNull then
       LParam.Clear
     else
-      LParam.AsMemo := (Attribute as TInstantBlob).Value;
+      {$IFDEF D12+}
+      LParam.AsBytes := (Attribute as TInstantBlob).Bytes;
+      {$ELSE}
+      LParam.AsBlob := (Attribute as TInstantBlob).Value;
+      {$ENDIF}
   end;
 
   procedure AddBooleanAttributeParam;
