@@ -446,6 +446,8 @@ type
     function GetStream: TMemoryStream;
     property Stream: TMemoryStream read GetStream;
   protected
+    function GetBytes: TInstantBytes;
+    procedure SetBytes(const AValue: TInstantBytes);
     function GetValue: string; virtual;
     procedure SetValue(const AValue: string); virtual;
     class function AttributeType: TInstantAttributeType; override;
@@ -472,6 +474,7 @@ type
     function WriteBuffer(const Buffer; Position, Count: Integer): Integer;
     property Size: Integer read GetSize;
   published
+    property Bytes: TInstantBytes read GetBytes write SetBytes;
     property Value: string read GetValue write SetValue;
   end;
 
@@ -3458,6 +3461,13 @@ begin
   Result := Value;
 end;
 
+function TInstantBlob.GetBytes: TInstantBytes;
+begin
+  SetLength(Result, Size);
+  if Size > 0 then
+    Read(Result[0], 0, Size);
+end;
+
 function TInstantBlob.GetSize: Integer;
 begin
   Result := Stream.Size;
@@ -3554,6 +3564,21 @@ begin
     on E: Exception do
       raise InvalidValueError(AValue, E);
   end;
+end;
+
+procedure TInstantBlob.SetBytes(const AValue: TInstantBytes);
+var
+  L: Integer;
+begin
+  L := length(AValue);
+  if L > 0 then
+  begin
+    Stream.Clear;
+    WriteBuffer(AValue[0], 0, L);
+    Stream.Size := L;
+  end
+  else
+    Clear;
 end;
 
 procedure TInstantBlob.SetValue(const AValue: string);

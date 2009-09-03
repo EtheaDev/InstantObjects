@@ -40,6 +40,11 @@ unit InstantTypes;
 
 interface
 
+{$IFDEF D12+}
+uses
+  Sysutils; // TBytes
+{$ENDIF}
+
 type
   {$IFNDEF D6+}
   IInterface = interface (IUnknown)
@@ -88,6 +93,12 @@ type
 
   TTime = type TDateTime;
   TDate = type TDateTime;
+
+  {$IFDEF D12+}
+  TInstantBytes = TBytes;
+  {$ELSE}
+  TInstantBytes = array of Byte;
+  {$ENDIF}
 
 implementation
 
