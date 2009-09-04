@@ -472,9 +472,9 @@ type
     procedure Reset; override;
     procedure SaveDataToStream(AStream: TStream);
     function WriteBuffer(const Buffer; Position, Count: Integer): Integer;
+    property Bytes: TInstantBytes read GetBytes write SetBytes;
     property Size: Integer read GetSize;
   published
-    property Bytes: TInstantBytes read GetBytes write SetBytes;
     property Value: string read GetValue write SetValue;
   end;
 
