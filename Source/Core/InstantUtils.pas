@@ -50,6 +50,8 @@ type
     Major, Minor, Release, Build: Word;
   end;
 
+function InstantAllocMem(Size: Cardinal): Pointer;
+procedure InstantFreeMem(P: Pointer);
 function InstantCompareObjects(Obj1, Obj2: TObject; PropName: string;
   Options: TInstantCompareOptions): Integer; overload;
 function InstantCompareObjects(Obj1, Obj2: TObject; PropNames: TStrings;
@@ -107,6 +109,90 @@ uses
   InstantFpcUtils,
 {$ENDIF}
   {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti;
+
+
+{$IFDEF IO_MEM_OVERRUN_CHECK}
+const
+  IO_MEM_SIGNATURE = Longint($BCFEEFCB);
+
+type
+  PInstantAllocGuard = ^TInstantAllocGuard;
+  TInstantAllocGuard = packed array[0..3] of Longint;
+
+  PInstantAllocHeader = ^TInstantAllocHeader;
+  TInstantAllocHeader = packed record
+    Signature : Longint;
+    GuardPtr  : PInstantAllocGuard;
+    UserData  : record end;
+  end;
+
+function InstantAllocMem(Size: Cardinal): Pointer;
+var
+  Header: PInstantAllocHeader;
+  GuardPtr: PAnsiChar;
+  I: integer;
+begin
+  if (Size > 0) then
+  begin
+    // Pad the allocation block with a header and guard area
+    Header := AllocMem(sizeof(TInstantAllocHeader) + Size + sizeof(TInstantAllocGuard));
+    Result := @Header.UserData;
+
+    // Initialize the block header signature and guard pointer
+    Header.Signature := IO_MEM_SIGNATURE;
+    GuardPtr := PAnsiChar(@Header.UserData);
+    inc(GuardPtr,Size);
+    Header.GuardPtr := PInstantAllocGuard(GuardPtr);
+
+    // Initialize the guard area with a known signature
+    for I := low(Header.GuardPtr^) to high(Header.GuardPtr^) do
+      Header.GuardPtr^[I] := IO_MEM_SIGNATURE;
+  end else
+  begin
+    Result := nil;
+  end;
+end;
+
+procedure InstantFreeMem(P: Pointer);
+var
+  BlockPtr: PAnsiChar;
+  Header: PInstantAllocHeader;
+  I: integer;
+begin
+  if Assigned(P) then
+  begin
+    BlockPtr := PAnsiChar(P);
+    dec(BlockPtr, sizeof(TInstantAllocHeader));
+    Header := PInstantAllocHeader(BlockPtr);
+
+    // Ensure the header signature is intact
+    if (Header.Signature <> IO_MEM_SIGNATURE) then
+      raise EInvalidPointer.Create('InstantFreeMem - header signature is invalid');
+
+    // Ensure the guard pointer is not null
+    if (Header.GuardPtr = nil) then
+      raise EInvalidPointer.Create('InstantFreeMem - header guard pointer is invalid');
+
+    // Ensure the block guard area has not been modified
+    for I := low(Header.GuardPtr^) to high(Header.GuardPtr^) do
+      if (Header.GuardPtr^[I] <> IO_MEM_SIGNATURE) then
+        raise EInvalidPointer.Create('InstantFreeMem - memory overrun corruption detected');
+
+    FreeMem(BlockPtr);
+  end;
+end;
+{$ELSE}  // IO_MEM_OVERRUN_CHECK disabled
+
+function InstantAllocMem(Size: Cardinal): Pointer;
+begin
+  Result := AllocMem(Size);
+end;
+
+procedure InstantFreeMem(P: Pointer);
+begin
+  FreeMem(P);
+end;
+{$ENDIF}
 
 function InstantCompareObjects(Obj1, Obj2: TObject; PropName: string;
   Options: TInstantCompareOptions): Integer;

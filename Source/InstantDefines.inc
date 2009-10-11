@@ -32,6 +32,7 @@
   {$DEFINE D9+}
   {$DEFINE D10}
   {$DEFINE D10+}
+  {$DEFINE D10_OR_D11}
 {$ENDIF}
 
 {$IFDEF VER185}
@@ -40,6 +41,7 @@
   {$DEFINE D7+}
   {$DEFINE D9+}
   {$DEFINE D10+}
+  {$DEFINE D10_OR_D11}
   {$DEFINE D11}
   {$DEFINE D11+}
 {$ENDIF}
@@ -149,6 +151,21 @@
   {$WARN UNSAFE_CODE OFF}
   {$WARN UNSAFE_CAST OFF}
 {$ENDIF}
+
+// "inline" keyword is available for D2005+
+{$IFDEF D9+}
+  {$DEFINE SUPPORTS_INLINE}
+{$ENDIF}
+
+{
+  Define this symbol to cause InstantAllocMem and InstantFreeMem to pad
+  allocated memory blocks with a guard area to detect buffer overruns.
+  When this define is enabled. InstantFreeMem will check if the signature
+  in the guard area has been changed and will raise an exception indicating
+  memory corruption has occured. This was implemented to aid in identification
+  of issues in the record buffer management in the InstantPresentation unit.
+}
+{.$DEFINE IO_MEM_OVERRUN_CHECK}
 
 {
   Define this symbol to enable logging of all SQL statements to the debug
