@@ -230,7 +230,7 @@ begin
     with Connector.Connection do
       begin
         if not Connected then
-          Connected := true;
+          Open;
         RefreshMetadataCache;
         GetTableNames('','','',Tables,[osMy],[tkTable]);
       end;
