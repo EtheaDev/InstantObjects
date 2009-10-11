@@ -430,7 +430,7 @@ procedure TInstantAnyDACConnector.AfterConnectionChange;
 begin
   if (HasConnection) then
     begin
-      FConnection.Connected := False;
+      FConnection.Close;
       FConnection.TxOptions.AutoCommit := true;
       FConnection.TxOptions.Isolation := xiReadCommitted;
       FConnection.OnLogin := DoLogin;
@@ -558,9 +558,9 @@ function TInstantAnyDACConnector.GetDatabaseExists: Boolean;
 begin
   AssignLoginOptions;
   try
-    Connection.Connected := True;
+    Connection.Open;
     Result := True;
-    Connection.Connected := False;
+    Connection.Close;
   except
 // TODO Fixup database detection logic for AnyDAC - Exception approach may not work well
 //    on E : EZSQLException do
@@ -607,7 +607,7 @@ end;
 procedure TInstantAnyDACConnector.InternalConnect;
 begin
   CheckConnection;
-  FConnection.Connected := true;
+  FConnection.Open;
 end;
 
 procedure TInstantAnyDACConnector.InternalCreateDatabase;
@@ -620,7 +620,7 @@ end;
 procedure TInstantAnyDACConnector.InternalDisconnect;
 begin
   if (HasConnection) then
-    FConnection.Connected := false;
+    FConnection.Close;
 end;
 
 procedure TInstantAnyDACConnector.InternalRollbackTransaction;

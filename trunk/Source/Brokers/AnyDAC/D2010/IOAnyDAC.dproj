@@ -1,6 +1,6 @@
 ﻿	<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 		<PropertyGroup>
-			<ProjectGuid>{B2FCAE40-1DA4-401B-878A-1D0C9AB45191}</ProjectGuid>
+			<ProjectGuid>{CD800962-5B25-4949-8D83-1261EE4A4203}</ProjectGuid>
 			<MainSource>IOAnyDAC.dpk</MainSource>
 			<Config Condition="'$(Config)'==''">Debug</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
@@ -48,9 +48,9 @@
 			</DelphiCompile>
 			<DCCReference Include="IOCore.dcp"/>
 			<DCCReference Include="xmlrtl.dcp"/>
-			<DCCReference Include="AnyDAC_Phys.dcp"/>
-			<DCCReference Include="AnyDAC_ComI.dcp"/>
-			<DCCReference Include="AnyDAC_Comp.dcp"/>
+			<DCCReference Include="AnyDAC_Phys_D14.dcp"/>
+			<DCCReference Include="AnyDAC_ComI_D14.dcp"/>
+			<DCCReference Include="AnyDAC_Comp_D14.dcp"/>
 			<DCCReference Include="..\InstantAnyDAC.pas"/>
 			<DCCReference Include="..\InstantAnyDACCatalog.pas"/>
 			<DCCReference Include="..\InstantAnyDACConnectionDefEdit.pas">

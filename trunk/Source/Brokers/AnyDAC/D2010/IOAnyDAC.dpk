@@ -30,9 +30,9 @@ package IOAnyDAC;
 requires
   IOCore,
   xmlrtl,
-  AnyDAC_Phys,
-  AnyDAC_ComI,
-  AnyDAC_Comp;
+  AnyDAC_Phys_D14,
+  AnyDAC_ComI_D14,
+  AnyDAC_Comp_D14;
 
 contains
   InstantAnyDAC in '..\InstantAnyDAC.pas',
