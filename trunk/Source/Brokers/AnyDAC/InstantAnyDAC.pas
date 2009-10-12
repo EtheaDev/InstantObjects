@@ -50,7 +50,8 @@ interface
 uses
   Classes, Db, InstantPersistence, InstantCommand, InstantDBBuild,
   InstantBrokers, InstantMetadata, InstantTypes, uADCompClient,
-  uADStanOption, uADStanParam, uADStanIntf, uADStanConst
+  uADStanOption, uADStanParam, uADStanIntf, uADStanConst,
+  uADDAptIntf, uADStanAsync, uADDAptManager, uADCompDataSet
   {$IFDEF D10+}, DBCommonTypes{$ENDIF};
 
 type
