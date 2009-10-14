@@ -3,7 +3,7 @@ unit UBuilder;
 interface
 
 uses
-  InstantPersistence, Classes;
+  InstantPersistence, InstantTypes, Classes;
 
 procedure BuildAndConnect(const ConnectionFileName, ConnectionName : string);
 procedure CreateRandomContacts(Count: Integer; LoadPictures : boolean = False;
