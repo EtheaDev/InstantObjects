@@ -388,6 +388,7 @@ type
     function AllocRecordBuffer: TRecordBuffer; override;
     procedure ClearCalcFields(Buffer: TRecordBuffer); override;
     procedure FreeRecordBuffer(var Buffer: TRecordBuffer); override;
+    function FieldDataSize(Field : TField): integer; {$IFDEF SUPPORTS_INLINE} inline; {$ENDIF}
     procedure GetBookmarkData(Buffer: TRecordBuffer; Data: Pointer); override;
     function GetBookmarkFlag(Buffer: TRecordBuffer): TBookmarkFlag; override;
     function GetRecord(Buffer: TRecordBuffer; GetMode: TGetMode;
@@ -2423,7 +2424,7 @@ begin
     if not (IsBlobField(Fields[I]) or IsCalcField(Fields[I])) then
     begin
       SaveFieldValue(Fields[I], @Buffer[Offset], AObject);
-      Inc(Offset, Fields[I].DataSize);
+      Inc(Offset, FieldDataSize(Fields[I]));
     end;
   end;
 end;
@@ -2447,7 +2448,7 @@ begin
     begin
       LoadFieldParams(AObject, Fields[I]);
       LoadFieldValue(Fields[I], @Buffer[Offset], AObject);
-      Inc(Offset, Fields[I].DataSize);
+      Inc(Offset, FieldDataSize(Fields[I]));
     end;
   end;
   GetBookmarkData(Buffer, @BM);
@@ -2534,7 +2535,7 @@ begin
   Result := 0;
   for I := 0 to Pred(FieldCount) do
     if not (IsBlobField(Fields[I]) or IsCalcField(Fields[I])) then
-      Inc(Result, Fields[I].DataSize);
+      Inc(Result, FieldDataSize(Fields[I]));
 end;
 
 procedure TInstantCustomExposer.DeleteObject(Index: Integer);
@@ -2672,6 +2673,25 @@ begin
   Buffer := nil;
 end;
 
+function TInstantCustomExposer.FieldDataSize(Field : TField): integer;
+begin
+{$IFDEF D14+}
+  // Workaround for DataSize bugs in D2010 RTM (QC 78620 and 78620)
+  if (not Assigned(Field)) or (Field is TBlobField) then
+    Result := 0
+  else
+    if Field is TBCDField then
+      Result := SizeOf(TBcd) // D2010 returns Sizeof(System.Currency)
+    else
+      Result := Field.DataSize;
+{$ELSE}
+  if Assigned(Field) then
+    Result := Field.DataSize
+  else
+    Result := 0;
+{$ENDIF}
+end;
+
 function TInstantCustomExposer.GetAccessor: TInstantAccessor;
 begin
   if not Assigned(FAccessor) then
@@ -2759,7 +2779,7 @@ var
   D: TDateTimeRec;
 begin
   if Assigned(Buffer) then
-    Move(CurrentBuffer[GetFieldOffset(Field)], Buffer^, Field.DataSize);
+    Move(CurrentBuffer[GetFieldOffset(Field)], Buffer^, FieldDataSize(Field));
   // Show null dates as blanks
   if (Field is TDateTimeField) and Assigned(Buffer) then
   begin
@@ -2780,7 +2800,7 @@ begin
     Result := 0;
     for I := 0 to Pred(Field.Index) do
       if not (IsBlobField(Fields[I]) or IsCalcField(Fields[I])) then
-        Inc(Result, Fields[I].DataSize);
+        Inc(Result, FieldDataSize(Fields[I]));
   end;
 end;
 
@@ -3610,13 +3630,13 @@ begin
   case Field.DataType of
     ftString:
       begin
-        FillChar(Buffer^, Field.DataSize, 0);
+        FillChar(Buffer^, FieldDataSize(Field), 0);
         if not Empty then
         begin
           S := AnsiString(Value);
           Len := Length(S);
-          if Len >= Field.DataSize then
-            Len := Pred(Field.DataSize);
+          if Len >= FieldDataSize(Field) then
+            Len := Pred(FieldDataSize(Field));
           if Len > 0 then
             Move(S[1], Buffer^, Len);
         end;
@@ -3648,14 +3668,14 @@ begin
         if Empty or (Value = 0) then
           D.Date := 0 else
           D.Date := Value + DateDelta;
-        Move(D, Buffer^, Field.DataSize);
+        Move(D, Buffer^, FieldDataSize(Field));
       end;
     ftTime:
       begin
         if Empty or (Value = 0) then
           D.Time := 0 else
           D.Time := Value * MSecsPerDay;
-        Move(D, Buffer^, Field.DataSize);
+        Move(D, Buffer^, FieldDataSize(Field));
       end;
     ftDateTime:
       begin
@@ -3665,7 +3685,7 @@ begin
           T := DateTimeToTimeStamp(Value);
           D.DateTime := TimeStampToMSecs(T);
         end;
-        Move(D, Buffer^, Field.DataSize);
+        Move(D, Buffer^, FieldDataSize(Field));
       end;
     ftBoolean:
       begin
@@ -3999,7 +4019,7 @@ begin
   case Field.DataType of
     ftString:
       begin
-        P := {$IFDEF UNICODE}AnsiStrAlloc{$ELSE}StrAlloc{$ENDIF}(Field.DataSize);
+        P := {$IFDEF UNICODE}AnsiStrAlloc{$ELSE}StrAlloc{$ENDIF}(FieldDataSize(Field));
         try
           StrCopy(P, Buffer);
           S := P;
@@ -4027,7 +4047,7 @@ begin
       end;
     ftDate:
       begin
-        Move(Buffer^, D, Field.DataSize);
+        Move(Buffer^, D, FieldDataSize(Field));
         if D.Date = 0 then
           Value := 0
         else
@@ -4035,12 +4055,12 @@ begin
       end;
     ftTime:
       begin
-        Move(Buffer^, D, Field.DataSize);
+        Move(Buffer^, D, FieldDataSize(Field));
         Value := D.Time / MSecsPerDay;
       end;
     ftDateTime:
       begin
-        Move(Buffer^, D, Field.DataSize);
+        Move(Buffer^, D, FieldDataSize(Field));
         if (D.Date = 0) and (D.Time = 0) then
           Value := 0
         else begin
@@ -4114,9 +4134,9 @@ end;
 procedure TInstantCustomExposer.SetFieldData(Field: TField; Buffer: Pointer);
 begin
   if Assigned(Buffer) then
-    Move(Buffer^, CurrentBuffer[GetFieldOffset(Field)], Field.DataSize)
+    Move(Buffer^, CurrentBuffer[GetFieldOffset(Field)], FieldDataSize(Field))
   else
-    FillChar(CurrentBuffer[GetFieldOffset(Field)], Field.DataSize, 0);
+    FillChar(CurrentBuffer[GetFieldOffset(Field)], FieldDataSize(Field), 0);
   if not (State in [dsCalcFields, dsInternalCalc, dsFilter, dsNewValue]) and
           not FInSetFieldData then
   begin
