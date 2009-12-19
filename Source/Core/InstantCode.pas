@@ -495,6 +495,12 @@ type
   TInstantCodeContainerMethodFlag = (mfIndex, mfValue, mfResult);
   TInstantCodeContainerMethodFlags = set of TInstantCodeContainerMethodFlag;
 
+  TInstantCodeRttiAttribute = class(TInstantCodeMember)
+  protected
+    class function InternalAtInstance(Reader: TInstantCodeReader; out Name: string): Boolean; override;
+    procedure InternalRead(Reader: TInstantCodeReader); override;
+  end;
+
   TInstantCodeAttributeTailor = class(TObject)
   private
     FAddMethod: TInstantCodeMethod;
@@ -2858,13 +2864,15 @@ begin
   Result :=
     TInstantCodeField.AtInstance(Reader) or
     TInstantCodeMethod.AtInstance(Reader) or
-    TInstantCodeProperty.AtInstance(Reader);
+    TInstantCodeProperty.AtInstance(Reader) or
+    TInstantCodeRttiAttribute.AtInstance(Reader);
 end;
 
 procedure TInstantCodeMembers.InternalRead(Reader: TInstantCodeReader);
 begin
   ReadObjects(Reader,
-    [TInstantCodeField, TInstantCodeMethod, TInstantCodeProperty]);
+    [TInstantCodeField, TInstantCodeMethod, TInstantCodeProperty,
+     TInstantCodeRttiAttribute]);
 end;
 
 procedure TInstantCodeMembers.InternalWrite(Writer: TInstantCodeWriter);
@@ -3284,6 +3292,32 @@ end;
 procedure TInstantCodeProperty.SetTypeName(const Value: string);
 begin
   FTypeLink.Name := Value;
+end;
+
+{ TInstantCodeRttiAttribute }
+
+class function TInstantCodeRttiAttribute.InternalAtInstance(
+  Reader: TInstantCodeReader; out Name: string): Boolean;
+begin
+  Result := Reader.ReadChar = '[';
+  if Result then
+    Name := Reader.ReadToken else
+    Name := '';
+end;
+
+procedure TInstantCodeRttiAttribute.InternalRead(Reader: TInstantCodeReader);
+var
+  BracketCount: Integer;
+  C: Char;
+begin
+  inherited;
+
+  BracketCount := 0;
+  repeat
+    C := Reader.ReadChar;
+    if C = '[' then Inc(BracketCount) else
+    if C = ']' then Dec(BracketCount);
+  until BracketCount = 0;
 end;
 
 { TInstantCodeAttributeTailor }
@@ -9032,4 +9066,3 @@ finalization
   DestroyTypeProcessors;
 
 end.
-
