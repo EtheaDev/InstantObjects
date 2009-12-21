@@ -2545,6 +2545,11 @@ end;
 
 destructor TInstantCustomExposer.Destroy;
 begin
+  // Ensure the Exposer is closed. Active will always be False
+  // for TInstantExposer since the Subject is already set to Nil
+  // (see TInstantExposer.Destroy for more details).
+  if Active then
+    Close;
   FNotifier.Free;
   DestroyAccessor;
   if (csDesigning in ComponentState) and Assigned(DesignModel) then
@@ -4413,6 +4418,10 @@ end;
 
 destructor TInstantExposer.Destroy;
 begin
+  // Clear the Subject to Undo any pending changes and deactivate the
+  // Exposer. This prevents TDataSet.Destroy from causing the Subject
+  // be unexpectedly accessed later in the destruction sequence.
+  SetSubject(nil);
   FMasterLink.Free;
   inherited;
 end;
