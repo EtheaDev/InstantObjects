@@ -8711,7 +8711,10 @@ end;
 
 function TInstantConnector.GetClientCount: Integer;
 begin
-  Result := ClientList.Count;
+  if (assigned(FClientList)) then
+    Result := FClientList.Count
+  else
+    Result := 0;
 end;
 
 function TInstantConnector.GetClientList: TList;
