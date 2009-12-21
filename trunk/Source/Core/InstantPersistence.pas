@@ -1610,6 +1610,9 @@ uses
 {$ELSE}
   Mask,
 {$ENDIF}
+{$IFDEF D14+}
+  RTTI, InstantRttiAttributes,
+{$ENDIF}
   InstantUtils, {InstantRtti, }InstantDesignHook, InstantCode;
 
 var
@@ -2440,7 +2443,48 @@ begin
 end;
 
 procedure TInstantAttribute.Initialize;
+
+{$IFDEF D14+}
+  procedure InitializeRttiAttributes;
+
+    procedure InvokeRttiAttribute(RttiMember: TRttiMember);
+    var
+      CustomAttribute: TCustomAttribute;
+    begin
+      for CustomAttribute in RttiMember.GetAttributes do
+        if CustomAttribute is TInstantRttiAttribute then
+          TInstantRttiAttribute(CustomAttribute).Change(Self, RttiMember);
+    end;
+
+  var
+    RttiContext: TRttiContext;
+    RttiType: TRttiType;
+    RttiField: TRttiField;
+    RttiMethod: TRttiMethod;
+    RttiProperty: TRttiProperty;
+  begin
+    RttiContext := TRttiContext.Create;
+    try
+      RttiType := RttiContext.GetType(Self.ClassType);
+
+      for RttiField in RttiType.GetFields do
+        InvokeRttiAttribute(RttiField);
+
+      for RttiMethod in RttiType.GetMethods do
+        InvokeRttiAttribute(RttiMethod);
+
+      for RttiProperty in RttiType.GetProperties do
+        InvokeRttiAttribute(RttiProperty);
+    finally
+      RttiContext.Free
+    end;
+  end;
+{$ENDIF}
+
 begin
+{$IFDEF D14+}
+  InitializeRttiAttributes;
+{$ENDIF}
 end;
 
 procedure TInstantAttribute.ReadName(Reader: TInstantReader);
