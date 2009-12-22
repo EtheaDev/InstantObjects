@@ -410,6 +410,7 @@ procedure TInstantBDEConnector.InternalBuildDatabase(Scheme: TInstantScheme);
     I: Integer;
     Table: TTable;
     IndexName: string;
+    TmpSize: Integer;
   begin
     Table := TTable.Create(nil);
     try
@@ -427,8 +428,17 @@ procedure TInstantBDEConnector.InternalBuildDatabase(Scheme: TInstantScheme);
           end;
         for I := 0 to Pred(FieldMetadatas.Count) do
           with FieldMetadatas[I] do
-            Table.FieldDefs.Add(Name, FieldTypes[DataType], Size,
+          begin
+            // Avoid 'Invalid field size' BDE Exception when creating
+            // SequenceNo. Don't know why it only happens for this dtInteger
+            // field?
+            if DataType = dtInteger then
+              TmpSize := 0 else
+              TmpSize := Size;
+
+           Table.FieldDefs.Add(Name, FieldTypes[DataType], TmpSize,
               foRequired in Options);
+          end;
       end;
       Table.CreateTable;
     finally
