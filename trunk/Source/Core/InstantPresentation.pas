@@ -2211,6 +2211,21 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
       Result := ftString;
   end;
 
+  function EnumerationToFieldType(const FieldName: string): TFieldType;
+  var
+    AttributeMetadata: TInstantAttributeMetadata;
+  begin
+    Result := ftString;
+    AttributeMetadata := FindAttributeMetadata(FieldName);
+    if Assigned(AttributeMetadata) then
+      case AttributeMetadata.AttributeType of
+        atEnum:
+          Result := ftInteger;
+        atBoolean:
+          Result := ftBoolean;
+      end;
+  end;
+
 var
   FieldName: string;
   FieldType: TFieldType;
@@ -2230,10 +2245,11 @@ begin
     Include(FieldAttribs, DB.faReadOnly);
   case TypeKind of
     tkEnumeration:
-      if PropInfo^.PropType^^.Name = 'Boolean' then
+      FieldType := EnumerationToFieldType(FieldName);
+{      if PropInfo^.PropType^^.Name = 'Boolean' then
         FieldType := ftBoolean
       else
-        FieldType := ftString;
+        FieldType := ftString;}
     tkString, tkLString{$IFDEF D12+}, tkUString{$ENDIF}:
       FieldType := StringFieldType(FieldName);
     tkInteger:
