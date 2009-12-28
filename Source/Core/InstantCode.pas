@@ -5189,7 +5189,10 @@ end;
 
 function TInstantCodeClass.GetBaseClass: TInstantCodeClass;
 begin
-  Result := FBaseClassLink.Instance;
+  if Assigned(FBaseClassLink) then
+    Result := FBaseClassLink.Instance
+  else
+    Result := nil;  
 end;
 
 function TInstantCodeClass.GetBaseClassName: string;
