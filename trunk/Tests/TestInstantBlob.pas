@@ -203,6 +203,8 @@ var
   vReturnValue: Integer;
   vCount: Integer;
   vPosition: Integer;
+  vTempStr1: AnsiString;
+  vTempStr2: AnsiString;
   vBlobReadStr: string;
   vStreamReadStr: string;
 begin
@@ -218,15 +220,16 @@ begin
     vReturnValue := vStream.Seek(vPosition, soFromBeginning);
     AssertEquals(vPosition, vReturnValue);
 
-    SetLength(vStreamReadStr, vCount);
-    vReturnValue := vStream.Read(vStreamReadStr[1], vCount);
+    SetLength(vTempStr1, vCount);
+    vReturnValue := vStream.Read(vTempStr1[1], vCount);
     AssertEquals(vCount, vReturnValue);
+    vStreamReadStr := string(vTempStr1);
 
-    SetLength(vBlobReadStr, vCount);
-    vReturnValue := FInstantBlob.ReadBuffer(vBlobReadStr[1], vPosition,
-      vCount);
+    SetLength(vTempStr2, vCount);
+    vReturnValue := FInstantBlob.ReadBuffer(vTempStr2[1], vPosition, vCount);
     AssertEquals(vCount, vReturnValue);
-    AssertEquals(vStreamReadStr, vBlobReadStr);
+    vBlobReadStr := string(vTempStr2);
+    AssertEquals(string(vStreamReadStr), string(vBlobReadStr));
 
     vStreamReadStr := UpperCase(vStreamReadStr);
     vBlobReadStr := UpperCase(vBlobReadStr);
