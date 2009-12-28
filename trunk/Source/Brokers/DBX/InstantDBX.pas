@@ -165,6 +165,13 @@ type
     function GetDBMSName: string; override;
   end;
 
+  { Firebird/Interbase through the Devart dbX driver }
+
+  TInstantDBXDevartInterbaseBroker = class(TInstantDBXInterBaseFirebirdBroker)
+  protected
+    function GetDBMSName: string; override;
+  end;
+
   { MS SQL Server }
 
   TInstantDBXMSSQLSQLGenerator = class(TInstantSQLGenerator)
@@ -314,6 +321,8 @@ begin
     Result := TInstantDBXMySQLBroker.Create(Self)
   else if SameText(Connection.DriverName, 'FirebirdUIB') then
     Result := TInstantDBXFirebirdUIBBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'DevartInterbase') then
+    Result := TInstantDBXDevartInterbaseBroker.Create(Self)
   else
     raise Exception.CreateFmt('dbExpress driver "%s" not supported',
       [Connection.DriverName]);
@@ -891,6 +900,13 @@ end;
 function TInstantDBXFirebirdUIBBroker.GetDBMSName: string;
 begin
   Result := 'Firebird';
+end;
+
+{ TInstantDBXDevartInterbaseBroker }
+
+function TInstantDBXDevartInterbaseBroker.GetDBMSName: string;
+begin
+  Result := 'Interbase';
 end;
 
 { TInstantDBXTransaction }
