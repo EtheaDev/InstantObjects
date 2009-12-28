@@ -447,7 +447,7 @@ end;
 
 procedure TInstantAttributeViewFrame.PopulateInheritedAttributes;
 begin
-  if (assigned(Subject)) then
+  if (assigned(Subject)) and (assigned(Subject.BaseClass)) then
     LoadAttributeView(InheritedAttributesView, Subject.BaseClass, True);
 end;
 
