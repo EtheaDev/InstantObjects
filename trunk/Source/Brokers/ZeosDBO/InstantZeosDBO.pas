@@ -36,6 +36,15 @@ unit InstantZeosDBO;
 {$I '..\..\InstantDefines.inc'}
 {$ENDIF}
 
+//
+// Enable this define for ZeosDBO 7.x Alpha support
+//
+// WARNING: The broker will no longer compile agaist ZeosDBO v6.6.x.
+// Zeos v7 support is experimental and has seen very little testing.
+//
+{.$DEFINE ZEOSDBO_V7+}
+
+
 // Supported databases
 
 {$DEFINE SYBASE_SUPPORT}
@@ -54,6 +63,13 @@ uses
   {$IFDEF D10+}, DBCommonTypes{$ENDIF};
 
 type
+  // Login event signature changed in v7 Alpha
+  {$IFDEF ZEOSDBO_V7+}
+    TZeosLoginEvent = TZLoginEvent;
+  {$ELSE}
+    TZeosLoginEvent = TLoginEvent;
+  {$ENDIF}
+
   TInstantZeosDBOConnectionDef = class(TInstantRelationalConnectionDef)
   private
     FCatalog: string;
@@ -91,7 +107,7 @@ type
   private
     FConnection: TZConnection;
     FLoginPrompt: Boolean;
-    FOnLogin: TLoginEvent;
+    FOnLogin: TZeosLoginEvent;
     FUseDelimitedIdents: Boolean;
     procedure DoAfterConnectionChange;
     procedure DoBeforeConnectionChange;
@@ -126,7 +142,7 @@ type
   published
     property Connection: TZConnection read GetConnection write SetConnection;
     property LoginPrompt: Boolean read GetLoginPrompt write SetLoginPrompt default False;
-    property OnLogin: TLoginEvent read FOnLogin write FOnLogin;
+    property OnLogin: TZeosLoginEvent read FOnLogin write FOnLogin;
     property UseDelimitedIdents: Boolean read FUseDelimitedIdents write SetUseDelimitedIdents default False;
   end;
 
@@ -485,7 +501,12 @@ begin
   if SameText(FConnection.Protocol, 'interbase-5') or
    SameText(FConnection.Protocol, 'interbase-6') or
    SameText(FConnection.Protocol, 'firebird-1.0') or
-   SameText(FConnection.Protocol, 'firebird-1.5') then
+   SameText(FConnection.Protocol, 'firebird-1.5') or
+   SameText(FConnection.Protocol, 'firebirdd-1.5') or
+   SameText(FConnection.Protocol, 'firebird-2.0') or
+   SameText(FConnection.Protocol, 'firebirdd-2.0') or
+   SameText(FConnection.Protocol, 'firebird-2.1') or
+   SameText(FConnection.Protocol, 'firebirdd-2.1') then
     Result := TInstantZeosDBOIbFbBroker.Create(Self);
   {$ENDIF}
 
@@ -813,7 +834,11 @@ end;
 function TInstantZeosDBOBroker.GetDBMSName: string;
 begin
   if Connector.Connected then
+  {$IFDEF ZEOSDBO_V7+}
+    Result := Connector.Connection.DbcConnection.GetMetadata.GetDatabaseInfo.GetDatabaseProductName
+  {$ELSE}
     Result := Connector.Connection.DbcConnection.GetMetadata.GetDatabaseProductName
+  {$ENDIF}
   else
     Result := Connector.Connection.Protocol;
 end;
@@ -1099,7 +1124,7 @@ begin
         DbcConnection.QueryInterface(IZMySqlConnection, MySqlConnection);
         if Assigned(MySqlConnection) then
           MySqlConnection.GetPlainDriver.
-           CreateDatabase(MySqlConnection.GetConnectionHandle, PChar(Database))
+           CreateDatabase(MySqlConnection.GetConnectionHandle, PAnsiChar(Database))
         else
           inherited;
       finally
