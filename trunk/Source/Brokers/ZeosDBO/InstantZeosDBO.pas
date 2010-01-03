@@ -365,7 +365,7 @@ begin
     with DbcConnection.GetMetadata.GetCatalogs do
     try
       while Next do
-        Strings.Add(GetString(1));
+        Strings.Add(string(GetString(1)));
     finally
       Close;
     end;
@@ -1124,7 +1124,7 @@ begin
         DbcConnection.QueryInterface(IZMySqlConnection, MySqlConnection);
         if Assigned(MySqlConnection) then
           MySqlConnection.GetPlainDriver.
-           CreateDatabase(MySqlConnection.GetConnectionHandle, PAnsiChar(Database))
+           CreateDatabase(MySqlConnection.GetConnectionHandle, PAnsiChar(AnsiString(Database)))
         else
           inherited;
       finally
