@@ -2453,7 +2453,7 @@ procedure TInstantAttribute.Initialize;
     begin
       for CustomAttribute in RttiMember.GetAttributes do
         if CustomAttribute is TInstantRttiAttribute then
-          TInstantRttiAttribute(CustomAttribute).Change(Self, RttiMember);
+          TInstantRttiAttribute(CustomAttribute).Change(Self.GetOwner, RttiMember);
     end;
 
   var
