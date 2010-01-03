@@ -85,13 +85,13 @@ begin
     // Work around for a ZeosDBO behavior with Interbase and Firebird, where
     // metadata name with wildcards ('_' or '%') receives a '%' after its name,
     // and another drivers where metadata names are searched with LIKE clause
-    if SameText(Fields.GetStringByName('TABLE_NAME'), TableMetadata.Name) then
+    if SameText(string(Fields.GetStringByName('TABLE_NAME')), TableMetadata.Name) then
     begin
       if ColumnTypeToDataType(TZSQLType(Fields.GetShortByName('DATA_TYPE')),
         FieldDataType, FieldAlternateDataTypes) then
       begin
         FieldMetadata := TableMetadata.FieldMetadatas.Add;
-        FieldMetadata.Name := Fields.GetStringByName('COLUMN_NAME');
+        FieldMetadata.Name := string(Fields.GetStringByName('COLUMN_NAME'));
         FieldMetadata.DataType := FieldDataType;
         FieldMetadata.AlternateDataTypes := FieldAlternateDataTypes;
         FieldMetadata.Options := [];
@@ -131,20 +131,20 @@ begin
   while PrimaryKeys.Next do
     // Work around for a ZeosDBO behavior with Interbase and Firebird where
     // metadata names are searched with LIKE clause
-    if SameText(PrimaryKeys.GetStringByName('TABLE_NAME'), TableMetadata.Name) then
+    if SameText(string(PrimaryKeys.GetStringByName('TABLE_NAME')), TableMetadata.Name) then
     begin
-      IndexName := PrimaryKeys.GetStringByName('PK_NAME');
+      IndexName := string(PrimaryKeys.GetStringByName('PK_NAME'));
       // MySQL driver doesn't assign PK_NAME
       if IndexName = '' then
         IndexName := 'PRIMARY';
       if Assigned(IndexMetadata) and SameText(IndexMetadata.Name, IndexName) then
         IndexMetadata.Fields := IndexMetadata.Fields + ';' +
-          PrimaryKeys.GetStringByName('COLUMN_NAME')
+          string(PrimaryKeys.GetStringByName('COLUMN_NAME'))
       else
       begin
         IndexMetadata := TableMetadata.IndexMetadatas.Add;
         IndexMetadata.Name := IndexName;
-        IndexMetadata.Fields := PrimaryKeys.GetStringByName('COLUMN_NAME');
+        IndexMetadata.Fields := string(PrimaryKeys.GetStringByName('COLUMN_NAME'));
         IndexMetadata.Options := [ixPrimary, ixUnique];
       end;
     end;
@@ -157,17 +157,17 @@ begin
   IndexInfo.BeforeFirst;
   while IndexInfo.Next do
   begin
-    IndexName := IndexInfo.GetStringByName('INDEX_NAME');
+    IndexName := string(IndexInfo.GetStringByName('INDEX_NAME'));
     // Exclude primary keys
     if not Assigned(TableMetadata.IndexMetadatas.Find(IndexName)) then
     begin
       if Assigned(IndexMetadata) and SameText(IndexMetadata.Name, IndexName) then
         IndexMetadata.Fields := IndexMetadata.Fields + ';' +
-          IndexInfo.GetStringByName('COLUMN_NAME');
+          string(IndexInfo.GetStringByName('COLUMN_NAME'));
       begin
         IndexMetadata := TableMetadata.IndexMetadatas.Add;
         IndexMetadata.Name := IndexName;
-        IndexMetadata.Fields := IndexInfo.GetStringByName('COLUMN_NAME');
+        IndexMetadata.Fields := string(IndexInfo.GetStringByName('COLUMN_NAME'));
         IndexMetadata.Options := [];
         if not IndexInfo.GetBooleanByName('NON_UNIQUE')
          { TODO : This work around must be removed for ZeosDBO versions
@@ -199,10 +199,10 @@ begin
   Tables.BeforeFirst;
   while Tables.Next do
   begin
-    if SameText(Tables.GetStringByName('TABLE_TYPE'), 'TABLE') then
+    if SameText(string(Tables.GetStringByName('TABLE_TYPE')), 'TABLE') then
     begin
       TableMetadata := TableMetadatas.Add;
-      TableMetadata.Name := Tables.GetStringByName('TABLE_NAME');
+      TableMetadata.Name := string(Tables.GetStringByName('TABLE_NAME'));
       // Call AddIndexMetadatas first, so that AddFieldMetadatas can see which
       // indexes are defined to correctly set the foIndexed option.
       AddIndexMetadatas(TableMetadata);
