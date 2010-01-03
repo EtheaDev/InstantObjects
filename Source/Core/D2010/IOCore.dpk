@@ -58,6 +58,7 @@ contains
   InstantBrokers in '..\InstantBrokers.pas',
   InstantMetadata in '..\InstantMetadata.pas',
   InstantStandardValidators in '..\InstantStandardValidators.pas',
-  InstantValidation in '..\InstantValidation.pas';
+  InstantValidation in '..\InstantValidation.pas',
+  InstantRttiAttributes in '..\InstantRttiAttributes.pas';
 
 end.
