@@ -105,7 +105,8 @@ function AccessProperty(AObject: TObject; PropPath: string;
   Value: Variant): Variant;
 var
   PropInfo: PPropInfo;
-  PreferStrings: Boolean;
+// DVT Backed out change to fix ME breakage issue
+//PreferStrings: Boolean;
 begin
   if Assigned(AObject) then
   begin
@@ -148,8 +149,10 @@ begin
           SetPropValue(AObject, InstantGetPropName(PropInfo), Value);
         end;
       end;
-      PreferStrings := GetTypeInfo(PropInfo)^.Kind <> tkEnumeration;
-      Result := GetPropValue(AObject, InstantGetPropName(PropInfo), PreferStrings);
+    // DVT Backed out change to fix ME breakage issue
+    //PreferStrings := GetTypeInfo(PropInfo)^.Kind <> tkEnumeration;
+    //Result := GetPropValue(AObject, InstantGetPropName(PropInfo), PreferStrings);
+      Result := GetPropValue(AObject, InstantGetPropName(PropInfo));
     end else
       Result := Null;
   end else
