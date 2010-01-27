@@ -801,7 +801,7 @@ type
     FStatement: TInstantIQLObject;
     FTablePathList: TStringList;
     FParentContext: TInstantTranslationContext;
-
+    FIdDataType: TInstantDataType;
     procedure AddJoin(const FromPath, FromField, ToPath, ToField: string);
     function GetClassTablePath: string;
     function GetChildContext(const AIndex: Integer): TInstantTranslationContext;
@@ -840,7 +840,8 @@ type
     property TablePathList: TStringList read GetTablePathList;
   public
     constructor Create(const AStatement: TInstantIQLObject; const AQuote: Char;
-      const ADelimiters: string; const AParentContext: TInstantTranslationContext = nil);
+      const ADelimiters: string; const AIdDataType: TInstantDataType;
+      const AParentContext: TInstantTranslationContext = nil);
     destructor Destroy; override;
 
     procedure AfterConstruction; override;
@@ -866,6 +867,7 @@ type
     property CriteriaCount: Integer read GetCriteriaCount;
     property Criterias[Index: Integer]: string read GetCriterias;
     property Delimiters: string read FDelimiters;
+    property IdDataType: TInstantDataType read FIdDataType;
     property ObjectClassName: string read FObjectClassName write SetObjectClassName;
     property ObjectClassMetadata: TInstantClassMetadata read GetObjectClassMetadata;
     property ParentContext: TInstantTranslationContext read FParentContext;
@@ -932,7 +934,7 @@ type
   public
     property Context: TInstantTranslationContext read FContext;
     destructor Destroy; override;
-    function QuoteString(const Str: string): string; // funzione non membro
+    function QuoteString(const Str: string): string;
     property Query: TInstantCustomRelationalQuery read GetQuery;
   end;
 
@@ -5165,7 +5167,8 @@ begin
   if not Assigned(Command.ClassRef) then
     Exit;
 
-  FContext := TInstantTranslationContext.Create(Command, Quote, Delimiters);
+  FContext := TInstantTranslationContext.Create(Command, Quote,
+    Delimiters, Connector.IdDataType);
 end;
 
 procedure TInstantRelationalTranslator.Clear;
@@ -6139,7 +6142,8 @@ end;
 
 constructor TInstantTranslationContext.Create(
   const AStatement: TInstantIQLObject; const AQuote: Char;
-  const ADelimiters: string; const AParentContext: TInstantTranslationContext = nil);
+  const ADelimiters: string; const AIdDataType: TInstantDataType;
+  const AParentContext: TInstantTranslationContext = nil);
 begin
   inherited Create;
   FParentContext := AParentContext;
@@ -6157,7 +6161,8 @@ end;
 function TInstantTranslationContext.CreateChildContext(
   const AStatement: TInstantIQLObject): TInstantTranslationContext;
 begin
-  Result := TInstantTranslationContext.Create(AStatement, Quote, Delimiters, Self);
+  Result := TInstantTranslationContext.Create(AStatement, Quote, Delimiters,
+    IdDataType, Self);
 end;
 
 destructor TInstantTranslationContext.Destroy;
@@ -6383,9 +6388,15 @@ procedure TInstantTranslationContext.Initialize;
         [Qualify(ClassTablePath, InstantClassFieldName),
         QuoteString(ClassRef.ObjectClassName)]));
     if Specifier.IsPath then
-      AddCriteria(Format('%s <> %s%s',
-        [QualifyPath(ConcatPath(Specifier.Text, InstantIdFieldName)),
-          Quote, Quote]));
+    begin
+      if IdDataType in [dtString, dtMemo, dtBlob] then
+        AddCriteria(Format('%s <> %s%s',
+          [QualifyPath(ConcatPath(Specifier.Text, InstantIdFieldName)),
+            Quote, Quote]))
+      else
+        AddCriteria(Format('%s <> 0',
+          [QualifyPath(ConcatPath(Specifier.Text, InstantIdFieldName))]));
+    end;
   end;
 
 var
@@ -6402,8 +6413,6 @@ begin
     ClassRef := TInstantIQLSubquery(FStatement).ClassRef;
     Specifier := TInstantIQLSubquery(FStatement).Specifier;
   end;
-
-  // da TInstantIQLRelationalTranslator.BeforeTranslate
 
   PathList := TList.Create;
   try
