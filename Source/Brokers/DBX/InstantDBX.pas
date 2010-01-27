@@ -172,6 +172,13 @@ type
     function GetDBMSName: string; override;
   end;
 
+  { Firebird through the native D2010 driver }
+
+  TInstantDBXFirebirdBroker = class(TInstantDBXInterBaseFirebirdBroker)
+  protected
+    function GetDBMSName: string; override;
+  end;
+
   { MS SQL Server }
 
   TInstantDBXMSSQLSQLGenerator = class(TInstantSQLGenerator)
@@ -321,6 +328,8 @@ begin
     Result := TInstantDBXMySQLBroker.Create(Self)
   else if SameText(Connection.DriverName, 'FirebirdUIB') then
     Result := TInstantDBXFirebirdUIBBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'FIREBIRD') then
+    Result := TInstantDBXFirebirdBroker.Create(Self)
   else if SameText(Connection.DriverName, 'DevartInterbase') then
     Result := TInstantDBXDevartInterbaseBroker.Create(Self)
   else
@@ -961,6 +970,13 @@ begin
   FTransaction := Connector.Connection.BeginTransaction;
 end;
 {$ENDIF}
+
+{ TInstantDBXFirebirdBroker }
+
+function TInstantDBXFirebirdBroker.GetDBMSName: string;
+begin
+  Result := 'Firebird';
+end;
 
 initialization
   RegisterClass(TInstantDBXConnectionDef);
