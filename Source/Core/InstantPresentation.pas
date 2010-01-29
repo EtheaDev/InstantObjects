@@ -2211,6 +2211,12 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
       Result := ftString;
   end;
 
+  // TODO The attribute mapping process needs to be re-evaluated. 
+  // The metadata-based approach fails in some cases since the Exposer
+  // subject is not always a TInstanObject instance (e.g. Delphi a TList).
+  // The code now falls back to RTTI based mapping as it did originally.
+  // Restoring the previous behavior fixes a breakage in Model Exporer
+  // DVT
   function EnumerationToFieldType(const FieldName: string): TFieldType;
   var
     AttributeMetadata: TInstantAttributeMetadata;
@@ -2218,12 +2224,21 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
     Result := ftString;
     AttributeMetadata := FindAttributeMetadata(FieldName);
     if Assigned(AttributeMetadata) then
+    begin
       case AttributeMetadata.AttributeType of
         atEnum:
           Result := ftInteger;
         atBoolean:
           Result := ftBoolean;
       end;
+    end else
+    begin
+      // Default to original logic when metadata is not found!
+      if PropInfo^.PropType^^.Name = 'Boolean' then
+        Result := ftBoolean
+      else
+        Result := ftString;
+    end;
   end;
 
 var
@@ -2246,10 +2261,6 @@ begin
   case TypeKind of
     tkEnumeration:
       FieldType := EnumerationToFieldType(FieldName);
-{      if PropInfo^.PropType^^.Name = 'Boolean' then
-        FieldType := ftBoolean
-      else
-        FieldType := ftString;}
     tkString, tkLString{$IFDEF D12+}, tkUString{$ENDIF}:
       FieldType := StringFieldType(FieldName);
     tkInteger:
