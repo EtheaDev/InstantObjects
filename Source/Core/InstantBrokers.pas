@@ -2805,26 +2805,6 @@ procedure TInstantSQLResolver.AddAttributeParam(Attribute: TInstantAttribute;
 var
   FieldName: string;
 
-  (* No longer used. To be removed when things stabilize with D2009.
-  procedure AddBlobParam(const AFieldName, Value: string);
-  var
-    Param: TParam;
-  begin
-    Param := AddParam(Params, AFieldName, ftBlob);
-    if Value <> '' then
-      Param.AsMemo := Value
-  end;
-
-  procedure AddMemoParam(const AFieldName, Value: string);
-  var
-    Param: TParam;
-  begin
-    Param := AddParam(Params, AFieldName, ftMemo);
-    if Value <> '' then
-      Param.AsMemo := Value
-  end;
-  *)
-
   procedure AddBlobAttributeParam;
   var
     LParam: TParam;
@@ -2834,7 +2814,7 @@ var
       LParam.Clear
     else
       {$IFDEF D12+}
-      LParam.AsBytes := (Attribute as TInstantBlob).Bytes;
+      LParam.AsBlob := (Attribute as TInstantBlob).Bytes;
       {$ELSE}
       LParam.AsBlob := (Attribute as TInstantBlob).Value;
       {$ENDIF}
