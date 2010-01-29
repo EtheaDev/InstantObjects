@@ -681,24 +681,43 @@ var
   SourceParam : TParam;
   TargetParam : TADParam;
   i           : Integer;
+  Params      : TADParams;
 begin
   // Don't call inherited
+  Params := (DataSet as TADQuery).Params;
   for i := 0 to Pred(AParams.Count) do
     begin
       SourceParam := AParams[i];
-      TargetParam := (DataSet as TADQuery).Params.FindParam(SourceParam.Name);
+      TargetParam := Params.FindParam(SourceParam.Name);
       if assigned(TargetParam) then
         AssignParam(SourceParam, TargetParam);
     end;
 end;
 
 procedure TInstantAnyDACBroker.AssignParam(SourceParam: TParam; TargetParam: TADParam);
+
+{$IFDEF D12+}
+function ConvertBlobData(const Bytes: TBytes): RawByteString;
+  begin
+    SetLength(Result, Length(Bytes));
+    if length(Result) > 0 then
+      Move(Bytes[0], Result[1], Length(Bytes))
+  end;
+{$ENDIF}
+
 begin
   case SourceParam.DataType of
     ftBoolean:
       if UseBooleanFields then
         TargetParam.Assign(SourceParam) else
         TargetParam.AsInteger := ord(SourceParam.AsBoolean);
+    ftBlob:
+    // Temporary workaround for AnyDAC blob issue with MSSQL
+    {$IFDEF D12+}
+      TargetParam.AsBlob := ConvertBlobData(SourceParam.AsBlob);
+    {$ELSE}
+      TargetParam.AsBlob := SourceParam.AsBlob;
+    {$ENDIF}
     else
       TargetParam.Assign(SourceParam);
   end;
