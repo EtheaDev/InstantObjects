@@ -52,7 +52,7 @@ uses
   InstantBrokers, InstantMetadata, InstantTypes, uADCompClient,
   uADStanOption, uADStanParam, uADStanIntf, uADStanConst,
   uADDAptIntf, uADStanAsync, uADDAptManager, uADCompDataSet
-  {$IFDEF D10+}, DBCommonTypes{$ENDIF};
+  {$IFDEF D10+}, Variants, DBCommonTypes{$ENDIF};
 
 type
   TInstantAnyDACConnectionDef = class(TInstantRelationalConnectionDef)
@@ -714,7 +714,9 @@ begin
     ftBlob:
     // Temporary workaround for AnyDAC blob issue with MSSQL
     {$IFDEF D12+}
-      TargetParam.AsBlob := ConvertBlobData(SourceParam.AsBlob);
+      if (VarArrayHighBound(SourceParam.Value,1) <> -1) then
+        TargetParam.AsBlob := ConvertBlobData(SourceParam.AsBlob) else
+        TargetParam.AsBlob := '';
     {$ELSE}
       TargetParam.AsBlob := SourceParam.AsBlob;
     {$ENDIF}
