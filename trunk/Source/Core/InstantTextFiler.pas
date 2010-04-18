@@ -39,7 +39,8 @@ unit InstantTextFiler;
 interface
 
 uses
-  Classes, InstantClasses;
+  Classes, InstantClasses
+  {$IFDEF D12+}, Character{$ENDIF};
 
 type
   PInstantTextPos = ^TInstantTextPos;
@@ -92,6 +93,8 @@ type
     function GetBof: Boolean; override;
     function GetEof: Boolean; override;
     procedure Initialize; override;
+    function IsIdentPrefix(Ch: Char): Boolean;
+    function IsIdentChar(Ch: Char; AllowDots: boolean): Boolean;
     function IsNumericPrefix(Ch: Char): Boolean;
     function IsStringDelimiter(Ch: Char): Boolean;
   public
@@ -106,6 +109,7 @@ type
     function ReadNext(const Str: string; StopBefore: Boolean = False): string;
     function ReadNumeric: string; virtual;
     function ReadString: string; virtual;
+    function ReadIdent(AllowDots: boolean): string;
     function ReadToken: string;
     function SkipSpace: Boolean;
     procedure UnreadToken;
@@ -317,6 +321,27 @@ begin
   ConstAware := True;
 end;
 
+function TInstantTextReader.IsIdentPrefix(Ch: Char): Boolean;
+begin
+{$IFDEF D12+}
+  Result := TCharacter.IsLetter(Ch) or (Ch = '_');
+{$ELSE}
+  Result := Ch in ['A'..'Z','a'..'z','_'];
+{$ENDIF}
+end;
+
+function TInstantTextReader.IsIdentChar(Ch: Char; AllowDots: boolean): Boolean;
+begin
+{$IFDEF D12+}
+  Result := TCharacter.IsLetterOrDigit(Ch) or (Ch = '_') or (AllowDots and (Ch = '.'))
+{$ELSE}
+  if (AllowDots) then
+    Result := Ch in ['A'..'Z','a'..'z','_','.']
+  else
+    Result := Ch in ['A'..'Z','a'..'z','_'];
+{$ENDIF}
+end;
+
 function TInstantTextReader.IsNumericPrefix(Ch: Char): Boolean;
 begin
   Result := ConstAware and
@@ -455,6 +480,38 @@ begin
     end;
   end else
     Position := SavePos;
+end;
+
+function TInstantTextReader.ReadIdent(AllowDots: boolean): string;
+var
+  Ch: Char;
+  SavePos: TInstantTextPos;
+begin
+  Result := '';
+  if Eof then
+    Exit;
+  FTokenPos := Position;
+  Ch := ReadChar;
+  while IsSpace(Ch) do
+  begin
+    FTokenPos := Position;
+    if Eof then
+      Exit;
+    Ch := ReadChar;
+  end;
+  if (not IsIdentPrefix(Ch)) then
+  begin
+    Position := FTokenPos;
+    Exit;
+  end;
+  repeat
+    Result := Result + Ch;
+    if Eof then
+      Exit;
+    SavePos := Position;
+    Ch := ReadChar;
+  until not IsIdentChar(Ch,AllowDots);
+  Position := SavePos;
 end;
 
 function TInstantTextReader.ReadToken: string;
