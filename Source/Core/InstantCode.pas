@@ -5701,38 +5701,32 @@ end;
 procedure TInstantCodeUsesClause.InternalRead(Reader: TInstantCodeReader);
 var
   Token: string;
-  GotName: Boolean;
+  Ident: string;
   BeginPos: TInstantCodePos;
+  UsedUnit: TInstantCodeUses;
 begin
   inherited;
-  GotName := False;
   while not Reader.Finished and not Reader.ReadEndOfStatement do
   begin
     Reader.SkipSpace;
     BeginPos := Reader.Position;
+    Ident := Reader.ReadIdent(True);
+    if (Ident = '') then
+      Reader.ErrorExpected('unit name', False);
+    UsedUnit := Add;
+    UsedUnit.Name := Ident;
+    UsedUnit.EndPos := Reader.Position;
+    UsedUnit.StartPos := BeginPos;
     Token := Reader.ReadToken;
+    if SameText(Token, 'in') then
+    begin
+      Reader.ReadString;
+      Token := Reader.ReadToken;
+    end;
     if Token = ';' then
       Break;
-    if Token = ',' then
-    begin
-      if not GotName then
-        Reader.ErrorExpected('unit name', False);
-      GotName := False;
-    end else if GotName then
-      Reader.ErrorExpected(',')
-    else begin
-      with Add do
-      begin
-        StartPos := BeginPos;
-        Name := Token;
-        EndPos := Reader.Position;
-        if SameText(Reader.ReadToken, 'in') then
-          Reader.ReadString
-        else
-          Reader.Position := EndPos;
-      end;
-      GotName := True;
-    end;
+    if Token <> ',' then
+      Reader.ErrorExpected(', or ; ' + Token);
   end;
 end;
 
