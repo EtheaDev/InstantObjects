@@ -3645,7 +3645,6 @@ end;
 function TInstantBlob.Write(const Buffer; Position, Count: Integer): Integer;
 var
   LValue: AnsiString;
-  LBufferPointer: {$IFDEF D12+}PByte{$ELSE}PChar{$ENDIF};
 
   function CompareBuffers: Boolean;
   var
@@ -3653,7 +3652,7 @@ var
     B: {$IFDEF D12+}Byte{$ELSE}Char{$ENDIF};
   begin
     Stream.Position := Position;
-    for I := Position to Pred(Position + Count) do
+    for I := 0 to Pred(Count) do
     begin
       Result := (Stream.Read(B, 1) = 1) and (B = {$IFDEF D12+}PByte{$ELSE}PChar{$ENDIF}(@Buffer)[I]);
       if not Result then
@@ -3663,11 +3662,10 @@ var
   end;
 
 begin
-  SetLength(LValue, Count);
-  LBufferPointer := @Buffer;
-  Inc(LBufferPointer, Position);
-  StrLCopy(PAnsiChar(LValue), PAnsiChar(LBufferPointer), Count);
+  SetLength(LValue, Count + 1);
+  StrLCopy(PAnsiChar(LValue), PAnsiChar(@Buffer), Count);
   Validate(string(LValue));
+
   if not CompareBuffers then
   begin
     Stream.Position := Position;
