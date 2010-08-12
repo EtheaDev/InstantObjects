@@ -751,6 +751,12 @@ function InstantGetAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 procedure InstantRegisterAccessorClass(AClass: TInstantAccessorClass);
 procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
 
+var
+  // StringFields for unlimited-length string attributes are created of the
+  // size indicated by this variable. Fields for attributes that do have a
+  // maximum length of that length instead.
+  InstantDefaultStringFieldSize: Integer = 255;
+
 implementation
 
 uses
@@ -770,7 +776,6 @@ uses
 
 const
   SelfFieldName = 'Self';
-  DefaultStringFieldSize = 255;
   DefaultStringDisplayWidth = 12;
 
 var
@@ -3183,7 +3188,7 @@ begin
     if Assigned(Metadata) and (Metadata.Size <> 0) then
       FieldDef.Size := Metadata.Size
     else
-      FieldDef.Size := DefaultStringFieldSize;
+      FieldDef.Size := InstantDefaultStringFieldSize;
   end;
   if Assigned(FOnInitFieldDef) then
     FOnInitFieldDef(Self, FieldDef);
