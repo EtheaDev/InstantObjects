@@ -1750,10 +1750,6 @@ end;
 
 function TInstantCustomResolver.CreateEmbeddedObjectInputStream(
   const AConnector: TInstantConnector; const AField: TField): TStream;
-{$IFDEF D12+}
-var
-  LEncoding: TEncoding;
-{$ENDIF}
 begin
   Assert(Assigned(AConnector));
   Assert(Assigned(AField));
@@ -1762,13 +1758,8 @@ begin
   if AConnector.BlobStreamFormat = sfBinary then
     Result := TBytesStream.Create(AField.AsBytes)
   else
-  begin
-    TEncoding.GetBufferEncoding(AField.AsBytes, LEncoding);
-    Result := TInstantStringStream.Create(LEncoding.GetString(AField.AsBytes));
-  end;
-  {$ELSE}
-  Result := TInstantStringStream.Create(AField.AsString);
   {$ENDIF}
+  Result := TInstantStringStream.Create(AField.AsString);
 end;
 
 function TInstantCustomResolver.CreateEmbeddedObjectOutputStream(
