@@ -2899,6 +2899,19 @@ var
       LParam.AsMemo := MemoAttrib.Value;
   end;
 
+  procedure AddWideMemoAttributeParam;
+  var
+    LParam: TParam;
+    MemoAttrib: TInstantMemo;
+  begin
+    LParam := AddParam(Params, FieldName, ftWideMemo);
+    MemoAttrib := (Attribute as TInstantMemo);
+    if (MemoAttrib.Size = 0) or Attribute.IsNull then
+      LParam.Clear
+    else
+      LParam.Value := MemoAttrib.AsString;
+  end;
+
   procedure AddPartAttributeParam;
   var
     Stream: TStream;
@@ -2988,6 +3001,9 @@ begin
     atInteger:
       AddIntegerAttributeParam;
     atMemo:
+      if Broker.Connector.UseUnicode then
+        AddWideMemoAttributeParam
+      else
       AddMemoAttributeParam;
     atPart:
       AddPartAttributeParam;
