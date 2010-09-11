@@ -792,7 +792,6 @@ type
     procedure DoAfterRefresh;
     procedure DoAfterRetrieve;
     procedure DoAfterStore;
-    procedure DoAttributeChanged(Attribute: TInstantAttribute);
     procedure DoBeforeContentChange(Container: TInstantContainer;
       ChangeType: TInstantContentChangeType; Index: Integer; AObject: TInstantObject);
     procedure DoBeforeDispose;
@@ -848,6 +847,7 @@ type
     property SavedState: TInstantObjectState read GetSavedState;
     property State: TInstantObjectState read GetState;
   protected
+    procedure DoAttributeChanged(Attribute: TInstantAttribute); virtual;
     procedure Abandon;
     procedure AfterAddRef; virtual;
     procedure AfterAssign; virtual;
@@ -1412,6 +1412,7 @@ type
     FOnGenerateId: TInstantGenerateIdEvent;
     FIdSize: Integer;
     FIdDataType: TInstantDataType;
+    FUseUnicode: Boolean;
     procedure AbandonObjects;
     procedure ApplyTransactedObjectStates;
     procedure ClearTransactedObjects;
@@ -1497,6 +1498,8 @@ type
       default False;
     property UseTransactions: Boolean read FUseTransactions
       write FUseTransactions default True;
+    property UseUnicode: Boolean read FUseUnicode write FUseUnicode
+      default False;
     property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase
       write FBeforeBuildDatabase;
     property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat
@@ -1515,6 +1518,7 @@ type
     FBlobStreamFormat: TInstantStreamFormat;
     FIdSize: Integer;
     FIdDataType: TInstantDataType;
+    FUseUnicode: Boolean;
   protected
     function GetCaption: string; virtual;
     procedure InitConnector(Connector: TInstantConnector); virtual;
@@ -1533,6 +1537,8 @@ type
       default dtString;
     property IdSize: Integer read FIdSize write FIdSize
       default InstantDefaultFieldSize;
+    property UseUnicode: Boolean read FUseUnicode write FUseUnicode
+      default False;
   end;
 
   TInstantConnectionDefs = class(TInstantCollection)
@@ -8580,6 +8586,7 @@ constructor TInstantConnector.Create(AOwner: TComponent);
 begin
   inherited;
   FUseTransactions := True;
+  FUseUnicode := False;
   FIdDataType := dtString;
   FIdSize := InstantDefaultFieldSize;
 end;
@@ -8986,6 +8993,7 @@ begin
   FBlobStreamFormat := sfBinary;
   FIdDataType := dtString;
   FIdSize := InstantDefaultFieldSize;
+  FUseUnicode := False;
 end;
 
 function TInstantConnectionDef.CreateConnector(AOwner: TComponent): TInstantConnector;
@@ -9019,6 +9027,7 @@ begin
   Connector.BlobStreamFormat := BlobStreamFormat;
   Connector.IdDataType := IdDataType;
   Connector.IdSize := IdSize;
+  Connector.UseUnicode := UseUnicode;
 end;
 
 { TInstantConnectionDefs }
