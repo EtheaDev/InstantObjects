@@ -122,6 +122,7 @@ type
     constructor Create(AOwner: TComponent); override;
     property Grid: TDBGrid read GetGrid;
     property DataSource: TDataSource read GetDataSource write SetDataSource;
+    procedure Setup;
   end;
 
   TInstantExplorer = class(TCustomControl)
@@ -212,7 +213,7 @@ type
     procedure SetRootObject(const Value: TObject); virtual;
     procedure UpdateDetails;
   public
-    procedure SetupContentEditor;
+    procedure SetupContentEditor; virtual;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Clear;
@@ -497,8 +498,10 @@ begin
     finally
       Items.EndUpdate;
       OnChange := SaveOnChange;
-      CurrentObject := LCurrentObject;
-      TreeView.FullExpand;
+      if LCurrentObject <> nil then
+        CurrentObject := LCurrentObject
+      else if Items.Count > 0 then
+        Selected := Items[0];
     end;
   end;
 end;
@@ -1089,14 +1092,23 @@ procedure TInstantExplorer.SetCurrentObject(const AValue: TObject);
 var
   LNodeIndex: Integer;
 begin
-  for LNodeIndex := 0 to TreeView.Items.Count - 1 do
+  if (AValue <> nil) and (TreeView.Items.Count > 0) then
   begin
-    if Integer(TreeView.Items[LNodeIndex].Data) > 0 then
-      if TInstantExplorerNodeData(TreeView.Items[LNodeIndex].Data).Instance = AValue then
-      begin
-        TreeView.Selected := TreeView.Items[LNodeIndex];
-        Break;
-      end;
+    for LNodeIndex := 0 to TreeView.Items.Count - 1 do
+    begin
+      if Integer(TreeView.Items[LNodeIndex].Data) > 0 then
+        if TInstantExplorerNodeData(TreeView.Items[LNodeIndex].Data).Instance = AValue then
+        begin
+          TreeView.Selected := TreeView.Items[LNodeIndex];
+          TreeViewChange(TreeView, nil);
+          Break;
+        end;
+    end;
+  end
+  else
+  begin
+    TreeView.Selected := nil;
+    TreeViewChange(TreeView, nil);
   end;
 end;
 
@@ -1196,12 +1208,18 @@ begin
   begin
     DestroyObjectEditor;
     Container := TInstantContainer(AObject);
-    ObjectExposer.Subject := nil;
-    ObjectExposer.Mode := amContent;
-    ObjectExposer.ContainerName := Container.Name;
-    ObjectExposer.Subject := Container.Owner;
-    DetailView := ContentView;
-    SetupContentEditor;
+    if (ObjectExposer.Subject <> Container.Owner) or (ObjectExposer.ContainerName <> Container.Name) then
+    begin
+      ObjectExposer.Subject := nil;
+      ObjectExposer.Mode := amContent;
+      ObjectExposer.ContainerName := Container.Name;
+      ObjectExposer.Subject := Container.Owner;
+    end;
+    if DetailView <> ContentView then
+    begin
+      DetailView := ContentView;
+      SetupContentEditor;
+    end;
   end
   else if Assigned(AObject) then
   begin
@@ -1272,6 +1290,7 @@ begin
     if LField.DataType in [ftBlob, ftMemo, ftDataSet] then
       FContentEditor.Grid.Columns[LColumnIndex].Visible := False;
   end;
+  FContentEditor.Setup;
 end;
 
 function TInstantExplorer.CreateFieldList: TStrings;
@@ -1311,7 +1330,8 @@ procedure TInstantExplorerDBGrid.UpdateLastColumnWidth;
 
 begin
   if Columns.Count >= 1 then
-    Columns[Columns.Count - 1].Width := ClientWidth - GetAllColumnsWidth(1);
+    Columns[Columns.Count - 1].Width := ClientWidth - GetAllColumnsWidth(1)
+      - IndicatorWidth - GetSystemMetrics(SM_CXVSCROLL);
 end;
 
 { TInstantExplorerContentEditor }
@@ -1345,6 +1365,12 @@ end;
 procedure TInstantExplorerContentEditor.SetDataSource(const AValue: TDataSource);
 begin
   FGrid.DataSource := AValue;
+end;
+
+procedure TInstantExplorerContentEditor.Setup;
+begin
+  if FGrid is TInstantExplorerDBGrid then
+    TInstantExplorerDBGrid(FGrid).UpdateLastColumnWidth;
 end;
 
 { TInstantExplorerDBComboBox }
