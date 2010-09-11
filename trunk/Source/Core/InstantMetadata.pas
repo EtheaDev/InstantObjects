@@ -289,6 +289,7 @@ type
     destructor Destroy; override;
     procedure LoadFromFile(const FileName: string);
     procedure LoadFromResFile(const FileName: string);
+    procedure MergeFromResFile(const FileName: string);
     procedure SaveToFile(const FileName: string);
     procedure SaveToResFile(const FileName: string);
     property ClassMetadatas: TInstantClassMetadatas read GetClassMetadatas;
@@ -1393,6 +1394,30 @@ begin
     Stream.ReadObjectRes(ClassMetadatas);
   finally
     Stream.Free;
+  end;
+end;
+
+procedure TInstantModel.MergeFromResFile(const FileName: string);
+var
+  LModel: TInstantModel;
+  I: Integer;
+  LClassMetadata: TInstantClassMetadata;
+begin
+  LModel := TInstantModel.Create;
+  try
+    LModel.LoadFromResFile(FileName);
+    for I := 0 to LModel.ClassMetadatas.Count - 1 do
+    begin
+      LClassMetadata := ClassMetadatas.Add;
+      try
+        LClassMetadata.Assign(LModel.ClassMetadatas[I]);
+      except
+        FreeAndNil(LClassMetadata);
+        raise;
+      end;
+    end;
+  finally
+    LModel.Free;
   end;
 end;
 
