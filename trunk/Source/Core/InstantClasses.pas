@@ -1717,7 +1717,7 @@ end;
 
 procedure TInstantXMLProcessor.SkipBlanks;
 begin
-  while InstantCharInSet(PeekChar, [#1..#32]) do
+  while InstantCharInSet(PeekChar, [#0..#32]) do
     ReadChar;
 end;
 
