@@ -164,7 +164,7 @@ end;
 
 procedure TTestXMLBroker.TestStoreAndRetrieveContact;
 const
-  DEF_NAME = 'Mike "Artù"';
+  DEF_NAME = 'Mike ''Artù''';
   DEF_CITY = 'Milan (€)';
 var
   c: TContact;
