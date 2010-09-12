@@ -1272,6 +1272,12 @@ end;
 function TXMLFilesAccessor.WriteInstantObject(const AObject: TInstantObject;
   const AStorageName: string; out AObjectUpdateCount: Integer): Boolean;
 begin
+  // Get rid of the previous file if the object already existed and has
+  // changed Id.
+  if (AObject.PersistentId <> '') and AObject.IsIdChanged then
+    DeleteInstantObjectXmlFile(AObject,
+      GetObjectFileName(AStorageName, AObject.ClassName, AObject.PersistentId));
+
   Result := InternalWriteInstantObject(AObject, AStorageName,
     AObjectUpdateCount);
 end;
