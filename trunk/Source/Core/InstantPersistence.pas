@@ -461,6 +461,7 @@ type
     function Write(const Buffer; Position, Count: Integer): Integer; virtual;
     procedure WriteObject(Writer: TInstantWriter); override;
     procedure AssignTo(Dest: TPersistent); override;
+    function GetIsNull: Boolean; override;
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
@@ -3516,6 +3517,11 @@ begin
   SetLength(Result, Size);
   if Size > 0 then
     Read(Result[0], 0, Size);
+end;
+
+function TInstantBlob.GetIsNull: Boolean;
+begin
+  Result := Size = 0;
 end;
 
 function TInstantBlob.GetSize: Integer;
