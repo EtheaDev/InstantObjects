@@ -2796,7 +2796,7 @@ begin
     Result := BM.Instance;
   end else if not InContent then
     Result := Subject
-  else if RecNo <= 0 then
+  else if (RecNo <= 0) or (RecordCount = 0) then
     Result := nil
   else
     Result := Objects[Pred(RecNo)];
@@ -3911,6 +3911,7 @@ function TInstantCustomExposer.RefreshObjectBuffer(AObject: TObject): Boolean;
 var
   Buffer: TRecordBuffer;
   Editing: Boolean;
+  BrowsingObject: Boolean;
 begin
   if not Active then
   begin
@@ -3928,8 +3929,8 @@ begin
     if Assigned(Buffer) then
     begin
       Editing := (Buffer = ActiveBuffer) and (State in dsEditModes);
-      Result := (State = dsBrowse) or
-        (Editing and (eoSyncEdit in Options));
+      BrowsingObject := (State = dsBrowse) and (AObject is ObjectClass);
+      Result := BrowsingObject or (Editing and (eoSyncEdit in Options));
       if Result then
       begin
         CopyObjectToBuffer(AObject, Buffer);
