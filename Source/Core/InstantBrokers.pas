@@ -3004,7 +3004,7 @@ begin
       if Broker.Connector.UseUnicode then
         AddWideMemoAttributeParam
       else
-      AddMemoAttributeParam;
+        AddMemoAttributeParam;
     atPart:
       AddPartAttributeParam;
     atParts:
