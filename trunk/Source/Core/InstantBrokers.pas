@@ -825,6 +825,7 @@ type
     function TablePathToAlias(const TablePath: string): string;
     function GetChildContextIndex: Integer;
     function GetChildContextLevel: Integer;
+    function RootAttribToFieldName(const AttribName: string): string;
   protected
     function AddCriteria(const Criteria: string): Integer;
     function AddTablePath(const TablePath: string): Integer;
@@ -891,9 +892,6 @@ type
   protected
     procedure BeforeTranslate; override;
     procedure Clear; override;
-    procedure CollectObjects(AObject: TInstantIQLObject;
-      AClassType: TInstantIQLObjectClass; AList: TList;
-      const AStopClassTypes: array of TInstantIQLObjectClass);
     function GetDelimiters: string; virtual;
     function GetQuote: Char; virtual;
     function GetWildcard: string; virtual;
@@ -903,7 +901,6 @@ type
     function InSubquery(const AObject: TInstantIQLObject; out ASubQuery: TInstantIQLSubquery): Boolean;
     // Returns True if the given attribute is a "root" attribute. Root
     // attributes are Class and Id.
-    function IsRootAttribute(const AttributeName: string): Boolean; // funzione non membro
     function IsPrimary(AObject: TInstantIQLObject): Boolean;
     function TranslateObject(AObject: TInstantIQLObject;
       Writer: TInstantIQLWriter): Boolean; override;
@@ -1037,15 +1034,6 @@ type
       default True;
   end;
 
-  function ConcatPath(const APathText, AttribName: string): string; 
-  function ExtractTarget(const PathStr: string): string;
-  function RootAttribToFieldName(const AttribName: string): string;
-  function IsRootAttribute(const AttributeName: string): Boolean;
-  procedure CollectObjects(
-    AObject: TInstantIQLObject; AClassType: TInstantIQLObjectClass; AList: TList;
-    const AStopClassTypes: array of TInstantIQLObjectClass);
-  procedure WriteAnd(Writer: TInstantIQLWriter);
-
 var
   InstantLogProc: procedure (const AString: string) of object;
 
@@ -1093,26 +1081,6 @@ begin
 end;
 {$ENDIF}
 
-function CreateObjectFromDataSet(AClass: TClass; DataSet: TDataSet): TObject;
-var
-  I: Integer;
-  FieldName: string;
-begin
-  if AClass = nil then
-    raise Exception.Create(SUnassignedClass)
-  else if AClass.InheritsFrom(TInstantObject) then
-    Result := TInstantObjectClass(AClass).Create
-  else
-    Result := AClass.Create;
-  for I := 0 to Pred(DataSet.FieldCount) do
-  begin
-    FieldName := StringReplace(
-      DataSet.Fields[I].FieldName, '_', '.', [rfReplaceAll]);
-    InstantSetProperty(Result, FieldName, DataSet.Fields[I].Value);
-  end;
-end;
-
-
 function ConcatPath(const APathText, AttribName: string): string;
 begin
   Result := Format('%s%s%s', [APathText, InstantDot, AttribName]);
@@ -1126,22 +1094,14 @@ begin
   Result := Copy(PathStr, I + 1, Length(PathStr) - I)
 end;
 
-function RootAttribToFieldName(const AttribName: string): string;
-begin
-  if SameText(AttribName, InstantClassFieldName) then
-    Result := InstantClassFieldName
-  else if SameText(AttribName, InstantIdFieldName) then
-    Result := InstantIdFieldName;
-end;
-
 function IsRootAttribute(const AttributeName: string): Boolean;
 begin
   Result := SameText(AttributeName, InstantClassFieldName) or
     SameText(AttributeName, InstantIdFieldName);
 end;
 
-procedure CollectObjects(
-  AObject: TInstantIQLObject; AClassType: TInstantIQLObjectClass; AList: TList;
+procedure CollectObjects(AObject: TInstantIQLObject;
+  AClassType: TInstantIQLObjectClass; AList: TList;
   const AStopClassTypes: array of TInstantIQLObjectClass);
 var
   I: Integer;
@@ -5100,15 +5060,19 @@ begin
 end;
 
 procedure TInstantCustomRelationalQuery.TranslateCommand;
+var
+  LTranslator: TInstantRelationalTranslator;
 begin
   if TranslatorClass <> nil then
-    with TranslatorClass.Create(Self) do
-      try
-        CommandText := Self.Command;
-        Statement := StatementText;
-      finally
-        Free;
-      end;
+  begin
+    LTranslator := TranslatorClass.Create(Self);
+    try
+      LTranslator.CommandText := Command;
+      Statement := LTranslator.StatementText;
+    finally
+      LTranslator.Free;
+    end;
+  end;
 end;
 
 class function TInstantCustomRelationalQuery.TranslatorClass: TInstantRelationalTranslatorClass;
@@ -5163,38 +5127,6 @@ begin
   inherited;
   if Assigned(Context) then
     Context.Clear;
-end;
-
-procedure TInstantRelationalTranslator.CollectObjects(
-  AObject: TInstantIQLObject; AClassType: TInstantIQLObjectClass; AList: TList;
-  const AStopClassTypes: array of TInstantIQLObjectClass);
-var
-  I: Integer;
-  LObject: TInstantIQLObject;
-
-  function IsStopClassType(const AClassType: TClass): Boolean;
-  var
-    LClassTypeIndex: Integer;
-  begin
-    Result := True;
-    for LClassTypeIndex := Low(AStopClassTypes) to High(AStopClassTypes) do
-      if AClassType = AStopClassTypes[LClassTypeIndex] then
-        Exit;
-    Result := False;
-  end;
-
-begin
-  if not (Assigned(AObject) and Assigned(AList)) then
-    Exit;
-  for I := 0 to Pred(AObject.ObjectCount) do
-  begin
-    LObject := AObject[I];
-    if IsStopClassType(LObject.ClassType) then
-      Continue;
-    if LObject is AClassType then
-      AList.Add(LObject);
-    CollectObjects(LObject, AClassType, AList, AStopClassTypes)
-  end;
 end;
 
 function TInstantRelationalTranslator.GetConnector: TInstantRelationalConnector;
@@ -5272,13 +5204,6 @@ function TInstantRelationalTranslator.IsPrimary(
 begin
   Result := Assigned(AObject) and Assigned(Command) and
     ((AObject = Command) or (AObject.Owner = Command));
-end;
-
-function TInstantRelationalTranslator.IsRootAttribute(
-  const AttributeName: string): Boolean;
-begin
-  Result := SameText(AttributeName, InstantClassFieldName) or
-    SameText(AttributeName, InstantIdFieldName);
 end;
 
 function TInstantRelationalTranslator.QuoteString(const Str: string): string;
@@ -5587,6 +5512,26 @@ function TInstantNavigationalQuery.CreateObject(Row: Integer): TObject;
 var
   ClassNameField, ObjectNameField: TField;
   AClass: TInstantObjectClass;
+
+  function CreateObjectFromDataSet(AClass: TClass; DataSet: TDataSet): TObject;
+  var
+    I: Integer;
+    FieldName: string;
+  begin
+    if AClass = nil then
+      raise Exception.Create(SUnassignedClass)
+    else if AClass.InheritsFrom(TInstantObject) then
+      Result := TInstantObjectClass(AClass).Create
+    else
+      Result := AClass.Create;
+    for I := 0 to Pred(DataSet.FieldCount) do
+    begin
+      FieldName := StringReplace(
+        DataSet.Fields[I].FieldName, '_', '.', [rfReplaceAll]);
+      InstantSetProperty(Result, FieldName, DataSet.Fields[I].Value);
+    end;
+  end;
+
 begin
   RowNumber := Row;
   ObjectNameField := DataSet.FindField(InstantIdFieldName);
@@ -6489,6 +6434,14 @@ var
   FieldName: string;
 begin
   PathToTarget(PathText, Result, FieldName);
+end;
+
+function TInstantTranslationContext.RootAttribToFieldName(const AttribName: string): string;
+begin
+  if SameText(AttribName, InstantClassFieldName) then
+    Result := InstantClassFieldName
+  else if SameText(AttribName, InstantIdFieldName) then
+    Result := InstantIdFieldName;
 end;
 
 function TInstantTranslationContext.PathToTarget(const PathText: string;
