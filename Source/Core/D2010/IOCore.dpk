@@ -37,6 +37,7 @@ contains
   InstantClasses in '..\InstantClasses.pas',
   InstantConsts in '..\InstantConsts.pas',
   InstantRtti in '..\InstantRtti.pas',
+  InstantRttiAttributes in '..\InstantRttiAttributes.pas',
   InstantCommand in '..\InstantCommand.pas',
   InstantPersistence in '..\InstantPersistence.pas',
   InstantExplorer in '..\InstantExplorer.pas',
@@ -58,7 +59,6 @@ contains
   InstantBrokers in '..\InstantBrokers.pas',
   InstantMetadata in '..\InstantMetadata.pas',
   InstantStandardValidators in '..\InstantStandardValidators.pas',
-  InstantValidation in '..\InstantValidation.pas',
-  InstantRttiAttributes in '..\InstantRttiAttributes.pas';
+  InstantValidation in '..\InstantValidation.pas';
 
 end.
