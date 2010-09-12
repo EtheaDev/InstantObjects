@@ -6080,12 +6080,13 @@ begin
   inherited Create;
   FParentContext := AParentContext;
 
-  if Assigned(FParentContext) then 
+  if Assigned(FParentContext) then
     FParentContext.AddChildContext(Self);
 
   FStatement := AStatement;
   FQuote := AQuote;
   FDelimiters := ADelimiters;
+  FIdDataType := AIdDataType;
 
   Initialize;
 end;
