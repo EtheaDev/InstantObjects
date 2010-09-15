@@ -30,6 +30,12 @@
 
 unit TestInstantNumeric;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMock, TestModel;
@@ -134,7 +140,8 @@ begin
 
   FInstantNumeric.Value := 1000;
   FInstantNumeric.Metadata.EditMask := '#,000'; //EditMask don't use ThousandSeparator var
-  AssertEquals('1' + ThousandSeparator + '000', FInstantNumeric.DisplayText);
+  AssertEquals('1' + {$IFDEF D15+}FormatSettings.{$ENDIF}ThousandSeparator +
+    '000', FInstantNumeric.DisplayText);
 end;
 
 procedure TestTInstantNumeric.TestIsDefault;

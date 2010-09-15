@@ -30,6 +30,12 @@
 
 unit TestInstantRtti;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses
@@ -190,8 +196,8 @@ procedure TTestInstantRtti.TestMaskUtils;
 var
   ds, ts : string;
 begin
-  ds := DateSeparator;
-  ts := TimeSeparator;
+  ds := {$IFDEF D15+}FormatSettings.{$ENDIF}DateSeparator;
+  ts := {$IFDEF D15+}FormatSettings.{$ENDIF}TimeSeparator;
 
   AssertEquals('123', FormatMaskText('###','1234'));
   AssertEquals('(123)_   -    ', FormatMaskText('(000)_000-0000;0;*','123'));
@@ -209,7 +215,7 @@ begin
   AssertEquals('13'+ds+'02'+ds+'95',FormatMaskText('!99/99/00;0;','130295'));
   AssertEquals('13'+ds+'02'+ds+'1995',FormatMaskText('!99/99/\1\900;0;','130295'));
   AssertEquals('13 Gen 1995',FormatMaskText('!99 >L<LL \1\900;0;','13Gen95'));
-  AssertEquals('21'+ts+'05'+TimeSeparator+'15',FormatMaskText('!90:00:00;0;','210515'));
+  AssertEquals('21'+ts+'05'+{$IFDEF D15+}FormatSettings.{$ENDIF}TimeSeparator+'15',FormatMaskText('!90:00:00;0;','210515'));
   AssertEquals('13'+ts+'45',FormatMaskText('!90:00;0;','1345'));
 end;
 
