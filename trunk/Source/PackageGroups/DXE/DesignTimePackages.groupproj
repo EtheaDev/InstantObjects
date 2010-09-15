@@ -3,22 +3,22 @@
 			<ProjectGuid>{b0beaee6-5b6a-420d-a1e5-7be9568cd5a2}</ProjectGuid>
 		</PropertyGroup>
 		<ItemGroup>
-			<Projects Include="..\..\Design\D2011\DclIOCore.dproj">
+			<Projects Include="..\..\Design\DXE\DclIOCore.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\Brokers\ADO\D2011\DclIOADO.dproj">
+			<Projects Include="..\..\Brokers\ADO\DXE\DclIOADO.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\Brokers\BDE\D2011\DclIOBDE.dproj">
+			<Projects Include="..\..\Brokers\BDE\DXE\DclIOBDE.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\Brokers\DBX\D2011\DclIODBX.dproj">
+			<Projects Include="..\..\Brokers\DBX\DXE\DclIODBX.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\Brokers\IBX\D2011\DclIOIBX.dproj">
+			<Projects Include="..\..\Brokers\IBX\DXE\DclIOIBX.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\Brokers\XML\D2011\DclIOXML.dproj">
+			<Projects Include="..\..\Brokers\XML\DXE\DclIOXML.dproj">
 				<Dependencies/>
 			</Projects>
 		</ItemGroup>
@@ -32,58 +32,58 @@
 			</BorlandProject>
 		</ProjectExtensions>
 		<Target Name="DclIOCore">
-			<MSBuild Projects="..\..\Design\D2011\DclIOCore.dproj"/>
+			<MSBuild Projects="..\..\Design\DXE\DclIOCore.dproj"/>
 		</Target>
 		<Target Name="DclIOCore:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\Design\D2011\DclIOCore.dproj"/>
+			<MSBuild Targets="Clean" Projects="..\..\Design\DXE\DclIOCore.dproj"/>
 		</Target>
 		<Target Name="DclIOCore:Make">
-			<MSBuild Targets="Make" Projects="..\..\Design\D2011\DclIOCore.dproj"/>
+			<MSBuild Targets="Make" Projects="..\..\Design\DXE\DclIOCore.dproj"/>
 		</Target>
 		<Target Name="DclIOADO">
-			<MSBuild Projects="..\..\Brokers\ADO\D2011\DclIOADO.dproj"/>
+			<MSBuild Projects="..\..\Brokers\ADO\DXE\DclIOADO.dproj"/>
 		</Target>
 		<Target Name="DclIOADO:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\Brokers\ADO\D2011\DclIOADO.dproj"/>
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\ADO\DXE\DclIOADO.dproj"/>
 		</Target>
 		<Target Name="DclIOADO:Make">
-			<MSBuild Targets="Make" Projects="..\..\Brokers\ADO\D2011\DclIOADO.dproj"/>
+			<MSBuild Targets="Make" Projects="..\..\Brokers\ADO\DXE\DclIOADO.dproj"/>
 		</Target>
 		<Target Name="DclIOBDE">
-			<MSBuild Projects="..\..\Brokers\BDE\D2011\DclIOBDE.dproj"/>
+			<MSBuild Projects="..\..\Brokers\BDE\DXE\DclIOBDE.dproj"/>
 		</Target>
 		<Target Name="DclIOBDE:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\Brokers\BDE\D2011\DclIOBDE.dproj"/>
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\BDE\DXE\DclIOBDE.dproj"/>
 		</Target>
 		<Target Name="DclIOBDE:Make">
-			<MSBuild Targets="Make" Projects="..\..\Brokers\BDE\D2011\DclIOBDE.dproj"/>
+			<MSBuild Targets="Make" Projects="..\..\Brokers\BDE\DXE\DclIOBDE.dproj"/>
 		</Target>
 		<Target Name="DclIODBX">
-			<MSBuild Projects="..\..\Brokers\DBX\D2011\DclIODBX.dproj"/>
+			<MSBuild Projects="..\..\Brokers\DBX\DXE\DclIODBX.dproj"/>
 		</Target>
 		<Target Name="DclIODBX:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\Brokers\DBX\D2011\DclIODBX.dproj"/>
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\DBX\DXE\DclIODBX.dproj"/>
 		</Target>
 		<Target Name="DclIODBX:Make">
-			<MSBuild Targets="Make" Projects="..\..\Brokers\DBX\D2011\DclIODBX.dproj"/>
+			<MSBuild Targets="Make" Projects="..\..\Brokers\DBX\DXE\DclIODBX.dproj"/>
 		</Target>
 		<Target Name="DclIOIBX">
-			<MSBuild Projects="..\..\Brokers\IBX\D2011\DclIOIBX.dproj"/>
+			<MSBuild Projects="..\..\Brokers\IBX\DXE\DclIOIBX.dproj"/>
 		</Target>
 		<Target Name="DclIOIBX:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\Brokers\IBX\D2011\DclIOIBX.dproj"/>
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\IBX\DXE\DclIOIBX.dproj"/>
 		</Target>
 		<Target Name="DclIOIBX:Make">
-			<MSBuild Targets="Make" Projects="..\..\Brokers\IBX\D2011\DclIOIBX.dproj"/>
+			<MSBuild Targets="Make" Projects="..\..\Brokers\IBX\DXE\DclIOIBX.dproj"/>
 		</Target>
 		<Target Name="DclIOXML">
-			<MSBuild Projects="..\..\Brokers\XML\D2011\DclIOXML.dproj"/>
+			<MSBuild Projects="..\..\Brokers\XML\DXE\DclIOXML.dproj"/>
 		</Target>
 		<Target Name="DclIOXML:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\Brokers\XML\D2011\DclIOXML.dproj"/>
+			<MSBuild Targets="Clean" Projects="..\..\Brokers\XML\DXE\DclIOXML.dproj"/>
 		</Target>
 		<Target Name="DclIOXML:Make">
-			<MSBuild Targets="Make" Projects="..\..\Brokers\XML\D2011\DclIOXML.dproj"/>
+			<MSBuild Targets="Make" Projects="..\..\Brokers\XML\DXE\DclIOXML.dproj"/>
 		</Target>
 		<Target Name="Build">
 			<CallTarget Targets="DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML"/>
