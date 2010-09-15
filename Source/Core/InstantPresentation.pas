@@ -2712,7 +2712,7 @@ end;
 
 function TInstantCustomExposer.FieldDataSize(Field : TField): integer;
 begin
-{$IFDEF D14+}
+{$IFDEF D14}
   // Workaround for DataSize bugs in D2010 RTM (QC 78620 and 78620)
   if (not Assigned(Field)) or (Field is TBlobField) then
     Result := 0
