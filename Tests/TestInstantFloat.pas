@@ -30,6 +30,12 @@
 
 unit TestInstantFloat;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMock, TestModel;
@@ -123,9 +129,11 @@ end;
 
 procedure TestTInstantFloat.TestAsString;
 begin
-  FInstantFloat.AsString := '1' + DecimalSeparator + '3';
+  FInstantFloat.AsString := '1' +
+    {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator + '3';
   AssertEquals(1.3, FInstantFloat.Value);
-  AssertEquals('1' + DecimalSeparator + '3', FInstantFloat.AsString);
+  AssertEquals('1' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+    '3', FInstantFloat.AsString);
 end;
 
 procedure TestTInstantFloat.TestAsVariant;
@@ -142,7 +150,8 @@ begin
   FInstantFloat.Reset;
   AssertEquals(1.3, FInstantFloat.Value);
 
-  FInstantFloat.Metadata.DefaultValue := '15' + DecimalSeparator + '7';
+  FInstantFloat.Metadata.DefaultValue := '15' +
+    {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator + '7';
   FInstantFloat.Reset;
   AssertEquals(15.7, FInstantFloat.Value);
 

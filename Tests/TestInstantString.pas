@@ -30,6 +30,12 @@
 
 unit TestInstantString;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMock, TestModel;
@@ -104,7 +110,8 @@ var
 begin
   vCurr := 23.45;
   FInstantString.AsCurrency := vCurr;
-  AssertEquals('23' + DecimalSeparator + '45', FInstantString.Value);
+  AssertEquals('23' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+    '45', FInstantString.Value);
   AssertEquals(vCurr, FInstantString.AsCurrency);
 end;
 
@@ -118,7 +125,8 @@ end;
 procedure TestTInstantString.TestAsFloat;
 begin
   FInstantString.AsFloat := 89.45;
-  AssertEquals('89' + DecimalSeparator + '45', FInstantString.Value);
+  AssertEquals('89' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+    '45', FInstantString.Value);
   AssertEquals(89.45, FInstantString.AsFloat);
 end;
 

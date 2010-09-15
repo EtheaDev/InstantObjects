@@ -30,6 +30,12 @@
 
 unit TestInstantClasses;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses
@@ -400,7 +406,8 @@ begin
     AssertEquals('TInstantGuineaPig', ic.Reader.ReadStr); //la stringa con il classname
     c.ConvertToText(ic);
     ic.Producer.eof; //to flush the buffer
-    AssertEquals('ConvertToText', '<Age>2</Age>' + LLineBreak + '<Weight>1' + DecimalSeparator +
+    AssertEquals('ConvertToText', '<Age>2</Age>' + LLineBreak + '<Weight>1' +
+      {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
       '123</Weight>' + LLineBreak + '<PigName>Miss piggy</PigName>' + LLineBreak, outs.DataString);
   finally
     ic.Free;
@@ -420,7 +427,8 @@ begin
     InstantObjectBinaryToText(ins, outs);
     AssertEquals('InstantObjectBinaryToText',
       '<TInstantGuineaPig>' + LLineBreak + LIndentation + '<Age>2</Age>' + LLineBreak + LIndentation +
-      '<Weight>1' + DecimalSeparator + '123</Weight>' + LLineBreak + LIndentation +
+      '<Weight>1' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+        '123</Weight>' + LLineBreak + LIndentation +
       '<PigName>Miss piggy</PigName>' + LLineBreak + '</TInstantGuineaPig>' + LLineBreak,
       outs.DataString);
   finally
@@ -454,7 +462,8 @@ begin
 
     AssertEquals('InstantWriteObject(sfXML)',
       '<TInstantGuineaPig>' + LLineBreak + LIndentation + '<Age>2</Age>' + LLineBreak + LIndentation +
-      '<Weight>1' + DecimalSeparator + '123</Weight>' + LLineBreak + LIndentation +
+      '<Weight>1' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+        '123</Weight>' + LLineBreak + LIndentation +
       '<PigName>Miss piggy</PigName>' + LLineBreak + '</TInstantGuineaPig>' + LLineBreak,
       ms.DataString);
   finally

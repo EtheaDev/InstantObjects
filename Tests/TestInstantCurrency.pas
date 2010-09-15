@@ -30,6 +30,12 @@
 
 unit TestInstantCurrency;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMock, TestModel;
@@ -128,9 +134,11 @@ end;
 
 procedure TestTInstantCurrency.TestAsString;
 begin
-  FInstantCurrency.AsString := '15' + DecimalSeparator + '7';
+  FInstantCurrency.AsString := '15' +
+    {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator + '7';
   AssertEquals(15.7, FInstantCurrency.Value);
-  AssertEquals('15' + DecimalSeparator + '7', FInstantCurrency.AsString);
+  AssertEquals('15' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+    '7', FInstantCurrency.AsString);
 end;
 
 procedure TestTInstantCurrency.TestAsVariant;
@@ -147,7 +155,8 @@ begin
   FInstantCurrency.Reset;
   AssertEquals(1.3, FInstantCurrency.Value);
 
-  FInstantCurrency.Metadata.DefaultValue := '15' + DecimalSeparator + '7';
+  FInstantCurrency.Metadata.DefaultValue := '15' +
+    {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator + '7';
   FInstantCurrency.Reset;
   AssertEquals(15.7, FInstantCurrency.Value);
 
