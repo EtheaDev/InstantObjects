@@ -40,6 +40,11 @@ type
     ResultTabSheet: TTabSheet;
     TranslatedQueryTabSheet: TTabSheet;
     TranslatedQueryMemo: TMemo;
+    Label1: TLabel;
+    LoadModeComboBox: TComboBox;
+    StatsTabSheet: TTabSheet;
+    StatsMemo: TMemo;
+    FetchAllCheckBox: TCheckBox;
     procedure ExecuteActionExecute(Sender: TObject);
     procedure ExampleComboBoxClick(Sender: TObject);
     procedure TestSelectorAfterScroll(DataSet: TDataSet);
@@ -63,7 +68,7 @@ implementation
 {$R *.dfm}
 
 uses
-  InstantPersistence, InstantBrokers, InstantConsts;
+  InstantPersistence, InstantBrokers, InstantConsts, InstantTypes;
   
 const
   Examples: array[0..11, 0..1] of string = (
@@ -113,16 +118,31 @@ begin
 end;
 
 procedure TQueryViewForm.ExecuteActionExecute(Sender: TObject);
+var
+  LStartTime: Cardinal;
 begin
-{$IFDEF IO_STATEMENT_LOGGING}
-  TranslatedQueryMemo.Clear;
-{$ENDIF}
-  with TestSelector do
-  begin
-    Close;
-    TestSelector.MaxCount := StrToInt(Trim(MaxCountEdit.text));
-    Command.Text := CommandEdit.Text;
-    Open;
+  LStartTime := GetTickCount;
+  try
+    TestSelector.RequestedLoadMode := TInstantLoadMode(LoadModeComboBox.ItemIndex);
+    {$IFDEF IO_STATEMENT_LOGGING}
+    TranslatedQueryMemo.Clear;
+    {$ENDIF}
+    with TestSelector do
+    begin
+      Close;
+      TestSelector.MaxCount := StrToInt(Trim(MaxCountEdit.Text));
+      Command.Text := CommandEdit.Text;
+      Open;
+      if FetchAllCheckBox.Checked then
+        while not Eof do
+          Next;
+      ResultPageControl.ActivePage := ResultTabSheet;
+    end;
+  finally
+    StatsMemo.Clear;
+    StatsMemo.Lines.Add('Requested load mode: ' + LoadModeComboBox.Items[Ord(TestSelector.RequestedLoadMode)]);
+    StatsMemo.Lines.Add('Actual load mode: ' + LoadModeComboBox.Items[Ord(TestSelector.ActualLoadMode)]);
+    StatsMemo.Lines.Add(Format('Elapsed time: %ns', [(GetTickCount - LStartTime) / 1000.00]));
   end;
 end;
 

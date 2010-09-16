@@ -399,6 +399,8 @@ type
 
   TInstantAbstractObjectClass = class of TInstantAbstractObject;
 
+  TInstantAbstractObjectData = class(TInstantStreamable);
+
   TInstantAbstractObject = class(TInstantStreamable)
   private
     FConnector: TComponent;
@@ -407,7 +409,8 @@ type
     procedure SetConnector(AConnector: TComponent);
   public
     constructor Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
-      Refresh: Boolean = False; AConnector: TComponent = nil); virtual; abstract;
+      Refresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil); virtual; abstract;
   end;
 
   TInstantAbstractAttributeClass = class of TInstantAbstractAttribute;

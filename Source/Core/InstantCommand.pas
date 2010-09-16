@@ -39,7 +39,8 @@ unit InstantCommand;
 interface
 
 uses
-  Classes, SysUtils, Contnrs, InstantClasses, InstantTextFiler, InstantMetadata;
+  Classes, SysUtils, Contnrs, InstantClasses, InstantTextFiler, InstantMetadata,
+  InstantTypes;
 
 type
   TInstantIQLObject = class;
@@ -440,6 +441,8 @@ type
   private
     FCommand: TInstantIQLCommand;
     FCommandText: string;
+    FRequestedLoadMode: TInstantLoadMode;
+    FActualLoadMode: TInstantLoadMode;
     procedure SetCommandText(const Value: string);
     function GetCommand: TInstantIQLCommand;
   protected
@@ -450,9 +453,19 @@ type
     function CreateCommand: TInstantIQLCommand; virtual;
     procedure Translate; virtual;
     property Command: TInstantIQLCommand read GetCommand;
+    procedure SetActualLoadMode(const AValue: TInstantLoadMode);
   public
+    procedure AfterConstruction; override;
     property CommandText: string read FCommandText write SetCommandText;
     property ResultClassName: string read GetResultClassName;
+    // Set this property to request a special load mode for the command.
+    // Not all modes are supported for all kinds of IQL commands,
+    // so setting this property is merely a request, and the actual fulfilment
+    // depends on the particular IQL command.
+    property RequestedLoadMode: TInstantLoadMode read FRequestedLoadMode
+      write FRequestedLoadMode default lmKeysFirst;
+    // Returns the actually used load mode.
+    property ActualLoadMode: TInstantLoadMode read FActualLoadMode;
   end;
 
   TInstantIQLTranslator = class;
@@ -526,7 +539,7 @@ implementation
 
 uses
   StrUtils,
-  InstantPersistence, InstantUtils, InstantConsts, InstantTypes, InstantBrokers;
+  InstantPersistence, InstantUtils, InstantConsts, InstantBrokers;
 
 const
   OperatorTokens: array[TInstantIQLOperatorType] of string = ('=', '>', '<',
@@ -1628,6 +1641,12 @@ end;
 
 { TInstantIQLTranslator }
 
+procedure TInstantIQLCommandTranslator.AfterConstruction;
+begin
+  inherited;
+  FRequestedLoadMode := lmKeysFirst;
+end;
+
 procedure TInstantIQLCommandTranslator.AfterTranslate;
 begin
 end;
@@ -1655,6 +1674,12 @@ end;
 function TInstantIQLCommandTranslator.GetResultClassName: string;
 begin
   Result := '';
+end;
+
+procedure TInstantIQLCommandTranslator.SetActualLoadMode(
+  const AValue: TInstantLoadMode);
+begin
+  FActualLoadMode := AValue;
 end;
 
 procedure TInstantIQLCommandTranslator.SetCommandText(const Value: string);
@@ -1973,7 +1998,10 @@ begin
       if Assigned(FUsingAttribute) then
       begin
         WriteSpace;
-{ TODO -oAndrea Magni : Maybe it would be better to check also TInstantTranslationContext.CriteriaCount, in order to determine if there is already a where condition used to perform join with other tables }
+        { TODO -oAndrea Magni : Maybe it would be better to check also
+          TInstantTranslationContext.CriteriaCount, in order to determine
+          if there is already a where condition used to perform join with
+          other tables }
         if Assigned(FClause) or (not FClassRef.Any) then
           WriteKeyword('AND')
         else

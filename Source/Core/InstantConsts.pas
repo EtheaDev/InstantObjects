@@ -163,6 +163,7 @@ resourcestring
   SSplashScreenTitle = 'InstantObjects - Object Persistence Framework';
   SSQLStatementIndexOutOfBounds = 'SQL statement index out of bounds.';
   SSubqueryMissing = 'Subquery missing';
+  STablePathNotFound = 'Table path %s not found';
   STransactionInProgress = 'Transaction in progress';
   STrueString = 'True';
   SUnableToQueryAttribute = 'Unable to query on attribute %s.%s';
