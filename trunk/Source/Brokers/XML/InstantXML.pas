@@ -43,7 +43,7 @@ interface
 
 uses
   Classes, DB, Contnrs, InstantPersistence, InstantBrokers, InstantCommand,
-  InstantMetadata, InstantTypes;
+  InstantMetadata, InstantTypes, InstantClasses;
 
 const
   XML_UTF8_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
@@ -193,10 +193,10 @@ type
       TInstantAttributeMap;
       ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
         override;
-    procedure InternalRetrieveMap(AObject: TInstantObject; const AObjectId:
-      string;
-      Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction; Info:
-        PInstantOperationInfo); override;
+    procedure InternalRetrieveMap(AObject: TInstantObject;
+      const AObjectId: string; Map: TInstantAttributeMap;
+      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo;
+      const AObjectData: TInstantAbstractObjectData); override;
     procedure InternalStoreMap(AObject: TInstantObject; Map:
       TInstantAttributeMap;
       ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
@@ -325,7 +325,7 @@ procedure GlobalLoadFileList(const Path: string; FileList: TStringList);
 implementation
 
 uses
-  SysUtils, InstantConsts, InstantClasses,
+  SysUtils, InstantConsts,
   TypInfo, InstantXMLCatalog, InstantXMLConnectionDefEdit, InstantUtils,
 {$IFDEF MSWINDOWS}
 {$IFNDEF D6+}
@@ -529,11 +529,13 @@ end;
 
 procedure TInstantXMLResolver.InternalRetrieveMap(AObject: TInstantObject;
   const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
+  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo;
+  const AObjectData: TInstantAbstractObjectData);
 var
   AInfo: TInstantOperationInfo;
   LObjectUpdateCount: Integer;
 begin
+  // This resolver does not support retrieving from any kind of object data.
   if not Assigned(Info) then
   begin
     Info := @AInfo;

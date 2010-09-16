@@ -19,16 +19,16 @@ inherited QueryViewForm: TQueryViewForm
     BorderWidth = 30
     TabOrder = 0
     object CommandLabel: TLabel
-      Left = 32
-      Top = 16
+      Left = 30
+      Top = 14
       Width = 47
       Height = 13
       Caption = '&Command'
       FocusControl = CommandEdit
     end
     object ExampleLabel: TLabel
-      Left = 125
-      Top = 124
+      Left = 315
+      Top = 125
       Width = 40
       Height = 13
       Caption = 'E&xample'
@@ -43,6 +43,14 @@ inherited QueryViewForm: TQueryViewForm
       AutoSize = False
       Caption = '&Max Count:'
       FocusControl = MaxCountEdit
+    end
+    object Label1: TLabel
+      Left = 168
+      Top = 124
+      Width = 26
+      Height = 13
+      Caption = 'Mode'
+      FocusControl = LoadModeComboBox
     end
     object CommandEdit: TMemo
       Left = 30
@@ -61,20 +69,19 @@ inherited QueryViewForm: TQueryViewForm
     object ExecuteButton: TButton
       Left = 30
       Top = 119
-      Width = 75
+      Width = 59
       Height = 25
       Action = ExecuteAction
-      TabOrder = 2
+      TabOrder = 1
     end
     object ExampleComboBox: TComboBox
-      Left = 168
+      Left = 361
       Top = 121
-      Width = 461
+      Width = 268
       Height = 21
       Style = csDropDownList
       DropDownCount = 12
-      ItemHeight = 13
-      TabOrder = 1
+      TabOrder = 4
       OnClick = ExampleComboBoxClick
     end
     object MaxCountEdit: TMaskEdit
@@ -84,8 +91,30 @@ inherited QueryViewForm: TQueryViewForm
       Height = 21
       EditMask = '#########;1; '
       MaxLength = 9
-      TabOrder = 3
+      TabOrder = 5
       Text = '0        '
+    end
+    object LoadModeComboBox: TComboBox
+      Left = 202
+      Top = 121
+      Width = 101
+      Height = 21
+      Style = csDropDownList
+      ItemIndex = 0
+      TabOrder = 3
+      Text = 'Keys First'
+      Items.Strings = (
+        'Keys First'
+        'Full Burst')
+    end
+    object FetchAllCheckBox: TCheckBox
+      Left = 95
+      Top = 124
+      Width = 58
+      Height = 17
+      Alignment = taLeftJustify
+      Caption = 'Fetch All'
+      TabOrder = 2
     end
   end
   object ResultPageControl: TPageControl
@@ -117,6 +146,24 @@ inherited QueryViewForm: TQueryViewForm
       Caption = 'Translated Query'
       ImageIndex = 1
       object TranslatedQueryMemo: TMemo
+        Left = 0
+        Top = 0
+        Width = 764
+        Height = 139
+        Align = alClient
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Courier New'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+      end
+    end
+    object StatsTabSheet: TTabSheet
+      Caption = 'Stats'
+      ImageIndex = 2
+      object StatsMemo: TMemo
         Left = 0
         Top = 0
         Width = 764

@@ -90,11 +90,11 @@ type
   TInstantNavigationalResolverOperation = procedure(AObject: TInstantObject;
     AttributeMetadata: TInstantAttributeMetadata) of object;
 
-
   TInstantCustomRelationalBroker = class(TInstantBroker)
   private
     FStatementCache: TInstantStatementCache;
     FStatementCacheCapacity: Integer;
+    FObjectData: TInstantAbstractObjectData;
     procedure DisposeMap(AObject: TInstantObject; const AObjectId: string;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
       Info: PInstantOperationInfo);
@@ -113,7 +113,7 @@ type
   protected
     property StatementCache: TInstantStatementCache read GetStatementCache;
     function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver;
-    virtual; abstract;
+      virtual; abstract;
     function GetDBMSName: string; virtual;
     function GetSQLDelimiters: string; virtual;
     function GetSQLQuote: Char; virtual;
@@ -121,8 +121,8 @@ type
     function InternalDisposeObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean; override;
     function InternalRetrieveObject(AObject: TInstantObject;
-      const AObjectId: string; ConflictAction: TInstantConflictAction): Boolean;
-      override;
+      const AObjectId: string; ConflictAction: TInstantConflictAction;
+      const AObjectData: TInstantAbstractObjectData = nil): Boolean; override;
     function InternalStoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean; override;
   public
@@ -262,8 +262,8 @@ type
       Info: PInstantOperationInfo); virtual;
     procedure InternalRetrieveMap(AObject: TInstantObject;
       const AObjectId: string; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-      virtual;
+      ConflictAction: TInstantConflictAction; AInfo: PInstantOperationInfo;
+      const AObjectData: TInstantAbstractObjectData = nil); virtual;
     procedure InternalStoreMap(AObject: TInstantObject;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
       Info: PInstantOperationInfo); virtual;
@@ -280,7 +280,8 @@ type
         TInstantConflictAction);
     procedure RetrieveMap(AObject: TInstantObject; const AObjectId: string;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
-      Info: PInstantOperationInfo);
+      Info: PInstantOperationInfo;
+      const AObjectData: TInstantAbstractObjectData = nil);
     procedure StoreMap(AObject: TInstantObject; Map: TInstantAttributeMap;
       ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
     procedure StoreObject(AObject: TInstantObject; Conflict:
@@ -350,8 +351,8 @@ type
       Info: PInstantOperationInfo); override;
     procedure InternalRetrieveMap(AObject: TInstantObject;
       const AObjectId: string; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction;
-      Info: PInstantOperationInfo); override;
+      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo;
+      const AObjectData: TInstantAbstractObjectData = nil); override;
     procedure InternalStoreMap(AObject: TInstantObject;
       Map: TInstantAttributeMap;
       ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
@@ -374,8 +375,8 @@ type
     procedure ReadReference(Attribute: TInstantReference); virtual;
     procedure ReadReferences(Attribute: TInstantReferences); virtual;
     procedure ReadString(Attribute: TInstantString); virtual;
-    procedure ResetAttributes(AObject: TInstantObject;
-      Map: TInstantAttributeMap);
+    procedure ResetAttributes(const AObject: TInstantObject;
+      const AMap: TInstantAttributeMap);
     procedure SetObjectUpdateCount(AObject: TInstantObject; Value: Integer);
     function TranslateError(AObject: TInstantObject; E: Exception): Exception;
       virtual;
@@ -406,7 +407,7 @@ type
     property TableName: string read FTableName;
   end;
 
-  //Backwards compatibility
+  // Backward compatibility
   TInstantResolver = TInstantNavigationalResolver;
 
   TInstantSQLResolver = class(TInstantCustomResolver)
@@ -444,6 +445,12 @@ type
     function GetSelectExternalPartSQL: string;
     function GetDeleteExternalSQL: string;
     function GetInsertExternalSQL: string;
+    procedure ResetAttributes(const AObject: TInstantObject;
+      const AMap: TInstantAttributeMap);
+    procedure RetrieveMapFromDataSet(const AObject: TInstantObject;
+      const AObjectId: string; const AMap: TInstantAttributeMap;
+      ConflictAction: TInstantConflictAction; AInfo: PInstantOperationInfo;
+      const ADataSet: TDataSet);
   protected
     procedure AddAttributeParam(Attribute: TInstantAttribute;
       Params: TParams); virtual;
@@ -458,10 +465,10 @@ type
     procedure InternalDisposeMap(AObject: TInstantObject;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
       Info: PInstantOperationInfo); override;
-    procedure InternalRetrieveMap(AObject: TInstantObject; 
+    procedure InternalRetrieveMap(AObject: TInstantObject;
       const AObjectId: string; Map: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-      override;
+      ConflictAction: TInstantConflictAction; AInfo: PInstantOperationInfo;
+      const AObjectData: TInstantAbstractObjectData = nil); override;
     procedure InternalStoreMap(AObject: TInstantObject;
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
       Info: PInstantOperationInfo); override;
@@ -768,7 +775,6 @@ type
     procedure TranslateCommand; override;
     class function TranslatorClass: TInstantRelationalTranslatorClass; virtual;
   public
-    function CreateTranslator: TInstantRelationalTranslator;
     property Statement: string read GetStatement write SetStatement;
     property Connector: TInstantRelationalConnector read GetConnector;
   end;
@@ -802,6 +808,8 @@ type
     FTablePathList: TStringList;
     FParentContext: TInstantTranslationContext;
     FIdDataType: TInstantDataType;
+    FRequestedLoadMode: TInstantLoadMode;
+    FActualLoadMode: TInstantLoadMode;
     procedure AddJoin(const FromPath, FromField, ToPath, ToField: string);
     function GetClassTablePath: string;
     function GetChildContext(const AIndex: Integer): TInstantTranslationContext;
@@ -835,16 +843,14 @@ type
     procedure Initialize;
     procedure MakeJoins(Path: TInstantIQLPath);
     procedure MakeTablePaths(Path: TInstantIQLPath);
-    function QuoteString(const Str: string): string;
-
     property CriteriaList: TStringList read GetCriteriaList;
     property TablePathList: TStringList read GetTablePathList;
   public
     constructor Create(const AStatement: TInstantIQLObject; const AQuote: Char;
       const ADelimiters: string; const AIdDataType: TInstantDataType;
+      const ARequestedLoadMode: TInstantLoadMode;
       const AParentContext: TInstantTranslationContext = nil);
     destructor Destroy; override;
-
     procedure AfterConstruction; override;
     procedure Clear;
     function AddChildContext(const AContext: TInstantTranslationContext): Integer;
@@ -880,8 +886,18 @@ type
     property TablePathAliases[Index: Integer]: string read GetTablePathAliases;
     property TablePathCount: Integer read GetTablePathCount;
     property TablePaths[Index: Integer]: string read GetTablePaths;
+    function QuoteString(const Str: string): string;
+    // Use this property to ask for a particular load mode, such as a burst mode
+    // in which objects are retrieved in batches saving roundtrips to the
+    // database. Load modes require specific command translation, that's why
+    // this class is involved. This property is set at creation time. The
+    // requested mode might not be supported: read ActualLoadMode to know which
+    // load mode will actually be used for the statement.
+    property RequestedBurstLoadMode: TInstantLoadMode read FRequestedLoadMode;
+    // Equals the value of RequestedLoadMode if the mode is supported for the
+    // particular IQL query. Otherwise it will contain the fallback mode.
+    property ActualLoadMode: TInstantLoadMode read FActualLoadMode;
   end;
-
 
   TInstantRelationalTranslator = class(TInstantQueryTranslator)
   private
@@ -931,7 +947,6 @@ type
   public
     property Context: TInstantTranslationContext read FContext;
     destructor Destroy; override;
-    function QuoteString(const Str: string): string;
     property Query: TInstantCustomRelationalQuery read GetQuery;
   end;
 
@@ -975,7 +990,7 @@ type
     property RowNumber: Integer read GetRowNumber write SetRowNumber;
   end;
 
-  //Backwards compatibility
+  // Backward compatibility
   TInstantRelationalQuery = TInstantNavigationalQuery;
 
   TInstantSQLQuery = class(TInstantCustomRelationalQuery)
@@ -987,7 +1002,7 @@ type
     function GetObjectReferenceCount: Integer;
     function GetObjectReferenceList: TInstantObjectReferenceList;
     function GetParamsObject: TParams;
-    procedure InitObjectReferences(DataSet: TDataSet);
+    procedure InitObjectReferences(const ADataSet: TDataSet);
   protected
     function GetActive: Boolean; override;
     function AcquireDataSet(const AStatement: string; AParams: TParams):
@@ -1032,6 +1047,16 @@ type
   published
     property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt
       default True;
+  end;
+
+  // Holds object data in the current record of a dataset specified upon
+  // creation. Used in burst load mode.
+  TInstantDataSetObjectData = class(TInstantAbstractObjectData)
+  private
+    FDataSet: TDataSet;
+  public
+    constructor CreateAndInit(const ADataSet: TDataSet);
+    property DataSet: TDataSet read FDataSet;
   end;
 
 var
@@ -1208,10 +1233,19 @@ end;
 
 function TInstantCustomRelationalBroker.InternalRetrieveObject(
   AObject: TInstantObject; const AObjectId: string;
-  ConflictAction: TInstantConflictAction): Boolean;
+  ConflictAction: TInstantConflictAction;
+  const AObjectData: TInstantAbstractObjectData = nil): Boolean;
 begin
-  Result := PerformOperation(AObject, AObjectId, otRetrieve, RetrieveMap,
-    ConflictAction);
+  // RetrieveMap will use this as an implicit argument.
+  // Making it explicit is too cumbersome since no other TInstantBrokerOperation
+  // needs it.
+  FObjectData := AObjectData;
+  try
+    Result := PerformOperation(AObject, AObjectId, otRetrieve, RetrieveMap,
+      ConflictAction);
+  finally
+    FObjectData := nil;
+  end;
 end;
 
 function TInstantCustomRelationalBroker.InternalStoreObject(
@@ -1280,7 +1314,7 @@ procedure TInstantCustomRelationalBroker.RetrieveMap(AObject: TInstantObject;
   const AObjectId: string; Map: TInstantAttributeMap;
   ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
 begin
-  EnsureResolver(Map).RetrieveMap(AObject, AObjectId, Map, ConflictAction, Info);
+  EnsureResolver(Map).RetrieveMap(AObject, AObjectId, Map, ConflictAction, Info, FObjectData);
 end;
 
 procedure TInstantCustomRelationalBroker.SetStatementCacheCapacity(const Value: Integer);
@@ -1776,7 +1810,8 @@ end;
 procedure TInstantCustomResolver.InternalRetrieveMap(
   AObject: TInstantObject; const AObjectId: string;
   Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
-  Info: PInstantOperationInfo);
+  AInfo: PInstantOperationInfo;
+  const AObjectData: TInstantAbstractObjectData = nil);
 begin
 end;
 
@@ -1801,9 +1836,10 @@ end;
 
 procedure TInstantCustomResolver.RetrieveMap(AObject: TInstantObject;
   const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
+  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo;
+  const AObjectData: TInstantAbstractObjectData = nil);
 begin
-  InternalRetrieveMap(AObject, AObjectId, Map, ConflictAction, Info);
+  InternalRetrieveMap(AObject, AObjectId, Map, ConflictAction, Info, AObjectData);
 end;
 
 procedure TInstantCustomResolver.StoreMap(AObject: TInstantObject;
@@ -2125,10 +2161,12 @@ end;
 
 procedure TInstantNavigationalResolver.InternalRetrieveMap(
   AObject: TInstantObject; const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
+  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo;
+  const AObjectData: TInstantAbstractObjectData = nil);
 var
   AInfo: TInstantOperationInfo;
 begin
+  // This resolver doesn't support retrieving from any kind of TInstantAbstractObjectData.
   if not Assigned(Info) then
     Info := @AInfo;
   Open;
@@ -2142,7 +2180,8 @@ begin
         FieldByName(InstantUpdateCountFieldName).AsInteger);
     end;
     PerformOperation(AObject, Map, ReadAttribute);
-  end else
+  end
+  else
     ResetAttributes(AObject, Map);
 end;
 
@@ -2464,10 +2503,10 @@ begin
   AObject.AttributeByName(AttributeMetadata.Name).Reset;
 end;
 
-procedure TInstantNavigationalResolver.ResetAttributes(AObject: TInstantObject;
-  Map: TInstantAttributeMap);
+procedure TInstantNavigationalResolver.ResetAttributes(
+  const AObject: TInstantObject; const AMap: TInstantAttributeMap);
 begin
-  PerformOperation(AObject, Map, ResetAttribute);
+  PerformOperation(AObject, AMap, ResetAttribute);
 end;
 
 procedure TInstantNavigationalResolver.SetDataSet(Value: TDataset);
@@ -3319,45 +3358,43 @@ begin
   end;
 end;
 
+procedure TInstantSQLResolver.ResetAttributes(const AObject: TInstantObject;
+  const AMap: TInstantAttributeMap);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(AMap.Count) do
+    AObject.AttributeByName(AMap[I].Name).Reset;
+end;
+
 procedure TInstantSQLResolver.InternalRetrieveMap(AObject: TInstantObject;
   const AObjectId: string; Map: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; Info: PInstantOperationInfo);
-
-  procedure ResetAttributes;
-  var
-    I: Integer;
-  begin
-    for I := 0 to Pred(Map.Count) do
-      AObject.AttributeByName(Map[I].Name).Reset
-  end;
-
+  ConflictAction: TInstantConflictAction; AInfo: PInstantOperationInfo;
+  const AObjectData: TInstantAbstractObjectData = nil);
 var
-  DataSet: TDataSet;
-  Params: TParams;
-  AInfo: TInstantOperationInfo;
+  LDataSet: TDataSet;
+  LParams: TParams;
 begin
-  if not Assigned(Info) then
-    Info := @AInfo;
-  Params := TParams.Create;
-  try
-    AddBaseParams(Params, AObject.ClassName, AObjectId);
-    DataSet := Broker.AcquireDataSet(SelectSQL, Params);
+  // This resolver supports retrieving data from TInstantDataSetObjectData.
+  if Assigned(AObjectData) and (AObjectData is TInstantDataSetObjectData) then
+    RetrieveMapFromDataSet(AObject, AObjectId, Map, ConflictAction, AInfo,
+      TInstantDataSetObjectData(AObjectData).DataSet)
+  else
+  begin
+    LParams := TParams.Create;
     try
-      DataSet.Open;
-      Info.Success := not DataSet.EOF;
-      Info.Conflict := not Info.Success;
-      if Info.Success then
-      begin
-        if Map.IsRootMap then
-          Broker.SetObjectUpdateCount(AObject, DataSet.FieldByName(InstantUpdateCountFieldName).AsInteger);
-        ReadAttributes(AObject, AObjectId, Map, DataSet);
-      end else
-        ResetAttributes;
+      AddBaseParams(LParams, AObject.ClassName, AObjectId);
+      LDataSet := Broker.AcquireDataSet(SelectSQL, LParams);
+      try
+        LDataSet.Open;
+        RetrieveMapFromDataSet(AObject, AObjectId, Map, ConflictAction,
+          AInfo, LDataSet);
+      finally
+        Broker.ReleaseDataSet(LDataSet);
+      end;
     finally
-      Broker.ReleaseDataSet(DataSet);
+      LParams.Free;
     end;
-  finally
-    Params.Free;
   end;
 end;
 
@@ -3844,6 +3881,31 @@ begin
   Param := Params.FindParam(PersistentIdParamName);
   if Assigned(Param) then
     Params.Delete(Param.Index);
+end;
+
+procedure TInstantSQLResolver.RetrieveMapFromDataSet(const AObject: TInstantObject;
+  const AObjectId: string; const AMap: TInstantAttributeMap;
+  ConflictAction: TInstantConflictAction; AInfo: PInstantOperationInfo;
+  const ADataSet: TDataSet);
+var
+  LInfo: TInstantOperationInfo;
+begin
+  Assert(Assigned(AObject));
+  Assert(Assigned(ADataSet));
+
+  if not Assigned(AInfo) then
+    AInfo := @LInfo;
+
+  AInfo.Success := not ADataSet.Eof;
+  AInfo.Conflict := not AInfo.Success;
+  if AInfo.Success then
+  begin
+    if AMap.IsRootMap then
+      Broker.SetObjectUpdateCount(AObject, ADataSet.FieldByName(InstantUpdateCountFieldName).AsInteger);
+    ReadAttributes(AObject, AObjectId, AMap, ADataSet);
+  end
+  else
+    ResetAttributes(AObject, AMap);
 end;
 
 function TInstantSQLResolver.TranslateError(AObject: TInstantObject;
@@ -4980,11 +5042,6 @@ end;
 
 { TInstantCustomRelationalQuery }
 
-function TInstantCustomRelationalQuery.CreateTranslator: TInstantRelationalTranslator;
-begin
-  Result := TranslatorClass.Create(Self);
-end;
-
 function TInstantCustomRelationalQuery.GetConnector: TInstantRelationalConnector;
 begin
   Result := inherited Connector as TInstantRelationalConnector;
@@ -5067,8 +5124,10 @@ begin
   begin
     LTranslator := TranslatorClass.Create(Self);
     try
+      LTranslator.RequestedLoadMode := RequestedLoadMode;
       LTranslator.CommandText := Command;
       Statement := LTranslator.StatementText;
+      SetActualLoadMode(LTranslator.ActualLoadMode);
     finally
       LTranslator.Free;
     end;
@@ -5119,7 +5178,8 @@ begin
     Exit;
 
   FContext := TInstantTranslationContext.Create(Command, Quote,
-    Delimiters, Connector.IdDataType);
+    Delimiters, Connector.IdDataType, RequestedLoadMode);
+  SetActualLoadMode(FContext.ActualLoadMode);
 end;
 
 procedure TInstantRelationalTranslator.Clear;
@@ -5204,11 +5264,6 @@ function TInstantRelationalTranslator.IsPrimary(
 begin
   Result := Assigned(AObject) and Assigned(Command) and
     ((AObject = Command) or (AObject.Owner = Command));
-end;
-
-function TInstantRelationalTranslator.QuoteString(const Str: string): string;
-begin
-  Result := InstantQuote(Str, Quote);
 end;
 
 function TInstantRelationalTranslator.ReplaceWildcard(
@@ -5315,7 +5370,7 @@ begin
     begin
       S := InstantUnquote(S, S[1]);
       S := ReplaceWildCard(S);
-      Writer.WriteString(QuoteString(S));
+      Writer.WriteString(Context.QuoteString(S));
       Result := True;
     end else
       Result := False;
@@ -5442,10 +5497,43 @@ function TInstantRelationalTranslator.TranslateSpecifier(
     end;
   end;
 
+  procedure WriteAllFields(Writer: TInstantIQLWriter;
+    const AContext: TInstantTranslationContext);
+  var
+    LMapIndex, LAttrIndex: Integer;
+    LAttrMeta: TInstantAttributeMetadata;
+    LTablePath, LFieldName: string;
+  begin
+    for LMapIndex := 0 to AContext.ObjectClassMetadata.StorageMaps.Count - 1 do
+    begin
+      for LAttrIndex := 0 to AContext.ObjectClassMetadata.StorageMaps[LMapIndex].Count - 1 do
+      begin
+        LAttrMeta := AContext.ObjectClassMetadata.StorageMaps[LMapIndex][LAttrIndex];
+        if ((LAttrMeta.AttributeType = atPart) and (LAttrMeta.StorageKind = skExternal))
+          or (LAttrMeta.AttributeType = atReference) then
+        begin
+          // External part and reference attribute are treated akin:
+          // select Class and Id fields.
+          if Assigned(AContext.PathToTarget(LAttrMeta.FieldName, LTablePath, LFieldName)) then
+            Writer.WriteString(Format(', %s, %s', [
+              AContext.Qualify(LTablePath, LFieldName + InstantClassFieldName),
+              AContext.Qualify(LTablePath, LFieldName + InstantIdFieldName)]));
+        end
+        else if (LAttrMeta.AttributeType in [atParts, atReferences])
+          and (LAttrMeta.StorageKind = skExternal) then
+          // No fields needed for external containers.
+        else
+          // Select all other fields.
+          Writer.WriteString(Format(', %s', [AContext.QualifyPath(LAttrMeta.FieldName)]));
+      end;
+    end;
+  end;
+
 var
   ClassQual, IdQual, PathText: string;
   LContext: TInstantTranslationContext;
   LSubQuery: TInstantIQLSubquery;
+  LTablePath, LDummyFieldName: string;
 begin
   Result := Assigned(Specifier) and Assigned(Writer);
   if Result then
@@ -5459,17 +5547,30 @@ begin
 
     if Specifier.Operand is TInstantIQLPath then
     begin
+      // This branch handles SELECT * FROM
       PathText := TInstantIQLPath(Specifier.Operand).Text;
       ClassQual := LContext.QualifyPath(ConcatPath(PathText, InstantClassFieldName));
       IdQual := LContext.QualifyPath(ConcatPath(PathText, InstantIdFieldName));
     end else
     begin
+      // This branch handles SELECT <attribute> FROM
       ClassQual := LContext.QualifyPath(InstantClassFieldName);
       IdQual := LContext.QualifyPath(InstantIdFieldName);
     end;
     Writer.WriteString(Format('%s AS %s, %s AS %s', [ClassQual,
       InstantClassFieldName, IdQual, InstantIdFieldName]));
-    if IncludeOrderFields then
+
+    // Mind that LContext.ActualBurstLoadMode might be different than
+    // Self.RequestedBurstLoadMode.
+    if LContext.ActualLoadMode = lmFullBurst then
+    begin
+      // Use the Id just to get the table path needed to add the updatecount
+      // field. We could use anything we know is in the main table.
+      LContext.PathToTarget(InstantIdFieldName, LTablePath, LDummyFieldName);
+      Writer.WriteString(Format(', %s', [LContext.Qualify(LTablePath, InstantUpdateCountFieldName)]));
+      WriteAllFields(Writer, LContext);
+    end
+    else if IncludeOrderFields then
       WriteOrderFields(Writer);
   end;
 end;
@@ -5875,30 +5976,50 @@ begin
   Result := FStatement;
 end;
 
-procedure TInstantSQLQuery.InitObjectReferences(DataSet: TDataSet);
-var
-  ObjRef: TInstantObjectReference;
-begin
-  if Assigned(DataSet) then
+procedure TInstantSQLQuery.InitObjectReferences(const ADataSet: TDataSet);
+
+  function IsBurstLoadModeDataSet(const ADataSet: TDataSet): Boolean;
   begin
-    DataSet.DisableControls;
+    // A trick to check if the dataset that came from the broker is actually
+    // a burst load mode dataset. Requesting burst load mode does not guarantee
+    // to get it, as not all IQL query types support it yet.
+    Result := Assigned(ADataSet.FindField(InstantUpdateCountFieldName));
+  end;
+
+var
+  LObjRef: TInstantObjectReference;
+  LObjData: TInstantDataSetObjectData;
+begin
+  LObjData := nil;
+  if Assigned(ADataSet) then
+  begin
+    ADataSet.DisableControls;
     try
-      while not DataSet.Eof do
-      begin
-        ObjRef := ObjectReferenceList.Add;
-        try
-          ObjRef.ReferenceObject(
-            DataSet.FieldByName(InstantClassFieldName).AsString,
-            DataSet.FieldByName(InstantIdFieldName).AsString);
-        except
-          ObjRef.Free;
-          raise;
+      if IsBurstLoadModeDataSet(ADataSet) then
+        LObjData := TInstantDataSetObjectData.CreateAndInit(ADataSet);
+      try
+        while not ADataSet.Eof do
+        begin
+          LObjRef := ObjectReferenceList.Add;
+          try
+            LObjRef.ReferenceObject(
+              ADataSet.FieldByName(InstantClassFieldName).AsString,
+              ADataSet.FieldByName(InstantIdFieldName).AsString);
+            if Assigned(LObjData) then
+              LObjRef.RetrieveObjectFromObjectData(LObjData);
+          except
+            LObjRef.Free;
+            raise;
+          end;
+          if (MaxCount > 0) and (ObjectReferenceList.Count = MaxCount) then
+            Break;
+          ADataSet.Next;
         end;
-        if (MaxCount > 0) and (ObjectReferenceList.Count = MaxCount) then break;
-        DataSet.Next;
+      finally
+        FreeAndNil(LObjData);
       end;
     finally
-      DataSet.EnableControls;
+      ADataSet.EnableControls;
     end;
   end;
 end;
@@ -6075,6 +6196,7 @@ end;
 constructor TInstantTranslationContext.Create(
   const AStatement: TInstantIQLObject; const AQuote: Char;
   const ADelimiters: string; const AIdDataType: TInstantDataType;
+  const ARequestedLoadMode: TInstantLoadMode;
   const AParentContext: TInstantTranslationContext = nil);
 begin
   inherited Create;
@@ -6087,6 +6209,7 @@ begin
   FQuote := AQuote;
   FDelimiters := ADelimiters;
   FIdDataType := AIdDataType;
+  FRequestedLoadMode := ARequestedLoadMode;
 
   Initialize;
 end;
@@ -6094,8 +6217,15 @@ end;
 function TInstantTranslationContext.CreateChildContext(
   const AStatement: TInstantIQLObject): TInstantTranslationContext;
 begin
+  // Child contexts (such as subqueries) don't translate queries for
+  // burst load modes, for the time being.
+  // That's because subqueries now are only used in the EXISTS() function,
+  // and for this case there's nothing to be gained (and a performance
+  // penalty as well) in constructing a burst load mode enabled subquery.
+  // This decision might be revisited in the future if child contexts
+  // are used for other things.
   Result := TInstantTranslationContext.Create(AStatement, Quote, Delimiters,
-    IdDataType, Self);
+    IdDataType, lmKeysFirst, Self);
 end;
 
 destructor TInstantTranslationContext.Destroy;
@@ -6299,22 +6429,41 @@ procedure TInstantTranslationContext.Initialize;
     end;
 
   var
-   TablePath: string;
-   Path: TInstantIQLPath;
+    LTablePath: string;
+    LPath: TInstantIQLPath;
+    LClassMeta: TInstantClassMetadata;
   begin
     if ClassRef.Any then
-      TablePath := ObjectClassMetadata.TableName
-    else begin
-      Path := FindAttributePath;
-      if Assigned(Path) then
-        TablePath := PathToTablePath(Path.Attributes[0])
+      LTablePath := ObjectClassMetadata.TableName
+    else
+    begin
+      LPath := FindAttributePath;
+      if Assigned(LPath) then
+        LTablePath := PathToTablePath(LPath.Attributes[0])
       else
-        TablePath := ObjectClassMetadata.TableName;
+        LTablePath := ObjectClassMetadata.TableName;
     end;
-    AddTablePath(TablePath);
+    AddTablePath(LTablePath);
+    if ActualLoadMode = lmFullBurst then
+    begin
+      // Standard mode only adds the main table when needed, and not always.
+      // A possible optimization would be to add it only if it does actually
+      // have attributes we select. For now let's add it by default as it
+      // covers almost all cases.
+      AddTablePath(TableName);
+      LClassMeta := ObjectClassMetadata.Parent;
+      while Assigned(LClassMeta) do
+      begin
+        AddTablePath(LClassMeta.TableName);
+        LClassMeta := LClassMeta.Parent;
+      end;
+    end;
   end;
 
   procedure InitCommandCriterias;
+  var
+    LClassMeta: TInstantClassMetadata;
+    LTableName: string;
   begin
     if not ClassRef.Any then
       AddCriteria(Format('%s = %s',
@@ -6329,6 +6478,20 @@ procedure TInstantTranslationContext.Initialize;
       else
         AddCriteria(Format('%s <> 0',
           [QualifyPath(ConcatPath(Specifier.Text, InstantIdFieldName))]));
+    end;
+    if ActualLoadMode = lmFullBurst then
+    begin
+      LClassMeta := ObjectClassMetadata.Parent;
+      while Assigned(LClassMeta) do
+      begin
+        LTableName := LClassMeta.TableName;
+        if LTableName <> TableName then
+        begin
+          AddJoin(TableName, InstantClassFieldName, LTableName, InstantClassFieldName);
+          AddJoin(TableName, InstantIdFieldName, LTableName, InstantIdFieldName);
+        end;
+        LClassMeta := LClassMeta.Parent;
+      end;
     end;
   end;
 
@@ -6346,6 +6509,18 @@ begin
     ClassRef := TInstantIQLSubquery(FStatement).ClassRef;
     Specifier := TInstantIQLSubquery(FStatement).Specifier;
   end;
+
+  { TODO : supporting ANY in burst load mode would mean collect
+    all descendant classes in the model and left join to all tables,
+    which is complicated to do and would probably be inefficient as well.
+    A better approach would be to perform N queries, one for each
+    concrete class, and combine the resulting sets. This would require
+    some big refactoring and is left for the future. For now, we don't
+    support burst load mode for ANY statements. }
+  if Classref.Any then
+    FActualLoadMode := lmKeysFirst
+  else
+    FActualLoadMode := FRequestedLoadMode;
 
   PathList := TList.Create;
   try
@@ -6424,8 +6599,7 @@ begin
   for I := 0 to Pred(Path.AttributeCount) do
   begin
     TablePath := PathToTablePath(Path.SubPath[I]);
-    if IndexOfTablePath(TablePath) = -1 then
-      AddTablePath(TablePath);
+    AddTablePath(TablePath);
   end;
 end;
 
@@ -6563,8 +6737,13 @@ end;
 
 function TInstantTranslationContext.TablePathToAlias(
   const TablePath: string): string;
+var
+  LIndex: Integer;
 begin
-  Result := TablePathAliases[IndexOfTablePath(TablePath)];
+  LIndex := IndexOfTablePath(TablePath);
+  if LIndex < 0 then
+    raise EInstantError.CreateFmt(STablePathNotFound, [TablePath]);
+  Result := TablePathAliases[LIndex];
 end;
 
 function TInstantTranslationContext.WriteCriterias(Writer: TInstantIQLWriter;
@@ -6599,6 +6778,15 @@ begin
     Writer.WriteString(Format('%s %s',[InstantEmbrace(
       ExtractTarget(TablePaths[I]), Delimiters), TablePathAliases[I]]));
   end;
+end;
+
+{ TInstantDataSetObjectData }
+
+constructor TInstantDataSetObjectData.CreateAndInit(const ADataSet: TDataSet);
+begin
+  Assert(Assigned(ADataSet));
+  Create;
+  FDataSet := ADataSet;
 end;
 
 end.

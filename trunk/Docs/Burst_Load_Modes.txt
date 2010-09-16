@@ -1,0 +1,73 @@
+Burst Load Mode
+Nando Dessena, 14/09/2010
+
+What is it
+----------
+
+Burst Load Mode is an alternative way of retrieving objects in InstantObjects' SQL brokers. This new mode can be selected on a case by case basis by setting the new RequestedLoadMode property of an InstantSelector or InstantQuery to the value lmFullBurst.
+
+What does it do
+---------------
+
+When IO retrieves a set of objects through a SQL broker, the order of operations is as follows:
+1) Execute a select statement (we'll call it the primary query) that retrieves the primary keys of all objects selected by the IQL command.
+2) Fetch all records (up to MaxCount).
+3) For each record accessed, materialize the object. This implies executing one or more select statements to get all object data (main object query), containers and references (accessory queries). External storage implies more queries. The main query joins all the tables for the given class and ancestors.
+
+Burst Load Mode causes these changes:
+1) The primary query retrieves all object data, and not just the primary keys.
+2) All objects are materialized (up to MaxCount) from the obtained data set; this causes the execution of all accessory and external queries that in the standard case are executed at point 3, minus the main query, which is not needed anymore.
+
+This means that Burst Load Mode is much quicker when retrieving a dataset, whereas standard mode is best at getting the first records.
+
+When it is used
+--------------- 
+
+Burst Load Mode is well suited for all cases in which objects are selected (typically through an IQL command with a WHERE clause) to be processed. If the entire dataset is going to be fetched and all records visited anyway, then it's much quicker to do it in Burst Load Mode.
+
+The standard way is more of the "lazy load" kind, and as such it is more suited for when a list of objects is displayed for browsing, typically in a DBGrid, and not all objects are needed but just one or a few are selected to work with. In this case displaying the first records in the grid is much quicker in standard mode.
+
+Performance notes
+-----------------
+
+Here are some quick benchmarks done with the example queries of PrimerExternal. Operations timed include Open and Last (to ensure full fetching) on a selector. Datasets are small (a couple dozen records). The database is a local Firebird server and the compiler is Delphi 2010. All caches were flushed at each iteration. Three iterations for each test. Times in seconds.
+
+SELECT * FROM TCompany
+
+Burst	Standard
+2.1	  3.5
+2.0	  3.7
+2.4	  3.7
+		
+SELECT * FROM TPerson
+
+Burst	Standard
+4.8	  6.7
+4.6	  7.0
+4.7	  6.8
+
+A further test that fetches and materializes many more objects (in the thousands) shows where the gains are in Burst Load Mode. In this test all records are visited and materialized upon opening the selector (Open; while not Eof do Next;):
+
+SELECT * FROM TCompany
+
+Burst Standard
+54.7  104.0
+
+Without the fetches, that is just opening the selector and letting some 20 materialized objects populate the DBGrid, the results are:
+
+SELECT * FROM TCompany
+
+Burst Standard
+35.0  1.2
+
+This tells us that using burst mode when not appropriate can hurt performance, which suggests to keep it disabled by default and only enable it on request (property BurstLoad: Boolean default False). 
+
+Caveats and future improvements
+-------------------------------
+
+- Currently Burst Load Mode is not supported for IQL commands using the ANY keywords. Doing so will require some significant refactorings and was postponed.
+
+- External atPart and all atReference attributes still need separate queries. It is difficult but not impossible to get them in the first query as well, thus reducing fetch time even more.  
+
+- A mixture of standard and Burst Load Mode looks interesting, and the work done on Burst Load Mode makes it easier to implement it. This mixture would be a standard mode in which one or more specified attributes are fetched as well as the primary keys in the main query. This would allow to display a list of objects in a DBGrid, or other multi-record control, without materializing them, as quickly as whendoing direct SQL queries. Thought should be given to design details such as when where and how to specify the attributes that should be loaded together with the primary key. The value lmPartialBurst is reserved for this.
+    

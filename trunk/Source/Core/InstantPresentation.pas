@@ -40,7 +40,7 @@ interface
 {$ENDIF}
 
 uses
-  Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, 
+  Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantTypes,
   InstantMetadata, InstantUtils;
 
 type
@@ -661,6 +661,7 @@ type
     FParamCheck: Boolean;
     FParams: TParams;
     FQuery: TInstantQuery;
+    FRequestedLoadMode: TInstantLoadMode;
     procedure CommandChanged(Sender: TObject);
     procedure DestroyQuery;
     function GetCommand: TStringList;
@@ -673,6 +674,7 @@ type
     procedure SetMaxCount(const Value: Integer);
     procedure SetParams(Value: TParams);
     procedure WriteParamData(Writer: TWriter);
+    function GetActualLoadMode: TInstantLoadMode;
   protected
     { IProviderSupport }
     procedure PSEndTransaction(Commit: Boolean); override;
@@ -698,8 +700,11 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     property ObjectClass;
+    property ActualLoadMode: TInstantLoadMode read GetActualLoadMode;
   published
     property AutoOpen: Boolean read FAutoOpen write FAutoOpen default False;
+    property RequestedLoadMode: TInstantLoadMode
+      read FRequestedLoadMode write FRequestedLoadMode default lmKeysFirst;
     property Command: TStringList read GetCommand write SetCommand;
     property Connector: TInstantConnector read GetConnector write SetConnector;
     property MaxCount: Integer read FMaxCount write SetMaxCount default 0;
@@ -772,7 +777,7 @@ uses
      FmtBcd,
   {$ENDIF} InstantClasses,
   InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors,
-  InstantTypes, DbConsts;
+  DbConsts;
 
 const
   SelfFieldName = 'Self';
@@ -4709,6 +4714,7 @@ begin
   inherited;
   NestedDataSetClass := TInstantExposer;
   ParamCheck := True;
+  FRequestedLoadMode := lmKeysFirst;
 end;
 
 procedure TInstantSelector.DefineProperties(Filer: TFiler);
@@ -4738,6 +4744,11 @@ procedure TInstantSelector.DestroyQuery;
 begin
   DestroyAccessor;
   FreeAndNil(FQuery);
+end;
+
+function TInstantSelector.GetActualLoadMode: TInstantLoadMode;
+begin
+  Result := Query.ActualLoadMode;
 end;
 
 function TInstantSelector.GetCommand: TStringList;
@@ -4774,6 +4785,7 @@ begin
     else
       FQuery := Connector.CreateQuery;
     FQuery.MaxCount := MaxCount;
+    FQuery.RequestedLoadMode := RequestedLoadMode;
     if not (csReading in ComponentState) then
       FQuery.Command := Command.Text;
   end;

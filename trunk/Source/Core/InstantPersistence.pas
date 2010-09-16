@@ -140,6 +140,9 @@ type
       AObjectId: string); overload;
     procedure ReferenceObject(AObjectClass: TInstantObjectClass;
       const AObjectId: string); overload;
+    // Retrieves the referenced object from the specified data object.
+    // Used in burst load mode to get the data already fetched in a dataset.
+    procedure RetrieveObjectFromObjectData(const AObjectData: TInstantAbstractObjectData);
     procedure WriteAsObject(Writer: TInstantWriter); virtual;
     property Instance: TInstantObject read GetInstance write SetInstance;
     property ObjectClass: TInstantObjectClass read GetObjectClass;
@@ -905,7 +908,8 @@ type
       AConnector: TInstantConnector = nil); overload; virtual;
     constructor Create(AConnector: TInstantConnector = nil); virtual;
     constructor Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
-        Refresh: Boolean = False; AConnector: TComponent = nil); override;
+        ARefresh: Boolean = False; AConnector: TComponent = nil;
+        const AObjectData: TInstantAbstractObjectData = nil); override;
     function AddObject(AObject: TInstantObject): Integer; overload;
     function AddRef: Integer;
     procedure Assign(Source: TPersistent); override;
@@ -1070,8 +1074,8 @@ type
     function Find(const AObjectId: string): TInstantObject;
     procedure ObjectDestroyed(AObject: TInstantObject);
     procedure RefreshObject(AObject: TInstantObject);
-    function RetrieveObject(const AObjectId: string; AObject: TInstantObject):
-      Boolean;
+    function RetrieveObject(const AObjectId: string; const AObject: TInstantObject;
+      const AObjectData: TInstantAbstractObjectData = nil): Boolean;
     procedure StoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction);
     property Connector: TInstantConnector read FConnector write FConnector;
@@ -1142,6 +1146,9 @@ type
     FCommand: string;
     FConnector: TInstantConnector;
     FMaxCount: Integer;
+    FRequestedLoadMode: TInstantLoadMode;
+    FActualLoadMode: TInstantLoadMode;
+    FLoadMode: TInstantLoadMode;
     function GetConnector: TInstantConnector;
     function GetObjectCount: Integer;
     function GetObjects(Index: Integer): TObject;
@@ -1167,6 +1174,7 @@ type
     procedure SetParams(Value: TParams); virtual;
     procedure TranslateCommand; virtual;
     function InternalGetObjectReferenceId(Index: Integer) : string; virtual;
+    procedure SetActualLoadMode(const AValue: TInstantLoadMode);
   public
     constructor Create(AConnector: TInstantConnector); virtual;
     function AddObject(AObject: TObject): Integer;
@@ -1190,6 +1198,9 @@ type
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property Params: TParams read GetParams write SetParams;
+    property RequestedLoadMode: TInstantLoadMode read FLoadMode write FLoadMode
+      default lmKeysFirst;
+    property ActualLoadMode: TInstantLoadMode read FActualLoadMode;
   end;
 
   EInstantConflict = class(EInstantError)
@@ -1358,8 +1369,8 @@ type
     function InternalDisposeObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
     function InternalRetrieveObject(AObject: TInstantObject;
-      const AObjectId: string; ConflictAction: TInstantConflictAction):
-      Boolean; virtual; abstract;
+      const AObjectId: string; ConflictAction: TInstantConflictAction;
+      const AObjectData: TInstantAbstractObjectData = nil): Boolean; virtual; abstract;
     function InternalStoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean; virtual; abstract;
   public
@@ -1392,7 +1403,8 @@ type
     // and calling ReadDatabaseSchema will raise an exception.
     function IsCatalogSupported: Boolean;
     function RetrieveObject(AObject: TInstantObject; const AObjectId: string;
-      ConflictAction: TInstantConflictAction): Boolean;
+      ConflictAction: TInstantConflictAction;
+      const AObjectData: TInstantAbstractObjectData = nil): Boolean;
     procedure SetObjectUpdateCount(AObject: TInstantObject; Value: Integer);
     function StoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean;
@@ -1620,7 +1632,7 @@ uses
 {$IFDEF D14+}
   RTTI, InstantRttiAttributes,
 {$ENDIF}
-  InstantUtils, {InstantRtti, }InstantDesignHook, InstantCode;
+  InstantUtils, InstantDesignHook, InstantCode;
 
 var
   ConnectorClasses: TList;
@@ -2116,7 +2128,7 @@ begin
 end;
 
 procedure TInstantObjectReference.DoAssignInstance(AInstance: TInstantObject;
-    AOwnsInstance: Boolean);
+  AOwnsInstance: Boolean);
 begin
   if FInstance <> AInstance then
   begin
@@ -2224,6 +2236,21 @@ begin
     FObjectClassName := AObjectClassName;
     FObjectId := AObjectId;
   end;
+end;
+
+procedure TInstantObjectReference.RetrieveObjectFromObjectData(
+  const AObjectData: TInstantAbstractObjectData);
+var
+  LObject: TInstantObject;
+begin
+  Assert(Assigned(AObjectData));
+
+  LObject := ObjectClass.Retrieve(ObjectId, False, False, nil, AObjectData);
+  DoAssignInstance(LObject, True);
+  if Assigned(FInstance) then
+    FInstance.Release
+  else
+    Integer(FInstance) := -1;
 end;
 
 procedure TInstantObjectReference.ReferenceObject(
@@ -6730,7 +6757,8 @@ end;
 
 {$O-}
 constructor TInstantObject.Retrieve(const AObjectId: string; CreateIfMissing:
-    Boolean = False; Refresh: Boolean = False; AConnector: TComponent = nil);
+  Boolean = False; ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil);
 
   procedure RetrieveDenied;
   begin
@@ -6743,18 +6771,23 @@ var
   VerificationResult: TInstantVerificationResult;
 begin
   inherited Create;
+
   InstantCheckConnector(TInstantConnector(AConnector));
   SetConnector(TInstantConnector(AConnector));
+
   Instance := ObjectStore.Find(AObjectId);
   if Assigned(Instance) then
   begin
     inherited FreeInstance;
-    Self := Instance;
+    Self := Instance as TInstantObject;
     AddRef;
-  end else
+    if ARefresh then
+      Refresh;
+  end
+  else
   begin
     Init;
-    Exists := ObjectStore.RetrieveObject(AObjectId, Self);
+    Exists := ObjectStore.RetrieveObject(AObjectId, Self, AObjectData);
     VerificationResult := VerifyOperation(otRetrieve);
     case VerificationResult of
       vrAbort:
@@ -7529,7 +7562,8 @@ begin
 end;
 
 function TInstantObjectStore.RetrieveObject(const AObjectId: string;
-  AObject: TInstantObject): Boolean;
+  const AObject: TInstantObject;
+  const AObjectData: TInstantAbstractObjectData = nil): Boolean;
 begin
   Result := Assigned(AObject) and AObject.Metadata.IsStored;
   if not Result then
@@ -7538,7 +7572,7 @@ begin
   try
     AObject.DisableChanges;
     try
-      Result := Broker.RetrieveObject(AObject, AObjectId, caFail);
+      Result := Broker.RetrieveObject(AObject, AObjectId, caFail, AObjectData);
       if Result then
         AObject.SetPersistentId(AObjectId)
       else begin
@@ -7875,6 +7909,11 @@ begin
       Open
     else
       Close;
+end;
+
+procedure TInstantQuery.SetActualLoadMode(const AValue: TInstantLoadMode);
+begin
+  FActualLoadMode := AValue;
 end;
 
 procedure TInstantQuery.SetCommand(const Value: string);
@@ -8544,13 +8583,13 @@ end;
 
 function TInstantBroker.IsCatalogSupported: Boolean;
 var
-  vCatalog: TInstantCatalog;
+  LCatalog: TInstantCatalog;
 begin
-  vCatalog := CreateCatalog(nil);
+  LCatalog := CreateCatalog(nil);
   try
-    Result := Assigned(vCatalog);
+    Result := Assigned(LCatalog);
   finally
-    vCatalog.Free;
+    LCatalog.Free;
   end;
 end;
 
@@ -8570,9 +8609,10 @@ begin
 end;
 
 function TInstantBroker.RetrieveObject(AObject: TInstantObject;
-  const AObjectId: string; ConflictAction: TInstantConflictAction): Boolean;
+  const AObjectId: string; ConflictAction: TInstantConflictAction;
+  const AObjectData: TInstantAbstractObjectData = nil): Boolean;
 begin
-  Result := InternalRetrieveObject(AObject, AObjectId, ConflictAction);
+  Result := InternalRetrieveObject(AObject, AObjectId, ConflictAction, AObjectData);
 end;
 
 procedure TInstantBroker.SetObjectUpdateCount(AObject: TInstantObject;

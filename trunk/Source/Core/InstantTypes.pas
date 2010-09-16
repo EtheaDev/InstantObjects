@@ -100,6 +100,21 @@ type
   TInstantBytes = array of Byte;
   {$ENDIF}
 
+  // Defines the way data is loaded by an InstantSelector or InstantQuery when
+  // working with a SQL broker. See documentation for implication of using the
+  // different modes.
+  TInstantLoadMode = (
+    // Loads primary keys first, everything else on demand.
+    lmKeysFirst,
+    // Loads selected attributes first - not yet implemented.
+    // Falls back to lmKeysFirst.
+    //lmPartialBurst,
+    // Loads all simple attributes and internal containers in the first pass.
+    // In the future this might trigger loading of external atPart attributes
+    // as well.
+    lmFullBurst
+  );
+
 implementation
 
 end.

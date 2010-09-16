@@ -158,6 +158,7 @@ begin
     2: Result := TripletName;
   end;
   Result[1] := UpCase(Result[1]);
+  Result := Result + ' ' + 'А ати aa'
 end;
 
 function RandomCompanyName: string;
@@ -231,7 +232,7 @@ begin
     RandomStr(StreetBeginnings) +
     RandomStr(StreetEndings) + ' ' +
     RandomStr(StreetTypes) + ' ' +
-    IntToStr((Random(499) + 1) div (Random(9) + 1) + 1);
+    IntToStr((Random(499) + 1) div (Random(9) + 1) + 1) + ' ' + 'А ати aa';
 end;
 
 function RandomCity: string;
