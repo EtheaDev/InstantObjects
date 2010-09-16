@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Steven Mitchell
+ * Steven Mitchell, Nando Dessena
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -36,7 +36,7 @@ interface
 
 uses
   SysUtils, Classes, DB, InstantPersistence, InstantBrokers, InstantMetadata,
-  InstantTypes, UbMockObject;
+  InstantTypes, InstantClasses, UbMockObject;
 
 type
   TInstantBrokerClass = class of TInstantBroker;
@@ -78,7 +78,8 @@ type
       ConflictAction: TInstantConflictAction): Boolean; override;
     function InternalRetrieveObject(AObject: TInstantObject;
       const AObjectId: string;
-      ConflictAction: TInstantConflictAction): Boolean;  override;
+      ConflictAction: TInstantConflictAction;
+      const AObjectData: TInstantAbstractObjectData = nil): Boolean;  override;
     function InternalStoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean;  override;
   public
@@ -97,7 +98,8 @@ type
       ConflictAction: TInstantConflictAction): Boolean; override;
     function InternalRetrieveObject(AObject: TInstantObject;
       const AObjectId: String;
-      ConflictAction: TInstantConflictAction): Boolean;  override;
+      ConflictAction: TInstantConflictAction;
+      const AObjectData: TInstantAbstractObjectData = nil): Boolean;  override;
     function InternalStoreObject(AObject: TInstantObject;
       ConflictAction: TInstantConflictAction): Boolean;  override;
   public
@@ -144,7 +146,8 @@ type
     function InternalDisposeObject(AObject: TInstantObject; ConflictAction:
         TInstantConflictAction): Boolean; override;
     function InternalRetrieveObject(AObject: TInstantObject; const AObjectId:
-        String; ConflictAction: TInstantConflictAction): Boolean; override;
+        String; ConflictAction: TInstantConflictAction;
+        const AObjectData: TInstantAbstractObjectData = nil): Boolean; override;
     function InternalStoreObject(AObject: TInstantObject; ConflictAction:
         TInstantConflictAction): Boolean; override;
   public
@@ -288,7 +291,8 @@ end;
 
 function TInstantMockBroker.InternalRetrieveObject(AObject: TInstantObject;
   const AObjectId: string;
-  ConflictAction: TInstantConflictAction): Boolean;
+  ConflictAction: TInstantConflictAction;
+  const AObjectData: TInstantAbstractObjectData = nil): Boolean;
 begin
   Result := True;
   FMock.AddExpectation('InternalRetrieveObject ' + AObjectId);
@@ -355,7 +359,8 @@ end;
 
 function TInstantMockCRBroker.InternalRetrieveObject(
   AObject: TInstantObject; const AObjectId: String;
-  ConflictAction: TInstantConflictAction): Boolean;
+  ConflictAction: TInstantConflictAction;
+  const AObjectData: TInstantAbstractObjectData = nil): Boolean;
 begin
   Result := True;
   MockManager.AddExpectation('InternalRetrieveObject ' + CaToStr(ConflictAction) + ' ' + AObjectId);
@@ -507,7 +512,8 @@ begin
 end;
 
 function TInstantMockSQLBroker.InternalRetrieveObject(AObject: TInstantObject;
-    const AObjectId: String; ConflictAction: TInstantConflictAction): Boolean;
+    const AObjectId: String; ConflictAction: TInstantConflictAction;
+    const AObjectData: TInstantAbstractObjectData = nil): Boolean;
 begin
   Result := True;
   MockManager.AddExpectation('InternalRetrieveObject ' + CaToStr(ConflictAction) + ' ' + AObjectId);
