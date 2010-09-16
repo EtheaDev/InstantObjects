@@ -1,1 +1,17 @@
-<TInstantConnectionDefs><TInstantXMLConnectionDef><Name>XMLDB</Name><IsBuilt>TRUE</IsBuilt><RootFolder>C:\Users\nandod\Work\Projects\instantobjects\Demos\PrimerCross\XMLDB</RootFolder></TInstantXMLConnectionDef></TInstantConnectionDefs>
+<TInstantConnectionDefs>
+  <TInstantXMLConnectionDef>
+    <Name>XMLDB</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <RootFolder>C:\Users\nandod\Work\Projects\instantobjects\Demos\PrimerCross\XMLDB</RootFolder>
+  </TInstantXMLConnectionDef>
+  <TInstantBDEConnectionDef>
+    <Name>ParadoxDB</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <DriverName>STANDARD</DriverName>
+    <Parameters>PATH=.\ParadoxDB
+DEFAULT DRIVER=PARADOX
+ENABLE BCD=FALSE
+</Parameters>
+  </TInstantBDEConnectionDef>
+</TInstantConnectionDefs>
