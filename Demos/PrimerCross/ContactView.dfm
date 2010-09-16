@@ -47,7 +47,6 @@ inherited ContactViewForm: TContactViewForm
           Top = 2
           Width = 145
           Height = 21
-          ItemHeight = 13
           TabOrder = 0
           OnClick = FindEditClick
         end
@@ -317,6 +316,7 @@ inherited ContactViewForm: TContactViewForm
   end
   object ActionList: TActionList
     Images = ActionImages
+    State = asSuspended
     OnUpdate = ActionListUpdate
     Left = 16
     Top = 256

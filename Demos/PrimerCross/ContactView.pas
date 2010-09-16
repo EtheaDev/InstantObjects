@@ -134,6 +134,8 @@ type
     procedure Connect; override;
     procedure Disconnect; override;
     procedure Reset; override;
+    procedure FormHide(Sender: TObject); override;
+    procedure FormShow(Sender: TObject); override;
   end;
 
 implementation
@@ -436,6 +438,18 @@ begin
     Add('all');
     Add('?');
   end;
+end;
+
+procedure TContactViewForm.FormHide(Sender: TObject);
+begin
+  inherited;
+  ActionList.State := asSuspended;
+end;
+
+procedure TContactViewForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  ActionList.State := asNormal;
 end;
 
 function TContactViewForm.GetContactFilter: TContactFilter;
