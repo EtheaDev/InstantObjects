@@ -5240,7 +5240,8 @@ function TInstantRelationalTranslator.InSubquery(
   const AObject: TInstantIQLObject;
   out ASubQuery: TInstantIQLSubquery): Boolean;
 begin
-  if AObject is TInstantIQLSubquery then begin
+  if AObject is TInstantIQLSubquery then
+  begin
     Result := True;
     ASubQuery := TInstantIQLSubquery(AObject);
   end
@@ -5276,7 +5277,8 @@ begin
     S := StringReplace(Str, '%%', #1, [rfReplaceAll]);
     S := StringReplace(S, '%', WildCard, [rfReplaceAll]);
     Result := StringReplace(S, #1, '%', [rfReplaceAll]);
-  end else
+  end
+  else
     Result := Str;
 end;
 
@@ -5514,7 +5516,7 @@ function TInstantRelationalTranslator.TranslateSpecifier(
         begin
           // External part and reference attribute are treated akin:
           // select Class and Id fields.
-          if Assigned(AContext.PathToTarget(LAttrMeta.FieldName, LTablePath, LFieldName)) then
+          if Assigned(AContext.PathToTarget(LAttrMeta.Name, LTablePath, LFieldName)) then
             Writer.WriteString(Format(', %s, %s', [
               AContext.Qualify(LTablePath, LFieldName + InstantClassFieldName),
               AContext.Qualify(LTablePath, LFieldName + InstantIdFieldName)]));
@@ -5524,7 +5526,7 @@ function TInstantRelationalTranslator.TranslateSpecifier(
           // No fields needed for external containers.
         else
           // Select all other fields.
-          Writer.WriteString(Format(', %s', [AContext.QualifyPath(LAttrMeta.FieldName)]));
+          Writer.WriteString(Format(', %s', [AContext.QualifyPath(LAttrMeta.Name)]));
       end;
     end;
   end;
@@ -6454,7 +6456,8 @@ procedure TInstantTranslationContext.Initialize;
       LClassMeta := ObjectClassMetadata.Parent;
       while Assigned(LClassMeta) do
       begin
-        AddTablePath(LClassMeta.TableName);
+        if LClassMeta.IsStored then
+          AddTablePath(LClassMeta.TableName);
         LClassMeta := LClassMeta.Parent;
       end;
     end;
@@ -6484,11 +6487,14 @@ procedure TInstantTranslationContext.Initialize;
       LClassMeta := ObjectClassMetadata.Parent;
       while Assigned(LClassMeta) do
       begin
-        LTableName := LClassMeta.TableName;
-        if LTableName <> TableName then
+        if LClassMeta.IsStored then
         begin
-          AddJoin(TableName, InstantClassFieldName, LTableName, InstantClassFieldName);
-          AddJoin(TableName, InstantIdFieldName, LTableName, InstantIdFieldName);
+          LTableName := LClassMeta.TableName;
+          if (LTableName <> TableName) and LClassMeta.IsStored then
+          begin
+            AddJoin(TableName, InstantClassFieldName, LTableName, InstantClassFieldName);
+            AddJoin(TableName, InstantIdFieldName, LTableName, InstantIdFieldName);
+          end;
         end;
         LClassMeta := LClassMeta.Parent;
       end;
