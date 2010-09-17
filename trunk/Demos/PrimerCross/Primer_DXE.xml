@@ -10,16 +10,27 @@ DEFAULT DRIVER=PARADOX
 ENABLE BCD=TRUE
 </Parameters>
   </TInstantBDEConnectionDef>
-  <TInstantIBXConnectionDef>
+  <TInstantDBXConnectionDef>
     <Name>FirebirdDB</Name>
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
     <LoginPrompt>FALSE</LoginPrompt>
-    <ConnectionString>.\FirebirdDB\PRIMERDB.FDB</ConnectionString>
-    <Options>ibxUseDelimitedIdents</Options>
-    <Params>User_Name=SYSDBA
-Password=masterkey</Params>
-  </TInstantIBXConnectionDef>
+    <ConnectionName>PrimerCrossISO</ConnectionName>
+    <DriverName>Firebird</DriverName>
+    <GetDriverFunc>getSQLDriverINTERBASE</GetDriverFunc>
+    <LibraryName>dbxfb.dll</LibraryName>
+    <Params>drivername=Firebird
+Database=.\FirebirdDB\PRIMERDB.FDB
+User_Name=SYSDBA
+Password=masterkey
+blobsize=-1
+localecode=0000
+devartinterbase transisolation=ReadCommited
+productname=Interbase
+ServerCharSet=ISO8859_1
+</Params>
+    <VendorLib>fbclient.dll</VendorLib>
+  </TInstantDBXConnectionDef>
   <TInstantXMLConnectionDef>
     <Name>XmlDB</Name>
     <IsBuilt>TRUE</IsBuilt>

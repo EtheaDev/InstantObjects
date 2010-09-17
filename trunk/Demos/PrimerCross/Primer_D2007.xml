@@ -16,9 +16,10 @@ ENABLE BCD=TRUE
     <BlobStreamFormat>sfXML</BlobStreamFormat>
     <LoginPrompt>FALSE</LoginPrompt>
     <ConnectionString>.\FirebirdDB\PRIMERDB.FDB</ConnectionString>
-    <Options>ibxUseDelimitedIdents</Options>
-    <Params>User_Name=SYSDBA
-Password=masterkey</Params>
+    <Options></Options>
+    <Params>user_name=SYSDBA
+password=masterkey
+lc_ctype=ISO8859_1</Params>
   </TInstantIBXConnectionDef>
   <TInstantXMLConnectionDef>
     <Name>XmlDB</Name>
