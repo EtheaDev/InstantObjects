@@ -195,18 +195,18 @@
   are any objects that circularly refer to it, which should be destroyed as
   well. If you are sure that your object model doesn't allow circular
   references (as is the case with many object models, especially simple ones),
-  you can undefine this symbol to gain a little speed in programs that create
+  you can define this symbol to gain a little speed in programs that create
   and destroy large quantities of objects.
 
   WARNING: If you disable the check, then every time your program frees an
   object with circular references, it will leak memory. You might not notice it
-  unless you are using memory leak detection tools such as FastMM.
+  unless you are using a memory leak detection tool such as FastMM.
   So please make sure your model doesn't allow any circular reference
-  before turning this setting off.
+  before enabling this define.
 
-  Also, do it only if you actually need the speed gain, which is needed only
-  in special cases.
+  Also, do it only if you actually need the speed gain, which is not significant
+  in most cases.
 }
-{$DEFINE IO_CIRCULAR_REFERENCE_CHECK}
+{.$DEFINE IO_NO_CIRCULAR_REFERENCE_CHECK}
 
 

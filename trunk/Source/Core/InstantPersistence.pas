@@ -812,7 +812,7 @@ type
     procedure DoStore(ConflictAction: TInstantConflictAction);
     procedure DoUnchange;
     function FindDefaultContainer: TInstantContainer;
-{$IFDEF IO_CIRCULAR_REFERENCE_CHECK}
+{$IFNDEF IO_NO_CIRCULAR_REFERENCE_CHECK}
     procedure FreeCircularReferences;
 {$ENDIF}
     function GetClassId: string;
@@ -1148,7 +1148,6 @@ type
     FMaxCount: Integer;
     FRequestedLoadMode: TInstantLoadMode;
     FActualLoadMode: TInstantLoadMode;
-    FLoadMode: TInstantLoadMode;
     function GetConnector: TInstantConnector;
     function GetObjectCount: Integer;
     function GetObjects(Index: Integer): TObject;
@@ -1198,8 +1197,8 @@ type
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property Params: TParams read GetParams write SetParams;
-    property RequestedLoadMode: TInstantLoadMode read FLoadMode write FLoadMode
-      default lmKeysFirst;
+    property RequestedLoadMode: TInstantLoadMode
+      read FRequestedLoadMode write FRequestedLoadMode default lmKeysFirst;
     property ActualLoadMode: TInstantLoadMode read FActualLoadMode;
   end;
 
@@ -6213,7 +6212,7 @@ begin
   DestroyInternalFields;
 end;
 
-{$IFDEF IO_CIRCULAR_REFERENCE_CHECK}
+{$IFNDEF IO_NO_CIRCULAR_REFERENCE_CHECK}
 procedure TInstantObject.FreeCircularReferences;
 var
   CheckedObjects: TObjectList;
@@ -6295,7 +6294,7 @@ end;
 
 procedure TInstantObject.FreeInstance;
 begin
-{$IFDEF IO_CIRCULAR_REFERENCE_CHECK}
+{$IFNDEF IO_NO_CIRCULAR_REFERENCE_CHECK}
   FreeCircularReferences;
 {$ENDIF}
   DoRelease;
@@ -6779,7 +6778,7 @@ begin
   if Assigned(Instance) then
   begin
     inherited FreeInstance;
-    Self := Instance as TInstantObject;
+    Self := Instance;
     AddRef;
     if ARefresh then
       Refresh;
@@ -6948,7 +6947,7 @@ end;
 
 function TInstantObject._Release: Integer;
 begin
-{$IFDEF IO_CIRCULAR_REFERENCE_CHECK}
+{$IFNDEF IO_NO_CIRCULAR_REFERENCE_CHECK}
   FreeCircularReferences;
 {$ENDIF}
   Result := DoRelease;
