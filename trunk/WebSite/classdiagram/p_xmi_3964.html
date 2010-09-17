@@ -1,0 +1,677 @@
+<html>
+<link href="styles.css" rel="stylesheet" type="text/css">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-16">
+</head>
+<body class="body">
+<table width="100%">
+<tr>
+<td><span class="p_name">Package: InstantTextFiler</span></td>
+<td class="t_cell"><a href="p_xmi_3964_diagram.html">Diagram</a></td>
+<td class="t_cell"><a href="overview.html">Back to overview</a></td>
+</tr>
+</table>
+<p></p><a name="xmi_3266"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>EInstantTextPosError</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    <a href="p_xmi_3243.html#xmi_5">EInstantError</a><br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FPosition</td>
+<td class="t_cell"><a href="p_xmi_3964.html#xmi_3966">TInstantTextPos</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">Position</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">Create</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Msg</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_3964.html#xmi_3966">TInstantTextPos</a></td>
+<td class="t_cell">APosition</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br><a name="xmi_88"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TInstantTextFiler</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    TObject<br>
+
+    Subclasses: 
+
+    <a href="p_xmi_3964.html#xmi_3665">TInstantTextReader</a>,  <a href="p_xmi_3964.html#xmi_3685">TInstantTextWriter</a><br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FFreeStream</td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FPosition</td>
+<td class="t_cell"><a href="p_xmi_3964.html#xmi_3966">TInstantTextPos</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FStream</td>
+<td class="t_cell">TStream
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">StreamPos</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Bof</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Eof</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Position</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">GetPosition</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_3964.html#xmi_3966">TInstantTextPos</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetPosition</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_3964.html#xmi_3966">TInstantTextPos</a></td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">AdvancePosition</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Char</td>
+<td class="t_cell">Ch</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">DescendPosition</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Char</td>
+<td class="t_cell">Ch</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetBof</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetEof</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetStreamPos</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Initialize</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IsSpace</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Char</td>
+<td class="t_cell">Ch</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IsText</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Char</td>
+<td class="t_cell">Ch</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">SetStreamPos</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Create</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TStream</td>
+<td class="t_cell">AStream</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">FreeStream</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Create</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">AText</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Destroy</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Reset</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br><a name="xmi_3665"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TInstantTextReader</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    <a href="p_xmi_3964.html#xmi_88">TInstantTextFiler</a><br>
+
+    Subclasses: 
+
+    <a href="p_xmi_3585.html#xmi_3604">TInstantIQLReader</a>,  <a href="p_xmi_4042.html#xmi_4034">TInstantCodeReader</a><br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FConstAware</td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FTokenPos</td>
+<td class="t_cell"><a href="p_xmi_3964.html#xmi_3966">TInstantTextPos</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">ConstAware</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">GetBof</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetEof</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Initialize</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IsNumericPrefix</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Char</td>
+<td class="t_cell">Ch</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IsStringDelimiter</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Char</td>
+<td class="t_cell">Ch</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">AtSpace</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">BackChar</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Char
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">GotoToken</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Token</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Skip</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">IgnoreCase</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">NextChar</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Char
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">NextToken</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ReadChar</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Char
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ReadMatching</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Str</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ReadNext</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Str</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">StopBefore</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ReadNumeric</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ReadString</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ReadToken</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">SkipSpace</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">UnreadToken</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br><a name="xmi_3685"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TInstantTextWriter</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    <a href="p_xmi_3964.html#xmi_88">TInstantTextFiler</a><br>
+
+    Subclasses: 
+
+    <a href="p_xmi_3585.html#xmi_551">TInstantIQLWriter</a>,  <a href="p_xmi_4042.html#xmi_4040">TInstantCodeWriter</a><br><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">WriteChar</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Char</td>
+<td class="t_cell">Ch</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">WriteString</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Str</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br></body>
+</html>

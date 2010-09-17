@@ -1,0 +1,409 @@
+/***********************************************/
+/* 2col_leftNav.css                            */
+/* Use with template 2col_leftNav.html          */
+/***********************************************/
+
+/***********************************************/
+/* HTML tag styles                             */
+/***********************************************/ 
+
+body{
+	font-family: Arial,sans-serif;
+	color: #000000;
+	line-height: 1.166;
+	margin: 0px;
+}
+
+a:link, a:visited, a:hover {
+	color: #006699;
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+/* overrides decoration from previous rule for hovered links */
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: Arial,sans-serif;
+	margin: 0px;
+	padding: 0px;
+}
+
+h1{
+	font-family: Verdana,Arial,sans-serif;
+	font-size: 120%;
+	color: #334d55;
+}
+
+h2{
+ font-size: 114%;
+ color: #006699;
+}
+
+h3{
+ font-size: 100%;
+ color: #334d55;
+}
+
+h4{
+ font-size: 100%;
+ font-weight: normal;
+ color: #333333;
+}
+
+h5{
+ font-size: 100%;
+ color: #334d55;
+}
+
+ul{
+	list-style-type: square;
+}
+
+ul ul{
+ list-style-type: disc;
+}
+
+ul ul ul{
+ list-style-type: none;
+}
+
+label{
+ font: bold 100% Arial,sans-serif;
+ color: #334d55;
+}
+				
+
+/***********************************************/
+/* Layout Divs                                 */
+/***********************************************/
+
+#masthead{
+	margin: 0;
+	padding: 0px;
+	width: 100%;
+  background-image: url(../images/color_grad_pic_bkg.jpg);
+	background-repeat: repeat-x;
+}
+
+#navBar{
+	margin: 0 79% 0 0;
+	background-color: #eeeeee;
+	border: 1px solid #005eb2;
+	
+	/* hack to fix IE6/Win's peekaboo bug */
+	height: 1%;
+}
+
+#content{
+	float:right;
+	width: 75%;
+	margin: 0;
+	padding: 0 3% 0 0;
+	height: 1%;
+}
+
+#main{
+	margin: 0;
+	padding: 0px 10px 10px 10px;
+}
+
+#contentRight{
+	float:right;
+	width: 48%;
+	margin: 0;
+	padding: 0px;
+	background-color: #eeeeee;
+	border: 1px solid #005eb2;
+	height: 1%;
+}
+
+#contentLeft{
+	margin: 0 52% 0 0;
+	background-color: #eeeeee;
+	border: 1px solid #005eb2;
+	
+	/* hack to fix IE6/Win's peekaboo bug */
+	height: 1%;
+}
+
+/***********************************************/
+/*Component Divs                               */
+/***********************************************/
+
+#siteLogo{
+	margin: 0 0 0 0;
+	padding: 18px 0px 0px 40px;
+	height: 92px;
+	text-align: right;
+	
+}
+
+#siteLogo h1{
+	margin: 0px;
+	padding: 55px 10px 10px 0px;
+	/* color: #dd6900; */
+	color: #003366;
+	font-size: 80%;
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+}
+
+#siteLogo img{
+	padding: 0px 40px 0px 0px;
+	margin: 0 5px 5px 0;
+	float: left;
+}
+
+/*************** #pageName styles **************/
+
+#pageName{
+	padding: 15px 0px 15px 10px;
+}
+
+#pageName h4{
+	font-size: 80%;
+}
+
+
+/************* #globalNav styles **************/
+
+#globalNav{
+	color: #003366;
+	padding: 2px 0px 0px 10px;
+	white-space: nowrap;
+	border-top: 1px solid #B1B1B1;
+	border-bottom: 3px solid #B1B1B1;
+	background-image: url(../images/color_grad_pic1.gif);
+	background-repeat: repeat-x;
+	height: 25px;
+}
+/* 'nowrap' prevents links from line-wrapping if there are too many to fit in one line
+   this will force a horizontal scrollbar if there isn't enough room for all links
+   remove rule or change value to 'normal' if you want the links to line-wrap */
+
+#globalNav img{
+ display: block;
+}
+
+#globalNav a {
+	font-size: 70%;
+	padding: 0px 4px 0px 0px; 
+}
+
+
+/************* #breadCrumb styles *************/
+
+#breadCrumb{
+	font-size: 80%;
+	padding: 2px 0px 4px 10px;
+	border-bottom: 1px solid #cccccc;
+	font-style: italic;
+}
+
+
+/************** .feature styles ***************/
+
+.feature{
+	padding: 1px;
+	border: 1px solid #005eb2;
+	font-size: 80%;
+	color: black;
+	margin: 10px 0px 0px 0px;
+}
+
+.feature h3{
+	padding: 10px 0px 10px 10px;
+	color: #ECFDFF;
+	text-align: left;
+}
+
+.feature img{
+	float: right;
+	padding: 0px 10px 0px 0px;
+	margin: 0 5px 5px 0;
+}
+/* adjust margins to change separation between the feature image and text flowing around it */
+
+#contentHdr {
+	background-color: #005eb2;
+  background-image: url(../images/color_grad_pic2.gif);
+	background-repeat: repeat-x;
+}
+
+#contentBody {
+	border-top: 2px solid white;
+	padding: 0px 0px 10px 10px;
+	/* background-color: #D9FBFF; */
+	background-color: #eeeeee;
+}
+
+#content #projectBorder{
+	padding: 1px;
+	border: 1px solid #005eb2;
+	/* height: 1%; */
+	margin-bottom: 10px;
+}
+
+#content #projectContent{
+	background-color: #eeeeee;
+	height: 1%;
+}
+
+/*.feature li{
+	padding: 0px 0px 10px 10px;
+	font-size: 80%;
+}*/
+
+/************** .generalCtr styles *****************/
+
+.generalCtr{
+	text-align: center;
+	padding: 10px 0px 0px 10px;
+	font-size: 80%;
+}
+
+/************** .story styles *****************/
+
+.story{
+	clear: both;
+	padding: 10px 0px 0px 10px;
+	font-size: 80%;
+}
+
+.story p{
+	padding: 0px 0px 5px 0px;
+}
+
+
+/************* #siteInfo styles ***************/
+
+#siteInfo{
+	clear: both;
+	border: 1px solid #cccccc;
+	font-size: 75%;
+	color: #B1B1B1;
+	padding: 10px 10px 10px 10px;
+	margin-top: 0px;
+	text-align: center;
+}
+/* negative top margin pulls siteinfo up so its top border overlaps (and thus lines up with)
+	the bottom border of the navBar in cases where they "touch" */
+
+#siteInfo img{
+	padding: 4px 4px 4px 0px;
+	vertical-align: middle;
+}
+
+
+/*********** #navBar link styles ***********/
+
+#navBar ul a:link, #navBar ul a:visited {display: block;}
+#navBar ul {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+/* hack to fix IE/Win's broken rendering of block-level anchors in lists */
+#navBar li {border-bottom: 1px solid #EEE;}
+
+/* fix for browsers that don't need the hack */
+html>body #navBar li {
+	border-bottom: none;
+	padding: 0px;
+	/* border-top: none; */
+}
+
+
+/*********** #sectionLinks styles ***********/
+
+#sectionLinks{
+	position: relative;
+	margin: 0px;
+	padding: 0px;
+	border-bottom: 1px solid #cccccc;
+	font-size: 80%;
+}
+
+#sectionLinks h3{
+	padding: 10px 0px 2px 10px;
+}
+
+#sectionLinks a:link{
+	padding: 2px 0px 2px 10px;
+	border-top: 1px solid #cccccc;
+	width: 100%;
+  voice-family: "\"}\""; 
+  voice-family:inherit;
+	width: auto;
+}
+
+#sectionLinks a:visited{
+	border-top: 1px solid #cccccc;
+	padding: 2px 0px 2px 10px;
+}
+
+#sectionLinks a:hover{
+	border-top: 1px solid #cccccc;
+	background-color: #dddddd;
+	padding: 2px 0px 2px 10px;
+}
+
+
+/*********** .relatedLinks styles ***********/
+
+.relatedLinks{
+	margin: 0px;
+	padding: 0px 0px 10px 10px;
+	font-size: 70%;
+}
+
+.relatedLinks h3{
+	padding: 10px 0px 2px 0px;
+}
+
+
+/*********** .fileLinks styles ***********/
+
+.fileLinks{
+	margin: 0px;
+	padding: 0px 0px 10px 10px;
+	font-size: 80%;
+}
+
+.fileLinks h3{
+	padding: 10px 0px 2px 25px;
+}
+
+
+/************** #advert styles **************/
+
+#advert{
+	padding: 10px 0px 0px 10px;
+	font-size: 80%;
+	border-top: 1px solid #cccccc;
+}
+
+#advert img{
+	display: block;
+}
+
+
+/************** #headlines styles **************/
+
+#headlines{
+	margin: 0px;
+	padding: 10px 0px 20px 10px;
+	font-size: 80%;
+}
+
+#headlines p{
+	padding: 5px 0px 5px 0px;
+}
+
+/*********** .hilite styles ***********/
+
+.hilite {
+	font-weight: bold;
+}

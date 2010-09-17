@@ -1,0 +1,1364 @@
+<html>
+<link href="styles.css" rel="stylesheet" type="text/css">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-16">
+</head>
+<body class="body">
+<table width="100%">
+<tr>
+<td><span class="p_name">Package: InstantConnectionManager</span></td>
+<td class="t_cell"><a href="p_xmi_7674_diagram.html">Diagram</a></td>
+<td class="t_cell"><a href="overview.html">Back to overview</a></td>
+</tr>
+</table>
+<p></p><a name="xmi_148"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TInstantConnectionManager</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    TComponent<br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FCaption</td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FForm</td>
+<td class="t_cell"><a href="p_xmi_7674.html#xmi_242">TInstantConnectionManagerForm</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FFileName</td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FModel</td>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_13">TInstantModel</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnBuild</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnConnect</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnDisconnect</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnEdit</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnIsConnected</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnPrepare</td>
+<td class="t_cell">TInstantConnectorEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnSupportConnector</td>
+<td class="t_cell">TInstantConnectorClassEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FVisibleActions</td>
+<td class="t_cell"><a href="p_xmi_7674.html#xmi_7676">TInstantConnectionManagerActionTypes</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">Form</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">CurrentConnectionDef</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Model</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Caption</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">FileName</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">VisibleActions</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnBuild</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnConnect</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnDisconnect</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnEdit</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnIsConnected</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnPrepare</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnSupportConnector</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">GetCaption</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetCurrentConnectionDef</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetForm</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_7674.html#xmi_242">TInstantConnectionManagerForm</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetModel</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_13">TInstantModel</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetCaption</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetCurrentConnectionDef</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetFileName</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetModel</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_13">TInstantModel</a></td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetOnBuild</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectionDefEvent</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetOnConnect</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectionDefEvent</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetOnDisconnect</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectionDefEvent</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetOnEdit</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectionDefEvent</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetOnIsConnected</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectionDefEvent</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetOnPrepare</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectorEvent</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetOnSupportConnector</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectorClassEvent</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetVisibleActions</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_7674.html#xmi_7676">TInstantConnectionManagerActionTypes</a></td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">HasForm</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Create</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TComponent</td>
+<td class="t_cell">AOwner</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Execute</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br><a name="xmi_242"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TInstantConnectionManagerForm</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    TForm<br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FConnectionDefs</td>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2090">TInstantConnectionDefs</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FFileName</td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FModel</td>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_13">TInstantModel</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnBuild</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnConnect</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnDisconnect</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnEdit</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnIsConnected</td>
+<td class="t_cell">TInstantConnectionDefEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnPrepare</td>
+<td class="t_cell">TInstantConnectorEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FOnSupportConnector</td>
+<td class="t_cell">TInstantConnectorClassEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">DefsFileName</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectionDefs</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">ActionList</td>
+<td class="t_cell">TActionList
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">BuildAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">BuildButton</td>
+<td class="t_cell">TButton
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">BuildItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">CloseButton</td>
+<td class="t_cell">TButton
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectButton</td>
+<td class="t_cell">TButton
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectionImages</td>
+<td class="t_cell">TImageList
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectionMenu</td>
+<td class="t_cell">TPopupMenu
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectionView</td>
+<td class="t_cell">TListView
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">DeleteAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">DeleteItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">DisconnectAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">DisconnectItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">EditAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">EditItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">N1</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">NewMenu</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">RenameAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">RenameItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">CurrentConnectionDef</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">FileName</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Model</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">VisibleActions</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnBuild</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnConnect</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnDisconnect</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnEdit</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnIsConnected</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnPrepare</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OnSupportConnector</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">ConfirmDlg</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Text</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetConnectionDefs</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2090">TInstantConnectionDefs</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetCurrentConnectionDef</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetDefsFileName</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetVisibleActions</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_7674.html#xmi_7676">TInstantConnectionManagerActionTypes</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetCurrentConnectionDef</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetFileName</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetVisibleActions</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_7674.html#xmi_7676">TInstantConnectionManagerActionTypes</a></td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetOnSupportConnector</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectorClassEvent</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateMenu</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">Build</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Connect</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Disconnect</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Edit</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">DoBuild</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">DoConnect</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">DoDisconnect</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">DoEdit</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">DoPrepare</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_146">TInstantConnector</a></td>
+<td class="t_cell">Connector</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IsConnected</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_588.html#xmi_2075">TInstantConnectionDef</a></td>
+<td class="t_cell">ConnectionDef</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">LoadConnectionDefs</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">PopulateConnectionDefs</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">SaveConnectionDefs</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">SupportConnector</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInstantConnectorClass</td>
+<td class="t_cell">ConnectorClass</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">ActionListUpdate</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TBasicAction</td>
+<td class="t_cell">Action</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Handled</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectionViewEdited</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">TListItem</td>
+<td class="t_cell">Item</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">S</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">BuildActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ConnectionViewDblClick</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">DeleteActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">DisconnectActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">EditActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">FormCreate</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">FormShow</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">NewMenuItemClick</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">RenameActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Destroy</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br></body>
+</html>

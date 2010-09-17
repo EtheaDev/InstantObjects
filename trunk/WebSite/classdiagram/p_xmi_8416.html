@@ -1,0 +1,981 @@
+<html>
+<link href="styles.css" rel="stylesheet" type="text/css">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-16">
+</head>
+<body class="body">
+<table width="100%">
+<tr>
+<td><span class="p_name">Package: InstantModelExpert</span></td>
+<td class="t_cell"><a href="p_xmi_8416_diagram.html">Diagram</a></td>
+<td class="t_cell"><a href="overview.html">Back to overview</a></td>
+</tr>
+</table>
+<p></p><a name="xmi_384"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TInstantModelExpert</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    TNotifierObject<br>
+
+    Implements: 
+
+    IOTAWizard<br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FActiveProjectName</td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FBuilderItem</td>
+<td class="t_cell"><a href="p_xmi_8416.html#xmi_423">TReferencedMenuItem</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FExplorerItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FIDEInterface</td>
+<td class="t_cell"><a href="p_xmi_8545.html#xmi_102">TInstantOTAIDEInterface</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FIsChanged</td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FMustUpdateAfterCompile</td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FResourceModule</td>
+<td class="t_cell"><a href="p_xmi_8356.html#xmi_353">TInstantDesignResourceModule</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FSaveApplicationIdle</td>
+<td class="t_cell">TIdleEvent
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FToolImageCount</td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FToolImageOffset</td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FUpdateDisableCount</td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FUpdateTimer</td>
+<td class="t_cell">TTimer
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">CurrentSource</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Explorer</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">ActiveProject</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AllowContinue</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">IsDirty</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">ExplorerApplyClass</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4052">TInstantCodeClass</a></td>
+<td class="t_cell">AClass</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_96">TInstantCodeClassChangeInfo</a></td>
+<td class="t_cell">ChangeInfo</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">ExplorerGotoSource</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">FileName</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4043">TInstantCodePos</a></td>
+<td class="t_cell">Pos</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">ExplorerLoadModel</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4093">TInstantCodeModel</a></td>
+<td class="t_cell">Model</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetActiveProject</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">IOTAProject
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetAllowContinue</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetCurrentSource</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetExplorer</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_8701.html#xmi_415">TInstantModelExplorerForm</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetIDString</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetIsDirty</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetName</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetState</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">TWizardState
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetIsDirty</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">ApplicationIdle</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Done</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">AccessModelUnits</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IOTAProject</td>
+<td class="t_cell">Project</td>
+</tr>
+<tr>
+<td class="t_cell">TStrings</td>
+<td class="t_cell">Units</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Write</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">AddToolError</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">FileName</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Msg</td>
+</tr>
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Line</td>
+</tr>
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Column</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">AddToolMessage</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">FileName</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Msg</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Prefix</td>
+</tr>
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Line</td>
+</tr>
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Column</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">AddToolText</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Text</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">AttachMenus</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">BuilderItemClick</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">CheckProjectChanged</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">CompileProject</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IOTAProject</td>
+<td class="t_cell">Project</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">CollectModules</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IOTAProject</td>
+<td class="t_cell">Project</td>
+</tr>
+<tr>
+<td class="t_cell">TInterfaceList</td>
+<td class="t_cell">Modules</td>
+</tr>
+<tr>
+<td class="t_cell">TStrings</td>
+<td class="t_cell">Names</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">CreateIDEInterface</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_8545.html#xmi_102">TInstantOTAIDEInterface</a>
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">CreateUpdateTimer</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">TTimer
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">DetachMenus</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">EnumSources</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInterfaceList</td>
+<td class="t_cell">Modules</td>
+</tr>
+<tr>
+<td class="t_cell">TSourceEnumerator</td>
+<td class="t_cell">Enumerator</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">ExplorerItemClick</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetModelModules</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TInterfaceList</td>
+<td class="t_cell">Modules</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IDEAfterCompilation</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Succeeded</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IDEBeforeCompilation</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">IOTAProject</td>
+<td class="t_cell">Project</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">IsCodeInsight</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Cancel</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IDEEventNotification</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">TEventNotification</td>
+<td class="t_cell">NotifyCode</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Cancel</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IDEFileNotification</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">TFileNotification</td>
+<td class="t_cell">NotifyCode</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">FileName</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Cancel</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IDEModuleNotification</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">TNotifyCode</td>
+<td class="t_cell">NotifyCode</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">FileName</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">IsModelUnit</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">FileName</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">ShowExplorer</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateModel</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateTimerTick</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Create</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Destroy</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">DisableUpdate</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">EnableUpdate</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ApplyClass</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4052">TInstantCodeClass</a></td>
+<td class="t_cell">AClass</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_96">TInstantCodeClassChangeInfo</a></td>
+<td class="t_cell">ChangeInfo</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">BuildDatabase</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4093">TInstantCodeModel</a></td>
+<td class="t_cell">CodeModel</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Execute</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">LoadModel</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4093">TInstantCodeModel</a></td>
+<td class="t_cell">Model</td>
+</tr>
+<tr>
+<td class="t_cell">IOTAProject</td>
+<td class="t_cell">Project</td>
+</tr>
+<tr>
+<td class="t_cell">TDateTime</td>
+<td class="t_cell">CheckTime</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">SelectUnits</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateEnabled</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateModelUnits</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br><a name="xmi_423"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TReferencedMenuItem</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    TMenuItem<br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FReferee</td>
+<td class="t_cell"><a href="p_xmi_8416.html#xmi_8417">PReferencedMenuItem</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">Create</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TComponent</td>
+<td class="t_cell">AOwner</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_8416.html#xmi_423">TReferencedMenuItem</a></td>
+<td class="t_cell">AReferee</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Destroy</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br></body>
+</html>

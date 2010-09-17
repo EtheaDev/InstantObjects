@@ -1,0 +1,860 @@
+<html>
+<link href="styles.css" rel="stylesheet" type="text/css">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-16">
+</head>
+<body class="body">
+<table width="100%">
+<tr>
+<td><span class="p_name">Package: InstantClassEditor</span></td>
+<td class="t_cell"><a href="p_xmi_8170_diagram.html">Diagram</a></td>
+<td class="t_cell"><a href="overview.html">Back to overview</a></td>
+</tr>
+</table>
+<p></p><a name="xmi_8166"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TInstantClassEditorForm</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    <a href="p_xmi_8147.html#xmi_246">TInstantEditForm</a><br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FBackupAttributes</td>
+<td class="t_cell">TObjectList
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FChangedAttributes</td>
+<td class="t_cell">TStringList
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FNewAttributes</td>
+<td class="t_cell">TList
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FModel</td>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4093">TInstantCodeModel</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FNameAttribute</td>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4370">TInstantCodeAttribute</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FTitle</td>
+<td class="t_cell">string
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FIsNew</td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">NameAttribute</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeImages</td>
+<td class="t_cell">TImageList
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">StateImages</td>
+<td class="t_cell">TImageList
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributesMenu</td>
+<td class="t_cell">TPopupMenu
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Actions</td>
+<td class="t_cell">TActionList
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ActionImages</td>
+<td class="t_cell">TImageList
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeNewAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeDeleteAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeNewItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeDeleteItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeEditAction</td>
+<td class="t_cell">TAction
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeEditItem</td>
+<td class="t_cell">TMenuItem
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">PageControl</td>
+<td class="t_cell">TPageControl
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ClassSheet</td>
+<td class="t_cell">TTabSheet
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ClassNameLabel</td>
+<td class="t_cell">TLabel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">BaseClassLabel</td>
+<td class="t_cell">TLabel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">UnitLabel</td>
+<td class="t_cell">TLabel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ClassNameEdit</td>
+<td class="t_cell">TDBEdit
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">BaseClassEdit</td>
+<td class="t_cell">TDBComboBox
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">UnitEdit</td>
+<td class="t_cell">TDBComboBox
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">StorageEdit</td>
+<td class="t_cell">TDBEdit
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeSheet</td>
+<td class="t_cell">TTabSheet
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributesSplitter</td>
+<td class="t_cell">TSplitter
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">InheritedAttributesPanel</td>
+<td class="t_cell">TPanel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">InheritedAttributesLabel</td>
+<td class="t_cell">TLabel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">InheritedAttributesView</td>
+<td class="t_cell">TListView
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">IntroducedAttributesPanel</td>
+<td class="t_cell">TPanel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">IntroducedAttributesView</td>
+<td class="t_cell">TListView
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">IntroducedAttributesLabel</td>
+<td class="t_cell">TLabel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">StorageLabel</td>
+<td class="t_cell">TLabel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">PersistenceComboBox</td>
+<td class="t_cell">TDBComboBox
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">PersistenceLabel</td>
+<td class="t_cell">TLabel
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ChangedAttributes</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">FocusedAttribute</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">IsNew</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Model</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">NewAttributes</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Subject</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">DeleteAttribute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4370">TInstantCodeAttribute</a></td>
+<td class="t_cell">Attribute</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">FitColumns</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TListView</td>
+<td class="t_cell">View</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetNameAttribute</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4370">TInstantCodeAttribute</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetSubject</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4052">TInstantCodeClass</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">LoadAttributeView</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TListView</td>
+<td class="t_cell">View</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4052">TInstantCodeClass</a></td>
+<td class="t_cell">AClass</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Recursive</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetModel</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4093">TInstantCodeModel</a></td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetSubject</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4052">TInstantCodeClass</a></td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetFocusedAttribute</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4370">TInstantCodeAttribute</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">SetIsNew</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Value</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">AddAttributeToView</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TListView</td>
+<td class="t_cell">View</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4370">TInstantCodeAttribute</a></td>
+<td class="t_cell">Attribute</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">TListItem
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">EditAttribute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell"><a href="p_xmi_4042.html#xmi_4370">TInstantCodeAttribute</a></td>
+<td class="t_cell">Attribute</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Exists</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Title</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">PopulateInheritedAttributes</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">PopulateIntroducedAttributes</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">PopulateBaseClasses</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">PopulateUnits</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateActions</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateCaption</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateControls</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeNewActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeDeleteActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeEditActionExecute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">FormCreate</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">IntroducedAttributesViewDblClick</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">IntroducedAttributesViewEdited</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">TListItem</td>
+<td class="t_cell">Item</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">S</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">ClassNameEditChange</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">SubjectExposerAfterPostField</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">TField</td>
+<td class="t_cell">Field</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">PersistenceComboBoxChange</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">SubjectExposerTranslate</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">TField</td>
+<td class="t_cell">Field</td>
+</tr>
+<tr>
+<td class="t_cell">Variant</td>
+<td class="t_cell">Value</td>
+</tr>
+<tr>
+<td class="t_cell">Boolean</td>
+<td class="t_cell">Write</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">OkButtonClick</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">CancelButtonClick</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">AttributesMenuPopup</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Create</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TComponent</td>
+<td class="t_cell">AOwner</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">Destroy</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br></body>
+</html>
