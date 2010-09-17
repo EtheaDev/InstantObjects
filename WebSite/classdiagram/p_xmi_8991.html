@@ -1,0 +1,477 @@
+<html>
+<link href="styles.css" rel="stylesheet" type="text/css">
+<head>
+<META http-equiv="Content-Type" content="text/html; charset=UTF-16">
+</head>
+<body class="body">
+<table width="100%">
+<tr>
+<td><span class="p_name">Package: OFExpert</span></td>
+<td class="t_cell"><a href="p_xmi_8991_diagram.html">Diagram</a></td>
+<td class="t_cell"><a href="overview.html">Back to overview</a></td>
+</tr>
+</table>
+<p></p><a name="xmi_131"></a><table width="500" cellspacing="1" cellpadding="2" border="0">
+<tr>
+<td class="ClassTableHeader" width="200"><b>TObjectFoundryExpert</b></td>
+<td class="ClassTableHeader" width="150">
+        class
+      </td>
+</tr>
+</table>    
+
+    Inherits from: 
+
+    TInterfacedObject<br>
+
+    Implements: 
+
+    IUnknown,  IMMExpert,  IInstantObjectsExpert<br><b>Attributes</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Type</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">FOptions</td>
+<td class="t_cell"><a href="p_xmi_9050.html#xmi_31">TOFOptions</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">Options</td>
+<td class="t_cell"><a href="p_.html#"></a>
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><b>Operations</b><table width="100%" cellpadding="3" cellspacing="0" border="1">
+<tr>
+<td class="tableheader">Name</td>
+<td class="tableheader">Parameters</td>
+<td class="tableheader">Returns</td>
+<td class="tableheader">Visibility</td>
+</tr>
+<tr>
+<td class="t_cell">AttributeEditorLoadClasses</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">TObject</td>
+<td class="t_cell">Sender</td>
+</tr>
+<tr>
+<td class="t_cell">TStrings</td>
+<td class="t_cell">Items</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">GetOptions</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell"><a href="p_xmi_9050.html#xmi_31">TOFOptions</a>
+       
+    </td>
+<td class="t_cell">private</td>
+</tr>
+<tr>
+<td class="t_cell">Destroyed</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">EditAttribute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IMMProperty</td>
+<td class="t_cell">P</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">EraseMetaData</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IMMClass</td>
+<td class="t_cell">C</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">Execute</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Index</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">ExecuteClassRegWizard</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">ExpertID</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">WideString
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetAttributeAccessCode</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IMMProperty</td>
+<td class="t_cell">P</td>
+</tr>
+<tr>
+<td class="t_cell">TIOAccessMethodType</td>
+<td class="t_cell">MethodType</td>
+</tr>
+<tr>
+<td class="t_cell">PChar</td>
+<td class="t_cell">Buf</td>
+</tr>
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">BufLen</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetAttributeType</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IMMProperty</td>
+<td class="t_cell">P</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">TIOAttributeType
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetAvailable</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetMenuPositions</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Index</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">TMMMenuPosition
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetMenuShortCuts</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Index</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">TShortCut
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetIOUsesClause</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">PChar</td>
+<td class="t_cell">Buf</td>
+</tr>
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">BufLen</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetVerbCount</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetVerbs</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Index</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">WideString
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetMetaData</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IMMClass</td>
+<td class="t_cell">C</td>
+</tr>
+<tr>
+<td class="t_cell">PChar</td>
+<td class="t_cell">Buf</td>
+</tr>
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">BufLen</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">SetMetaData</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IMMClass</td>
+<td class="t_cell">C</td>
+</tr>
+<tr>
+<td class="t_cell">PChar</td>
+<td class="t_cell">MetaData</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">UpdateAttributeMembers</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">IMMProperty</td>
+<td class="t_cell">P</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">ExecuteAction</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Index</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetActionCount</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">Integer
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetActionData</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">Index</td>
+</tr>
+<tr>
+<td class="t_cell"><a href="p_xmi_8927.html#xmi_8928">TMMActionData</a></td>
+<td class="t_cell">Data</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetCustomImages</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Integer</td>
+<td class="t_cell">ImageIndexOffset</td>
+</tr>
+<tr>
+<td class="t_cell">THandle</td>
+<td class="t_cell">Images</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetCustomMenuData</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">WideString
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">GetCustomToolbarData</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">WideString
+       
+    </td>
+<td class="t_cell">protected</td>
+</tr>
+<tr>
+<td class="t_cell">EditOptions</td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+<tr>
+<td class="t_cell">HandleException</td>
+<td class="t_cell">
+<table cellpadding="2" cellspacing="1" border="0">
+<tr>
+<td class="t_cell">Exception</td>
+<td class="t_cell">E</td>
+</tr>
+<tr>
+<td class="t_cell">string</td>
+<td class="t_cell">Text</td>
+</tr>
+<tr>
+<td class="t_cell">IUnknown</td>
+<td class="t_cell">Entity</td>
+</tr>
+</table>
+       
+    </td>
+<td class="t_cell">Boolean
+       
+    </td>
+<td class="t_cell">public</td>
+</tr>
+</table><br><br></body>
+</html>
