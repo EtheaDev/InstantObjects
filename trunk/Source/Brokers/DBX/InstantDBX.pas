@@ -172,7 +172,7 @@ type
     function GetDBMSName: string; override;
   end;
 
-  { Firebird through the native D2010 driver }
+  { Firebird through the native D2010+ driver }
 
   TInstantDBXFirebirdBroker = class(TInstantDBXInterBaseFirebirdBroker)
   protected
@@ -209,7 +209,7 @@ type
     class function TranslatorClass: TInstantRelationalTranslatorClass; override;
   end;
 
-  { Oracle }
+  { Oracle through the native driver }
 
   TInstantDBXOracleBroker = class(TInstantDBXBroker)
   protected
@@ -217,6 +217,14 @@ type
     function ColumnTypeByDataType(DataType: TInstantDataType): string; override;
     function GetDBMSName: string; override;
     function GetSQLQuote: Char; override;
+  end;
+
+  { Oracle through the Devart dbX driver }
+
+  TInstantDBXDevartOracleBroker = class(TInstantDBXOracleBroker)
+  protected
+    procedure AssignParam(SourceParam, TargetParam: TParam); override;
+    function ColumnTypeByDataType(DataType: TInstantDataType): string; override;
   end;
 
   { IBM DB2 }
@@ -328,10 +336,14 @@ begin
     Result := TInstantDBXMySQLBroker.Create(Self)
   else if SameText(Connection.DriverName, 'FirebirdUIB') then
     Result := TInstantDBXFirebirdUIBBroker.Create(Self)
-  else if SameText(Connection.DriverName, 'FIREBIRD') then
-    Result := TInstantDBXFirebirdBroker.Create(Self)
   else if SameText(Connection.DriverName, 'DevartInterbase') then
     Result := TInstantDBXDevartInterbaseBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'DevartOracle') then
+    Result := TInstantDBXDevartOracleBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'DevartSQLServer') then
+    Result := TInstantDBXMSSQLBroker.Create(Self)
+  else if SameText(Connection.DriverName, 'Firebird') then
+    Result := TInstantDBXFirebirdBroker.Create(Self)
   else
     raise Exception.CreateFmt('dbExpress driver "%s" not supported',
       [Connection.DriverName]);
@@ -787,7 +799,7 @@ const
     'FLOAT',
     'DECIMAL(14,4)',
     'NUMBER(1)',
-    'VARCHAR',
+    'VARCHAR2',
     'CLOB',
     'DATE',
     'BLOB',
@@ -806,6 +818,42 @@ end;
 function TInstantDBXOracleBroker.GetSQLQuote: Char;
 begin
   Result := '''';
+end;
+
+{ TInstantDBXDevartOracleBroker }
+
+procedure TInstantDBXDevartOracleBroker.AssignParam(SourceParam,
+  TargetParam: TParam);
+begin
+  { TODO : This may vary depending on DBX driver parameters. }
+  case SourceParam.DataType of
+    ftInteger:
+      TargetParam.AsInteger := SourceParam.AsInteger;
+    ftCurrency:
+      TargetParam.AsBCD := SourceParam.AsCurrency;
+  else
+    inherited;
+  end;
+end;
+
+function TInstantDBXDevartOracleBroker.ColumnTypeByDataType(
+  DataType: TInstantDataType): string;
+const
+  { TODO : This may vary depending on DBX driver parameters. }
+  Types: array[TInstantDataType] of string = (
+    'INTEGER',
+    'NUMBER',
+    'DECIMAL(14,4)',
+    'NUMBER(1)',
+    'VARCHAR',
+    'CLOB',
+    'DATE',
+    'BLOB',
+    'DATE',
+    'DATE',
+    'INTEGER');
+begin
+  Result := Types[DataType];
 end;
 
 { TInstantDBXDB2Broker }
