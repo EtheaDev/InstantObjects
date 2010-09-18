@@ -21,7 +21,7 @@
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
  * Contributor(s):
- * Carlo Barazzetta, Nando Dessena, Joao Morais
+ * Carlo Barazzetta, Nando Dessena, Joao Morais, Marcos E. Yanes
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -36,7 +36,7 @@ unit InstantUIB;
 interface
 
 uses
-  Classes, Db, jvuib, jvuibdataset, jvuiblib, SysUtils,
+  Classes, Db, uib, uibdataset, uiblib, SysUtils,
   InstantPersistence, InstantBrokers, InstantClasses,
   InstantCommand, InstantMetadata, InstantTypes;
 
@@ -57,7 +57,7 @@ type
     FOptions: TInstantUIBOptions;
     FParams: string;
   protected
-    function CreateDataBase(AOwner: TComponent): TJvUIBDataBase;
+    function CreateDataBase(AOwner: TComponent): TUIBDataBase;
     procedure InitConnector(Connector: TInstantConnector); override;
   public
     class function ConnectionTypeName: string; override;
@@ -75,13 +75,13 @@ type
 
   TInstantUIBConnector = class(TInstantRelationalConnector)
   private
-    FDataBase: TJvUIBDataBase;
-    FTransaction: TJvUIBTransaction;
+    FDataBase: TUIBDataBase;
+    FTransaction: TUIBTransaction;
     FOptions: TInstantUIBOptions;
     FLoginPrompt: Boolean;
-    function GetDataBase: TJvUIBDataBase;
-    function GetTransaction: TJvUIBTransaction;
-    procedure SetDataBase(const Value: TJvUIBDataBase);
+    function GetDataBase: TUIBDataBase;
+    function GetTransaction: TUIBTransaction;
+    procedure SetDataBase(const Value: TUIBDataBase);
     procedure DataBaseLogin;
   protected
     procedure CheckDataBase;
@@ -100,10 +100,10 @@ type
     destructor Destroy; override;
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    property Transaction: TJvUIBTransaction read GetTransaction;
+    property Transaction: TUIBTransaction read GetTransaction;
     function HasDataBase: Boolean;
   published
-    property DataBase: TJvUIBDataBase read GetDataBase write SetDataBase;
+    property DataBase: TUIBDataBase read GetDataBase write SetDataBase;
     property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt;
     property Options: TInstantUIBOptions read FOptions write FOptions default DefaultInstantUIBOptions;
   end;
@@ -176,9 +176,9 @@ begin
 end;
 
 function TInstantUIBConnectionDef.CreateDataBase(
-  AOwner: TComponent): TJvUIBDataBase;
+  AOwner: TComponent): TUIBDataBase;
 begin
-  Result := TJvUIBDataBase.Create(AOwner);
+  Result := TUIBDataBase.Create(AOwner);
   try
     Result.CharacterSet := CharacterSet;
     Result.LibraryName := LibraryName;
@@ -206,7 +206,7 @@ end;
 
 procedure TInstantUIBConnectionDef.InitConnector(Connector: TInstantConnector);
 var
-  DataBase: TJvUIBDataBase;
+  DataBase: TUIBDataBase;
 begin
   inherited;
   DataBase := CreateDatabase(Connector);
@@ -245,19 +245,19 @@ begin
   inherited;
 end;
 
-function TInstantUIBConnector.GetDataBase: TJvUIBDataBase;
+function TInstantUIBConnector.GetDataBase: TUIBDataBase;
 begin
   if not (csDesigning in ComponentState) then
     CheckDataBase;
   Result := FDataBase;
 end;
 
-function TInstantUIBConnector.GetTransaction: TJvUIBTransaction;
+function TInstantUIBConnector.GetTransaction: TUIBTransaction;
 begin
   if not Assigned(FTransaction) then
   begin
     CheckDataBase;
-    FTransaction := TJvUIBTransaction.Create(nil);
+    FTransaction := TUIBTransaction.Create(nil);
     try
       FTransaction.DataBase := FDatabase;
       FTransaction.AutoStart := True;
@@ -301,7 +301,7 @@ begin
     Transaction.StartTransaction;
 end;
 
-procedure TInstantUIBConnector.SetDataBase(const Value: TJvUIBDataBase);
+procedure TInstantUIBConnector.SetDataBase(const Value: TUIBDataBase);
 begin
   if Value <> FDataBase then
   begin
@@ -320,7 +320,7 @@ begin
   if DataBase.Connected then
     raise EInstantError.Create(SDatabaseOpen);
   try
-    DataBase.CreateDatabase(4096);
+    DataBase.CreateDatabase(csUTF8, 8192);
   finally
     Disconnect;
   end;
@@ -409,7 +409,7 @@ var
   TargetParams: TSQLParams;
 begin
   //don't call inherited!
-  TargetParams := TJvUIBDataset(DataSet).Params;
+  TargetParams := TUIBDataset(DataSet).Params;
   for I := 0 to Pred(AParams.Count) do
   begin
     SourceParam := AParams[I];
@@ -420,7 +420,7 @@ begin
     else
     begin
       case SourceParam.DataType of
-        ftString:
+        ftString, ftWideString:
           TargetParams.ByNameAsString[SourceParam.Name] := SourceParam.AsString;
         ftInteger:
           TargetParams.ByNameAsInteger[SourceParam.Name] := SourceParam.AsInteger;
@@ -435,7 +435,7 @@ begin
         ftBlob, ftMemo:
         begin
           BlobContent := SourceParam.AsString;
-          TJvUIBDataset(DataSet).ParamsSetBlob(SourceParam.Name, BlobContent);
+          TUIBDataset(DataSet).ParamsSetBlob(SourceParam.Name, BlobContent);
         end;
       else
         raise Exception.Create('Parameter data type not supported: ' +
@@ -456,7 +456,8 @@ const
     'TIMESTAMP',
     'BLOB',
     'DATE',
-    'TIME');
+    'TIME',
+    'INTEGER');
 
 function TInstantUIBBroker.DataTypeToColumnType(
   DataType: TInstantDataType; Size: Integer): string;
@@ -469,9 +470,9 @@ end;
 function TInstantUIBBroker.CreateDataSet(const AStatement: string;
   AParams: TParams): TDataSet;
 var
-  Query: TJvUIBDataSet;
+  Query: TUIBDataset;
 begin
-  Query := TJvUIBDataSet.Create(nil);
+  Query := TUIBDataset.Create(nil);
   try
     Query.Database := Connector.DataBase;
     Query.FetchBlobs := True;
@@ -503,9 +504,9 @@ end;
 function TInstantUIBBroker.Execute(const AStatement: string;
   AParams: TParams): Integer;
 var
-  DataSet: TJvUIBDataSet;
+  DataSet: TUIBDataset;
 begin
-  DataSet := AcquireDataSet(AStatement, AParams) as TJvUIBDataSet;
+  DataSet := AcquireDataSet(AStatement, AParams) as TUIBDataset;
   try
     DataSet.Execute;
     Result := DataSet.RowsAffected;
