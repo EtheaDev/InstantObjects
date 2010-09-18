@@ -3301,7 +3301,8 @@ class function TInstantCodeRttiAttribute.InternalAtInstance(
 begin
   Result := Reader.ReadChar = '[';
   if Result then
-    Name := Reader.ReadToken else
+    Name := Reader.ReadToken
+  else
     Name := '';
 end;
 
@@ -3315,8 +3316,10 @@ begin
   BracketCount := 0;
   repeat
     C := Reader.ReadChar;
-    if C = '[' then Inc(BracketCount) else
-    if C = ']' then Dec(BracketCount);
+    if C = '[' then
+      Inc(BracketCount)
+    else if C = ']' then
+      Dec(BracketCount);
   until BracketCount = 0;
 end;
 
@@ -5792,7 +5795,8 @@ begin
   ReadObjects(Reader, [TInstantCodeRecord, TInstantCodeClassRef,
     TInstantCodeClassForward, TInstantCodeClass, TInstantCodeInterface,
     TInstantCodeDispInterface, TInstantCodeEnum, TInstantCodeSet,
-    TInstantCodeTypeDef, TInstantCodeProcType, TInstantCodeUnknownType]);
+    TInstantCodeTypeDef, TInstantCodeProcType, TInstantCodeRttiAttribute,
+    TInstantCodeUnknownType]);
 end;
 
 { TInstantCodeVars }
