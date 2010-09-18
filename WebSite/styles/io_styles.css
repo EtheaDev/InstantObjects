@@ -87,20 +87,21 @@ label{
 	background-repeat: repeat-x;
 }
 
-#navBar{
+.navBar{
 	margin: 0 79% 0 0;
 	background-color: #eeeeee;
 	border: 1px solid #005eb2;
 	
 	/* hack to fix IE6/Win's peekaboo bug */
 	height: 1%;
+	margin-bottom: 20px;
 }
 
 #content{
 	float:right;
 	width: 75%;
 	margin: 0;
-	padding: 0 3% 0 0;
+	padding: 0 2% 0 0;
 	height: 1%;
 }
 
@@ -227,7 +228,7 @@ label{
 
 #contentHdr {
 	background-color: #005eb2;
-  background-image: url(../images/color_grad_pic2.gif);
+	background-image: url(../images/color_grad_pic2.gif);
 	background-repeat: repeat-x;
 }
 
@@ -269,6 +270,7 @@ label{
 	clear: both;
 	padding: 10px 0px 0px 10px;
 	font-size: 80%;
+	border-bottom: 1px solid #B1B1B1;
 }
 
 .story p{
@@ -298,18 +300,18 @@ label{
 
 /*********** #navBar link styles ***********/
 
-#navBar ul a:link, #navBar ul a:visited {display: block;}
-#navBar ul {
+.navBar ul a:link, .navBar ul a:visited {display: block;}
+.navBar ul {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
 /* hack to fix IE/Win's broken rendering of block-level anchors in lists */
-#navBar li {border-bottom: 1px solid #EEE;}
+.navBar li {border-bottom: 1px solid #EEE;}
 
 /* fix for browsers that don't need the hack */
-html>body #navBar li {
+html>body .navBar li {
 	border-bottom: none;
 	padding: 0px;
 	/* border-top: none; */
@@ -318,38 +320,36 @@ html>body #navBar li {
 
 /*********** #sectionLinks styles ***********/
 
-#sectionLinks{
+.section{
 	position: relative;
 	margin: 0px;
-	padding: 0px;
+	padding: 2px 0px 2px 10px;
 	border-bottom: 1px solid #cccccc;
 	font-size: 80%;
 }
 
-#sectionLinks h3{
-	padding: 10px 0px 2px 10px;
-}
-
-#sectionLinks a:link{
-	padding: 2px 0px 2px 10px;
+.section a:link{
 	border-top: 1px solid #cccccc;
-	width: 100%;
-  voice-family: "\"}\""; 
-  voice-family:inherit;
-	width: auto;
 }
 
-#sectionLinks a:visited{
+.section a:visited{
 	border-top: 1px solid #cccccc;
 	padding: 2px 0px 2px 10px;
 }
 
-#sectionLinks a:hover{
+.section a:hover{
 	border-top: 1px solid #cccccc;
-	background-color: #dddddd;
-	padding: 2px 0px 2px 10px;
+	/*background-color: #dddddd;
+	padding: 2px 0px 2px 10px;*/
 }
 
+.section .feed{
+	font-size: 80%;
+}
+
+.section h3{
+	font-size: 90%;
+}
 
 /*********** .relatedLinks styles ***********/
 
