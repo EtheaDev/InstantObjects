@@ -21,7 +21,7 @@
  * The Initial Developer of the Original Code is: Andrea Petrelli
  *
  * Contributor(s):
- * Nando Dessena, Joao Morais
+ * Nando Dessena, Joao Morais, Marcos E. Yanes
  *
  * ***** END LICENSE BLOCK ***** *)
 
@@ -90,7 +90,7 @@ implementation
 {$R *.DFM}
 
 uses
-  InstantPersistence, InstantClasses, InstantConsts, jvuiblib;
+  InstantPersistence, InstantClasses, InstantConsts, uiblib;
 
 { TInstantUIBConnectionDefEditForm }
 
@@ -100,7 +100,7 @@ var
   I: TCharacterSet;
 begin
   for I := low(TCharacterSet) to high(TCharacterSet) do
-    AItems.Add(CharacterSetStr[I]);
+    AItems.Add(string(CharacterSetStr[I]));
 end;
 
 procedure TInstantUIBConnectionDefEditForm.ConnectionStringButtonClick(

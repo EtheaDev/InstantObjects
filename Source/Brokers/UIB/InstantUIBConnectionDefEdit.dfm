@@ -134,7 +134,6 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
       Width = 113
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 10
     end
@@ -159,7 +158,6 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
       Width = 113
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 11
     end
     object IdSizeEdit: TEdit
@@ -207,7 +205,6 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
       Width = 113
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 7
       OnChange = CharacterSetComboBoxChange
     end
@@ -216,7 +213,6 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
       Top = 256
       Width = 113
       Height = 21
-      ItemHeight = 13
       TabOrder = 8
       OnChange = SQLRoleEditChange
       Items.Strings = (
