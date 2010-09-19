@@ -109,7 +109,7 @@ type
       Map: TInstantAttributeMap; ConflictAction: TInstantConflictAction;
       Info: PInstantOperationInfo);
     function GetStatementCache: TInstantStatementCache;
-    procedure SetStatementCacheCapacity(const Value: Integer);
+    procedure SetStatementCacheCapacity(const AValue: Integer);
   protected
     property StatementCache: TInstantStatementCache read GetStatementCache;
     function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver;
@@ -535,14 +535,14 @@ type
     procedure InternalClearAttributeLinkRecords; virtual;
     procedure InternalDisposeDeletedAttributeObjects(
       Attribute: TInstantContainer); virtual;
-    procedure InternalReadAttributeObjects(Attribute: TInstantContainer; 
+    procedure InternalReadAttributeObjects(Attribute: TInstantContainer;
       const AObjectId: string); virtual;
   public
     constructor Create(AResolver: TInstantCustomResolver);
     procedure StoreAttributeObjects(Attribute: TInstantContainer);
     procedure ClearAttributeLinkRecords;
     procedure DisposeDeletedAttributeObjects(Attribute: TInstantContainer);
-    procedure ReadAttributeObjects(Attribute: TInstantContainer; 
+    procedure ReadAttributeObjects(Attribute: TInstantContainer;
       const AObjectId: string);
     property Broker: TInstantCustomRelationalBroker read GetBroker;
     property Resolver: TInstantCustomResolver read GetResolver;
@@ -621,6 +621,7 @@ type
     property Resolver: TInstantSQLResolver read GetResolver;
   end;
 
+  // An item in the statement cache.
   TInstantStatement = class
   private
     FStatementImplementation: TComponent;
@@ -630,6 +631,9 @@ type
     property StatementImplementation: TComponent read FStatementImplementation;
   end;
 
+  // Caches objects that implement command statements in releational brokers.
+  // Most commonly, they are TDataSet descendants that implement SQL queries.
+  // brokers cache them to save on prepare/compilation time.
   TInstantStatementCache = class(TComponent)
   private
     FStatements: TStringList;
@@ -649,6 +653,7 @@ type
     function AddStatement(const StatementText: string;
       const StatementImplementation: TComponent): Integer;
     function RemoveStatement(const StatementText: string): Boolean;
+    function HasStatementImplementation(const StatementImplementation: TComponent): Boolean;
   end;
 
   // A TInstantCatalog that gathers its info from an existing database (through
@@ -993,21 +998,36 @@ type
   // Backward compatibility
   TInstantRelationalQuery = TInstantNavigationalQuery;
 
+  // Holds object data in the current record of a dataset specified upon
+  // creation. May hold data for several objects, locating the correct
+  // record each time it copies data to an object.
+  TInstantDataSetObjectData = class(TInstantAbstractObjectData)
+  private
+    FDataSet: TDataSet;
+    FRecNo: Integer;
+    FIdField: TField;
+  public
+    constructor CreateAndInit(const ADataSet: TDataSet);
+    property DataSet: TDataSet read FDataSet;
+    function Locate(const AObjectId: string): Boolean;
+  end;
+
   TInstantSQLQuery = class(TInstantCustomRelationalQuery)
   private
     FObjectReferenceList: TInstantObjectReferenceList;
     FParamsObject: TParams;
     FStatement: string;
+    FDataSet: TDataSet;
     procedure DestroyObjectReferenceList;
     function GetObjectReferenceCount: Integer;
     function GetObjectReferenceList: TInstantObjectReferenceList;
     function GetParamsObject: TParams;
-    procedure InitObjectReferences(const ADataSet: TDataSet);
+    procedure InitObjectReferences;
   protected
     function GetActive: Boolean; override;
     function AcquireDataSet(const AStatement: string; AParams: TParams):
       TDataSet; virtual;
-    procedure ReleaseDataSet(const DataSet: TDataSet);
+    procedure ReleaseDataSet;
     function GetParams: TParams; override;
     function GetStatement: string; override;
     function InternalAddObject(AObject: TObject): Integer; override;
@@ -1047,16 +1067,6 @@ type
   published
     property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt
       default True;
-  end;
-
-  // Holds object data in the current record of a dataset specified upon
-  // creation. Used in burst load mode.
-  TInstantDataSetObjectData = class(TInstantAbstractObjectData)
-  private
-    FDataSet: TDataSet;
-  public
-    constructor CreateAndInit(const ADataSet: TDataSet);
-    property DataSet: TDataSet read FDataSet;
   end;
 
 var
@@ -1317,13 +1327,16 @@ begin
   EnsureResolver(Map).RetrieveMap(AObject, AObjectId, Map, ConflictAction, Info, FObjectData);
 end;
 
-procedure TInstantCustomRelationalBroker.SetStatementCacheCapacity(const Value: Integer);
+procedure TInstantCustomRelationalBroker.SetStatementCacheCapacity(const AValue: Integer);
 begin
-  FStatementCacheCapacity := Value;
-  if FStatementCacheCapacity = 0 then
-    FreeAndNil(FStatementCache)
-  else if Assigned(FStatementCache) then
-    FStatementCache.Capacity := FStatementCacheCapacity;
+  if FStatementCacheCapacity <> AValue then
+  begin
+    FStatementCacheCapacity := AValue;
+    if FStatementCacheCapacity = 0 then
+      FreeAndNil(FStatementCache)
+    else if Assigned(FStatementCache) then
+      FStatementCache.Capacity := FStatementCacheCapacity;
+  end;
 end;
 
 procedure TInstantCustomRelationalBroker.StoreMap(AObject: TInstantObject;
@@ -1553,7 +1566,7 @@ end;
 
 procedure TInstantSQLBroker.ReleaseDataSet(const ADataSet: TDataSet);
 begin
-  if FStatementCacheCapacity <> 0 then
+  if Assigned(FStatementCache) and FStatementCache.HasStatementImplementation(ADataSet) then
     ADataSet.Close
   else
     ADataSet.Free;
@@ -1980,7 +1993,6 @@ end;
 procedure TInstantNavigationalResolver.ClearPart(Attribute: TInstantPart);
 begin
   if Attribute.Metadata.StorageKind = skExternal then
-//    Attribute.Value.ObjectStore.DisposeObject(Attribute.Value, caIgnore);
     DisposeObject(Attribute.Value, caIgnore);
 end;
 
@@ -1992,7 +2004,6 @@ begin
   if Attribute.Metadata.StorageKind = skExternal then
   begin
     for I := 0 to Pred(Attribute.Count) do
-//      Attribute.Items[I].ObjectStore.DisposeObject(Attribute.Items[I], caIgnore);
       DisposeObject(Attribute.Items[I], caIgnore);
     LinkDatasetResolver :=
         GetLinkDatasetResolver(Attribute.Metadata.ExternalStorageName);
@@ -3063,7 +3074,7 @@ begin
   Assert(Assigned(AStream));
 
   // Look in TInstantCustomResolver.CreateEmbeddedObjectOutputStream
-  // to see the stream type. Change there need to be propagated here.
+  // to see the stream type. Changes there need to be propagated here.
   if AConnector.BlobStreamFormat = sfBinary then
   begin
     LParam := AddParam(AParams, AParamName, ftBlob);
@@ -3274,7 +3285,6 @@ var
                   as TInstantObject;
                 try
                   if Assigned(PartObject) then
-//                    PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                     DisposeObject(PartObject, caIgnore);
                 finally
                   PartObject.Free;
@@ -3325,8 +3335,6 @@ var
           Attribute := TInstantContainer(AObject.AttributeByName(
               AttributeMetadata.Name));
           for j := 0 to Pred(Attribute.Count) do
-//            Attribute.Items[j].ObjectStore.DisposeObject(
-//                Attribute.Items[j], caIgnore);
             DisposeObject(Attribute.Items[j], caIgnore);
         end;
         DeleteAllExternalLinks(i);
@@ -3376,9 +3384,12 @@ var
   LParams: TParams;
 begin
   // This resolver supports retrieving data from TInstantDataSetObjectData.
-  if Assigned(AObjectData) and (AObjectData is TInstantDataSetObjectData) then
+  if Assigned(AObjectData) and (AObjectData is TInstantDataSetObjectData)
+    and TInstantDataSetObjectData(AObjectData).Locate(AObjectId) then
+  begin
     RetrieveMapFromDataSet(AObject, AObjectId, Map, ConflictAction, AInfo,
-      TInstantDataSetObjectData(AObjectData).DataSet)
+      TInstantDataSetObjectData(AObjectData).DataSet);
+  end
   else
   begin
     LParams := TParams.Create;
@@ -3476,7 +3487,6 @@ var
                       AObject.Connector) as TInstantObject;
                     try
                       if Assigned(PartObject) then
-//                        PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
                         DisposeObject(PartObject, caIgnore);
                     finally
                       PartObject.Free;
@@ -3495,7 +3505,6 @@ var
             // Store object
             PartObject := PartAttribute.Value;
             PartObject.CheckId;
-//            PartObject.ObjectStore.StoreObject(PartObject, caIgnore);
             StoreObject(PartObject, caIgnore);
           end;
         end;
@@ -3513,7 +3522,6 @@ var
     for I := 0 to Pred(Map.Count) do
     begin
       AttributeMetadata := Map[I];
-//      if AttributeMetadata.AttributeType = atParts then
       if AttributeMetadata.AttributeType in [atParts, atReferences] then
       begin
         Attribute := TInstantContainer(AObject.AttributeByName(
@@ -4080,7 +4088,6 @@ end;
 procedure TInstantNavigationalLinkResolver.InternalDisposeDeletedAttributeObjects(
     Attribute: TInstantContainer);
 var
-//    I: Integer;
   Obj: TInstantObject;
   AttributeMetadata: TInstantAttributeMetadata;
   ObjDisposed: Boolean;
@@ -4096,43 +4103,14 @@ begin
     AttributeMetadata := Attribute.Metadata;
     while not Eof do
     begin
-//        PartDeleted := True;
-//        for I := 0 to Pred(Attribute.Count) do
-//        begin
-//          if InstantSameText(Attribute.Fields[I].Id, ADataSet.Fields[4].AsString,
-//              True) then
-//          begin
-//            PartDeleted := False;
-//            Break;
-//          end;
-//        end;
-//        if PartDeleted then
-//        begin
-//          PartObject := AttributeMetadata.ObjectClass.Retrieve(
-//            ADataSet.Fields[4].AsString, False, False, Attribute.Connector);
-//          try
-//            if Assigned(PartObject) then
-//            begin
-//              PartObject.ObjectStore.DisposeObject(PartObject, caIgnore);
-//              ADataSet.Delete;
-//            end;
-//          finally
-//            PartObject.Free;
-//          end;
-//          if not PartDeleted then
-//            ADataSet.Next;
-//        end;
-
       ObjDisposed := False;
       Obj := AttributeMetadata.ObjectClass.Retrieve(
-          FieldByName(InstantChildIdFieldName).AsString,
-//          DataSet.Fields[4].AsString,
-          False, False, Attribute.Connector) as TInstantObject;
+        FieldByName(InstantChildIdFieldName).AsString,
+        False, False, Attribute.Connector) as TInstantObject;
       try
         if Assigned(Obj) and
-            (Attribute.IndexOf(Obj) = -1) then
+          (Attribute.IndexOf(Obj) = -1) then
         begin
-//          Obj.ObjectStore.DisposeObject(Obj, caIgnore);
           Resolver.DisposeObject(Obj, caIgnore);
           Delete;
           ObjDisposed := True;
@@ -4153,6 +4131,7 @@ procedure TInstantNavigationalLinkResolver.InternalReadAttributeObjects(
     Attribute: TInstantContainer; const AObjectId: string);
 var
   WasOpen: Boolean;
+  LChildClassField, LChildIdField: TField;
 begin
   WasOpen := Dataset.Active;
 
@@ -4162,13 +4141,11 @@ begin
     // Attribute.Owner.Id can be '', so do not use here.
     SetDatasetParentRange(Attribute.Owner.Classname, AObjectId);
     First;
+    LChildClassField := FieldByName(InstantChildClassFieldName);
+    LChildIdField := FieldByName(InstantChildIdFieldName);
     while not Eof do
     begin
-      Attribute.AddReference(
-          FieldByName(InstantChildClassFieldName).AsString,
-          FieldByName(InstantChildIdFieldName).AsString);
-//          DataSet.Fields[3].AsString,
-//          DataSet.Fields[4].AsString);
+      Attribute.AddReference(LChildClassField.AsString, LChildIdField.AsString);
       Next;
     end;
   finally
@@ -4197,7 +4174,6 @@ begin
       Obj.CheckId;
       Append;
       try
-//        FieldByName(InstantIdFieldName).AsString := Obj.GenerateId;
         FieldByName(InstantIdFieldName).AsString :=
             Attribute.Connector.GenerateId;
         FieldByName(InstantParentClassFieldName).AsString :=
@@ -4206,19 +4182,10 @@ begin
         FieldByName(InstantChildClassFieldName).AsString := Obj.ClassName;
         FieldByName(InstantChildIdFieldName).AsString := Obj.Id;
         FieldByName(InstantSequenceNoFieldName).AsInteger := Succ(I);
-////        DataSet.Fields[0].AsString := Obj.GenerateId;
-//        DataSet.Fields[0].AsString := Obj.Id;
-//        DataSet.Fields[1].AsString :=
-//            Attribute.Owner.ClassName;
-//        DataSet.Fields[2].AsString := Attribute.Owner.Id;
-//        DataSet.Fields[3].AsString := Obj.ClassName;
-//        DataSet.Fields[4].AsString := Obj.Id;
-//        DataSet.Fields[5].AsInteger := Succ(I);
         Post;
       except
         Cancel;
       end;
-//      Obj.ObjectStore.StoreObject(Obj, caIgnore);
       Resolver.StoreObject(Obj, caIgnore);
     end;
   finally
@@ -4312,13 +4279,11 @@ begin
         while not DataSet.Eof do
         begin
           Obj := InstantFindClass(DataSet.FieldByName(InstantChildClassFieldName).AsString).Retrieve(
-//            DataSet.Fields[1].AsString, False, False, AObject.Connector);
               DataSet.FieldByName(InstantChildIdFieldName).AsString,
               False, False, Attribute.Connector) as TInstantObject;
           try
             if Assigned(Obj) and
                 (Attribute.IndexOf(Obj) = -1) then
-//              Obj.ObjectStore.DisposeObject(Obj, caIgnore);
               Resolver.DisposeObject(Obj, caIgnore);
           finally
             Obj.Free;
@@ -4336,28 +4301,29 @@ begin
   end;
 end;
 
-procedure TInstantSQLLinkResolver.InternalReadAttributeObjects(Attribute:
-    TInstantContainer; const AObjectId: string);
+procedure TInstantSQLLinkResolver.InternalReadAttributeObjects(
+  Attribute: TInstantContainer; const AObjectId: string);
 var
   Statement: string;
   Params: TParams;
-  Dataset: TDataset;
+  Dataset: TDataSet;
+  LChildClassField, LChildIdField: TField;
 begin
   Params := TParams.Create;
   try
     Statement := Format(Resolver.SelectExternalSQL, [TableName]);
     Resolver.AddIdParam(Params, InstantParentIdFieldName, AObjectId);
     Resolver.AddStringParam(Params, InstantParentClassFieldName,
-        AttributeOwner.ClassName);
+      AttributeOwner.ClassName);
     DataSet := Broker.AcquireDataSet(Statement, Params);
     try
       DataSet.Open;
       try
+        LChildClassField := DataSet.FieldByName(InstantChildClassFieldName);
+        LChildIdField := DataSet.FieldByName(InstantChildIdFieldName);
         while not DataSet.Eof do
         begin
-          Attribute.AddReference(
-              DataSet.FieldByName(InstantChildClassFieldName).AsString,
-              DataSet.FieldByName(InstantChildIdFieldName).AsString);
+          Attribute.AddReference(LChildClassField.AsString, LChildIdField.AsString);
           DataSet.Next;
         end;
       finally
@@ -4385,7 +4351,6 @@ begin
     // Store object
     Obj := Attribute.Items[I];
     Obj.CheckId;
-//    Obj.ObjectStore.StoreObject(Obj, caIgnore);
     Resolver.StoreObject(Obj, caIgnore);
 
     // Insert link
@@ -4393,7 +4358,6 @@ begin
     try
       Statement := Format(Resolver.InsertExternalSQL,
           [TableName]);
-//      Resolver.AddIdParam(Params, InstantIdFieldName, AttributeOwner.GenerateId);
       Resolver.AddIdParam(Params, InstantIdFieldName,
           Attribute.Connector.GenerateId);
       Resolver.AddStringParam(Params, InstantParentClassFieldName,
@@ -4487,6 +4451,22 @@ begin
     Result := TInstantStatement(FStatements.Objects[Index])
   else
     Result := nil;
+end;
+
+function TInstantStatementCache.HasStatementImplementation(
+  const StatementImplementation: TComponent): Boolean;
+var
+  I: Integer;
+begin
+  Result := False;
+  for I := 0 to FStatements.Count - 1 do
+  begin
+    if TinstantStatement(FStatements.Objects[I]).StatementImplementation = StatementImplementation then
+    begin
+      Result := True;
+      Break;
+    end;
+  end;
 end;
 
 procedure TInstantStatementCache.Notification(AComponent: TComponent; Operation: TOperation);
@@ -5564,7 +5544,7 @@ begin
 
     // Mind that LContext.ActualBurstLoadMode might be different than
     // Self.RequestedBurstLoadMode.
-    if LContext.ActualLoadMode = lmFullBurst then
+    if IsBurstLoadMode(LContext.ActualLoadMode) then
     begin
       // Use the Id just to get the table path needed to add the updatecount
       // field. We could use anything we know is in the main table.
@@ -5922,13 +5902,6 @@ begin
   end;
 end;
 
-destructor TInstantSQLQuery.Destroy;
-begin
-  DestroyObjectReferenceList;
-  FParamsObject.Free;
-  inherited;
-end;
-
 { TInstantSQLQuery }
 
 function TInstantSQLQuery.AcquireDataSet(const AStatement: string;
@@ -5936,6 +5909,14 @@ function TInstantSQLQuery.AcquireDataSet(const AStatement: string;
 begin
   Result := (Connector.Broker as TInstantSQLBroker).AcquireDataSet(AStatement,
     AParams);
+end;
+
+destructor TInstantSQLQuery.Destroy;
+begin
+  DestroyObjectReferenceList;
+  ReleaseDataSet;
+  FParamsObject.Free;
+  inherited;
 end;
 
 procedure TInstantSQLQuery.DestroyObjectReferenceList;
@@ -5978,50 +5959,45 @@ begin
   Result := FStatement;
 end;
 
-procedure TInstantSQLQuery.InitObjectReferences(const ADataSet: TDataSet);
-
-  function IsBurstLoadModeDataSet(const ADataSet: TDataSet): Boolean;
-  begin
-    // A trick to check if the dataset that came from the broker is actually
-    // a burst load mode dataset. Requesting burst load mode does not guarantee
-    // to get it, as not all IQL query types support it yet.
-    Result := Assigned(ADataSet.FindField(InstantUpdateCountFieldName));
-  end;
-
+procedure TInstantSQLQuery.InitObjectReferences;
 var
   LObjRef: TInstantObjectReference;
-  LObjData: TInstantDataSetObjectData;
+  LClassField, LIdField: TField;
 begin
-  LObjData := nil;
-  if Assigned(ADataSet) then
+  Assert(Assigned(Connector));
+
+  if Assigned(FDataSet) then
   begin
-    ADataSet.DisableControls;
     try
-      if IsBurstLoadModeDataSet(ADataSet) then
-        LObjData := TInstantDataSetObjectData.CreateAndInit(ADataSet);
+      FDataSet.DisableControls;
       try
-        while not ADataSet.Eof do
+        LClassField := FDataSet.FieldByName(InstantClassFieldName);
+        LIdField := FDataSet.FieldByName(InstantIdFieldName);
+        while not FDataSet.Eof do
         begin
           LObjRef := ObjectReferenceList.Add;
           try
-            LObjRef.ReferenceObject(
-              ADataSet.FieldByName(InstantClassFieldName).AsString,
-              ADataSet.FieldByName(InstantIdFieldName).AsString);
-            if Assigned(LObjData) then
-              LObjRef.RetrieveObjectFromObjectData(LObjData);
+            if IsBurstLoadMode(ActualLoadMode) then
+              LObjRef.ReferenceObject(LClassField.AsString, LIdField.AsString,
+                TInstantDataSetObjectData.CreateAndInit(FDataSet))
+            else
+              LObjRef.ReferenceObject(LClassField.AsString, LIdField.AsString);
+            if ActualLoadMode = lmFullBurst then
+              LObjRef.RetrieveObjectFromObjectData;
           except
             LObjRef.Free;
             raise;
           end;
           if (MaxCount > 0) and (ObjectReferenceList.Count = MaxCount) then
             Break;
-          ADataSet.Next;
+          FDataSet.Next;
         end;
       finally
-        FreeAndNil(LObjData);
+        FDataSet.EnableControls;
       end;
     finally
-      ADataSet.EnableControls;
+      if ActualLoadMode = lmFullBurst then
+        ReleaseDataSet;
     end;
   end;
 end;
@@ -6034,6 +6010,7 @@ end;
 procedure TInstantSQLQuery.InternalClose;
 begin
   DestroyObjectReferenceList;
+  ReleaseDataSet;
   inherited;
 end;
 
@@ -6072,18 +6049,18 @@ begin
 end;
 
 procedure TInstantSQLQuery.InternalOpen;
-var
-  DataSet: TDataSet;
 begin
   inherited;
-  DataSet := AcquireDataSet(Statement, ParamsObject);
-  if Assigned(DataSet) then
+  ReleaseDataSet;
+  FDataSet := AcquireDataSet(Statement, ParamsObject);
+  if Assigned(FDataSet) then
   try
-    if not DataSet.Active then
-      DataSet.Open;
-    InitObjectReferences(DataSet);
-  finally
-    ReleaseDataSet(DataSet);
+    if not FDataSet.Active then
+      FDataSet.Open;
+    InitObjectReferences;
+  except
+    ReleaseDataSet;
+    raise;
   end;
 end;
 
@@ -6106,9 +6083,13 @@ begin
   Result := ObjectReferenceList.RefItems[Index].HasInstance;
 end;
 
-procedure TInstantSQLQuery.ReleaseDataSet(const DataSet: TDataSet);
+procedure TInstantSQLQuery.ReleaseDataSet;
 begin
-  (Connector.Broker as TInstantSQLBroker).ReleaseDataSet(DataSet);
+  if Assigned(FDataSet) and Assigned(Connector) and Assigned(Connector.Broker) then
+  begin
+    (Connector.Broker as TInstantSQLBroker).ReleaseDataSet(FDataSet);
+    FDataSet := nil;
+  end;
 end;
 
 procedure TInstantSQLQuery.SetParams(Value: TParams);
@@ -6446,7 +6427,7 @@ procedure TInstantTranslationContext.Initialize;
         LTablePath := ObjectClassMetadata.TableName;
     end;
     AddTablePath(LTablePath);
-    if ActualLoadMode = lmFullBurst then
+    if IsBurstLoadMode(ActualLoadMode) then
     begin
       // Standard mode only adds the main table when needed, and not always.
       // A possible optimization would be to add it only if it does actually
@@ -6482,7 +6463,7 @@ procedure TInstantTranslationContext.Initialize;
         AddCriteria(Format('%s <> 0',
           [QualifyPath(ConcatPath(Specifier.Text, InstantIdFieldName))]));
     end;
-    if ActualLoadMode = lmFullBurst then
+    if IsBurstLoadMode(ActualLoadMode) then
     begin
       LClassMeta := ObjectClassMetadata.Parent;
       while Assigned(LClassMeta) do
@@ -6793,6 +6774,14 @@ begin
   Assert(Assigned(ADataSet));
   Create;
   FDataSet := ADataSet;
+  FRecNo := ADataSet.RecNo;
+  FIdField := ADataSet.FieldByName(InstantIdFieldName);
+end;
+
+function TInstantDataSetObjectData.Locate(const AObjectId: string): Boolean;
+begin
+  FDataSet.RecNo := FRecNo;
+  Result := FIdField.AsString = AObjectId;
 end;
 
 end.

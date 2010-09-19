@@ -104,17 +104,25 @@ type
   // working with a SQL broker. See documentation for implication of using the
   // different modes.
   TInstantLoadMode = (
-    // Loads primary keys first, everything else on demand.
+    // Loads primary keys first, materializes objects on demand by loading
+    // all object data from the database.
     lmKeysFirst,
-    // Loads selected attributes first - not yet implemented.
-    // Falls back to lmKeysFirst.
-    //lmPartialBurst,
+    // Loads all simple attributes first, materializes objects on demand using
+    // loaded data from simple attributes and accessing the database for the
+    // rest.
+    lmPartialBurst,
     // Loads all simple attributes and internal containers in the first pass.
-    // In the future this might trigger loading of external atPart attributes
-    // as well.
+    // Materializes all objects when the cursor is open.
     lmFullBurst
   );
 
+function IsBurstLoadMode(const ALoadMode: TInstantLoadMode): Boolean; {$IFDEF D10+}inline;{$ENDIF}
+
 implementation
+
+function IsBurstLoadMode(const ALoadMode: TInstantLoadMode): Boolean; {$IFDEF D10+}inline;{$ENDIF}
+begin
+  Result := ALoadMode in [lmPartialBurst, lmFullBurst];
+end;
 
 end.
