@@ -24,7 +24,7 @@ function RandomCity: string;
 implementation
 
 uses
-  SysUtils;
+  SysUtils, InstantUtils;
 
 const
   Letters = ['a'..'z'];
@@ -113,14 +113,14 @@ function RandomConsonant: Char;
 begin
   repeat
     Result := RandomLetter;
-  until Result in Consonants;
+  until InstantCharInSet(Result, Consonants);
 end;
 
 function RandomVowel: Char;
 begin
   repeat
     Result := RandomLetter;
-  until Result in Vowels;
+  until InstantCharInSet(Result, Vowels);
 end;
 
 function RandomName: string;
@@ -232,7 +232,7 @@ begin
     RandomStr(StreetBeginnings) +
     RandomStr(StreetEndings) + ' ' +
     RandomStr(StreetTypes) + ' ' +
-    IntToStr((Random(499) + 1) div (Random(9) + 1) + 1) + ' ' + 'А ати aa';
+    IntToStr((Random(499) + 1) div (Random(9) + 1) + 1);
 end;
 
 function RandomCity: string;

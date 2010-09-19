@@ -105,16 +105,26 @@ inherited QueryViewForm: TQueryViewForm
       Text = 'Keys First'
       Items.Strings = (
         'Keys First'
+        'Partial Burst'
         'Full Burst')
     end
     object FetchAllCheckBox: TCheckBox
       Left = 95
-      Top = 124
-      Width = 58
+      Top = 116
+      Width = 64
       Height = 17
       Alignment = taLeftJustify
       Caption = 'Fetch All'
       TabOrder = 2
+    end
+    object StatementCacheCheckBox: TCheckBox
+      Left = 95
+      Top = 131
+      Width = 64
+      Height = 17
+      Alignment = taLeftJustify
+      Caption = 'S. Cache'
+      TabOrder = 6
     end
   end
   object ResultPageControl: TPageControl
@@ -180,7 +190,6 @@ inherited QueryViewForm: TQueryViewForm
     end
   end
   object TestSelector: TInstantSelector
-    AfterScroll = TestSelectorAfterScroll
     AfterClose = TestSelectorAfterClose
     Left = 32
     Top = 192

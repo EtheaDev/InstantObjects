@@ -45,6 +45,7 @@ type
     StatsTabSheet: TTabSheet;
     StatsMemo: TMemo;
     FetchAllCheckBox: TCheckBox;
+    StatementCacheCheckBox: TCheckBox;
     procedure ExecuteActionExecute(Sender: TObject);
     procedure ExampleComboBoxClick(Sender: TObject);
     procedure TestSelectorAfterScroll(DataSet: TDataSet);
@@ -129,13 +130,25 @@ begin
     {$ENDIF}
     with TestSelector do
     begin
+      if Connector.Broker is TInstantSQLBroker then
+      begin
+        if StatementCacheCheckBox.Checked then
+          TInstantSQLBroker(Connector.Broker).StatementCacheCapacity := -1
+        else
+          TInstantSQLBroker(Connector.Broker).StatementCacheCapacity := 0;
+      end;
       Close;
       TestSelector.MaxCount := StrToInt(Trim(MaxCountEdit.Text));
       Command.Text := CommandEdit.Text;
-      Open;
-      if FetchAllCheckBox.Checked then
-        while not Eof do
-          Next;
+      DisableControls;
+      try
+        Open;
+        if FetchAllCheckBox.Checked then
+          while not Eof do
+            Next;
+      finally
+        EnableControls;
+      end;
       ResultPageControl.ActivePage := ResultTabSheet;
     end;
   finally

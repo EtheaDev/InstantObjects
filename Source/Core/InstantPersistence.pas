@@ -105,6 +105,7 @@ type
     FObjectId: string;
     FOwner: TInstantComplex;
     FOwnsInstance: Boolean;
+    FObjectData: TInstantAbstractObjectData;
     procedure ClearReference;
     procedure DoAssignInstance(AInstance: TInstantObject; AOwnsInstance: Boolean);
     function GetInstance: TInstantObject;
@@ -136,13 +137,12 @@ type
     function IsBroken: Boolean;
     procedure ReadAsObject(Reader: TInstantReader); virtual;
     procedure Reset;
-    procedure ReferenceObject(const AObjectClassName,
-      AObjectId: string); overload;
-    procedure ReferenceObject(AObjectClass: TInstantObjectClass;
-      const AObjectId: string); overload;
-    // Retrieves the referenced object from the specified data object.
-    // Used in burst load mode to get the data already fetched in a dataset.
-    procedure RetrieveObjectFromObjectData(const AObjectData: TInstantAbstractObjectData);
+    procedure ReferenceObject(const AObjectClassName, AObjectId: string;
+      const AObjectData: TInstantAbstractObjectData = nil); overload;
+    procedure ReferenceObject(const AObjectClass: TInstantObjectClass;
+      const AObjectId: string; const AObjectData: TInstantAbstractObjectData = nil); overload;
+    // Retrieves the referenced object from internal data object, if available.
+    procedure RetrieveObjectFromObjectData;
     procedure WriteAsObject(Writer: TInstantWriter); virtual;
     property Instance: TInstantObject read GetInstance write SetInstance;
     property ObjectClass: TInstantObjectClass read GetObjectClass;
@@ -2036,15 +2036,18 @@ end;
 { TInstantObjectReference }
 
 procedure TInstantObjectReference.Assign(Source: TPersistent);
+var
+  LSource: TInstantObjectReference;
 begin
   inherited;
   if Source is TInstantObjectReference then
-    with TInstantObjectReference(Source) do
-    begin
-      Self.FObjectClassName := FObjectClassName;
-      Self.FObjectId := FObjectId;
-      Self.Instance := Instance;
-    end;
+  begin
+    LSource := TInstantObjectReference(Source);
+    FObjectClassName := LSource.FObjectClassName;
+    FObjectId := LSource.FObjectId;
+    Instance := LSource.Instance;
+    FObjectData := LSource.FObjectData;
+  end;
 end;
 
 procedure TInstantObjectReference.AssignInstance(AInstance: TInstantObject);
@@ -2056,6 +2059,7 @@ procedure TInstantObjectReference.ClearReference;
 begin
   FObjectClassName := '';
   FObjectId := '';
+  FreeAndNil(FObjectData);
 end;
 
 constructor TInstantObjectReference.Clone(Source: TInstantObjectReference;
@@ -2091,7 +2095,7 @@ begin
     InstantCheckConnector(Connector);
     if HasReference then
     begin
-      Obj := ObjectClass.Retrieve(ObjectId, False, False, Connector);
+      Obj := ObjectClass.Retrieve(ObjectId, False, False, Connector, FObjectData);
       DoAssignInstance(Obj, AOwnsInstance);
     end;
     if Assigned(FInstance) then
@@ -2104,6 +2108,7 @@ end;
 
 destructor TInstantObjectReference.Destroy;
 begin
+  FreeAndNil(FObjectData);
   DestroyInstance;
   inherited;
 end;
@@ -2224,38 +2229,41 @@ begin
   Reader.ReadStr;
   FObjectClassName := Reader.ReadStr;
   FObjectId := Reader.ReadStr;
+  FObjectData := nil;
 end;
 
 procedure TInstantObjectReference.ReferenceObject(const AObjectClassName,
-  AObjectId: string);
+  AObjectId: string; const AObjectData: TInstantAbstractObjectData = nil);
 begin
   if not Equals(AObjectClassName, AObjectId) then
   begin
+    FreeAndNil(FObjectData);
     DestroyInstance;
     FObjectClassName := AObjectClassName;
     FObjectId := AObjectId;
+    FObjectData := AObjectData;
   end;
 end;
 
-procedure TInstantObjectReference.RetrieveObjectFromObjectData(
-  const AObjectData: TInstantAbstractObjectData);
+procedure TInstantObjectReference.ReferenceObject(
+  const AObjectClass: TInstantObjectClass; const AObjectId: string;
+  const AObjectData: TInstantAbstractObjectData = nil);
+begin
+  ReferenceObject(AObjectClass.ClassName, AObjectId, AObjectData);
+end;
+
+procedure TInstantObjectReference.RetrieveObjectFromObjectData;
 var
   LObject: TInstantObject;
 begin
-  Assert(Assigned(AObjectData));
+  Assert(Assigned(FObjectData));
 
-  LObject := ObjectClass.Retrieve(ObjectId, False, False, nil, AObjectData);
+  LObject := ObjectClass.Retrieve(ObjectId, False, False, nil, FObjectData);
   DoAssignInstance(LObject, True);
   if Assigned(FInstance) then
     FInstance.Release
   else
     Integer(FInstance) := -1;
-end;
-
-procedure TInstantObjectReference.ReferenceObject(
-  AObjectClass: TInstantObjectClass; const AObjectId: string);
-begin
-  ReferenceObject(AObjectClass.ClassName, AObjectId);
 end;
 
 procedure TInstantObjectReference.Reset;
@@ -7567,6 +7575,7 @@ begin
   Result := Assigned(AObject) and AObject.Metadata.IsStored;
   if not Result then
     Exit;
+
   CheckBroker(Broker);
   try
     AObject.DisableChanges;
