@@ -567,6 +567,7 @@ type
     procedure Clear;
     function Find(const AName: string): TInstantAttributeMetadata;
     procedure Remove(Item: TInstantAttributeMetadata);
+    procedure Assign(Source: TPersistent); override;
     property Items[Index: Integer]: TInstantAttributeMetadata read GetItems
       write SetItems; default;
     function Owner: TInstantClassMetadata;
@@ -619,15 +620,19 @@ end;
 { TInstantClassMetadata }
 
 procedure TInstantClassMetadata.Assign(Source: TPersistent);
+var
+  LSource: TInstantClassMetadata;
 begin
   inherited;
   if Source is TInstantClassMetadata then
-    with TInstantClassMetadata(Source) do
-    begin
-      Self.FDefaultContainerName := FDefaultContainerName;
-      Self.FStorageName := FStorageName;
-      Self.FPersistence := FPersistence;
-    end;
+  begin
+    LSource := TInstantClassMetadata(Source);
+    FDefaultContainerName := LSource.DefaultContainerName;
+    FStorageName := LSource.StorageName;
+    FPersistence := LSource.Persistence;
+    FParentName := LSource.ParentName;
+    AttributeMetadatas.Assign(LSource.AttributeMetadatas);
+  end;
 end;
 
 procedure TInstantClassMetadata.BuildAttributeMap(Map: TInstantAttributeMap;
@@ -1408,12 +1413,18 @@ begin
     LModel.LoadFromResFile(FileName);
     for I := 0 to LModel.ClassMetadatas.Count - 1 do
     begin
-      LClassMetadata := ClassMetadatas.Add;
-      try
-        LClassMetadata.Assign(LModel.ClassMetadatas[I]);
-      except
-        FreeAndNil(LClassMetadata);
-        raise;
+      LClassMetadata := ClassMetadatas.Find(LModel.ClassMetadatas[I].Name);
+      if Assigned(LClassMetadata) then
+        LClassMetadata.Assign(LModel.ClassMetadatas[I])
+      else
+      begin
+        LClassMetadata := ClassMetadatas.Add;
+        try
+          LClassMetadata.Assign(LModel.ClassMetadatas[I]);
+        except
+          FreeAndNil(LClassMetadata);
+          raise;
+        end;
       end;
     end;
   finally
@@ -1704,26 +1715,28 @@ end;
 { TInstantAttributeMetadata }
 
 procedure TInstantAttributeMetadata.Assign(Source: TPersistent);
+var
+  LSource: TInstantAttributeMetadata;
 begin
   inherited;
   if Source is TInstantAttributeMetadata then
-    with TInstantAttributeMetadata(Source) do
-    begin
-      Self.FAttributeType := FAttributeType;
-      Self.FDefaultValue := FDefaultValue;
-      Self.FDisplayWidth := FDisplayWidth;
-      Self.FEditMask := FEditMask;
-      Self.FIsIndexed := FIsIndexed;
-      Self.FIsRequired := FIsRequired;
-      Self.FUseNull := FUseNull;
-      Self.FObjectClassName := FObjectClassName;
-      Self.FSize := FSize;
-      Self.FStorageName := FStorageName;
-      Self.FStorageKind := FStorageKind;
-      Self.FExternalStorageName := FExternalStorageName;
-      Self.FValidCharsString := FValidCharsString;
-      Self.FEnumName := FEnumName;
-    end;
+  begin
+    LSource := TInstantAttributeMetadata(Source);
+    FAttributeType := LSource.AttributeType;
+    FDefaultValue := LSource.DefaultValue;
+    FDisplayWidth := LSource.DisplayWidth;
+    FEditMask := LSource.EditMask;
+    FIsIndexed := LSource.IsIndexed;
+    FIsRequired := LSource.IsRequired;
+    FUseNull := LSource.UseNull;
+    FObjectClassName := LSource.ObjectClassName;
+    FSize := LSource.Size;
+    FStorageName := LSource.StorageName;
+    FStorageKind := LSource.StorageKind;
+    FExternalStorageName := LSource.ExternalStorageName;
+    FValidCharsString := LSource.ValidCharsString;
+    FEnumName := LSource.EnumName;
+  end;
 end;
 
 procedure TInstantAttributeMetadata.CheckAttributeClass(AClass:
@@ -1989,6 +2002,30 @@ function TInstantAttributeMetadatas.Add: TInstantAttributeMetadata;
 begin
   Result := TInstantAttributeMetadata(inherited Add);
   Changed;
+end;
+
+procedure TInstantAttributeMetadatas.Assign(Source: TPersistent);
+var
+  LSource: TInstantAttributeMetadatas;
+  I: Integer;
+  LAttribMetadata: TInstantAttributeMetadata;
+begin
+  inherited;
+  if Source is TInstantAttributeMetadatas then
+  begin
+    LSource := TInstantAttributeMetadatas(Source);
+    Clear;
+    for I := 0 to LSource.Count - 1 do
+    begin
+      LAttribMetadata := Add;
+      try
+        LAttribMetadata.Assign(LSource[I]);
+      except
+        FreeAndNil(LAttribMetadata);
+        raise;
+      end;
+    end;
+  end;
 end;
 
 procedure TInstantAttributeMetadatas.Changed;
