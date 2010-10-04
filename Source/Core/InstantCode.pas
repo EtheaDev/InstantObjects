@@ -495,7 +495,13 @@ type
   TInstantCodeContainerMethodFlag = (mfIndex, mfValue, mfResult);
   TInstantCodeContainerMethodFlags = set of TInstantCodeContainerMethodFlag;
 
-  TInstantCodeRttiAttribute = class(TInstantCodeMember)
+  TInstantCodeMemberRttiAttribute = class(TInstantCodeMember)
+  protected
+    class function InternalAtInstance(Reader: TInstantCodeReader; out Name: string): Boolean; override;
+    procedure InternalRead(Reader: TInstantCodeReader); override;
+  end;
+
+  TInstantCodeClassRttiAttribute = class(TInstantCodeType)
   protected
     class function InternalAtInstance(Reader: TInstantCodeReader; out Name: string): Boolean; override;
     procedure InternalRead(Reader: TInstantCodeReader); override;
@@ -2865,14 +2871,14 @@ begin
     TInstantCodeField.AtInstance(Reader) or
     TInstantCodeMethod.AtInstance(Reader) or
     TInstantCodeProperty.AtInstance(Reader) or
-    TInstantCodeRttiAttribute.AtInstance(Reader);
+    TInstantCodeMemberRttiAttribute.AtInstance(Reader);
 end;
 
 procedure TInstantCodeMembers.InternalRead(Reader: TInstantCodeReader);
 begin
   ReadObjects(Reader,
     [TInstantCodeField, TInstantCodeMethod, TInstantCodeProperty,
-     TInstantCodeRttiAttribute]);
+     TInstantCodeMemberRttiAttribute]);
 end;
 
 procedure TInstantCodeMembers.InternalWrite(Writer: TInstantCodeWriter);
@@ -3294,10 +3300,8 @@ begin
   FTypeLink.Name := Value;
 end;
 
-{ TInstantCodeRttiAttribute }
-
-class function TInstantCodeRttiAttribute.InternalAtInstance(
-  Reader: TInstantCodeReader; out Name: string): Boolean;
+function _RttiAttributeAtInstance(Reader: TInstantCodeReader;
+  out Name: string): Boolean;
 begin
   Result := Reader.ReadChar = '[';
   if Result then
@@ -3306,13 +3310,11 @@ begin
     Name := '';
 end;
 
-procedure TInstantCodeRttiAttribute.InternalRead(Reader: TInstantCodeReader);
+procedure _RttiAttributeRead(Reader: TInstantCodeReader);
 var
   BracketCount: Integer;
   C: Char;
 begin
-  inherited;
-
   BracketCount := 0;
   repeat
     C := Reader.ReadChar;
@@ -3321,6 +3323,33 @@ begin
     else if C = ']' then
       Dec(BracketCount);
   until BracketCount = 0;
+end;
+
+{ TInstantCodeMemberRttiAttribute }
+
+class function TInstantCodeMemberRttiAttribute.InternalAtInstance(
+  Reader: TInstantCodeReader; out Name: string): Boolean;
+begin
+  Result := _RttiAttributeAtInstance(Reader, Name);
+end;
+
+procedure TInstantCodeMemberRttiAttribute.InternalRead(Reader: TInstantCodeReader);
+begin
+  _RttiAttributeRead(Reader);
+end;
+
+{ TInstantCodeClassRttiAttribute }
+
+class function TInstantCodeClassRttiAttribute.InternalAtInstance(
+  Reader: TInstantCodeReader; out Name: string): Boolean;
+begin
+  Result := _RttiAttributeAtInstance(Reader, Name);
+end;
+
+procedure TInstantCodeClassRttiAttribute.InternalRead(
+  Reader: TInstantCodeReader);
+begin
+  _RttiAttributeRead(Reader);
 end;
 
 { TInstantCodeAttributeTailor }
@@ -5795,7 +5824,7 @@ begin
   ReadObjects(Reader, [TInstantCodeRecord, TInstantCodeClassRef,
     TInstantCodeClassForward, TInstantCodeClass, TInstantCodeInterface,
     TInstantCodeDispInterface, TInstantCodeEnum, TInstantCodeSet,
-    TInstantCodeTypeDef, TInstantCodeProcType, TInstantCodeRttiAttribute,
+    TInstantCodeTypeDef, TInstantCodeProcType, TInstantCodeClassRttiAttribute,
     TInstantCodeUnknownType]);
 end;
 
