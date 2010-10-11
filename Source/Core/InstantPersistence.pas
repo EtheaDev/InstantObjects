@@ -785,6 +785,7 @@ type
     FOnBeforeContentChange: TInstantContentChangeEvent;
     FOnChange: TInstantNotifyEvent;
     FOnError: TInstantErrorEvent;
+    FOnBeforeDispose: TInstantNotifyEvent;
     procedure ClearOwnerContext;
     procedure CreateAttributes;
     procedure DestroyAttributes;
@@ -972,6 +973,8 @@ type
     property RefBy[Index: Integer]: TInstantComplex read GetRefBy;
     property RefByCount: Integer read GetRefByCount;
     property UpdateCount: Integer read GetUpdateCount;
+    property OnBeforeDispose: TInstantNotifyEvent
+      read FOnBeforeDispose write FOnBeforeDispose;
     property OnAfterContentChange: TInstantContentChangeEvent
       read FOnAfterContentChange write FOnAfterContentChange;
     property OnAttributeChanged: TInstantAttributeChangeEvent
@@ -5978,6 +5981,8 @@ end;
 procedure TInstantObject.DoBeforeDispose;
 begin
   BeforeDispose;
+  if Assigned(FOnBeforeDispose) then
+    FOnBeforeDispose(Self);
 end;
 
 procedure TInstantObject.DoBeforeRefresh;
