@@ -561,7 +561,7 @@ begin
   with FDetailPanel do
   begin
     Parent := Self;
-    BorderStyle := bsSingle;
+    BorderStyle := bsNone;
     Height := Self.Height div 2;
     Align := alClient;
   end;
