@@ -1,4 +1,4 @@
-(*
+  (*
  *   InstantObjects
  *   Broker and Connector Classes
  *)
@@ -624,11 +624,14 @@ type
   // An item in the statement cache.
   TInstantStatement = class
   private
-    FStatementImplementation: TComponent;
+    FStatementDataSet: TDataSet;
+    FDataSetRefCount: Integer;
   public
-    constructor Create(const AStatementImplementation: TComponent);
+    constructor Create(const AStatementDataSet: TDataSet);
     destructor Destroy; override;
-    property StatementImplementation: TComponent read FStatementImplementation;
+    property StatementDataSet: TDataSet read FStatementDataSet;
+    function AddDataSetRef: Integer;
+    function ReleaseDataSetRef: Integer;
   end;
 
   // Caches objects that implement command statements in releational brokers.
@@ -650,10 +653,11 @@ type
     property Capacity: Integer read FCapacity write SetCapacity;
     destructor Destroy; override;
     function GetStatement(const StatementText: string): TInstantStatement;
+    function IndexOfStatementDataSet(const StatementDataSet: TDataSet): Integer;
+    function GetStatementByIndex(const AIndex: Integer): TInstantStatement;
     function AddStatement(const StatementText: string;
-      const StatementImplementation: TComponent): Integer;
+      const StatementDataSet: TDataSet): Integer;
     function RemoveStatement(const StatementText: string): Boolean;
-    function HasStatementImplementation(const StatementImplementation: TComponent): Boolean;
   end;
 
   // A TInstantCatalog that gathers its info from an existing database (through
@@ -1006,6 +1010,9 @@ type
     FDataSet: TDataSet;
     FRecNo: Integer;
     FIdField: TField;
+  protected
+    procedure Notification(AComponent: TComponent; Operation: TOperation);
+      override;
   public
     constructor CreateAndInit(const ADataSet: TDataSet);
     property DataSet: TDataSet read FDataSet;
@@ -1044,6 +1051,8 @@ type
     procedure SetParams(Value: TParams); override;
     function ObjectFetched(Index: Integer): Boolean; override;
     procedure SetStatement(const Value: string); override;
+    procedure Notification(AComponent: TComponent; Operation: TOperation);
+      override;
     property ObjectReferenceCount: Integer read GetObjectReferenceCount;
     property ObjectReferenceList: TInstantObjectReferenceList read
         GetObjectReferenceList;
@@ -1454,8 +1463,25 @@ begin
     CachedStatement := StatementCache.GetStatement(AStatement);
     if Assigned(CachedStatement) then
     begin
-      Result := TDataSet(CachedStatement.StatementImplementation);
-      AssignDataSetParams(Result, AParams);
+      Result := TDataSet(CachedStatement.StatementDataSet);
+      // The dataset might be already open to serve a burst mode retrieval,
+      // in which case we can reuse it unless it's parametric.
+      if Result.Active then
+      begin
+        if AParams.Count = 0 then
+          Result.First
+        else
+        begin
+          Result.Close;
+          AssignDataSetParams(Result, AParams);
+          Result.Open;
+        end;
+      end
+      else
+      begin
+        AssignDataSetParams(Result, AParams);
+        Result.Open;
+      end;
     end;
   end;
   if not Assigned(Result) then
@@ -1565,11 +1591,22 @@ begin
 end;
 
 procedure TInstantSQLBroker.ReleaseDataSet(const ADataSet: TDataSet);
+var
+  I: Integer;
+  LStatement: TInstantStatement;
 begin
-  if Assigned(FStatementCache) and FStatementCache.HasStatementImplementation(ADataSet) then
-    ADataSet.Close
-  else
-    ADataSet.Free;
+  if Assigned(FStatementCache) then
+  begin
+    I := FStatementCache.IndexOfStatementDataSet(ADataSet);
+    if I >= 0 then
+    begin
+      LStatement := FStatementCache.GetStatementByIndex(I);
+      if LStatement.ReleaseDataSetRef <= 0 then
+        ADataSet.Close;
+      Exit;
+    end;
+  end;
+  ADataSet.Free;
 end;
 
 { TInstantRelationalConnector }
@@ -4378,16 +4415,29 @@ end;
 
 { TInstantStatement }
 
-constructor TInstantStatement.Create(const AStatementImplementation: TComponent);
+function TInstantStatement.AddDataSetRef: Integer;
+begin
+  Inc(FDataSetRefCount);
+  Result := FDataSetRefCount;
+end;
+
+constructor TInstantStatement.Create(const AStatementDataSet: TDataSet);
 begin
   inherited Create;
-  FStatementImplementation := AStatementImplementation;
+  FStatementDataSet := AStatementDataSet;
+  FDataSetRefCount := 1;
 end;
 
 destructor TInstantStatement.Destroy;
 begin
-  FStatementImplementation.Free;
+  FStatementDataSet.Free;
   inherited;
+end;
+
+function TInstantStatement.ReleaseDataSetRef: Integer;
+begin
+  Dec(FDataSetRefCount);
+  Result := FDataSetRefCount;
 end;
 
 { TInstantStatementCache }
@@ -4409,16 +4459,16 @@ begin
 end;
 
 function TInstantStatementCache.AddStatement(const StatementText: string;
-  const StatementImplementation: TComponent): Integer;
+  const StatementDataSet: TDataSet): Integer;
 var
   StatementObject: TInstantStatement;
 begin
-  if Assigned(StatementImplementation) then
+  if Assigned(StatementDataSet) then
   begin
     Shrink;
-    StatementObject := TInstantStatement.Create(StatementImplementation);
+    StatementObject := TInstantStatement.Create(StatementDataSet);
     Result := FStatements.AddObject(StatementText, StatementObject);
-    StatementImplementation.FreeNotification(Self);
+    StatementDataSet.FreeNotification(Self);
   end
   else
     Result := -1;
@@ -4448,22 +4498,31 @@ var
 begin
   Index := FStatements.IndexOf(StatementText);
   if Index >= 0 then
-    Result := TInstantStatement(FStatements.Objects[Index])
+  begin
+    Result := TInstantStatement(FStatements.Objects[Index]);
+    Result.AddDataSetRef;
+  end
   else
     Result := nil;
 end;
 
-function TInstantStatementCache.HasStatementImplementation(
-  const StatementImplementation: TComponent): Boolean;
+function TInstantStatementCache.GetStatementByIndex(
+  const AIndex: Integer): TInstantStatement;
+begin
+  Result := TinstantStatement(FStatements.Objects[AIndex]);
+end;
+
+function TInstantStatementCache.IndexOfStatementDataSet(
+  const StatementDataSet: TDataSet): Integer;
 var
   I: Integer;
 begin
-  Result := False;
+  Result := -1;
   for I := 0 to FStatements.Count - 1 do
   begin
-    if TinstantStatement(FStatements.Objects[I]).StatementImplementation = StatementImplementation then
+    if TinstantStatement(FStatements.Objects[I]).StatementDataSet = StatementDataSet then
     begin
-      Result := True;
+      Result := I;
       Break;
     end;
   end;
@@ -4476,7 +4535,7 @@ begin
   inherited;
   if Operation = opRemove then
     for I := FStatements.Count - 1 downto 0 do
-      if TInstantStatement(FStatements.Objects[I]).StatementImplementation = AComponent then
+      if TInstantStatement(FStatements.Objects[I]).StatementDataSet = AComponent then
         DeleteStatement(I);
 end;
 
@@ -6055,6 +6114,7 @@ begin
   FDataSet := AcquireDataSet(Statement, ParamsObject);
   if Assigned(FDataSet) then
   try
+    FDataSet.FreeNotification(Self);
     if not FDataSet.Active then
       FDataSet.Open;
     InitObjectReferences;
@@ -6076,6 +6136,14 @@ end;
 function TInstantSQLQuery.InternalRemoveObject(AObject: TObject): Integer;
 begin
   Result := ObjectReferenceList.Remove(AObject as TInstantObject);
+end;
+
+procedure TInstantSQLQuery.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited;
+  if (Operation = opRemove) and (AComponent = FDataSet) then
+    FDataSet := nil;
 end;
 
 function TInstantSQLQuery.ObjectFetched(Index: Integer): Boolean;
@@ -6772,7 +6840,8 @@ end;
 constructor TInstantDataSetObjectData.CreateAndInit(const ADataSet: TDataSet);
 begin
   Assert(Assigned(ADataSet));
-  Create;
+  Create(nil);
+  ADataSet.FreeNotification(Self);
   FDataSet := ADataSet;
   FRecNo := ADataSet.RecNo;
   FIdField := ADataSet.FieldByName(InstantIdFieldName);
@@ -6780,8 +6849,21 @@ end;
 
 function TInstantDataSetObjectData.Locate(const AObjectId: string): Boolean;
 begin
-  FDataSet.RecNo := FRecNo;
-  Result := FIdField.AsString = AObjectId;
+  if not Assigned(FDataSet) or not FDataSet.Active then
+    Result := False
+  else
+  begin
+    FDataSet.RecNo := FRecNo;
+    Result := FIdField.AsString = AObjectId;
+  end;
+end;
+
+procedure TInstantDataSetObjectData.Notification(AComponent: TComponent;
+  Operation: TOperation);
+begin
+  inherited;
+  if (Operation = opRemove) and (AComponent = FDataSet) then
+    FDataSet := nil;
 end;
 
 end.

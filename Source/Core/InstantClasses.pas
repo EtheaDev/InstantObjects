@@ -399,7 +399,7 @@ type
 
   TInstantAbstractObjectClass = class of TInstantAbstractObject;
 
-  TInstantAbstractObjectData = class(TInstantStreamable);
+  TInstantAbstractObjectData = class(TComponent);
 
   TInstantAbstractObject = class(TInstantStreamable)
   private

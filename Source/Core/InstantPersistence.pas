@@ -1144,7 +1144,7 @@ type
     procedure InternalExecute; override;
   end;
 
-  TInstantQuery = class(TPersistent)
+  TInstantQuery = class(TComponent)
   private
     FCommand: string;
     FConnector: TInstantConnector;
@@ -7704,7 +7704,7 @@ end;
 
 constructor TInstantQuery.Create(AConnector: TInstantConnector);
 begin
-  inherited Create;
+  inherited Create(nil);
   FConnector := AConnector;
 end;
 
