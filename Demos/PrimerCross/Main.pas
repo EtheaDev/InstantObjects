@@ -148,7 +148,12 @@ uses
   InstantDBX,
   {$ENDIF}
   InstantADO, InstantBDE, InstantIBX,
-{$ENDIF}
+  {$IFDEF D14+}
+    // These are required for DBExpress to load the drivers in newer
+    // versions of Delphi. If you get a compilation error it means you
+    // don't have an Enterprise version of Delphi - just remove them.
+    DBXFirebird, DBXInterBase, DBXDB2, DBXMSSql, DBXOracle,
+  {$ENDIF}{$ENDIF}
 {$IFDEF LINUX}
   InstantDBX,
 {$ENDIF}
