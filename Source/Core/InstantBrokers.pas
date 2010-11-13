@@ -6042,7 +6042,7 @@ begin
             else
               LObjRef.ReferenceObject(LClassField.AsString, LIdField.AsString);
             if ActualLoadMode = lmFullBurst then
-              LObjRef.RetrieveObjectFromObjectData;
+              LObjRef.RetrieveObjectFromObjectData(Connector);
           except
             LObjRef.Free;
             raise;

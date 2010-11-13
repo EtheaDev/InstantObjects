@@ -141,8 +141,8 @@ type
       const AObjectData: TInstantAbstractObjectData = nil); overload;
     procedure ReferenceObject(const AObjectClass: TInstantObjectClass;
       const AObjectId: string; const AObjectData: TInstantAbstractObjectData = nil); overload;
-    // Retrieves the referenced object from internal data object, if available.
-    procedure RetrieveObjectFromObjectData;
+    // Retrieves the referenced object from the internal data object, if available.
+    procedure RetrieveObjectFromObjectData(const AConnector: TInstantConnector);
     procedure WriteAsObject(Writer: TInstantWriter); virtual;
     property Instance: TInstantObject read GetInstance write SetInstance;
     property ObjectClass: TInstantObjectClass read GetObjectClass;
@@ -1178,7 +1178,7 @@ type
     function InternalGetObjectReferenceId(Index: Integer) : string; virtual;
     procedure SetActualLoadMode(const AValue: TInstantLoadMode);
   public
-    constructor Create(AConnector: TInstantConnector); virtual;
+    constructor Create(AConnector: TInstantConnector); reintroduce; virtual;
     function AddObject(AObject: TObject): Integer;
     procedure ApplyChanges;
     procedure Close;
@@ -2255,13 +2255,14 @@ begin
   ReferenceObject(AObjectClass.ClassName, AObjectId, AObjectData);
 end;
 
-procedure TInstantObjectReference.RetrieveObjectFromObjectData;
+procedure TInstantObjectReference.RetrieveObjectFromObjectData(
+  const AConnector: TInstantConnector);
 var
   LObject: TInstantObject;
 begin
   Assert(Assigned(FObjectData));
 
-  LObject := ObjectClass.Retrieve(ObjectId, False, False, nil, FObjectData);
+  LObject := ObjectClass.Retrieve(ObjectId, False, False, AConnector, FObjectData);
   DoAssignInstance(LObject, True);
   if Assigned(FInstance) then
     FInstance.Release
