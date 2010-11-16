@@ -516,7 +516,7 @@ begin
     Count := StrToInt(Trim(ObjectsEdit.text));
     Execute(TestRetrieveCheckBox.Checked, TestQueryCheckBox.Checked, TestDisposeCheckBox.Checked);
     AResult := ExtractResult;
-    AResult.Name := ConnectionName;
+    AResult.Name := ConnectionName + ' (Cache: ' + Trim(CacheSizeEdit.Text) + ')';
     AResult.IsChecked := True;
     TestResults.AddResult(AResult);
     ShowTestResults;
