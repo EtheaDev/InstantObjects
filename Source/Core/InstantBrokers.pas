@@ -1478,10 +1478,7 @@ begin
         end;
       end
       else
-      begin
         AssignDataSetParams(Result, AParams);
-        Result.Open;
-      end;
     end;
   end;
   if not Assigned(Result) then
