@@ -1,4 +1,4 @@
-  (*
+(*
  *   InstantObjects
  *   Broker and Connector Classes
  *)
@@ -449,7 +449,6 @@ type
       const AMap: TInstantAttributeMap);
     procedure RetrieveMapFromDataSet(const AObject: TInstantObject;
       const AObjectId: string; const AMap: TInstantAttributeMap;
-      ConflictAction: TInstantConflictAction; AInfo: PInstantOperationInfo;
       const ADataSet: TDataSet);
   protected
     procedure AddAttributeParam(Attribute: TInstantAttribute;
@@ -3421,7 +3420,9 @@ begin
   if Assigned(AObjectData) and (AObjectData is TInstantDataSetObjectData)
     and TInstantDataSetObjectData(AObjectData).Locate(AObjectId) then
   begin
-    RetrieveMapFromDataSet(AObject, AObjectId, Map, ConflictAction, AInfo,
+    AInfo.Success := True;
+    AInfo.Conflict := not AInfo.Success;
+    RetrieveMapFromDataSet(AObject, AObjectId, Map,
       TInstantDataSetObjectData(AObjectData).DataSet);
   end
   else
@@ -3432,8 +3433,12 @@ begin
       LDataSet := Broker.AcquireDataSet(SelectSQL, LParams);
       try
         LDataSet.Open;
-        RetrieveMapFromDataSet(AObject, AObjectId, Map, ConflictAction,
-          AInfo, LDataSet);
+        AInfo.Success := not LDataSet.Eof;
+        AInfo.Conflict := not AInfo.Success;
+        if AInfo.Success then
+          RetrieveMapFromDataSet(AObject, AObjectId, Map, LDataSet)
+        else
+          ResetAttributes(AObject, Map);
       finally
         Broker.ReleaseDataSet(LDataSet);
       end;
@@ -3925,29 +3930,16 @@ begin
     Params.Delete(Param.Index);
 end;
 
-procedure TInstantSQLResolver.RetrieveMapFromDataSet(const AObject: TInstantObject;
-  const AObjectId: string; const AMap: TInstantAttributeMap;
-  ConflictAction: TInstantConflictAction; AInfo: PInstantOperationInfo;
-  const ADataSet: TDataSet);
-var
-  LInfo: TInstantOperationInfo;
+procedure TInstantSQLResolver.RetrieveMapFromDataSet(
+  const AObject: TInstantObject; const AObjectId: string;
+  const AMap: TInstantAttributeMap; const ADataSet: TDataSet);
 begin
   Assert(Assigned(AObject));
   Assert(Assigned(ADataSet));
 
-  if not Assigned(AInfo) then
-    AInfo := @LInfo;
-
-  AInfo.Success := not ADataSet.Eof;
-  AInfo.Conflict := not AInfo.Success;
-  if AInfo.Success then
-  begin
-    if AMap.IsRootMap then
-      Broker.SetObjectUpdateCount(AObject, ADataSet.FieldByName(InstantUpdateCountFieldName).AsInteger);
-    ReadAttributes(AObject, AObjectId, AMap, ADataSet);
-  end
-  else
-    ResetAttributes(AObject, AMap);
+  if AMap.IsRootMap then
+    Broker.SetObjectUpdateCount(AObject, ADataSet.FieldByName(InstantUpdateCountFieldName).AsInteger);
+  ReadAttributes(AObject, AObjectId, AMap, ADataSet);
 end;
 
 function TInstantSQLResolver.TranslateError(AObject: TInstantObject;
