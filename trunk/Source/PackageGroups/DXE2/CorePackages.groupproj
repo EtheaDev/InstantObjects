@@ -21,7 +21,7 @@
 			<Projects Include="..\..\Brokers\XML\DXE2\DclIOXML.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\..\Tests\TestIO_DXE.dproj">
+			<Projects Include="..\..\..\Tests\TestIO_DXE2.dproj">
 				<Dependencies/>
 			</Projects>
 		</ItemGroup>
@@ -86,23 +86,23 @@
 		<Target Name="DclIOXML:Make">
 			<MSBuild Targets="Make" Projects="..\..\Brokers\XML\DXE2\DclIOXML.dproj"/>
 		</Target>
-		<Target Name="TestIO_DXE">
-			<MSBuild Projects="..\..\..\Tests\TestIO_DXE.dproj"/>
+		<Target Name="TestIO_DXE2">
+			<MSBuild Projects="..\..\..\Tests\TestIO_DXE2.dproj"/>
 		</Target>
-		<Target Name="TestIO_DXE:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\..\Tests\TestIO_DXE.dproj"/>
+		<Target Name="TestIO_DXE2:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\..\Tests\TestIO_DXE2.dproj"/>
 		</Target>
-		<Target Name="TestIO_DXE:Make">
-			<MSBuild Targets="Make" Projects="..\..\..\Tests\TestIO_DXE.dproj"/>
+		<Target Name="TestIO_DXE2:Make">
+			<MSBuild Targets="Make" Projects="..\..\..\Tests\TestIO_DXE2.dproj"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="IOCore;DclIOCore;IOBDE;DclIOBDE;IOXML;DclIOXML;TestIO_DXE"/>
+			<CallTarget Targets="IOCore;DclIOCore;IOBDE;DclIOBDE;IOXML;DclIOXML;TestIO_DXE2"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="IOCore:Clean;DclIOCore:Clean;IOBDE:Clean;DclIOBDE:Clean;IOXML:Clean;DclIOXML:Clean;TestIO_DXE:Clean"/>
+			<CallTarget Targets="IOCore:Clean;DclIOCore:Clean;IOBDE:Clean;DclIOBDE:Clean;IOXML:Clean;DclIOXML:Clean;TestIO_DXE2:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="IOCore:Make;DclIOCore:Make;IOBDE:Make;DclIOBDE:Make;IOXML:Make;DclIOXML:Make;TestIO_DXE:Make"/>
+			<CallTarget Targets="IOCore:Make;DclIOCore:Make;IOBDE:Make;DclIOBDE:Make;IOXML:Make;DclIOXML:Make;TestIO_DXE2:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>
