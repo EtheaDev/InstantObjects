@@ -88,6 +88,24 @@
   {$DEFINE D15+}
 {$ENDIF}
 
+{$IFDEF VER230}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10+}
+  {$DEFINE D11}
+  {$DEFINE D11+}
+  {$DEFINE D12}
+  {$DEFINE D12+}
+  {$DEFINE D14}
+  {$DEFINE D14+}
+  {$DEFINE D15}
+  {$DEFINE D15+}
+  {$DEFINE D16}
+  {$DEFINE D16+}
+{$ENDIF}
+
 {$IFDEF FPC}
   {$DEFINE D5+}
   {$DEFINE D6+}
