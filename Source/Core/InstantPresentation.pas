@@ -410,7 +410,11 @@ type
     function CreateAccessor: TInstantAccessor; virtual;
     procedure CreateFields; override;
     function CreateNestedDataSet(DataSetField: TDataSetField): TDataSet; override;
+  {$IFDEF D16+}
+    procedure DataEvent(Event: TDataEvent; Info: NativeInt); override;
+  {$ELSE}
     procedure DataEvent(Event: TDataEvent; Info: Longint); override;
+  {$ENDIF}
     procedure DestroyAccessor;
     procedure DoAfterDelete; override;
     procedure DoAfterPostField(Field: TField); virtual;
@@ -581,7 +585,11 @@ type
     FOnMasterDisable: TNotifyEvent;
   protected
     procedure ActiveChanged; override;
+  {$IFDEF D16+}
+    procedure DataEvent(Event: TDataEvent; Info: NativeInt); override;
+  {$ELSE}
     procedure DataEvent(Event: TDataEvent; Info: Longint); override;
+  {$ENDIF}
     procedure DoMasterChange;
     procedure DoMasterDisable;
     function GetDetailDataSet: TDataSet; override;
@@ -610,7 +618,11 @@ type
     procedure SyncWithParent(Field: TDataSetField);
   protected
     procedure SetSubject(Value: TObject); virtual;
+  {$IFDEF D16+}
+    procedure DataEvent(Event: TDataEvent; Info: NativeInt); override;
+  {$ELSE}
     procedure DataEvent(Event: TDataEvent; Info: Longint); override;
+  {$ENDIF}
     function GetSubject: TObject; override;
     procedure MasterChanged(Sender: TObject);
     procedure SetDataSetField(const Value: TDataSetField); override;
@@ -2550,7 +2562,8 @@ begin
     Result := Accessor.CreateObject;
 end;
 
-procedure TInstantCustomExposer.DataEvent(Event: TDataEvent; Info: Longint);
+procedure TInstantCustomExposer.DataEvent(Event: TDataEvent;
+  Info: {$IFDEF D16+}NativeInt{$ELSE}Longint{$ENDIF});
 var
   I: Integer;
   DataSet: TDataSet;
@@ -4385,7 +4398,8 @@ begin
   FDetailExposer := ADetailExposer;
 end;
 
-procedure TInstantExposerLink.DataEvent(Event: TDataEvent; Info: Integer);
+procedure TInstantExposerLink.DataEvent(Event: TDataEvent;
+  Info: {$IFDEF D16+}NativeInt{$ELSE}Longint{$ENDIF});
 begin
   inherited;
   if not DetailExposer.Active and (Event = deRecordChange) then
@@ -4445,7 +4459,7 @@ end;
 { TInstantExposer }
 
 procedure TInstantExposer.DataEvent(Event: TDataEvent;
-  Info: Integer);
+  Info: {$IFDEF D16+}NativeInt{$ELSE}Longint{$ENDIF});
 begin
   case Event of
     deParentScroll:
