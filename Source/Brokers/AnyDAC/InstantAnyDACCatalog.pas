@@ -20,7 +20,7 @@
  *
  * The Initial Developer of the Original Code is: David Taylor
  *
- * Portions created by the Initial Developer are Copyright (C) 2009
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -54,7 +54,8 @@ type
       const Catalog : string; Schema : string);
     procedure AddTableMetadatas(TableMetadatas: TInstantTableMetadatas);
     function ColumnTypeToDataType(const ColumnType: TADDataType;
-      out DataType: TInstantDataType; out AlternateDataTypes: TInstantDataTypes): Boolean;
+      const ColumnLength : variant; out DataType: TInstantDataType;
+      out AlternateDataTypes: TInstantDataTypes): Boolean;
     function GetBroker: TInstantAnyDACBroker;
     function GetConnector: TInstantAnyDACConnector;
   public
@@ -95,17 +96,19 @@ begin
       ADFieldName   := VarToStr(FieldRow.GetData('COLUMN_NAME'));
       ADFieldType   := TADDataType(FieldRow.GetData('COLUMN_DATATYPE'));
       IntValue      := FieldRow.GetData('COLUMN_ATTRIBUTES');
+      ColumnLength  := FieldRow.GetData('COLUMN_LENGTH');
       ADFieldAttrib := TADDataAttributes(pointer(@IntValue)^);
 
-      if ColumnTypeToDataType(ADFieldType, FieldDataType, FieldAltDataTypes) then
+      if ColumnTypeToDataType(ADFieldType, ColumnLength, FieldDataType, FieldAltDataTypes) then
         begin
           FieldMetadata := TableMetadata.FieldMetadatas.Add;
           FieldMetadata.Name := ADFieldName;
           FieldMetadata.DataType := FieldDataType;
           FieldMetadata.AlternateDataTypes := FieldAltDataTypes;
-          ColumnLength := FieldRow.GetData('COLUMN_LENGTH');
+
           if VarIsOrdinal(ColumnLength) then
-            FieldMetadata.Size :=  Integer(ColumnLength);
+            FieldMetadata.Size := Integer(ColumnLength);
+
           FieldMetadata.Options := [];
 
           if (not (caAllowNull in ADFieldAttrib)) then
@@ -203,7 +206,7 @@ begin
 
           // This is a bit of hack since each segment in the index defines
           // its own sort order. IO does not support this so we record the
-          // sort order of the first s(and possibly only) key field. 
+          // sort order of the first (and possibly only) key field.
           if (J = 0) then
             begin
               if (VarToStr(IndexFieldRow.GetData('SORT_ORDER')) = 'D') then
@@ -252,15 +255,31 @@ begin
 end;
 
 function TInstantAnyDACCatalog.ColumnTypeToDataType(const ColumnType: TADDataType;
-  out DataType: TInstantDataType; out AlternateDataTypes: TInstantDataTypes): Boolean;
+  const ColumnLength : variant; out DataType: TInstantDataType;
+  out AlternateDataTypes: TInstantDataTypes): Boolean;
 begin
   Result := True;
   AlternateDataTypes := [];
-  
+
   case ColumnType of
-    uADStanIntf.dtAnsiString:    DataType := InstantTypes.dtString;
-    uADStanIntf.dtWideString:    DataType := InstantTypes.dtString;
-    uADStanIntf.dtByteString:    DataType := InstantTypes.dtString;
+    uADStanIntf.dtAnsiString,
+    uADStanIntf.dtWideString:
+      begin
+        if VarIsOrdinal(ColumnLength) and (Integer(ColumnLength) = MAXINT) then
+          begin
+            DataType := InstantTypes.dtMemo;
+            Include(AlternateDataTypes, InstantTypes.dtString);
+          end else
+          begin
+            DataType := InstantTypes.dtString;
+          end;
+      end;
+    uADStanIntf.dtByteString:
+      begin
+        if VarIsOrdinal(ColumnLength) and (Integer(ColumnLength) = MAXINT) then
+          DataType := InstantTypes.dtBlob else
+          Result := False;
+      end;
     uADStanIntf.dtBoolean:       DataType := InstantTypes.dtBoolean;
     uADStanIntf.dtDateTime:      DataType := InstantTypes.dtDateTime;
     uADStanIntf.dtTime:          DataType := InstantTypes.dtTime;
