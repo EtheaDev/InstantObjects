@@ -20,7 +20,7 @@
  *
  * The Initial Developer of the Original Code is: David Taylor
  *
- * Portions created by the Initial Developer are Copyright (C) 2009
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
@@ -50,7 +50,7 @@ interface
 uses
   Classes, Db, InstantPersistence, InstantCommand, InstantDBBuild,
   InstantBrokers, InstantMetadata, InstantTypes, uADCompClient,
-  uADStanOption, uADStanParam, uADStanIntf, uADStanConst,
+  uADStanOption, uADStanParam, uADStanIntf, uADStanConst, uADPhysIntf,
   uADDAptIntf, uADStanAsync, uADDAptManager, uADCompDataSet
   {$IFDEF D10+}, Variants, DBCommonTypes{$ENDIF};
 
@@ -199,6 +199,11 @@ type
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
     function UseBooleanFields: Boolean; override;
   end;
+
+  TInstantAnyDACMSSQL2005Broker = class(TInstantAnyDACMSSQLBroker)
+  protected
+    function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
+  end;
   {$ENDIF}
 
   { Interbase and Firebird brokers }
@@ -316,6 +321,9 @@ const
   STmpTableSuffix = '_IOTmp_';
 {$ENDIF}
 
+{$IFDEF MSSQL_SUPPORT}
+  S_AD_MSSQL2005Id = S_AD_MSSQLId + ' 2005';
+{$ENDIF}
 
 procedure AssignAnyDACProtocols(Strings: TStrings);
 begin
@@ -329,6 +337,7 @@ begin
 
       {$IFDEF MSSQL_SUPPORT}
       Strings.Add(S_AD_MSSQLId);
+      Strings.Add(S_AD_MSSQL2005Id);
       {$ENDIF}
 
       {$IFDEF IBFB_SUPPORT}
@@ -403,7 +412,12 @@ begin
     ADConnector.Connection := Connection;
     ADConnector.LoginPrompt := LoginPrompt;
     ADConnector.UseDelimitedIdents := UseDelimitedIdents;
-    Connection.DriverName := Protocol;
+
+    // Use AnyDAC MSSQL driver name for MSSQL 2005 protocol
+    if (SameText(Protocol, S_AD_MSSQL2005Id)) then
+      Connection.DriverName := S_AD_MSSQLId else
+      Connection.DriverName := Protocol;
+
     Connection.TxOptions.AutoCommit := false;
     Connection.TxOptions.Isolation := xiReadCommitted;
     Connection.Params.Values['User_Name'] := UserName;
@@ -417,8 +431,6 @@ begin
     if (Port <= 0) then
       Connection.Params.Values['Server'] := HostName else
       Connection.Params.Values['Server'] := HostName + ', ' + IntToStr(Port)
-
-    // Connection.Properties.Text := Properties;
   except
     Connection.Free;
     raise;
@@ -479,6 +491,9 @@ begin
   {$IFDEF MSSQL_SUPPORT}
   if SameText(FConnection.DriverName, S_AD_MSSQLId) then
     Result := TInstantAnyDACMSSQLBroker.Create(Self);
+
+  if SameText(FConnection.DriverName, S_AD_MSSQL2005Id) then
+    Result := TInstantAnyDACMSSQL2005Broker.Create(Self);
   {$ENDIF}
 
   {$IFDEF IBFB_SUPPORT}
@@ -712,11 +727,8 @@ begin
         TargetParam.Assign(SourceParam) else
         TargetParam.AsInteger := ord(SourceParam.AsBoolean);
     ftBlob:
-    // Temporary workaround for AnyDAC blob issue with MSSQL
     {$IFDEF D12+}
-      if (VarArrayHighBound(SourceParam.Value,1) <> -1) then
-        TargetParam.AsBlob := ConvertBlobData(SourceParam.AsBlob) else
-        TargetParam.AsBlob := '';
+      TargetParam.AsBlob := ConvertBlobData(SourceParam.AsBlob);
     {$ELSE}
       TargetParam.AsBlob := SourceParam.AsBlob;
     {$ENDIF}
@@ -832,21 +844,23 @@ begin
 end;
 
 function TInstantAnyDACBroker.GetSQLDelimiters: string;
+var
+  LeftCh : char;
+  RightCh : char;
 begin
   if not Connector.UseDelimitedIdents then
     Result := ''
   else
   begin
     with Connector.Connection do
-      begin
-        if (ConnectionMetaDataIntf.NameQuotaChar1 <> #0) and
-           (ConnectionMetaDataIntf.NameQuotaChar1 <> ' ') then
-          Result := ConnectionMetaDataIntf.NameQuotaChar1 else
-          Result := '';
-        if (ConnectionMetaDataIntf.NameQuotaChar2 <> #0) and
-           (ConnectionMetaDataIntf.NameQuotaChar2 <> ' ') then
-          Result := Result + ConnectionMetaDataIntf.NameQuotaChar2;
-      end;
+    begin
+      LeftCh  := ConnectionMetaDataIntf.NameQuoteChar[ncDefault, nsLeft];
+      RightCh := ConnectionMetaDataIntf.NameQuoteChar[ncDefault, nsRight];
+    end;
+
+    if (LeftCh = #0) or (RightCh = #0) or (LeftCh = ' ') or (RightCh = ' ') then
+      Result := '' else
+      Result := LeftCh + RightCh;
   end;
 end;
 
@@ -959,6 +973,25 @@ end;
 function TInstantAnyDACMSSQLBroker.UseBooleanFields: Boolean;
 begin
   Result := True;
+end;
+
+function TInstantAnyDACMSSQL2005Broker.InternalDataTypeToColumnType(
+  DataType: TInstantDataType): string;
+const
+  Types: array[TInstantDataType] of string = (
+    'INTEGER',
+    'FLOAT',
+    'MONEY',
+    'BIT',
+    'VARCHAR',
+    'VARBINARY(MAX)',
+    'DATETIME',
+    'VARCHAR(MAX)',
+    'DATETIME',
+    'DATETIME',
+    'INTEGER');
+begin
+  Result := Types[DataType];
 end;
 {$ENDIF}
 
