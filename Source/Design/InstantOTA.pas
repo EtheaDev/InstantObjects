@@ -341,7 +341,6 @@ end;
 
 destructor TInstantOTAIDEInterface.Destroy;
 begin
-  MessageServices.ClearAllMessages;
   FIDENotifier5.Free;
   inherited;
 end;
