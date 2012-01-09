@@ -856,6 +856,7 @@ begin
       ActionImage := TBitmap.Create;
 
       try
+        ActionImage.PixelFormat := pf24bit;
         FResourceModule.ToolImages.GetBitmap(AImageIndex,ActionImage);
         Assert(Assigned(ActionImage));
         NewAction.ImageIndex := NTAServices.AddMasked(ActionImage,
