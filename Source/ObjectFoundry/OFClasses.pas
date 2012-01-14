@@ -345,6 +345,7 @@ begin
   TaggedStrings['EditMask'] := Metadata.EditMask;
   TaggedStrings['ValidChars'] := Metadata.ValidCharsString;
   TaggedIntegers['DisplayWidth'] := Metadata.DisplayWidth;
+  TaggedString['DisplayLabel'] := Metadata.DisplayLabel;
   TaggedStrings['DefaultValue'] := Metadata.DefaultValue;
   WasReadOnly := Prop.WriteAccess = rwNone;
   if ReadOnly <> WasReadOnly then
@@ -549,6 +550,7 @@ begin
   Metadata.EditMask := TaggedStrings['EditMask'];
   Metadata.ValidCharsString := TaggedStrings['ValidChars'];
   Metadata.DisplayWidth := TaggedIntegers['DisplayWidth'];
+  Metadata.DisplayLabel := TaggedStrings['DisplayLabel'];
   Metadata.DefaultValue := TaggedStrings['DefaultValue'];
   DetectContainerMethods;
   FOldName := Name;

@@ -231,6 +231,7 @@ begin
   FInstantAttributeMetadata.AttributeType := atString;
   FInstantAttributeMetadata.DefaultValue := 'Default';
   FInstantAttributeMetadata.DisplayWidth := 10;
+  FInstantAttributeMetadata.DisplayLabel := '';
   FInstantAttributeMetadata.EditMask := '';
   FInstantAttributeMetadata.IsIndexed := False;
   FInstantAttributeMetadata.IsRequired := True;
@@ -262,6 +263,7 @@ begin
     vSource.AttributeType := atString;
     vSource.DefaultValue := 'Default';
     vSource.DisplayWidth := 10;
+    vSource.DisplayLabel := 'FieldLabel';
     vSource.EditMask := '';
     vSource.IsIndexed := False;
     vSource.IsRequired := True;
@@ -278,6 +280,7 @@ begin
     AssertEquals('AttributeType incorrect', 'atString', vStr);
     AssertEquals('DefaultValue incorrect', 'Default', vDest.DefaultValue);
     AssertEquals('DisplayWidth incorrect', 10, vDest.DisplayWidth);
+    AssertEquals('DisplayLabel incorrect', 'FieldLabel', vDest.DisplayLabel);
     AssertEquals('EditMask incorrect', '', vDest.EditMask);
     AssertEquals('IsIndexed incorrect', False, vDest.IsIndexed);
     AssertEquals('IsRequired incorrect', True, vDest.IsRequired);

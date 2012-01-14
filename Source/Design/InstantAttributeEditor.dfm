@@ -351,6 +351,14 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Caption = 'Display &Width'
           FocusControl = DisplayWidthEdit
         end
+        object DisplayLabelLabel: TLabel
+          Left = 8
+          Top = 128
+          Width = 64
+          Height = 13
+          Caption = 'Display &Label'
+          FocusControl = DisplayLabelEdit
+        end
         object ValidCharsLabel: TLabel
           Left = 8
           Top = 48
@@ -361,7 +369,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         end
         object DefaultValueLabel: TLabel
           Left = 8
-          Top = 128
+          Top = 168
           Width = 64
           Height = 13
           Caption = '&Default Value'
@@ -385,6 +393,15 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           DataSource = SubjectSource
           TabOrder = 2
         end
+        object DisplayLabelEdit: TDBEdit
+          Left = 8
+          Top = 144
+          Width = 209
+          Height = 21
+          DataField = 'Metadata.DisplayLabel'
+          DataSource = SubjectSource
+          TabOrder = 3
+        end
         object ValidCharsEdit: TDBEdit
           Left = 8
           Top = 64
@@ -396,12 +413,12 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         end
         object DefaultValueEdit: TDBEdit
           Left = 8
-          Top = 144
+          Top = 184
           Width = 209
           Height = 21
           DataField = 'Metadata.DefaultValue'
           DataSource = SubjectSource
-          TabOrder = 3
+          TabOrder = 4
         end
       end
     end
