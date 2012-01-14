@@ -465,6 +465,7 @@ type
     FDefaultValue: string;
     FUseNull: Boolean;
     FDisplayWidth: Integer;
+    FDisplayLabel: string;
     FEditMask: string;
     FIsIndexed: Boolean;
     FIsRequired: Boolean;
@@ -485,6 +486,7 @@ type
     function GetCollection: TInstantAttributeMetadatas;
     function GetFieldName: string;
     function GetHasValidChars: Boolean;
+    function GetHasDisplayLabel: Boolean;
     function GetIsDefault: Boolean;
     function GetObjectClass: TInstantAbstractObjectClass;
     function GetObjectClassMetadata: TInstantClassMetadata;
@@ -526,6 +528,7 @@ type
       read GetObjectClassMetadata;
     property FieldName: string read GetFieldName write SetFieldName;
     property HasValidChars: Boolean read GetHasValidChars;
+    property HasDisplayLabel: Boolean read GetHasDisplayLabel;
     property TableName: string read GetTableName;
     procedure ValidateAttribute(const AAttribute: TInstantAbstractAttribute;
       const AValue: string);
@@ -539,6 +542,7 @@ type
     property UseNull: Boolean read FUseNull write FUseNull default False;
     property DisplayWidth: Integer read FDisplayWidth write FDisplayWidth
       default 0;
+    property DisplayLabel: string read FDisplayLabel write FDisplayLabel;
     property EditMask: string read FEditMask write FEditMask;
     property ExternalStorageName: string read FExternalStorageName
       write FExternalStorageName;
@@ -1725,6 +1729,7 @@ begin
     FAttributeType := LSource.AttributeType;
     FDefaultValue := LSource.DefaultValue;
     FDisplayWidth := LSource.DisplayWidth;
+    FDisplayLabel := LSource.DisplayLabel;
     FEditMask := LSource.EditMask;
     FIsIndexed := LSource.IsIndexed;
     FIsRequired := LSource.IsRequired;
@@ -1858,6 +1863,11 @@ end;
 function TInstantAttributeMetadata.GetHasValidChars: Boolean;
 begin
   Result := FValidCharsString <> '';
+end;
+
+function TInstantAttributeMetadata.GetHasDisplayLabel: Boolean;
+begin
+  Result := FDisplayLabel <> '';
 end;
 
 function TInstantAttributeMetadata.GetIsDefault: Boolean;

@@ -1594,6 +1594,7 @@ const
   MetaKeyEmbedded = 'embedded';
   MetaKeyValid = 'valid';
   MetaKeyWidth = 'width';
+  MetaKeyLabel = 'label';
   ModuleTypeNames: array[TInstantCodeModuleType] of string =
     ('program', 'unit', 'library');
 
@@ -4133,6 +4134,8 @@ begin
       Metadata.ValidCharsString := Reader.ReadStringValue
     else if Token = MetaKeyWidth then
       Metadata.DisplayWidth := Reader.ReadInteger
+    else if Token = MetaKeyLabel then
+      Metadata.Displaylabel := Reader.ReadStringValue
     else
       Reader.ErrorMessage('Unknown parameter: ' + Token);
   end;
@@ -4172,6 +4175,8 @@ begin
   if Metadata.HasValidChars then
     WriteStr(MetaKeyValid, Metadata.ValidCharsString);
   WriteInt(MetaKeyWidth, Metadata.DisplayWidth);
+  if Metadata.HasDisplayLabel then
+    WriteStr(MetaKeyLabel, Metadata.DisplayLabel);
   if IsIndexed then
     Writer.Write(' ' + MetaKeyIndex);
   if IsRequired then

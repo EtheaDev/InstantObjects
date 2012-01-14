@@ -77,6 +77,8 @@ type
     DefinitionSheet: TTabSheet;
     DisplayWidthEdit: TDBEdit;
     DisplayWidthLabel: TLabel;
+    DisplayLabelEdit: TDBEdit;
+    DisplayLabelLabel: TLabel;
     EditMaskEdit: TDBEdit;
     EdtMaskLabel: TLabel;
     MethodAddCheckBox: TCheckBox;

@@ -24,7 +24,7 @@
  * the Initial Developer. All Rights Reserved.
  *
  * Contributor(s):
- * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Joao Morais, 
+ * Carlo Barazzetta, Andrea Petrelli, Nando Dessena, Joao Morais,
  * Steven Mitchell, Brian Andersen, David Taylor
  *
  * ***** END LICENSE BLOCK ***** *)
@@ -3192,6 +3192,8 @@ begin
   begin
     (Field as TBCDField).Currency := True;
   end;
+  if Assigned(Metadata) and (Metadata.HasDisplayLabel) then
+    Field.DisplayLabel := Metadata.DisplayLabel;
   if Assigned(FOnInitField) then
     FOnInitField(Self, Field);
 end;
