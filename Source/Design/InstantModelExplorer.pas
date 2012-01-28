@@ -489,6 +489,7 @@ begin
             NewAttribute := NewClass.AddAttribute;
             NewAttribute.IsIndexed := ImportAttributeMetadata.IsIndexed;
             NewAttribute.IsRequired := ImportAttributeMetadata.IsRequired;
+            NewAttribute.IsUnique := ImportAttributeMetadata.IsUnique;
             NewAttribute.IsDefault := ImportAttributeMetadata.IsDefault;
             NewAttribute.AttributeType := ImportAttributeMetadata.AttributeType;
             NewAttribute.AttributeTypeName := ImportAttributeMetadata.AttributeTypeName;

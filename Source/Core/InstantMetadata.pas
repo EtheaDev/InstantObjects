@@ -469,6 +469,7 @@ type
     FEditMask: string;
     FIsIndexed: Boolean;
     FIsRequired: Boolean;
+    FIsUnique: Boolean;
     FObjectClassName: string;
     FSize: Integer;
     FStorageName: string;
@@ -550,6 +551,7 @@ type
       write FStorageKind default skEmbedded;
     property IsIndexed: Boolean read FIsIndexed write FIsIndexed;
     property IsRequired: Boolean read FIsRequired write FIsRequired;
+    property IsUnique: Boolean read FIsUnique write FIsUnique;
     property ObjectClassName: string read FObjectClassName
       write FObjectClassName;
     property Size: Integer read FSize write FSize default 0;
@@ -1332,9 +1334,17 @@ var
         begin
           if AttributeMetadata.IsIndexed then
           begin
-            IndexMetadatas.AddIndexMetadata(Map.Name +
-              AttributeMetadata.FieldName, AttributeMetadata.FieldName, []);
-            Options := Options + [foIndexed];
+            if AttributeMetadata.IsUnique then
+            begin
+              IndexMetadatas.AddIndexMetadata(Map.Name +
+                AttributeMetadata.FieldName, AttributeMetadata.FieldName, [ixUnique]);
+              Options := Options + [foIndexed, foUnique];
+            end else
+            begin
+              IndexMetadatas.AddIndexMetadata(Map.Name +
+                AttributeMetadata.FieldName, AttributeMetadata.FieldName, []);
+              Options := Options + [foIndexed];
+            end;
           end
           else if AttributeMetadata.IsRequired then
           begin
@@ -1733,6 +1743,7 @@ begin
     FEditMask := LSource.EditMask;
     FIsIndexed := LSource.IsIndexed;
     FIsRequired := LSource.IsRequired;
+    FIsUnique := LSource.IsUnique;
     FUseNull := LSource.UseNull;
     FObjectClassName := LSource.ObjectClassName;
     FSize := LSource.Size;

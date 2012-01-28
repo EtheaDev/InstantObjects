@@ -604,6 +604,7 @@ type
     function GetIsEnum: Boolean;
     function GetIsIndexed: Boolean;
     function GetIsRequired: Boolean;
+    function GetIsUnique: Boolean;
     function GetMetadata: TInstantAttributeMetadata;
     function GetMethodTypes: TInstantCodeContainerMethodTypes;
     function GetObjectClass: TInstantCodeClass;
@@ -626,6 +627,7 @@ type
     procedure SetIncludeRemoveMethod(const Value: Boolean);
     procedure SetIsIndexed(const Value: Boolean);
     procedure SetIsRequired(const Value: Boolean);
+    procedure SetIsUnique(const Value: Boolean);
     procedure SetMethodTypes(const Value: TInstantCodeContainerMethodTypes);
     procedure SetObjectClassName(const Value: string);
     procedure SetPropTypeName(const Value: string);
@@ -713,6 +715,7 @@ type
       write SetStorageKind;
     property IsIndexed: Boolean read GetIsIndexed write SetIsIndexed;
     property IsRequired: Boolean read GetIsRequired write SetIsRequired;
+    property IsUnique: Boolean read GetIsUnique write SetIsUnique;
     property Metadata: TInstantAttributeMetadata read GetMetadata;
     property MethodTypes: TInstantCodeContainerMethodTypes read GetMethodTypes
       write SetMethodTypes;
@@ -1589,6 +1592,7 @@ const
   MetaKeyFormat = 'format';
   MetaKeyIndex = 'index';
   MetaKeyRequired = 'required';
+  MetaKeyUnique = 'unique';
   MetaKeyMask = 'mask';
   MetaKeyStored = 'stored';
   MetaKeyEmbedded = 'embedded';
@@ -3741,6 +3745,7 @@ begin
       Self.IsDefault := IsDefault;
       Self.IsIndexed := IsIndexed;
       Self.IsRequired := IsRequired;
+      Self.IsUnique := IsUnique;
       Self.ReadOnly := ReadOnly;
       Self.SingularName := SingularName;
       Self.Visibility := Visibility;
@@ -3942,6 +3947,11 @@ begin
   Result := Metadata.IsRequired;
 end;
 
+function TInstantCodeAttribute.GetIsUnique: Boolean;
+begin
+  Result := Metadata.IsUnique;
+end;
+
 function TInstantCodeAttribute.GetMetadata: TInstantAttributeMetadata;
 begin
   if not Assigned(FMetadata) then
@@ -4128,6 +4138,8 @@ begin
       IsIndexed := True
     else if Token = MetaKeyRequired then
       IsRequired := True
+    else if Token = MetaKeyUnique then
+      IsUnique := True
     else if Token = MetaKeyMask then
       Metadata.EditMask := Reader.ReadStringValue
     else if Token = MetaKeyValid then
@@ -4179,6 +4191,8 @@ begin
     WriteStr(MetaKeyLabel, Metadata.DisplayLabel);
   if IsIndexed then
     Writer.Write(' ' + MetaKeyIndex);
+  if IsUnique then
+    Writer.Write(' ' + MetaKeyUnique);
   if IsRequired then
     Writer.Write(' ' + MetaKeyRequired);
   if Metadata.UseNull then
@@ -4285,6 +4299,11 @@ end;
 procedure TInstantCodeAttribute.SetIsRequired(const Value: Boolean);
 begin
   Metadata.IsRequired := Value;
+end;
+
+procedure TInstantCodeAttribute.SetIsUnique(const Value: Boolean);
+begin
+  Metadata.IsUnique := Value;
 end;
 
 procedure TInstantCodeAttribute.SetMethodTypes(
