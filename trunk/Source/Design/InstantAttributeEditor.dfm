@@ -292,7 +292,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           TabOrder = 2
           object OptionReadOnlyCheckBox: TCheckBox
             Left = 8
-            Top = 48
+            Top = 64
             Width = 73
             Height = 17
             Caption = '&Read only'
@@ -300,7 +300,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           end
           object OptionDefaultCheckBox: TCheckBox
             Left = 8
-            Top = 64
+            Top = 80
             Width = 73
             Height = 17
             Caption = '&Default'
@@ -316,15 +316,23 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           end
           object OptionRequiredCheckBox: TCheckBox
             Left = 8
-            Top = 32
+            Top = 48
             Width = 73
             Height = 17
             Caption = 'Req&uired'
+            TabOrder = 5
+          end
+          object OptionUniqueCheckBox: TCheckBox
+            Left = 8
+            Top = 32
+            Width = 73
+            Height = 17
+            Caption = 'Uni&que'
             TabOrder = 1
           end
           object OptionUseNullCheckBox: TCheckBox
             Left = 8
-            Top = 80
+            Top = 96
             Width = 73
             Height = 17
             Caption = 'Use &Null'
@@ -346,7 +354,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object DisplayWidthLabel: TLabel
           Left = 8
           Top = 88
-          Width = 65
+          Width = 64
           Height = 13
           Caption = 'Display &Width'
           FocusControl = DisplayWidthEdit

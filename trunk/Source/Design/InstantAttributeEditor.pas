@@ -96,6 +96,7 @@ type
     OptionIndexedCheckBox: TCheckBox;
     OptionReadOnlyCheckBox: TCheckBox;
     OptionRequiredCheckBox: TCheckBox;
+    OptionUniqueCheckBox: TCheckBox;
     OptionsGroupBox: TGroupBox;
     PageControl: TPageControl;
     PresentationSheet: TTabSheet;
@@ -255,6 +256,7 @@ procedure TInstantAttributeEditorForm.LoadData;
   begin
     OptionIndexedCheckBox.Checked := Subject.IsIndexed;
     OptionRequiredCheckBox.Checked := Subject.IsRequired;
+    OptionUniqueCheckBox.Checked := Subject.IsUnique;
     OptionReadOnlyCheckBox.Checked := Subject.ReadOnly;
     OptionDefaultCheckBox.Checked := Subject.IsDefault;
     OptionUseNullCheckBox.Checked := Subject.UseNull;
@@ -529,6 +531,8 @@ procedure TInstantAttributeEditorForm.SaveData;
       Result := True;
     if SetChangedField('IsRequired', OptionRequiredCheckBox.Checked) then
       Result := True;
+    if SetChangedField('IsUnique', OptionUniqueCheckBox.Checked) then
+      Result := True;
     if SetChangedField('ReadOnly', OptionReadOnlyCheckBox.Checked) then
       Result := True;
     if SetChangedField('IsDefault', OptionDefaultCheckBox.Checked) then
@@ -752,6 +756,7 @@ begin
   EnableCtrl(OptionsGroupBox, True);
   EnableCtrl(OptionIndexedCheckBox, True);
   EnableCtrl(OptionRequiredCheckBox, True);
+  EnableCtrl(OptionUniqueCheckBox, True);
   EnableCtrl(OptionUseNullCheckBox, not IsContainer);
   EnableCtrl(OkButton, IsValid);
   PresentationSheet.TabVisible := IsMaskable;

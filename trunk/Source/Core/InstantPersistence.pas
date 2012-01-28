@@ -160,6 +160,7 @@ type
     FIsChanged: Boolean;
     function GetIsIndexed: Boolean;
     function GetIsRequired: Boolean;
+    function GetIsUnique: Boolean;
     function GetMetadata: TInstantAttributeMetadata;
     function GetName: string;
     function GetValue: Variant;
@@ -224,6 +225,7 @@ type
     property IsIndexed: Boolean read GetIsIndexed;
     property IsMandatory: Boolean read GetIsMandatory;
     property IsRequired: Boolean read GetIsRequired;
+    property IsUnique: Boolean read GetIsUnique;
     property IsNull: Boolean read GetIsNull;
     property Name: string read GetName;
     property Metadata: TInstantAttributeMetadata read GetMetadata write SetMetadata;
@@ -2462,6 +2464,11 @@ end;
 function TInstantAttribute.GetIsRequired: Boolean;
 begin
   Result := Assigned(Metadata) and Metadata.IsRequired;
+end;
+
+function TInstantAttribute.GetIsUnique: Boolean;
+begin
+  Result := Assigned(Metadata) and Metadata.IsUnique;
 end;
 
 function TInstantAttribute.GetMetadata: TInstantAttributeMetadata;
