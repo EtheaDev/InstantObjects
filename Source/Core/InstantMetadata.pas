@@ -470,6 +470,7 @@ type
     FIsIndexed: Boolean;
     FIsRequired: Boolean;
     FIsUnique: Boolean;
+    FIndexName: string;
     FObjectClassName: string;
     FSize: Integer;
     FStorageName: string;
@@ -488,6 +489,7 @@ type
     function GetFieldName: string;
     function GetHasValidChars: Boolean;
     function GetHasDisplayLabel: Boolean;
+    function GetHasIndexName: Boolean;
     function GetIsDefault: Boolean;
     function GetObjectClass: TInstantAbstractObjectClass;
     function GetObjectClassMetadata: TInstantClassMetadata;
@@ -530,6 +532,7 @@ type
     property FieldName: string read GetFieldName write SetFieldName;
     property HasValidChars: Boolean read GetHasValidChars;
     property HasDisplayLabel: Boolean read GetHasDisplayLabel;
+    property HasIndexName: Boolean read GetHasIndexName;
     property TableName: string read GetTableName;
     procedure ValidateAttribute(const AAttribute: TInstantAbstractAttribute;
       const AValue: string);
@@ -552,6 +555,7 @@ type
     property IsIndexed: Boolean read FIsIndexed write FIsIndexed;
     property IsRequired: Boolean read FIsRequired write FIsRequired;
     property IsUnique: Boolean read FIsUnique write FIsUnique;
+    property IndexName: string read FIndexName write FIndexName;
     property ObjectClassName: string read FObjectClassName
       write FObjectClassName;
     property Size: Integer read FSize write FSize default 0;
@@ -1232,6 +1236,7 @@ procedure TInstantModelCatalog.InitTableMetadatas(ATableMetadatas:
   TInstantTableMetadatas);
 var
   Maps: TInstantAttributeMaps;
+  IndexName: string;
   I: Integer;
 
   procedure AddMap(Map: TInstantAttributeMap);
@@ -1334,15 +1339,19 @@ var
         begin
           if AttributeMetadata.IsIndexed then
           begin
+            if AttributeMetadata.HasIndexName then
+              IndexName := AttributeMetadata.IndexName else
+              IndexName := Map.Name + AttributeMetadata.FieldName;
+
             if AttributeMetadata.IsUnique then
             begin
-              IndexMetadatas.AddIndexMetadata(Map.Name +
-                AttributeMetadata.FieldName, AttributeMetadata.FieldName, [ixUnique]);
+              IndexMetadatas.AddIndexMetadata(IndexName,
+                AttributeMetadata.FieldName, [ixUnique]);
               Options := Options + [foIndexed, foUnique];
             end else
             begin
-              IndexMetadatas.AddIndexMetadata(Map.Name +
-                AttributeMetadata.FieldName, AttributeMetadata.FieldName, []);
+              IndexMetadatas.AddIndexMetadata(IndexName,
+                AttributeMetadata.FieldName, []);
               Options := Options + [foIndexed];
             end;
           end
@@ -1745,6 +1754,7 @@ begin
     FIsRequired := LSource.IsRequired;
     FIsUnique := LSource.IsUnique;
     FUseNull := LSource.UseNull;
+    FIndexName := LSource.IndexName;
     FObjectClassName := LSource.ObjectClassName;
     FSize := LSource.Size;
     FStorageName := LSource.StorageName;
@@ -1879,6 +1889,11 @@ end;
 function TInstantAttributeMetadata.GetHasDisplayLabel: Boolean;
 begin
   Result := FDisplayLabel <> '';
+end;
+
+function TInstantAttributeMetadata.GetHasIndexName: Boolean;
+begin
+  Result := FIndexName <> '';
 end;
 
 function TInstantAttributeMetadata.GetIsDefault: Boolean;
