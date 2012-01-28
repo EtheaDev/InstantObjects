@@ -114,8 +114,8 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     TabOrder = 6
   end
   object CloseButton: TButton
-    Left = 512
-    Top = 304
+    Left = 502
+    Top = 303
     Width = 75
     Height = 25
     Action = CloseAction
