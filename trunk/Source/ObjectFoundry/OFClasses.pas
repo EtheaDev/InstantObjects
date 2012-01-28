@@ -342,6 +342,7 @@ begin
   TaggedBooleans['IsIndexed'] := IsIndexed;
   TaggedBooleans['IsRequired'] := IsRequired;
   TaggedBooleans['IsUnique'] := IsUnique;
+  TaggedStrings['IndexName'] := IndexName;
   TaggedStrings['SingularName'] := SingularName;
   TaggedStrings['EditMask'] := Metadata.EditMask;
   TaggedStrings['ValidChars'] := Metadata.ValidCharsString;
@@ -547,6 +548,7 @@ begin
   IsIndexed := TaggedBooleans['IsIndexed'];
   IsRequired := TaggedBooleans['IsRequired'];
   IsUnique := TaggedBooleans['IsUnique'];
+  IndexName := TaggedStrings['IndexName'];
   SingularName := TaggedStrings['SingularName'];
   Metadata.Size := TaggedIntegers['Size'];
   Metadata.EditMask := TaggedStrings['EditMask'];

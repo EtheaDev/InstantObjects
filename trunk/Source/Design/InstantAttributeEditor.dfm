@@ -207,6 +207,14 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Caption = '&Singular Name'
           FocusControl = SingularNameEdit
         end
+        object IndexNameLabel: TLabel
+          Left = 8
+          Top = 181
+          Width = 58
+          Height = 13
+          Caption = 'Index Name'
+          FocusControl = IndexNameEdit
+        end
         object VisibilityEdit: TDBComboBox
           Left = 8
           Top = 24
@@ -313,6 +321,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
             Height = 17
             Caption = 'Inde&xed'
             TabOrder = 0
+            OnClick = OptionIndexedCheckBoxClick
           end
           object OptionRequiredCheckBox: TCheckBox
             Left = 8
@@ -338,6 +347,15 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
             Caption = 'Use &Null'
             TabOrder = 4
           end
+        end
+        object IndexNameEdit: TDBEdit
+          Left = 7
+          Top = 197
+          Width = 210
+          Height = 21
+          DataField = 'IndexName'
+          DataSource = SubjectSource
+          TabOrder = 4
         end
       end
       object PresentationSheet: TTabSheet

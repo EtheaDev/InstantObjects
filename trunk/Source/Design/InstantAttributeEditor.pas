@@ -122,6 +122,8 @@ type
     OptionUseNullCheckBox: TCheckBox;
     EnumeratedTypeLabel: TLabel;
     EnumeratedTypeEdit: TDBComboBox;
+    IndexNameLabel: TLabel;
+    IndexNameEdit: TDBEdit;
     procedure NameEditKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure NameEditChange(Sender: TObject);
@@ -140,6 +142,7 @@ type
     procedure StorageNameEditChange(Sender: TObject);
     procedure EnumeratedTypeEditChange(Sender: TObject);
     procedure EnumeratedTypeEditEnter(Sender: TObject);
+    procedure OptionIndexedCheckBoxClick(Sender: TObject);
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
@@ -758,6 +761,8 @@ begin
   EnableCtrl(OptionRequiredCheckBox, True);
   EnableCtrl(OptionUniqueCheckBox, True);
   EnableCtrl(OptionUseNullCheckBox, not IsContainer);
+  EnableCtrl(IndexNameLabel, OptionIndexedCheckBox.Checked);
+  EnableCtrl(IndexNameEdit, OptionIndexedCheckBox.Checked);
   EnableCtrl(OkButton, IsValid);
   PresentationSheet.TabVisible := IsMaskable;
 end;
@@ -842,6 +847,11 @@ begin
     if Assigned(CM) then
       Result := CM.IsStored;
   end;
+end;
+
+procedure TInstantAttributeEditorForm.OptionIndexedCheckBoxClick(Sender: TObject);
+begin
+  UpdateControls;
 end;
 
 procedure TInstantAttributeEditorForm.StorageNameEditChange(Sender: TObject);

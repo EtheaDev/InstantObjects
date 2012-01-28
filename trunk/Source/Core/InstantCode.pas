@@ -605,6 +605,7 @@ type
     function GetIsIndexed: Boolean;
     function GetIsRequired: Boolean;
     function GetIsUnique: Boolean;
+    function GetIndexName: string;
     function GetMetadata: TInstantAttributeMetadata;
     function GetMethodTypes: TInstantCodeContainerMethodTypes;
     function GetObjectClass: TInstantCodeClass;
@@ -628,6 +629,7 @@ type
     procedure SetIsIndexed(const Value: Boolean);
     procedure SetIsRequired(const Value: Boolean);
     procedure SetIsUnique(const Value: Boolean);
+    procedure SetIndexName(const Value: string);
     procedure SetMethodTypes(const Value: TInstantCodeContainerMethodTypes);
     procedure SetObjectClassName(const Value: string);
     procedure SetPropTypeName(const Value: string);
@@ -716,6 +718,7 @@ type
     property IsIndexed: Boolean read GetIsIndexed write SetIsIndexed;
     property IsRequired: Boolean read GetIsRequired write SetIsRequired;
     property IsUnique: Boolean read GetIsUnique write SetIsUnique;
+    property IndexName: string read GetIndexName write SetIndexName;
     property Metadata: TInstantAttributeMetadata read GetMetadata;
     property MethodTypes: TInstantCodeContainerMethodTypes read GetMethodTypes
       write SetMethodTypes;
@@ -3952,6 +3955,11 @@ begin
   Result := Metadata.IsUnique;
 end;
 
+function TInstantCodeAttribute.GetIndexName: string;
+begin
+  Result := Metadata.IndexName;
+end;
+
 function TInstantCodeAttribute.GetMetadata: TInstantAttributeMetadata;
 begin
   if not Assigned(FMetadata) then
@@ -4135,7 +4143,10 @@ begin
     else if Token = MetaKeyUseNull then
       Metadata.UseNull := True
     else if Token = MetaKeyIndex then
-      IsIndexed := True
+    begin
+      MetaData.IndexName := trim(Reader.ReadStringValue);
+      IsIndexed := True;
+    end
     else if Token = MetaKeyRequired then
       IsRequired := True
     else if Token = MetaKeyUnique then
@@ -4190,7 +4201,11 @@ begin
   if Metadata.HasDisplayLabel then
     WriteStr(MetaKeyLabel, Metadata.DisplayLabel);
   if IsIndexed then
+  begin
     Writer.Write(' ' + MetaKeyIndex);
+    if Metadata.HasIndexName then
+      Writer.Write(' ''' + Metadata.IndexName + '''');
+  end;
   if IsUnique then
     Writer.Write(' ' + MetaKeyUnique);
   if IsRequired then
@@ -4304,6 +4319,11 @@ end;
 procedure TInstantCodeAttribute.SetIsUnique(const Value: Boolean);
 begin
   Metadata.IsUnique := Value;
+end;
+
+procedure TInstantCodeAttribute.SetIndexName(const Value: string);
+begin
+  Metadata.IndexName := Value;
 end;
 
 procedure TInstantCodeAttribute.SetMethodTypes(
