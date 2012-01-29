@@ -488,6 +488,7 @@ begin
     PopulateIntroducedAttributes;
     PopulateInheritedAttributes;
   end;
+  UpdateActions;
 end;
 
 procedure TInstantAttributeViewFrame.StoreLayout;
@@ -518,6 +519,7 @@ var
 begin
   inherited;
   Attribute := FocusedAttribute;
+  AttributeNewItem.Enabled := Assigned(Subject);
   AttributeEditAction.Enabled := Assigned(Attribute);
   AttributeDeleteAction.Enabled := Assigned(Attribute);
 end;
