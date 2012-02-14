@@ -799,6 +799,43 @@ type
     property Query: TInstantQuery read GetQuery;
   end;
 
+  // A table path with its list of join clauses.
+  // Helper class used by TInstantTranslationContext.
+  TInstantTablePath = class
+  private
+    FJoinClauses: TStrings;
+    FIsOuterJoin: Boolean;
+    FName: string;
+    function GetCount: Integer;
+    function GetJoinClause(I: Integer): string;
+  public
+    constructor Create(const AName: string);
+    procedure AfterConstruction; override;
+    destructor Destroy; override;
+    property Name: string read FName write FName;
+    property IsOuterJoin: Boolean read FIsOuterJoin write FIsOuterJoin;
+    function AddJoinClause(const AJoinClause: string): Integer;
+    property JoinClauses[I: Integer]: string read GetJoinClause; default;
+    property Count: Integer read GetCount;
+  end;
+
+  // A list of table paths. Helper class used by TInstantTranslationContext.
+  TInstantTablePathList = class
+  private
+    FPaths: TObjectList;
+    function GetPath(I: Integer): TInstantTablePath;
+    function GetCount: Integer;
+  public
+    procedure AfterConstruction; override;
+    destructor Destroy; override;
+    property Paths[I: Integer]: TInstantTablePath read GetPath; default;
+    property Count: Integer read GetCount;
+    function IndexOfName(const ATablePathName: string): Integer;
+    function Add(const ATablePathName: string): Integer;
+    function AddJoinClause(const ATablePathName, AJoinClause: string;
+      const AIsOuterJoin: Boolean): Integer;
+  end;
+
   // Holds all information pertaining to a class used in a command. A command
   // may use several classes (because of subqueries), and a relational translator
   // has a tree of class context objects.
@@ -813,12 +850,13 @@ type
     FQuote: Char;
     FSpecifier: TInstantIQLSpecifier;
     FStatement: TInstantIQLObject;
-    FTablePathList: TStringList;
+    FTablePathList: TInstantTablePathList;
     FParentContext: TInstantTranslationContext;
     FIdDataType: TInstantDataType;
     FRequestedLoadMode: TInstantLoadMode;
     FActualLoadMode: TInstantLoadMode;
-    procedure AddJoin(const FromPath, FromField, ToPath, ToField: string);
+    procedure AddJoin(const FromPath, FromField, ToPath, ToField: string;
+      const IsOuter: Boolean);
     function GetClassTablePath: string;
     function GetChildContext(const AIndex: Integer): TInstantTranslationContext;
     function GetChildContextCount: Integer;
@@ -830,7 +868,7 @@ type
     function GetTableName: string;
     function GetTablePathAliases(Index: Integer): string;
     function GetTablePathCount: Integer;
-    function GetTablePathList: TStringList;
+    function GetTablePathList: TInstantTablePathList;
     function GetTablePaths(Index: Integer): string;
     function PathToTablePath(const PathText: string): string;
     function PathToTarget(const PathText: string;
@@ -842,6 +880,7 @@ type
     function GetChildContextIndex: Integer;
     function GetChildContextLevel: Integer;
     function RootAttribToFieldName(const AttribName: string): string;
+    function IsRequiredAttribute(const AAttributeName: string): Boolean;
   protected
     function AddCriteria(const Criteria: string): Integer;
     function AddTablePath(const TablePath: string): Integer;
@@ -852,7 +891,7 @@ type
     procedure MakeJoins(Path: TInstantIQLPath);
     procedure MakeTablePaths(Path: TInstantIQLPath);
     property CriteriaList: TStringList read GetCriteriaList;
-    property TablePathList: TStringList read GetTablePathList;
+    property TablePathList: TInstantTablePathList read GetTablePathList;
   public
     constructor Create(const AStatement: TInstantIQLObject; const AQuote: Char;
       const ADelimiters: string; const AIdDataType: TInstantDataType;
@@ -1323,7 +1362,7 @@ begin
       begin
         Map := StorageMaps[I];
         if (Map <> RootMap) and (Info.Conflict or OperationRequired(Map)) then
-          Operation(AObject, AObjectId, Map);
+          Operation(AObject, AObjectId, Map, ConflictAction, @Info);
       end;
   end;
 end;
@@ -5590,8 +5629,8 @@ begin
     Writer.WriteString(Format('%s AS %s, %s AS %s', [ClassQual,
       InstantClassFieldName, IdQual, InstantIdFieldName]));
 
-    // Mind that LContext.ActualBurstLoadMode might be different than
-    // Self.RequestedBurstLoadMode.
+    // Mind that LContext.ActualLoadMode might be different than
+    // Self.RequestedLoadMode.
     if IsBurstLoadMode(LContext.ActualLoadMode) then
     begin
       // Use the Id just to get the table path needed to add the updatecount
@@ -6200,10 +6239,10 @@ begin
 end;
 
 procedure TInstantTranslationContext.AddJoin(const FromPath, FromField, ToPath,
-  ToField: string);
+  ToField: string; const IsOuter: Boolean);
 begin
-  AddCriteria(Format('%s = %s', [Qualify(FromPath, FromField),
-    Qualify(ToPath, ToField)]));
+  TablePathList.AddJoinClause(ToPath, Format('%s = %s', [Qualify(FromPath, FromField),
+    Qualify(ToPath, ToField)]), IsOuter);
 end;
 
 function TInstantTranslationContext.AddTablePath(
@@ -6416,16 +6455,16 @@ begin
   Result := TablePathList.Count;
 end;
 
-function TInstantTranslationContext.GetTablePathList: TStringList;
+function TInstantTranslationContext.GetTablePathList: TInstantTablePathList;
 begin
   if not Assigned(FTablePathList) then
-    FTablePathList := TStringList.Create;
+    FTablePathList := TInstantTablePathList.Create;
   Result := FTablePathList;
 end;
 
 function TInstantTranslationContext.GetTablePaths(Index: Integer): string;
 begin
-  Result := TablePathList[Index];
+  Result := TablePathList[Index].Name;
 end;
 
 function TInstantTranslationContext.HasParentContext: Boolean;
@@ -6448,7 +6487,7 @@ end;
 function TInstantTranslationContext.IndexOfTablePath(
   const TablePath: string): Integer;
 begin
-  Result := TablePathList.IndexOf(TablePath);
+  Result := TablePathList.IndexOfName(TablePath);
 end;
 
 procedure TInstantTranslationContext.Initialize;
@@ -6530,8 +6569,8 @@ procedure TInstantTranslationContext.Initialize;
           LTableName := LClassMeta.TableName;
           if (LTableName <> TableName) and LClassMeta.IsStored then
           begin
-            AddJoin(TableName, InstantClassFieldName, LTableName, InstantClassFieldName);
-            AddJoin(TableName, InstantIdFieldName, LTableName, InstantIdFieldName);
+            AddJoin(TableName, InstantClassFieldName, LTableName, InstantClassFieldName, False);
+            AddJoin(TableName, InstantIdFieldName, LTableName, InstantIdFieldName, False);
           end;
         end;
         LClassMeta := LClassMeta.Parent;
@@ -6581,12 +6620,30 @@ begin
   end;
 end;
 
+function TInstantTranslationContext.IsRequiredAttribute(const AAttributeName: string): Boolean;
+var
+  LClassMetadata: TInstantClassMetadata;
+  LAttributeMetadata: TInstantAttributeMetadata;
+begin
+  Assert(AAttributeName <> '');
+  Assert(Assigned(ClassRef));
+
+  Result := False;
+  LClassMetadata := InstantModel.ClassMetadatas.Find(ClassRef.ObjectClassName);
+  if Assigned(LClassMetadata) then begin
+    LAttributeMetadata := LClassMetadata.AttributeMetadatas.Find(AAttributeName);
+    if Assigned(LAttributeMetadata) then
+      Result := LAttributeMetadata.IsRequired;
+  end;
+end;
+
 procedure TInstantTranslationContext.MakeJoins(Path: TInstantIQLPath);
 
   procedure MakePathJoins(Path: TInstantIQLPath);
   var
     I: Integer;
     PathText, FromPath, ToPath, FromField, ToField: string;
+    LIsRequiredAttribute: Boolean;
   begin
     if Path.AttributeCount > 1 then
     begin
@@ -6597,10 +6654,11 @@ procedure TInstantTranslationContext.MakeJoins(Path: TInstantIQLPath);
         if not IsRootAttribute(ExtractTarget(PathText)) then
         begin
           PathToTarget(PathText, ToPath, ToField);
+          LIsRequiredAttribute := IsRequiredAttribute(FromField);
           AddJoin(FromPath, FromField + InstantClassFieldName, ToPath,
-            InstantClassFieldName);
+            InstantClassFieldName, not LIsRequiredAttribute);
           AddJoin(FromPath, FromField + InstantIdFieldName, ToPath,
-            InstantIdFieldName);
+            InstantIdFieldName, not LIsRequiredAttribute);
           FromPath := ToPath;
           FromField := ToField;
         end;
@@ -6618,9 +6676,9 @@ procedure TInstantTranslationContext.MakeJoins(Path: TInstantIQLPath);
       if TablePath <> ClassTablePath then
       begin
         AddJoin(ClassTablePath, InstantClassFieldName,
-          TablePath, InstantClassFieldName);
+          TablePath, InstantClassFieldName, False);
         AddJoin(ClassTablePath, InstantIdFieldName,
-          TablePath, InstantIdFieldName);
+          TablePath, InstantIdFieldName, False);
       end;
     end;
   end;
@@ -6813,14 +6871,26 @@ end;
 
 procedure TInstantTranslationContext.WriteTables(Writer: TInstantIQLWriter);
 var
-  I: Integer;
+  I, J: Integer;
 begin
   for I := 0 to Pred(TablePathCount) do
   begin
-    if I > 0 then
-      Writer.WriteString(', ');
+    if I > 0 then begin
+      if TablePathList[I].IsOuterJoin then
+        Writer.WriteString(' LEFT OUTER');
+      Writer.WriteString(' JOIN ');
+    end;
     Writer.WriteString(Format('%s %s',[InstantEmbrace(
       ExtractTarget(TablePaths[I]), Delimiters), TablePathAliases[I]]));
+    if (I > 0) and (TablePathList[I].Count > 0) then begin
+      Writer.WriteString(' ON (');
+      for J := 0 to TablePathList[I].Count - 1 do begin
+        if J > 0 then
+          Writer.WriteString(' AND ');
+        Writer.WriteString(TablePathList[I][J]);
+      end;
+      Writer.WriteString(')');
+    end;
   end;
 end;
 
@@ -6853,6 +6923,96 @@ begin
   inherited;
   if (Operation = opRemove) and (AComponent = FDataSet) then
     FDataSet := nil;
+end;
+
+{ TInstantTablePathList }
+
+function TInstantTablePathList.Add(const ATablePathName: string): Integer;
+begin
+  Result := IndexOfName(ATablePathName);
+  if Result < 0 then
+    Result := FPaths.Add(TInstantTablePath.Create(ATablePathName));
+end;
+
+function TInstantTablePathList.AddJoinClause(const ATablePathName,
+  AJoinClause: string; const AIsOuterJoin: Boolean): Integer;
+begin
+  Result := Add(ATablePathName);
+  Paths[Result].AddJoinClause(AJoinClause);
+  Paths[Result].IsOuterJoin := AIsOuterJoin;
+end;
+
+procedure TInstantTablePathList.AfterConstruction;
+begin
+  inherited;
+  FPaths := TObjectList.Create(True);
+end;
+
+destructor TInstantTablePathList.Destroy;
+begin
+  FreeAndNil(FPaths);
+  inherited;
+end;
+
+function TInstantTablePathList.GetCount: Integer;
+begin
+  Result := FPaths.Count;
+end;
+
+function TInstantTablePathList.GetPath(I: Integer): TInstantTablePath;
+begin
+  Result := TInstantTablePath(FPaths[I]);
+end;
+
+function TInstantTablePathList.IndexOfName(
+  const ATablePathName: string): Integer;
+var
+  I: Integer;
+begin
+  Result := -1;
+  for I := 0 to Count - 1 do begin
+    if Paths[I].Name = ATablePathName then begin
+      Result := I;
+      Break;
+    end;
+  end;
+end;
+
+{ TInstantTablePath }
+
+function TInstantTablePath.AddJoinClause(const AJoinClause: string): Integer;
+begin
+  Result := FJoinClauses.IndexOf(AJoinClause);
+  if Result < 0 then
+    Result := FJoinClauses.Add(AJoinClause);
+end;
+
+procedure TInstantTablePath.AfterConstruction;
+begin
+  inherited;
+  FJoinClauses := TStringList.Create;
+end;
+
+constructor TInstantTablePath.Create(const AName: string);
+begin
+  inherited Create;
+  FName := AName;
+end;
+
+destructor TInstantTablePath.Destroy;
+begin
+  FreeAndNil(FJoinClauses);
+  inherited;
+end;
+
+function TInstantTablePath.GetCount: Integer;
+begin
+  Result := FJoinClauses.Count;
+end;
+
+function TInstantTablePath.GetJoinClause(I: Integer): string;
+begin
+  Result := FJoinClauses[I];
 end;
 
 end.
