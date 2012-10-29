@@ -47,6 +47,9 @@ uses
   QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList,
   QStdCtrls, QComCtrls, QExtCtrls,
 {$ENDIF}
+{$IFDEF D17+}
+  System.Actions,
+{$ENDIF}
   InstantPersistence, InstantDBBuild, InstantDBEvolution, InstantPresentation,
   InstantMetadata;
 
@@ -123,6 +126,11 @@ type
 implementation
 
 {$R *.dfm}
+
+{$IFDEF D17+}
+uses
+  System.UITypes;
+{$ENDIF}
 
 procedure TInstantCustomDBEvolverForm.ShowSequenceButtonClick(Sender: TObject);
 begin

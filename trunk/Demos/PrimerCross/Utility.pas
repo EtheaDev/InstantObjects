@@ -21,6 +21,9 @@ uses
 {$IFDEF LINUX}
   QForms, QDialogs, QControls,
 {$ENDIF}
+{$IFDEF D17+}
+  System.UITypes,
+{$ENDIF}
   SysUtils;
 
 var

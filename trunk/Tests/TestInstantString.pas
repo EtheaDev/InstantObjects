@@ -69,7 +69,11 @@ type
 
 implementation
 
-uses SysUtils, testregistry, InstantClasses;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, testregistry, InstantClasses;
 
 procedure TestTInstantString.SetUp;
 begin

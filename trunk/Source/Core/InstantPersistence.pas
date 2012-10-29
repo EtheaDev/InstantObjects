@@ -1636,6 +1636,9 @@ uses
 {$IFDEF D14+}
   RTTI, InstantRttiAttributes,
 {$ENDIF}
+{$IFDEF D17+}
+  System.Types,
+{$ENDIF}
   InstantUtils, InstantDesignHook, InstantCode;
 
 var

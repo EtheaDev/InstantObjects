@@ -587,6 +587,9 @@ implementation
 
 uses
   SysUtils, TypInfo, InstantPersistence, InstantUtils, InstantValidation,
+{$IFDEF D17+}
+  System.Types,
+{$ENDIF}
   InstantStandardValidators {registers the standard validators - do not remove};
 
 const

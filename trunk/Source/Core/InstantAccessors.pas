@@ -113,7 +113,11 @@ type
 implementation
 
 uses
-  SysUtils, Contnrs, InstantClasses, InstantConsts;
+  SysUtils,
+{$IFDEF D17+}
+  System.Types,
+{$ENDIF}
+  Contnrs, InstantClasses, InstantConsts;
 
 { TInstantObjectAccessor }
 

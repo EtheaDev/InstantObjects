@@ -19,7 +19,8 @@ uses
   QMenus, QExtCtrls, QComCtrls, QGrids, QDBGrids, QImgList, QActnList,
 {$ENDIF}
   InstantPersistence, BasicView, Stopwatch,
-  InstantConnectionManagerFormUnit, InstantConnectionManager;
+  InstantConnectionManagerFormUnit, InstantConnectionManager
+  {$IFDEF D17+}, System.Actions{$ENDIF};
 
 type
   TMainForm = class(TForm)
@@ -153,7 +154,8 @@ uses
     // versions of Delphi. If you get a compilation error it means you
     // don't have an Enterprise version of Delphi - just remove them.
     DBXFirebird, DBXInterBase, DBXDB2, DBXMSSql, DBXOracle,
-  {$ENDIF}{$ENDIF}
+  {$ENDIF}
+{$ENDIF}
 {$IFDEF LINUX}
   InstantDBX,
 {$ENDIF}

@@ -38,6 +38,12 @@ unit TestInstantFloat;
 
 interface
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 uses fpcunit, InstantPersistence, InstantMock, TestModel;
 
 type
@@ -64,7 +70,11 @@ type
 
 implementation
 
-uses SysUtils, testregistry, InstantClasses;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, testregistry, InstantClasses;
 
 procedure TestTInstantFloat.SetUp;
 begin

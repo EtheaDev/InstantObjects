@@ -30,6 +30,12 @@
 
 unit TestInstantFieldMetadata;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantMetadata;
@@ -69,7 +75,11 @@ type
 
 implementation
 
-uses SysUtils, TypInfo, testregistry, InstantTypes;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, TypInfo, testregistry, InstantTypes;
 
 procedure TestTInstantFieldMetadata.SetUp;
 begin

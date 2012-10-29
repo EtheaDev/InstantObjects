@@ -30,6 +30,12 @@
 
 unit TestInstantScheme;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMetadata;
@@ -54,7 +60,11 @@ type
 
 implementation
 
-uses SysUtils, testregistry, InstantClasses, InstantTypes, InstantConsts;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, testregistry, InstantClasses, InstantTypes, InstantConsts;
 
 procedure TestTInstantScheme.SetUp;
 begin
