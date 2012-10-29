@@ -53,7 +53,8 @@ uses
   TestInstantObjectReference in 'TestInstantObjectReference.pas',
   MinimalModel in 'MinimalModel.pas',
   TestXMLBroker in 'TestXMLBroker.pas',
-  TestInstantCode in 'TestInstantCode.pas';
+  TestInstantCode in 'TestInstantCode.pas',
+  TestInstantPresentation in 'TestInstantPresentation.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}

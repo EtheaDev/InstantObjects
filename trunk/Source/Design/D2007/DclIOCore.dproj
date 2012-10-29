@@ -6,7 +6,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
-    <DCC_DependencyCheckOutputName>..\..\..\..\..\..\..\Documents\RAD Studio\5.0\Bpl\DclIOCore_D11.bpl</DCC_DependencyCheckOutputName>
+    <DCC_DependencyCheckOutputName>..\..\..\..\..\..\..\Public\Documents\RAD Studio\5.0\Bpl\DclIOCore_D11.bpl</DCC_DependencyCheckOutputName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Version>7.0</Version>
@@ -43,12 +43,12 @@
     <DCCReference Include="..\InstantAbout.pas">
       <Form>InstantAboutForm</Form>
     </DCCReference>
-	<DCCReference Include="..\InstantAttributeView.pas">
-	  <Form>InstantAttributeViewFrame</Form>
-      <DesignClass>TFrame</DesignClass>
-	</DCCReference>
     <DCCReference Include="..\InstantAttributeEditor.pas">
       <Form>InstantAttributeEditorForm</Form>
+    </DCCReference>
+    <DCCReference Include="..\InstantAttributeView.pas">
+      <Form>InstantAttributeViewFrame</Form>
+      <DesignClass>TFrame</DesignClass>
     </DCCReference>
     <DCCReference Include="..\InstantClassEditor.pas">
       <Form>InstantClassEditorForm</Form>
