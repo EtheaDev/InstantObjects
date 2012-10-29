@@ -327,6 +327,9 @@ implementation
 uses
   SysUtils, InstantConsts,
   TypInfo, InstantXMLCatalog, InstantXMLConnectionDefEdit, InstantUtils,
+{$IFDEF D17+}
+  System.Types,
+{$ENDIF}
 {$IFDEF MSWINDOWS}
 {$IFNDEF D6+}
   FileCtrl,
@@ -358,6 +361,7 @@ var
   R: Integer;
   PathWithWildCards: string;
 begin
+  
   PathWithWildCards := IncludeTrailingPathDelimiter(Path) + XML_WILDCARD;
   //Find the first file
   R := SysUtils.FindFirst(PathWithWildCards, faAnyFile, SearchRec);
@@ -1200,7 +1204,7 @@ var
 begin
   if FileExists(AFileName) then
   begin
-    fileStream := TFileStream.Create(AFileName, fmOpenRead);
+    fileStream := TFileStream.Create(AFileName, fmShareDenyWrite);
     try
       InstantReadObject(fileStream, sfXML, AObject);
       Result := True;
@@ -1219,7 +1223,7 @@ var
   strUtf8: string;
   strstream: TStringStream;
 begin
-  fileStream := TFileStream.Create(AFileName, fmOpenRead);
+  fileStream := TFileStream.Create(AFileName, fmShareDenyWrite);
   try
     SetLength(strUtf8, fileStream.Size);
     Result := fileStream.Read(strUtf8[1], fileStream.Size) <> 0;
