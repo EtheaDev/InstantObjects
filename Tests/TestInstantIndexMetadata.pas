@@ -30,6 +30,12 @@
 
 unit TestInstantIndexMetadata;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMetadata;
@@ -69,7 +75,11 @@ type
 
 implementation
 
-uses SysUtils, Db, testregistry;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, Db, testregistry;
 
 procedure TestTInstantIndexMetadata.SetUp;
 begin

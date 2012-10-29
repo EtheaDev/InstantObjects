@@ -91,7 +91,11 @@ function InstantValidatorFactory: TInstantValidatorFactory;
 implementation
 
 uses
-  Classes, SysUtils;
+  Classes,
+{$IFDEF D17+}
+  System.Types,
+{$ENDIF}
+ SysUtils;
 
 var
   _InstantValidatorFactory: TInstantValidatorFactory;

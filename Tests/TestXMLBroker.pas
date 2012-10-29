@@ -30,6 +30,12 @@
 
 unit TestXMLBroker;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses
@@ -51,6 +57,9 @@ type
 implementation
 
 uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
   SysUtils, ShellAPI, InstantPersistence, TestModel;
 
 { TTestXMLBroker }

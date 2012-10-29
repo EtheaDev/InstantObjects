@@ -20,6 +20,7 @@ uses
   QComCtrls, QGrids, QDBGrids, QExtCtrls, QButtons,
   QStdCtrls, QActnList, QImgList, QMenus, Types,
 {$ENDIF}
+  {$IFDEF D17+}Actions,{$ENDIF}
   BasicView, Model, InstantPresentation, InstantExplorer;
 
 type

@@ -30,6 +30,12 @@
 
 unit TestInstantAttribute;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, TestModel, InstantMock;
@@ -58,7 +64,11 @@ type
 
 implementation
 
-uses SysUtils, testregistry, InstantClasses, InstantMetadata;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, testregistry, InstantClasses, InstantMetadata;
 
 procedure TestTInstantAttribute.SetUp;
 begin

@@ -127,7 +127,9 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure LoadConnectionDefs;
+    procedure LoadConnectionDefsFromStream(const AStream: TStream);
     procedure SaveConnectionDefs;
+    procedure SaveConnectionDefsToStream(const AStream: TStream);
     procedure ConnectByName(const ConnectionDefName: string);
     procedure Execute;
     function IsConnected: Boolean;
@@ -315,7 +317,7 @@ begin
     InputStream := CreateConnectionDefsInputStream();
     try
       if Assigned(InputStream) then
-        InstantReadObject(InputStream, FileFormat, ConnectionDefs);
+        LoadConnectionDefsFromStream(InputStream);
     finally
       InputStream.Free;
     end;
@@ -326,6 +328,20 @@ begin
   end;
 end;
 
+procedure TInstantConnectionManager.LoadConnectionDefsFromStream(
+  const AStream: TStream);
+begin
+  Assert(Assigned(AStream));
+
+  try
+    InstantReadObject(AStream, FileFormat, ConnectionDefs);
+  except
+    on E: Exception do
+      raise EInstantError.CreateFmt(SErrorLoadingConnectionDefs,
+        [AStream.ClassName, E.Message]);
+  end;
+end;
+
 procedure TInstantConnectionManager.SaveConnectionDefs;
 var
   OutputStream: TStream;
@@ -333,10 +349,17 @@ begin
   OutputStream := CreateConnectionDefsOutputStream();
   try
     if Assigned(OutputStream) then
-      InstantWriteObject(OutputStream, FileFormat, ConnectionDefs);
+      SaveConnectionDefsToStream(OutputStream);
   finally
     OutputStream.Free;
   end;
+end;
+
+procedure TInstantConnectionManager.SaveConnectionDefsToStream(
+  const AStream: TStream);
+begin
+  Assert(Assigned(AStream));
+  InstantWriteObject(AStream, FileFormat, ConnectionDefs);
 end;
 
 function TInstantConnectionManager.GetDefsFileName: string;

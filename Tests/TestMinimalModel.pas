@@ -121,7 +121,7 @@ begin
   r := r + '<Persistence>peStored</Persistence><StorageName>SIMPLE</StorageName>';
   r := r + '<AttributeMetadatas><TInstantAttributeMetadatas><TInstantAttributeMetadata>';
   r := r + '<Name>StringProperty</Name><AttributeType>atString</AttributeType>';
-  r := r + '<IsIndexed>FALSE</IsIndexed><IsRequired>FALSE</IsRequired><Size>10</Size>';
+  r := r + '<IsIndexed>FALSE</IsIndexed><IsRequired>FALSE</IsRequired><IsUnique>FALSE</IsUnique><Size>10</Size>';
   r := r + '<StorageName>STRING</StorageName></TInstantAttributeMetadata>';
   r := r + '</TInstantAttributeMetadatas></AttributeMetadatas></TInstantClassMetadata></TInstantClassMetadatas>';
 {$ELSE}

@@ -30,6 +30,12 @@
 
 unit TestInstantBoolean;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMock, TestModel;
@@ -63,7 +69,11 @@ Type
 
 implementation
 
-uses SysUtils, testregistry, InstantClasses, InstantConsts;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, testregistry, InstantClasses, InstantConsts;
 
 procedure TestTInstantBoolean.SetUp;
 begin

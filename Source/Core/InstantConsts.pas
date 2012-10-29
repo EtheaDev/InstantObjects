@@ -206,6 +206,7 @@ resourcestring
   SParentContextNotFoundForSubQuery = 'Parent context object not found for subquery (''%s'')';
   SUsingAttributeMustBeAReference = 'Attribute (''%s'') is not a reference: USING attribute must be a reference.';  
   SUsingAttributeMetadataNotFound = 'Cannot get metadata for USING attribute (''%s'')';
+  SSQLExecuteError = 'SQL execute error. Statement: ''%s''. Error: ''%s''';
 
 implementation
 

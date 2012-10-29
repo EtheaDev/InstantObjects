@@ -539,6 +539,9 @@ implementation
 
 uses
   StrUtils,
+{$IFDEF D17+}
+  System.Types,
+{$ENDIF}
   InstantPersistence, InstantUtils, InstantConsts, InstantBrokers;
 
 const

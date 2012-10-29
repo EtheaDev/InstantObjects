@@ -512,7 +512,14 @@ type
     procedure DeleteObject(Index: Integer);
     procedure DisableChanges;
     procedure EnableChanges;
+{$IFDEF D17+}
+{$IFNDEF NEXTGEN}
+    function GetFieldData(Field: TField; Buffer: Pointer): Boolean; overload; override;
+{$ENDIF !NEXTGEN}
+    function GetFieldData(Field: TField; Buffer: TValueBuffer): Boolean; overload; override;
+{$ELSE D17+}
     function GetFieldData(Field: TField; Buffer: Pointer): Boolean; override;
+{$ENDIF D17+}
     function GetFieldStrings(Field: TField; Strings: TStrings): Integer;
     function GotoObject(AObject: TObject): Boolean;
     function IndexOfObject(AObject: TObject): Integer;
@@ -784,12 +791,19 @@ uses
   QForms,
 {$ENDIF}
   {$IFDEF D6+}
-    Variants,
-    {$IFNDEF FPC}MaskUtils,{$ENDIF}
-     FmtBcd,
-  {$ENDIF} InstantClasses,
-  InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors,
-  DbConsts;
+  Variants,
+  {$IFNDEF FPC}MaskUtils,{$ENDIF}
+  FmtBcd,
+{$ENDIF}
+{$IFDEF D17+}
+  System.Types,
+  Generics.Collections,
+{$ENDIF}
+  InstantClasses,
+  InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors, DbConsts;
+
+type
+  TDetailDataSetList = {$IFDEF D17+}TList<TDataSet>{$ELSE}TList{$ENDIF};
 
 const
   SelfFieldName = 'Self';
@@ -2828,6 +2842,24 @@ begin
     Result := nil;
 end;
 
+{$IFDEF D17+}
+function TInstantCustomExposer.GetFieldData(Field: TField;
+  Buffer: TValueBuffer): Boolean;
+var
+  D: TDateTimeRec;
+begin
+  if Assigned(Buffer) then
+    Move(CurrentBuffer[GetFieldOffset(Field)], Buffer[0], FieldDataSize(Field));
+  // Show null dates as blanks
+  if (Field is TDateTimeField) and Assigned(Buffer) then
+  begin
+    Move(Buffer[0], D, SizeOf(TDateTimeRec));
+    Result := (D.Date <> 0) and (D.Time <> 0);
+  end else
+    Result := (State in [dsEdit, dsInsert]) or (RecordCount > 0);
+end;
+{$ENDIF D17+}
+
 function TInstantCustomExposer.GetFieldData(Field: TField;
   Buffer: Pointer): Boolean;
 var
@@ -2904,13 +2936,13 @@ end;
 function TInstantCustomExposer.GetIsChanged: Boolean;
 var
   I: Integer;
-  List: TList;
+  List: TDetailDataSetList;
 begin
   Result := FContentChanged or
    (Assigned(FRecordBuffer) and FRecordBuffer.IsChanged);
   if not Result then
   begin
-    List := TList.Create;
+    List := TDetailDataSetList.Create;
     try
       GetDetailDataSets(List);
       for I := 0 to Pred(List.Count) do
@@ -3832,10 +3864,10 @@ end;
 procedure TInstantCustomExposer.PostChanges;
 var
   I: Integer;
-  List: TList;
+  List: TDetailDataSetList;
   AObject: TInstantObject;
 begin
-  List := TList.Create;
+  List := TDetailDataSetList.Create;
   try
     GetDetailDataSets(List);
     for I := 0 to Pred(List.Count) do
@@ -3971,9 +4003,9 @@ end;
 procedure TInstantCustomExposer.Remember;
 var
   I: Integer;
-  List: TList;
+  List: TDetailDataSetList;
 begin
-  List := TList.Create;
+  List := TDetailDataSetList.Create;
   try
     GetDetailDataSets(List);
     for I := 0 to Pred(List.Count) do
@@ -4030,9 +4062,9 @@ end;
 procedure TInstantCustomExposer.Revert;
 var
   I: Integer;
-  List: TList;
+  List: TDetailDataSetList;
 begin
-  List := TList.Create;
+  List := TDetailDataSetList.Create;
   try
     GetDetailDataSets(List);
     for I := 0 to Pred(List.Count) do
@@ -4341,9 +4373,9 @@ end;
 procedure TInstantCustomExposer.Undo;
 var
   I: Integer;
-  List: TList;
+  List: TDetailDataSetList;
 begin
-  List := TList.Create;
+  List := TDetailDataSetList.Create;
   try
     GetDetailDataSets(List);
     for I := 0 to Pred(List.Count) do

@@ -48,6 +48,9 @@ uses
   QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList,
   QStdCtrls, QComCtrls, QExtCtrls,
 {$ENDIF}
+{$IFDEF D17+}
+  System.Actions,
+{$ENDIF}
   InstantConnectionManager, InstantClasses, InstantPersistence, InstantMetadata;
 
 type
@@ -181,6 +184,9 @@ implementation
 
 uses
   InstantImageUtils, InstantConsts, InstantDBEvolverFormUnit,
+{$IFDEF D17+}
+  System.UITypes,
+{$ENDIF}
   InstantDBBuilderFormUnit;
 
 const

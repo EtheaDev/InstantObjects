@@ -30,6 +30,12 @@
 
 unit TestInstantComplex;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMock, TestModel;
@@ -56,7 +62,11 @@ type
 
 implementation
 
-uses SysUtils, testregistry;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, testregistry;
 
 procedure TestTInstantComplex.SetUp;
 begin

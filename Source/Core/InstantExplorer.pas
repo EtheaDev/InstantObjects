@@ -495,13 +495,16 @@ begin
           LoadObjectNode(nil, FRootObject, ChildCount, True);
         end;
       end;
+      if LCurrentObject <> nil then
+        CurrentObject := LCurrentObject;
     finally
       Items.EndUpdate;
       OnChange := SaveOnChange;
-      if LCurrentObject <> nil then
-        CurrentObject := LCurrentObject
-      else if Items.Count > 0 then
+      if Items.Count > 0 then
+      begin
         Selected := Items[0];
+        TreeViewChange(TreeView, nil);
+      end;
     end;
   end;
 end;
@@ -901,6 +904,7 @@ end;
 function TInstantExplorer.IncludeNode(
   NodeData: TInstantExplorerNodeData): Boolean;
 begin
+  Result := True;
   if Assigned(FOnIncludeNode) then
     FOnIncludeNode(Self, NodeData, Result)
   else

@@ -40,8 +40,9 @@ unit InstantCode;
 interface
 
 uses
-  Classes, Contnrs, SysUtils, InstantPersistence, InstantClasses, 
-  InstantMetadata, InstantTextFiler, InstantTypes, TypInfo;
+  {$IFDEF D17+}System.Types, {$ENDIF}Classes, Contnrs, SysUtils,
+  InstantPersistence, InstantClasses, InstantMetadata, InstantTextFiler,
+  InstantTypes, TypInfo;
 
 type
   TInstantCodePos = TInstantTextPos;

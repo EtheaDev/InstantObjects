@@ -41,7 +41,7 @@ interface
 uses
   Classes, ToolsAPI, InstantOTA, Menus, ImgList, ExtCtrls, Forms,
   InstantDesignResources, InstantModelExplorer, InstantCode, 
-  InstantConsts, ActnList;
+  InstantConsts, ActnList{$IFDEF D17+}, System.Actions{$ENDIF};
 
 type
   TIOMetaDataCheckState = (mcNeverChecked, mcCheckError, mcCheckCorrect);

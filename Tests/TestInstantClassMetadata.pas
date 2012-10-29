@@ -30,6 +30,12 @@
 
 unit TestInstantClassMetadata;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses fpcunit, InstantPersistence, InstantMock, InstantMetadata;
@@ -74,7 +80,11 @@ type
 
 implementation
 
-uses SysUtils, TypInfo, testregistry, InstantTypes;
+uses
+  {$IFDEF D17+}
+  System.Classes,
+  {$ENDIF}
+  SysUtils, TypInfo, testregistry, InstantTypes;
 
 procedure TestTInstantClassMetadata.SetUp;
 begin
