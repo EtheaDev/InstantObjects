@@ -1,0 +1,52 @@
+Virtual Containers
+Carlo Barazzetta, 12/05/2014
+
+What is a Virtual Container
+---------------------------
+
+A Virtual Container is a particular References Container of a Master Object to manage his details attributes. This type of container works only for SQL Brokers.
+To obtain a Master-Detail relationship you must have a reference to the Master Object into the Detail Object. This is the typical approach for a Master-Detail relationship used in SQL environment. 
+
+
+What does it do
+---------------
+
+In IO a References Container attribute uses a Blob field stored in the master record containing a list of Ids to retrieve Detail records.  
+Using a Virtual Container the List of Ids is loaded directly by a query to the Detail Table, using the reference attribute field.
+using Virtual Containers is more simple to manage details objects, because is never necessary to update the Master Object after deleting a Detail Object and you are not responsible to reorder the details objects into the Container if you want to order Details by a particular attribute.  
+
+Defining a Virtual Container
+----------------------------
+ 
+To define a Virtual Container use those parameters:
+Type: References
+Object Class: Txxxx
+Storage Kind: Virtual
+External Storage Name: Detail TableName and Detail Field names separated by ;
+
+The source code for METADATA definition appear like this one:
+Details: References(TISSampleDetail) virtual 'SAMPLEDETAIL;PARENTOBJECTCLASS;PARENTOBJECTID'; 
+Note that the External Storage Name is not used to define a new table for external storage of relationship, but contains 2 informations about the existing Detail Table:
+1) SAMPLEDETAIL is the name of the Detail Table
+2) PARENTOBJECTCLASS;PARENTOBJECTID are the fields in the Detail Table referencing the Master Record.
+
+In the Master Table the Field of the Virtual Container doesn't exists.
+
+Defining the order of Detail Objects
+------------------------------------
+You can continue to work with the virtual container as a normal container, but you cannot change the order of Detail Objects using Move() because this order is never stored in a field.
+The default order of details objects of a virtual container is the InstantUpdateCountFieldName attribute.
+
+If you want to change the order of the detail objects you must inherits GetDetailsStatementValues method and write a code like this:
+procedure TISSampleClass.GetDetailsStatementValues(
+  var FromClause, SequenceNoFieldName, OrderByClause: string);
+begin
+  inherited;
+  if SameText(FromClause,'SAMPLEDETAIL') then
+  begin
+    SequenceNoFieldName := 'CompanyDescription';
+    OrderByClause := 'COMPANY.DX DESC';
+  end;
+end; 
+
+    
