@@ -1,6 +1,6 @@
 ------------------------------------------------------------------
 
-  InstantObjects for Delphi, Kylix, FPC
+  InstantObjects for Delphi
 
   Mozilla Public License 1.1
   Based on Seleqt InstantObjects.
@@ -60,8 +60,8 @@ INSTALLATION
    <installdir>/Source/Core/<version>/IOCore.dpk (build)
    <installdir>/Source/Design/<version>/DclIOCore.dpk (install)
    
-   Where <version> identifies your version of Delphi, Kylix or
-   FPC. Examples: D5, D6, D7, K3, D2005, D2006, etc.
+   Where <version> identifies your version of Delphi
+   Examples: D7, D2005, D2006, etc.
 
 
 4. Build and install the desired catalog and broker package(s):
@@ -79,11 +79,6 @@ INSTALLATION
    <installdir>/Source/Brokers/XML/<version>/DclIOXML.dpk (install)
    
    Please note that not all brokers are available in all versions
-   of Delphi/Kylix/FPC. If you think you can make a supplied broker
+   of Delphi. If you think you can make a supplied broker
    work in an unsupported version, or create a new broker from scratch
    then please contact us.
-   
-   NOTE TO DELPHI 5 USERS:
-   dpk files in Delphi 5 have an additional suffix "_D5". This is
-   because Delphi 5 does not support the LIBSUFFIX compiler directive
-   that InstantObjects uses in newer versions of Delphi.

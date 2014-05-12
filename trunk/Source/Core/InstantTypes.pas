@@ -51,7 +51,7 @@ type
   end;
   {$ENDIF}
 
-  TInstantStorageKind = (skEmbedded, skExternal);
+  TInstantStorageKind = (skEmbedded, skExternal, skVirtual);
   TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean,
     atString, atDateTime, atBlob, atMemo, atGraphic,
     atPart, atReference, atParts, atReferences, atDate, atTime, atEnum);

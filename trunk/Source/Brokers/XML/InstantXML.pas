@@ -58,11 +58,15 @@ const
 type
   TXMLFileFormat = (xffUtf8, xffIso);
 
+  TXMLFileOpenEvent = function (const AObject: TInstantObject;
+      const AObjectId, AFileName: string): Boolean of Object;
+
   TXMLFilesAccessor = class(TCustomConnection)
   private
     FConnected: Boolean;
     FRootFolder: string;
     FXMLFileFormat: TXMLFileFormat;
+    FOnCustomLoadXMLFile: TXMLFileOpenEvent;
     function GetRootFolder: string;
     procedure SetRootFolder(const AValue: string);
     function ObjectUpdateCountFromFileName(const AFileName: string): Integer;
@@ -73,8 +77,6 @@ type
     function GetConnected: Boolean; override;
     // Override this method to redirect storage to different folders with a
     // class-level or object-level granularity.
-    function GetObjectFileName(const AStorageName, AObjectClassName,
-      AObjectId: string): string; virtual;
     function LoadInstantObjectFromXmlFile(const AObject: TInstantObject;
       const AObjectId, AFileName: string): Boolean;
     function SaveInstantObjectToXmlFile(const AObject: TInstantObject;
@@ -97,6 +99,8 @@ type
     function InternalDeleteInstantObject(const AObject: TInstantObject;
       const AStorageName: string): Boolean; virtual;
   public
+    function GetObjectFileName(const AStorageName, AObjectClassName,
+      AObjectId: string): string; virtual;
     constructor Create(AOwner: TComponent); override;
     function LocateInstantObject(const AStorageName, AObjectClassName,
       AObjectId: string): Boolean;
@@ -112,8 +116,8 @@ type
       const AStorageNames: TStrings); virtual;
   published
     property RootFolder: string read GetRootFolder write SetRootFolder;
-    property XMLFileFormat: TXMLFileFormat
-      read FXMLFileFormat write FXMLFileFormat default xffUtf8;
+    property XMLFileFormat: TXMLFileFormat read FXMLFileFormat write FXMLFileFormat default xffUtf8;
+    property OnCustomLoadXMLFile: TXMLFileOpenEvent read FOnCustomLoadXMLFile write FOnCustomLoadXMLFile;
   end;
 
   TInstantXMLConnectionDef = class(TInstantConnectionBasedConnectionDef)
@@ -326,19 +330,11 @@ implementation
 
 uses
   SysUtils, InstantConsts,
-  TypInfo, InstantXMLCatalog, InstantXMLConnectionDefEdit, InstantUtils,
-{$IFDEF D17+}
-  System.Types,
+  TypInfo, InstantXMLCatalog, InstantUtils,
+{$IFNDEF FMX}
+InstantXMLConnectionDefEdit, FileCtrl, Controls,
 {$ENDIF}
-{$IFDEF MSWINDOWS}
-{$IFNDEF D6+}
-  FileCtrl,
-{$ENDIF}
-  Windows, Controls;
-{$ENDIF}
-{$IFDEF LINUX}
-QControls;
-{$ENDIF}
+  Windows;
 
 resourcestring
   SCannotCreateDirectory = 'Cannot create directory %s';
@@ -455,6 +451,7 @@ end;
 
 function TInstantXMLConnectionDef.Edit: Boolean;
 begin
+{$IFNDEF FMX}
   with TInstantXMLConnectionDefEditForm.Create(nil) do
   try
     LoadData(Self);
@@ -464,6 +461,9 @@ begin
   finally
     Free;
   end;
+{$ELSE}
+  Result := False;
+{$ENDIF}
 end;
 
 { TInstantXMLResolver }
@@ -1143,46 +1143,35 @@ begin
   end;
 end;
 
+function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
+  const AObject: TInstantObject; const AFileName: string): Boolean;
+var
+  strstream: TStringStream;
+  fileStream: TFileStream;
 {$IFDEF UNICODE}
-function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
-  const AObject: TInstantObject; const AFileName: string): Boolean;
-var
-  strstream: TStringStream;
-  fileStream: TFileStream;
   DataStr: UTF8String;
-begin
-  strstream := TStringStream.Create('', TEncoding.UTF8);
-  try
-    InstantWriteObject(strStream, sfXML, AObject);
-    DataStr := XML_UTF8_HEADER + UTF8String(GetXMLLineBreak) + UTF8String(strStream.DataString);
-  finally
-    strStream.Free;
-  end;
-  fileStream := TFileStream.Create(AFileName, fmCreate);
-  try
-    Result := fileStream.Write(DataStr[1], Length(DataStr)) <> 0;
-  finally
-    fileStream.Free;
-  end;
-end;
 {$ELSE}
-function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
-  const AObject: TInstantObject; const AFileName: string): Boolean;
-var
-  strstream: TStringStream;
-  fileStream: TFileStream;
   DataStr: string;
+{$ENDIF}
 begin
+{$IFDEF UNICODE}
+  strstream := TStringStream.Create('', TEncoding.UTF8);
+{$ELSE}
   strstream := TStringStream.Create('');
+{$ENDIF}
   try
     InstantWriteObject(strStream, sfXML, AObject);
-{$IFDEF D6+}
+{$IFDEF UNICODE}
+    DataStr := XML_UTF8_HEADER + UTF8String(GetXMLLineBreak) + UTF8String(strStream.DataString);
+{$ELSE}
+  {$IFDEF D6+}
     if FXMLFileFormat = xffUtf8 then
       DataStr := AnsiToUtf8(XML_UTF8_HEADER + GetXMLLineBreak + strStream.DataString)
     else
       DataStr := XML_ISO_HEADER + GetXMLLineBreak + strStream.DataString;
-{$ELSE}
+  {$ELSE}
     DataStr := strStream.DataString;
+  {$ENDIF}
 {$ENDIF}
   finally
     strStream.Free;
@@ -1194,7 +1183,6 @@ begin
     fileStream.Free;
   end;
 end;
-{$ENDIF}
 
 {$IFDEF UNICODE}
 function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
@@ -1202,18 +1190,27 @@ function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
 var
   fileStream: TFileStream;
 begin
+  Result := False;
   if FileExists(AFileName) then
   begin
-    fileStream := TFileStream.Create(AFileName, fmShareDenyWrite);
-    try
-      InstantReadObject(fileStream, sfXML, AObject);
-      Result := True;
-    finally
-      fileStream.Free;
+    Try
+      if Assigned(FOnCustomLoadXMLFile) then
+        Result := FOnCustomLoadXMLFile(AObject, AObjectId, AFileName);
+
+      if not Result then
+      begin
+        fileStream := TFileStream.Create(AFileName, fmShareDenyWrite);
+        try
+          InstantReadObject(fileStream, sfXML, AObject);
+          Result := True;
+        finally
+          fileStream.Free;
+        end;
+      end;
+    except
+      on E: Exception do raise EInOutError.CreateFmt(SErrorLoadingFile, [AFileName, E.Message]);
     end;
-  end
-  else
-    Result := False;
+  end;
 end;
 {$ELSE}
 function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
@@ -1223,24 +1220,32 @@ var
   strUtf8: string;
   strstream: TStringStream;
 begin
-  fileStream := TFileStream.Create(AFileName, fmShareDenyWrite);
-  try
-    SetLength(strUtf8, fileStream.Size);
-    Result := fileStream.Read(strUtf8[1], fileStream.Size) <> 0;
-  finally
-    fileStream.Free;
-  end;
+  if Assigned(FOnCustomLoadXMLFile) then
+    Result := FOnCustomLoadXMLFile(AObject, AObjectId, AFileName);
 
-{$IFDEF D6+}
-  if FXMLFileFormat = xffUtf8 then
-    strUtf8 := Utf8ToAnsi(strUtf8);
-{$ENDIF}
+  if not Result then
+  
+  begin
+    fileStream := TFileStream.Create(AFileName, fmShareDenyWrite);
+    try
+      SetLength(strUtf8, fileStream.Size);
+      Result := fileStream.Read(strUtf8[1], fileStream.Size) <> 0;
+    finally
+      fileStream.Free;
+    end;
+    {$IFDEF D6+}
+    if FXMLFileFormat = xffUtf8 then
+      strUtf8 := Utf8ToAnsi(strUtf8);
+    {$ENDIF}
 
-  strstream := TStringStream.Create(strUtf8);
-  try
-    InstantReadObject(strstream, sfXML, AObject);
-  finally
-    strstream.Free;
+    strstream := TStringStream.Create(strUtf8);
+    try try
+      InstantReadObject(strstream, sfXML, AObject);
+    except
+      on E: Exception do raise EInOutError.CreateFmt(SErrorLoadingFile, [AFileName, E.Message]); end;
+    finally
+      strstream.Free;
+    end;
   end;
 end;
 {$ENDIF}

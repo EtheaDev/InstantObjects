@@ -423,6 +423,7 @@ type
     FSelectExternalPartSQL: string;
     FDeleteExternalSQL: string;
     FInsertExternalSQL: string;
+    FSelectVirtualSQL: string;
     function AddIntegerParam(Params: TParams; const ParamName: string;
       Value: Integer): TParam;
     function AddStringParam(Params: TParams; const ParamName, Value: string): TParam;
@@ -441,6 +442,7 @@ type
     function GetUpdateConcurrentSQL: string;
     function GetUpdateSQL: string;
     function GetBroker: TInstantSQLBroker;
+    function GetSelectVirtualSQL: string;
     function GetSelectExternalSQL: string;
     function GetSelectExternalPartSQL: string;
     function GetDeleteExternalSQL: string;
@@ -512,6 +514,8 @@ type
       write FInsertExternalSQL;
     property Map: TInstantAttributeMap read FMap;
     property SelectSQL: string read GetSelectSQL write FSelectSQL;
+    property SelectVirtualSQL: string read GetSelectVirtualSQL
+      write FSelectVirtualSQL;
     property SelectExternalSQL: string read GetSelectExternalSQL
       write FSelectExternalSQL;
     property SelectExternalPartSQL: string read GetSelectExternalPartSQL
@@ -594,16 +598,20 @@ type
   end;
 
   // TInstantSQLLinkResolver class defines interface for handling
-  // access to container attributes with external storage for
+  // access to container attributes with external or virtual storage for
   // SQL brokers. Due to the generic nature of SQL this class is used
   // directly and no descendant classes are needed for SQL brokers.
   TInstantSQLLinkResolver = class(TInstantLinkResolver)
   private
     FAttributeOwner: TInstantObject;
     FTableName: string;
+    FParentObjectClassFieldName: string;
+    FParentObjectIdFieldName: string;
     function GetBroker: TInstantSQLBroker;
     function GetResolver: TInstantSQLResolver;
     property TableName: string read FTableName;
+    property ParentObjectClassFieldName: string read FParentObjectClassFieldName;
+    property ParentObjectIdFieldName: string read FParentObjectIdFieldName;
   protected
     procedure InternalStoreAttributeObjects(Attribute: TInstantContainer);
       override;
@@ -733,6 +741,8 @@ type
       string; virtual;
     function InternalGenerateSelectSQL(Map: TInstantAttributeMap): string;
       virtual;
+    function InternalGenerateSelectVirtualSQL(Map: TInstantAttributeMap):
+      string; virtual;
     function InternalGenerateSelectExternalSQL(Map: TInstantAttributeMap):
       string; virtual;
     function InternalGenerateSelectExternalPartSQL(Map: TInstantAttributeMap):
@@ -762,6 +772,7 @@ type
     function GenerateInsertSQL(Map: TInstantAttributeMap): string;
     function GenerateInsertExternalSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectSQL(Map: TInstantAttributeMap): string;
+    function GenerateSelectVirtualSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectExternalSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectTablesSQL: string;
@@ -1118,6 +1129,11 @@ type
 
 var
   InstantLogProc: procedure (const AString: string) of object;
+
+{$IFDEF IO_STATEMENT_LOGGING}
+procedure InstantLogStatement(const Caption, AStatement: string;
+  AParams: TParams = nil);
+{$ENDIF}
 
 implementation
 
@@ -1835,7 +1851,7 @@ begin
 
   {$IFDEF D12+}
   if AConnector.BlobStreamFormat = sfBinary then
-    Result := TBytesStream.Create(AField.AsBytes)
+    Result := TStringStream.Create(AField.AsString)
   else
   {$ENDIF}
   Result := TInstantStringStream.Create(AField.AsString);
@@ -1848,7 +1864,7 @@ begin
 
   {$IFDEF D12+}
   if AConnector.BlobStreamFormat = sfBinary then
-    Result := TBytesStream.Create
+    Result := TStringStream.Create
   else
     Result := TStringStream.Create('', TEncoding.UTF8);
   {$ELSE}
@@ -2093,7 +2109,7 @@ procedure TInstantNavigationalResolver.ClearReferences(
 var
   LinkDatasetResolver: TInstantNavigationalLinkResolver;
 begin
-  if Attribute.Metadata.StorageKind = skExternal then
+  if Attribute.Metadata.StorageKind in [skExternal, skVirtual] then
   begin
     LinkDatasetResolver :=
         GetLinkDatasetResolver(Attribute.Metadata.ExternalStorageName);
@@ -2552,7 +2568,7 @@ var
 begin
   with Attribute do
   begin
-    if Metadata.StorageKind = skExternal then
+    if Metadata.StorageKind in [skExternal, skVirtual] then
     begin
       Clear;
       LinkDatasetResolver :=
@@ -3006,7 +3022,7 @@ var
       Part.Value.CheckId;
       AddIdParam(Params, FieldName + InstantIdFieldName, Part.Value.Id);
     end
-    else
+    else if Attribute.Metadata.StorageKind = skEmbedded then
     begin
       Stream := CreateEmbeddedObjectOutputStream(Broker.Connector);
       try
@@ -3152,9 +3168,9 @@ begin
     LParam := AddParam(AParams, AParamName, ftBlob);
     if AStream.Size > 0 then
       {$IFDEF D12+}
-      LParam.AsBytes := (AStream as TBytesStream).Bytes;
+        LParam.AsBlob := BytesOf((AStream as TStringStream).DataString);
       {$ELSE}
-      LParam.AsMemo := (AStream as TStringStream).DataString;
+      LParam.AsBlob := (AStream as TStringStream).DataString;
       {$ENDIF}
   end
   else
@@ -3170,7 +3186,7 @@ procedure TInstantSQLResolver.AddIdParam(Params: TParams;
 var
   Param: TParam;
 begin
-  Param := AddParam(Params, ParamName, InstantDataTypeToFieldType(Broker.Connector.IdDataType));
+  Param := AddParam(Params, ParamName, InstantDataTypeToFieldType(Broker.Connector.IdDataType, Broker.Connector.UseUnicode));
   if Value <> '' then
     Param.Value := Value;
 end;
@@ -3199,7 +3215,10 @@ end;
 function TInstantSQLResolver.AddStringParam(Params: TParams;
   const ParamName, Value: string): TParam;
 begin
-  Result := AddParam(Params, ParamName, ftString);
+  if Broker.Connector.UseUnicode then
+    Result := AddParam(Params, ParamName, ftWideString)
+  else
+    Result := AddParam(Params, ParamName, ftString);
   if Value <> '' then
     Result.AsString := Value;
 end;
@@ -3284,6 +3303,13 @@ begin
   if FSelectExternalPartSQL = '' then
     FSelectExternalPartSQL := Broker.Generator.GenerateSelectExternalPartSQL(Map);
   Result := FSelectExternalPartSQL;
+end;
+
+function TInstantSQLResolver.GetSelectVirtualSQL: string;
+begin
+  if FSelectVirtualSQL = '' then
+    FSelectVirtualSQL := Broker.Generator.GenerateSelectVirtualSQL(Map);
+  Result := FSelectVirtualSQL;
 end;
 
 function TInstantSQLResolver.GetSelectExternalSQL: string;
@@ -3806,7 +3832,7 @@ var
     Stream: TStream;
     LinkResolver: TInstantSQLLinkResolver;
   begin
-    if AttributeMetadata.StorageKind = skExternal then
+    if AttributeMetadata.StorageKind in [skExternal, skVirtual] then
     begin
       with (Attribute as TInstantReferences) do
       begin
@@ -4285,9 +4311,34 @@ end;
 
 constructor TInstantSQLLinkResolver.Create(AResolver: TInstantSQLResolver;
     const ATableName: string; AObject: TInstantObject);
+var
+  p: integer;
 begin
   inherited Create(AResolver);
-  FTableName := ATableName;
+  //A virtual external container can have a composite TableName like:
+  //'DETAILTABLENAME;MASTEROBJECTCLASS;MASTEROBJECTID'
+  //If not specified the default fields for master/details relations are:
+  //InstantParentClassFieldName and InstantParentIdFieldName
+  p := pos(';',ATableName);
+  if p > 0 then
+  begin
+    FTableName := Copy(ATableName,1,p-1);
+    FParentObjectClassFieldName := Copy(ATableName,p+1,MaxInt);
+    p := pos(';',FParentObjectClassFieldName);
+    if p > 0 then
+    begin
+      FParentObjectIdFieldName := Copy(FParentObjectClassFieldName,p+1,MaxInt);
+      FParentObjectClassFieldName := Copy(FParentObjectClassFieldName,1,p-1);
+    end
+    else
+      FParentObjectIdFieldName := InstantParentIdFieldName;
+  end
+  else
+  begin
+    FTableName := ATableName;
+    FParentObjectClassFieldName := InstantParentClassFieldName;
+    FParentObjectIdFieldName := InstantParentIdFieldName;
+  end;
   FAttributeOwner := AObject;
 end;
 
@@ -4373,10 +4424,29 @@ var
   Params: TParams;
   Dataset: TDataSet;
   LChildClassField, LChildIdField: TField;
+  SequenceNoFieldName, FromClause, OrderByClause: string;
 begin
   Params := TParams.Create;
   try
-    Statement := Format(Resolver.SelectExternalSQL, [TableName]);
+    if Attribute.Metadata.StorageKind = skVirtual then
+    begin
+      Statement := Resolver.SelectVirtualSQL;
+      //Default values
+      FromClause := TableName;
+      Attribute.Owner.GetDetailsStatementValues(FromClause,SequenceNoFieldName,OrderByClause);
+      //Statement custom
+      Statement := Format(Statement,
+        [TableName,TableName,
+         TableName+'.'+SequenceNoFieldName,
+         FromClause,
+         TableName+'.'+ParentObjectClassFieldName,
+         TableName+'.'+ParentObjectIdFieldName,
+         OrderByClause]);
+    end
+    else
+    begin
+      Statement := Format(Resolver.SelectExternalSQL, [TableName]);
+    end;
     Resolver.AddIdParam(Params, InstantParentIdFieldName, AObjectId);
     Resolver.AddStringParam(Params, InstantParentClassFieldName,
       AttributeOwner.ClassName);
@@ -4697,7 +4767,7 @@ begin
       end
       else if AttributeMetadata.AttributeType = atPart then
       begin
-        if AttributeMetadata.StorageKind = skExternal then
+        if AttributeMetadata.StorageKind in [skExternal, skVirtual] then
         begin
           RefClassFieldName := FieldName + InstantClassFieldName;
           RefIdFieldName := FieldName + InstantIdFieldName;
@@ -4844,6 +4914,12 @@ function TInstantSQLGenerator.GenerateSelectExternalSQL(
   Map: TInstantAttributeMap): string;
 begin
   Result := InternalGenerateSelectExternalSQL(Map);
+end;
+
+function TInstantSQLGenerator.GenerateSelectVirtualSQL(
+  Map: TInstantAttributeMap): string;
+begin
+  Result := InternalGenerateSelectVirtualSQL(Map);
 end;
 
 function TInstantSQLGenerator.GenerateSelectSQL
@@ -5046,6 +5122,19 @@ begin
      EmbraceField(InstantIdFieldName), InstantIdFieldName]);
   Result := Format('SELECT %s FROM %s WHERE %s',
     [FieldStr, EmbraceTable('%s'), WhereStr]);
+end;
+
+function TInstantSQLGenerator.InternalGenerateSelectVirtualSQL(
+  Map: TInstantAttributeMap): string;
+var
+  FieldStr, WhereStr: string;
+begin
+  FieldStr := Format('%s.CLASS '+InstantChildClassFieldName+', %s.ID '+InstantChildIdFieldName+', %s SequenceNo',
+  [EmbraceField('%s'),EmbraceField('%s'),EmbraceField('%s'),
+   EmbraceField(InstantIdFieldName), EmbraceField(InstantUpdateCountFieldName)]);
+  WhereStr := '%s = :'+InstantParentClassFieldName+' AND %s = :'+InstantParentIdFieldName;
+  Result := Format('SELECT %s FROM %s WHERE %s ORDER BY %s',
+    [FieldStr, EmbraceTable('%s'), WhereStr, EmbraceField('%s')]);
 end;
 
 function TInstantSQLGenerator.InternalGenerateSelectExternalSQL(
@@ -5589,8 +5678,8 @@ function TInstantRelationalTranslator.TranslateSpecifier(
               AContext.Qualify(LTablePath, LFieldName + InstantIdFieldName)]));
         end
         else if (LAttrMeta.AttributeType in [atParts, atReferences])
-          and (LAttrMeta.StorageKind = skExternal) then
-          // No fields needed for external containers.
+          and (LAttrMeta.StorageKind in [skExternal, skVirtual]) then
+          // No fields needed for external and virtual containers.
         else
           // Select all other fields.
           Writer.WriteString(Format(', %s', [AContext.QualifyPath(LAttrMeta.Name)]));
@@ -6512,24 +6601,30 @@ procedure TInstantTranslationContext.Initialize;
     LPath: TInstantIQLPath;
     LClassMeta: TInstantClassMetadata;
   begin
+    // Standard non-burst mode adds the main table only when needed, not always.
+    // A possible optimization would be to add it only if it does actually
+    // have attributes we select. For now let's add it by default as it
+    // covers almost all cases. We add it first to ease the join clause
+    // generation later.
+    if IsBurstLoadMode(ActualLoadMode) then
+      AddTablePath(TableName);
+
+    // Add main table path as required.
     if ClassRef.Any then
-      LTablePath := ObjectClassMetadata.TableName
+      LTablePath := TableName
     else
     begin
       LPath := FindAttributePath;
       if Assigned(LPath) then
         LTablePath := PathToTablePath(LPath.Attributes[0])
       else
-        LTablePath := ObjectClassMetadata.TableName;
+        LTablePath := TableName;
     end;
     AddTablePath(LTablePath);
+
+    // Add paths for all parent tables in burst mode.
     if IsBurstLoadMode(ActualLoadMode) then
     begin
-      // Standard mode only adds the main table when needed, and not always.
-      // A possible optimization would be to add it only if it does actually
-      // have attributes we select. For now let's add it by default as it
-      // covers almost all cases.
-      AddTablePath(TableName);
       LClassMeta := ObjectClassMetadata.Parent;
       while Assigned(LClassMeta) do
       begin

@@ -54,7 +54,7 @@ uses
   MinimalModel in 'MinimalModel.pas',
   TestXMLBroker in 'TestXMLBroker.pas',
   TestInstantCode in 'TestInstantCode.pas',
-  TestInstantPresentation in 'TestInstantPresentation.pas';
+  TestInstantExposer in 'TestInstantExposer.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}

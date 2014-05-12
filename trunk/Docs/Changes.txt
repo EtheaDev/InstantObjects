@@ -1,6 +1,20 @@
 VERSION HISTORY
 ---------------
 
+Version 2.2 (2.2.0.0) (2014-05-12)
+- Full UNICODE support: based on UseUnicode flag of InstantConnection:
+  Exposers uses TWideStringField or TWideMemoField mapping string attributes
+  
+- Virtual Containers (for SQL brokers):
+  Master-Detail relationship using a contaier without storage  
+  (read VirtualContainers.txt for more informations)
+
+- Added Broker for Embarcadero FireDac
+
+- Added support for Delphi XE5 and XE6
+
+- Updated UnitTesting for Exposers and Unicode Support
+
 Version 2.1 (2.1.0.0) (2007-02-26)
 
 - Support for SQL Server 2005; catalog support for SQL Server 7;

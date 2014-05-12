@@ -152,8 +152,6 @@ type
     FOnIncludeNode: TInstantExplorerIncludeNodeEvent;
     FOnGetAllowedValues: TInstantExplorerGetAllowedValuesEvent;
     FOnGetFieldNames: TInstantExplorerGetFieldNamesEvent;
-    function AddNode(NodeType: TInstantExplorerNodeType; Parent: TTreeNode;
-      Name: string; AObject: TObject; Value: string = ''): TTreeNode;
     procedure ArrangeControls;
     procedure AssignRootObject(Value: TObject);
     procedure CreateContentView;
@@ -171,10 +169,12 @@ type
       const APropName: string; const AAllowedValues: TStrings);
     function GetImages: TCustomImageList;
     procedure LoadContainerNode(Node: TTreeNode; Container: TInstantContainer);
+    procedure LoadInstantQueryNode(Node: TTreeNode; InstantQuery: TInstantQuery);
     procedure LoadNode(Node: TTreeNode; LoadChildren: Boolean);
     procedure LoadObjectNode(Node: TTreeNode; Instance: TObject;
       var ChildCount: Integer; LoadChildren: Boolean);
     function NodeIsLoaded(Node: TTreeNode): Boolean;
+    function NodeDataIsAssigned(Node: TTreeNode): Boolean;
     procedure ObjectExposerAfterDelete(Sender: TDataSet);
     procedure ObjectExposerAfterPost(Sender: TDataSet);
     procedure ResizeControls;
@@ -190,6 +190,8 @@ type
     function GetContentEditor: TWinControl;
     function CreateFieldList: TStrings;
   protected
+    function AddNode(NodeType: TInstantExplorerNodeType; Parent: TTreeNode;
+      Name: string; AObject: TObject; Value: string = ''): TTreeNode; virtual;
     procedure ChangeNode(Node: TTreeNode); virtual;
     function CreateContentEditor(AOwner: TComponent;
       DataSource: TDataSource): TInstantExplorerContentEditor; virtual;
@@ -212,6 +214,8 @@ type
     procedure SetNodeTypes(const Value: TInstantExplorerNodeTypes); virtual;
     procedure SetRootObject(const Value: TObject); virtual;
     procedure UpdateDetails;
+    function GetAttributesCount(Instance: TInstantObject): integer; virtual;
+    function GetAttribute(Instance: TInstantObject; I: integer): TObject; virtual;
   public
     procedure SetupContentEditor; virtual;
     constructor Create(AOwner: TComponent); override;
@@ -373,8 +377,9 @@ begin
     else if FInstance is TInstantContainer then
       with TInstantContainer(FInstance) do
         Result := Result + '(' + RequiredClass.ClassName + ')'
-    else if FInstance is TInstantAttribute then
-      //
+    else if FInstance is TInstantQuery then
+      with TInstantQuery(FInstance) do
+        Result := Result + '(' + ObjectClassName + ')'
     else if FInstance is TInstantStreamable then
       with TInstantStreamable(FInstance) do
         if Name <> '' then
@@ -884,7 +889,7 @@ end;
 
 procedure TInstantExplorer.GetImageIndex(Node: TTreeNode);
 begin
-  if Assigned(FOnGetImageIndex) then
+  if Assigned(FOnGetImageIndex) and Assigned(Node) then
     FOnGetImageIndex(Self, Node);
 end;
 
@@ -920,6 +925,15 @@ begin
     AddNode(ntObject, Node, IntToStr(I), Container[I]);
 end;
 
+procedure TInstantExplorer.LoadInstantQueryNode(Node: TTreeNode;
+  InstantQuery: TInstantQuery);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(InstantQuery.ObjectCount) do
+    AddNode(ntObject, Node, IntToStr(I), InstantQuery.Objects[I]);
+end;
+
 procedure TInstantExplorer.Loaded;
 begin
   inherited;
@@ -932,18 +946,42 @@ var
   ChildCount: Integer;
   NodeData: TInstantExplorerNodeData;
 begin
-  if not Assigned(Node) or not Assigned(Node.Data) then
+  if not NodeDataIsAssigned(Node) then
     Exit;
   NodeData := TInstantExplorerNodeData(Node.Data);
   Node.DeleteChildren;
   Instance := NodeData.Instance;
   ChildCount := 0;
   if Instance is TInstantContainer then
-    LoadContainerNode(Node, TInstantContainer(Instance))
+  begin
+    if (Instance is TInstantReferences) and (TInstantReferences(Instance).Metadata.StorageKind = skVirtual) then
+      TInstantReferences(Instance).Owner.Refresh;
+    LoadContainerNode(Node, TInstantContainer(Instance));
+  end
+  else if Instance is TInstantQuery then
+    LoadInstantQueryNode(Node, TInstantQuery(Instance))
   else
     LoadObjectNode(Node, Instance, ChildCount, LoadChildren);
   if not LoadChildren and (ChildCount > 0) then
     Node.Owner.AddChildObject(Node, '', NotLoaded);
+end;
+
+function TInstantExplorer.GetAttributesCount(Instance: TInstantObject): integer;
+begin
+  Result := Instance.Metadata.MemberMap.Count;
+end;
+
+function TInstantExplorer.GetAttribute(Instance: TInstantObject; I: integer): TObject;
+var
+  Attribute: TInstantAttributeMetadata;
+begin
+  Result := nil;
+  if I < Instance.Metadata.MemberMap.Count then
+  begin
+    Attribute := Instance.Metadata.MemberMap[I];
+    if Attribute.Category = acContainer then
+      Result := Instance.ContainerByName(Attribute.Name)
+  end;
 end;
 
 procedure TInstantExplorer.LoadObjectNode(Node: TTreeNode; Instance: TObject;
@@ -954,22 +992,30 @@ procedure TInstantExplorer.LoadObjectNode(Node: TTreeNode; Instance: TObject;
   var
     I: Integer;
     Map: TInstantAttributeMap;
-    Attribute: TInstantAttributeMetadata;
+    Attribute: TObject;
     Container: TInstantContainer;
+    InstantQuery: TInstantQuery;
   begin
     Map := Instance.Metadata.MemberMap;
     if not Assigned(Map) then
       Exit;
-    for I := 0 to Pred(Map.Count) do
+    for I := 0 to Pred(GetAttributesCount(Instance)) do
     begin
-      Attribute := TInstantAttributeMetadata(Map[I]);
-      if Attribute.Category = acContainer then
+      Attribute := GetAttribute(Instance, I);
+      if Attribute is TInstantContainer then
       begin
         Inc(ChildCount);
+        Container := TInstantContainer(Attribute);
+        if LoadChildren then
+          AddNode(ntContainer, Node, Container.Name, Container);
+      end
+      else if Attribute is TInstantQuery then
+      begin
+        Inc(ChildCount);
+        InstantQuery := TInstantQuery(Attribute);
         if LoadChildren then
         begin
-          Container := Instance.ContainerByName(Attribute.Name);
-          AddNode(ntContainer, Node, Container.Name, Container);
+          AddNode(ntContainer, Node, InstantQuery.ObjectClassName, InstantQuery);
         end;
       end;
     end;
@@ -1021,9 +1067,10 @@ var
 begin
   // Don't test 'Assigned(Node.Data)' because value
   // of 'Node.Data' could be -1 ('NotLoaded')
-  if Integer(Node.Data) > 0 then
+  if NodeDataIsAssigned(Node) then
   begin
     Obj := TObject(Node.Data);
+    Node.Data := NotLoaded;
     FreeAndNil(Obj);
   end;
 end;
@@ -1034,8 +1081,14 @@ begin
   begin
     Node := Node.GetFirstChild;
     Result := not Assigned(Node) or (Node.Data <> NotLoaded);
-  end else
+  end
+  else
     Result := True;
+end;
+
+function TInstantExplorer.NodeDataIsAssigned(Node: TTreeNode): Boolean;
+begin
+  Result := Assigned(Node) and (Integer(Node.Data) <> -1);
 end;
 
 procedure TInstantExplorer.ObjectExposerAfterPost(Sender: TDataSet);
@@ -1186,20 +1239,21 @@ end;
 procedure TInstantExplorer.TreeViewGetImageIndex(Sender: TObject;
   Node: TTreeNode);
 begin
-  if not Assigned(Node) then
+  if not Assigned(Node) or Node.Deleting or (Node.ItemId = nil) then
     Exit;
-  if Assigned(Node.Data) then
+  if NodeDataIsAssigned(Node) then
   begin
     Node.ImageIndex := TInstantExplorerNodeData(Node.Data).ImageIndex;
     Node.SelectedIndex := Node.ImageIndex;
+    GetImageIndex(Node);
   end;
-  GetImageIndex(Node);
 end;
 
 procedure TInstantExplorer.UpdateDetails;
 var
   AObject: TObject;
   Container: TInstantContainer;
+  InstantQuery: TInstantQuery;
 begin
   ObjectExposer.PostChanges;
   if Layout = loTreeOnly then
@@ -1218,6 +1272,22 @@ begin
       ObjectExposer.Mode := amContent;
       ObjectExposer.ContainerName := Container.Name;
       ObjectExposer.Subject := Container.Owner;
+    end;
+    if DetailView <> ContentView then
+    begin
+      DetailView := ContentView;
+      SetupContentEditor;
+    end;
+  end
+  else if AObject is TInstantQuery then
+  begin
+    DestroyObjectEditor;
+    InstantQuery := TInstantQuery(AObject);
+    if (ObjectExposer.Subject <> InstantQuery) or (ObjectExposer.ContainerName <> InstantQuery.ObjectClassName) then
+    begin
+      ObjectExposer.Subject := nil;
+      ObjectExposer.Mode := amContent;
+      ObjectExposer.Subject := InstantQuery;
     end;
     if DetailView <> ContentView then
     begin

@@ -488,6 +488,9 @@ type
     property Items[Index: Integer]: TProjectItem read GetItems write SetItems;
   end;
 
+var
+  TestUseUnicode: Boolean;
+
 implementation
 
 uses
@@ -1567,5 +1570,7 @@ initialization
     TProjectItem,
     TProjectItems
   ]);
+
+  TestUseUnicode := True;
 
 end.

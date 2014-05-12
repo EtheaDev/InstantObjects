@@ -33,7 +33,6 @@
 			<GenDll>true</GenDll>
 			<GenPackage>true</GenPackage>
 			<DllSuffix>_D14</DllSuffix>
-			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Cfg_1)'!=''">
 			<Version>7.0</Version>

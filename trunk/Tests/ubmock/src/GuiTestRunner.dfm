@@ -1,9 +1,9 @@
 object GUITestRunner: TGUITestRunner
   Left = 574
   Top = 125
-  Width = 518
-  Height = 664
   Caption = 'FPCUnit - Unit test runner'
+  ClientHeight = 625
+  ClientWidth = 502
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,36 +18,39 @@ object GUITestRunner: TGUITestRunner
   object Splitter1: TSplitter
     Left = 0
     Top = 555
-    Width = 510
+    Width = 502
     Height = 16
     Cursor = crVSplit
     Align = alTop
     Beveled = True
     ResizeStyle = rsUpdate
+    ExplicitWidth = 510
   end
   object pbBar: TPaintBox
     Left = 0
     Top = 57
-    Width = 510
+    Width = 502
     Height = 33
     Align = alTop
     OnPaint = pbBarPaint
+    ExplicitWidth = 510
   end
   object pnlToolbar: TPanel
     Left = 0
     Top = 0
-    Width = 510
+    Width = 502
     Height = 57
     Align = alTop
     TabOrder = 0
     DesignSize = (
-      510
+      502
       57)
     object lblSelectedTest: TLabel
-      Left = 168
-      Top = 24
-      Width = 95
-      Height = 16
+      Left = 103
+      Top = 8
+      Width = 298
+      Height = 43
+      AutoSize = False
       Caption = 'lblSelectedTest'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlue
@@ -55,15 +58,14 @@ object GUITestRunner: TGUITestRunner
       Font.Name = 'MS Sans Serif'
       Font.Style = []
       ParentFont = False
+      WordWrap = True
     end
     object btnRun: TBitBtn
-      Left = 16
+      Left = 7
       Top = 8
       Width = 90
       Height = 41
       Caption = '&Run'
-      TabOrder = 0
-      OnClick = btnRunClick
       Glyph.Data = {
         360C0000424D360C000000000000360000002800000020000000200000000100
         180000000000000C0000120B0000120B000000000000000000008AFEFF8AFEFF
@@ -163,6 +165,8 @@ object GUITestRunner: TGUITestRunner
         8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFE
         FF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8A
         FEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF8AFEFF}
+      TabOrder = 0
+      OnClick = btnRunClick
     end
     object btnClose: TBitBtn
       Left = 407
@@ -171,8 +175,6 @@ object GUITestRunner: TGUITestRunner
       Height = 41
       Anchors = [akTop, akRight]
       Caption = '&Close'
-      TabOrder = 1
-      OnClick = btnCloseClick
       Glyph.Data = {
         F6060000424DF606000000000000360000002800000018000000180000000100
         180000000000C0060000120B0000120B00000000000000000000FFFFFFFFFFFF
@@ -230,12 +232,14 @@ object GUITestRunner: TGUITestRunner
         000000000000000000000000000000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
         FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+      TabOrder = 1
+      OnClick = btnCloseClick
     end
   end
   object pnlCentral: TPanel
     Left = 0
     Top = 90
-    Width = 510
+    Width = 502
     Height = 465
     Align = alTop
     BevelOuter = bvNone
@@ -243,7 +247,7 @@ object GUITestRunner: TGUITestRunner
     object PageControl1: TPageControl
       Left = 0
       Top = 0
-      Width = 510
+      Width = 502
       Height = 465
       ActivePage = tsTestTree
       Align = alClient
@@ -253,7 +257,7 @@ object GUITestRunner: TGUITestRunner
         object TestTree: TTreeView
           Left = 0
           Top = 0
-          Width = 502
+          Width = 494
           Height = 437
           Align = alClient
           Font.Charset = ANSI_CHARSET
@@ -274,7 +278,7 @@ object GUITestRunner: TGUITestRunner
         object XMLMemo: TMemo
           Left = 0
           Top = 0
-          Width = 502
+          Width = 494
           Height = 437
           Align = alClient
           TabOrder = 0
@@ -285,16 +289,16 @@ object GUITestRunner: TGUITestRunner
   object pnlBottom: TPanel
     Left = 0
     Top = 571
-    Width = 510
-    Height = 59
+    Width = 502
+    Height = 54
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
     object Memo1: TMemo
       Left = 0
       Top = 0
-      Width = 510
-      Height = 59
+      Width = 502
+      Height = 54
       Align = alClient
       Lines.Strings = (
         'Memo1')
@@ -306,7 +310,7 @@ object GUITestRunner: TGUITestRunner
     Left = 192
     Top = 200
     Bitmap = {
-      494C010108000900040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010108000900080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

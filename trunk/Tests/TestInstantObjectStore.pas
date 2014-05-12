@@ -1,4 +1,4 @@
-(*
+﻿(*
  *   InstantObjects Test Suite
  *   TestInstantObjectStore
  *)
@@ -80,6 +80,8 @@ procedure TestTInstantObjectStore.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockCRBroker;
+  FConn.IsDefault := True;
+  FConn.UseUnicode := TestModel.TestUseUnicode;
 
   if InstantModel.ClassMetadatas.Count > 0 then
     InstantModel.ClassMetadatas.Clear;
@@ -101,6 +103,11 @@ var
   vObjectId: string;
   vPerson1: TPerson;
   vPerson2: TPerson;
+const
+  NAME1 = 'AName1';
+  NAME1_UNICODE = '网站导航1';
+  NAME2 = 'AName2';
+  NAME2_UNICODE = '网站导航2';
 begin
   vPerson2 := nil;
   AssertEquals(0, FInstantObjectStore.Count);
@@ -108,19 +115,28 @@ begin
   vPerson1 := TPerson.Create(FConn);
   try
     AssertNotNull(vPerson1);
-    vPerson1.Name := 'AName1';
+    if not FConn.UseUnicode then
+      vPerson1.Name := NAME1
+    else
+      vPerson1.Name := NAME1_UNICODE;
     vPerson1.Store;
     vObjectId := vPerson1.PersistentId;
     AssertEquals(1, FInstantObjectStore.Count);
 
     vPerson2 := TPerson.Create(FConn);
     AssertNotNull(vPerson2);
-    vPerson2.Name := 'AName2';
+    if not FConn.UseUnicode then
+      vPerson2.Name := NAME2
+    else
+      vPerson2.Name := NAME2_UNICODE;
     vPerson2.Store;
     AssertEquals(2, FInstantObjectStore.Count);
 
     AssertSame(vPerson1, TPerson(FInstantObjectStore.Find(vObjectId)));
-    AssertEquals('AName1', TPerson(FInstantObjectStore.Find(vObjectId)).Name);
+    if not FConn.UseUnicode then
+      AssertEquals(NAME1, TPerson(FInstantObjectStore.Find(vObjectId)).Name)
+    else
+      AssertEquals(NAME1_UNICODE, TPerson(FInstantObjectStore.Find(vObjectId)).Name);
 
     AssertNotNull(vPerson1.Connector);
     AssertNotNull(vPerson2.Connector);
@@ -137,12 +153,14 @@ begin
   end;
 end;
 
-procedure
-    TestTInstantObjectStore.TestDispose_Refresh_StoreObject_ObjectDestroyed;
+procedure TestTInstantObjectStore.TestDispose_Refresh_StoreObject_ObjectDestroyed;
 var
   vObjectId: string;
   vPerson: TPerson;
   vBrock: TInstantMockCRBroker;
+const
+  NAME = 'AName';
+  NAME_UNICODE = '网站导航';
 begin
   AssertEquals(0, FInstantObjectStore.Count);
   vBrock := FConn.Broker as TInstantMockCRBroker;
@@ -151,7 +169,10 @@ begin
   vPerson := TPerson.Create(FConn);
   try
     AssertNotNull(vPerson);
-    vPerson.Name := 'AName';
+    if not FConn.UseUnicode then
+      vPerson.Name := NAME
+    else
+      vPerson.Name := NAME_UNICODE;
     vPerson.Store;
     vObjectId := vPerson.PersistentId;
     vBrock.MockManager.StartSetUp;
@@ -165,8 +186,10 @@ begin
     vBrock.MockManager.AddExpectation('InternalDisposeObject caFail ' + vObjectId);
     vBrock.MockManager.Verify;
     AssertEquals(0, FInstantObjectStore.Count);
-    AssertEquals('AName', vPerson.Name);
-
+    if not FConn.UseUnicode then
+      AssertEquals(NAME, vPerson.Name)
+    else
+      AssertEquals(NAME_UNICODE, vPerson.Name);
     vBrock.MockManager.EndSetUp;
     FInstantObjectStore.RefreshObject(vPerson);
     vBrock.MockManager.StartSetUp;
@@ -178,7 +201,10 @@ begin
     vBrock.MockManager.StartSetUp;
     vBrock.MockManager.Verify;
     AssertEquals(0, FInstantObjectStore.Count);
-    AssertEquals('AName', vPerson.Name);
+    if not FConn.UseUnicode then
+      AssertEquals(NAME, vPerson.Name)
+    else
+      AssertEquals(NAME_UNICODE, vPerson.Name);
 
     FInstantObjectStore.RefreshObject(vPerson);
 
@@ -188,7 +214,10 @@ begin
     vBrock.MockManager.AddExpectation('InternalStoreObject caFail ' + vObjectId);
     vBrock.MockManager.Verify;
     AssertEquals(1, FInstantObjectStore.Count);
-    AssertEquals('AName', vPerson.Name);
+    if not FConn.UseUnicode then
+      AssertEquals(NAME, vPerson.Name)
+    else
+      AssertEquals(NAME_UNICODE, vPerson.Name);
   finally
     vPerson.Free;
   end;

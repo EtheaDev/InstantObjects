@@ -115,7 +115,7 @@ type
   end;
 
   TInstantIQLOperatorType = (otEQ, otGT, otLT, otNE, otEN, otEG, otGE, otLE,
-    otEL, otLike, otIs, otIn, otAdd, otSub, otOr, otXor, otMul, otDiv, otFDiv,
+    otEL, otLike, otIs, otIn, otNotIn, otAdd, otSub, otOr, otXor, otMul, otDiv, otFDiv, //Differs from standard
     otMod, otAnd);
   TInstantIQLOperatorTypes = set of TInstantIQLOperatorType;
 
@@ -545,8 +545,11 @@ uses
   InstantPersistence, InstantUtils, InstantConsts, InstantBrokers;
 
 const
-  OperatorTokens: array[TInstantIQLOperatorType] of string = ('=', '>', '<',
-    '<>', '><', '=>', '>=', '<=', '=<', 'LIKE', 'IS', 'IN', '+', '-', 'OR',
+  OperatorInTokens: array[TInstantIQLOperatorType] of string = ('=', '>', '<',
+    '<>', '><', '=>', '>=', '<=', '=<', 'LIKE', 'IS', 'IN', 'NOT_IN', '+', '-', 'OR',
+    'XOR', '*', 'DIV', '/', 'MOD', 'AND');
+  OperatorOutTokens: array[TInstantIQLOperatorType] of string = ('=', '>', '<',
+    '<>', '><', '=>', '>=', '<=', '=<', 'LIKE', 'IS', 'IN', 'NOT IN', '+', '-', 'OR',
     'XOR', '*', 'DIV', '/', 'MOD', 'AND');
   OrderTokens: array[TInstantIQLOrderDirection] of string = ('ASC', 'DESC');
 
@@ -843,9 +846,9 @@ class function TInstantIQLOperator.GetOperatorType(const Token: string;
 var
   OpType: TInstantIQLOperatorType;
 begin
-  for OpType := Low(OperatorTokens) to High(OperatorTokens) do
+  for OpType := Low(OperatorInTokens) to High(OperatorInTokens) do
     if (OpType in OperatorTypes) and
-      SameText(Token, OperatorTokens[OpType])  then
+      SameText(Token, OperatorInTokens[OpType])  then
     begin
       Result := True;
       OperatorType := OpType;
@@ -890,7 +893,7 @@ end;
 procedure TInstantIQLOperator.WriteObject(Writer: TInstantIQLWriter);
 begin
   inherited;
-  Writer.WriteString(OperatorTokens[FOperatorType]);
+  Writer.WriteString(OperatorOutTokens[FOperatorType]);
 end;
 
 { TInstantIQLRelOp }
@@ -898,7 +901,7 @@ end;
 class function TInstantIQLRelOp.OperatorTypes: TInstantIQLOperatorTypes;
 begin
   Result := [otEQ, otGT, otLT, otNE, otEN, otEG, otGE, otLE, otEL, otLike,
-    otIs, otIn];
+    otIs, otIn, otNotIn];
 end;
 
 { TInstantIQLAddOp }
@@ -1165,7 +1168,7 @@ end;
 
 procedure TInstantIQLConstant.ReadObject(Reader: TInstantIQLReader);
 var
-  Token: string;
+  Token, LastToken: string;
 begin
   inherited;
   Token := Reader.ReadToken;
@@ -1173,8 +1176,12 @@ begin
   begin
     FValue := Token;
     repeat
+      LastToken := Token;
       Token := Reader.ReadToken;
-      FValue := FValue + Token;
+      if Pos(LastToken+Token, '><>>=<=!==') > 0 then
+        FValue := FValue + Token
+      else
+        FValue := FValue + ' ' + Token;
     until Token = ']'
   end else
     FValue := Token;

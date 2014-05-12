@@ -1,6 +1,6 @@
 ------------------------------------------------------------------
 
-  InstantObjects for Delphi, Kylix, FPC
+  InstantObjects for Delphi
 
   Mozilla Public License 1.1 Edition
   
