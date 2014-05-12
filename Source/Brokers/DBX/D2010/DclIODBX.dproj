@@ -2,7 +2,7 @@
 		<PropertyGroup>
 			<ProjectGuid>{37A94EA0-7FE9-4F18-B639-D0056DB88697}</ProjectGuid>
 			<MainSource>DclIODBX.dpk</MainSource>
-			<Config Condition="'$(Config)'==''">Debug</Config>
+			<Config Condition="'$(Config)'==''">Release</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
 			<ProjectVersion>12.0</ProjectVersion>
 		</PropertyGroup>
@@ -29,7 +29,6 @@
 			<DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
 			<GenDll>true</GenDll>
 			<DllSuffix>_D14</DllSuffix>
-			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DCC_Platform>x86</DCC_Platform>
 		</PropertyGroup>

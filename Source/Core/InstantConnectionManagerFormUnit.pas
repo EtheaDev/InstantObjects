@@ -670,7 +670,7 @@ end;
 procedure TInstantConnectionManagerForm.SetOnSupportConnector(
   Value: TInstantConnectorClassEvent);
 begin
-  if @Value <> @FOnSupportConnector then
+  if Addr(Value) <> Addr(FOnSupportConnector) then
   begin
     FOnSupportConnector := Value;
     UpdateMenu;

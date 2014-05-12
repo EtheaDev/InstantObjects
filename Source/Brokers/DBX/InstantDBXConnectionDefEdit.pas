@@ -66,6 +66,7 @@ type
     StreamFormatLabel: TLabel;
     StreamFormatComboBox: TComboBox;
     LoginPromptCheckBox: TCheckBox;
+    UseUnicodeCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure DriverNameEditChange(Sender: TObject);
     procedure ConnectionNameListBoxClick(Sender: TObject);
@@ -171,6 +172,7 @@ begin
   //CB
   StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat);
   LoginPromptCheckBox.Checked := ConnectionDef.LoginPrompt;
+  UseUnicodeCheckBox.Checked := ConnectionDef.UseUnicode;
 end;
 
 procedure TInstantDBXConnectionDefEditForm.SaveData(

@@ -296,7 +296,7 @@ type
 implementation
 
 uses
-  SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math,
+  SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math, InstantClasses,
   InstantDBBuild, InstantIBFbCatalog, InstantMSSqlCatalog, InstantMySQLCatalog;
 
 { TInstantDBXConnector }
@@ -579,9 +579,15 @@ end;
 function TInstantDBXBroker.Execute(const AStatement: string;
   AParams: TParams): Integer;
 begin
+  Result := 0;
   with CreateDataSet(AStatement, AParams) as TSQLQuery do
-    try
+    try try
       Result := ExecSQL;
+    except
+      on E: Exception do
+        raise EInstantError.CreateFmt(SSQLExecuteError,
+          [AStatement, E.Message], E);
+    end;
     finally
       Free;
     end;
@@ -622,6 +628,10 @@ begin
   end else if SameText(Constant.Value, InstantFalseString) then
   begin
     Writer.WriteChar('0');
+    Result := True;
+  end else if (Copy(Constant.Value,1,1) = '[') and (Copy(Constant.Value,length(Constant.Value),1) = ']') then
+  begin
+    Writer.WriteString(Copy(Constant.Value,2,length(Constant.Value)-2));
     Result := True;
   end else
     Result := inherited TranslateConstant(Constant, Writer);
@@ -783,7 +793,7 @@ begin
     ftInteger:
       TargetParam.AsFloat := SourceParam.AsInteger;
     ftCurrency:
-      TargetParam.AsCurrency := SourceParam.AsCurrency;
+      TargetParam.AsBCD := SourceParam.AsCurrency;
     ftFloat:
       TargetParam.AsFloat := SourceParam.AsFloat;
   else

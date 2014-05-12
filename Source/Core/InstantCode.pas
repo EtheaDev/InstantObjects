@@ -1593,6 +1593,7 @@ const
   MetaKeyDefault = 'default';
   MetaKeyUseNull = 'usenull';
   MetaKeyExternal = 'external';
+  MetaKeyVirtual = 'virtual';
   MetaKeyFormat = 'format';
   MetaKeyIndex = 'index';
   MetaKeyRequired = 'required';
@@ -1863,6 +1864,11 @@ begin
       if SameText(Token, MetaKeyExternal) then
       begin
         FMetadata.StorageKind := skExternal;
+        FMetadata.ExternalStorageName := ReadStringValue;
+      end;
+      if SameText(Token, MetaKeyVirtual) then
+      begin
+        FMetadata.StorageKind := skVirtual;
         FMetadata.ExternalStorageName := ReadStringValue;
       end;
     end;
@@ -4192,6 +4198,10 @@ begin
       WriteStr(MetaKeyStored, Metadata.StorageName);
     WriteStr(MetaKeyExternal, Metadata.ExternalStorageName, True);
   end
+  else if Metadata.StorageKind = skVirtual then
+  begin
+    WriteStr(MetaKeyVirtual, Metadata.ExternalStorageName, True);
+  end
   else
     WriteStr(MetaKeyStored, Metadata.StorageName);
   WriteStr(MetaKeyDefault, Metadata.DefaultValue);
@@ -4392,7 +4402,7 @@ end;
 
 function TInstantCodeAttribute.GetCanHaveStorageName: boolean;
 begin
-  Result := (StorageKind <> skExternal) or (AttributeType = atPart);
+  Result := (not (StorageKind in [skExternal, skVirtual])) or (AttributeType = atPart);
 end;
 
 function TInstantCodeAttribute.GetCanBeExternal: boolean;
@@ -9084,6 +9094,11 @@ begin
       if SameText(Token, MetaKeyExternal) then
       begin
         FMetadata.StorageKind := skExternal;
+        FMetadata.ExternalStorageName := '';
+      end
+      else if SameText(Token, MetaKeyVirtual) then
+      begin
+        FMetadata.StorageKind := skVirtual;
         FMetadata.ExternalStorageName := '';
       end
       else if SameText(Token, MetaKeyStored) then

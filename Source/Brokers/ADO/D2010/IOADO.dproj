@@ -2,7 +2,7 @@
 		<PropertyGroup>
 			<ProjectGuid>{BF5FCE65-8CE6-49DA-80A0-E55081BF9F72}</ProjectGuid>
 			<MainSource>IOADO.dpk</MainSource>
-			<Config Condition="'$(Config)'==''">Debug</Config>
+			<Config Condition="'$(Config)'==''">Release</Config>
 			<DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
 			<ProjectVersion>12.0</ProjectVersion>
 		</PropertyGroup>
@@ -21,14 +21,13 @@
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_ImageBase>00400000</DCC_ImageBase>
-			<DCC_DependencyCheckOutputName>C:\Documents and Settings\All Users\Documents\RAD Studio\7.0\Bpl\IOADO_D14.bpl</DCC_DependencyCheckOutputName>
+			<DCC_DependencyCheckOutputName>C:\Users\Public\Documents\RAD Studio\7.0\Bpl\IOADO_D14.bpl</DCC_DependencyCheckOutputName>
 			<DllSuffix>_D14</DllSuffix>
 			<DCC_WriteableConstants>true</DCC_WriteableConstants>
 			<DCC_Platform>x86</DCC_Platform>
 			<DCC_UnitAlias>WinTypes=Windows;WinProcs=Windows;$(DCC_UnitAlias)</DCC_UnitAlias>
 			<RuntimeOnlyPackage>true</RuntimeOnlyPackage>
 			<DCC_Description>InstantObjects ADO Run-Time Support (Delphi 2010)</DCC_Description>
-			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_S>false</DCC_S>
 			<DCC_N>false</DCC_N>
 			<GenDll>true</GenDll>

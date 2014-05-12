@@ -506,6 +506,10 @@ begin
   begin
     Writer.WriteChar('0');
     Result := True;
+  end else if (Copy(Constant.Value,1,1) = '[') and (Copy(Constant.Value,length(Constant.Value),1) = ']') then
+  begin
+    Writer.WriteString(Copy(Constant.Value,2,length(Constant.Value)-2));
+    Result := True;
   end else
     Result := inherited TranslateConstant(Constant, Writer);
 end;

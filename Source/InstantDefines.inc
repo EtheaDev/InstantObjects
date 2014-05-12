@@ -52,7 +52,6 @@
   {$DEFINE D7+}
   {$DEFINE D9+}
   {$DEFINE D10+}
-  {$DEFINE D11}
   {$DEFINE D11+}
   {$DEFINE D12}
   {$DEFINE D12+}
@@ -64,9 +63,7 @@
   {$DEFINE D7+}
   {$DEFINE D9+}
   {$DEFINE D10+}
-  {$DEFINE D11}
   {$DEFINE D11+}
-  {$DEFINE D12}
   {$DEFINE D12+}
   {$DEFINE D14}
   {$DEFINE D14+}
@@ -78,11 +75,8 @@
   {$DEFINE D7+}
   {$DEFINE D9+}
   {$DEFINE D10+}
-  {$DEFINE D11}
   {$DEFINE D11+}
-  {$DEFINE D12}
   {$DEFINE D12+}
-  {$DEFINE D14}
   {$DEFINE D14+}
   {$DEFINE D15}
   {$DEFINE D15+}
@@ -94,36 +88,82 @@
   {$DEFINE D7+}
   {$DEFINE D9+}
   {$DEFINE D10+}
-  {$DEFINE D11}
   {$DEFINE D11+}
-  {$DEFINE D12}
   {$DEFINE D12+}
-  {$DEFINE D14}
   {$DEFINE D14+}
-  {$DEFINE D15}
   {$DEFINE D15+}
   {$DEFINE D16}
   {$DEFINE D16+}
 {$ENDIF}
 
+// Delphi XE3
 {$IFDEF VER240}
   {$DEFINE D5+}
   {$DEFINE D6+}
   {$DEFINE D7+}
   {$DEFINE D9+}
   {$DEFINE D10+}
-  {$DEFINE D11}
   {$DEFINE D11+}
-  {$DEFINE D12}
   {$DEFINE D12+}
-  {$DEFINE D14}
   {$DEFINE D14+}
-  {$DEFINE D15}
   {$DEFINE D15+}
-  {$DEFINE D16}
   {$DEFINE D16+}
   {$DEFINE D17}
   {$DEFINE D17+}
+{$ENDIF}
+
+// Delphi XE4
+{$IFDEF VER250}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10+}
+  {$DEFINE D11+}
+  {$DEFINE D12+}
+  {$DEFINE D14+}
+  {$DEFINE D15+}
+  {$DEFINE D16+}
+  {$DEFINE D17+}
+  {$DEFINE D18}
+  {$DEFINE D18+}
+{$ENDIF}
+
+// Delphi XE5
+{$IFDEF VER260}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10+}
+  {$DEFINE D11+}
+  {$DEFINE D12+}
+  {$DEFINE D14+}
+  {$DEFINE D15+}
+  {$DEFINE D16+}
+  {$DEFINE D17+}
+  {$DEFINE D18+}
+  {$DEFINE D19}
+  {$DEFINE D19+}
+{$ENDIF}
+
+// Delphi XE6
+{$IFDEF VER270}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10+}
+  {$DEFINE D11+}
+  {$DEFINE D12+}
+  {$DEFINE D14+}
+  {$DEFINE D15+}
+  {$DEFINE D16+}
+  {$DEFINE D17+}
+  {$DEFINE D18+}
+  {$DEFINE D19+}
+  {$DEFINE D20}
+  {$DEFINE D20+}
 {$ENDIF}
 
 {$IFDEF FPC}

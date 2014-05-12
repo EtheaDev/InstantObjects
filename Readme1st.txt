@@ -1,6 +1,6 @@
 ------------------------------------------------------------------
 
-  InstantObjects for Delphi, Kylix, FPC
+  InstantObjects for Delphi - Full Unicode version
 
   Mozilla Public License 1.1 Edition
   Based on Seleqt InstantObjects.

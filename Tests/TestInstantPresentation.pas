@@ -53,6 +53,8 @@ type
     procedure TearDown; override;
   published
     procedure TestFieldGetValue;
+    procedure TestFieldSetValue;
+    procedure TestEditPost;
   end;
 
 implementation
@@ -91,6 +93,23 @@ end;
 procedure TestTInstantExposer.TestFieldGetValue;
 begin
   AssertEquals('John Doe', FInstantExposer.FieldByName('Name').AsString);
+end;
+
+procedure TestTInstantExposer.TestFieldSetValue;
+begin
+  FInstantExposer.FieldByName('Name').AsString := 'Jane Doe';
+  AssertEquals('Jane Doe', FInstantExposer.FieldByName('Name').AsString);
+end;
+
+procedure TestTInstantExposer.TestEditPost;
+begin
+  FInstantExposer.Edit;
+  FInstantExposer.FieldByName('Name').AsString := 'Jane Doe';
+  AssertEquals('Jane Doe', FInstantExposer.FieldByName('Name').AsString);
+  AssertEquals('Jane Doe', FPerson.Name);
+  FInstantExposer.Post;
+  AssertEquals('Jane Doe', FInstantExposer.FieldByName('Name').AsString);
+  AssertEquals('Jane Doe', FPerson.Name);
 end;
 
 initialization

@@ -103,11 +103,19 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     end
     object LoginPromptCheckBox: TCheckBox
       Left = 16
-      Top = 198
+      Top = 187
       Width = 137
       Height = 17
       Caption = '&Login Prompt'
       TabOrder = 2
+    end
+    object UseUnicodeCheckBox: TCheckBox
+      Left = 16
+      Top = 205
+      Width = 137
+      Height = 17
+      Caption = '&Use Unicode'
+      TabOrder = 3
     end
   end
   object BottomPanel: TPanel

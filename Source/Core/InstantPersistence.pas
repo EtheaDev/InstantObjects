@@ -41,16 +41,8 @@ unit InstantPersistence;
 interface
 
 uses
-{$IFDEF MSWINDOWS}
-  Graphics,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics,
-{$ENDIF}
-{$IFDEF FPC}
-  InstantFpcUtils,
-{$ENDIF}
-  Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand, InstantConsts,
+  {$IFDEF FMX}FMX.Objects,{$ELSE}Graphics,{$ENDIF}
+  Classes, {$IFNDEF NEXTGEN}Contnrs,{$ENDIF} SysUtils, DB, InstantClasses, InstantCommand, InstantConsts,
   InstantMetadata, InstantTypes;
 
 type
@@ -198,7 +190,7 @@ type
     procedure SetAsObject(AValue: TInstantObject); virtual;
     procedure SetAsString(const AValue: string); virtual;
     procedure SetAsVariant(AValue: Variant); virtual;
-    procedure SetIsChanged(Value: Boolean);
+    procedure SetIsChanged(Value: Boolean); virtual;
     procedure SetOwner(AOwner: TInstantObject); virtual;
     procedure WriteName(Writer: TInstantWriter);
     procedure Validate(const AValue: string); virtual;
@@ -449,6 +441,7 @@ type
     FStream: TMemoryStream;
     function GetSize: Integer;
     function GetStream: TMemoryStream;
+    function UseUnicode: boolean;
     property Stream: TMemoryStream read GetStream;
   protected
     function GetBytes: TInstantBytes;
@@ -470,14 +463,19 @@ type
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
+{$IFDEF FMX}
+    procedure AssignPicture(Source: TImage);
+    procedure AssignToPicture(Dest: TImage);
+{$ELSE}
     procedure AssignPicture(Source: TPicture);
     procedure AssignToPicture(Dest: TPicture);
+{$ENDIF}
     procedure Clear;
     procedure LoadDataFromStream(AStream: TStream);
-    function ReadBuffer(var Buffer; Position, Count: Integer): Integer;
+    function ReadBuffer(var Buffer; Position, Count: Integer): Integer; virtual;
     procedure Reset; override;
     procedure SaveDataToStream(AStream: TStream);
-    function WriteBuffer(const Buffer; Position, Count: Integer): Integer;
+    function WriteBuffer(const Buffer; Position, Count: Integer): Integer; virtual;
     property Bytes: TInstantBytes read GetBytes write SetBytes;
     property Size: Integer read GetSize;
   published
@@ -656,6 +654,9 @@ type
     procedure Reset; override;
     procedure SaveObjectsToStream(AStream: TStream);
     procedure Sort(Compare: TInstantSortCompare);
+    function isVirtual: boolean;
+    function isExternal: boolean;
+    function isExmbedded: Boolean;
     property ChangeCount: Integer read GetChangeCount;
     property Count: Integer read GetCount;
     property Items[Index: Integer]: TInstantObject read GetItems write SetItems; default;
@@ -951,6 +952,8 @@ type
     procedure ResetAttributes;
     procedure Store(ConflictAction: TInstantConflictAction = caFail);
     procedure Unchanged;
+    procedure GetDetailsStatementValues(var FromClause,
+      SequenceNoFieldName, OrderByClause: string); virtual;
     property Caption: string read GetCaption;
     property ClassId: string read GetClassId;
     property Connector: TInstantConnector read GetConnector;
@@ -1596,14 +1599,17 @@ procedure InstantUnregisterClass(AClass: TInstantObjectClass);
 procedure InstantUnregisterClasses(AClasses: array of TInstantObjectClass);
 
 function InstantResolveGraphicFileType(AStream: TStream ): TInstantGraphicFileFormat;
+{$IFNDEF FMX}
 procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
   AGraphicClass: TGraphicClass);
 function InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat) : TGraphicClass;
+{$ENDIF}
 
 // Converts a TInstantDataType to a type that can be used to create TField and
 // TParam instances. Raises an exception for unsupported datatypes (at the time
 // of writing, all datatypes are supported).
-function InstantDataTypeToFieldType(const InstantDataType: TInstantDataType): TFieldType;
+function InstantDataTypeToFieldType(const InstantDataType: TInstantDataType;
+  UseUnicode: Boolean): TFieldType;
 
 const
   InstantDataTypeStrings: array[TInstantDataType] of string =
@@ -1644,7 +1650,9 @@ uses
 var
   ConnectorClasses: TList;
   ClassList: TList;
+{$IFNDEF FMX}
   GraphicClassList: array[TInstantGraphicFileFormat] OF TGraphicClass;
+{$ENDIF}
   RuntimeModel: TInstantModel;
   ObjectNotifiers: TInstantObjectNotifiers;
   DefaultConnector: TInstantConnector;
@@ -1726,15 +1734,28 @@ begin
     Result := DataTypesXML[AttributeType];
 end;
 
-function InstantDataTypeToFieldType(const InstantDataType: TInstantDataType): TFieldType;
+function InstantDataTypeToFieldType(const InstantDataType: TInstantDataType;
+  UseUnicode: Boolean): TFieldType;
 begin
   case InstantDataType of
     dtInteger: Result := ftInteger;
     dtFloat: Result := ftFloat;
     dtCurrency: Result := ftCurrency;
     dtBoolean: Result := ftBoolean;
-    dtString: Result := ftString;
-    dtMemo: Result := ftMemo;
+    dtString:
+    begin
+      if UseUnicode then
+        Result := ftWideString
+      else
+        Result := ftString;
+    end;
+    dtMemo:
+    begin
+      if UseUnicode then
+        Result := ftWideMemo
+      else
+        Result := ftMemo;
+    end;
     dtDateTime: Result := ftDateTime;
     dtDate: Result := ftDate;
     dtTime: Result := ftTime;
@@ -2030,6 +2051,7 @@ begin
   end;
 end;
 
+{$IFNDEF FMX}
 procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
   AGraphicClass: TGraphicClass);
 begin
@@ -2040,6 +2062,7 @@ function InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat : TInst
 begin
   Result := GraphicClassList[InstantGraphicFileFormat];
 end;
+{$ENDIF}
 
 { TInstantObjectReference }
 
@@ -3586,13 +3609,23 @@ end;
 
 function TInstantBlob.GetValue: string;
 var
-  LValue: AnsiString;
+  LAnsiValue: AnsiString;
+  LValue: String;
 begin
   if Size > 0 then
   begin
-    SetLength(LValue, Size div SizeOf(AnsiChar));
-    Read(LValue[1], 0, Size);
-    Result := string(LValue);
+    if not UseUnicode then
+    begin
+      SetLength(LAnsiValue, Size div SizeOf(AnsiChar));
+      Read(LAnsiValue[1], 0, Size);
+      Result := string(LAnsiValue);
+    end
+    else
+    begin
+      SetLength(LValue, Size div SizeOf(Char));
+      Read(LValue[1], 0, Size);
+      Result := LValue;
+    end;
   end
   else
     Result := '';
@@ -3688,18 +3721,40 @@ end;
 procedure TInstantBlob.SetValue(const AValue: string);
 var
   L: Integer;
-  LValue: AnsiString;
+  LAnsiValue: AnsiString;
+  LValue: String;
 begin
-  LValue := AnsiString(AValue);
-  L := Length(LValue) * SizeOf(AnsiChar);
+  if not UseUnicode then
+  begin
+    LAnsiValue := AnsiString(AValue);
+    L := Length(LAnsiValue) * SizeOf(AnsiChar);
+  end
+  else
+  begin
+    LValue := AValue;
+    L := Length(LValue) * SizeOf(Char);
+  end;
   if L > 0 then
   begin
     Stream.Clear;
-    WriteBuffer(LValue[1], 0, L);
+    if not UseUnicode then
+      WriteBuffer(LAnsiValue[1], 0, L)
+    else
+      WriteBuffer(LValue[1], 0, L);
     Stream.Size := L;
   end
   else
     Clear;
+end;
+
+function TInstantBlob.UseUnicode: boolean;
+begin
+  if Assigned(Owner) and Assigned(Owner.Connector) then
+    Result := Owner.Connector.UseUnicode
+  else if InstantDefaultConnector <> nil then
+    Result := InstantDefaultConnector.UseUnicode
+  else
+    Result := False;
 end;
 
 function TInstantBlob.Write(const Buffer; Position, Count: Integer): Integer;
@@ -3748,6 +3803,42 @@ begin
   Writer.WriteBinary(SaveDataToStream);
 end;
 
+{$IFDEF FMX}
+procedure TInstantBlob.AssignPicture(Source: TImage);
+begin
+  if Assigned(Source.Bitmap) then
+  begin
+    Stream.Clear;
+    Source.Bitmap.SaveToStream(Stream);
+  end
+  else
+    Clear;
+  Changed;
+end;
+
+procedure TInstantBlob.AssignToPicture(Dest: TImage);
+var
+  Image : TImage;
+  InstantGraphicFileFormat : TInstantGraphicFileFormat;
+begin
+  if Stream.Size > 0 then
+  begin
+    Stream.Position := 0;
+    InstantGraphicFileFormat := InstantResolveGraphicFileType(Stream);
+    if InstantGraphicFileFormat = gffUnknown then
+      raise EInstantError.Create(SUnsupportedGraphicStream);
+    Image := TImage.Create(nil);
+    Try
+      Image.Bitmap.LoadFromStream(Stream);
+      Dest.Assign(Image);
+    Finally
+      Image.Free;
+    End;
+  end
+  else if Assigned(Dest.Bitmap) then
+    Dest.Bitmap := nil;
+end;
+{$ELSE}
 procedure TInstantBlob.AssignPicture(Source: TPicture);
 begin
   if Assigned(Source.Graphic) then
@@ -3786,12 +3877,19 @@ begin
   else if Assigned(Dest.Graphic) then
     Dest.Graphic := nil;
 end;
+{$ENDIF}
 
 procedure TInstantBlob.AssignTo(Dest: TPersistent);
 begin
+{$IFDEF FMX}
+  if Dest is TImage then
+    AssignToPicture(TImage(Dest))
+  else
+{$ELSE}
   if Dest is TPicture then
     AssignToPicture(TPicture(Dest))
   else
+{$ENDIF}
     inherited;
 end;
 
@@ -4531,6 +4629,21 @@ begin
   AfterContentChange(ctAdd, Index, AObject);
 end;
 
+function TInstantContainer.isExmbedded: Boolean;
+begin
+  Result := Assigned(Metadata) and (Metadata.StorageKind = skEmbedded);
+end;
+
+function TInstantContainer.isExternal: boolean;
+begin
+  Result := Assigned(Metadata) and (Metadata.StorageKind=skExternal);
+end;
+
+function TInstantContainer.isVirtual: boolean;
+begin
+  Result := Assigned(Metadata) and (Metadata.StorageKind = skVirtual);
+end;
+
 procedure TInstantContainer.LoadObjectsFromStream(AStream: TStream);
 var
   Obj: TPersistent;
@@ -5178,7 +5291,7 @@ var
 begin
   Result := -1;
 
-  if Metadata.StorageKind = skExternal then
+  if Metadata.StorageKind in [skExternal, skVirtual] then
   begin
     Ref := ObjectReferenceList.Add;
     try
@@ -6355,6 +6468,14 @@ begin
   Result := FDefaultContainer;
   if not Assigned(Result) then
     raise EInstantError.CreateFmt(SDefaultContainerNotSpecified, [ClassName]);
+end;
+
+procedure TInstantObject.GetDetailsStatementValues(
+  var FromClause, SequenceNoFieldName, OrderByClause: string);
+begin
+  //Default values for virtual containers details query
+  SequenceNoFieldName := InstantUpdateCountFieldName;
+  OrderByClause := InstantUpdateCountFieldName;
 end;
 
 function TInstantObject.GetHasDefaultContainer: Boolean;
@@ -9181,11 +9302,13 @@ initialization
     TInstantObjectReference, TInstantConnectionDefs, TInstantConnectionDef]);
   ClassList := TList.Create;
 {$IFDEF MSWINDOWS}
+{$IFNDEF FMX}
   GraphicClassList[gffIco] := Graphics.TIcon;
   GraphicClassList[gffBmp] := Graphics.TBitmap;
   {$IFNDEF FPC}
     GraphicClassList[gffEmf] := Graphics.TMetaFile;
   {$ENDIF}
+{$ENDIF}
 {$ENDIF}
 {$IFDEF LINUX}
   GraphicClassList[gffIco] := QGraphics.TIcon;

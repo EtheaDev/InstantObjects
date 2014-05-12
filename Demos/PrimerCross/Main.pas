@@ -19,8 +19,9 @@ uses
   QMenus, QExtCtrls, QComCtrls, QGrids, QDBGrids, QImgList, QActnList,
 {$ENDIF}
   InstantPersistence, BasicView, Stopwatch,
-  InstantConnectionManagerFormUnit, InstantConnectionManager
-  {$IFDEF D17+}, System.Actions{$ENDIF};
+  InstantConnectionManagerFormUnit, InstantConnectionManager,
+  {$IFDEF D17+}System.Actions,{$ENDIF}
+  WideStrings, SqlExpr;
 
 type
   TMainForm = class(TForm)
@@ -148,7 +149,10 @@ uses
   {$IFNDEF VER130}
   InstantDBX,
   {$ENDIF}
-  InstantADO, InstantBDE, InstantIBX,
+  InstantADO, InstantIBX, InstantBDE,
+  {$IFDEF D19+}
+  InstantFireDAC,
+  {$ENDIF}
   {$IFDEF D14+}
     // These are required for DBExpress to load the drivers in newer
     // versions of Delphi. If you get a compilation error it means you

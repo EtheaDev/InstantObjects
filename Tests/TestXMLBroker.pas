@@ -1,4 +1,4 @@
-(*
+﻿(*
  *   InstantObjects Test Suite
  *   TestMockBroker
  *)
@@ -71,6 +71,7 @@ begin
   ForceDirectories(FAcc.RootFolder);
   FConn := TInstantXMLConnector.Create(nil);
   FConn.Connection := FAcc;
+  FConn.UseUnicode := TestModel.TestUseUnicode;
 
   if InstantModel.ClassMetadatas.Count > 0 then
     InstantModel.ClassMetadatas.Clear;
@@ -153,7 +154,7 @@ begin
     FreeAndNil(c2);
   end;
 
-  LQuery := InstantDefaultConnector.CreateQuery;
+  LQuery := FConn.CreateQuery;
   try
     LQuery.Command := 'select * from TContact order by Name';
     LQuery.Open;
@@ -173,8 +174,9 @@ end;
 
 procedure TTestXMLBroker.TestStoreAndRetrieveContact;
 const
-  DEF_NAME = 'Mike ''Art�''';
-  DEF_CITY = 'Milan (�)';
+  DEF_NAME = 'Mike ''Artù''';
+  DEF_NAME_UNICODE = '网站导航';
+  DEF_CITY = 'Milan (€)';
 var
   c: TContact;
   old_id: string;
@@ -183,7 +185,10 @@ begin
   FConn.IsDefault := True;
   c := TContact.Create;
   try
-    c.Name := DEF_NAME;
+    if FConn.UseUnicode then
+      c.Name := DEF_NAME_UNICODE
+    else
+      c.Name := DEF_NAME;
     c.Address.City := DEF_CITY;
     t := TPhone.Create;
     t.Name := 'Home';
@@ -205,7 +210,10 @@ begin
   try
     AssertNotNull('Object not retrieved', c);
     AssertEquals(old_id, c.Id);
-    AssertEquals(DEF_NAME, c.Name);
+    if FConn.UseUnicode then
+      AssertEquals(DEF_NAME_UNICODE, c.Name)
+    else
+      AssertEquals(DEF_NAME, c.Name);
     AssertEquals(DEF_CITY, c.Address.City);
     AssertNotNull(c.Address);
     AssertEquals(2, c.PhoneCount);
