@@ -184,10 +184,7 @@ var
 begin
   Node := FindNode(ATest);
   if Assigned(Node) then
-  begin
-    Node.ImageIndex := 0;
-    Node.SelectedIndex := 0;
-  end;
+    PaintNodeSuccess(Node);
 end;
 
 procedure TGUITestRunner.FormCreate(Sender: TObject);
@@ -339,8 +336,7 @@ var
 begin
   if Assigned(aNode) then
   begin
-    aNode.ImageIndex := 0;
-    aNode.SelectedIndex := 0;
+    PaintNodeSuccess(aNode);
     for i := 0 to aNode.Count - 1 do
       if GetSubNode(aNode, i).Count > 0 then
         PaintRunnableSubnodes(GetSubNode(aNode, i));
