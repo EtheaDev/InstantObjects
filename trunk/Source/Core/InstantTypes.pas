@@ -65,7 +65,7 @@ type
   TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString,
     dtMemo, dtDateTime, dtBlob, dtDate, dtTime, dtEnum);
   TInstantDataTypes = set of TInstantDataType;
-  TInstantFieldOption = (foRequired, foIndexed, foUnique);
+  TInstantFieldOption = (foRequired, foIndexed, foUnique, foMultiLanguage);
   TInstantFieldOptions = set of TInstantFieldOption;
 
   TInstantCatalogFeature = (cfReadTableInfo, cfReadColumnInfo, cfReadIndexInfo);

@@ -149,7 +149,7 @@ uses
   {$IFNDEF VER130}
   InstantDBX,
   {$ENDIF}
-  InstantADO, InstantIBX, InstantBDE,
+  InstantADO, InstantIBX,
   {$IFDEF D19+}
   InstantFireDAC,
   {$ENDIF}

@@ -645,6 +645,8 @@ type
     function GetCanBeExternal: boolean;
     function GetUseNull: Boolean;
     procedure SetUseNull(const Value: Boolean);
+    function GetIsLocalized: Boolean;
+    procedure SetIsLocalized(const Value: Boolean);
   protected
     function GetIsDefault: Boolean; virtual;
     function GetMethodName(MethodType: TInstantCodeContainerMethodType): string;
@@ -718,6 +720,7 @@ type
       write SetStorageKind;
     property IsIndexed: Boolean read GetIsIndexed write SetIsIndexed;
     property IsRequired: Boolean read GetIsRequired write SetIsRequired;
+    property IsLocalized: Boolean read GetIsLocalized write SetIsLocalized;
     property IsUnique: Boolean read GetIsUnique write SetIsUnique;
     property IndexName: string read GetIndexName write SetIndexName;
     property Metadata: TInstantAttributeMetadata read GetMetadata;
@@ -1597,6 +1600,7 @@ const
   MetaKeyFormat = 'format';
   MetaKeyIndex = 'index';
   MetaKeyRequired = 'required';
+  MetaKeyLocalized = 'localized';
   MetaKeyUnique = 'unique';
   MetaKeyMask = 'mask';
   MetaKeyStored = 'stored';
@@ -3952,6 +3956,11 @@ begin
   Result := Metadata.IsIndexed;
 end;
 
+function TInstantCodeAttribute.GetIsLocalized: Boolean;
+begin
+  Result := Metadata.IsLocalized;
+end;
+
 function TInstantCodeAttribute.GetIsRequired: Boolean;
 begin
   Result := Metadata.IsRequired;
@@ -4156,6 +4165,8 @@ begin
     end
     else if Token = MetaKeyRequired then
       IsRequired := True
+    else if Token = MetaKeyLocalized then
+      IsLocalized := True
     else if Token = MetaKeyUnique then
       IsUnique := True
     else if Token = MetaKeyMask then
@@ -4221,6 +4232,8 @@ begin
     Writer.Write(' ' + MetaKeyUnique);
   if IsRequired then
     Writer.Write(' ' + MetaKeyRequired);
+  if IsLocalized then
+    Writer.Write(' ' + MetaKeyLocalized);
   if Metadata.UseNull then
     Writer.Write(' ' + MetaKeyUseNull);
   if IsDefault then
@@ -4320,6 +4333,11 @@ end;
 procedure TInstantCodeAttribute.SetIsIndexed(const Value: Boolean);
 begin
   Metadata.IsIndexed := Value;
+end;
+
+procedure TInstantCodeAttribute.SetIsLocalized(const Value: Boolean);
+begin
+  Metadata.IsLocalized := Value;
 end;
 
 procedure TInstantCodeAttribute.SetIsRequired(const Value: Boolean);

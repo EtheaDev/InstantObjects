@@ -1,6 +1,6 @@
 ------------------------------------------------------------------
 
-  InstantObjects for Delphi
+  InstantObjects for Delphi - Unicode version
 
   Mozilla Public License 1.1 Edition
   
@@ -51,23 +51,29 @@ in a standard Delphi installation. If you want to know how to install
 other brokers to use third party data access components and technologies,
 please refer to the installation section of \Doc\Readme.txt file.
 
-For example RunTimePackages.bpg for Delphi 7 contains:
+For example RunTimePackages.bpg for Delphi XE7 contains:
 --------------------------------
 1) IOCore.dpk: InstantObjects Core Package
-2) IOADO.dpk : ADO Broker
-3) IOBDE.dpk : BDE Broker
-4) IODBX.dpk : DBExpress Broker
-5) IOIBX.dpk : IBX Broker
-6) IOXML.dpk : XML Broker
+2) IOIBFbCatalog.dpk: Catalog for Interbase/Firebird
+3) IOMSSqlCatalog.dpk: Catalog for MS-SQL 
+4) IOMySQLCatalog.dpk: Catalog for MySQL
+5) IOADO.dpk : ADO Broker
+6) IODBX.dpk : DBExpress Broker
+7) IOIBX.dpk : IBX Broker
+8) IOXML.dpk : XML Broker
+9) IOFireDAC.dpk: FireDAC Broker
 
-For example DesignTimePackages.bpg for Delphi  7 contains:
+For example DesignTimePackages.bpg for Delphi XE7 contains:
 --------------------------------
-1) dclIOCore.dpk: InstantObjects Desing package
-2) dclIOADO.dpk : ADO Broker
-3) dclIOBDE.dpk : BDE Broker
-4) dclIODBX.dpk : DBExpress Broker
-5) dclIOIBX.dpk : IBX Broker
-6) dclIOXML.dpk : XML Broker
+1) dclIOCore.dpk: InstantObjects Core Package
+2) dclIOIBFbCatalog.dpk: Catalog for Interbase/Firebird
+3) dclIOMSSqlCatalog.dpk: Catalog for MS-SQL 
+4) dclIOMySQLCatalog.dpk: Catalog for MySQL
+5) dclIOADO.dpk : ADO Broker
+6) dclIODBX.dpk : DBExpress Broker
+7) dclIOIBX.dpk : IBX Broker
+8) dclIOXML.dpk : XML Broker
+9) dclIOFireDAC.dpk: FireDAC Broker
 
 When you are familiar with the packages and source structure of
 InstantObjects you can setup and maintain your own personalised

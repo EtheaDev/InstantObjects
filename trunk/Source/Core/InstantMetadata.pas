@@ -469,6 +469,7 @@ type
     FEditMask: string;
     FIsIndexed: Boolean;
     FIsRequired: Boolean;
+    FIsLocalized: Boolean;
     FIsUnique: Boolean;
     FIndexName: string;
     FObjectClassName: string;
@@ -554,6 +555,7 @@ type
       write FStorageKind default skEmbedded;
     property IsIndexed: Boolean read FIsIndexed write FIsIndexed;
     property IsRequired: Boolean read FIsRequired write FIsRequired;
+    property IsLocalized: Boolean read FIsLocalized write FIsLocalized default False;
     property IsUnique: Boolean read FIsUnique write FIsUnique;
     property IndexName: string read FIndexName write FIndexName;
     property ObjectClassName: string read FObjectClassName
@@ -1362,6 +1364,10 @@ var
           begin
             Options := Options + [foRequired];
           end;
+          if AttributeMetadata.IsLocalized then
+          begin
+            Options := Options + [foMultiLanguage];
+          end;
           FieldMetadatas.AddFieldMetadata(AttributeMetadata.FieldName,
             Scheme.AttributeTypeToDataType(AttributeMetadata.AttributeType),
             AttributeMetadata.Size, Options);
@@ -1755,6 +1761,7 @@ begin
     FEditMask := LSource.EditMask;
     FIsIndexed := LSource.IsIndexed;
     FIsRequired := LSource.IsRequired;
+    FIsLocalized := LSource.IsLocalized;
     FIsUnique := LSource.IsUnique;
     FUseNull := LSource.UseNull;
     FIndexName := LSource.IndexName;
