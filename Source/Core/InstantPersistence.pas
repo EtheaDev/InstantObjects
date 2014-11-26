@@ -485,6 +485,7 @@ type
   TInstantMemo = class(TInstantBlob)
   protected
     class function AttributeType: TInstantAttributeType; override;
+    procedure SetValue(const AValue: string); override;
     procedure ReadObject(Reader: TInstantReader); override;
     procedure WriteObject(Writer: TInstantWriter); override;
   end;
@@ -3724,23 +3725,13 @@ var
   LAnsiValue: AnsiString;
   LValue: String;
 begin
-  if not UseUnicode then
-  begin
-    LAnsiValue := AnsiString(AValue);
-    L := Length(LAnsiValue) * SizeOf(AnsiChar);
-  end
-  else
-  begin
-    LValue := AValue;
-    L := Length(LValue) * SizeOf(Char);
-  end;
+    //Default Blob streaming is not based on UseUnicode setting.
+  LAnsiValue := AnsiString(AValue);
+  L := Length(LAnsiValue) * SizeOf(AnsiChar);
   if L > 0 then
   begin
     Stream.Clear;
-    if not UseUnicode then
-      WriteBuffer(LAnsiValue[1], 0, L)
-    else
-      WriteBuffer(LValue[1], 0, L);
+    WriteBuffer(LAnsiValue[1], 0, L);
     Stream.Size := L;
   end
   else
@@ -3904,6 +3895,36 @@ procedure TInstantMemo.ReadObject(Reader: TInstantReader);
 begin
   ReadName(Reader);
   Value := Reader.ReadString;
+end;
+
+procedure TInstantMemo.SetValue(const AValue: string);
+var
+  L: Integer;
+  LAnsiValue: AnsiString;
+  LValue: String;
+begin
+  //Don't call inherited: Text streaming is different by UseUnicode
+  if not UseUnicode then
+  begin
+    LAnsiValue := AnsiString(AValue);
+    L := Length(LAnsiValue) * SizeOf(AnsiChar);
+  end
+  else
+  begin
+    LValue := AValue;
+    L := Length(LValue) * SizeOf(Char);
+  end;
+  if L > 0 then
+  begin
+    Stream.Clear;
+    if not UseUnicode then
+      WriteBuffer(LAnsiValue[1], 0, L)
+    else
+      WriteBuffer(LValue[1], 0, L);
+    Stream.Size := L;
+  end
+  else
+    Clear;
 end;
 
 procedure TInstantMemo.WriteObject(Writer: TInstantWriter);
@@ -6088,7 +6109,8 @@ begin
   AttributeChanged(Attribute);
   if Assigned(FOnAttributeChanged) then
     FOnAttributeChanged(Self, Attribute);
-  Changed;
+  if not ((Attribute is TInstantContainer) and TInstantContainer(Attribute).isVirtual) then
+    Changed;
 end;
 
 procedure TInstantObject.DoBeforeContentChange(
