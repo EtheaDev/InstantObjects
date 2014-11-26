@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TContact>
+  <Id>CE940464314ACF4F9DC2953FBDB3BF8C</Id>
+  <Address>
+    <TAddress>
+      <City>Milan (€)</City>
+      <Street>Street</Street>
+    </TAddress>
+  </Address>
+  <Category>
+    <TCategory>
+      <Id>CAT000</Id>
+    </TCategory>
+  </Category>
+  <City>Milan (€)</City>
+  <Name>AName</Name>
+</TContact>
