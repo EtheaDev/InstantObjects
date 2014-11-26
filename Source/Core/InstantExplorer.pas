@@ -60,12 +60,13 @@ type
     FName: string;
     FInstance: TObject;
     FValue: string;
+    FLevel: integer;
   protected
     function GetCaption: string; virtual;
     function GetImageIndex: Integer; virtual;
   public
-    constructor Create(ANodeType: TInstantExplorerNodeType; AName: string;
-      AInstance: TObject; AValue: string);
+    constructor Create(ANodeType: TInstantExplorerNodeType; const AName: string;
+      AInstance: TObject; const AValue: string; const ALevel: integer);
     destructor Destroy; override;
     property Caption: string read GetCaption;
     property ImageIndex: Integer read GetImageIndex;
@@ -73,6 +74,7 @@ type
     property Name: string read FName;
     property NodeType: TInstantExplorerNodeType read FNodeType;
     property Value: string read FValue;
+    property Level: integer read FLevel;
   end;
 
   TInstantExplorerNodeEvent = procedure(Sender: TInstantExplorer;
@@ -200,7 +202,7 @@ type
       NodeData: TInstantExplorerNodeData): TTreeNode; virtual;
     function CreateNodeData(NodeType: TInstantExplorerNodeType;
       const Name: string; AObject: TObject;
-      const Value: string): TInstantExplorerNodeData; virtual;
+      const Value: string; const Level: integer): TInstantExplorerNodeData; virtual;
     function CreateObjectEditor(AOwner: TComponent;
       DataSource: TDataSource): TControl; virtual;
     function CreateTreeView(AOwner: TComponent): TTreeView; virtual;
@@ -213,7 +215,7 @@ type
     procedure SetImages(const Value: TCustomImageList); virtual;
     procedure SetNodeTypes(const Value: TInstantExplorerNodeTypes); virtual;
     procedure SetRootObject(const Value: TObject); virtual;
-    procedure UpdateDetails;
+    procedure UpdateDetails(ForceRefresh: boolean = False);
     function GetAttributesCount(Instance: TInstantObject): integer; virtual;
     function GetAttribute(Instance: TInstantObject; I: integer): TObject; virtual;
   public
@@ -341,10 +343,11 @@ end;
 { TInstantExplorerNodeData }
 
 constructor TInstantExplorerNodeData.Create(ANodeType: TInstantExplorerNodeType;
-  AName: string; AInstance: TObject; AValue: string);
+  const AName: string; AInstance: TObject; const AValue: string; const ALevel: integer);
 begin
   FNodeType := ANodeType;
   FName := AName;
+  FLevel := ALevel;
   FInstance := AInstance;
   if (FNodeType = ntObject) and (FInstance is TInstantObject) then
     TInstantObject(FInstance).AddRef;
@@ -400,8 +403,13 @@ function TInstantExplorer.AddNode(NodeType: TInstantExplorerNodeType;
   Parent: TTreeNode; Name: string; AObject: TObject; Value: string): TTreeNode;
 var
   NodeData: TInstantExplorerNodeData;
+  LLevel: integer;
 begin
-  NodeData := CreateNodeData(NodeType, Name, AObject, Value);
+  if Assigned(Parent) then
+    LLevel := Parent.Level
+  else
+    LLevel := 0;
+  NodeData := CreateNodeData(NodeType, Name, AObject, Value, LLevel);
   if Assigned(NodeData) then
   begin
     if IncludeNode(NodeData) then
@@ -608,14 +616,14 @@ end;
 
 function TInstantExplorer.CreateNodeData(
   NodeType: TInstantExplorerNodeType; const Name: string; AObject: TObject;
-  const Value: string): TInstantExplorerNodeData;
+  const Value: string; const Level: integer): TInstantExplorerNodeData;
 begin
   if Assigned(FOnCreateNodeData) then
   begin
     Result := nil;
     FOnCreateNodeData(Self, NodeType, Name, AObject, Value, Result);
   end else
-    Result := TInstantExplorerNodeData.Create(NodeType, Name, AObject, Value);
+    Result := TInstantExplorerNodeData.Create(NodeType, Name, AObject, Value, Level);
 end;
 
 function TInstantExplorer.CreateObjectEditor(AOwner: TComponent;
@@ -953,11 +961,7 @@ begin
   Instance := NodeData.Instance;
   ChildCount := 0;
   if Instance is TInstantContainer then
-  begin
-    if (Instance is TInstantReferences) and (TInstantReferences(Instance).Metadata.StorageKind = skVirtual) then
-      TInstantReferences(Instance).Owner.Refresh;
-    LoadContainerNode(Node, TInstantContainer(Instance));
-  end
+    LoadContainerNode(Node, TInstantContainer(Instance))
   else if Instance is TInstantQuery then
     LoadInstantQueryNode(Node, TInstantQuery(Instance))
   else
@@ -1109,10 +1113,18 @@ end;
 procedure TInstantExplorer.RefreshNode(Node: TTreeNode);
 var
   IsExpanded: Boolean;
+  NodeData: TInstantExplorerNodeData;
+  Container: TInstantContainer;
 begin
   if not Assigned(Node) then
     Exit;
   IsExpanded := Node.Expanded;
+  if NodeDataIsAssigned(Node) then
+  begin
+    NodeData := TInstantExplorerNodeData(Node.Data);
+    if (NodeData.Instance is TInstantReferences) and (TInstantReferences(NodeData.Instance).isVirtual) then
+      UpdateDetails(True);
+  end;
   LoadNode(Node, IsExpanded);
   if IsExpanded then
     Node.Expand(False);
@@ -1249,13 +1261,14 @@ begin
   end;
 end;
 
-procedure TInstantExplorer.UpdateDetails;
+procedure TInstantExplorer.UpdateDetails(ForceRefresh: boolean = False);
 var
   AObject: TObject;
   Container: TInstantContainer;
   InstantQuery: TInstantQuery;
 begin
-  ObjectExposer.PostChanges;
+  if not ForceRefresh then
+    ObjectExposer.PostChanges;
   if Layout = loTreeOnly then
   begin
     ObjectExposer.Subject := nil;
@@ -1268,11 +1281,15 @@ begin
     Container := TInstantContainer(AObject);
     if (ObjectExposer.Subject <> Container.Owner) or (ObjectExposer.ContainerName <> Container.Name) then
     begin
+      ObjectExposer.Close;
       ObjectExposer.Subject := nil;
       ObjectExposer.Mode := amContent;
       ObjectExposer.ContainerName := Container.Name;
       ObjectExposer.Subject := Container.Owner;
-    end;
+    end
+    else if ForceRefresh then
+      Container.Owner.Refresh;
+
     if DetailView <> ContentView then
     begin
       DetailView := ContentView;
