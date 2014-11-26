@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TContact>
+  <Id>1E06DD44F478B44FB23FEB0823BE3995</Id>
+  <Category>
+    <TCategory>
+      <Id>CAT000</Id>
+    </TCategory>
+  </Category>
+  <City></City>
+  <Name>AName</Name>
+  <Phones>
+    <TPhone>
+      <Name>Home</Name>
+    </TPhone>
+    <TPhone>
+      <Name>Office</Name>
+      <Number>012-234-56781</Number>
+    </TPhone>
+  </Phones>
+</TContact>

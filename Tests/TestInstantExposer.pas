@@ -46,6 +46,7 @@ type
     procedure TearDown; override;
   published
     procedure TestStoreAndRetrieveContact;
+    procedure TestStoreAndRetrievePicture;
     procedure TestStoreAndRetrieveContactPhones;
 //    procedure TestOrderBy;
     procedure FieldSetValue;
@@ -54,7 +55,7 @@ type
 implementation
 
 uses
-  SysUtils, ShellAPI, InstantPersistence, TestModel, DB;
+  SysUtils, Classes, ShellAPI, InstantPersistence, TestModel, DB, Graphics;
 
 { TTestXMLBroker }
 
@@ -286,6 +287,46 @@ begin
 //    AssertEquals(DEF_NUM_HOME, c.Phones[0].Number);
 //    AssertEquals(DEF_OFFICE, c.Phones[1].Name);
 //    AssertEquals(DEF_NUM_OFFICE, c.Phones[1].Number);
+  finally
+    FreeAndNil(c);
+  end;
+end;
+
+procedure TTestExposer.TestStoreAndRetrievePicture;
+const
+  DEF_NAME = 'AName';
+  DEF_NAME_UNICODE = '链接';
+var
+  c: TPerson;
+  Field: TField;
+  old_id: string;
+  BlobContentBefore, BlobContentAfter: string;
+begin
+  FExp.ObjectClass := TPerson;
+  c := TPerson.Create;
+  try
+    FExp.Subject := c;
+    FExp.Edit;
+    Field := FExp.FieldByName('Name');
+    if not FConn.UseUnicode then
+    begin
+      Field.Value := DEF_NAME;
+      AssertEquals(DEF_NAME, c.Name);
+    end
+    else
+    begin
+      Field.Value := DEF_NAME_UNICODE;
+      AssertEquals(DEF_NAME_UNICODE, c.Name);
+    end;
+    Field := FExp.FieldByName('Picture');
+    AssertTrue(Field is TBlobField);
+    TBlobField(Field).LoadFromFile(ExtractFilePath(ParamStr(0)) + 'Picture.bmp');
+    BlobContentBefore := TBlobField(Field).AsString;
+    AssertTrue(BlobContentBefore <> '');
+    c.Picture := BlobContentBefore;
+    BlobContentAfter := TBlobField(Field).AsString;
+    AssertTrue(BlobContentBefore = BlobContentAfter);
+    FExp.Post;
   finally
     FreeAndNil(c);
   end;
