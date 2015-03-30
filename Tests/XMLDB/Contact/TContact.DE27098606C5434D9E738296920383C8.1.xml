@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TContact>
+  <Id>DE27098606C5434D9E738296920383C8</Id>
+  <Address>
+    <TAddress>
+      <City>Milan (€)</City>
+      <Street>链接</Street>
+    </TAddress>
+  </Address>
+  <Category>
+    <TCategory>
+      <Id>CAT000</Id>
+    </TCategory>
+  </Category>
+  <City>Milan (€)</City>
+  <Name>网站导航</Name>
+</TContact>

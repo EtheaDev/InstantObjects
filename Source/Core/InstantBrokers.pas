@@ -477,8 +477,8 @@ type
       AttributeMetadata: TInstantAttributeMetadata; DataSet: TDataSet); virtual;
     procedure ReadAttributes(AObject: TInstantObject; const AObjectId: string;
       Map: TInstantAttributeMap; DataSet: TDataSet);
-    function ReadBlobField(DataSet: TDataSet; const FieldName: string): string;
-      virtual;
+    procedure ReadBlobField(BlobAttr: TInstantBlob; DataSet: TDataSet;
+      const FieldName: string); virtual;
     function ReadBooleanField(DataSet: TDataSet; const FieldName: string):
       Boolean; virtual;
     function ReadDateTimeField(DataSet: TDataSet; const FieldName: string):
@@ -3693,7 +3693,7 @@ var
 
   procedure ReadBlobAttribute;
   begin
-    (Attribute as TInstantBlob).Value := ReadBlobField(DataSet, AFieldName);
+    ReadBlobField(Attribute as TInstantBlob, DataSet, AFieldName);
   end;
 
   procedure ReadBooleanAttribute;
@@ -3917,10 +3917,22 @@ begin
       ReadAttribute(AObject, AObjectId, Map[I], DataSet);
 end;
 
-function TInstantSQLResolver.ReadBlobField(DataSet: TDataSet;
-  const FieldName: string): string;
+procedure TInstantSQLResolver.ReadBlobField(BlobAttr: TInstantBlob;
+  DataSet: TDataSet; const FieldName: string);
+var
+  Field: TField;
+  MemoryStream: TMemoryStream;
 begin
-  Result := DataSet.FieldByName(FieldName).AsString;
+  Field := DataSet.FieldByName(FieldName);
+  if Field is TBlobField then
+  begin
+    MemoryStream := TMemoryStream.Create;
+    TBlobField(Field).SaveToStream(MemoryStream);
+    MemoryStream.Position := 0;
+    BlobAttr.LoadDataFromStream(MemoryStream);
+  end
+  else
+    BlobAttr.Value := DataSet.FieldByName(FieldName).AsString;
 end;
 
 function TInstantSQLResolver.ReadBooleanField(DataSet: TDataSet;

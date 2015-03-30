@@ -116,8 +116,13 @@ type
     procedure AssignLoginOptions; virtual;
     procedure CheckConnection;
     function CreateBroker: TInstantBroker; override;
+    {$IFDEF D22+}
+    procedure DoLogin(AConnection: TFDCustomConnection;
+      AParams: TFDConnectionDefParams); virtual;
+    {$ELSE}
     procedure DoLogin(AConnection: TFDCustomConnection;
       const AConnectionDef: IFDStanConnectionDef); virtual;
+    {$ENDIF}
     function GetConnected: Boolean; override;
     function GetDatabaseExists: Boolean; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
@@ -535,8 +540,13 @@ begin
      [FConnection.DriverName]);
 end;
 
+{$IFDEF D22+}
+procedure TInstantFireDACConnector.DoLogin(AConnection: TFDCustomConnection;
+  AParams: TFDConnectionDefParams);
+{$ELSE}
 procedure TInstantFireDACConnector.DoLogin(AConnection: TFDCustomConnection;
   const AConnectionDef: IFDStanConnectionDef);
+{$ENDIF}
 begin
   if (assigned(FOnLogin)) then
     FOnLogin(AConnection, AConnection.Params.Values['User_Name'],
