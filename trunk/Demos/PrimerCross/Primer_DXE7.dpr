@@ -66,9 +66,7 @@ uses
   QueryView in 'QueryView.pas' {QueryViewForm: TFrame},
   RandomData in 'RandomData.pas',
   Stopwatch in 'Stopwatch.pas',
-  Utility in 'Utility.pas',
-  Vcl.Themes,
-  Vcl.Styles;
+  Utility in 'Utility.pas';
 
 {$R *.res}
 {$R *.mdr} {Model}
