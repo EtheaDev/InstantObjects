@@ -1,6 +1,8 @@
 VERSION HISTORY
 ---------------
 
+Version 2.3 (2.3.0.0) (2015-04-08)
+- Added support for Delphi XE8
 - Added support for Delphi XE7
 
 Version 2.2 (2.2.0.0) (2014-05-12)
