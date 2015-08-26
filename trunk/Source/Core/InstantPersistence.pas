@@ -3723,7 +3723,6 @@ procedure TInstantBlob.SetValue(const AValue: string);
 var
   L: Integer;
   LAnsiValue: AnsiString;
-  LValue: String;
 begin
     //Default Blob streaming is not based on UseUnicode setting.
   LAnsiValue := AnsiString(AValue);

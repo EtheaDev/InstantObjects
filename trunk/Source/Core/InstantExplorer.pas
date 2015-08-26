@@ -1114,7 +1114,6 @@ procedure TInstantExplorer.RefreshNode(Node: TTreeNode);
 var
   IsExpanded: Boolean;
   NodeData: TInstantExplorerNodeData;
-  Container: TInstantContainer;
 begin
   if not Assigned(Node) then
     Exit;
