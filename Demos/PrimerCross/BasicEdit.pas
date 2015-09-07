@@ -143,6 +143,7 @@ procedure TBasicEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
 {$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
   BorderStyle := bsSingle;
 {$ENDIF}
 {$IFDEF LINUX}

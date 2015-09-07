@@ -2,6 +2,8 @@ object MainForm: TMainForm
   Left = 254
   Top = 225
   Caption = 'InstantObjects Primer'
+  ClientHeight = 181
+  ClientWidth = 304
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,8 +20,9 @@ object MainForm: TMainForm
   object SideBarSplitter: TSplitter
     Left = 88
     Top = 26
-    Height = 139
+    Height = 136
     ResizeStyle = rsLine
+    ExplicitHeight = 139
   end
   object ToolBar: TToolBar
     Left = 0
@@ -45,7 +48,7 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 165
+    Top = 162
     Width = 304
     Height = 19
     Panels = <
@@ -61,7 +64,7 @@ object MainForm: TMainForm
     Left = 0
     Top = 26
     Width = 88
-    Height = 139
+    Height = 136
     Align = alLeft
     BevelOuter = bvNone
     BorderStyle = bsSingle
@@ -79,19 +82,14 @@ object MainForm: TMainForm
       Left = 0
       Top = 8
       Width = 84
-      Height = 127
+      Height = 124
       Align = alClient
       BorderStyle = bsNone
       Color = clAppWorkSpace
       Columns = <>
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clCaptionText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
       IconOptions.AutoArrange = True
       ReadOnly = True
-      ParentFont = False
+      ParentFont = True
       TabOrder = 0
       OnSelectItem = SideBarSelectItem
     end
@@ -100,7 +98,7 @@ object MainForm: TMainForm
     Left = 91
     Top = 26
     Width = 213
-    Height = 139
+    Height = 136
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
@@ -127,19 +125,14 @@ object MainForm: TMainForm
         Width = 32
         Height = 16
         Caption = 'Title'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWhite
-        Font.Height = -13
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentFont = False
+        ParentFont = True
       end
     end
     object WorkClientPanel: TPanel
       Left = 0
       Top = 31
       Width = 213
-      Height = 108
+      Height = 105
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1

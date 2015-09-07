@@ -3,7 +3,8 @@ unit HelpViewK3;
 interface
 
 uses
-  SysUtils, Classes, BasicView, QForms, QControls, QComCtrls, QActnList;
+  SysUtils, Classes, BasicView, QForms, QControls, QComCtrls, QActnList,
+  ActnList, Controls, ComCtrls, ToolWin;
 
 type
   THelpViewForm = class(TBasicViewForm)
@@ -24,6 +25,11 @@ implementation
 procedure THelpViewForm.FormCreate(Sender: TObject);
 begin
   inherited;
+{$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
+  Font.Height = 19
+  Font.Name = 'adobe-helvetica'
+{$ENDIF}
   Caption := 'Overview';
   acIndex.Execute;
 end;

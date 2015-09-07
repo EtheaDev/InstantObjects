@@ -67,7 +67,9 @@ end;
 
 procedure TBasicViewForm.FormCreate(Sender: TObject);
 begin
-  ;
+{$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
+{$ENDIF}
 end;
 
 procedure TBasicViewForm.FormHide(Sender: TObject);

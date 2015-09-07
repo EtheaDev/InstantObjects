@@ -6,11 +6,7 @@ object BasicBrowseForm: TBasicBrowseForm
   BorderIcons = [biSystemMenu]
   Caption = 'Browse'
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
+  ParentFont = True
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter

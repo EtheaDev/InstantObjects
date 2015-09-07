@@ -207,6 +207,29 @@
   {$DEFINE D22+}
 {$ENDIF}
 
+// Delphi 10 Seattle
+{$IFDEF VER300}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10+}
+  {$DEFINE D11+}
+  {$DEFINE D12+}
+  {$DEFINE D14+}
+  {$DEFINE D15+}
+  {$DEFINE D16+}
+  {$DEFINE D17+}
+  {$DEFINE D18+}
+  {$DEFINE D19+}
+  {$DEFINE D20+}
+  {$DEFINE D21+}
+  {$DEFINE D22+}
+  {$DEFINE D23}
+  {$DEFINE D23+}
+  {$LIBSUFFIX '_D23'}  
+{$ENDIF}
+
 {$IFDEF FPC}
   {$DEFINE D5+}
   {$DEFINE D6+}
@@ -326,6 +349,6 @@
   Also, do it only if you actually need the speed gain, which is not significant
   in most cases.
 }
-{.$DEFINE IO_NO_CIRCULAR_REFERENCE_CHECK}
+{$DEFINE IO_NO_CIRCULAR_REFERENCE_CHECK}
 
 

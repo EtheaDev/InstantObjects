@@ -1,6 +1,9 @@
 VERSION HISTORY
 ---------------
 
+Version 2.4 (2.4.0.0) (2015-09-01)
+- Added support for Delphi 10 Seattle
+
 Version 2.3 (2.3.0.0) (2015-04-08)
 - Added support for Delphi XE8
 - Added support for Delphi XE7
