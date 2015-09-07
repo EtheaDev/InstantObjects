@@ -1,9 +1,6 @@
 inherited HelpViewForm: THelpViewForm
   Width = 486
   VertScrollBar.Range = 37
-  Font.Height = 19
-  Font.Name = 'adobe-helvetica'
-  ParentFont = False
   object TextBrowser: TTextBrowser
     Left = 0
     Top = 37

@@ -133,7 +133,7 @@ inherited PersonEditForm: TPersonEditForm
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Name = 'Arial'
           TitleFont.Style = []
           Columns = <
             item

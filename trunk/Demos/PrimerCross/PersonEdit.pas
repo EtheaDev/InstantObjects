@@ -178,6 +178,10 @@ procedure TPersonEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
 {$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
+  Font.Height := -11;
+  EmailsGrid.TitleFont.Assign(Screen.IconFont);
+
   LoadMultipleImages(EmployerToolImages,'PERSONEMPLOYERTOOLIMAGES',HInstance);
   {$IFNDEF VER130}
   PictureImage.Proportional := True;

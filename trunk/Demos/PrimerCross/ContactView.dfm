@@ -188,12 +188,7 @@ inherited ContactViewForm: TContactViewForm
         Width = 627
         Height = 432
         Align = alClient
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Arial'
-        Font.Style = []
-        ParentFont = False
+        ParentFont = True
         TabHeight = 18
         TabOrder = 0
         TabWidth = 30

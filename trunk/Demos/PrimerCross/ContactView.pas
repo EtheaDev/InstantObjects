@@ -412,6 +412,10 @@ begin
   Caption := 'Contacts';
   ContactGrid.OnDrawColumnCell := ContactGridDrawColumnCell;
 {$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
+  Font.Height := -11;
+  ContactGrid.TitleFont.Assign(Screen.IconFont);
+
   LoadMultipleImages(ActionImages,'CONTACTACTIONIMAGES',HInstance);
   LoadMultipleImages(ExplorerImages,'EXPLORERCONTACTIMAGES',HInstance);
 {$ENDIF}

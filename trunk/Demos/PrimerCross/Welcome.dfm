@@ -36,84 +36,24 @@ object WelcomeForm: TWelcomeForm
         Left = 88
         Top = 4
         Width = 317
-        Height = 49
+        Height = 46
         Alignment = taCenter
         AutoSize = False
         Caption = 'Application title'
-        Color = clBtnFace
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -16
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsBold]
-        ParentColor = False
-        ParentFont = False
         Transparent = True
         WordWrap = True
       end
-      object InfoLabel1: TLabel
-        Left = 88
-        Top = 56
-        Width = 313
-        Height = 41
-        AutoSize = False
-        Caption = 
-          'This application demonstrates the main features of InstantObject' +
-          's by providing a sample business model implementation and an acc' +
-          'ompanying user interface.'
-        Transparent = True
-        WordWrap = True
-      end
-      object InfoLabel2: TLabel
-        Left = 88
-        Top = 104
-        Width = 313
-        Height = 33
-        AutoSize = False
-        Caption = 
-          'The entire user interface was built using standard %s controls t' +
-          'o demonstrate the level of integration with %s.'
-        Transparent = True
-        WordWrap = True
-      end
-      object InfoLabel3: TLabel
-        Left = 88
-        Top = 144
-        Width = 313
-        Height = 49
-        AutoSize = False
-        Caption = 
-          'The application can be tested with the database types of your ch' +
-          'oice by defining connections and building the databases via the ' +
-          'Connection Manager.'
-        Transparent = True
-        WordWrap = True
-      end
-      object InfoLabel5: TLabel
-        Left = 88
-        Top = 207
-        Width = 257
-        Height = 13
-        Caption = 'For more information about InstantObjects, please visit:'
-      end
-      object WebLinkLabel: TLabel
-        Left = 88
-        Top = 223
-        Width = 143
-        Height = 13
-        Cursor = crHandPoint
-        Caption = 'http://www.instantObjects.org'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlue
-        Font.Height = -11
-        Font.Name = 'MS Sans Serif'
-        Font.Style = [fsUnderline]
-        ParentFont = False
-        OnClick = WebLinkLabelClick
+      object Memo1: TMemo
+        Left = 9
+        Top = 70
+        Width = 416
+        Height = 152
+        Lines.Strings = (
+          '')
       end
       object LogoImage: TImage
-        Left = 16
-        Top = 8
+        Left = 9
+        Top = 4
         Width = 58
         Height = 56
         AutoSize = True
@@ -260,14 +200,14 @@ object WelcomeForm: TWelcomeForm
           0000}
       end
       object OkButton: TButton
-        Left = 338
+        Left = 350
         Top = 232
         Width = 75
         Height = 25
         Caption = 'OK'
         Default = True
         ModalResult = 1
-        TabOrder = 0
+        TabOrder = 1
       end
     end
   end

@@ -58,12 +58,7 @@ inherited QueryViewForm: TQueryViewForm
       Width = 712
       Height = 87
       Align = alClient
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Courier New'
-      Font.Style = []
-      ParentFont = False
+      ParentFont = True
       TabOrder = 0
     end
     object ExecuteButton: TButton
@@ -161,12 +156,7 @@ inherited QueryViewForm: TQueryViewForm
         Width = 764
         Height = 139
         Align = alClient
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Courier New'
-        Font.Style = []
-        ParentFont = False
+        ParentFont = True
         TabOrder = 0
       end
     end
@@ -179,12 +169,7 @@ inherited QueryViewForm: TQueryViewForm
         Width = 764
         Height = 139
         Align = alClient
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Courier New'
-        Font.Style = []
-        ParentFont = False
+        ParentFont = True
         TabOrder = 0
       end
     end

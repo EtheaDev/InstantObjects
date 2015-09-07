@@ -56,6 +56,7 @@ uses
 procedure TContactSortForm.FormCreate(Sender: TObject);
 begin
 {$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
 {$ENDIF}
 {$IFDEF LINUX}

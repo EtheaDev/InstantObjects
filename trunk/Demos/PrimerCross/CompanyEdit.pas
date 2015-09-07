@@ -172,6 +172,10 @@ procedure TCompanyEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
 {$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
+  Font.Height := -11;
+  EmployeeGrid.TitleFont.Assign(Screen.IconFont);
+
   LoadMultipleImages(ActionImages,'COMPANYEDITACTIONIMAGES',HInstance);
 {$ENDIF}
 {$IFDEF LINUX}

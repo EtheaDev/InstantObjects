@@ -457,10 +457,9 @@ procedure TPerformanceViewForm.FormCreate(Sender: TObject);
 begin
   Caption := 'Performance';
   InfoMemo.BorderStyle := bsNone;
-  SetTitleLabel(TitleLabel);
-  SetTitleLabel(ConnectionLabel);
 
 {$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
   TestResultListView.OnEdited := TestResultListViewEditedVCL;
   TestResultListView.SortType := stText;
 {$ENDIF}
@@ -468,6 +467,8 @@ begin
   TestResultListView.OnEdited := TestResultListViewEditedCLX;
   TestResultListView.Columns[0].Width := 180;
 {$ENDIF}
+  SetTitleLabel(TitleLabel);
+  SetTitleLabel(ConnectionLabel);
 end;
 
 procedure TPerformanceViewForm.FormHide(Sender: TObject);

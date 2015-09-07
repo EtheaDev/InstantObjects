@@ -528,6 +528,12 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   Caption := Application.Title;
 {$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
+  WorkTitleLabel.Color := clHighLightText;
+  WorkTitleLabel.Font.Height := -13;
+  WorkTitleLabel.Font.Style := [fsBold];
+  SideBar.Font.Color := clCaptionText;
+
   LoadMultipleImages(SideBarImages,'MAINSIDEBARIMAGES',HInstance);
   LoadMultipleImages(ActionImages,'MAINACTIONIMAGES',HInstance);
   with SideBar do
