@@ -25,13 +25,16 @@ package IOCoreRtl;
 {$IMAGEBASE $400000}
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'InstantObjects Run-Time Package (Delphi XE)'}
-{$LIBSUFFIX '_D15'}
+{$DESCRIPTION 'InstantObjects Run-Time Package (Delphi XE3)'}
+{$LIBSUFFIX '_D17'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}
 
 requires
-  rtl;
+  rtl,
+  vcl,
+  dbrtl,
+  vcldb;
 
 contains
   InstantUtils in '..\InstantUtils.pas',
