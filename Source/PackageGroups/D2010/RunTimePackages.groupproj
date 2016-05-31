@@ -18,9 +18,6 @@
 			<Projects Include="..\..\Brokers\ADO\D2010\IOADO.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\Brokers\BDE\D2010\IOBDE.dproj">
-				<Dependencies/>
-			</Projects>
 			<Projects Include="..\..\Brokers\DBX\D2010\IODBX.dproj">
 				<Dependencies/>
 			</Projects>
@@ -85,15 +82,6 @@
 		<Target Name="IOADO:Make">
 			<MSBuild Targets="Make" Projects="..\..\Brokers\ADO\D2010\IOADO.dproj"/>
 		</Target>
-		<Target Name="IOBDE">
-			<MSBuild Projects="..\..\Brokers\BDE\D2010\IOBDE.dproj"/>
-		</Target>
-		<Target Name="IOBDE:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\Brokers\BDE\D2010\IOBDE.dproj"/>
-		</Target>
-		<Target Name="IOBDE:Make">
-			<MSBuild Targets="Make" Projects="..\..\Brokers\BDE\D2010\IOBDE.dproj"/>
-		</Target>
 		<Target Name="IODBX">
 			<MSBuild Projects="..\..\Brokers\DBX\D2010\IODBX.dproj"/>
 		</Target>
@@ -122,13 +110,13 @@
 			<MSBuild Targets="Make" Projects="..\..\Brokers\XML\D2010\IOXML.dproj"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IOBDE;IODBX;IOIBX;IOXML"/>
+			<CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IODBX;IOIBX;IOXML"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IOBDE:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean"/>
+			<CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IOBDE:Make;IODBX:Make;IOIBX:Make;IOXML:Make"/>
+			<CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IODBX:Make;IOIBX:Make;IOXML:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>

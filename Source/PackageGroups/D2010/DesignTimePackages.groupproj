@@ -9,9 +9,6 @@
 			<Projects Include="..\..\Brokers\ADO\D2010\DclIOADO.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="..\..\Brokers\BDE\D2010\DclIOBDE.dproj">
-				<Dependencies/>
-			</Projects>
 			<Projects Include="..\..\Brokers\DBX\D2010\DclIODBX.dproj">
 				<Dependencies/>
 			</Projects>
@@ -49,15 +46,6 @@
 		<Target Name="DclIOADO:Make">
 			<MSBuild Targets="Make" Projects="..\..\Brokers\ADO\D2010\DclIOADO.dproj"/>
 		</Target>
-		<Target Name="DclIOBDE">
-			<MSBuild Projects="..\..\Brokers\BDE\D2010\DclIOBDE.dproj"/>
-		</Target>
-		<Target Name="DclIOBDE:Clean">
-			<MSBuild Targets="Clean" Projects="..\..\Brokers\BDE\D2010\DclIOBDE.dproj"/>
-		</Target>
-		<Target Name="DclIOBDE:Make">
-			<MSBuild Targets="Make" Projects="..\..\Brokers\BDE\D2010\DclIOBDE.dproj"/>
-		</Target>
 		<Target Name="DclIODBX">
 			<MSBuild Projects="..\..\Brokers\DBX\D2010\DclIODBX.dproj"/>
 		</Target>
@@ -86,13 +74,13 @@
 			<MSBuild Targets="Make" Projects="..\..\Brokers\XML\D2010\DclIOXML.dproj"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="DclIOCore;DclIOADO;DclIOBDE;DclIODBX;DclIOIBX;DclIOXML"/>
+			<CallTarget Targets="DclIOCore;DclIOADO;DclIODBX;DclIOIBX;DclIOXML"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIOBDE:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean"/>
+			<CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIOBDE:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make"/>
+			<CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>
