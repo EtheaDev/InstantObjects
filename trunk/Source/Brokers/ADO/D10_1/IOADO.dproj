@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{A15C8D03-E537-4203-982B-A812DB31354A}</ProjectGuid>
+        <ProjectGuid>{1D42880F-45BE-4D04-A1A4-BA58B5768107}</ProjectGuid>
         <MainSource>IOADO.dpk</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>

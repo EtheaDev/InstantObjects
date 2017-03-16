@@ -1,10 +1,9 @@
 object MainForm: TMainForm
   Left = 232
   Top = 177
-  BorderStyle = bsSingle
-  Caption = 'Demo'
-  ClientHeight = 309
-  ClientWidth = 363
+  Caption = 'InstantObjects simple demo'
+  ClientHeight = 311
+  ClientWidth = 452
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -13,6 +12,10 @@ object MainForm: TMainForm
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
+  DesignSize = (
+    452
+    311)
   PixelsPerInch = 96
   TextHeight = 13
   object DBNavigator1: TDBNavigator
@@ -23,11 +26,12 @@ object MainForm: TMainForm
     DataSource = ContactsSource
     TabOrder = 0
   end
-  object DBGrid1: TDBGrid
+  object ContactGrid: TDBGrid
     Left = 8
     Top = 40
-    Width = 345
+    Width = 439
     Height = 233
+    Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = ContactsSource
     TabOrder = 1
     TitleFont.Charset = DEFAULT_CHARSET
@@ -35,11 +39,12 @@ object MainForm: TMainForm
     TitleFont.Height = -11
     TitleFont.Name = 'MS Sans Serif'
     TitleFont.Style = []
+    OnDblClick = ContactGridDblClick
     Columns = <
       item
         Expanded = False
         FieldName = 'Name'
-        Width = 97
+        Width = 158
         Visible = True
       end
       item
@@ -51,50 +56,54 @@ object MainForm: TMainForm
       item
         Expanded = False
         FieldName = 'Phones'
+        Width = 118
         Visible = True
       end>
   end
   object AddPersonButton: TButton
-    Left = 8
+    Left = 131
     Top = 280
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Add Person'
     TabOrder = 2
     OnClick = AddPersonButtonClick
   end
   object AddCompanyButton: TButton
-    Left = 88
+    Left = 211
     Top = 280
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Add Company'
     TabOrder = 3
     OnClick = AddCompanyButtonClick
   end
   object EditContactButton: TButton
-    Left = 168
+    Left = 291
     Top = 280
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Edit Contact'
     TabOrder = 4
     OnClick = EditContactButtonClick
   end
   object ExploreButton: TButton
-    Left = 248
+    Left = 371
     Top = 280
     Width = 75
     Height = 25
+    Anchors = [akRight, akBottom]
     Caption = 'Explore'
     TabOrder = 5
     OnClick = ExploreButtonClick
   end
   object ContactSelector: TInstantSelector
-    AutoOpen = True
     Command.Strings = (
-      'SELECT * FROM ANY TContact')
-    Connector = InstantBDEConnector1
+      'SELECT * FROM ANY TContact ORDER BY Name')
+    Connector = InstantXMLConnector
     Left = 88
     Top = 232
   end
@@ -103,22 +112,14 @@ object MainForm: TMainForm
     Left = 120
     Top = 232
   end
-  object InstantBDEConnector1: TInstantBDEConnector
+  object InstantXMLConnector: TInstantXMLConnector
     IsDefault = True
-    Connection = Database1
+    Connection = XMLFileAccessor
     Left = 56
     Top = 232
   end
-  object Database1: TDatabase
-    DatabaseName = 'DemoDatabase'
-    DriverName = 'STANDARD'
-    LoginPrompt = False
-    Params.Strings = (
-      'PATH=.\Database'
-      'DEFAULT DRIVER=PARADOX'
-      'ENABLE BCD=FALSE')
-    SessionName = 'Default'
-    TransIsolation = tiDirtyRead
+  object XMLFileAccessor: TXMLFilesAccessor
+    RootFolder = '\'
     Left = 24
     Top = 232
   end

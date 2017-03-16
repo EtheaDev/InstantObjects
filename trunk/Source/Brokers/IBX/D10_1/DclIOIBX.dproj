@@ -1,6 +1,6 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{04708EEE-5D69-4308-8BED-42B0C0B84A8F}</ProjectGuid>
+        <ProjectGuid>{FDA89D48-CF91-4858-9F0C-3EC1AD97D78D}</ProjectGuid>
         <MainSource>DclIOIBX.dpk</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
