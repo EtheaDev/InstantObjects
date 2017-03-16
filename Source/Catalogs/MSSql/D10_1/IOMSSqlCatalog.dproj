@@ -1,6 +1,6 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{D79EB136-1196-4C33-842B-FCD304B70B90}</ProjectGuid>
+        <ProjectGuid>{37B6762C-756F-45CE-9421-BFD7D9FC105F}</ProjectGuid>
         <MainSource>IOMSSqlCatalog.dpk</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>

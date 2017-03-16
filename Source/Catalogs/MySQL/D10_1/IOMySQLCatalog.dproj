@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{FA68923A-B9AB-4354-A220-A68A7F55E6D7}</ProjectGuid>
+        <ProjectGuid>{AA738A23-6D5F-4F61-A87E-F1500C31B316}</ProjectGuid>
         <MainSource>IOMySQLCatalog.dpk</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>

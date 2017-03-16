@@ -4,6 +4,8 @@ uses
   Forms,
   Model in 'Model.pas',
   Main in 'Main.pas' {MainForm},
+  DemoData in 'DemoData.pas',
+  RandomData in 'RandomData.pas',
   ContactEdit in 'ContactEdit.pas' {ContactEditForm},
   PersonEdit in 'PersonEdit.pas' {PersonEditForm},
   CompanyEdit in 'CompanyEdit.pas' {CompanyEditForm};

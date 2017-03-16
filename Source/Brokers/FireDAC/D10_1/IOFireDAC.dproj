@@ -1,6 +1,6 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
-        <ProjectGuid>{50885E3B-26BC-4A4D-B07A-520421576DE5}</ProjectGuid>
+        <ProjectGuid>{D9C3A285-3C8C-4D2E-81B8-DF3D1B309F65}</ProjectGuid>
         <MainSource>IOFireDAC.dpk</MainSource>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>

@@ -1,7 +1,8 @@
 inherited PersonEditForm: TPersonEditForm
-  Height = 270
   Caption = 'Person'
+  ClientHeight = 237
   OldCreateOrder = True
+  ExplicitHeight = 266
   PixelsPerInch = 96
   TextHeight = 13
   object Label6: TLabel [5]
@@ -10,7 +11,6 @@ inherited PersonEditForm: TPersonEditForm
     Width = 55
     Height = 13
     Caption = 'DateOfBirth'
-    FocusControl = DBEdit5
   end
   inherited DBGrid1: TDBGrid
     TabOrder = 5
@@ -18,15 +18,17 @@ inherited PersonEditForm: TPersonEditForm
   inherited OkButton: TButton
     Top = 208
     TabOrder = 6
+    ExplicitTop = 208
   end
   inherited CancelButton: TButton
     Top = 208
     TabOrder = 7
+    ExplicitTop = 208
   end
   object DBEdit5: TDBEdit [13]
     Left = 8
     Top = 184
-    Width = 112
+    Width = 95
     Height = 21
     DataField = 'DateOfBirth'
     DataSource = ContactSource

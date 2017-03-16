@@ -3,8 +3,8 @@ object ContactEditForm: TContactEditForm
   Top = 211
   BorderStyle = bsDialog
   Caption = 'Contact'
-  ClientHeight = 206
-  ClientWidth = 373
+  ClientHeight = 272
+  ClientWidth = 431
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -93,8 +93,8 @@ object ContactEditForm: TContactEditForm
   object DBGrid1: TDBGrid
     Left = 200
     Top = 24
-    Width = 169
-    Height = 137
+    Width = 223
+    Height = 209
     DataSource = PhonesSource
     TabOrder = 4
     TitleFont.Charset = DEFAULT_CHARSET
@@ -106,18 +106,19 @@ object ContactEditForm: TContactEditForm
       item
         Expanded = False
         FieldName = 'Name'
-        Width = 60
+        Width = 78
         Visible = True
       end
       item
         Expanded = False
         FieldName = 'Number'
+        Width = 103
         Visible = True
       end>
   end
   object OkButton: TButton
-    Left = 208
-    Top = 176
+    Left = 268
+    Top = 239
     Width = 75
     Height = 25
     Caption = 'OK'
@@ -127,8 +128,8 @@ object ContactEditForm: TContactEditForm
     OnClick = OkButtonClick
   end
   object CancelButton: TButton
-    Left = 288
-    Top = 176
+    Left = 348
+    Top = 239
     Width = 75
     Height = 25
     Cancel = True
@@ -158,7 +159,6 @@ object ContactEditForm: TContactEditForm
     end
     object ContactExposerPhones: TDataSetField
       FieldName = 'Phones'
-      IncludeObjectField = False
     end
   end
   object ContactSource: TDataSource

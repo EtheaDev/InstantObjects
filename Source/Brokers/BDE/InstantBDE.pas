@@ -43,7 +43,7 @@ unit InstantBDE;
 interface
 
 uses
-  Classes, Db, DBTables, SysUtils, InstantPersistence, InstantCommand,
+  Classes, Db, SysUtils, InstantPersistence, InstantCommand,
   InstantBrokers, InstantMetadata, InstantTypes, InstantConsts;
 
 type
