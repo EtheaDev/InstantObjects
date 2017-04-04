@@ -5489,7 +5489,7 @@ begin
       begin
         InstantXMLProducer.WriteStartTag(
                 ObjectReferenceList.RefItems[I].ObjectClassName);
-        InstantXMLProducer.WriteData(ObjectReferenceList.RefItems[I].ObjectId);
+        InstantXMLProducer.WriteEscapedData(ObjectReferenceList.RefItems[I].ObjectId);
         InstantXMLProducer.WriteEndTag;
       end;
       InstantXMLProducer.WriteEndTag;
