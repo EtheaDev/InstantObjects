@@ -1,0 +1,371 @@
+object fmMain: TfmMain
+  Left = 0
+  Top = 0
+  Caption = 'InstantObjects Intro FireMonkey'
+  ClientHeight = 492
+  ClientWidth = 842
+  FormFactor.Width = 320
+  FormFactor.Height = 480
+  FormFactor.Devices = [dkDesktop]
+  object DBNavigator1: TBindNavigator
+    Height = 25.000000000000000000
+    Position.X = 104.000000000000000000
+    Position.Y = 8.000000000000000000
+    Width = 240.000000000000000000
+    DataSource = BindScopeDB1
+    xRadius = 4.000000000000000000
+    yRadius = 4.000000000000000000
+    object ConnectButton: TButton
+      DisableFocusEffect = False
+      Height = 25.000000000000000000
+      Position.X = -96.000000000000000000
+      TabOrder = 0
+      Text = 'Connect...'
+      Width = 89.000000000000000000
+      OnClick = ConnectButtonClick
+    end
+  end
+  object RecordLabel: TLabel
+    Height = 15.000000000000000000
+    Position.X = 352.000000000000000000
+    Position.Y = 14.000000000000000000
+    Text = 'Record:'
+    Width = 120.000000000000000000
+  end
+  object StringGrid1: TStringGrid
+    Touch.InteractiveGestures = [igPan]
+    Height = 441.000000000000000000
+    Position.X = 8.000000000000000000
+    Position.Y = 40.000000000000000000
+    StyleLookup = 'gridstyle'
+    Width = 633.000000000000000000
+    RowCount = 0
+    RowHeight = 21.000000000000000000
+    object TStringColumn
+      Header = 'Name'
+      Height = 416.000000000000000000
+      Width = 200.000000000000000000
+    end
+    object TStringColumn
+      Header = 'City'
+      Height = 416.000000000000000000
+      Position.X = 200.000000000000000000
+      Width = 100.000000000000000000
+    end
+    object TStringColumn
+      Header = 'Street'
+      Height = 416.000000000000000000
+      Position.X = 300.000000000000000000
+      Width = 100.000000000000000000
+    end
+    object TStringColumn
+      Header = 'Zip'
+      Height = 416.000000000000000000
+      Position.X = 400.000000000000000000
+      Width = 30.000000000000000000
+    end
+    object TStringColumn
+      Header = 'State'
+      Height = 416.000000000000000000
+      Position.X = 430.000000000000000000
+      Width = 60.000000000000000000
+    end
+    object TStringColumn
+      Header = 'Country'
+      Height = 416.000000000000000000
+      Position.X = 490.000000000000000000
+      Width = 100.000000000000000000
+    end
+  end
+  object ImageControl1: TImageControl
+    DisableFocusEffect = False
+    Height = 105.000000000000000000
+    Position.X = 648.000000000000000000
+    Position.Y = 40.000000000000000000
+    Scale.X = 2.000000000000000000
+    Scale.Y = 2.000000000000000000
+    Width = 81.000000000000000000
+    object PictureOpacityAnimation: TFloatAnimation
+      Duration = 1.000000000000000000
+      PropertyName = 'Opacity'
+      StopValue = 1.000000000000000000
+    end
+    object PictureRotationAngle: TFloatAnimation
+      Duration = 0.500000000000000000
+      PropertyName = 'RotationAngle'
+      StartValue = 180.000000000000000000
+      StopValue = 360.000000000000000000
+    end
+  end
+  object Edit1: TEdit
+    DisableFocusEffect = False
+    KeyboardType = vktDefault
+    Password = False
+    Position.X = 648.000000000000000000
+    Position.Y = 264.000000000000000000
+    Width = 169.000000000000000000
+    Height = 22.000000000000000000
+  end
+  object ContactSelector: TInstantSelector
+    AfterScroll = ContactSelectorAfterScroll
+    Command.Strings = (
+      'SELECT * FROM ANY TContact')
+    Connector = InstanXMLXConnector1
+    ObjectClassName = 'TContact'
+    AfterOpen = ContactSelectorAfterOpen
+    Left = 344
+    Top = 288
+    object ContactSelectorName: TStringField
+      FieldName = 'Name'
+      Size = 50
+    end
+    object ContactSelectorCategoryName: TStringField
+      FieldName = 'Category.Name'
+      Size = 30
+    end
+    object ContactSelectorAddressCity: TStringField
+      FieldName = 'Address.City'
+      Size = 30
+    end
+    object ContactSelectorAddressCountryId: TStringField
+      FieldName = 'Address.Country.Id'
+      Size = 255
+    end
+    object ContactSelectorAddressCountryName: TStringField
+      FieldName = 'Address.Country.Name'
+      Size = 30
+    end
+    object ContactSelectorAddressState: TStringField
+      FieldName = 'Address.State'
+      Size = 4
+    end
+    object ContactSelectorAddressStreet: TMemoField
+      FieldName = 'Address.Street'
+      BlobType = ftMemo
+    end
+    object ContactSelectorAddressZip: TStringField
+      FieldName = 'Address.Zip'
+      Size = 10
+    end
+    object ContactSelectorCity: TStringField
+      FieldName = 'City'
+      Size = 30
+    end
+    object ContactSelectorMainPhoneNumber: TStringField
+      FieldName = 'MainPhoneNumber'
+      Size = 255
+    end
+    object ContactSelectorPhones: TDataSetField
+      FieldName = 'Phones'
+    end
+  end
+  object ContactsSource: TDataSource
+    DataSet = ContactSelector
+    Left = 344
+    Top = 344
+  end
+  object InstanXMLXConnector1: TInstantXMLConnector
+    IsDefault = True
+    Connection = XMLFilesAccessor1
+    Left = 56
+    Top = 344
+  end
+  object XMLFilesAccessor1: TXMLFilesAccessor
+    RootFolder = '\'
+    Left = 56
+    Top = 288
+  end
+  object BindScopeDB1: TBindScopeDB
+    DataSource = ContactsSource
+    DataSet = ContactSelector
+    ScopeMappings = <>
+    Left = 344
+    Top = 408
+  end
+  object BindingsList: TBindingsList
+    Methods = <>
+    OutputConverters = <>
+    UseAppManager = True
+    Left = 704
+    Top = 48
+    object BindDBGridLink1: TBindDBGridLink
+      Category = 'DB Links'
+      DataSource = BindScopeDB1
+      GridControl = StringGrid1
+      AutoBufferCount = False
+      Columns = <
+        item
+          FieldName = 'Name'
+          Width = 200
+          Visible = True
+        end
+        item
+          FieldName = 'Address.City'
+          Header = 'City'
+          Width = 100
+          Visible = True
+        end
+        item
+          FieldName = 'Address.Street'
+          Header = 'Street'
+          Width = 100
+          Visible = True
+        end
+        item
+          FieldName = 'Address.Zip'
+          Header = 'Zip'
+          Width = 30
+          Visible = True
+        end
+        item
+          FieldName = 'Address.State'
+          Header = 'State'
+          Width = 60
+          Visible = True
+        end
+        item
+          FieldName = 'Address.Country.Name'
+          Header = 'Country'
+          Width = 100
+          Visible = True
+        end>
+    end
+    object DBLinkEdit1Name1: TBindDBEditLink
+      Category = 'DB Links'
+      DataSource = BindScopeDB2
+      FieldName = 'Name'
+      EditControl = Edit1
+    end
+    object DBLinkImageControl1Picture1: TBindDBImageLink
+      Category = 'DB Links'
+      DataSource = BindScopeDB2
+      FieldName = 'Picture'
+      ImageControl = ImageControl1
+    end
+  end
+  object PersonExposer: TInstantExposer
+    ObjectClassName = 'TPerson'
+    Left = 760
+    Top = 208
+    object PersonExposerAddressCity: TStringField
+      FieldName = 'Address.City'
+      Size = 30
+    end
+    object PersonExposerAddressCountryId: TStringField
+      FieldName = 'Address.Country.Id'
+      Size = 255
+    end
+    object PersonExposerAddressCountryName: TStringField
+      FieldName = 'Address.Country.Name'
+      Size = 30
+    end
+    object PersonExposerAddressState: TStringField
+      FieldName = 'Address.State'
+      Size = 4
+    end
+    object PersonExposerAddressStreet: TMemoField
+      FieldName = 'Address.Street'
+      BlobType = ftMemo
+    end
+    object PersonExposerAddressZip: TStringField
+      FieldName = 'Address.Zip'
+      Size = 10
+    end
+    object PersonExposerBirthDate: TDateField
+      FieldName = 'BirthDate'
+    end
+    object PersonExposerBirthTime: TTimeField
+      FieldName = 'BirthTime'
+    end
+    object PersonExposerCategoryName: TStringField
+      FieldName = 'Category.Name'
+      Size = 30
+    end
+    object PersonExposerCity: TStringField
+      FieldName = 'City'
+      Size = 30
+    end
+    object PersonExposerEmails: TDataSetField
+      FieldName = 'Emails'
+    end
+    object PersonExposerEmployerAddressCity: TStringField
+      FieldName = 'Employer.Address.City'
+      Size = 30
+    end
+    object PersonExposerEmployerAddressCountryId: TStringField
+      FieldName = 'Employer.Address.Country.Id'
+      Size = 255
+    end
+    object PersonExposerEmployerAddressCountryName: TStringField
+      FieldName = 'Employer.Address.Country.Name'
+      Size = 30
+    end
+    object PersonExposerEmployerAddressState: TStringField
+      FieldName = 'Employer.Address.State'
+      Size = 4
+    end
+    object PersonExposerEmployerAddressStreet: TMemoField
+      FieldName = 'Employer.Address.Street'
+      BlobType = ftMemo
+    end
+    object PersonExposerEmployerAddressZip: TStringField
+      FieldName = 'Employer.Address.Zip'
+      Size = 10
+    end
+    object PersonExposerEmployerCategoryName: TStringField
+      FieldName = 'Employer.Category.Name'
+      Size = 30
+    end
+    object PersonExposerEmployerCity: TStringField
+      FieldName = 'Employer.City'
+      Size = 30
+    end
+    object PersonExposerEmployerEmployees: TDataSetField
+      FieldName = 'Employer.Employees'
+    end
+    object PersonExposerEmployerMainPhoneNumber: TStringField
+      FieldName = 'Employer.MainPhoneNumber'
+      Size = 255
+    end
+    object PersonExposerEmployerName: TStringField
+      FieldName = 'Employer.Name'
+      Size = 50
+    end
+    object PersonExposerEmployerPhones: TDataSetField
+      FieldName = 'Employer.Phones'
+    end
+    object PersonExposerMainEmailAddress: TStringField
+      FieldName = 'MainEmailAddress'
+      Size = 255
+    end
+    object PersonExposerMainPhoneNumber: TStringField
+      FieldName = 'MainPhoneNumber'
+      Size = 255
+    end
+    object PersonExposerName: TStringField
+      FieldName = 'Name'
+      Size = 50
+    end
+    object PersonExposerPhones: TDataSetField
+      FieldName = 'Phones'
+    end
+    object PersonExposerPicture: TBlobField
+      FieldName = 'Picture'
+    end
+    object PersonExposerSalary: TBCDField
+      FieldName = 'Salary'
+      Precision = 18
+    end
+  end
+  object BindScopeDB2: TBindScopeDB
+    DataSet = PersonExposer
+    ScopeMappings = <>
+    Left = 760
+    Top = 312
+  end
+  object PersonSource: TDataSource
+    DataSet = PersonExposer
+    Left = 760
+    Top = 264
+  end
+end
