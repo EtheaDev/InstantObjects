@@ -74,7 +74,7 @@
         <DCC_TypedAtParameter>true</DCC_TypedAtParameter>
         <DllSuffix>_D24</DllSuffix>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_Description>InstantObjects FireDAC Run-Time Support (Delphi 10 Berlin)</DCC_Description>
+        <DCC_Description>InstantObjects FireDAC Run-Time Support (Delphi 10.1 Berlin)</DCC_Description>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <DCC_N>false</DCC_N>
