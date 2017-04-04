@@ -227,7 +227,6 @@
   {$DEFINE D22+}
   {$DEFINE D23}
   {$DEFINE D23+}
-  {$LIBSUFFIX '_D23'}  
 {$ENDIF}
 
 // Delphi 10.1 Berlin
@@ -251,7 +250,30 @@
   {$DEFINE D23+}
   {$DEFINE D24}
   {$DEFINE D24+}
-  {$LIBSUFFIX '_D23'}
+{$ENDIF}
+
+// Delphi 10.2 Tokyo
+{$IFDEF VER320}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10+}
+  {$DEFINE D11+}
+  {$DEFINE D12+}
+  {$DEFINE D14+}
+  {$DEFINE D15+}
+  {$DEFINE D16+}
+  {$DEFINE D17+}
+  {$DEFINE D18+}
+  {$DEFINE D19+}
+  {$DEFINE D20+}
+  {$DEFINE D21+}
+  {$DEFINE D22+}
+  {$DEFINE D23+}
+  {$DEFINE D24+}
+  {$DEFINE D25}
+  {$DEFINE D25+}
 {$ENDIF}
 
 {$IFDEF FPC}
