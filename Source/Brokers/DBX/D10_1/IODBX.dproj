@@ -73,7 +73,7 @@
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DllSuffix>_D24</DllSuffix>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
-        <DCC_Description>InstantObjects dbExpress Run-Time Support (Delphi 10 Berlin)</DCC_Description>
+        <DCC_Description>InstantObjects dbExpress Run-Time Support (Delphi 10.1 Berlin)</DCC_Description>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <GenPackage>true</GenPackage>
