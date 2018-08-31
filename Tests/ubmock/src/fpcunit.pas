@@ -73,6 +73,7 @@ type
     class procedure AssertEquals(Expected, Actual: int64); overload;
     class procedure AssertEquals(const AMessage: string; Expected, Actual: currency); overload;
     class procedure AssertEquals(Expected, Actual: currency); overload;
+    class procedure AssertEqualsDateTime(Expected, Actual: TDateTime); overload;
     class procedure AssertEquals(const AMessage: string; Expected, Actual, Delta: double); overload;
     class procedure AssertEquals(Expected, Actual, Delta: double); overload;
     class procedure AssertEquals(const AMessage: string; Expected, Actual: boolean); overload;
@@ -423,6 +424,12 @@ end;
 class procedure TAssert.AssertEquals(Expected, Actual: currency);
 begin
    AssertEquals('', Expected, Actual);
+end;
+
+class procedure TAssert.AssertEqualsDateTime(Expected, Actual: TDateTime);
+begin
+  if Expected <> Actual then
+     AssertEquals('', DateToStr(Expected), DateToStr(Actual));
 end;
 
 class procedure TAssert.AssertEquals(const AMessage: string; Expected, Actual, Delta: double);

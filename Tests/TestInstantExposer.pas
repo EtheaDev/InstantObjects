@@ -33,11 +33,12 @@ unit TestInstantExposer;
 interface
 
 uses
-  fpcunit, testregistry, InstantXML, InstantPresentation;
+  fpcunit, testregistry, InstantXML, InstantPresentation, DB;
 
 type
   TTestExposer = class(TTestCase)
   private
+    procedure AssignNameField(const Exp: TDataSet);
   protected
     FConn: TInstantXMLConnector;
     FAcc: TXMLFilesAccessor;
@@ -46,6 +47,7 @@ type
     procedure TearDown; override;
   published
     procedure TestStoreAndRetrieveContact;
+    procedure TestStoreAndRetrievePerson;
     procedure TestStoreAndRetrievePicture;
     procedure TestStoreAndRetrieveContactPhones;
 //    procedure TestOrderBy;
@@ -55,7 +57,18 @@ type
 implementation
 
 uses
-  SysUtils, Classes, ShellAPI, InstantPersistence, TestModel, DB, Graphics;
+  SysUtils, Classes, ShellAPI, InstantPersistence, TestModel, Graphics;
+
+const
+  DEF_NAME = 'AName';
+  DEF_NAME_UNICODE = '网站导航';
+  DEF_CITY = 'Milan (€)';
+  ADDRESS_STREET = 'Street';
+  ADDRESS_STREET_UNICODE = '链接';
+  DEF_HOME = 'Home';
+  DEF_OFFICE = 'Office';
+  DEF_NUM_HOME  = '012 12345678';
+  DEF_NUM_OFFICE = '012-234-56781';
 
 { TTestXMLBroker }
 
@@ -107,17 +120,9 @@ begin
 end;
 
 procedure TTestExposer.TestStoreAndRetrieveContact;
-const
-  DEF_NAME = 'AName';
-  DEF_NAME_UNICODE = '网站导航';
-  DEF_CITY = 'Milan (€)';
-  ADDRESS_STREET = 'Street';
-  ADDRESS_STREET_UNICODE = '链接';
 var
   c: TContact;
   old_id: string;
-  t: TPhone;
-  DataSetField: TDataSetField;
   Field: TField;
 begin
   FExp.ObjectClass := TContact;
@@ -125,20 +130,13 @@ begin
   try
     FExp.Subject := c;
     FExp.Edit;
-    Field := FExp.FieldByName('Name');
-    if not FConn.UseUnicode then
-    begin
-      Field.Value := DEF_NAME;
-      AssertEquals(DEF_NAME, c.Name);
-    end
-    else
-    begin
-      Field.Value := DEF_NAME_UNICODE;
-      AssertEquals(DEF_NAME_UNICODE, c.Name);
-    end;
+    //Test Name (Unicode)
+    AssignNameField(FExp);
+    //Test Address.City (Unicode)
     Field := FExp.FieldByName('Address.City');
     Field.Value := DEF_CITY;
     AssertEquals(DEF_CITY, c.Address.City);
+    //Test Address.Street (Unicode)
     Field := FExp.FieldByName('Address.Street');
     if not FConn.UseUnicode then
     begin
@@ -150,6 +148,7 @@ begin
       Field.Value := ADDRESS_STREET_UNICODE;
       AssertEquals(ADDRESS_STREET_UNICODE, c.Address.Street);
     end;
+
     FExp.Post;
     if not FConn.UseUnicode then
     begin
@@ -190,12 +189,25 @@ begin
   end;
 end;
 
-procedure TTestExposer.FieldSetValue;
-const
-  DEF_NAME = 'AName';
-  DEF_NAME_UNICODE = '链接';
+procedure TTestExposer.AssignNameField(const Exp: TDataSet);
 var
   Field: TField;
+begin
+  Field := FExp.FieldByName('Name');
+  if not FConn.UseUnicode then
+  begin
+    Field.Value := DEF_NAME;
+    AssertEquals(DEF_NAME, Field.Value);
+  end
+  else
+  begin
+    Field.Value := DEF_NAME_UNICODE;
+    AssertEquals(DEF_NAME_UNICODE, Field.Value);
+  end;
+end;
+
+procedure TTestExposer.FieldSetValue;
+var
   c: TContact;
 begin
   FExp.ObjectClass := TContact;
@@ -203,54 +215,26 @@ begin
   try
     FExp.Subject := c;
     FExp.Edit;
-    Field := FExp.FieldByName('Name');
-    if not FConn.UseUnicode then
-    begin
-      Field.Value := DEF_NAME;
-      AssertEquals(DEF_NAME, Field.Value);
-    end
-    else
-    begin
-      Field.Value := DEF_NAME_UNICODE;
-      AssertEquals(DEF_NAME_UNICODE, Field.Value);
-    end;
+    //Test Name (Unicode)
+    AssignNameField(FExp);
   finally
     FreeAndNil(c);
   end;
 end;
 
 procedure TTestExposer.TestStoreAndRetrieveContactPhones;
-const
-  DEF_NAME = 'AName';
-  DEF_NAME_UNICODE = '链接';
-  DEF_HOME = 'Home';
-  DEF_OFFICE = 'Office';
-  DEF_NUM_HOME  = '012 12345678';
-  DEF_NUM_OFFICE = '012-234-56781';
 var
   c: TContact;
   old_id: string;
-  t: TPhone;
   DataSetField: TDataSetField;
-  Field: TField;
 begin
   FExp.ObjectClass := TContact;
   c := TContact.Create;
   try
     FExp.Subject := c;
     FExp.Edit;
-    Field := FExp.FieldByName('Name');
-    if not FConn.UseUnicode then
-    begin
-      Field.Value := DEF_NAME;
-      AssertEquals(DEF_NAME, c.Name);
-    end
-    else
-    begin
-      Field.Value := DEF_NAME_UNICODE;
-      AssertEquals(DEF_NAME_UNICODE, c.Name);
-    end;
-    Field := FExp.FieldByName('Address.City');
+    //Test Name (Unicode)
+    AssignNameField(FExp);
     DataSetField := FExp.FieldByName('Phones') as TDataSetField;
     DataSetField.NestedDataSet.Append;
     DataSetField.NestedDataSet.FieldByName('Name').Value := DEF_HOME;
@@ -292,14 +276,52 @@ begin
   end;
 end;
 
+procedure TTestExposer.TestStoreAndRetrievePerson;
+var
+  p: TPerson;
+  old_id: string;
+  Field: TField;
+  LBirthDate: TDateTime;
+begin
+  FExp.ObjectClass := TPerson;
+  p := TPerson.Create;
+  try
+    FExp.Subject := p;
+    FExp.Edit;
+    //Test Name (Unicode)
+    AssignNameField(FExp);
+    LBirthDate := EncodeDate(1974, 09, 30);
+    //Test BirthDate from 01/01/1900 to Today
+    //LBirthDate := EncodeDate(1900, 01, 01);
+    //while True do
+    begin
+      Field := FExp.FieldByName('BirthDate');
+      Field.Value := LBirthDate;
+      AssertEqualsDateTime(LBirthDate, p.BirthDate);
+      LBirthDate := LBirthDate + 1;
+      //if LBirthDate >= Date then
+        //Break;
+    end;
+    FExp.Post;
+    old_id := p.id;
+  finally
+    FreeAndNil(p);
+  end;
+  AssertNull(p);
+  p := TPerson.Retrieve(old_id);
+  try
+    AssertNotNull('Object not retrieved', p);
+    AssertEquals(old_id, p.Id);
+    AssertEquals(LBirthDate, p.BirthDate);
+  finally
+    FreeAndNil(p);
+  end;
+end;
+
 procedure TTestExposer.TestStoreAndRetrievePicture;
-const
-  DEF_NAME = 'AName';
-  DEF_NAME_UNICODE = '链接';
 var
   c: TPerson;
   Field: TField;
-  old_id: string;
   BlobContentBefore, BlobContentAfter: string;
 begin
   FExp.ObjectClass := TPerson;
