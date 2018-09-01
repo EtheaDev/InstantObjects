@@ -290,18 +290,11 @@ begin
     FExp.Edit;
     //Test Name (Unicode)
     AssignNameField(FExp);
+    //Test particular Date
     LBirthDate := EncodeDate(1974, 09, 30);
-    //Test BirthDate from 01/01/1900 to Today
-    //LBirthDate := EncodeDate(1900, 01, 01);
-    //while True do
-    begin
-      Field := FExp.FieldByName('BirthDate');
-      Field.Value := LBirthDate;
-      AssertEqualsDateTime(LBirthDate, p.BirthDate);
-      LBirthDate := LBirthDate + 1;
-      //if LBirthDate >= Date then
-        //Break;
-    end;
+    Field := FExp.FieldByName('BirthDate');
+    Field.Value := LBirthDate;
+    AssertEqualsDateTime(LBirthDate, p.BirthDate);
     FExp.Post;
     old_id := p.id;
   finally

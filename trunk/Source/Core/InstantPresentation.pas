@@ -195,6 +195,7 @@ type
 
   TInstantFieldEvent = procedure(Sender: TObject; Field: TField) of object;
   TInstantCreateObjectEvent = procedure(Sender: TObject; var AObject: TObject) of object;
+  TInstantAfterCreateObjectEvent = procedure(Sender: TObject; const AObject: TObject) of object;
   TInstantFieldErrorEvent = procedure(Sender: TObject; E: Exception; Field: TField; Value: Variant; Write: Boolean; var Handled: Boolean) of object;
   TInstantIncludeFieldEvent = procedure(Sender: TObject; const FieldName: string; var Include: Boolean) of object;
   TInstantFieldDefEvent = procedure(Sender: TObject; FieldDef: TFieldDef) of object;
@@ -320,6 +321,7 @@ type
     FBeforePostField: TInstantFieldEvent;
     FOnCompare: TInstantCompareObjectsEvent;
     FOnCreateObject: TInstantCreateObjectEvent;
+    FAfterCreateObject: TInstantAfterCreateObjectEvent;
     FOnFieldError: TInstantFieldErrorEvent;
     FOnIncludeField: TInstantIncludeFieldEvent;
     FOnInitField: TInstantFieldEvent;
@@ -498,7 +500,7 @@ type
     procedure SetFieldData(Field: TField; Buffer: TValueBuffer); overload; override;
 {$ENDIF}
 {$IFNDEF NEXTGEN}
-    procedure SetFieldData(Field: TField; Buffer: Pointer); overload; override; {$IFDEF D12+}deprecated 'Use overloaded method instead';{$ENDIF}
+    procedure SetFieldData(Field: TField; Buffer: Pointer); overload; override;
 {$ENDIF}
     procedure SetFiltered(Value: Boolean); override;
     procedure SetRecNo(Value: Integer); override;
@@ -598,6 +600,7 @@ type
     property OnCalcFields;
     property OnCompare: TInstantCompareObjectsEvent read GetOnCompare write SetOnCompare;
     property OnCreateObject: TInstantCreateObjectEvent read FOnCreateObject write FOnCreateObject;
+    property AfterCreateObject: TInstantAfterCreateObjectEvent read FAfterCreateObject write FAfterCreateObject;
     property OnFieldError: TInstantFieldErrorEvent read FOnFieldError write FOnFieldError;
     property OnFilterRecord;
     property OnIncludeField: TInstantIncludeFieldEvent read FOnIncludeField write FOnIncludeField;
@@ -2637,6 +2640,8 @@ begin
     FOnCreateObject(Self, Result);
   if not Assigned(Result) then
     Result := Accessor.CreateObject;
+  if Assigned(FAfterCreateObject) then
+    FAfterCreateObject(Self, Result);
 end;
 
 procedure TInstantCustomExposer.DataEvent(Event: TDataEvent;
@@ -2807,7 +2812,7 @@ end;
 
 function TInstantCustomExposer.FieldDataSize(Field : TField): integer;
 begin
-{$IFDEF D14}
+{$IFDEF VER210}
   // Workaround for DataSize bugs in D2010 RTM (QC 78620 and 78620)
   if (not Assigned(Field)) or (Field is TBlobField) then
     Result := 0
@@ -2924,7 +2929,8 @@ begin
   if (Field is TDateTimeField) and Assigned(Buffer) then
   begin
     Move(Buffer[0], D, SizeOf(TDateTimeRec));
-    Result := (D.Date <> 0) and (D.Time <> 0);
+    //Result := (D.Date <> 0) and (D.Time <> 0); WRONG TEST, FAIL WITH DATE 30/09/1974!
+    Result := (D.DateTime <> 0);
   end else
     Result := (State in [dsEdit, dsInsert]) or (RecordCount > 0);
 end;
@@ -4256,7 +4262,8 @@ begin
     ftDateTime:
       begin
         Move(Buffer^, D, FieldDataSize(Field));
-        if (D.Date = 0) and (D.Time = 0) then
+        //if (D.Date = 0) and (D.Time = 0) then WRONG TEST, FAIL WITH DATE 30/09/1974!
+        if (D.DateTime = 0) then
           Value := 0
         else begin
           T := MSecsToTimeStamp(D.DateTime);
