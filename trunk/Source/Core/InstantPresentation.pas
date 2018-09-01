@@ -2947,7 +2947,8 @@ begin
   if (Field is TDateTimeField) and Assigned(Buffer) then
   begin
     D := TDateTimeRec(Buffer^);
-    Result := (D.Date <> 0) and (D.Time <> 0);
+    //Result := (D.Date <> 0) and (D.Time <> 0); WRONG TEST, FAIL WITH DATE 30/09/1974!
+    Result := (D.DateTime <> 0);
   end else
     Result := (State in [dsEdit, dsInsert]) or (RecordCount > 0);
 end;
