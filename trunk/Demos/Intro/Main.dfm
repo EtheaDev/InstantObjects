@@ -33,7 +33,7 @@ object MainForm: TMainForm
     Height = 233
     Anchors = [akLeft, akTop, akRight, akBottom]
     DataSource = ContactsSource
-    TabOrder = 1
+    TabOrder = 2
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
@@ -67,7 +67,7 @@ object MainForm: TMainForm
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Add Person'
-    TabOrder = 2
+    TabOrder = 3
     OnClick = AddPersonButtonClick
   end
   object AddCompanyButton: TButton
@@ -77,7 +77,7 @@ object MainForm: TMainForm
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Add Company'
-    TabOrder = 3
+    TabOrder = 4
     OnClick = AddCompanyButtonClick
   end
   object EditContactButton: TButton
@@ -87,7 +87,7 @@ object MainForm: TMainForm
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Edit Contact'
-    TabOrder = 4
+    TabOrder = 5
     OnClick = EditContactButtonClick
   end
   object ExploreButton: TButton
@@ -97,8 +97,18 @@ object MainForm: TMainForm
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Explore'
-    TabOrder = 5
+    TabOrder = 6
     OnClick = ExploreButtonClick
+  end
+  object GenerateDataButton: TButton
+    Left = 8
+    Top = 279
+    Width = 97
+    Height = 25
+    Anchors = [akRight, akBottom]
+    Caption = 'Generate Data...'
+    TabOrder = 1
+    OnClick = GenerateDataButtonClick
   end
   object ContactSelector: TInstantSelector
     Command.Strings = (

@@ -93,7 +93,7 @@ const
     'Detroit', 'Houston', 'Indianapolis', 'Kansas City', 'Las Vegas',
     'Los Angeles', 'Memphis', 'Miami', 'Minneapolis', 'Nashville',
     'New Orleans', 'New York', 'Oklahoma', 'Omaha', 'Philadelphia',
-    'Pittsburgh', 'Portland', 'San Diego', 'San Fransisco', 'Seattle', 'Tampa',
+    'Pittsburgh', 'Portland', 'San Diego', 'San Francisco', 'Seattle', 'Tampa',
     'Utah', 'Washington');
 
   DomainSuffixes: array[0..4] of string = (

@@ -8,15 +8,17 @@ uses
   Fmx.Bind.Navigator, InstantPersistence, InstantBrokers, Data.DB,
   InstantXML, InstantPresentation, Data.Bind.Components, Data.Bind.DBScope,
   Data.Bind.EngExt, Fmx.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs,
-  Fmx.Bind.Editors, FMX.Grid, Data.Bind.DBLinks, Fmx.Bind.DBLinks, FMX.Objects, FMX.Edit, FMX.Ani;
+  Fmx.Bind.Editors, FMX.Grid, Data.Bind.DBLinks, Fmx.Bind.DBLinks, FMX.Objects, FMX.Edit,
+  FMX.Ani, Data.Bind.Controls, FMX.Grid.Style, FMX.StdCtrls, FMX.ScrollBox,
+  FMX.Controls.Presentation;
 
 type
   TfmMain = class(TForm)
     DBNavigator1: TBindNavigator;
     ContactsSource: TDataSource;
-    InstanXMLXConnector1: TInstantXMLConnector;
+    InstantXMLConnector: TInstantXMLConnector;
     ContactSelector: TInstantSelector;
-    XMLFilesAccessor1: TXMLFilesAccessor;
+    XMLFilesAccessor: TXMLFilesAccessor;
     ConnectButton: TButton;
     RecordLabel: TLabel;
     BindScopeDB1: TBindScopeDB;
@@ -97,7 +99,6 @@ uses
 procedure TfmMain.ConnectButtonClick(Sender: TObject);
 begin
   InitConnection;
-  ContactSelector.Open;
 end;
 
 procedure TfmMain.ContactSelectorAfterOpen(DataSet: TDataSet);
@@ -120,11 +121,22 @@ end;
 
 procedure TfmMain.InitConnection;
 begin
-  XMLFilesAccessor1.RootFolder := ExtractFilePath(ParamStr(0))+
-    '..'+PathDelim+'..'+PathDelim+'..'+PathDelim+'..'+PathDelim+'Database';
-//  CreateCategories;
-//  CreateCountries;
-//  CreateRandomContacts(100, True);
+  XMLFilesAccessor.RootFolder := ExtractFilePath(ParamStr(0))+
+    '..\Database';
+  InstantXMLConnector.Connected := True;
+  InstantXMLConnector.IsDefault := True;
+  ContactSelector.Open;
+  if ContactSelector.Eof then
+  begin
+    ContactSelector.Close;
+    Try
+      CreateCategories;
+      CreateCountries;
+      CreateRandomContacts(100, True);
+    Finally
+      ContactSelector.Open;
+    End;
+  end;
 end;
 
 procedure TfmMain.UpdateRecordLabel;

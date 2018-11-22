@@ -19,16 +19,19 @@ type
     ExploreButton: TButton;
     InstantXMLConnector: TInstantXMLConnector;
     XMLFileAccessor: TXMLFilesAccessor;
+    GenerateDataButton: TButton;
     procedure AddPersonButtonClick(Sender: TObject);
     procedure AddCompanyButtonClick(Sender: TObject);
     procedure EditContactButtonClick(Sender: TObject);
     procedure ExploreButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure ContactGridDblClick(Sender: TObject);
+    procedure GenerateDataButtonClick(Sender: TObject);
   private
     function EditContact(Contact: TContact): Boolean;
     procedure CreateRandomContacts(Count: Integer);
     procedure EditCurrentContact;
+    procedure GenerateRandomData(const ANumber: Integer);
   public
   end;
 
@@ -111,13 +114,23 @@ begin
   ContactSelector.Open;
   if ContactSelector.Eof then
   begin
-    ContactSelector.Close;
-    try
-      //First Time: create of Random Data
-      CreateRandomContacts(100);
-    finally
-      ContactSelector.Open;
-    end;
+    //First Time: create of Random Data
+    GenerateRandomData(30);
+  end;
+end;
+
+procedure TMainForm.GenerateDataButtonClick(Sender: TObject);
+begin
+  GenerateRandomData(10);
+end;
+
+procedure TMainForm.GenerateRandomData(const ANumber: Integer);
+begin
+  ContactSelector.Close;
+  try
+    CreateRandomContacts(ANumber);
+  finally
+    ContactSelector.Open;
   end;
 end;
 

@@ -10,7 +10,7 @@ interface
 
 uses
   Classes, Model, InstantPersistence,
-  {$IFDEF FMX}FMX.Objects,{$ELSE}Graphics,{$ENDIF}
+  {$IFDEF INSTANTOBJECTS_FMX}FMX.Objects,{$ELSE}Graphics,{$ENDIF}
   RandomData;
 
 
@@ -28,12 +28,7 @@ uses
 
 procedure AssignRandomPicture(Male : boolean; InstantBlob : TInstantBlob);
 const
-{$IFDEF MSWINDOWS}
-  ARandomExt : Array[0..2] of string = ('.bmp','.jpg','.emf');
-{$ENDIF}
-{$IFDEF LINUX}
   ARandomExt : Array[0..2] of string = ('.bmp','.jpg','.png');
-{$ENDIF}
 var
   Picture: TImage;
   PictureName : string;
@@ -43,7 +38,7 @@ begin
     PictureName := 'man'+PictureName
   else
     PictureName := 'woman'+PictureName;
-  PictureName := ExtractFilePath(ParamStr(0))+'..\..\..\..\Pictures'+PathDelim+PictureName;
+  PictureName := ExtractFilePath(ParamStr(0))+'..\Pictures'+PathDelim+PictureName;
   if FileExists(PictureName) then
   begin
     Picture := TImage.Create(nil);
