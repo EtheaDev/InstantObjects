@@ -1,5 +1,11 @@
 VERSION HISTORY
 ---------------
+Version 2.7 (2.7.0.0) (2018-11-22)
+- Added support for Delphi 10.2 Tokyo
+
+Version 2.6 (2.6.0.0) (2017-04-04)
+- Added support for Delphi 10.2 Tokyo
+
 Version 2.5 (2.5.0.0) (2016-05-31)
 - Added support for Delphi 10.1 Berlin
 

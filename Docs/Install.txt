@@ -61,7 +61,7 @@ INSTALLATION
    <installdir>/Source/Design/<version>/DclIOCore.dpk (install)
    
    Where <version> identifies your version of Delphi
-   Examples: D7, D2005, D2006, etc.
+   Examples: DXE7, D10.3, etc.
 
 
 4. Build and install the desired catalog and broker package(s):

@@ -1,6 +1,7 @@
 ------------------------------------------------------------------
 
   InstantObjects for Delphi - Full Unicode version
+  ver. 2.7 for Delphi 10.3 Rio
 
   Mozilla Public License 1.1 Edition
   Based on Seleqt InstantObjects.
@@ -9,7 +10,6 @@
   All rights reserved.
 
 ------------------------------------------------------------------
-
 
 TABLE OF CONTENTS
 

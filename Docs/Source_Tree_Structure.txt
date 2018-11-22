@@ -1,24 +1,30 @@
 Structure of the InstantObjects source tree
 ===========================================
-Nando Dessena, 02/2005
+Carlo Barazzetta, 11/2018
 
 Abstract
 --------
-The following notes document the structure of the InstantObjects tree as stored in CVS, explaining what each folder is for.
+The following notes document the structure of the InstantObjects tree as stored in Git, explaining what each folder is for.
 
 Modules
 -------
-Currently IO is made up of 4 (mostly independent) modules; future versions might be organized differently. Here is a list of the 4 modules:
+Currently InstantObjects is made up of 4 (mostly independent) modules; future versions might be organized differently. Here is a list of the 4 modules:
 
 Demos: contains demo projects aimed at the IO newbie. There is a subfolder for each applciation:
 
 - Intro: the bare bones demo application, whose building process is shown in the famous IO introductory video.
 
-- PrimerCross: the cross-platform version of the more juicy Primer example. This folder also contains a PrimerExternal.dpr project that makes use of external storage.
+- PrimerCross: the cross-database-platform version of the more juicy Primer example. This folder also contains a PrimerExternal.dpr project that makes use of external storage.
+
+- PrimerFireMonkey: a simple example for using IO with FireMonkey (using INSTANTOBECTS_FMX compiler directive)
 
 - Pump: a straightforward application that shows how to use the InstantPump component.
 
 - Test: in a subfolder called BuildPrimerDatabase you'll find a console application that demonstrates building and populating an InstantObjects database.
+
+- ConsoleApp: an example of a console application 
+
+- EvolveTest: an example of evolving database structure
 
 The Demos folder must be a sibling of the Source folder (they're not completely independent).
 
@@ -30,17 +36,21 @@ Source: here is where all the IO code is stored. The Source folder has a number 
 
 - Brokers: base folder for all the persistence brokers (one subfolder each).
 
+- Catalogs: folder for mapping IO datatypes with database vendor field types.
+
 - Core: the core run time stuff, or the heart of IO.
 
 - Design: the design-time companion (Model Explorer, etc.).
 
-- ObjectFoundry: ModelMaker integration expert/add-in.
-
-- Tests: holds the IO automated unit test infrastructure and the actual test code.
+- PackageGroups: contains package groups for easy installation of all the packages
 
 The Source\Brokers folder
 -------------------------
 Here we have a subfolder for each supported broker. A broker is a means for IO to use as storage a particular database engine through a particular middleware. There are two main kinds of IO object brokers: dataset-based and SQL-based; the latter offer better performance and additional features (like external storage) when you use a SQL-enabled database engine. Here is a list of the currently supported brokers:
+
+FireDAC: a SQL-based broker to use Embarcadero FireDac. Available from Delphi XE3.
+
+AnyDAC: a SQL-based broker to use  AnyDac, the previous commercial component of FireDAC.
 
 ADO: for MS Access (table-based) and MS SQL Server (SQL-based) through ADO/OLEDB. Makes use of the Delphi support for ADO (ADOExpress/dbGo).
 
@@ -77,10 +87,6 @@ The Source\Design folder
 ------------------------
 This is where the IO design time stuff (DclIOCore.dpk) lives. The subfolders here have the same meaning as those in the brokers folders.
 
-The Source\ObjectFoundry folder
--------------------------------
-ObjectFoundry is a tool that joins InstantObjects and ModelMaker. See the OF_readme.txt file to know more.
-
-The Source\Tests folder
+The Tests folder
 -----------------------
 The IO test infrastructure makes use of the open source ubmock unit test framework (from our own Uberto Barbini). This folder contains the IO specific unit test stuff. Currently the unit testing effort has just started, so we have just a handful of tests. Additions (in the form of new tests) are very welcome.
