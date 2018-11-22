@@ -41,7 +41,7 @@ unit InstantPersistence;
 interface
 
 uses
-  {$IFDEF FMX}FMX.Objects,{$ELSE}Graphics,{$ENDIF}
+  {$IFDEF INSTANTOBJECTS_FMX}FMX.Objects,{$ELSE}Graphics,{$ENDIF}
   Classes, {$IFNDEF NEXTGEN}Contnrs,{$ENDIF} SysUtils, DB, InstantClasses, InstantCommand, InstantConsts,
   InstantMetadata, InstantTypes;
 
@@ -463,7 +463,7 @@ type
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
-{$IFDEF FMX}
+{$IFDEF INSTANTOBJECTS_FMX}
     procedure AssignPicture(Source: TImage);
     procedure AssignToPicture(Dest: TImage);
 {$ELSE}
@@ -1600,7 +1600,7 @@ procedure InstantUnregisterClass(AClass: TInstantObjectClass);
 procedure InstantUnregisterClasses(AClasses: array of TInstantObjectClass);
 
 function InstantResolveGraphicFileType(AStream: TStream ): TInstantGraphicFileFormat;
-{$IFNDEF FMX}
+{$IFNDEF INSTANTOBJECTS_FMX}
 procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
   AGraphicClass: TGraphicClass);
 function InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat) : TGraphicClass;
@@ -1651,7 +1651,7 @@ uses
 var
   ConnectorClasses: TList;
   ClassList: TList;
-{$IFNDEF FMX}
+{$IFNDEF INSTANTOBJECTS_FMX}
   GraphicClassList: array[TInstantGraphicFileFormat] OF TGraphicClass;
 {$ENDIF}
   RuntimeModel: TInstantModel;
@@ -2052,7 +2052,7 @@ begin
   end;
 end;
 
-{$IFNDEF FMX}
+{$IFNDEF INSTANTOBJECTS_FMX}
 procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
   AGraphicClass: TGraphicClass);
 begin
@@ -3793,7 +3793,7 @@ begin
   Writer.WriteBinary(SaveDataToStream);
 end;
 
-{$IFDEF FMX}
+{$IFDEF INSTANTOBJECTS_FMX}
 procedure TInstantBlob.AssignPicture(Source: TImage);
 begin
   if Assigned(Source.Bitmap) then
@@ -3871,7 +3871,7 @@ end;
 
 procedure TInstantBlob.AssignTo(Dest: TPersistent);
 begin
-{$IFDEF FMX}
+{$IFDEF INSTANTOBJECTS_FMX}
   if Dest is TImage then
     AssignToPicture(TImage(Dest))
   else
@@ -9323,7 +9323,7 @@ initialization
     TInstantObjectReference, TInstantConnectionDefs, TInstantConnectionDef]);
   ClassList := TList.Create;
 {$IFDEF MSWINDOWS}
-{$IFNDEF FMX}
+{$IFNDEF INSTANTOBJECTS_FMX}
   GraphicClassList[gffIco] := Graphics.TIcon;
   GraphicClassList[gffBmp] := Graphics.TBitmap;
   {$IFNDEF FPC}
