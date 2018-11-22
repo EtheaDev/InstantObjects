@@ -331,7 +331,7 @@ implementation
 uses
   SysUtils, InstantConsts,
   TypInfo, InstantXMLCatalog, InstantUtils,
-{$IFNDEF FMX}
+{$IFNDEF INSTANTOBJECTS_FMX}
 InstantXMLConnectionDefEdit, FileCtrl, Controls,
 {$ENDIF}
   Windows;
@@ -451,7 +451,7 @@ end;
 
 function TInstantXMLConnectionDef.Edit: Boolean;
 begin
-{$IFNDEF FMX}
+{$IFNDEF INSTANTOBJECTS_FMX}
   with TInstantXMLConnectionDefEditForm.Create(nil) do
   try
     LoadData(Self);

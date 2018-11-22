@@ -42,7 +42,7 @@ unit InstantXMLCatalog;
 interface
 
 uses
-{$IFNDEF FMX}
+{$IFNDEF INSTANTOBJECTS_FMX}
   FileCtrl,
 {$ENDIF}
   InstantPersistence, InstantBrokers, InstantMetadata, InstantTypes;

@@ -3894,6 +3894,8 @@ begin
     ClearRecord(Buffer)
   else begin
     Obj := Objects[Pred(RecNo)];
+    if not Assigned(Obj) then
+      raise Exception.Create('Critical error: object not found!');
     CopyObjectToBuffer(Obj, Buffer);
     with GetRecInfo(Buffer)^ do
     begin
