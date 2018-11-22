@@ -1,23 +1,53 @@
 inherited QueryViewForm: TQueryViewForm
   Width = 772
   Height = 320
+  ExplicitWidth = 772
+  ExplicitHeight = 320
   object Splitter: TSplitter
     Left = 0
-    Top = 147
+    Top = 182
     Width = 772
     Height = 6
     Cursor = crVSplit
     Align = alTop
+    ExplicitTop = 147
   end
-  object CommandPanel: TPanel
+  object ExamplePanel: TPanel
     Left = 0
     Top = 0
     Width = 772
+    Height = 35
+    Align = alTop
+    BevelOuter = bvLowered
+    TabOrder = 0
+    object ExampleLabel: TLabel
+      Left = 27
+      Top = 16
+      Width = 40
+      Height = 13
+      Caption = 'E&xample'
+      FocusControl = ExampleComboBox
+    end
+    object ExampleComboBox: TComboBox
+      Left = 73
+      Top = 8
+      Width = 666
+      Height = 21
+      Style = csDropDownList
+      DropDownCount = 12
+      TabOrder = 0
+      OnClick = ExampleComboBoxClick
+    end
+  end
+  object CommandPanel: TPanel
+    Left = 0
+    Top = 35
+    Width = 772
     Height = 147
     Align = alTop
-    BevelOuter = bvNone
+    BevelOuter = bvLowered
     BorderWidth = 30
-    TabOrder = 0
+    TabOrder = 1
     object CommandLabel: TLabel
       Left = 30
       Top = 14
@@ -25,14 +55,6 @@ inherited QueryViewForm: TQueryViewForm
       Height = 13
       Caption = '&Command'
       FocusControl = CommandEdit
-    end
-    object ExampleLabel: TLabel
-      Left = 315
-      Top = 125
-      Width = 40
-      Height = 13
-      Caption = 'E&xample'
-      FocusControl = ExampleComboBox
     end
     object NumberLabel: TLabel
       Left = 614
@@ -45,20 +67,19 @@ inherited QueryViewForm: TQueryViewForm
       FocusControl = MaxCountEdit
     end
     object Label1: TLabel
-      Left = 168
-      Top = 124
+      Left = 473
+      Top = 125
       Width = 26
       Height = 13
       Caption = 'Mode'
       FocusControl = LoadModeComboBox
     end
     object CommandEdit: TMemo
-      Left = 30
-      Top = 30
-      Width = 712
-      Height = 87
+      Left = 31
+      Top = 31
+      Width = 710
+      Height = 85
       Align = alClient
-      ParentFont = True
       TabOrder = 0
     end
     object ExecuteButton: TButton
@@ -68,16 +89,6 @@ inherited QueryViewForm: TQueryViewForm
       Height = 25
       Action = ExecuteAction
       TabOrder = 1
-    end
-    object ExampleComboBox: TComboBox
-      Left = 361
-      Top = 121
-      Width = 268
-      Height = 21
-      Style = csDropDownList
-      DropDownCount = 12
-      TabOrder = 4
-      OnClick = ExampleComboBoxClick
     end
     object MaxCountEdit: TMaskEdit
       Left = 695
@@ -90,13 +101,13 @@ inherited QueryViewForm: TQueryViewForm
       Text = '0        '
     end
     object LoadModeComboBox: TComboBox
-      Left = 202
-      Top = 121
+      Left = 507
+      Top = 122
       Width = 101
       Height = 21
       Style = csDropDownList
       ItemIndex = 0
-      TabOrder = 3
+      TabOrder = 4
       Text = 'Keys First'
       Items.Strings = (
         'Keys First'
@@ -104,8 +115,8 @@ inherited QueryViewForm: TQueryViewForm
         'Full Burst')
     end
     object FetchAllCheckBox: TCheckBox
-      Left = 95
-      Top = 116
+      Left = 111
+      Top = 123
       Width = 64
       Height = 17
       Alignment = taLeftJustify
@@ -113,63 +124,69 @@ inherited QueryViewForm: TQueryViewForm
       TabOrder = 2
     end
     object StatementCacheCheckBox: TCheckBox
-      Left = 95
-      Top = 131
-      Width = 64
+      Left = 199
+      Top = 123
+      Width = 106
       Height = 17
       Alignment = taLeftJustify
-      Caption = 'S. Cache'
-      TabOrder = 6
+      Caption = 'Statement Cache'
+      TabOrder = 3
     end
   end
   object ResultPageControl: TPageControl
     Left = 0
-    Top = 153
+    Top = 188
     Width = 772
-    Height = 167
+    Height = 132
     ActivePage = ResultTabSheet
     Align = alClient
-    TabOrder = 1
+    TabOrder = 2
     object ResultTabSheet: TTabSheet
       Caption = 'Result'
       object ResultGrid: TDBGrid
         Left = 0
         Top = 0
         Width = 764
-        Height = 139
+        Height = 104
         Align = alClient
         DataSource = TestSource
         TabOrder = 0
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
       end
     end
     object TranslatedQueryTabSheet: TTabSheet
       Caption = 'Translated Query'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object TranslatedQueryMemo: TMemo
         Left = 0
         Top = 0
         Width = 764
-        Height = 139
+        Height = 104
         Align = alClient
-        ParentFont = True
         TabOrder = 0
       end
     end
     object StatsTabSheet: TTabSheet
       Caption = 'Stats'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       object StatsMemo: TMemo
         Left = 0
         Top = 0
         Width = 764
-        Height = 139
+        Height = 104
         Align = alClient
-        ParentFont = True
         TabOrder = 0
       end
     end

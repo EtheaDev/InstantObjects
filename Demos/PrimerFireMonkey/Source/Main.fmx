@@ -6,88 +6,61 @@ object fmMain: TfmMain
   ClientWidth = 842
   FormFactor.Width = 320
   FormFactor.Height = 480
-  FormFactor.Devices = [dkDesktop]
+  FormFactor.Devices = [Desktop]
+  DesignerMasterStyle = 0
   object DBNavigator1: TBindNavigator
-    Height = 25.000000000000000000
     Position.X = 104.000000000000000000
     Position.Y = 8.000000000000000000
-    Width = 240.000000000000000000
+    Size.Width = 240.000000000000000000
+    Size.Height = 25.000000000000000000
+    Size.PlatformDefault = False
     DataSource = BindScopeDB1
     xRadius = 4.000000000000000000
     yRadius = 4.000000000000000000
     object ConnectButton: TButton
-      DisableFocusEffect = False
-      Height = 25.000000000000000000
       Position.X = -96.000000000000000000
+      Size.Width = 80.000000000000000000
+      Size.Height = 22.000000000000000000
+      Size.PlatformDefault = False
       TabOrder = 0
       Text = 'Connect...'
-      Width = 89.000000000000000000
       OnClick = ConnectButtonClick
     end
   end
   object RecordLabel: TLabel
-    Height = 15.000000000000000000
     Position.X = 352.000000000000000000
     Position.Y = 14.000000000000000000
+    Size.Width = 120.000000000000000000
+    Size.Height = 15.000000000000000000
+    Size.PlatformDefault = False
     Text = 'Record:'
-    Width = 120.000000000000000000
   end
   object StringGrid1: TStringGrid
-    Touch.InteractiveGestures = [igPan]
-    Height = 441.000000000000000000
+    CanFocus = True
+    ClipChildren = True
     Position.X = 8.000000000000000000
     Position.Y = 40.000000000000000000
+    Size.Width = 625.000000000000000000
+    Size.Height = 353.000000000000000000
+    Size.PlatformDefault = False
     StyleLookup = 'gridstyle'
-    Width = 633.000000000000000000
-    RowCount = 0
     RowHeight = 21.000000000000000000
-    object TStringColumn
-      Header = 'Name'
-      Height = 416.000000000000000000
-      Width = 200.000000000000000000
-    end
-    object TStringColumn
-      Header = 'City'
-      Height = 416.000000000000000000
-      Position.X = 200.000000000000000000
-      Width = 100.000000000000000000
-    end
-    object TStringColumn
-      Header = 'Street'
-      Height = 416.000000000000000000
-      Position.X = 300.000000000000000000
-      Width = 100.000000000000000000
-    end
-    object TStringColumn
-      Header = 'Zip'
-      Height = 416.000000000000000000
-      Position.X = 400.000000000000000000
-      Width = 30.000000000000000000
-    end
-    object TStringColumn
-      Header = 'State'
-      Height = 416.000000000000000000
-      Position.X = 430.000000000000000000
-      Width = 60.000000000000000000
-    end
-    object TStringColumn
-      Header = 'Country'
-      Height = 416.000000000000000000
-      Position.X = 490.000000000000000000
-      Width = 100.000000000000000000
-    end
+    RowCount = 0
+    Viewport.Width = 621.000000000000000000
+    Viewport.Height = 328.000000000000000000
   end
   object ImageControl1: TImageControl
-    DisableFocusEffect = False
-    Height = 105.000000000000000000
     Position.X = 648.000000000000000000
     Position.Y = 40.000000000000000000
     Scale.X = 2.000000000000000000
     Scale.Y = 2.000000000000000000
-    Width = 81.000000000000000000
+    Size.Width = 73.000000000000000000
+    Size.Height = 89.000000000000000000
+    Size.PlatformDefault = False
     object PictureOpacityAnimation: TFloatAnimation
       Duration = 1.000000000000000000
       PropertyName = 'Opacity'
+      StartValue = 0.000000000000000000
       StopValue = 1.000000000000000000
     end
     object PictureRotationAngle: TFloatAnimation
@@ -98,19 +71,18 @@ object fmMain: TfmMain
     end
   end
   object Edit1: TEdit
-    DisableFocusEffect = False
-    KeyboardType = vktDefault
-    Password = False
+    Touch.InteractiveGestures = [LongTap, DoubleTap]
     Position.X = 648.000000000000000000
     Position.Y = 264.000000000000000000
-    Width = 169.000000000000000000
-    Height = 22.000000000000000000
+    Size.Width = 100.000000000000000000
+    Size.Height = 22.000000000000000000
+    Size.PlatformDefault = False
   end
   object ContactSelector: TInstantSelector
     AfterScroll = ContactSelectorAfterScroll
     Command.Strings = (
       'SELECT * FROM ANY TContact')
-    Connector = InstanXMLXConnector1
+    Connector = InstantXMLConnector
     ObjectClassName = 'TContact'
     AfterOpen = ContactSelectorAfterOpen
     Left = 344
@@ -164,20 +136,19 @@ object fmMain: TfmMain
     Left = 344
     Top = 344
   end
-  object InstanXMLXConnector1: TInstantXMLConnector
-    IsDefault = True
-    Connection = XMLFilesAccessor1
+  object InstantXMLConnector: TInstantXMLConnector
+    BlobStreamFormat = sfXML
+    Connection = XMLFilesAccessor
     Left = 56
     Top = 344
   end
-  object XMLFilesAccessor1: TXMLFilesAccessor
+  object XMLFilesAccessor: TXMLFilesAccessor
     RootFolder = '\'
     Left = 56
     Top = 288
   end
   object BindScopeDB1: TBindScopeDB
     DataSource = ContactsSource
-    DataSet = ContactSelector
     ScopeMappings = <>
     Left = 344
     Top = 408
@@ -185,14 +156,12 @@ object fmMain: TfmMain
   object BindingsList: TBindingsList
     Methods = <>
     OutputConverters = <>
-    UseAppManager = True
     Left = 704
     Top = 48
     object BindDBGridLink1: TBindDBGridLink
       Category = 'DB Links'
       DataSource = BindScopeDB1
       GridControl = StringGrid1
-      AutoBufferCount = False
       Columns = <
         item
           FieldName = 'Name'

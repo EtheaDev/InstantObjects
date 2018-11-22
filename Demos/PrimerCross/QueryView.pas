@@ -26,8 +26,6 @@ type
     CommandEdit: TMemo;
     CommandLabel: TLabel;
     CommandPanel: TPanel;
-    ExampleComboBox: TComboBox;
-    ExampleLabel: TLabel;
     ExecuteAction: TAction;
     ExecuteButton: TButton;
     ResultGrid: TDBGrid;
@@ -46,6 +44,9 @@ type
     StatsMemo: TMemo;
     FetchAllCheckBox: TCheckBox;
     StatementCacheCheckBox: TCheckBox;
+    ExamplePanel: TPanel;
+    ExampleLabel: TLabel;
+    ExampleComboBox: TComboBox;
     procedure ExecuteActionExecute(Sender: TObject);
     procedure ExampleComboBoxClick(Sender: TObject);
     procedure TestSelectorAfterScroll(DataSet: TDataSet);
