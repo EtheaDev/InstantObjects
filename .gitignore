@@ -9,3 +9,8 @@
 /Source/Catalogs/MySQL/D10_3/*.local
 /Source/Core/D10_3/*.local
 /Source/Core/D10_3/*.identcache
+*.local
+*.exe
+*.identcache
+*.stat
+__history
