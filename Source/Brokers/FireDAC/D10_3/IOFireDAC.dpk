@@ -25,7 +25,7 @@ package IOFireDAC;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'InstantObjects FireDAC Run-Time Support (Delphi 10 Tokyo)'}
+{$DESCRIPTION 'InstantObjects FireDAC Run-Time Support (Delphi 10.3 Rio)'}
 {$LIBSUFFIX '_D26'}
 {$RUNONLY}
 {$IMPLICITBUILD OFF}

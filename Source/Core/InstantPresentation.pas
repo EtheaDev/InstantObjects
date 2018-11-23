@@ -378,6 +378,7 @@ type
     procedure SetOnProgress(const Value: TInstantProgressEvent);
     procedure SetOptions(const Value: TInstantExposerOptions);
     procedure SetSorted(Value: Boolean);
+    function GetIsDefaultFields: Boolean;
   protected
     { IProviderSupport }
     procedure PSGetAttributes(List: TList); override;
@@ -524,6 +525,8 @@ type
     property ObjectClassName: string read GetObjectClassName write SetObjectClassName stored HasObjectClassName;
     property RecordBuffer: TInstantRecordBuffer read GetRecordBuffer;
     property Subject: TObject read GetSubject;
+    property IsDefaultFields: Boolean read GetIsDefaultFields;
+
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -828,7 +831,7 @@ uses
   System.Types,
   Generics.Collections,
 {$ENDIF}
-  InstantClasses,
+  InstantClasses, AnsiStrings,
   InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors, DbConsts;
 
 type
@@ -2909,6 +2912,15 @@ begin
     Result := Objects[Pred(RecNo)];
 end;
 
+function TInstantCustomExposer.GetIsDefaultFields: Boolean;
+begin
+{$IFDEF D18+}
+  Result := (inherited FieldOptions.AutoCreateMode <> acExclusive) or not (lcPersistent in Fields.LifeCycles);
+{$ELSE}
+  Result := inherited DefaultFields;
+{$ENDIF}
+end;
+
 function TInstantCustomExposer.GetDesignClass: TInstantCodeClass;
 begin
   if Assigned(DesignModel) then
@@ -3243,7 +3255,7 @@ end;
 function TInstantCustomExposer.IncludeField(FieldName: string;
   Default: Boolean): Boolean;
 begin
-  if DefaultFields or (csDesigning in ComponentState) or (Fields.Count = 0) then
+  if IsDefaultFields or (csDesigning in ComponentState) or (Fields.Count = 0) then
     Result := Default
   else
     Result := Assigned(Fields.FindField(FieldName));
@@ -3430,7 +3442,7 @@ end;
 procedure TInstantCustomExposer.InternalClose;
 begin
   FIsOpen := False;
-  if DefaultFields then
+  if IsDefaultFields then
     DestroyFields;
   FContentChanged := False;
   FreeAndNil(FContentBuffer);
@@ -3599,7 +3611,7 @@ begin
     Remember;
   FRecNo := 0;
   InternalInitFieldDefs;
-  if DefaultFields then
+  if IsDefaultFields then
     CreateFields;
   BindFields(True);
   InitBufferPointers;
@@ -4212,6 +4224,16 @@ begin
   case Field.DataType of
     ftString:
       begin
+        {$IFDEF D18+}
+        P_A := AnsiStrings.AnsiStrAlloc(FieldDataSize(Field));
+        try
+          AnsiStrings.StrCopy(P_A, Buffer);
+          A_S := P_A;
+          Value := A_S;
+        finally
+          AnsiStrings.StrDispose(P_A);
+        end;
+        {$ELSE}
         P_A := AnsiStrAlloc(FieldDataSize(Field));
         try
           StrCopy(P_A, Buffer);
@@ -4220,6 +4242,7 @@ begin
         finally
           StrDispose(P_A);
         end;
+        {$ENDIF}
       end;
     ftWideString:
       begin

@@ -578,19 +578,21 @@ end;
 
 function TInstantDBXBroker.Execute(const AStatement: string;
   AParams: TParams): Integer;
+var
+  LQuery: TSQLQuery;
 begin
-  Result := 0;
-  with CreateDataSet(AStatement, AParams) as TSQLQuery do
-    try try
-      Result := ExecSQL;
-    except
-      on E: Exception do
-        raise EInstantError.CreateFmt(SSQLExecuteError,
-          [AStatement, E.Message], E);
-    end;
-    finally
-      Free;
-    end;
+  Result := -1;
+  LQuery := CreateDataSet(AStatement, AParams) as TSQLQuery;
+  try try
+    Result := LQuery.ExecSQL;
+  except
+    on E: Exception do
+      raise EInstantError.CreateFmt(SSQLExecuteError,
+        [AStatement, E.Message], E);
+  end;
+  finally
+    LQuery.Free;
+  end;
 end;
 
 function TInstantDBXBroker.GetConnector: TInstantDBXConnector;

@@ -42,7 +42,7 @@ unit InstantXML;
 interface
 
 uses
-  Classes, DB, Contnrs, InstantPersistence, InstantBrokers, InstantCommand,
+  Classes, DB, Contnrs, Types, InstantPersistence, InstantBrokers, InstantCommand,
   InstantMetadata, InstantTypes, InstantClasses;
 
 const
@@ -695,8 +695,8 @@ end;
 procedure TInstantXMLConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
   CheckConnection;
-  if not DirectoryExists(Connection.RootFolder) and
-      not ForceDirectories(Connection.RootFolder) then
+  if not SysUtils.DirectoryExists(Connection.RootFolder) and
+      not SysUtils.ForceDirectories(Connection.RootFolder) then
     raise EInOutError.CreateFmt(SCannotCreateDirectory,
       [Connection.RootFolder]);
 end;
@@ -1338,7 +1338,7 @@ end;
 
 procedure TXMLFilesAccessor.CreateStorageDir(const AStorageName: string);
 begin
-  if not DirectoryExists(RootFolder + AStorageName) then
+  if not SysUtils.DirectoryExists(RootFolder + AStorageName) then
     MkDir(RootFolder + AStorageName);
 end;
 
@@ -1379,7 +1379,7 @@ end;
 
 procedure TXMLFilesAccessor.DoConnect;
 begin
-  if DirectoryExists(RootFolder) then
+  if SysUtils.DirectoryExists(RootFolder) then
     FConnected := True;
 end;
 
@@ -1469,8 +1469,8 @@ begin
   Connector.CheckConnection;
   vDatabaseName := Connector.DatabaseName;
 
-  if not DirectoryExists(vDatabaseName) and
-      not ForceDirectories(vDatabaseName) then
+  if not SysUtils.DirectoryExists(vDatabaseName) and
+      not SysUtils.ForceDirectories(vDatabaseName) then
     raise EInOutError.CreateFmt(SCannotCreateDirectory, [vDatabaseName]);
 
   // No need to create the class-specific folders, which will be created
@@ -1494,7 +1494,7 @@ begin
 
   // Delete subFolder for the "storage name"
   vTableName := vDatabaseName + TableMetadata.Name;
-  if DirectoryExists(vTableName) then
+  if SysUtils.DirectoryExists(vTableName) then
   begin
     if FindFirst(vTableName + '\*.*', faAnyFile, sr) = 0 then
     begin

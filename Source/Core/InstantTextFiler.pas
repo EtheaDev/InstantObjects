@@ -323,22 +323,30 @@ end;
 
 function TInstantTextReader.IsIdentPrefix(Ch: Char): Boolean;
 begin
-{$IFDEF D12+}
-  Result := TCharacter.IsLetter(Ch) or (Ch = '_');
+{$IFDEF D18+}
+  Result := Ch.IsLetter or  (Ch = '_');
 {$ELSE}
-  Result := Ch in ['A'..'Z','a'..'z','_'];
+  {$IFDEF D12+}
+    Result := TCharacter.IsLetter(Ch) or  (Ch = '_');
+  {$ELSE}
+    Result := Ch in ['A'..'Z','a'..'z','_'];
+  {$ENDIF}
 {$ENDIF}
 end;
 
 function TInstantTextReader.IsIdentChar(Ch: Char; AllowDots: boolean): Boolean;
 begin
-{$IFDEF D12+}
-  Result := TCharacter.IsLetterOrDigit(Ch) or (Ch = '_') or (AllowDots and (Ch = '.'))
+{$IFDEF D18+}
+  Result := Ch.IsLetterOrDigit or (Ch = '_') or (AllowDots and (Ch = '.'));
 {$ELSE}
-  if (AllowDots) then
-    Result := Ch in ['A'..'Z','a'..'z','_','.']
-  else
-    Result := Ch in ['A'..'Z','a'..'z','_'];
+  {$IFDEF D12+}
+     Result := TCharacter.IsLetterOrDigit(Ch) or (Ch = '_') or (AllowDots and (Ch = '.'));
+  {$ELSE}
+    if (AllowDots) then
+      Result := Ch in ['A'..'Z','a'..'z','_','.']
+    else
+      Result := Ch in ['A'..'Z','a'..'z','_'];
+  {$ENDIF}
 {$ENDIF}
 end;
 

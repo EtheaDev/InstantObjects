@@ -31,7 +31,7 @@ package DclIOCore;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'InstantObjects Design-Time Package (Delphi 10.3)'}
+{$DESCRIPTION 'InstantObjects Design-Time Package (Delphi 10.3 Rio)'}
 {$LIBSUFFIX '_D26'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}

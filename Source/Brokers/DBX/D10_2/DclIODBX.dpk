@@ -26,7 +26,7 @@ package DclIODBX;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'InstantObjects dbExpress Design-Time Support (Delphi 10.1 Berlin)'}
+{$DESCRIPTION 'InstantObjects dbExpress Design-Time Support (Delphi 10.2 Tokyo)'}
 {$LIBSUFFIX '_D25'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}

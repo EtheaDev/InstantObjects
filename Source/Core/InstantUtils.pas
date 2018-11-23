@@ -318,7 +318,7 @@ begin
         vtExtended: Result[I] := VExtended^;
         vtString: Result[I] := VString^;
         vtPointer: Result[I] := Integer(VPointer);
-        vtPChar: Result[I] := StrPas(VPChar);
+        vtPChar: Result[I] := AnsiString(VPChar);
         vtAnsiString: Result[I] := string(VAnsiString);
         vtCurrency: Result[I] := VCurrency^;
         vtVariant: Result[I] := VVariant^;

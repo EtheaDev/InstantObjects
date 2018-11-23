@@ -26,7 +26,7 @@ package DclIOXML;
 {$IMAGEBASE $400000}
 {$DEFINE DEBUG}
 {$ENDIF IMPLICITBUILDING}
-{$DESCRIPTION 'InstantObjects XML Design-Time Support (Delphi 10.1 Berlin)'}
+{$DESCRIPTION 'InstantObjects XML Design-Time Support (Delphi 10.3 Rio)'}
 {$LIBSUFFIX '_D26'}
 {$DESIGNONLY}
 {$IMPLICITBUILD OFF}

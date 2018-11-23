@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{5758E177-7F72-4DD5-A3A7-513F90CFCA65}</ProjectGuid>
         <MainSource>IOIBX.dpk</MainSource>
@@ -51,7 +51,7 @@
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DllSuffix>_D26</DllSuffix>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
-        <DCC_Description>InstantObjects IBX Run-Time Support (Delphi 10.3)</DCC_Description>
+        <DCC_Description>InstantObjects IBX Run-Time Support (Delphi 10.3 Rio)</DCC_Description>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;IBX;$(DCC_Namespace)</DCC_Namespace>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <GenPackage>true</GenPackage>

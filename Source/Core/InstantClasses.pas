@@ -1195,9 +1195,9 @@ procedure TInstantStream.ReadResHeader;
 var
   HeaderSize: Cardinal;
 begin
-  Seek(SizeOf(Cardinal), soFromCurrent);
+  Position := Position + SizeOf(Cardinal);
   Read(HeaderSize, SizeOf(Cardinal));
-  Seek(HeaderSize - 2 * SizeOf(Cardinal), soFromCurrent);
+  Position := Position + HeaderSize - 2 * SizeOf(Cardinal);
 end;
 
 procedure TInstantStream.ReadResourceFileHeader;

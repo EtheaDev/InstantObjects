@@ -43,7 +43,7 @@ interface
 uses
   {$IFDEF INSTANTOBJECTS_FMX}FMX.Objects,{$ELSE}Graphics,{$ENDIF}
   Classes, {$IFNDEF NEXTGEN}Contnrs,{$ENDIF} SysUtils, DB, InstantClasses, InstantCommand, InstantConsts,
-  InstantMetadata, InstantTypes;
+  InstantMetadata, InstantTypes, AnsiStrings;
 
 type
   TInstantAttribute = class;
@@ -3768,7 +3768,11 @@ var
 
 begin
   SetLength(LValue, Count + 1);
+{$IFDEF D18+}
+  AnsiStrings.StrLCopy(PAnsiChar(LValue), PAnsiChar(@Buffer), Count);
+{$ELSE}
   StrLCopy(PAnsiChar(LValue), PAnsiChar(@Buffer), Count);
+{$ENDIF}
   Validate(string(LValue));
 
   if not CompareBuffers then

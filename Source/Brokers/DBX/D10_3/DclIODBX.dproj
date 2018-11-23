@@ -48,7 +48,7 @@
         <DCC_TypedAtParameter>true</DCC_TypedAtParameter>
         <DllSuffix>_D26</DllSuffix>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_Description>InstantObjects dbExpress Design-Time Support (Delphi 10.3)</DCC_Description>
+        <DCC_Description>InstantObjects dbExpress Design-Time Support (Delphi 10.3 Rio)</DCC_Description>
         <DCC_ImageBase>00400000</DCC_ImageBase>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
         <DCC_N>false</DCC_N>

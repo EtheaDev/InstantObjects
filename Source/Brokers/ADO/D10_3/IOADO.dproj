@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{532C58B1-8400-4716-AD3A-A4C7D7A9F493}</ProjectGuid>
         <MainSource>IOADO.dpk</MainSource>
@@ -51,7 +51,7 @@
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
         <DllSuffix>_D26</DllSuffix>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <DCC_Description>InstantObjects ADO Run-Time Support (Delphi 10 Tokyo)</DCC_Description>
+        <DCC_Description>InstantObjects ADO Run-Time Support (Delphi 10.3 Rio)</DCC_Description>
         <DCC_WriteableConstants>true</DCC_WriteableConstants>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;System.Win;Data.Win;$(DCC_Namespace)</DCC_Namespace>

@@ -255,7 +255,7 @@ Resourcestring
 implementation
 
 uses
-  Windows, testutils;
+  Windows, testutils, Types;
 
 type
 

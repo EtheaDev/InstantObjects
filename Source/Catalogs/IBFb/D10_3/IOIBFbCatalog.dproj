@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{4995B4F1-FCC0-4866-ADDA-1C36D5E59A38}</ProjectGuid>
         <MainSource>IOIBFbCatalog.dpk</MainSource>
@@ -52,7 +52,7 @@
         <DCC_TypedAtParameter>true</DCC_TypedAtParameter>
         <DllSuffix>_D26</DllSuffix>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_Description>InstantObjects Catalog for InterBase and Firebird (Delphi 10.3)</DCC_Description>
+        <DCC_Description>InstantObjects Catalog for InterBase and Firebird (Delphi 10.3 Rio)</DCC_Description>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <DCC_N>false</DCC_N>

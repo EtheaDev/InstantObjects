@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{24846E7C-894C-484E-950C-B528292DF63E}</ProjectGuid>
         <MainSource>IOXML.dpk</MainSource>
@@ -52,7 +52,7 @@
         <DCC_TypedAtParameter>true</DCC_TypedAtParameter>
         <DllSuffix>_D26</DllSuffix>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;$(DCC_Namespace)</DCC_Namespace>
-        <DCC_Description>InstantObjects XML Run-Time Support (Delphi 10.3)</DCC_Description>
+        <DCC_Description>InstantObjects XML Run-Time Support (Delphi 10.3 Rio)</DCC_Description>
         <DCC_OutputNeverBuildDcps>true</DCC_OutputNeverBuildDcps>
         <RuntimeOnlyPackage>true</RuntimeOnlyPackage>
         <DCC_N>false</DCC_N>
