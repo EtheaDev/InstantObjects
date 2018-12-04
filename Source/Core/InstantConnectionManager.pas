@@ -30,22 +30,13 @@
 
 unit InstantConnectionManager;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows,  
-{$ENDIF}
-{$IFDEF LINUX}
-  QTypes, 
-{$ENDIF}
   InstantClasses, InstantPersistence, InstantMetadata;
 
 type

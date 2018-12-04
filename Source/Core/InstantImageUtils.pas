@@ -29,20 +29,11 @@ unit InstantImageUtils;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils,
-{$IFDEF MSWINDOWS}
   Graphics, Controls, ImgList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QImgList,
-{$ENDIF}
   Classes;
 
 // Loads a bitmap resource and slices it into a number of images which are
@@ -50,22 +41,12 @@ uses
 // is loaded from the specified module handle, otherwise ResourceName is
 // interpreted as a file name containing the bitmap to load.
 procedure LoadMultipleImages(ImageList: TImageList; const ResourceName: string;
-{$IFDEF MSWINDOWS}
   const ResourceHandle: LongWord = 0);
-{$ENDIF}
-{$IFDEF LINUX}
-  const ResourceHandle: Cardinal = 0);
-{$ENDIF}
 
 implementation
 
 procedure LoadMultipleImages(ImageList: TImageList; const ResourceName: string;
-{$IFDEF MSWINDOWS}
   const ResourceHandle: LongWord = 0);
-{$ENDIF}
-{$IFDEF LINUX}
-  const ResourceHandle: Cardinal = 0);
-{$ENDIF}
 var
   Picture: TPicture;
   X, Y: Integer;

@@ -53,7 +53,6 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
       Top = 32
       Width = 280
       Height = 21
-      ItemHeight = 13
       TabOrder = 0
       OnDropDown = DatabaseEditDropDown
     end
@@ -63,10 +62,7 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
       Width = 21
       Height = 21
       Hint = 'Database Directory'
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 1
-      OnClick = DirectoryButtonClick
+      DoubleBuffered = True
       Glyph.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
         0400000000008000000000000000000000001000000000000000000000000000
@@ -76,6 +72,11 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
         0555550FBFBFBFBF0555550BFBFBFBFB0555550FBFBFBFBF0555550BFBFBFBFB
         0555550FBFBFBFBF055555000000000055555550FBFB05555555555700007555
         5555555555555555555555555555555555555555555555555555}
+      ParentDoubleBuffered = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      OnClick = DirectoryButtonClick
     end
     object DictionaryButton: TBitBtn
       Left = 325
@@ -83,10 +84,7 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
       Width = 21
       Height = 21
       Hint = 'Data Dictionary'
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 2
-      OnClick = DictionaryButtonClick
+      DoubleBuffered = True
       Glyph.Data = {
         F6000000424DF600000000000000760000002800000010000000100000000100
         0400000000008000000000000000000000001000000000000000000000000000
@@ -96,6 +94,11 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
         333333CCC0FFF0C333333CCCCC0FFF0C33334CCCCCC0FFF0C333C4CCCCCC0FFF
         0C333C4CCCCCC0FFF0C333C4CCC0CC0F0C33333C4C0CCCC033333333C4CCCCCC
         333333333C4CCCC33333333333C4C33333333333333333333333}
+      ParentDoubleBuffered = False
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 2
+      OnClick = DictionaryButtonClick
     end
     object ConnectionTypeGroupBox: TGroupBox
       Left = 16
@@ -135,7 +138,6 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 4
     end
@@ -148,6 +150,9 @@ object InstantADSConnectionDefEditForm: TInstantADSConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      362
+      35)
     object OkButton: TButton
       Left = 204
       Top = 6

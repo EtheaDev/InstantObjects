@@ -30,11 +30,7 @@
 
 unit InstantTextFiler;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -133,17 +129,8 @@ uses
 procedure AdvanceTextPos(var Pos: TInstantTextPos; Ch: Char);
 begin
   case Ch of
-    {$IFDEF MSWINDOWS}
     #13: Pos.Column := 1;
     #10: Inc(Pos.Line);
-    {$ENDIF}
-
-    {$IFDEF LINUX}
-    #10: begin
-      Inc(Pos.Line);
-      Pos.Column := 1;
-    end;
-    {$ENDIF}
   else
     Inc(Pos.Column);
   end;
@@ -153,17 +140,8 @@ end;
 procedure DescendTextPos(var Pos: TInstantTextPos; Ch: Char);
 begin
   case Ch of
-    {$IFDEF MSWINDOWS}
     #13: Pos.Column := 0; { Unknown }
     #10: Dec(Pos.Line);
-    {$ENDIF}
-
-    {$IFDEF LINUX}
-    #10: begin
-      Dec(Pos.Line);
-      Pos.Column := 0;
-    end;
-    {$ENDIF}
   else
     Dec(Pos.Column);
   end;

@@ -1,10 +1,10 @@
 object InstantConnectionManagerForm: TInstantConnectionManagerForm
   Left = 396
   Top = 280
-  Width = 350
-  Height = 281
   BorderIcons = [biSystemMenu]
   Caption = 'Connection Manager'
+  ClientHeight = 242
+  ClientWidth = 334
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -32,8 +32,8 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   object ConnectionView: TListView
     Left = 0
     Top = 0
-    Width = 342
-    Height = 222
+    Width = 334
+    Height = 210
     Align = alClient
     Columns = <
       item
@@ -48,14 +48,18 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
     TabOrder = 0
     ViewStyle = vsReport
     OnDblClick = ConnectionViewDblClick
+    ExplicitWidth = 342
+    ExplicitHeight = 222
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 222
-    Width = 342
+    Top = 210
+    Width = 334
     Height = 32
     Align = alBottom
     TabOrder = 1
+    ExplicitTop = 222
+    ExplicitWidth = 342
     object BuildButton: TButton
       Left = 4
       Top = 4

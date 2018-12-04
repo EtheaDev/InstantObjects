@@ -31,11 +31,7 @@
 
 unit InstantCode;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -1585,12 +1581,7 @@ type
   end;
 
 const
-{$IFDEF MSWINDOWS}
   CRLF = #13#10;
-{$ENDIF}
-{$IFDEF LINUX}
-  CRLF = #10;
-{$ENDIF}
 
   MetadataInfoID = 'IOMETADATA';
   MetaKeyDefault = 'default';
@@ -6862,12 +6853,7 @@ begin
         '/':
           if NextChar = '/' then
           begin
-            {$IFDEF MSWINDOWS}
               ReadNext(#13);
-            {$ENDIF}
-            {$IFDEF LINUX}
-              ReadNext(#10);
-            {$ENDIF}
             IsComment := True;
           end;
       end;
@@ -8106,16 +8092,9 @@ begin
         while not Finished do
         begin
           Ch := ReadTextChar;
-          {$IFDEF MSWINDOWS}
           if (Ch = #13) and (NextChar = #10) then
           begin
             ReadTextChar;
-          {$ENDIF}
-
-          {$IFDEF LINUX}
-          if (Ch = #10) then
-          begin
-          {$ENDIF}
 
             DeleteFrom(StartPos);
             Exit;
@@ -8852,7 +8831,6 @@ begin
   I := CursorPos.Offset;
   while I >= 0 do
   begin
-    {$IFDEF MSWINDOWS}
     if FCode^[I] = #13 then
     begin
       Inc(I);
@@ -8868,21 +8846,6 @@ begin
       Break;
     end;
     Dec(I);
-    {$ENDIF}
-
-    {$IFDEF LINUX}
-    if FCode^[I] = #10 then
-    begin
-      Inc(I);
-      while FCode^[I] in [' ', #9] do
-      begin
-        Result := Result + FCode^[I];
-        Inc(I);
-      end;
-      Break;
-    end;
-    Dec(I);
-    {$ENDIF}
   end;
 end;
 

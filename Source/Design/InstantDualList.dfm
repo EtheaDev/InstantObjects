@@ -1,32 +1,39 @@
 inherited InstantDualListForm: TInstantDualListForm
   Left = 310
-  Width = 385
-  Height = 286
   Caption = 'Dual List'
+  ClientHeight = 329
+  ClientWidth = 372
   OldCreateOrder = True
+  ExplicitWidth = 388
+  ExplicitHeight = 368
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 211
-    Width = 377
+    Top = 288
+    Width = 372
+    ExplicitTop = 288
+    ExplicitWidth = 372
     inherited ButtonBevel: TBevel
-      Width = 377
+      Width = 372
+      ExplicitWidth = 377
     end
     object OkButton: TButton
-      Left = 218
+      Left = 213
       Top = 10
       Width = 75
       Height = 25
+      Anchors = [akTop, akRight]
       Caption = 'OK'
       Default = True
       ModalResult = 1
       TabOrder = 0
     end
     object CancelButton: TButton
-      Left = 298
+      Left = 293
       Top = 10
       Width = 75
       Height = 25
+      Anchors = [akTop, akRight]
       Cancel = True
       Caption = 'Cancel'
       ModalResult = 2
@@ -36,17 +43,18 @@ inherited InstantDualListForm: TInstantDualListForm
   object ClientPanel: TPanel
     Left = 0
     Top = 0
-    Width = 377
-    Height = 211
+    Width = 372
+    Height = 288
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 4
     TabOrder = 1
+    OnResize = ClientPanelResize
     object LeftPanel: TPanel
       Left = 4
       Top = 4
       Width = 165
-      Height = 203
+      Height = 280
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
@@ -54,7 +62,7 @@ inherited InstantDualListForm: TInstantDualListForm
         Left = 0
         Top = 0
         Width = 165
-        Height = 203
+        Height = 280
         Align = alClient
         Columns = <
           item
@@ -69,18 +77,18 @@ inherited InstantDualListForm: TInstantDualListForm
       end
     end
     object RightPanel: TPanel
-      Left = 208
+      Left = 203
       Top = 4
       Width = 165
-      Height = 203
-      Align = alRight
+      Height = 280
+      Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
       object RightView: TListView
         Left = 0
         Top = 0
         Width = 165
-        Height = 203
+        Height = 280
         Align = alClient
         Columns = <
           item
@@ -97,13 +105,13 @@ inherited InstantDualListForm: TInstantDualListForm
     object CenterPanel: TPanel
       Left = 169
       Top = 4
-      Width = 39
-      Height = 203
-      Align = alClient
+      Width = 34
+      Height = 280
+      Align = alLeft
       BevelOuter = bvNone
       TabOrder = 2
       object RightButton: TButton
-        Left = 7
+        Left = 3
         Top = 24
         Width = 25
         Height = 25
@@ -111,7 +119,7 @@ inherited InstantDualListForm: TInstantDualListForm
         TabOrder = 0
       end
       object LeftButton: TButton
-        Left = 7
+        Left = 3
         Top = 56
         Width = 25
         Height = 25
@@ -119,7 +127,7 @@ inherited InstantDualListForm: TInstantDualListForm
         TabOrder = 1
       end
       object AllRightButton: TButton
-        Left = 7
+        Left = 3
         Top = 88
         Width = 25
         Height = 25
@@ -127,7 +135,7 @@ inherited InstantDualListForm: TInstantDualListForm
         TabOrder = 2
       end
       object AllLeftButton: TButton
-        Left = 7
+        Left = 3
         Top = 120
         Width = 25
         Height = 25

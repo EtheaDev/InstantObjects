@@ -94,6 +94,7 @@ end;
 
 procedure TInstantDBISAMConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
   UpdateControls;
 end;

@@ -30,22 +30,13 @@
 
 unit InstantDialog;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QExtCtrls, QControls, QStdCtrls, QComCtrls, QForms,
-{$ENDIF}
   Classes;
 
 type
@@ -61,12 +52,8 @@ implementation
 
 procedure TInstantDialogForm.FormCreate(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsDialog;
-{$ENDIF}
 end;
 
 end.

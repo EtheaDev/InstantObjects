@@ -33,19 +33,10 @@ unit InstantDBXConnectionDefEdit;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 uses
-{$IFDEF MSWINDOWS}
   Forms, Dialogs, StdCtrls, Controls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   SysUtils, Classes, InstantDBX,
   {$IFNDEF D11+}DBXpress,{$ENDIF}
   DB, SQLExpr;
@@ -122,13 +113,9 @@ end;
 
 procedure TInstantDBXConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
-{$IFDEF MSWINDOWS}
   BorderStyle := bsDialog;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsDialog;
-{$ENDIF}
   UpdateDriverNames;
 end;
 

@@ -29,11 +29,7 @@
 
 unit InstantZeosDBOConnectionDefEdit;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -95,6 +91,7 @@ uses
 
 procedure TInstantZeosDBOConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   AssignZeosDBOProtocols(ProtocolComboBox.Items);
   AssignInstantStreamFormat(StreamFormatComboBox.Items);
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);

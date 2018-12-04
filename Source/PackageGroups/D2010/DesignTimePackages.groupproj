@@ -18,6 +18,9 @@
 			<Projects Include="..\..\Brokers\XML\D2010\DclIOXML.dproj">
 				<Dependencies/>
 			</Projects>
+			<Projects Include="..\..\..\Demos\PrimerCross\Primer_D2010.dproj">
+				<Dependencies/>
+			</Projects>
 		</ItemGroup>
 		<ProjectExtensions>
 			<Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -73,14 +76,23 @@
 		<Target Name="DclIOXML:Make">
 			<MSBuild Targets="Make" Projects="..\..\Brokers\XML\D2010\DclIOXML.dproj"/>
 		</Target>
+		<Target Name="Primer_D2010">
+			<MSBuild Projects="..\..\..\Demos\PrimerCross\Primer_D2010.dproj"/>
+		</Target>
+		<Target Name="Primer_D2010:Clean">
+			<MSBuild Targets="Clean" Projects="..\..\..\Demos\PrimerCross\Primer_D2010.dproj"/>
+		</Target>
+		<Target Name="Primer_D2010:Make">
+			<MSBuild Targets="Make" Projects="..\..\..\Demos\PrimerCross\Primer_D2010.dproj"/>
+		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="DclIOCore;DclIOADO;DclIODBX;DclIOIBX;DclIOXML"/>
+			<CallTarget Targets="DclIOCore;DclIOADO;DclIODBX;DclIOIBX;DclIOXML;Primer_D2010"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean"/>
+			<CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean;Primer_D2010:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make"/>
+			<CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make;Primer_D2010:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>

@@ -30,23 +30,14 @@
 
 unit InstantDualList;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls, ActnList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QActnList, QControls, QComCtrls, QStdCtrls, QExtCtrls,
-{$ENDIF}
   InstantDialog;
 
 type
@@ -75,6 +66,7 @@ type
     procedure LeftViewDblClick(Sender: TObject);
     procedure RightViewDblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure ClientPanelResize(Sender: TObject);
   private
     procedure MoveItem(Item: TListItem; View: TListView);
   protected
@@ -117,6 +109,14 @@ begin
     RightView.Items.EndUpdate;
     LeftView.Items.EndUpdate;
   end;
+end;
+
+procedure TInstantDualListForm.ClientPanelResize(Sender: TObject);
+begin
+  inherited;
+  LeftPanel.Width := (ClientPanel.Width div 2) - (CenterPanel.Width div 2);
+  LeftView.Column[0].Width := LeftPanel.Width - 25;
+  RightView.Column[0].Width := RightPanel.Width - 25;
 end;
 
 function TInstantDualListForm.Execute(Left, Right: TStrings): Boolean;
@@ -206,7 +206,8 @@ end;
 procedure TInstantDualListForm.FormCreate(Sender: TObject);
 begin
   inherited;
-{$IFDEF MSWINDOWS}
+  BorderStyle := bsSizeable;
+
   LeftView.HideSelection := True;
   LeftView.ColumnClick := False;
   LeftView.SortType := stText;
@@ -214,7 +215,6 @@ begin
   RightView.HideSelection := True;
   RightView.ColumnClick := False;
   RightView.SortType := stText;
-{$ENDIF}
 end;
 
 end.

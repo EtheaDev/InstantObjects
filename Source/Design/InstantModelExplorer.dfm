@@ -4,8 +4,11 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   Width = 418
   Height = 536
   VertScrollBar.Range = 20
+  BorderWidth = 4
   Caption = 'InstantObjects Model Explorer'
   Color = clBtnFace
+  Constraints.MinHeight = 400
+  Constraints.MinWidth = 400
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = 11
@@ -20,19 +23,21 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   TextHeight = 13
   object AttributeSplitter: TSplitter
     Left = 0
-    Top = 255
-    Width = 410
+    Top = 242
+    Width = 394
     Height = 4
     Cursor = crVSplit
     Align = alBottom
     Constraints.MinHeight = 4
     Visible = False
+    ExplicitTop = 255
+    ExplicitWidth = 410
   end
   object ModelPanel: TPanel
     Left = 0
     Top = 29
-    Width = 410
-    Height = 226
+    Width = 394
+    Height = 213
     Align = alClient
     BevelOuter = bvNone
     Constraints.MinHeight = 20
@@ -41,7 +46,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 410
+    Width = 394
     Height = 29
     BorderWidth = 1
     ButtonHeight = 23
@@ -89,8 +94,8 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   end
   object AttributePanel: TPanel
     Left = 0
-    Top = 259
-    Width = 410
+    Top = 246
+    Width = 394
     Height = 243
     Align = alBottom
     BevelOuter = bvNone
@@ -100,7 +105,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     object AttributeCaptionPanel: TPanel
       Left = 0
       Top = 0
-      Width = 410
+      Width = 394
       Height = 25
       Align = alTop
       BevelOuter = bvLowered
@@ -123,34 +128,64 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     inline InstantAttributeViewFrame: TInstantAttributeViewFrame
       Left = 0
       Top = 25
-      Width = 410
+      Width = 394
       Height = 218
       Align = alClient
       TabOrder = 1
+      ExplicitTop = 25
+      ExplicitWidth = 394
+      ExplicitHeight = 218
       inherited AttributesSplitter: TSplitter
         Top = 114
-        Width = 410
+        Width = 394
+        ExplicitTop = 114
+        ExplicitWidth = 410
       end
       inherited InheritedAttributesPanel: TPanel
         Top = 118
-        Width = 410
+        Width = 394
+        ExplicitTop = 118
+        ExplicitWidth = 394
         inherited InheritedAttributesLabel: TLabel
-          Width = 410
+          AlignWithMargins = True
+          Left = 3
+          Top = 3
+          Width = 388
+          ExplicitLeft = 3
+          ExplicitTop = 3
+          ExplicitWidth = 410
         end
         inherited InheritedAttributesView: TListView
-          Width = 410
+          Top = 22
+          Width = 394
+          Height = 78
           Font.Pitch = fpVariable
+          ExplicitTop = 22
+          ExplicitWidth = 394
+          ExplicitHeight = 78
         end
       end
       inherited IntroducedAttributesPanel: TPanel
-        Width = 410
+        Width = 394
         Height = 114
+        ExplicitWidth = 394
+        ExplicitHeight = 114
         inherited IntroducedAttributesLabel: TLabel
-          Width = 410
+          AlignWithMargins = True
+          Left = 3
+          Top = 3
+          Width = 388
+          ExplicitLeft = 3
+          ExplicitTop = 3
+          ExplicitWidth = 410
         end
         inherited IntroducedAttributesView: TListView
-          Width = 410
-          Height = 98
+          Top = 22
+          Width = 394
+          Height = 92
+          ExplicitTop = 22
+          ExplicitWidth = 394
+          ExplicitHeight = 92
         end
       end
       inherited Actions: TActionList

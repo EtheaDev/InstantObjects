@@ -30,11 +30,7 @@
 
 unit InstantNexusDBEmbeddedConnectionDefEdit;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 {$I InstantNexusDBDefines.inc}
 
 interface
@@ -94,7 +90,6 @@ implementation
 
 uses
   SysUtils,
-{$IFNDEF LINUX}
   {$IFDEF D6+}
     {$WARN UNIT_PLATFORM OFF}
   {$ENDIF}
@@ -102,7 +97,6 @@ uses
   {$IFDEF D6+}
     {$WARN UNIT_PLATFORM ON}
   {$ENDIF}
-{$ENDIF}
   InstantClasses,
   InstantPersistence,
   InstantConsts,
@@ -237,6 +231,7 @@ end;
 procedure TInstantNexusDBEmbeddedConnectionDefEditForm.FormCreate(Sender:
   TObject);
 begin
+  Font.Assign(Screen.IconFont);
   LoadAliasesButton.Hint := SLoadAvailableAliases;
   BrowseButton.Hint := SSelectAnAliasPath;
 

@@ -52,7 +52,6 @@ object InstantFlashFilerConnectionDefEditForm: TInstantFlashFilerConnectionDefEd
       Top = 32
       Width = 305
       Height = 21
-      ItemHeight = 13
       Sorted = True
       TabOrder = 0
       OnDropDown = AliasEditDropDown
@@ -72,7 +71,6 @@ object InstantFlashFilerConnectionDefEditForm: TInstantFlashFilerConnectionDefEd
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 2
     end
@@ -85,6 +83,9 @@ object InstantFlashFilerConnectionDefEditForm: TInstantFlashFilerConnectionDefEd
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      362
+      35)
     object OkButton: TButton
       Left = 204
       Top = 6

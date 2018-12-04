@@ -141,7 +141,6 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Width = 113
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 2
     end
@@ -157,7 +156,6 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Top = 72
       Width = 113
       Height = 21
-      ItemHeight = 13
       TabOrder = 5
       OnDropDown = CatalogComboBoxDropDown
     end
@@ -206,7 +204,6 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Width = 137
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 10
     end
@@ -216,7 +213,6 @@ object InstantZeosDBOConnectionDefEditForm: TInstantZeosDBOConnectionDefEditForm
       Width = 137
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 11
     end
     object IdSizeEdit: TEdit

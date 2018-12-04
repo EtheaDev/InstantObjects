@@ -33,11 +33,7 @@ unit InstantPresentation;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantTypes,
@@ -818,9 +814,6 @@ implementation
 uses
 {$IFDEF VER130}
   Forms,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms,
 {$ENDIF}
   {$IFDEF D6+}
   Variants,

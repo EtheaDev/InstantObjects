@@ -126,7 +126,6 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
       Width = 113
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 9
     end
@@ -159,7 +158,6 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
       Width = 113
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 10
     end
     object IdSizeEdit: TEdit
@@ -198,7 +196,6 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
       Top = 216
       Width = 113
       Height = 21
-      ItemHeight = 13
       TabOrder = 7
       OnChange = CharacterSetComboBoxChange
       Items.Strings = (
@@ -237,6 +234,9 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      362
+      35)
     object OkButton: TButton
       Left = 204
       Top = 6

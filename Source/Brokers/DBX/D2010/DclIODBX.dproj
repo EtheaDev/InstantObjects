@@ -20,6 +20,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_DependencyCheckOutputName>C:\Users\Public\Documents\RAD Studio\7.0\Bpl\DclIODBX_D14.bpl</DCC_DependencyCheckOutputName>
 			<DesignOnlyPackage>true</DesignOnlyPackage>
 			<DCC_Description>InstantObjects dbExpress Design-Time Support (Delphi 2010)</DCC_Description>

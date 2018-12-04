@@ -228,6 +228,9 @@ object InstantUIBConnectionDefEditForm: TInstantUIBConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      362
+      35)
     object OkButton: TButton
       Left = 204
       Top = 6

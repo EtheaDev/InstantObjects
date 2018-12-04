@@ -31,26 +31,16 @@
 
 unit InstantAttributeView;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes, DB, Contnrs, InstantPresentation,
   InstantPersistence, InstantCode, InstantEdit,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls, Mask, DBCtrls,
   ImgList, ActnList, Menus, Buttons;
-{$ENDIF}
-{$IFDEF LINUX}
-  QActnList, QMenus, QTypes, QImgList, QComCtrls, QControls, QExtCtrls,
-  QStdCtrls, QDBCtrls, QMask, QForms;
-{$ENDIF}
 
 type
   TInstantAttributeViewFrame = class(TFrame)
@@ -246,7 +236,7 @@ begin
       finally
         Items.EndUpdate;
       end;
-      NewItem.MakeVisible{$IFDEF MSWINDOWS}(False){$ENDIF};
+      NewItem.MakeVisible(False);
     end;
   end;
 end;
@@ -271,14 +261,8 @@ begin
   FChangedAttributes := TStringList.Create;
   FNewAttributes := TList.Create;
   LoadMultipleImages(AttributeImages, 'IO_CLASSEDITORATTRIBUTEIMAGES', HInstance);
-{$IFDEF MSWINDOWS}
   IntroducedAttributesView.SmallImages := AttributeImages;
   InheritedAttributesView.SmallImages := AttributeImages;
-{$ENDIF}
-{$IFDEF LINUX}
-  IntroducedAttributesView.Images := AttributeImages;
-  InheritedAttributesView.Images := AttributeImages;
-{$ENDIF}
 end;
 
 procedure TInstantAttributeViewFrame.DeleteAttribute(
@@ -338,12 +322,7 @@ begin
   //adjust Columns size to window width
   for i := View.Columns.Count-1 downto 0 do
   begin
-{$IFDEF MSWINDOWS}
     View.Columns[i].AutoSize := True;
-{$ENDIF}
-{$IFDEF LINUX}
-    View.Columns[i].Width := View.Width div View.Columns.Count;
-{$ENDIF}
   end;
 end;
 

@@ -30,19 +30,12 @@
 
 unit InstantNexusDBEmbedded;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
-{$I InstantNexusDBDefines.inc}
 
 interface
 
 uses
-{$IFDEF MSWINDOWS}
   Windows,
-{$ENDIF}
   Classes, DB, InstantPersistence, InstantCommand, InstantNexusDB;
 
 type

@@ -31,26 +31,16 @@
 
 unit InstantClassEditor;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes, DB, Contnrs, InstantPresentation,
   InstantPersistence, InstantCode, InstantEdit,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ComCtrls, ExtCtrls, Mask, DBCtrls,
   ImgList, ActnList, Menus, InstantAttributeView;
-{$ENDIF}
-{$IFDEF LINUX}
-  QActnList, QMenus, QTypes, QImgList, QComCtrls, QControls, QExtCtrls,
-  QStdCtrls, QDBCtrls, QMask, QForms;
-{$ENDIF}
 
 type
   TInstantClassEditorForm = class(TInstantEditForm)
@@ -364,10 +354,10 @@ procedure TInstantClassEditorForm.ClassSheetResize(Sender: TObject);
 begin
   inherited;
   //simulate right-anchor (for Kylix compatibility)
-  ClassNameEdit.Width := ClassSheet.Width - 33;
-  BaseClassEdit.Width := ClassSheet.Width - 33;
-  UnitEdit.Width := ClassSheet.Width - 33;
-  StorageEdit.Width := ClassSheet.Width - 169;
+  ClassNameEdit.Width := ClassSheet.Width - 36;
+  BaseClassEdit.Width := ClassSheet.Width - 36;
+  UnitEdit.Width := ClassSheet.Width - 36;
+  StorageEdit.Width := ClassSheet.Width - 163;
 end;
 
 end.

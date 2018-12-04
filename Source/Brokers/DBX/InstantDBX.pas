@@ -32,19 +32,10 @@ unit InstantDBX;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 uses
-{$IFDEF MSWINDOWS}
   Controls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QControls,
-{$ENDIF}
   Classes, DB,
   {$IFNDEF D11+}DBXpress,{$ELSE}DBXCommon,{$ENDIF}
   SqlExpr, InstantPersistence, InstantCommand,
@@ -581,7 +572,6 @@ function TInstantDBXBroker.Execute(const AStatement: string;
 var
   LQuery: TSQLQuery;
 begin
-  Result := -1;
   LQuery := CreateDataSet(AStatement, AParams) as TSQLQuery;
   try try
     Result := LQuery.ExecSQL;

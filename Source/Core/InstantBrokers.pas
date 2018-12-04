@@ -32,11 +32,7 @@
 
 unit InstantBrokers;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -1138,12 +1134,7 @@ procedure InstantLogStatement(const Caption, AStatement: string;
 implementation
 
 uses
-{$IFDEF MSWINDOWS}
   Windows,
-{$ENDIF}
-{$IFDEF LINUX}
-  Types,
-{$ENDIF}
 {$IFDEF D6+}
   Variants,
   DateUtils,
@@ -1171,9 +1162,7 @@ begin
         ' = ' + AParams[g].AsString;
     end;
   end;
-{$IFDEF MSWINDOWS}
   OutputDebugString(PChar(S));
-{$ENDIF}
   if Assigned(InstantLogProc) then
     InstantLogProc(S);
 end;

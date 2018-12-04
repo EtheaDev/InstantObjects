@@ -30,23 +30,14 @@
 
 unit InstantWizard;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes, InstantDialog,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, ComCtrls;
-{$ENDIF}
-{$IFDEF LINUX}
-  QExtCtrls, QControls, QStdCtrls, QComCtrls;
-{$ENDIF}
 
 type
   TInstantWizardForm = class(TInstantDialogForm)

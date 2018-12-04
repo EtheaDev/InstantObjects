@@ -1,13 +1,14 @@
 inherited InstantWizardForm: TInstantWizardForm
   Caption = 'Wizard'
   OldCreateOrder = True
-  OnCreate = FormCreate
+  ExplicitWidth = 410
+  ExplicitHeight = 292
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
     TabOrder = 1
     object BackButton: TButton
-      Left = 160
+      Left = 156
       Top = 10
       Width = 75
       Height = 25
@@ -17,7 +18,7 @@ inherited InstantWizardForm: TInstantWizardForm
       OnClick = BackButtonClick
     end
     object NextButton: TButton
-      Left = 240
+      Left = 236
       Top = 10
       Width = 75
       Height = 25
@@ -28,7 +29,7 @@ inherited InstantWizardForm: TInstantWizardForm
       OnClick = NextButtonClick
     end
     object CancelButton: TButton
-      Left = 320
+      Left = 316
       Top = 10
       Width = 75
       Height = 25
@@ -42,16 +43,16 @@ inherited InstantWizardForm: TInstantWizardForm
   object ClientPanel: TPanel
     Left = 0
     Top = 49
-    Width = 402
-    Height = 175
+    Width = 394
+    Height = 163
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object WizardPageControl: TPageControl
       Left = 0
       Top = 0
-      Width = 402
-      Height = 175
+      Width = 394
+      Height = 163
       ActivePage = StartSheet
       Align = alClient
       Style = tsFlatButtons
@@ -80,7 +81,7 @@ inherited InstantWizardForm: TInstantWizardForm
   object HeaderPanel: TPanel
     Left = 0
     Top = 0
-    Width = 402
+    Width = 394
     Height = 49
     Align = alTop
     BevelOuter = bvNone
@@ -89,10 +90,11 @@ inherited InstantWizardForm: TInstantWizardForm
     object HeaderBevel: TBevel
       Left = 0
       Top = 41
-      Width = 402
+      Width = 394
       Height = 8
       Align = alBottom
       Shape = bsBottomLine
+      ExplicitWidth = 402
     end
     object HeaderImage: TImage
       Left = 7

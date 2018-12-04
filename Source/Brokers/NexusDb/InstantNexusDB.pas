@@ -30,19 +30,13 @@
 
 unit InstantNexusDB;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 {$I InstantNexusDBDefines.inc}
 
 interface
 
 uses
-{$IFDEF MSWINDOWS}
   Windows,
-{$ENDIF}
   Classes, DB, InstantPersistence, InstantBrokers, InstantCommand, 
   InstantMetadata, InstantTypes,
   nxptBasePooledTransport, nxsdServerEngine, nxdb, nxsdDataDictionary;

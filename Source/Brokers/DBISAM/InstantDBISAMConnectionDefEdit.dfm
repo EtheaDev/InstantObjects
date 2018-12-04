@@ -105,7 +105,6 @@ object InstantDBISAMConnectionDefEditForm: TInstantDBISAMConnectionDefEditForm
       Width = 76
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 3
       Items.Strings = (
         'LAN'
@@ -140,7 +139,6 @@ object InstantDBISAMConnectionDefEditForm: TInstantDBISAMConnectionDefEditForm
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 7
     end
@@ -153,6 +151,9 @@ object InstantDBISAMConnectionDefEditForm: TInstantDBISAMConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      362
+      35)
     object OkButton: TButton
       Left = 204
       Top = 6

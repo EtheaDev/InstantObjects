@@ -1,11 +1,13 @@
 object InstantDialogForm: TInstantDialogForm
   Left = 309
   Top = 242
-  Width = 410
-  Height = 292
   BorderIcons = [biSystemMenu]
   Caption = 'Dialog'
+  ClientHeight = 201
+  ClientWidth = 394
   Color = clBtnFace
+  Constraints.MinHeight = 240
+  Constraints.MinWidth = 400
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -18,19 +20,21 @@ object InstantDialogForm: TInstantDialogForm
   TextHeight = 13
   object ButtonPanel: TPanel
     Left = 0
-    Top = 217
-    Width = 402
+    Top = 160
+    Width = 394
     Height = 41
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitTop = 212
     object ButtonBevel: TBevel
       Left = 0
       Top = 0
-      Width = 402
+      Width = 394
       Height = 8
       Align = alTop
       Shape = bsTopLine
+      ExplicitWidth = 402
     end
   end
 end

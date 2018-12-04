@@ -31,11 +31,7 @@
 
 unit InstantReg;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -43,11 +39,7 @@ procedure Register;
 
 implementation
 
-{$IFDEF LINUX}
-{$R '../iodesimages.res'}
-{$ELSE}
 {$R '..\iodesimages.res'}
-{$ENDIF}
 
 {$IFDEF D9+}
 {$R IOCompsSplash.res}

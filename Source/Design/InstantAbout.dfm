@@ -1,22 +1,27 @@
 inherited InstantAboutForm: TInstantAboutForm
   Left = 374
   Top = 232
-  Height = 430
   Caption = 'About InstantObjects'
+  ClientHeight = 391
   OldCreateOrder = True
+  ExplicitWidth = 410
+  ExplicitHeight = 430
   PixelsPerInch = 96
   TextHeight = 13
   object TopBevel: TBevel [0]
     Left = 0
     Top = 70
-    Width = 402
+    Width = 394
     Height = 1
     Align = alTop
     Shape = bsTopLine
+    ExplicitWidth = 402
   end
   inherited ButtonPanel: TPanel
-    Top = 359
+    Top = 354
     Height = 37
+    ExplicitTop = 354
+    ExplicitHeight = 37
     object CloseButton: TButton
       Left = 318
       Top = 8
@@ -32,15 +37,15 @@ inherited InstantAboutForm: TInstantAboutForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 402
+    Width = 394
     Height = 70
     Align = alTop
     BevelOuter = bvNone
     Color = clWhite
     TabOrder = 1
     object LogoImage: TImage
-      Left = 15
-      Top = 7
+      Left = 9
+      Top = 8
       Width = 58
       Height = 56
       AutoSize = True
@@ -195,10 +200,10 @@ inherited InstantAboutForm: TInstantAboutForm
     end
     object VersionLabel: TLabel
       Left = 88
-      Top = 40
-      Width = 71
+      Top = 51
+      Width = 106
       Height = 13
-      Caption = 'Version 1.0.0.0'
+      Caption = '2.7 for Delphi 10.3 Rio'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -218,8 +223,8 @@ inherited InstantAboutForm: TInstantAboutForm
   object ClientPanel: TPanel
     Left = 0
     Top = 71
-    Width = 402
-    Height = 288
+    Width = 394
+    Height = 283
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 8
@@ -227,8 +232,8 @@ inherited InstantAboutForm: TInstantAboutForm
     object LicenseBorderPanel: TPanel
       Left = 8
       Top = 8
-      Width = 386
-      Height = 272
+      Width = 378
+      Height = 267
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 1
@@ -237,8 +242,8 @@ inherited InstantAboutForm: TInstantAboutForm
       object LicensePanel: TPanel
         Left = 1
         Top = 1
-        Width = 384
-        Height = 270
+        Width = 376
+        Height = 265
         Align = alClient
         BevelOuter = bvNone
         BorderWidth = 8
@@ -247,42 +252,13 @@ inherited InstantAboutForm: TInstantAboutForm
         object LicenseMemo: TMemo
           Left = 8
           Top = 8
-          Width = 368
-          Height = 254
+          Width = 360
+          Height = 249
           Align = alClient
           BorderStyle = bsNone
           Color = clWhite
           Lines.Strings = (
-            'InstantObjects Object Persistence Framework'
-            'Mozilla Public License 1.1 Edition'
-            ''
-            
-              'This product is subject to the Mozilla Public License Version 1.' +
-              '1 (the '
-            '"License"); '
-            
-              'you may not use this product except in compliance with the Licen' +
-              'se. '
-            
-              'You may obtain a copy of the License at http://www.mozilla.org/M' +
-              'PL/'
-            ''
-            
-              'Software distributed under the License is distributed on an "AS ' +
-              'IS" basis,'
-            'WITHOUT WARRANTY OF ANY KIND, either express or implied.'
-            
-              'See the License for the specific language governing rights and l' +
-              'imitations'
-            'under the License.'
-            ''
-            'The Original Code is: Seleqt InstantObjects'
-            'The Initial Developer of the Original Code is: Seleqt'
-            ''
-            
-              'Portions created by the Initial Developer are Copyright (C) 2001' +
-              '-2003'
-            'the Initial Developer. All Rights Reserved.')
+            '')
           ReadOnly = True
           TabOrder = 0
         end

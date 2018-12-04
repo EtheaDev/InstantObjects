@@ -1,11 +1,13 @@
 object InstantEditForm: TInstantEditForm
   Left = 366
   Top = 273
-  Width = 297
-  Height = 220
   BorderIcons = [biSystemMenu]
   Caption = 'Edit'
+  ClientHeight = 211
+  ClientWidth = 281
   Color = clBtnFace
+  Constraints.MaxWidth = 400
+  Constraints.MinHeight = 250
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -18,23 +20,25 @@ object InstantEditForm: TInstantEditForm
   object EditPanel: TPanel
     Left = 0
     Top = 0
-    Width = 289
-    Height = 155
+    Width = 281
+    Height = 180
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 4
     TabOrder = 0
+    ExplicitHeight = 150
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 155
-    Width = 289
+    Top = 180
+    Width = 281
     Height = 31
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 150
     object ButtonPanel: TPanel
-      Left = 129
+      Left = 121
       Top = 0
       Width = 160
       Height = 31

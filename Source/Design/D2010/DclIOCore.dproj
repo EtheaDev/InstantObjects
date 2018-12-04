@@ -20,6 +20,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_DependencyCheckOutputName>C:\Users\Public\Documents\RAD Studio\7.0\Bpl\DclIOCore_D14.bpl</DCC_DependencyCheckOutputName>
 			<DesignOnlyPackage>true</DesignOnlyPackage>
 			<DCC_Description>InstantObjects Design-Time Package (Delphi 2010)</DCC_Description>
@@ -131,8 +132,8 @@
 					<VersionInfo>
 						<VersionInfo Name="IncludeVerInfo">True</VersionInfo>
 						<VersionInfo Name="AutoIncBuild">False</VersionInfo>
-						<VersionInfo Name="MajorVer">1</VersionInfo>
-						<VersionInfo Name="MinorVer">0</VersionInfo>
+						<VersionInfo Name="MajorVer">2</VersionInfo>
+						<VersionInfo Name="MinorVer">7</VersionInfo>
 						<VersionInfo Name="Release">0</VersionInfo>
 						<VersionInfo Name="Build">0</VersionInfo>
 						<VersionInfo Name="Debug">False</VersionInfo>
@@ -144,15 +145,15 @@
 						<VersionInfo Name="CodePage">1252</VersionInfo>
 					</VersionInfo>
 					<VersionInfoKeys>
-						<VersionInfoKeys Name="CompanyName"/>
-						<VersionInfoKeys Name="FileDescription"/>
-						<VersionInfoKeys Name="FileVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="CompanyName">Ethea S.r.l.</VersionInfoKeys>
+						<VersionInfoKeys Name="FileDescription">InstantObjects</VersionInfoKeys>
+						<VersionInfoKeys Name="FileVersion">2.7.0.0</VersionInfoKeys>
 						<VersionInfoKeys Name="InternalName"/>
 						<VersionInfoKeys Name="LegalCopyright"/>
 						<VersionInfoKeys Name="LegalTrademarks"/>
 						<VersionInfoKeys Name="OriginalFilename"/>
-						<VersionInfoKeys Name="ProductName"/>
-						<VersionInfoKeys Name="ProductVersion">1.0.0.0</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductName">InstantObjects</VersionInfoKeys>
+						<VersionInfoKeys Name="ProductVersion">2.7</VersionInfoKeys>
 						<VersionInfoKeys Name="Comments"/>
 					</VersionInfoKeys>
 					<Excluded_Packages>

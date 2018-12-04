@@ -86,7 +86,6 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 0
       OnChange = AliasComboBoxChange
@@ -98,7 +97,6 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
       Width = 213
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 1
       OnChange = DriverComboBoxChange
@@ -120,7 +118,6 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
       Width = 120
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 4
       OnChange = AliasComboBoxChange
@@ -140,7 +137,6 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
       Width = 120
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 5
     end
     object IdSizeEdit: TEdit
@@ -159,6 +155,9 @@ object InstantBDEConnectionDefEditForm: TInstantBDEConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      392
+      35)
     object OkButton: TButton
       Left = 234
       Top = 6

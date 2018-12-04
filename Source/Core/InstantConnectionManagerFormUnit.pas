@@ -30,24 +30,14 @@
 
 unit InstantConnectionManagerFormUnit;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
   ImgList, Menus, ActnList, ExtCtrls, StdActns,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList,
-  QStdCtrls, QComCtrls, QExtCtrls,
-{$ENDIF}
 {$IFDEF D17+}
   System.Actions,
 {$ENDIF}
@@ -94,14 +84,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure RenameActionExecute(Sender: TObject);
-{$IFDEF MSWINDOWS}
     procedure ConnectionViewEditedVCL(Sender: TObject; Item: TListItem;
       var S: string);
-{$ENDIF}
-{$IFDEF LINUX}
-    procedure ConnectionViewEditedCLX(Sender: TObject; Item: TListItem;
-      var S: WideString);
-{$ENDIF}
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FileOpenActionBeforeExecute(Sender: TObject);
     procedure FileOpenActionExecute(Sender: TObject);
@@ -132,9 +116,6 @@ type
     procedure SetVisibleActions(Value: TInstantConnectionManagerActionTypes);
     procedure SetOnSupportConnector(Value: TInstantConnectorClassEvent);
     procedure UpdateMenu;
-{$IFDEF LINUX}
-    procedure EditItemCaption(Item : TListItem);
-{$ENDIF}
     function GetConnectionDefs: TInstantConnectionDefs;
     function GetFileName: string;
     procedure UpdateCaption;
@@ -296,7 +277,6 @@ begin
   ConnectAction.Execute;
 end;
 
-{$IFDEF MSWINDOWS}
 procedure TInstantConnectionManagerForm.ConnectionViewEditedVCL(Sender: TObject;
   Item: TListItem; var S: String);
 var
@@ -305,22 +285,6 @@ begin
   Def := Item.Data;
   Def.Name := S;
 end;
-{$ENDIF}
-{$IFDEF LINUX}
-procedure TInstantConnectionManagerForm.ConnectionViewEditedCLX(Sender: TObject;
-  Item: TListItem; var S: WideString);
-var
-  Def: TInstantConnectionDef;
-begin
-  Def := Item.Data;
-  Def.Name := S;
-end;
-
-procedure TInstantConnectionManagerForm.EditItemCaption(Item : TListItem);
-begin
-  Item.Caption := InputBox(SConnectionName,SConnectionName+':',Item.Caption);
-end;
-{$ENDIF}
 
 procedure TInstantConnectionManagerForm.DeleteActionExecute(
   Sender: TObject);
@@ -503,20 +467,13 @@ end;
 
 procedure TInstantConnectionManagerForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   LoadMultipleImages(ConnectionImages, 'IO_CONNECTIONMANAGERIMAGES', HInstance);
-{$IFDEF MSWINDOWS}
   BorderStyle := bsSizeable;
   ConnectionView.OnEdited := ConnectionViewEditedVCL;
   ConnectionView.HideSelection := False;
   ConnectionView.SortType := stText;
   ConnectionView.SmallImages := ConnectionImages;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsSizeable;
-  ConnectionView.OnEdited := ConnectionViewEditedCLX;
-  ConnectionView.ColumnMove := False;
-  ConnectionView.Images := ConnectionImages;
-{$ENDIF}
   ConnectionView.Columns[0].Width := 225;
   ConnectionView.Columns[1].Width := 80;
   UpdateMenu;
@@ -583,13 +540,8 @@ begin
     ConnectionDef.Name := 'New Connection';
     PopulateConnectionDefs;
     Item := ConnectionView.FindData(0, ConnectionDef, True, True);
-{$IFDEF MSWINDOWS}
     if Assigned(Item) then
       Item.EditCaption;
-{$ENDIF}
-{$IFDEF LINUX}
-    EditItemCaption(Item);
-{$ENDIF}
   except
     ConnectionDef.Free;
     raise;
@@ -638,13 +590,7 @@ procedure TInstantConnectionManagerForm.RenameActionExecute(
 begin
   with ConnectionView do
     if Assigned(Selected) then
-{$IFDEF MSWINDOWS}
       Selected.EditCaption;
-{$ENDIF}
-{$IFDEF LINUX}
-      EditItemCaption(Selected);
-{$ENDIF}
-
 end;
 
 procedure TInstantConnectionManagerForm.SetCurrentConnectionDef(

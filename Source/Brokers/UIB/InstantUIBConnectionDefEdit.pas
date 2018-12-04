@@ -27,11 +27,7 @@
 
 unit InstantUIBConnectionDefEdit;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -121,6 +117,7 @@ end;
 
 procedure TInstantUIBConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   AssignInstantStreamFormat(StreamFormatComboBox.Items);
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
   AssignCharacterSetItems(CharacterSetComboBox.Items);

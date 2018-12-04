@@ -30,22 +30,13 @@
 
 unit InstantAbout;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QExtCtrls, QControls, QStdCtrls, QComCtrls, QForms, QGraphics,
-{$ENDIF}
   InstantDialog;
 
 type
@@ -72,34 +63,22 @@ uses
 {$R *.dfm}
 
 procedure TInstantAboutForm.FormCreate(Sender: TObject);
-var
-  S, Suffix: string;
 begin
   inherited;
-{$IFDEF MSWINDOWS}
-  with InstantFileVersion(InstantModuleFileName) do
-  begin
-    S := Format('Version %d.%d.%d', [Major, Minor, Release]);
-    if Release > 0 then
-      S := S +'.'+ IntToStr(Release);
-    Suffix := InstantFileVersionValue(InstantModuleFileName, 'VersionSuffix');
-    if Suffix <> '' then
-      S := S + ' ' + Suffix;
-  end;
+  LicenseMemo.Text :=
+    'InstantObjects Object Persistence Framework'+sLineBreak+
+    'Mozilla Public License 1.1 Edition'+sLineBreak+
+    'This product is subject to the Mozilla Public License Version 1.1 (the "License");'+sLineBreak+
+    'you may not use this product except in compliance with the License.'+sLineBreak+
+    'You may obtain a copy of the License at http://www.mozilla.org/MPL/'+sLineBreak+
+    'Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.'+sLineBreak+
+    'See the License for the specific language governing rights and limitations under the License.'+sLineBreak+
+    'The Original Code is: Seleqt InstantObjects. The Initial Developer of the Original Code is: Seleqt'+sLineBreak+
+    'Portions created by the Initial Developer are Copyright (C) 2001-2003 the Initial Developer. All Rights Reserved.'+sLineBreak;
   BorderStyle := bsDialog;
   //Fonts and sizes
   TitleLabel.Font.Size := 16;
   TitleLabel.Font.Style := [fsBold];
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsDialog;
-  //Fonts and sizes
-  TitleLabel.Font.Size := 18;
-  TitleLabel.Font.Style := [fsBold];
-  //Package version for Kylix
-  S := Format('Version %d.%d.%d %s', [2,1,1,'MPL']);
-{$ENDIF}
-  VersionLabel.Caption := S;
 end;
 
 end.

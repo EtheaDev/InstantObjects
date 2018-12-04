@@ -27,11 +27,7 @@
 
 unit InstantXMLConnectionDefEdit;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 {$IFDEF D6+}
 {$WARN UNIT_PLATFORM OFF}
@@ -41,12 +37,7 @@ interface
 
 uses
   Classes, InstantXML,
-{$IFDEF MSWINDOWS}
   Forms, StdCtrls, Controls, ExtCtrls;
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QStdCtrls, QControls, QExtCtrls;
-{$ENDIF}
 
 type
   TInstantXMLConnectionDefEditForm = class(TForm)
@@ -75,11 +66,7 @@ implementation
 
 uses
   TypInfo,
-{$IFDEF MSWINDOWS}
   FileCtrl;
-{$ELSE}
-  QDialogs;
-{$ENDIF}
 
 { TInstantXMLConnectionDefEditForm }
 
@@ -100,12 +87,7 @@ end;
 procedure TInstantXMLConnectionDefEditForm.FolderButtonClick(
   Sender: TObject);
 var
-{$IFDEF MSWINDOWS}
   Dir: string;
-{$ENDIF}
-{$IFDEF LINUX}
-  Dir: WideString;
-{$ENDIF}
 begin
   Dir := RootDirEdit.Text;
   if SelectDirectory(XMLLabel.Caption, '', Dir) then
@@ -114,12 +96,8 @@ end;
 
 procedure TInstantXMLConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsDialog;
-{$ENDIF}
   InitXMLEncoding;
 end;
 

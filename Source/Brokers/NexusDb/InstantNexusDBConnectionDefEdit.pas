@@ -30,11 +30,7 @@
 
 unit InstantNexusDBConnectionDefEdit;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 {$I InstantNexusDBDefines.inc}
 
 interface
@@ -114,16 +110,7 @@ implementation
 {$R *.DFM}
 
 uses
-  SysUtils,
-{$IFNDEF LINUX}
-  {$IFDEF D6+}
-    {$WARN UNIT_PLATFORM OFF}
-  {$ENDIF}
-    FileCtrl,   // for SelectDirectory()
-  {$IFDEF D6+}
-    {$WARN UNIT_PLATFORM ON}
-  {$ENDIF}
-{$ENDIF}
+  SysUtils, FileCtrl,
   InstantClasses, InstantPersistence, InstantTypes, InstantConsts,
   InstantNexusDBConsts;
 
@@ -398,6 +385,7 @@ end;
 
 procedure TInstantNexusDBConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   LoadServersButton.Hint := SLoadAvailableNexusDBServers;
   LoadAliasesButton.Hint := SLoadAvailableAliases;
   BrowseButton.Hint := SSelectAnAliasPath;

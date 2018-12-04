@@ -31,11 +31,7 @@
 
 unit InstantUtils;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -63,11 +59,9 @@ function InstantConstArrayToVariant(AValues : array of const) : Variant;
 function InstantDateTimeToStr(DateTime: TDateTime): string;
 function InstantEmbrace(const S, Delimiters: string): string;
 function InstantFileAge(const FileName: string; out FileDateTime: TDateTime): boolean;
-{$IFDEF MSWINDOWS}
 function InstantFileVersionValue(const FileName, ValueName: string): string;
 function InstantFileVersion(const FileName: string): TInstantVersion;
 function InstantFileVersionStr(const FileName: string): string;
-{$ENDIF}
 function InstantGenerateId: string;
 function InstantIsIdentifier(Str: string): Boolean;
 function InstantIsNumeric(const Str: string): Boolean;
@@ -98,16 +92,10 @@ function TimeOf(const AValue: TDateTime): TDateTime;
 function InstantCharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean; overload;
 function InstantCharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean; overload;
 
-
 implementation
 
 uses
-{$IFDEF MSWINDOWS}
   Windows, ActiveX, ComObj,
-{$ENDIF}
-{$IFDEF FPC}
-  InstantFpcUtils,
-{$ENDIF}
   {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti;
 
 
@@ -372,7 +360,6 @@ begin
   {$ENDIF}
 end;
 
-{$IFDEF MSWINDOWS}
 function InstantFileVersionStr(const FileName: string): string;
 begin
   with InstantFileVersion(FileName) do
@@ -443,19 +430,13 @@ begin
     end;
   end;
 end;
-{$ENDIF}
 
 function InstantGenerateId: string;
 var
   I: Integer;
   Id: array[0..15] of Byte;
 begin
-{$IFDEF MSWINDOWS}
   OleCheck(CoCreateGuid(TGUID(Id)));
-{$ENDIF}
-{$IFDEF LINUX}
-  CreateGUID(TGUID(Id)); //Can I check errors?
-{$ENDIF}
   Result := '';
   for I := 0 to 15 do
     Result := Result + IntToHex(Id[I], 2);

@@ -32,11 +32,7 @@ unit InstantOTA;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   Classes, ToolsAPI, InstantTypes, Forms;

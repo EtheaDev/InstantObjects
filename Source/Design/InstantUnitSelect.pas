@@ -30,23 +30,14 @@
 
 unit InstantUnitSelect;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   ComCtrls, StdCtrls, ExtCtrls, ImgList, ActnList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QImgList, QActnList, QControls, QComCtrls, QStdCtrls, QExtCtrls,
-{$ENDIF}
   InstantDualList, InstantImageUtils;
 
 type
@@ -64,14 +55,8 @@ begin
   inherited;
   ListImages.Clear;
   LoadMultipleImages(ListImages, 'IO_UNITSELECTIMAGES', HInstance);
-{$IFDEF MSWINDOWS}
   LeftView.SmallImages := ListImages;
   RightView.SmallImages := ListImages;
-{$ENDIF}
-{$IFDEF LINUX}
-  LeftView.Images := ListImages;
-  RightView.Images := ListImages;
-{$ENDIF}
 end;
 
 end.

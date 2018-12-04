@@ -1,9 +1,9 @@
 object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
   Left = 287
   Top = 34
-  Width = 399
-  Height = 342
   Caption = 'dbExpress Connection'
+  ClientHeight = 303
+  ClientWidth = 383
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,20 +17,24 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 271
-    Width = 391
+    Top = 266
+    Width = 383
     Height = 2
     Align = alBottom
     Shape = bsBottomLine
+    ExplicitTop = 271
+    ExplicitWidth = 391
   end
   object ClientPanel: TPanel
     Left = 0
     Top = 0
-    Width = 391
-    Height = 271
+    Width = 383
+    Height = 266
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
+    ExplicitWidth = 391
+    ExplicitHeight = 271
     object DriverNameLabel: TLabel
       Left = 16
       Top = 16
@@ -69,7 +73,6 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Width = 137
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 0
       OnChange = DriverNameEditChange
@@ -97,9 +100,8 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
-      TabOrder = 3
+      TabOrder = 5
     end
     object LoginPromptCheckBox: TCheckBox
       Left = 16
@@ -120,12 +122,14 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 273
-    Width = 391
+    Top = 268
+    Width = 383
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    ExplicitTop = 273
+    ExplicitWidth = 391
     object OkButton: TButton
       Left = 233
       Top = 6

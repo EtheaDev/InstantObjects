@@ -31,21 +31,12 @@
 
 unit InstantExplorer;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
-{$IFDEF MSWINDOWS}
   Controls, Forms, ComCtrls, ExtCtrls, DbGrids, ImgList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QControls, QForms, QComCtrls, QExtCtrls, QDBGrids, QImgList,
-{$ENDIF}
   Classes, DB, TypInfo, InstantPersistence, InstantPresentation, DbCtrls;
 
 type
@@ -249,9 +240,7 @@ type
     property ShowHint;
     property ShowRoot: Boolean read FShowRoot write SetShowRoot default True;
     property Visible;
-{$IFDEF MSWINDOWS}
     property OnCanResize;
-{$ENDIF}
     property OnChangeNode: TInstantExplorerNodeEvent read FOnChangeNode write FOnChangeNode;
     property OnCreateNode: TInstantExplorerCreateNodeEvent read FOnCreateNode write FOnCreateNode;
     property OnCreateNodeData: TInstantExplorerCreateNodeDataEvent read FOnCreateNodeData write FOnCreateNodeData;
@@ -277,12 +266,7 @@ implementation
 uses
   SysUtils, Math, InstantClasses, InstantRtti, InstantMetadata,
   InstantTypes,
-{$IFDEF MSWINDOWS}
   Graphics, StdCtrls, Windows;
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QStdCtrls, QDbCtrls;
-{$ENDIF}
 
 const
   NotLoaded = Pointer(-1);
@@ -295,12 +279,8 @@ var
 begin
   Form := TForm.Create(nil);
   try
-{$IFDEF MSWINDOWS}
+    Form.Font.Assign(Screen.IconFont);
     Form.BorderStyle := bsSizeable;
-{$ENDIF}
-{$IFDEF LINUX}
-    Form.BorderStyle := fbsSizeable;
-{$ENDIF}
     Form.Position := poScreenCenter;
     Form.Caption := 'Object Explorer';
     Form.Height := Screen.Height div 10 * 6;
@@ -834,9 +814,7 @@ begin
     with FTreeView do
     begin
       Height := Self.Height div 2;
-{$IFDEF MSWINDOWS}
       HideSelection := False;
-{$ENDIF}
       OnChange := TreeViewChange;
       OnExpanding := TreeViewExpanding;
       OnGetImageIndex := TreeViewGetImageIndex;
@@ -851,9 +829,7 @@ function TInstantExplorer.CreateTreeView(AOwner: TComponent): TTreeView;
 begin
   Result := TTreeView.Create(AOwner);
   Result.ReadOnly := True;
-{$IFDEF MSWINDOWS}
   Result.ShowRoot := ShowRoot;
-{$ENDIF}
   Result.OnDeletion := TreeViewNodeDeletion;
 end;
 

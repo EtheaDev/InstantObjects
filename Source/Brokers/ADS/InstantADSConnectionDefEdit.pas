@@ -199,6 +199,7 @@ end;
 
 procedure TInstantADSConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
 end;
 

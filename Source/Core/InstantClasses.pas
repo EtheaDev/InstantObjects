@@ -31,19 +31,12 @@
 
 unit InstantClasses;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
-{$IFDEF MSWINDOWS}Windows,{$ENDIF}
-{$IFDEF FPC}
-  InstantFpcUtils, streamex,
-{$ENDIF}
+  Windows,
   Classes, InstantConsts, SysUtils;
 
 const
@@ -51,11 +44,6 @@ const
 
 type
   TChars = set of AnsiChar;
-
-{$IFDEF LINUX}
-    TDate = type TDateTime;
-    TTime = type TDateTime;
-{$ENDIF}
 
   EInstantError = class(Exception)
   private
@@ -469,16 +457,7 @@ type
     NextRaise: PRaiseFrame;
     ExceptAddr: Pointer;
     ExceptObject: TObject;
-{$IFDEF MSWINDOWS}
     ExceptionRecord: PExceptionRecord {$IFNDEF VER130}platform{$ENDIF};
-{$ENDIF}
-{$IFDEF LINUX}
-    ExceptionAddress: LongWord platform;
-    AccessAddress: LongWord platform;
-    SignalNumber: Integer platform;
-    Exc: Pointer platform;
-    Private_2: LongWord platform;
-{$ENDIF}
   end;
 
 { Global routines }

@@ -1,4 +1,4 @@
-  (*
+(*
  *   InstantObjects
  *   Attribute Editor
  *)
@@ -33,22 +33,13 @@ unit InstantAttributeEditor;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
   InstantEdit, DB, InstantCode, TypInfo,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, DBCtrls, Mask, ComCtrls, ImgList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QImgList, QStdCtrls, QDBCtrls, QMask, QControls, QComCtrls, QExtCtrls,
-{$ENDIF}
   InstantPresentation, InstantTypes;
 
 type
@@ -202,6 +193,7 @@ resourcestring
 
 procedure TInstantAttributeEditorForm.FormCreate(Sender: TObject);
 begin
+  inherited;
   PageControl.ActivePage := DefinitionSheet;
   ActiveControl := NameEdit;
   FValidator := TInstantAttributeValidator.Create(Subject, nil);

@@ -31,11 +31,7 @@
 
 unit InstantRtti;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -83,13 +79,6 @@ function InstantGetPropName(PropInfo: PPropInfo): string; {$IFDEF D10+}{$IFNDEF 
 implementation
 
 uses
-{$IFDEF MSWINDOWS}
-//  Controls,
-{$ENDIF}
-{$IFDEF LINUX}
-  InstantClasses, //only for TDate and TTime declaration
-  QControls,
-{$ENDIF}
   {$IFDEF D6+}Variants,{$ENDIF}SysUtils;
 
 function GetTypeInfo(PropInfo: PPropInfo) : PTypeInfo;

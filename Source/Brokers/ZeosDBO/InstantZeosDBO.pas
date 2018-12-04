@@ -30,11 +30,7 @@
 
 unit InstantZeosDBO;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 //
 // Enable this define for ZeosDBO 7.x Alpha support

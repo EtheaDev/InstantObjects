@@ -6,11 +6,15 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   ClientWidth = 400
   OldCreateOrder = True
   OnCreate = FormCreate
+  ExplicitWidth = 416
+  ExplicitHeight = 404
   PixelsPerInch = 96
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 400
     Height = 334
+    ExplicitWidth = 400
+    ExplicitHeight = 334
     object PageControl: TPageControl
       Left = 4
       Top = 4
@@ -79,7 +83,6 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Height = 21
           DataField = 'BaseClassName'
           DataSource = SubjectSource
-          ItemHeight = 13
           Sorted = True
           TabOrder = 1
         end
@@ -91,7 +94,6 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Style = csDropDownList
           DataField = 'PascalUnitName'
           DataSource = SubjectSource
-          ItemHeight = 13
           TabOrder = 2
         end
         object StorageEdit: TDBEdit
@@ -111,7 +113,6 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Style = csDropDownList
           DataField = 'Persistence'
           DataSource = SubjectSource
-          ItemHeight = 13
           TabOrder = 3
           OnChange = PersistenceComboBoxChange
         end
@@ -127,21 +128,21 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Height = 290
           Align = alClient
           TabOrder = 0
+          ExplicitHeight = 290
           inherited AttributesSplitter: TSplitter
             Top = 186
+            ExplicitTop = 186
           end
           inherited InheritedAttributesPanel: TPanel
             Top = 190
+            ExplicitTop = 190
           end
           inherited IntroducedAttributesPanel: TPanel
             Height = 186
+            ExplicitHeight = 186
             inherited IntroducedAttributesView: TListView
               Height = 170
-            end
-          end
-          inherited AttributesMenu: TPopupMenu
-            inherited AttributeNewItem: TMenuItem
-              OnClick = nil
+              ExplicitHeight = 170
             end
           end
         end
@@ -151,11 +152,22 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   inherited BottomPanel: TPanel
     Top = 334
     Width = 400
+    ExplicitTop = 334
+    ExplicitWidth = 400
     inherited ButtonPanel: TPanel
       Left = 240
+      ExplicitLeft = 240
       inherited OkButton: TButton
-        Left = 1
-        Top = 6
+        Left = -1
+        Top = 2
+        ExplicitLeft = -1
+        ExplicitTop = 2
+      end
+      inherited CancelButton: TButton
+        Left = 79
+        Top = 2
+        ExplicitLeft = 79
+        ExplicitTop = 2
       end
     end
   end

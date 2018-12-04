@@ -32,11 +32,7 @@
 
 unit InstantPersistence;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -1626,12 +1622,7 @@ const
 implementation
 
 uses
-{$IFDEF MSWINDOWS}
   Windows,
-{$ENDIF}
-{$IFDEF LINUX}
-  Types,
-{$ENDIF}
   TypInfo,
 {$IFDEF D6+}
   MaskUtils,
@@ -9326,20 +9317,12 @@ initialization
     TInstantAttributeMetadatas, TInstantAttributeMetadata,
     TInstantObjectReference, TInstantConnectionDefs, TInstantConnectionDef]);
   ClassList := TList.Create;
-{$IFDEF MSWINDOWS}
 {$IFNDEF INSTANTOBJECTS_FMX}
   GraphicClassList[gffIco] := Graphics.TIcon;
   GraphicClassList[gffBmp] := Graphics.TBitmap;
   {$IFNDEF FPC}
     GraphicClassList[gffEmf] := Graphics.TMetaFile;
   {$ENDIF}
-{$ENDIF}
-{$ENDIF}
-{$IFDEF LINUX}
-  GraphicClassList[gffIco] := QGraphics.TIcon;
-  GraphicClassList[gffBmp] := QGraphics.TBitmap;
-  GraphicClassList[gffPng] := QGraphics.TBitmap;
-  GraphicClassList[gffJpeg]:= QGraphics.TBitmap;
 {$ENDIF}
   ConnectorClasses := TList.Create;
   LoadClassMetadatas;

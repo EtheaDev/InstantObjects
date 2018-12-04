@@ -20,6 +20,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DesignOnlyPackage>true</DesignOnlyPackage>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
 			<DllSuffix>_D14</DllSuffix>

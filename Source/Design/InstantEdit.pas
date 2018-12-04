@@ -30,22 +30,13 @@
 
 unit InstantEdit;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes, DB,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, StdCtrls, ExtCtrls, Controls, Forms, Dialogs,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   InstantPresentation;
 type
   TInstantEditForm = class(TForm)
@@ -127,12 +118,8 @@ end;
 
 procedure TInstantEditForm.FormCreate(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsDialog;
-{$ENDIF}
 end;
 
 end.

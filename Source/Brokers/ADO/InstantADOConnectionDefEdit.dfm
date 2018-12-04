@@ -116,7 +116,6 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
       Width = 97
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 7
     end
@@ -134,7 +133,6 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
       Width = 120
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 8
     end
     object IdSizeEdit: TEdit
@@ -153,6 +151,9 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      446
+      35)
     object OkButton: TButton
       Left = 288
       Top = 6

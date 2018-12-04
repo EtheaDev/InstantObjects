@@ -1,9 +1,9 @@
 object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   Left = 244
   Top = 191
-  Width = 601
-  Height = 370
   Caption = 'InstantCustomDBEvolverForm'
+  ClientHeight = 331
+  ClientWidth = 585
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -25,6 +25,9 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
+  DesignSize = (
+    585
+    331)
   PixelsPerInch = 96
   TextHeight = 13
   object EvolutionLogLabel: TLabel

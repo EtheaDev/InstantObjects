@@ -30,22 +30,13 @@
 
 unit InstantCommandEditor;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QStdCtrls, QControls, QExtCtrls,
-{$ENDIF}
   InstantCode, InstantCommand;
 
 type
@@ -439,12 +430,8 @@ end;
 
 procedure TInstantCommandEditorForm.FormCreate(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsDialog;
-{$ENDIF}
 end;
 
 end.

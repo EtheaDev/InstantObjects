@@ -30,11 +30,7 @@
 
 unit InstantFireDAC;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 // Supported databases  (only MSSQL and Firebird have been tested as of 8/18/2009)
 

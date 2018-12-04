@@ -29,24 +29,14 @@
 
 unit InstantDBBuilderFormUnit;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
   ImgList, Menus, ActnList, ExtCtrls, StdActns,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QActnList, QMenus, QTypes, QImgList,
-  QStdCtrls, QComCtrls, QExtCtrls,
-{$ENDIF}
   InstantCustomDBEvolverFormUnit, InstantDBBuild, InstantDBEvolution, InstantConsts;
 
 

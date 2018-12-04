@@ -30,11 +30,7 @@
 
 unit InstantFireDACConnectionDefEdit;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -96,6 +92,7 @@ uses
 
 procedure TInstantFireDACConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   AssignInstantStreamFormat(StreamFormatComboBox.Items);
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
   AssignFireDACProtocols(ProtocolComboBox.Items);

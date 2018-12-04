@@ -31,23 +31,14 @@
 
 unit InstantModelExplorer;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes, IniFiles,
-{$IFDEF MSWINDOWS}
   Windows, Messages, ExtCtrls, ComCtrls, ImgList, DockForm,
   ToolWin, Graphics, Controls, Forms, Dialogs, Menus, StdCtrls, ActnList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QActnList, QMenus, QTypes, QImgList, QComCtrls, QControls, QExtCtrls,
-{$ENDIF}
   InstantCode, InstantAttributeView;
 
 type
@@ -70,18 +61,12 @@ type
   TModelTreeView = class(TTreeView)
   private
     FOnNodeDblClick: TNotifyEvent;
-{$IFDEF MSWINDOWS}
     procedure WMLButtonDblClk(var Message: TWMLButtonDblClk); message WM_LBUTTONDBLCLK;
-{$ENDIF}
   protected
     procedure DoNodeDblClick(Node: TTreeNode); virtual;
   published
     property OnNodeDblClick: TNotifyEvent read FOnNodeDblClick write FOnNodeDblClick;
   end;
-
-{$IFDEF LINUX}
-  TDockableForm = class(TForm);
-{$ENDIF}
 
   TInstantModelExplorerForm = class(TDockableForm)
     AboutAction: TAction;
@@ -212,15 +197,8 @@ var
 implementation
 
 uses
-{$IFDEF LINUX}
-  QDialogs,
-{$ENDIF}
-  TypInfo, InstantClassEditor, InstantClasses, DeskUtil, 
-{$IFNDEF D7+}
-  InstantModelExpertOld,
-{$ELSE}
+  TypInfo, InstantClassEditor, InstantClasses, DeskUtil,
   InstantModelExpert,
-{$ENDIF}
   InstantDesignUtils, InstantPersistence, InstantDesignHook, InstantAbout,
   InstantImageUtils, InstantMetadata, InstantModelImport, Registry;
 
@@ -239,7 +217,6 @@ begin
     FOnNodeDblClick(Node);
 end;
 
-{$IFDEF MSWINDOWS}
 procedure TModelTreeView.WMLButtonDblClk(var Message: TWMLButtonDblClk);
 begin
   with Message do
@@ -248,7 +225,6 @@ begin
     else
       inherited;
 end;
-{$ENDIF}
 
 { TInstantModelExplorerForm }
 
@@ -325,6 +301,8 @@ end;
 constructor TInstantModelExplorerForm.Create(AOwner: TComponent);
 begin
   inherited;
+  Font.Assign(Screen.IconFont);
+
   LoadMultipleImages(ActionImages, 'IO_MODELEXPLORERACTIONIMAGES', HInstance);
   LoadMultipleImages(ModelImages, 'IO_MODELEXPLORERMODELIMAGES', HInstance);
   LoadMultipleImages(AttributeImages, 'IO_MODELEXPLORERATTRIBUTEIMAGES', HInstance);
@@ -338,9 +316,7 @@ begin
     PopupMenu := TreeMenu;
     ReadOnly := True;
     HideSelection := False;
-{$IFDEF MSWINDOWS}
     RightClickSelect := True;
-{$ENDIF}
     OnChange := ModelViewChange;
     OnNodeDblClick := ModelViewNodeDblClick;
     OnGetImageIndex := ModelViewGetImageIndex;
@@ -355,10 +331,8 @@ begin
 
   FModel := TInstantCodeModel.Create;
   DesignModel := @FModel;
-{$IFDEF MSWINDOWS}
   DeskSection := 'InstantModelExplorer';
   AutoSave := True;
-{$ENDIF}
   ModelExplorer := Self;
   SetAttributePanelVisible(True);
   RestoreLayout;
@@ -869,9 +843,7 @@ procedure TInstantModelExplorerForm.UpdateModel;
             TInstantCodeClass(SubItems.Objects[I]), SubItems[I], Level));
         RemoveInvalidNodes(Result, SubNodes);
       finally
-{$IFDEF MSWINDOWS}
         Result.AlphaSort;
-{$ENDIF}
         SubNodes.Free;
         SubItems.Free;
       end;
@@ -897,17 +869,13 @@ begin
     if Assigned(FError) then
     begin
       ModelView.Items.Clear;
-{$IFDEF MSWINDOWS}
       ModelView.ShowRoot := False;
-{$ENDIF}
       ModelView.Items.AddObject(nil, FError.Text, FError)
     end else
     begin
       Nodes := TList.Create;
       try
-{$IFDEF MSWINDOWS}
         ModelView.ShowRoot := True;
-{$ENDIF}
         for I := 0 to Pred(Model.ClassCount) do
         begin
           AClass := Model.Classes[I];
@@ -999,10 +967,8 @@ end;
 initialization
   ModelExplorer := nil;
   RegisterFieldAddress('InstantModelExplorer', @ModelExplorer);
-{$IFDEF MSWINDOWS}
   RegisterDesktopFormClass(TInstantModelExplorerForm,
     'InstantModelExplorer', 'InstantModelExplorer');
-{$ENDIF}
 
 finalization
   UnregisterFieldAddress(@ModelExplorer);

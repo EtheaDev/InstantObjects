@@ -30,11 +30,7 @@
 
 unit InstantBDEReg;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 {$IFDEF D6+}
 {$WARN SYMBOL_PLATFORM OFF}

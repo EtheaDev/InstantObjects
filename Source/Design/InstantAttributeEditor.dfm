@@ -7,11 +7,15 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   ParentFont = True
   OldCreateOrder = True
   OnCreate = FormCreate
+  ExplicitWidth = 257
+  ExplicitHeight = 410
   PixelsPerInch = 96
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 241
     Height = 340
+    ExplicitWidth = 241
+    ExplicitHeight = 340
     object PageControl: TPageControl
       Left = 4
       Top = 4
@@ -105,7 +109,6 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Style = csDropDownList
           DataField = 'AttributeType'
           DataSource = SubjectSource
-          ItemHeight = 13
           Sorted = True
           TabOrder = 1
           OnClick = TypeEditClick
@@ -117,7 +120,6 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Height = 21
           DataField = 'Metadata.ObjectClassName'
           DataSource = SubjectSource
-          ItemHeight = 13
           Sorted = True
           TabOrder = 2
           OnChange = ObjectClassEditChange
@@ -160,7 +162,6 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Style = csDropDownList
           DataField = 'StorageKind'
           DataSource = SubjectSource
-          ItemHeight = 13
           Sorted = True
           TabOrder = 5
           OnChange = StorageKindEditChange
@@ -182,7 +183,6 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Height = 21
           DataField = 'Metadata.EnumName'
           DataSource = SubjectSource
-          ItemHeight = 13
           TabOrder = 8
           OnChange = EnumeratedTypeEditChange
           OnEnter = EnumeratedTypeEditEnter
@@ -223,7 +223,6 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Style = csDropDownList
           DataField = 'Visibility'
           DataSource = SubjectSource
-          ItemHeight = 0
           TabOrder = 0
         end
         object MethodsGroupBox: TGroupBox
@@ -361,6 +360,10 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
       object PresentationSheet: TTabSheet
         Caption = 'Presentation'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object EdtMaskLabel: TLabel
           Left = 8
           Top = 8
@@ -372,7 +375,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object DisplayWidthLabel: TLabel
           Left = 8
           Top = 88
-          Width = 64
+          Width = 65
           Height = 13
           Caption = 'Display &Width'
           FocusControl = DisplayWidthEdit
@@ -380,7 +383,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object DisplayLabelLabel: TLabel
           Left = 8
           Top = 128
-          Width = 64
+          Width = 62
           Height = 13
           Caption = 'Display &Label'
           FocusControl = DisplayLabelEdit
@@ -452,15 +455,22 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   inherited BottomPanel: TPanel
     Top = 340
     Width = 241
+    ExplicitTop = 340
+    ExplicitWidth = 241
     inherited ButtonPanel: TPanel
       Left = 81
+      ExplicitLeft = 81
       inherited OkButton: TButton
         Left = 1
         Top = 2
+        ExplicitLeft = 1
+        ExplicitTop = 2
       end
       inherited CancelButton: TButton
         Left = 81
         Top = 2
+        ExplicitLeft = 81
+        ExplicitTop = 2
       end
     end
   end

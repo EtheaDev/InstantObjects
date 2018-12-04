@@ -1,9 +1,9 @@
 object InstantCommandEditorForm: TInstantCommandEditorForm
   Left = 322
   Top = 268
-  Width = 401
-  Height = 275
   Caption = 'Command Editor'
+  ClientHeight = 236
+  ClientWidth = 385
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -18,9 +18,10 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
   object TopPanel: TPanel
     Left = 0
     Top = 0
-    Width = 393
+    Width = 385
     Height = 89
     Align = alTop
+    BevelOuter = bvNone
     TabOrder = 0
     object FromClassLabel: TLabel
       Left = 8
@@ -51,7 +52,6 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
       Width = 177
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 0
       OnClick = FromClassEditClick
@@ -71,7 +71,6 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
       Width = 177
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 2
       OnClick = AttributeEditClick
     end
@@ -87,13 +86,13 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 208
-    Width = 393
+    Top = 203
+    Width = 385
     Height = 33
     Align = alBottom
     TabOrder = 2
     object ButtonsPanel: TPanel
-      Left = 227
+      Left = 219
       Top = 1
       Width = 165
       Height = 31
@@ -124,12 +123,18 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
     end
   end
   object CommandTextEdit: TMemo
-    Left = 0
-    Top = 89
-    Width = 393
-    Height = 119
+    AlignWithMargins = True
+    Left = 3
+    Top = 92
+    Width = 379
+    Height = 108
     Align = alClient
+    BevelInner = bvNone
     TabOrder = 1
     OnChange = CommandTextEditChange
+    ExplicitLeft = 0
+    ExplicitTop = 89
+    ExplicitWidth = 385
+    ExplicitHeight = 114
   end
 end

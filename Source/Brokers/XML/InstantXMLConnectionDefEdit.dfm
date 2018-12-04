@@ -69,7 +69,6 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
       Width = 145
       Height = 21
       Style = csDropDownList
-      ItemHeight = 0
       TabOrder = 2
     end
   end

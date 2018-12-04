@@ -30,22 +30,13 @@
 
 unit InstantDesignUtils;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   DB,
-{$IFDEF MSWINDOWS}
   Controls, DbCtrls, Graphics, Forms, Dialogs;
-{$ENDIF}
-{$IFDEF LINUX}
-  QControls, QDbCtrls, QGraphics, QForms, QDialogs;
-{$ENDIF}
 
 procedure Busy(Enable: Boolean);
 function Confirm(const Msg: string): Boolean;

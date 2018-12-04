@@ -30,11 +30,7 @@
 
 unit InstantNexusDBConsts;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 {$I InstantNexusDBDefines.inc}
 
 interface

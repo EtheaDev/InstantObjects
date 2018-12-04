@@ -1362,7 +1362,6 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
       Top = 141
       Width = 241
       Height = 21
-      ItemHeight = 13
       TabOrder = 3
     end
     object PathEdit: TEdit
@@ -1406,14 +1405,12 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
       TabOrder = 2
       TabStop = True
       Thousands = False
-      Wrap = False
     end
     object AliasesCbx: TComboBox
       Left = 96
       Top = 253
       Width = 217
       Height = 21
-      ItemHeight = 13
       TabOrder = 5
     end
     object StreamFormatComboBox: TComboBox
@@ -1422,7 +1419,6 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
       Width = 149
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 7
     end
@@ -1455,7 +1451,6 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
         Width = 126
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 0
       end
       object IdSizeEdit: TEdit
@@ -1475,6 +1470,9 @@ object InstantNexusDBConnectionDefEditForm: TInstantNexusDBConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
+    DesignSize = (
+      506
+      35)
     object OkButton: TButton
       Left = 348
       Top = 6

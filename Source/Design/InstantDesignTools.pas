@@ -30,26 +30,17 @@
 
 unit InstantDesignTools;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   Classes,
-{$IFDEF MSWINDOWS}
   {$IFDEF D6+}
     DesignIntf, DesignEditors,
   {$ELSE}
     DsgnIntf,
   {$ENDIF}
-{$ENDIF}
-{$IFDEF LINUX}
-  DesignIntf, DesignEditors, ClxStrEdit,
-{$ENDIF}
   StrEdit, ColnEdit, InstantPresentation;
 
 type

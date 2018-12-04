@@ -1284,7 +1284,6 @@ object InstantNexusDBEmbeddedConnectionDefEditForm: TInstantNexusDBEmbeddedConne
       Top = 100
       Width = 217
       Height = 21
-      ItemHeight = 13
       TabOrder = 1
     end
     object StreamFormatComboBox: TComboBox
@@ -1293,7 +1292,6 @@ object InstantNexusDBEmbeddedConnectionDefEditForm: TInstantNexusDBEmbeddedConne
       Width = 152
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 3
     end
@@ -1326,7 +1324,6 @@ object InstantNexusDBEmbeddedConnectionDefEditForm: TInstantNexusDBEmbeddedConne
         Width = 126
         Height = 21
         Style = csDropDownList
-        ItemHeight = 13
         TabOrder = 0
       end
       object IdSizeEdit: TEdit

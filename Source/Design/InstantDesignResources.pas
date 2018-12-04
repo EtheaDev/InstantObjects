@@ -30,22 +30,13 @@
 
 unit InstantDesignResources;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
 uses
   SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, ImgList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QMenus, QControls, QExtCtrls, QForms, QImgList, QGraphics,
-{$ENDIF}
   Classes;
 
 type
