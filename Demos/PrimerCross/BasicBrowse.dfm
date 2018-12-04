@@ -1,10 +1,10 @@
 object BasicBrowseForm: TBasicBrowseForm
   Left = 379
   Top = 254
-  Width = 257
-  Height = 319
   BorderIcons = [biSystemMenu]
   Caption = 'Browse'
+  ClientHeight = 280
+  ClientWidth = 241
   Color = clBtnFace
   ParentFont = True
   KeyPreview = True
@@ -16,25 +16,26 @@ object BasicBrowseForm: TBasicBrowseForm
   TextHeight = 13
   object StatusBar: TStatusBar
     Left = 0
-    Top = 273
-    Width = 249
+    Top = 261
+    Width = 241
     Height = 19
     Panels = <>
+    ExplicitTop = 273
+    ExplicitWidth = 249
   end
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 249
+    Width = 241
     Height = 26
     AutoSize = True
     BorderWidth = 1
-    EdgeBorders = []
-    Flat = True
     Images = ActionImages
     ParentShowHint = False
     ShowHint = True
     TabOrder = 1
     OnResize = ToolBarResize
+    ExplicitWidth = 249
     object NewButton: TToolButton
       Left = 0
       Top = 0
@@ -85,12 +86,14 @@ object BasicBrowseForm: TBasicBrowseForm
   object BrowseGridPanel: TPanel
     Left = 0
     Top = 26
-    Width = 249
-    Height = 247
+    Width = 241
+    Height = 235
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 1
     TabOrder = 2
+    ExplicitWidth = 249
+    ExplicitHeight = 247
     object BrowseGrid: TDBGrid
       Left = 1
       Top = 1
@@ -104,7 +107,7 @@ object BasicBrowseForm: TBasicBrowseForm
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
-      TitleFont.Name = 'MS Sans Serif'
+      TitleFont.Name = 'Tahoma'
       TitleFont.Style = []
       OnDblClick = BrowseGridDblClick
       OnKeyUp = BrowseGridKeyUp

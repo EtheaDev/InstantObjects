@@ -2,20 +2,11 @@ unit DemoDataRequest;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls, QComCtrls,
-{$ENDIF}
   Classes;
 
 type
@@ -59,12 +50,8 @@ end;
 procedure TDemoDataRequestForm.FormCreate(Sender: TObject);
 begin
   inherited;
-{$IFDEF MSWINDOWS}
+  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsDialog;
-{$ENDIF}
 end;
 
 end.

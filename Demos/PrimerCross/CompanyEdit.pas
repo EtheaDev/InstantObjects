@@ -2,23 +2,13 @@ unit CompanyEdit;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, Grids, DBGrids,
   Mask, DBCtrls, ComCtrls, Menus, ImgList, ActnList, Buttons,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls, QExtCtrls, QGrids, QDBGrids,
-  QMask, QDBCtrls, QComCtrls, QMenus, QImgList, QActnList, QButtons,
-{$ENDIF}
   ContactEdit, DB, InstantPresentation, Model;
 
 type
@@ -171,17 +161,11 @@ end;
 procedure TCompanyEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   Font.Height := -11;
   EmployeeGrid.TitleFont.Assign(Screen.IconFont);
 
   LoadMultipleImages(ActionImages,'COMPANYEDITACTIONIMAGES',HInstance);
-{$ENDIF}
-{$IFDEF LINUX}
-  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'COMPANYEDITACTIONIMAGES.BMP');
-{$ENDIF}
-
   //getting glyph images
   EmployeeNewButton.Action := EmployeeNewAction;
   EmployeeLookupButton.Action := EmployeeLookupAction;

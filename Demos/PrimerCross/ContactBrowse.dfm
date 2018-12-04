@@ -1,6 +1,8 @@
 inherited ContactBrowseForm: TContactBrowseForm
   Left = 328
   Caption = 'Contacts'
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   inherited BrowseGridPanel: TPanel

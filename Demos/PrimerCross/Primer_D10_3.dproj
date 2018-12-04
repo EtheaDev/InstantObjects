@@ -55,6 +55,7 @@
         <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Brokers\FireDAC;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_UsePackage>vcl;rtl;vclx;dbrtl;vcldb;bdertl;vclimg;vclactnband;adortl;vcldbx;dbexpress;DbxCommonDriver;DataSnapIndy10ServerTransport;DataSnapProviderClient;vclie;xmlrtl;inet;dsnap;inetdb;IndySystem;IndyCore;IndyProtocols;DbxClientDriver;inetdbxpress;inetdbbde;DataSnapServer;dbxcds;DBXInterBaseDriver;DBXMySQLDriver;DBXFirebirdDriver;DBXSybaseASEDriver;DBXSybaseASADriver;DBXOracleDriver;DBXMSSQLDriver;DBXInformixDriver;DBXDb2Driver;vclib;ibxpress;intrawebdb_100_140;Intraweb_100_140;dsnapcon;vclribbon;VclSmp;soaprtl;TeeUI;TeeDB;Tee;vcltouch;webdsnap;websnap;rbRIDE1114;rbIDE1114;rbRAP1114;rbRCL1114;dclRBADO1114;rbADO1114;rbDB1114;rbDAD1114;dclRBBDE1114;rbDBDE1114;rbBDE1114;dclRBDBE1114;rbDBE1114;dclRBE1114;rbCIDE1114;dclRBIBE1114;rbIBE1114;rbUSERDesign1114;rbUSER1114;ActionBandExtensionsD2010;UniSynEdit_R2010;wPDF3_D2010;WPViewPDF_D2010;IOCore;Jcl;JclVcl;JvCoreD14R;JvSystemD14R;JvStdCtrlsD14R;JvAppFrmD14R;JvBandsD14R;JvDBD14R;JvDlgsD14R;JvBDED14R;JvCmpD14R;JvCryptD14R;JvCtrlsD14R;JvCustomD14R;JvDockingD14R;JvDotNetCtrlsD14R;JvEDID14R;JvGlobusD14R;JvHMID14R;JvInterpreterD14R;JvJansD14R;JvManagedThreadsD14R;JvMMD14R;JvNetD14R;JvPageCompsD14R;JvPluginD14R;JvPrintPreviewD14R;JvRuntimeDesignD14R;JvTimeFrameworkD14R;JvValidatorsD14R;JvWizardD14R;JvXPCtrlsD14R;rbDIDE1114;IOIBX;IOXML;IODBX;IOBDE;IOADO;ISRtl5;ISVcl5;ISOpenOffice5;ISFLib5;$(DCC_UsePackage)</DCC_UsePackage>
         <DCC_DependencyCheckOutputName>Primer_DXE.exe</DCC_DependencyCheckOutputName>
+        <DCC_Define>IO_STATEMENT_LOGGING;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
@@ -79,7 +80,7 @@
         <BT_BuildType>Debug</BT_BuildType>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(ModuleName);FileDescription=$(ModuleName);ProductName=$(ModuleName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <VerInfo_MajorVer>1</VerInfo_MajorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
@@ -133,8 +134,9 @@
                     <Source Name="MainSource">Primer_D10_3.dpr</Source>
                 </Source>
                 <Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k230.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
-                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp230.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\DataExplorerDBXPluginEnt260.bpl">DBExpress Enterprise Data Explorer Integration</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k260.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dclofficexp260.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>
             </Delphi.Personality>
             <ModelSupport>False</ModelSupport>

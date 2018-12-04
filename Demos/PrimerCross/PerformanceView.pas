@@ -2,22 +2,12 @@ unit PerformanceView;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, ToolWin, Menus,
   ExtCtrls, StdCtrls, Contnrs, ComCtrls, TeEngine, Mask,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QMenus,
-  QExtCtrls, QStdCtrls, QComCtrls, QTypes, QMask,
-{$ENDIF}
   Series, TeeProcs, Chart,
   InstantPersistence, InstantPresentation, InstantClasses, Stopwatch, DB, BasicView;
 
@@ -53,12 +43,7 @@ type
 
   TTest = class(TObject)
   private
-{$IFDEF MSWINDOWS}
     FMeasureStart: Cardinal;
-{$ENDIF}
-{$IFDEF LINUX}
-    FMeasureStart: TDateTime;
-{$ENDIF}
     FStopwatch: TStopwatch;
     FTestResult: TTestResult;
     FOnShowStatus: TShowStatusEvent;
@@ -118,7 +103,6 @@ type
     InfoMemo: TMemo;
     TestResultMenu: TPopupMenu;
     TestResultDeleteItem: TMenuItem;
-    IconImage: TImage;
     TestResultRenameItem: TMenuItem;
     TransactionsCheckBox: TCheckBox;
     ObjectsLabel: TLabel;
@@ -136,12 +120,7 @@ type
     procedure TestResultDeleteItemClick(Sender: TObject);
     procedure TestResultMenuPopup(Sender: TObject);
     procedure TestResultRenameItemClick(Sender: TObject);
-{$IFDEF MSWINDOWS}
     procedure TestResultListViewEditedVCL(Sender: TObject; Item: TListItem; var S: String);
-{$ENDIF}
-{$IFDEF LINUX}
-    procedure TestResultListViewEditedCLX(Sender: TObject; Item: TListItem; var S: WideString);
-{$ENDIF}
     procedure TransactionsCheckBoxClick(Sender: TObject);
     procedure TestDisposeCheckBoxClick(Sender: TObject);
     procedure TestRetrieveCheckBoxClick(Sender: TObject);
@@ -150,9 +129,6 @@ type
     function GetTestResults: TTestResults;
     function GetTestResultsFileName: string;
     procedure SetTitleLabel(TitleLabel : TLabel);
-{$IFDEF LINUX}
-    procedure EditItemCaption(Item : TListItem);
-{$ENDIF}
   protected
     procedure LoadTestResults;
     procedure ShowTestResults;
@@ -250,20 +226,10 @@ end;
 
 procedure TTest.EndMeasure(MeasureType: TMeasureType; Count: Integer);
 var
-{$IFDEF MSWINDOWS}
   ElapsedTime: Cardinal;
-{$ENDIF}
-{$IFDEF LINUX}
-  ElapsedTime: TDateTime;
-{$ENDIF}
 begin
   ElapsedTime := Stopwatch.ElapsedTime - FMeasureStart;
-{$IFDEF MSWINDOWS}
   TestResult.Values[MeasureType] := Count / (ElapsedTime / 1000);
-{$ENDIF}
-{$IFDEF LINUX}
-  TestResult.Values[MeasureType] := Count / ElapsedTime / (3600 * 24);
-{$ENDIF}
 end;
 
 procedure TTest.Execute(Retrieve, Query, Dispose : boolean);
@@ -455,18 +421,12 @@ end;
 
 procedure TPerformanceViewForm.FormCreate(Sender: TObject);
 begin
+  Font.Assign(Screen.IconFont);
   Caption := 'Performance';
   InfoMemo.BorderStyle := bsNone;
 
-{$IFDEF MSWINDOWS}
-  Font.Assign(Screen.IconFont);
   TestResultListView.OnEdited := TestResultListViewEditedVCL;
   TestResultListView.SortType := stText;
-{$ENDIF}
-{$IFDEF LINUX}
-  TestResultListView.OnEdited := TestResultListViewEditedCLX;
-  TestResultListView.Columns[0].Width := 180;
-{$ENDIF}
   SetTitleLabel(TitleLabel);
   SetTitleLabel(ConnectionLabel);
 end;
@@ -592,27 +552,12 @@ begin
   UpdateChart;
 end;
 
-{$IFDEF MSWINDOWS}
 procedure TPerformanceViewForm.TestResultListViewEditedVCL(Sender: TObject;
   Item: TListItem; var S: String);
 begin
   TTestResult(Item.Data).Name := S;
   UpdateChart;
 end;
-{$ENDIF}
-{$IFDEF LINUX}
-procedure TPerformanceViewForm.TestResultListViewEditedCLX(Sender: TObject;
-  Item: TListItem; var S: WideString);
-begin
-  TTestResult(Item.Data).Name := S;
-  UpdateChart;
-end;
-
-procedure TPerformanceViewForm.EditItemCaption(Item : TListItem);
-begin
-  Item.Caption := InputBox('Connection Name','Name:',Item.Caption);
-end;
-{$ENDIF}
 
 procedure TPerformanceViewForm.TestResultMenuPopup(Sender: TObject);
 begin
@@ -626,13 +571,8 @@ end;
 procedure TPerformanceViewForm.TestResultRenameItemClick(Sender: TObject);
 begin
   with TestResultListView do
-{$IFDEF MSWINDOWS}
     if Assigned(Selected) then
       Selected.EditCaption;
-{$ENDIF}
-{$IFDEF LINUX}
-    EditItemCaption(Selected);
-{$ENDIF}
 end;
 
 procedure TPerformanceViewForm.TestShowStatus(Sender: TObject;
@@ -697,12 +637,7 @@ end;
 
 procedure TPerformanceViewForm.SetTitleLabel(TitleLabel: TLabel);
 begin
-{$IFDEF MSWINDOWS}
   TitleLabel.Font.Size := 10;
-{$ENDIF}
-{$IFDEF LINUX}
-  TitleLabel.Font.Size := 12;
-{$ENDIF}
   TitleLabel.Font.Style := [fsBold];
 end;
 

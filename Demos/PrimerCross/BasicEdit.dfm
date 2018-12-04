@@ -1,9 +1,9 @@
 object BasicEditForm: TBasicEditForm
   Left = 326
   Top = 270
-  Width = 393
-  Height = 289
   Caption = 'Edit'
+  ClientHeight = 250
+  ClientWidth = 377
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -17,14 +17,14 @@ object BasicEditForm: TBasicEditForm
   TextHeight = 13
   object ButtonPanel: TPanel
     Left = 0
-    Top = 224
-    Width = 385
+    Top = 219
+    Width = 377
     Height = 31
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
     object AnchorPanel: TPanel
-      Left = 218
+      Left = 210
       Top = 0
       Width = 167
       Height = 31
@@ -57,8 +57,8 @@ object BasicEditForm: TBasicEditForm
   object ClientPanel: TPanel
     Left = 0
     Top = 0
-    Width = 385
-    Height = 224
+    Width = 377
+    Height = 219
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
@@ -66,8 +66,8 @@ object BasicEditForm: TBasicEditForm
     object PageControl: TPageControl
       Left = 2
       Top = 2
-      Width = 381
-      Height = 220
+      Width = 373
+      Height = 215
       ActivePage = DetailsSheet
       Align = alClient
       TabOrder = 0

@@ -1,7 +1,5 @@
 object MainDataModule: TMainDataModule
   OldCreateOrder = False
-  Left = 234
-  Top = 188
   Height = 444
   Width = 563
   object CountrySelector: TInstantSelector

@@ -1,5 +1,6 @@
 inherited HelpViewForm: THelpViewForm
   Width = 486
+  ExplicitWidth = 486
   object Browser: TWebBrowser
     Left = 0
     Top = 0

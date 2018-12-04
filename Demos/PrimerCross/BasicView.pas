@@ -2,20 +2,11 @@ unit BasicView;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
-{$ENDIF}
-{$IFDEF LINUX}
-  QTypes, QGraphics, QControls, QForms, QDialogs,
-{$ENDIF}
   InstantPersistence;
 
 
@@ -67,9 +58,7 @@ end;
 
 procedure TBasicViewForm.FormCreate(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
-{$ENDIF}
 end;
 
 procedure TBasicViewForm.FormHide(Sender: TObject);

@@ -1,9 +1,9 @@
 object ContactSortForm: TContactSortForm
   Left = 334
   Top = 264
-  Width = 378
-  Height = 267
   Caption = 'Sort'
+  ClientHeight = 228
+  ClientWidth = 362
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -50,7 +50,6 @@ object ContactSortForm: TContactSortForm
     Width = 209
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     Sorted = True
     TabOrder = 2
   end
@@ -60,7 +59,6 @@ object ContactSortForm: TContactSortForm
     Width = 209
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     Sorted = True
     TabOrder = 3
   end

@@ -2,11 +2,7 @@ unit HelpView;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,

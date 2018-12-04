@@ -1,6 +1,8 @@
 inherited PerformanceViewForm: TPerformanceViewForm
   Width = 749
   Height = 564
+  ExplicitWidth = 749
+  ExplicitHeight = 564
   object ClientPanel: TPanel
     Left = 0
     Top = 0
@@ -21,9 +23,9 @@ inherited PerformanceViewForm: TPerformanceViewForm
       Color = clWhite
       TabOrder = 0
       object TitleLabel: TLabel
-        Left = 40
+        Left = 16
         Top = 4
-        Width = 133
+        Width = 134
         Height = 13
         Caption = 'Database Performance Test'
       end
@@ -38,56 +40,14 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object ConnectionLabel: TLabel
         Left = 280
         Top = 4
-        Width = 132
+        Width = 133
         Height = 13
         Caption = 'Connection: Not Connected'
-      end
-      object IconImage: TImage
-        Left = 4
-        Top = 4
-        Width = 32
-        Height = 32
-        AutoSize = True
-        Picture.Data = {
-          055449636F6E0000010002001010100000000000280100002600000020201000
-          00000000E80200004E0100002800000010000000200000000100040000000000
-          C000000000000000000000000000000000000000000000000000BF0000BF0000
-          00BFBF00BF000000BF00BF00BFBF0000C0C0C000808080000000FF0000FF0000
-          00FFFF00FF000000FF00FF00FFFF0000FFFFFF00000000000000000000000000
-          33000000000000333300000000003333FF300000003333F00F3000000333000F
-          F0F300000033FFFFFF03000000333FFFFFF0300000033FFFFFF03000000333FF
-          FFF77300000033FFF70073000000333F00FF03000000033F8F77000000000333
-          8870700000000033087F88000000000000880000FF3F0000FC1F0000F01F0000
-          C00F0000800F000080070000C0070000C0030000E0030000E0010000F0010000
-          F0030000F8070000F8030000FC830000FFCF0000280000002000000040000000
-          0100040000000000800200000000000000000000000000000000000000000000
-          0000BF0000BF000000BFBF00BF000000BF00BF00BFBF0000C0C0C00080808000
-          0000FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF0000000000
-          0000000000000000000000000000000000000000000330000000000000000000
-          0000000003333000000000000000000000000003333333000000000000000000
-          0000033333388300000000000000000000033333388F83300000000000000000
-          033333388FFFF830000000000000000333333887F007F8330000000000000333
-          333000000FF007830000000000033333000FFFFFFFFFF0833000000000333300
-          FFFFFFF88FFFFF0830000000000333FFFFFFF88FFF88FFF033000000000333FF
-          FFF88FFF88FFFFF0830000000000333FF88FFF88FFFF00FF033000000000333F
-          FFFF88FFFF00CFFF0830000000000333FF88FFFF0099CCFFF033000000000377
-          77FFFF00CFF99CFFF083000000000000777F0099CCF99CCFFF03300000000FFF
-          00770FF99CFF99CFFF083000000FF777FF0770F99CCF99CCFFF0330008F77FCF
-          77F070FFFCCFFFCCFFF0830008F8CFFFC7F0770FFFFFFFFF77FF03308F0FFF0F
-          FF7F070FFFFFFF7007FF03308F0C0000FC7F07F0FFFF7008F03333308F0FFF0F
-          FF7F0FF0FF7008FFF033300008F0CF0FC7F07FFFF008FFF77030000008F00F0F
-          08F07FFFF8FFF77777000000008FF000FF0077FFF88777887700000080088FFF
-          088003FF33388777F88000007800088000083333333087F88000000000000000
-          00003333300008800000000000000800000003300000000000000000FFFFE7FF
-          FFFF83FFFFFE03FFFFF801FFFFE001FFFF8000FFFE0000FFF800007FE000007F
-          C000003FC000003FE000001FE000001FF000000FF000000FF8000007F8000007
-          F8000003E0000003C00000018000000180000000000000000000000100000007
-          8000001F8000001F8000001F0000001F38E0107FFDF079FFF8F9FFFF}
       end
       object ObjectsLabel: TLabel
         Left = 16
         Top = 72
-        Width = 77
+        Width = 82
         Height = 13
         Caption = '&Objects to store:'
         FocusControl = ObjectsEdit
@@ -95,13 +55,13 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object CacheSizeLabel: TLabel
         Left = 328
         Top = 72
-        Width = 108
+        Width = 109
         Height = 13
         Caption = 'Statement &Cache Size:'
         FocusControl = CacheSizeEdit
       end
       object RunButton: TButton
-        Left = 480
+        Left = 608
         Top = 36
         Width = 105
         Height = 25
@@ -110,22 +70,19 @@ inherited PerformanceViewForm: TPerformanceViewForm
         OnClick = RunButtonClick
       end
       object InfoMemo: TMemo
-        Left = 40
-        Top = 18
-        Width = 437
-        Height = 51
+        Left = 16
+        Top = 23
+        Width = 585
+        Height = 46
         TabStop = False
         Enabled = False
         Lines.Strings = (
           
             'This page allows you to run a performance test on the current co' +
-            'nnection.'
+            'nnection. You can measure the speed of store, '
           
-            'You can measure the speed of store, retrieve query and dispose o' +
-            'perations.'
-          
-            'Test results can be compared to other connections in the chart b' +
-            'elow.')
+            'retrieve query and dispose operations. Test results can be compa' +
+            'red to other connections in the chart below.')
         ReadOnly = True
         TabOrder = 0
       end
@@ -254,64 +211,67 @@ inherited PerformanceViewForm: TPerformanceViewForm
           ShowHint = True
           TabOrder = 0
           object TestResultStoreSeries: TBarSeries
-            Marks.ArrowLength = 20
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
             Marks.Visible = True
             SeriesColor = clGreen
             Title = 'Store'
-            XValues.DateTime = False
+            Gradient.Direction = gdTopBottom
             XValues.Name = 'X'
-            XValues.Multiplier = 1.000000000000000000
             XValues.Order = loAscending
-            YValues.DateTime = False
             YValues.Name = 'Bar'
-            YValues.Multiplier = 1.000000000000000000
             YValues.Order = loNone
+            Left = 120
+            Top = 344
           end
           object TestResultRetrieveSeries: TBarSeries
-            Marks.ArrowLength = 20
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
             Marks.Visible = True
             SeriesColor = 8454143
             Title = 'Retrieve'
-            XValues.DateTime = False
+            Gradient.Direction = gdTopBottom
             XValues.Name = 'X'
-            XValues.Multiplier = 1.000000000000000000
             XValues.Order = loAscending
-            YValues.DateTime = False
             YValues.Name = 'Bar'
-            YValues.Multiplier = 1.000000000000000000
             YValues.Order = loNone
+            Left = 120
+            Top = 288
           end
           object Series1: TBarSeries
-            Marks.ArrowLength = 20
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
             Marks.Visible = True
             SeriesColor = 16744576
             Title = 'Query'
-            XValues.DateTime = False
+            Gradient.Direction = gdTopBottom
             XValues.Name = 'X'
-            XValues.Multiplier = 1.000000000000000000
             XValues.Order = loAscending
-            YValues.DateTime = False
             YValues.Name = 'Bar'
-            YValues.Multiplier = 1.000000000000000000
             YValues.Order = loNone
+            Left = 120
+            Top = 224
           end
           object TestResultDisposeSeries: TBarSeries
-            Marks.ArrowLength = 20
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
             Marks.Visible = True
-            SeriesColor = clRed
             Title = 'Dispose'
-            XValues.DateTime = False
+            Gradient.Direction = gdTopBottom
             XValues.Name = 'X'
-            XValues.Multiplier = 1.000000000000000000
             XValues.Order = loAscending
-            YValues.DateTime = False
             YValues.Name = 'Bar'
-            YValues.Multiplier = 1.000000000000000000
             YValues.Order = loNone
+            Left = 120
+            Top = 160
           end
         end
       end

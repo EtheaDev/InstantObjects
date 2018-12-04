@@ -2,20 +2,11 @@ unit ContactSort;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-{$ENDIF}
   InstantPersistence;
 
 type
@@ -55,13 +46,8 @@ uses
 
 procedure TContactSortForm.FormCreate(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsDialog;
-{$ENDIF}
   LoadAttributes(TContact, AttributeComboBox.Items);
   LoadProperties(TContact, PropertyComboBox.Items);
   UpdateControls;

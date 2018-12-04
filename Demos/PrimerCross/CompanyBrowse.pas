@@ -2,22 +2,12 @@ unit CompanyBrowse;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
   Menus, ImgList, ActnList, Grids, DBGrids, ExtCtrls, ComCtrls, ToolWin,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls,
-  QMenus, QImgList, QActnList, QGrids, QDBGrids, QExtCtrls, QComCtrls,
-{$ENDIF}
   ContactBrowse, DB, InstantPresentation, Model;
 
 type

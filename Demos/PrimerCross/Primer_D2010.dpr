@@ -32,12 +32,7 @@
 
 program Primer_D2010;
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
-
 
 uses
   Forms,

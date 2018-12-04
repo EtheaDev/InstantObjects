@@ -2,11 +2,7 @@ unit Utility;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 procedure BeginBusy;
 procedure EndBusy;
@@ -15,12 +11,7 @@ function Confirm(const Text: string): Boolean;
 implementation
 
 uses
-{$IFDEF MSWINDOWS}
   Forms, Dialogs, Controls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms, QDialogs, QControls,
-{$ENDIF}
 {$IFDEF D17+}
   System.UITypes,
 {$ENDIF}

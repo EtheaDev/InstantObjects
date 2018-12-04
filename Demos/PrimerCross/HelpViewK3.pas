@@ -25,11 +25,9 @@ implementation
 procedure THelpViewForm.FormCreate(Sender: TObject);
 begin
   inherited;
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   Font.Height = 19
   Font.Name = 'adobe-helvetica'
-{$ENDIF}
   Caption := 'Overview';
   acIndex.Execute;
 end;

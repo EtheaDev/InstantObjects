@@ -2,16 +2,13 @@ object MainForm: TMainForm
   Left = 254
   Top = 225
   Caption = 'InstantObjects Primer'
-  ClientHeight = 181
-  ClientWidth = 304
+  ClientHeight = 619
+  ClientWidth = 1071
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
+  ParentFont = True
   Menu = MainMenu
   OldCreateOrder = False
+  Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
@@ -20,14 +17,14 @@ object MainForm: TMainForm
   object SideBarSplitter: TSplitter
     Left = 88
     Top = 26
-    Height = 136
+    Height = 574
     ResizeStyle = rsLine
     ExplicitHeight = 139
   end
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 304
+    Width = 1071
     Height = 26
     AutoSize = True
     BorderWidth = 1
@@ -48,8 +45,8 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 162
-    Width = 304
+    Top = 600
+    Width = 1071
     Height = 19
     Panels = <
       item
@@ -64,7 +61,7 @@ object MainForm: TMainForm
     Left = 0
     Top = 26
     Width = 88
-    Height = 136
+    Height = 574
     Align = alLeft
     BevelOuter = bvNone
     BorderStyle = bsSingle
@@ -82,14 +79,13 @@ object MainForm: TMainForm
       Left = 0
       Top = 8
       Width = 84
-      Height = 124
+      Height = 562
       Align = alClient
       BorderStyle = bsNone
       Color = clAppWorkSpace
       Columns = <>
       IconOptions.AutoArrange = True
       ReadOnly = True
-      ParentFont = True
       TabOrder = 0
       OnSelectItem = SideBarSelectItem
     end
@@ -97,23 +93,24 @@ object MainForm: TMainForm
   object WorkPanel: TPanel
     Left = 91
     Top = 26
-    Width = 213
-    Height = 136
+    Width = 980
+    Height = 574
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
     object WorkTitleSpacer: TBevel
       Left = 0
       Top = 27
-      Width = 213
+      Width = 980
       Height = 4
       Align = alTop
       Shape = bsSpacer
+      ExplicitWidth = 213
     end
     object WorkTitlePanel: TPanel
       Left = 0
       Top = 0
-      Width = 213
+      Width = 980
       Height = 27
       Align = alTop
       BevelInner = bvLowered
@@ -122,32 +119,31 @@ object MainForm: TMainForm
       object WorkTitleLabel: TLabel
         Left = 6
         Top = 5
-        Width = 32
-        Height = 16
+        Width = 20
+        Height = 13
         Caption = 'Title'
-        ParentFont = True
       end
     end
     object WorkClientPanel: TPanel
       Left = 0
       Top = 31
-      Width = 213
-      Height = 105
+      Width = 980
+      Height = 543
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
     end
   end
   object SideBarImages: TImageList
-    Height = 32
-    Width = 32
-    Left = 11
-    Top = 268
+    Height = 36
+    Width = 36
+    Left = 147
+    Top = 276
   end
   object MainMenu: TMainMenu
     Images = ActionImages
-    Left = 11
-    Top = 236
+    Left = 147
+    Top = 172
     object FileMenu: TMenuItem
       Caption = '&File'
       object ConnectionManagerItem: TMenuItem
@@ -186,8 +182,8 @@ object MainForm: TMainForm
   object ActionList: TActionList
     Images = ActionImages
     OnUpdate = ActionListUpdate
-    Left = 43
-    Top = 236
+    Left = 147
+    Top = 220
     object ConnectionManagerAction: TAction
       Caption = '&Connection Manager'
       Hint = 'Connection Manager'
@@ -203,15 +199,15 @@ object MainForm: TMainForm
     end
   end
   object ActionImages: TImageList
-    Left = 43
-    Top = 268
+    Left = 147
+    Top = 332
   end
   object ConnectionManager: TInstantConnectionManager
     OnConnect = ConnectionManagerConnect
     OnDisconnect = ConnectionManagerDisconnect
     OnIsConnected = ConnectionManagerIsConnected
     OnPrepare = ConnectionManagerPrepare
-    Left = 11
-    Top = 204
+    Left = 147
+    Top = 116
   end
 end

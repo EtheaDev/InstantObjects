@@ -2,22 +2,12 @@ unit Main;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
   Menus, ExtCtrls, ComCtrls, ToolWin, Grids, DBGrids, ImgList, ActnList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls,QTypes,
-  QMenus, QExtCtrls, QComCtrls, QGrids, QDBGrids, QImgList, QActnList,
-{$ENDIF}
   InstantPersistence, BasicView, Stopwatch,
   InstantConnectionManagerFormUnit, InstantConnectionManager,
   {$IFDEF D17+}System.Actions,{$ENDIF}
@@ -118,9 +108,7 @@ type
     property IsConnected: Boolean read GetIsConnected;
   end;
 
-{$IFDEF MSWINDOWS}
   {$R PrimerImages.res}
-{$ENDIF}
 
 var
   MainForm: TMainForm;
@@ -130,12 +118,7 @@ implementation
 uses
   Contnrs, Model, Welcome, MainData, RandomData, DemoData, Utility, ContactView,
   PerformanceView,
-{$IFDEF MSWINDOWS}
   HelpView, JPeg,
-{$ENDIF}
-{$IFDEF LINUX}
-  HelpViewK3,
-{$ENDIF}
   DemoDataRequest, InstantPresentation, InstantClasses,
   QueryView, InstantImageUtils, InstantTypes,
 
@@ -145,7 +128,6 @@ uses
   installed all brokers, please remove the missing broker unit(s) from
   the list. }
 
-{$IFDEF MSWINDOWS}
   {$IFNDEF VER130}
   InstantDBX,
   {$ENDIF}
@@ -159,10 +141,6 @@ uses
     // don't have an Enterprise version of Delphi - just remove them.
     DBXFirebird, DBXInterBase, DBXDB2, DBXMSSql, DBXOracle,
   {$ENDIF}
-{$ENDIF}
-{$IFDEF LINUX}
-  InstantDBX,
-{$ENDIF}
   InstantXML;
 
 {$R *.dfm}
@@ -397,9 +375,7 @@ var
 var
   I, CommitCount: Integer;
 begin
-{$IFDEF MSWINDOWS}
   GetAsyncKeyState(VK_ESCAPE);
-{$ENDIF}
   CommitCount := 200;
   Randomize;
   Companies := TObjectList.Create;
@@ -416,7 +392,6 @@ begin
           Free;
         end;
         Stopwatch.Step;
-{$IFDEF MSWINDOWS}
         if GetAsyncKeyState(VK_ESCAPE) <> 0 then
         begin
           Application.ProcessMessages;
@@ -425,7 +400,6 @@ begin
           else
             Application.ProcessMessages;
         end;
-{$ENDIF}
         if (Succ(I) mod CommitCount) = 0 then
           with InstantDefaultConnector do
           begin
@@ -514,7 +488,7 @@ end;
 
 procedure TMainForm.FormActivate(Sender: TObject);
 begin
-  WindowState := wsMaximized;
+//  WindowState := wsMaximized;
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -527,7 +501,6 @@ end;
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   Caption := Application.Title;
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   WorkTitleLabel.Color := clHighLightText;
   WorkTitleLabel.Font.Height := -13;
@@ -543,12 +516,6 @@ begin
     HotTrackStyles := [htHandPoint];
     LargeImages := SideBarImages;
   end;
-{$ENDIF}
-{$IFDEF LINUX}
-  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'MAINACTIONIMAGES.BMP');
-  LoadMultipleImages(SideBarImages,ExtractFilePath(Application.ExeName)+'MAINSIDEBARIMAGES.BMP');
-  SideBar.Images := SideBarImages;
-{$ENDIF}
 
 // To use XML format for ConnectionManager file:
   ConnectionManager.FileFormat := sfXML;
@@ -726,21 +693,11 @@ end;
 
 procedure TMainForm.StopwatchStop(Sender: TObject);
 var
-{$IFDEF LINUX}
-  h,m,s, ms : word;
-{$ELSE}
   ms : cardinal;
-{$ENDIF}
 begin
   with Stopwatch do
   begin
-{$IFDEF LINUX}
-    decodetime(TotalTime,h,m,s,ms);
-    ms := ms+s*1000+m*1000*60+h*1000*60*24;
-{$ENDIF}
-{$IFDEF MSWINDOWS}
     ms := TotalTime;
-{$ENDIF}
     ShowMessage(Format('%d objects processed in %d ms. (%d o/s)',
       [StepIndex, ms, Round(StepIndex / (ms / 1000))]));
   end;
@@ -795,12 +752,7 @@ end;
 
 procedure TMainForm.AssignRandomPicture(Male : boolean; InstantBlob : TInstantBlob);
 const
-{$IFDEF MSWINDOWS}
   ARandomExt : Array[0..2] of string = ('.bmp','.jpg','.emf');
-{$ENDIF}
-{$IFDEF LINUX}
-  ARandomExt : Array[0..2] of string = ('.bmp','.jpg','.png');
-{$ENDIF}
 var
   Picture: TPicture;
   PictureName : string;
@@ -838,8 +790,6 @@ begin
 end;
 
 initialization
-{$IFDEF MSWINDOWS}
   InstantRegisterGraphicClass(gffJpeg, TJPEGImage);
-{$ENDIF}
 
 end.

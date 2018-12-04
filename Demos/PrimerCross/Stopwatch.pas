@@ -2,20 +2,11 @@ unit Stopwatch;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils,
-{$IFDEF MSWINDOWS}
   Controls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QControls,
-{$ENDIF}
   Classes;
 
 type
@@ -26,30 +17,17 @@ type
     FOnStart: TNotifyEvent;
     FOnStep: TNotifyEvent;
     FOnStop: TNotifyEvent;
-{$IFDEF MSWINDOWS}
     FStartTime, FStopTime: Cardinal;
     function GetElapsedTime: Cardinal;
     function GetTotalTime: Cardinal;
-{$ENDIF}
-{$IFDEF LINUX}
-    FStartTime, FStopTime: TDateTime;
-    function GetElapsedTime: TDateTime;
-    function GetTotalTime: TDateTime;
-{$ENDIF}
     function GetStepPercent: Integer;
   public
     procedure Reset;
     procedure Start(AStepCount: Integer);
     procedure Step;
     procedure Stop;
-{$IFDEF MSWINDOWS}
     property ElapsedTime: Cardinal read GetElapsedTime;
     property TotalTime: Cardinal read GetTotalTime;
-{$ENDIF}
-{$IFDEF LINUX}
-    property ElapsedTime: TDateTime read GetElapsedTime;
-    property TotalTime: TDateTime read GetTotalTime;
-{$ENDIF}
     property StepCount: Integer read FStepCount;
     property StepIndex: Integer read FStepIndex;
     property StepPercent: Integer read GetStepPercent;
@@ -61,18 +39,12 @@ type
 implementation
 
 uses
-{$IFDEF MSWINDOWS}
   Windows, Forms,
-{$ENDIF}
-{$IFDEF LINUX}
-  QForms,
-{$ENDIF}
   Contnrs;
 
 
 { TStopwatch }
 
-{$IFDEF MSWINDOWS}
 function TStopwatch.GetElapsedTime: Cardinal;
 begin
   Result := GetTickCount - FStartTime;
@@ -82,18 +54,6 @@ function TStopwatch.GetTotalTime: Cardinal;
 begin
   Result := FStopTime - FStartTime;
 end;
-{$ENDIF}
-{$IFDEF LINUX}
-function TStopwatch.GetElapsedTime: TDateTime;
-begin
-  Result := Now - FStartTime;
-end;
-
-function TStopwatch.GetTotalTime: TDateTime;
-begin
-  Result := FStopTime - FStartTime;
-end;
-{$ENDIF}
 
 function TStopwatch.GetStepPercent: Integer;
 begin
@@ -118,12 +78,7 @@ begin
   FStepCount := AStepCount;
   if Assigned(FOnStart) then
     FOnStart(Self);
-{$IFDEF MSWINDOWS}
   FStartTime := GetTickCount;
-{$ENDIF}
-{$IFDEF LINUX}
-  FStartTime := Now;
-{$ENDIF}
 end;
 
 procedure TStopwatch.Step;
@@ -135,12 +90,7 @@ end;
 
 procedure TStopwatch.Stop;
 begin
-{$IFDEF MSWINDOWS}
   FStopTime := GetTickCount;
-{$ENDIF}
-{$IFDEF LINUX}
-  FStopTime := Now;
-{$ENDIF}
   Screen.Cursor := FCursor;
   if Assigned(FOnStop) then
     FOnStop(Self);

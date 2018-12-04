@@ -28,24 +28,15 @@ uses
   the list. }
 
 //Begin Broker inclusion section
-{$IFDEF MSWINDOWS}
   {$IFNDEF VER130}
   InstantDBX,
   {$ENDIF}
   InstantADO, InstantBDE, InstantIBX,
 {$ENDIF}
-{$IFDEF LINUX}
-  InstantDBX,
-{$ENDIF}
   InstantXML,
 //End Broker inclusion section
 
-{$IFDEF MSWINDOWS}
-    Jpeg, Graphics,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics,
-{$ENDIF}
+  Jpeg, Graphics,
   InstantConnectionManager, InstantClasses,
   Contnrs,
   DemoData, RandomData, Model;
@@ -79,12 +70,7 @@ procedure AssignRandomPicture(Male : boolean; InstantBlob : TInstantBlob;
   const PicturePath : string);
 
 const
-{$IFDEF MSWINDOWS}
   ARandomExt : Array[0..2] of string = ('.bmp','.jpg','.emf');
-{$ENDIF}
-{$IFDEF LINUX}
-  ARandomExt : Array[0..3] of string = ('.bmp','.jpg','.emf','.png');
-{$ENDIF}
 var
   Picture: TPicture;
   PictureName : string;
@@ -212,9 +198,7 @@ initialization
   ConnectionManager.OnConnect := ConnectorEventsProvider.ConnectionManagerConnect;
   ConnectionManager.OnDisconnect := ConnectorEventsProvider.ConnectionManagerDisconnect;
 
-{$IFDEF MSWINDOWS}
   InstantRegisterGraphicClass(gffJpeg, TJPEGImage);
-{$ENDIF}
 
 finalization
   ConnectionManager.Free;

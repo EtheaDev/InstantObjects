@@ -2,11 +2,7 @@ unit RandomData;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 type
   TGender = (gnMale, gnFemale);
@@ -158,7 +154,6 @@ begin
     2: Result := TripletName;
   end;
   Result[1] := UpCase(Result[1]);
-  Result := Result + ' ' + 'А ати aa'
 end;
 
 function RandomCompanyName: string;

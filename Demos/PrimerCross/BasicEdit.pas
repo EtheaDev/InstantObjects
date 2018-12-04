@@ -2,20 +2,11 @@ unit BasicEdit;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes, DB,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QExtCtrls, QStdCtrls, QComCtrls,
-{$ENDIF}
   InstantPresentation;
 
 type
@@ -142,13 +133,8 @@ end;
 procedure TBasicEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   BorderStyle := bsSingle;
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsSingle;
-{$ENDIF}
 end;
 
 

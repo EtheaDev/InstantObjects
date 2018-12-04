@@ -2,11 +2,7 @@ unit DemoData;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   Classes, Model, InstantPersistence, RandomData;
@@ -20,12 +16,7 @@ implementation
 
 uses
   SysUtils,
-{$IFDEF MSWINDOWS}
   Windows,
-{$ENDIF}
-{$IFDEF LINUX}
-  QDialogs,
-{$ENDIF}
   InstantUtils;
 
 procedure CreateCategories;

@@ -2,33 +2,17 @@ unit BasicBrowse;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes, DB,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
   Grids, DBGrids, ExtCtrls, ToolWin, ComCtrls, ImgList, Menus, ActnList,
-{$ENDIF}
-{$IFDEF LINUX}
-  Qt, QGraphics, QControls, QForms, QDialogs, QStdCtrls, QTypes,
-  QGrids, QDBGrids, QExtCtrls, QComCtrls, QImgList, QMenus, QActnList,
-{$ENDIF}
   InstantPresentation;
 
 const
-{$IFDEF MSWINDOWS}
   VK_ESCAPE_KEY = VK_ESCAPE;
   VK_RETURN_KEY = VK_RETURN;
-{$ENDIF}
-{$IFDEF LINUX}
-  VK_ESCAPE_KEY = Key_Escape;
-  VK_RETURN_KEY = Key_Return;
-{$ENDIF}
 
 type
   TBasicBrowseForm = class(TForm)
@@ -162,16 +146,10 @@ end;
 
 procedure TBasicBrowseForm.FormCreate(Sender: TObject);
 begin
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   LoadMultipleImages(ActionImages,'BROWSEACTIONIMAGES',HInstance);
   BorderStyle := bsSingle;
   SelectItem.Default := True;
-{$ENDIF}
-{$IFDEF LINUX}
-  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'BROWSEACTIONIMAGES.BMP');
-  BorderStyle := fbsSingle;
-{$ENDIF}
   UpdateControls;
 end;
 

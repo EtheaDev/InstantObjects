@@ -1,15 +1,10 @@
 object WelcomeForm: TWelcomeForm
   Left = 426
   Top = 263
-  Width = 436
-  Height = 269
   Caption = 'Welcome'
+  ClientHeight = 230
+  ClientWidth = 420
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -18,20 +13,24 @@ object WelcomeForm: TWelcomeForm
   object FramePanel: TPanel
     Left = 0
     Top = 0
-    Width = 428
-    Height = 235
+    Width = 420
+    Height = 230
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 1
     Color = clBlack
     TabOrder = 0
+    ExplicitWidth = 428
+    ExplicitHeight = 235
     object BackPanel: TPanel
       Left = 1
       Top = 1
-      Width = 426
-      Height = 233
+      Width = 418
+      Height = 228
       Align = alClient
       TabOrder = 0
+      ExplicitWidth = 426
+      ExplicitHeight = 233
       object TitleLabel: TLabel
         Left = 88
         Top = 4
@@ -42,14 +41,6 @@ object WelcomeForm: TWelcomeForm
         Caption = 'Application title'
         Transparent = True
         WordWrap = True
-      end
-      object Memo1: TMemo
-        Left = 9
-        Top = 70
-        Width = 416
-        Height = 152
-        Lines.Strings = (
-          '')
       end
       object LogoImage: TImage
         Left = 9
@@ -198,6 +189,15 @@ object WelcomeForm: TWelcomeForm
           8888881100000011111111111111111111111111111111111111111111111111
           1111111111111111111111111111111111111111111111111111111111111100
           0000}
+      end
+      object Memo1: TMemo
+        Left = 9
+        Top = 70
+        Width = 416
+        Height = 152
+        Lines.Strings = (
+          '')
+        TabOrder = 0
       end
       object OkButton: TButton
         Left = 350

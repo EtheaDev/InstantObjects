@@ -2,21 +2,12 @@ unit Welcome;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
   ShellApi,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls, QExtCtrls,
-{$ENDIF}
   Classes;
 
 type
@@ -40,8 +31,8 @@ procedure TWelcomeForm.FormCreate(Sender: TObject);
 var
   LLib, LPersonality: string;
 begin
+  Font.Assign(Screen.IconFont);
   TitleLabel.Caption := Application.Title;
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   TitleLabel.Font.Color := clWindowText;
   TitleLabel.Font.Style := [fsBold];
@@ -49,12 +40,6 @@ begin
   BorderStyle := bsNone;
   LPersonality := 'Delphi';
   LLib := 'VCL';
-{$ENDIF}
-{$IFDEF LINUX}
-  BorderStyle := fbsNone;
-  LPersonality := 'Kylix';
-  LLib := 'CLX';
-{$ENDIF}
   Memo1.Lines.Clear;
   Memo1.Lines.Add('This application demonstrates the main features of InstantObjects by providing a  sample business model implementation and an accompanying user interface.');
   Memo1.Lines.Add(Format('The entire user interface was built using standard %s controls to demonstrate the level of integration with %s.', [LLib, LPersonality]));

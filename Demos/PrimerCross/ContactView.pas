@@ -2,24 +2,13 @@ unit ContactView;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
-  SysUtils, Classes, DB, 
-{$IFDEF MSWINDOWS}
+  SysUtils, Classes, DB,
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   ComCtrls, Grids, DBGrids, ExtCtrls, Buttons, ShellApi,
   StdCtrls, ActnList, ToolWin, ImgList, Menus,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QTypes,
-  QComCtrls, QGrids, QDBGrids, QExtCtrls, QButtons,
-  QStdCtrls, QActnList, QImgList, QMenus, Types,
-{$ENDIF}
   {$IFDEF D17+}Actions,{$ENDIF}
   BasicView, Model, InstantPresentation, InstantExplorer;
 
@@ -178,11 +167,7 @@ var
 begin
   with ContactGrid do
   begin
-{$IFDEF MSWINDOWS}
     Gap := Width - GetSystemMetrics(SM_CXVSCROLL) - 23;
-{$ELSE}
-    Gap := Width - 43;
-{$ENDIF}
     for I := 1 to Pred(Columns.Count) do
       Dec(Gap, Columns[I].Width + 1);
     for I := Pred(Columns.Count) downto 1 do
@@ -386,9 +371,7 @@ begin
   finally
     Stream.Free;
   end;
-{$IFDEF MSWINDOWS}
   ShellExecute(Application.Handle, nil, PChar(FileName), nil, nil, SW_SHOW);
-{$ENDIF}
 end;
 
 procedure TContactViewForm.FilterActionExecute(Sender: TObject);
@@ -411,18 +394,12 @@ procedure TContactViewForm.FormCreate(Sender: TObject);
 begin
   Caption := 'Contacts';
   ContactGrid.OnDrawColumnCell := ContactGridDrawColumnCell;
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   Font.Height := -11;
   ContactGrid.TitleFont.Assign(Screen.IconFont);
 
   LoadMultipleImages(ActionImages,'CONTACTACTIONIMAGES',HInstance);
   LoadMultipleImages(ExplorerImages,'EXPLORERCONTACTIMAGES',HInstance);
-{$ENDIF}
-{$IFDEF LINUX}
-  LoadMultipleImages(ActionImages,ExtractFilePath(Application.ExeName)+'CONTACTACTIONIMAGES.BMP');
-  LoadMultipleImages(ExplorerImages,ExtractFilePath(Application.ExeName)+'EXPLORERCONTACTIMAGES.BMP');
-{$ENDIF}
   FindButton.Action := FindAction; //to get glyph image
 
   FSortOrder := 'Name';
@@ -561,12 +538,7 @@ procedure TContactViewForm.PerformTabQuery;
     Result := '';
     with IndexTabControl do
     begin
-{$IFDEF MSWINDOWS}
       Letters := Tabs[TabIndex];
-{$ENDIF}
-{$IFDEF LINUX}
-      Letters := Tabs[TabIndex].Caption;
-{$ENDIF}
       if Letters = 'all' then
         Exit;
     end;

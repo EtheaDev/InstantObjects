@@ -1,15 +1,10 @@
 object DemoDataRequestForm: TDemoDataRequestForm
   Left = 412
   Top = 260
-  Width = 313
-  Height = 195
   Caption = 'Create Random Data'
+  ClientHeight = 156
+  ClientWidth = 297
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate

@@ -2,22 +2,12 @@ unit PersonBrowse;
 
 interface
 
-{$IFDEF LINUX}
 {$I '../../Source/InstantDefines.inc'}
-{$ELSE}
-{$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, Menus, ImgList,
   ActnList, Grids, DBGrids, ExtCtrls, ComCtrls, ToolWin, StdCtrls,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QMenus, QImgList,
-  QActnList, QGrids, QDBGrids, QExtCtrls, QComCtrls, QStdCtrls,
-{$ENDIF}
   ContactBrowse, Db, InstantPresentation, Model;
 
 type

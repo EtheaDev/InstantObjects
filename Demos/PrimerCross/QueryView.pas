@@ -2,23 +2,13 @@ unit QueryView;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, Mask,
   Grids, DBGrids, StdCtrls, ExtCtrls, ActnList, Menus, Buttons,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QMask,
-  QGrids, QDBGrids, QStdCtrls, QExtCtrls, QActnList, QMenus, QButtons,
-{$ENDIF}
-  BasicView, Db, InstantPresentation, ComCtrls;
+  BasicView, Db, InstantPresentation, ComCtrls, System.Actions;
 
 type
   TQueryViewForm = class(TBasicViewForm)
@@ -53,7 +43,9 @@ type
     procedure ActionsUpdate(Action: TBasicAction; var Handled: Boolean);
     procedure TestSelectorAfterClose(DataSet: TDataSet);
   private
+{$IFDEF IO_STATEMENT_LOGGING}
     procedure LogStatement(const AString: string);
+{$ENDIF}
     procedure UpdateTabSheets;
   protected
     procedure LoadExamples;
@@ -167,6 +159,7 @@ begin
   ResultPageControl.ActivePage := ResultTabSheet;
 end;
 
+{$IFDEF IO_STATEMENT_LOGGING}
 procedure TQueryViewForm.LogStatement(const AString: string);
 begin
   //Log only first statement
@@ -174,6 +167,7 @@ begin
     TranslatedQueryMemo.Lines.Text :=
       Copy(AString, Length(InstantLogStatementBefore) + 1, MaxInt);
 end;
+{$ENDIF}
 
 procedure TQueryViewForm.LoadExamples;
 var

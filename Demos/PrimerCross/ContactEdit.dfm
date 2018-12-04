@@ -1,30 +1,43 @@
 inherited ContactEditForm: TContactEditForm
   Left = 300
   Top = 265
-  Width = 441
-  Height = 334
   ActiveControl = NameEdit
   BorderIcons = [biSystemMenu]
   Caption = 'Contact'
+  ClientHeight = 295
+  ClientWidth = 425
   OldCreateOrder = True
+  ExplicitWidth = 441
+  ExplicitHeight = 334
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 269
-    Width = 433
+    Top = 264
+    Width = 425
     TabOrder = 1
+    ExplicitTop = 269
+    ExplicitWidth = 433
     inherited AnchorPanel: TPanel
       Left = 266
+      ExplicitLeft = 266
     end
   end
   inherited ClientPanel: TPanel
-    Width = 433
-    Height = 269
+    Width = 425
+    Height = 264
     TabOrder = 0
+    ExplicitWidth = 433
+    ExplicitHeight = 269
     inherited PageControl: TPageControl
-      Width = 429
-      Height = 265
+      Width = 421
+      Height = 260
+      ExplicitWidth = 429
+      ExplicitHeight = 265
       inherited DetailsSheet: TTabSheet
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object NameLabel: TLabel
           Left = 8
           Top = 8
@@ -149,11 +162,6 @@ inherited ContactEditForm: TContactEditForm
           DataSource = PhonesSource
           Options = [dgEditing, dgTitles, dgColLines, dgCancelOnExit]
           TabOrder = 7
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -11
-          TitleFont.Name = 'MS Sans Serif'
-          TitleFont.Style = []
           Columns = <
             item
               Expanded = False

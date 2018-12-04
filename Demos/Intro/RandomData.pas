@@ -2,11 +2,7 @@ unit RandomData;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 type
   TGender = (gnMale, gnFemale);

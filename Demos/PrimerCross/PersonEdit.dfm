@@ -1,8 +1,8 @@
 inherited PersonEditForm: TPersonEditForm
   Left = 298
   Top = 244
-  Height = 383
   Caption = 'Person'
+  ClientHeight = 344
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
     00000100040000000000C0000000000000000000000000000000000000000000
@@ -15,18 +15,24 @@ inherited PersonEditForm: TPersonEditForm
     0000FFFF0000FF9F0000F20F0000E0070000F0070000F8070000F8070000F807
     0000FC0F0000FE3F0000FC1F0000FC1F0000FC1F0000FE3F0000FFFF0000}
   OnShow = FormShow
+  ExplicitWidth = 320
+  ExplicitHeight = 383
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 318
+    Top = 313
+    ExplicitTop = 318
   end
   inherited ClientPanel: TPanel
-    Height = 318
+    Height = 313
+    ExplicitHeight = 318
     inherited PageControl: TPageControl
-      Height = 314
+      Height = 309
+      ExplicitHeight = 314
       inherited DetailsSheet: TTabSheet
         inherited MidBevel: TBevel
           Height = 290
+          ExplicitHeight = 290
         end
         object BirthDateLabel: TLabel [8]
           Left = 136
@@ -85,6 +91,7 @@ inherited PersonEditForm: TPersonEditForm
         end
         inherited StreetEdit: TDBMemo
           Height = 37
+          ExplicitHeight = 37
         end
         inherited PhonesGrid: TDBGrid
           Height = 76
@@ -130,11 +137,6 @@ inherited PersonEditForm: TPersonEditForm
           DataSource = EmailsSource
           Options = [dgEditing, dgColLines, dgCancelOnExit]
           TabOrder = 12
-          TitleFont.Charset = DEFAULT_CHARSET
-          TitleFont.Color = clWindowText
-          TitleFont.Height = -11
-            TitleFont.Name = 'Arial'
-          TitleFont.Style = []
           Columns = <
             item
               Expanded = False
@@ -152,7 +154,6 @@ inherited PersonEditForm: TPersonEditForm
           AutoSize = True
           ButtonHeight = 23
           Caption = 'EmployerToolBar'
-          EdgeBorders = []
           Images = EmployerToolImages
           ParentShowHint = False
           ShowHint = True

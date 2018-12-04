@@ -1,9 +1,9 @@
 inherited CompanyEditForm: TCompanyEditForm
   Left = 282
   Top = 250
-  Width = 468
-  Height = 321
   Caption = 'Company'
+  ClientHeight = 282
+  ClientWidth = 452
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
     00000100040000000000C0000000000000000000000000000000000000000000
@@ -15,63 +15,87 @@ inherited CompanyEditForm: TCompanyEditForm
     9BB9007778000009B9007778800000090087788000000000000880000000C07F
     0000801F0000C0070000C0030000C0030000C0030000C0030000C0030000C003
     0000C0030000C0030000C0030000C0030000C0070000C01F0000CE7F0000}
+  ExplicitWidth = 468
+  ExplicitHeight = 321
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 263
-    Width = 460
+    Top = 251
+    Width = 452
+    ExplicitTop = 263
+    ExplicitWidth = 460
     inherited AnchorPanel: TPanel
       Left = 293
+      ExplicitLeft = 293
     end
   end
   inherited ClientPanel: TPanel
-    Width = 460
-    Height = 263
+    Width = 452
+    Height = 251
+    ExplicitWidth = 460
+    ExplicitHeight = 263
     inherited PageControl: TPageControl
-      Width = 456
-      Height = 259
+      Width = 448
+      Height = 247
+      ExplicitWidth = 456
+      ExplicitHeight = 259
       inherited DetailsSheet: TTabSheet
         TabVisible = True
         inherited ZipLabel: TLabel
           Left = 176
+          ExplicitLeft = 176
         end
         inherited StateLabel: TLabel
           Left = 160
+          ExplicitLeft = 160
         end
         inherited PhonesLabel: TLabel
           Left = 264
+          ExplicitLeft = 264
         end
         inherited MidBevel: TBevel
           Left = 248
+          ExplicitLeft = 248
         end
         inherited NameEdit: TDBEdit
           Width = 225
+          ExplicitWidth = 225
         end
         inherited StreetEdit: TDBMemo
           Width = 225
+          ExplicitWidth = 225
         end
         inherited CityEdit: TDBEdit
           Width = 161
+          ExplicitWidth = 161
         end
         inherited ZipEdit: TDBEdit
           Left = 176
+          ExplicitLeft = 176
         end
         inherited StateEdit: TDBEdit
           Left = 160
+          ExplicitLeft = 160
         end
         inherited PhonesGrid: TDBGrid
           Left = 264
         end
         inherited CountryEdit: TDBLookupComboBox
           Width = 145
+          ExplicitWidth = 145
         end
         inherited CategoryEdit: TDBLookupComboBox
           Width = 145
+          ExplicitWidth = 145
         end
       end
       object EmployeeSheet: TTabSheet
         Caption = 'Employees'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object EmployeeGridPanel: TPanel
           Left = 0
           Top = 0
@@ -92,10 +116,6 @@ inherited CompanyEditForm: TCompanyEditForm
             PopupMenu = EmployeeGridMenu
             ReadOnly = True
             TabOrder = 0
-            TitleFont.Charset = DEFAULT_CHARSET
-            TitleFont.Color = clWindowText
-            TitleFont.Height = -11
-            TitleFont.Name = 'Arial'
             TitleFont.Style = []
             Columns = <
               item
@@ -135,6 +155,8 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeNewAction
             Caption = '&New...'
+            DoubleBuffered = True
+            ParentDoubleBuffered = False
             TabOrder = 0
           end
           object EmployeeEditButton: TBitBtn
@@ -144,6 +166,8 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeEditAction
             Caption = '&Edit...'
+            DoubleBuffered = True
+            ParentDoubleBuffered = False
             TabOrder = 2
           end
           object EmployeeDeleteButton: TBitBtn
@@ -153,6 +177,8 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeDeleteAction
             Caption = '&Delete'
+            DoubleBuffered = True
+            ParentDoubleBuffered = False
             TabOrder = 4
           end
           object EmployeeLookupButton: TBitBtn
@@ -162,6 +188,8 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeLookupAction
             Caption = '&Lookup...'
+            DoubleBuffered = True
+            ParentDoubleBuffered = False
             TabOrder = 1
           end
           object EmployeeRemoveButton: TBitBtn
@@ -171,6 +199,8 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeRemoveAction
             Caption = '&Remove'
+            DoubleBuffered = True
+            ParentDoubleBuffered = False
             TabOrder = 3
           end
         end

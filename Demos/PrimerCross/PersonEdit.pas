@@ -2,22 +2,12 @@ unit PersonEdit;
 
 interface
 
-{$IFDEF LINUX}
-{$I '../../Source/InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
-{$ENDIF}
 
 uses
   SysUtils, Classes,
-{$IFDEF MSWINDOWS}
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
   Grids, DBGrids, Mask, DBCtrls, ComCtrls, Buttons, ToolWin, ImgList,
-{$ENDIF}
-{$IFDEF LINUX}
-  QGraphics, QControls, QForms, QDialogs, QStdCtrls, QExtCtrls,
-  QGrids, QDBGrids, QMask, QDBCtrls, QComCtrls, QButtons, QImgList,
-{$ENDIF}
   ContactEdit, DB, InstantPresentation, Model;
 
 type
@@ -68,9 +58,7 @@ implementation
 
 uses
   BasicEdit, CompanyBrowse,
-{$IFDEF MSWINDOWS}
   ExtDlgs, JPeg,
-{$ENDIF}
   InstantImageUtils;
 
 { TPersonEditForm }
@@ -131,12 +119,7 @@ procedure TPersonEditForm.PictureButtonClick(Sender: TObject);
 var
   Picture: TPicture;
 begin
-{$IFDEF MSWINDOWS}
   with TOpenPictureDialog.Create(nil) do
-{$ENDIF}
-{$IFDEF LINUX}
-  with TOpenDialog.Create(nil) do
-{$ENDIF}
   try
     if Execute then
     begin
@@ -177,7 +160,6 @@ end;
 procedure TPersonEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
-{$IFDEF MSWINDOWS}
   Font.Assign(Screen.IconFont);
   Font.Height := -11;
   EmailsGrid.TitleFont.Assign(Screen.IconFont);
@@ -186,10 +168,6 @@ begin
   {$IFNDEF VER130}
   PictureImage.Proportional := True;
   {$ENDIF}
-{$ENDIF}
-{$IFDEF LINUX}
-  LoadMultipleImages(EmployerToolImages,ExtractFilePath(Application.ExeName)+'PERSONEMPLOYERTOOLIMAGES.BMP');
-{$ENDIF}
 end;
 
 procedure TPersonEditForm.FormShow(Sender: TObject);

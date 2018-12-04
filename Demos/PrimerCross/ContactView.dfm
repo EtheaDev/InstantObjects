@@ -1,6 +1,8 @@
 inherited ContactViewForm: TContactViewForm
   Width = 627
   Height = 465
+  ExplicitWidth = 627
+  ExplicitHeight = 465
   object GridPanel: TPanel
     Left = 0
     Top = 0
@@ -56,6 +58,8 @@ inherited ContactViewForm: TContactViewForm
           Width = 22
           Height = 21
           Action = FindAction
+          DoubleBuffered = True
+          ParentDoubleBuffered = False
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
@@ -188,7 +192,6 @@ inherited ContactViewForm: TContactViewForm
         Width = 627
         Height = 432
         Align = alClient
-        ParentFont = True
         TabHeight = 18
         TabOrder = 0
         TabWidth = 30
@@ -241,10 +244,10 @@ inherited ContactViewForm: TContactViewForm
             PopupMenu = ContactGridMenu
             ReadOnly = True
             TabOrder = 0
-            TitleFont.Charset = ANSI_CHARSET
+            TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWindowText
             TitleFont.Height = -11
-            TitleFont.Name = 'Arial'
+            TitleFont.Name = 'Tahoma'
             TitleFont.Style = []
             OnDblClick = ContactGridDblClick
             OnKeyDown = ContactGridKeyDown
