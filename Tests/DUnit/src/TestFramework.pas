@@ -684,12 +684,8 @@ const sExpButWasFmt    = '%sexpected: <%s> but was: <%s>';
 ///////////////////////////////////////////////////////////////////////////
 implementation
 uses
-{$IFDEF LINUX}
-  Libc,
-{$ELSE}
   Windows,
   Registry,
-{$ENDIF}
 {$IFDEF USE_JEDI_JCL}
   JclDebug,
 {$ENDIF}
@@ -802,40 +798,6 @@ type
 var
   // SubKey of HKEY_CURRENT_USER for storing configurations in the registry (end with \)
   DUnitRegistryKey: string = ''; // How about 'Software\DUnitTests\';
-
-{$IFDEF LINUX}
-
-var
-  PerformanceCounterInitValue: Int64;
-
-procedure InitPerformanceCounter;
-var
-  TV : TTimeVal;
-  TZ : TTimeZone;
-begin
-  gettimeofday(TV, TZ);
-  PerformanceCounterInitValue :=
-    LongWord(TV.tv_sec mod (24*60*60) * 1000) + (LongWord(TV.tv_usec) div 1000);
-end;
-
-function QueryPerformanceCounter(var PerformanceCounter: Int64): LongBool;
-var
-  TV : TTimeVal;
-  TZ : TTimeZone;
-begin
-  gettimeofday(TV, TZ);
-  PerformanceCounter := (TV.tv_sec mod (24*60*60) * 1000) +
-            (TV.tv_usec div 1000);
-  PerformanceCounter := PerformanceCounter - PerformanceCounterInitValue;
-  Result := true;
-end;
-
-function QueryPerformanceFrequency(var Frequency: Int64): LongBool;
-begin
-  Frequency := 1000;
-  Result := true;
-end;
-{$ENDIF}
 
 {: Convert a pointer into its string representation }
 function PtrToStr(p: Pointer): string;
@@ -1553,11 +1515,9 @@ procedure TAbstractTest.LoadConfiguration(const fileName: string; const useRegis
 var
   f: TCustomIniFile;
 begin
-{$IFNDEF LINUX}
   if useRegistry then
     f := TRegistryIniFile.Create(DUnitRegistryKey + fileName)
   else
-{$ENDIF}
     if useMemIni then
       f := TMemIniFileTrimmed.Create(fileName)
     else
@@ -1579,11 +1539,9 @@ procedure TAbstractTest.SaveConfiguration(const fileName: string; const useRegis
 var
   f: TCustomIniFile;
 begin
-{$IFNDEF LINUX}
   if useRegistry then
     f := TRegistryIniFile.Create(DUnitRegistryKey + fileName)
   else
-{$ENDIF}
     if useMemIni then
       f := TMemIniFileTrimmed.Create(fileName)
     else
@@ -2934,9 +2892,7 @@ begin
 end;
 
 initialization
-{$IFDEF LINUX}
-  InitPerformanceCounter;
-{$ENDIF}
+
 finalization
   ClearRegistry;
 end.
