@@ -6,3 +6,7 @@
 __history
 /Demos/Intro/Database/Company
 /Demos/Intro/Database/Person
+/Source/Brokers/FireDAC/*.~dcr
+/Source/Core/*.~dcr
+/Source/Core/*.~res
+/Source/Design/*.~res
