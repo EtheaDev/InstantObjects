@@ -521,8 +521,6 @@ type
     property ObjectClassName: string read GetObjectClassName write SetObjectClassName stored HasObjectClassName;
     property RecordBuffer: TInstantRecordBuffer read GetRecordBuffer;
     property Subject: TObject read GetSubject;
-    property IsDefaultFields: Boolean read GetIsDefaultFields;
-
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -573,6 +571,7 @@ type
     property ObjectCount: Integer read GetObjectCount;
     property Objects[Index: Integer]: TObject read GetObjects;
     property TotalCount: Integer read GetTotalCount;
+    property IsDefaultFields: Boolean read GetIsDefaultFields;
   published
     property FieldOptions: TInstantFieldOptions read FFieldOptions write SetFieldOptions default [foThorough];
     property Filtered;
