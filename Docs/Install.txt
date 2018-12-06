@@ -27,8 +27,7 @@ There you will find other valuable information about the project.
 INSTALLATION
 ------------
 
-1. Unpack zip file to <installdir>
-
+1. Assume cloning Git Repo into <installdir>
 
 2. Add the following folders to your development environment's library path:
 
@@ -48,8 +47,9 @@ INSTALLATION
    --------------------------------------
    IBX                 IBFb
    UIB                 IBFb
-   DBX                 IBFb, MSSql
+   DBX                 IBFb, MSSql, MySQL
    ADO                 MSSql
+   FireDAC             IBFb, MSSql, MySQL
    
    Other brokers have their catalogs integrated into themselves,
    so there are not dependency issues for them.
@@ -61,7 +61,7 @@ INSTALLATION
    <installdir>/Source/Design/<version>/DclIOCore.dpk (install)
    
    Where <version> identifies your version of Delphi
-   Examples: DXE7, D10.3, etc.
+   Examples: DXE7, D10_3, etc.
 
 
 4. Build and install the desired catalog and broker package(s):

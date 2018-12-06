@@ -11,16 +11,15 @@
 
 ------------------------------------------------------------------
 
-
 WARNING !!!
 
-This file contains detailed info about the second option to install
+This file contains detailed info about the simplified option to install
 InstantObjects, as per the Readme1st.txt file in the root of the
 Project.
 
 If you inadvertently skipped reading it, it should be a good thing
 to do it now, before going on, in order to evaluate also the
-first alternative.
+custom installation alternative.
 
 There you will find other valuable information about the project.
 
@@ -79,5 +78,22 @@ When you are familiar with the packages and source structure of
 InstantObjects you can setup and maintain your own personalised
 bpg files to include only packages you want use.
 
+Environment library path
+
+Demos can compile InstantObjects units because they have relative search path into project, like:
+
+..\..\Source\Core;
+..\..\Source\Brokers\ADO;
+..\..\Source\Brokers\BDE;
+..\..\Source\Brokers\DBX;
+..\..\Source\Brokers\IBX;
+..\..\Source\Brokers\XML;
+..\..\Source\Catalogs\IBFb;
+..\..\Source\Catalogs\MSSql;
+..\..\Source\Catalogs\MySql;
+
+If you wan to compile your projects, remember to add search path to your Delphi Environment settings:
+<installdir>\Source\Core
+<installdir>\Source\Brokers\<brokername>
 
 

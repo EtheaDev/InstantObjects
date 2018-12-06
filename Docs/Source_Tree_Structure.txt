@@ -7,16 +7,16 @@ Abstract
 The following notes document the structure of the InstantObjects tree as stored in Git, explaining what each folder is for.
 
 Modules
--------
+----
 Currently InstantObjects is made up of 4 (mostly independent) modules; future versions might be organized differently. Here is a list of the 4 modules:
 
-Demos: contains demo projects aimed at the IO newbie. There is a subfolder for each applciation:
+Demos: contains demo projects aimed at the InstantObject newbie. There is a subfolder for each applciation:
 
-- Intro: the bare bones demo application, whose building process is shown in the famous IO introductory video.
+- Intro: the bare bones demo application, whose building process is shown in the famous InstantObject introductory video.
 
 - PrimerCross: the cross-database-platform version of the more juicy Primer example. This folder also contains a PrimerExternal.dpr project that makes use of external storage.
 
-- PrimerFireMonkey: a simple example for using IO with FireMonkey (using INSTANTOBECTS_FMX compiler directive)
+- PrimerFireMonkey: a simple example for using InstantObject with FireMonkey (using INSTANTOBECTS_FMX compiler directive)
 
 - Pump: a straightforward application that shows how to use the InstantPump component.
 
@@ -30,23 +30,23 @@ The Demos folder must be a sibling of the Source folder (they're not completely 
 
 Docs: Here you'll find some developer and user docs, mostly in the form of txt files. User docs here are in their primal form, not intended for direct user consumption but rather as the basis for the help maintainers and docs for testers. This folder might use a restructure.
 
-Help: sources for the IO user docs/help.
+Help: sources for the InstantObject user docs/help.
 
-Source: here is where all the IO code is stored. The Source folder has a number of subfolders each containing a different part of the code base. I'll document the inner structure of the folders in later sections, but here is a summary:
+Source: here is where all the InstantObject code is stored. The Source folder has a number of subfolders each containing a different part of the code base. I'll document the inner structure of the folders in later sections, but here is a summary:
 
 - Brokers: base folder for all the persistence brokers (one subfolder each).
 
-- Catalogs: folder for mapping IO datatypes with database vendor field types.
+- Catalogs: folder for mapping InstantObject datatypes with database vendor field types.
 
-- Core: the core run time stuff, or the heart of IO.
+- Core: the core run time stuff, or the heart of InstantObject.
 
 - Design: the design-time companion (Model Explorer, etc.).
 
 - PackageGroups: contains package groups for easy installation of all the packages
 
 The Source\Brokers folder
--------------------------
-Here we have a subfolder for each supported broker. A broker is a means for IO to use as storage a particular database engine through a particular middleware. There are two main kinds of IO object brokers: dataset-based and SQL-based; the latter offer better performance and additional features (like external storage) when you use a SQL-enabled database engine. Here is a list of the currently supported brokers:
+----
+Here we have a subfolder for each supported broker. A broker is a means for InstantObject to use as storage a particular database engine through a particular middleware. There are two main kinds of InstantObject object brokers: dataset-based and SQL-based; the latter offer better performance and additional features (like external storage) when you use a SQL-enabled database engine. Here is a list of the currently supported brokers:
 
 FireDAC: a SQL-based broker to use Embarcadero FireDac. Available from Delphi XE3.
 
@@ -60,9 +60,9 @@ BDE: a dataset-based broker that uses the Borland Database Engine. Although it m
 
 DBISAM: a dataset-based broker for the DBISAM database and Delphi components (commercial - not available out of the box).
 
-DBX: a SQL-based broker to use Borland dbExpress (dbX). Available out of the box in Delphi 6 and Delphi 7.
+DBX: a SQL-based broker to use Borland dbExpress (dbX).
 
-FlashFiler: a dataset-based broker to use the open source (formerly TurboPower) FlashFiler database components. Not available out of the box; still available (although AFAIK no longer actively maintained) through SourceForge.
+FlashFiler: a dataset-based broker to use the open source (formerly TurboPower) FlashFiler database components. Not available out of the box; still available (no longer actively maintained).
 
 IBX: a SQL-based broker for the open source Delphi IBX components (for InterBase and, if you're daring, Firebird). Generally requires the latest IBX update. IBX is available out of the box, updates from Borland CodeCentral.
 
@@ -70,23 +70,24 @@ NexusDb & NexusDbSQL: dataset-based and SQL-based version of the NexusDb (commer
 
 UIB: a SQL-based broker for the high-performance open source UIB (Unified InterBase) components, good for both InterBase and Firebird and part of the JVCL. Not available out of the box.
 
-XML: a lightweight XML-based broker which uses plain XML files as storage. Currently it does not support filtering.
+XML: a lightweight XML-based broker which uses plain XML files as storage.
 
 Template: an example do-nothing dataset-based broker to use as template to build your own. My own advice, if you want to develop a new broker, is to rather clone & modify a real (possibly similar) broker than starting from the template.
 
-Each broker's subfolder contains the common source files plus a subfolder for each supported platform (D5, D6, D7, K3...). This subfolder contains the package source files plus any additional platform specific files. Not all brokers are supported on all platforms. If a platform is missing, the reason might be one of these:
+Each broker's subfolder contains the common source files plus a subfolder for each supported Delphi Version (DXE7, DXE8, D10_3). This subfolder contains the package source files plus any additional platform specific files. Not all brokers are supported on all platforms. If a platform is missing, the reason might be one of these:
 
-- Not applicable (for example, the DBX broker does not exist in D5 because dbExpress itself is a D6+ thing).
-- Missing maintainer: we haven't found anyone to maintain and keep the broker up-to-date on that particular platform. This is where you can help! Have a look at the Docs\Maintainers.html list to see what holes we have currently.
+- Not applicable (for example, the FireDAC broker exist only from Delphi XE5).
+
+- Missing maintainer: we haven't found anyone to maintain and keep the broker up-to-date on that particular platform.
 
 The Source\Core folder
-----------------------
+----
 This is the core (IOCore.dpk) of InstantObjects; it is used by all the brokers and by the design time stuff. The subfolders here have the same meaning as those in the brokers folders.
 
 The Source\Design folder
-------------------------
-This is where the IO design time stuff (DclIOCore.dpk) lives. The subfolders here have the same meaning as those in the brokers folders.
+----
+This is where the InstantObject design time stuff (DclIOCore.dpk) lives. The subfolders here have the same meaning as those in the brokers folders.
 
 The Tests folder
------------------------
-The IO test infrastructure makes use of the open source ubmock unit test framework (from our own Uberto Barbini). This folder contains the IO specific unit test stuff. Currently the unit testing effort has just started, so we have just a handful of tests. Additions (in the form of new tests) are very welcome.
+----
+The InstantObject test infrastructure makes use of the open source ubmock unit test framework (from our own Uberto Barbini). This folder contains the InstantObject specific unit test stuff. Currently the unit testing effort has just started, so we have just a handful of tests. Additions (in the form of new tests) are very welcome.
