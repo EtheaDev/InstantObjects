@@ -45,7 +45,7 @@
 			<DCC_DependencyCheckOutputName>TestIO_DXE2.exe</DCC_DependencyCheckOutputName>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base_Win64)'!=''">
-			<Icon_MainIcon>TestIO_DXE2_Icon.ico</Icon_MainIcon>
+			<Icon_MainIcon>IO_icon_32x32.ico</Icon_MainIcon>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base_Win32)'!=''">
 			<VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>

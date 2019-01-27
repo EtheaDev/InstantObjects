@@ -326,6 +326,7 @@ type
     FOnProgress: TInstantProgressEvent;
     FOnTranslate: TInstantFieldTranslateEvent;
     FOnAddClassFieldDef: TInstantAddClassFieldDefEvent;
+    FUseUnicode: Boolean;
     DeletingCurrentObject: boolean;
     procedure AccessorChanged(Sender: TObject; ChangeType: TInstantChangeType);
     procedure CheckClass(AObject: TObject);
@@ -375,6 +376,7 @@ type
     procedure SetOptions(const Value: TInstantExposerOptions);
     procedure SetSorted(Value: Boolean);
     function GetIsDefaultFields: Boolean;
+    function GetUseUnicode: Boolean;
   protected
     { IProviderSupport }
     procedure PSGetAttributes(List: TList); override;
@@ -384,7 +386,7 @@ type
     function PSGetTableName: string; override;
   {$ENDIF}
     procedure PSReset; override;
-    function UseUnicode: boolean; virtual;
+    procedure SetUseUnicode(Value: Boolean);
   protected
     procedure AddClassFieldDefs(const FieldName: string; AClass: TClass); overload;
     procedure AddClassFieldDefs(const FieldName: string; AClass: TInstantCodeClass); overload;
@@ -608,6 +610,7 @@ type
     property OnProgress: TInstantProgressEvent read GetOnProgress write SetOnProgress;
     property OnTranslate: TInstantFieldTranslateEvent read FOnTranslate write FOnTranslate;
     property OnAddClassFieldDef : TInstantAddClassFieldDefEvent read FOnAddClassFieldDef write FOnAddClassFieldDef;
+    property UseUnicode: Boolean read GetUseUnicode write SetUseUnicode default False;
   end;
 
   TInstantExposerLink = class(TDetailDataLink)
@@ -2295,7 +2298,7 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
     end;
   end;
 
-  // TODO The attribute mapping process needs to be re-evaluated. 
+  // TODO The attribute mapping process needs to be re-evaluated.
   // The metadata-based approach fails in some cases since the Exposer
   // subject is not always a TInstanObject instance (e.g. Delphi a TList).
   // The code now falls back to RTTI based mapping as it did originally.
@@ -3172,6 +3175,15 @@ end;
 function TInstantCustomExposer.GetTotalCount: Integer;
 begin
   Result := Accessor.TotalCount;
+end;
+
+function TInstantCustomExposer.GetUseUnicode: Boolean;
+begin
+  if Assigned(Accessor) and Assigned(Accessor.Connector) then
+    FUseUnicode := Accessor.Connector.UseUnicode
+  else if InstantDefaultConnector <> nil then
+    FUseUnicode := InstantDefaultConnector.UseUnicode;
+  Result := FUseUnicode;
 end;
 
 procedure TInstantCustomExposer.GotoActiveRecord;
@@ -4532,6 +4544,28 @@ begin
   end;
 end;
 
+procedure TInstantCustomExposer.SetUseUnicode(Value: Boolean);
+var
+  LUseUnicodeOk: Boolean;
+begin
+  Try
+    if Assigned(Accessor) and Assigned(Accessor.Connector) then
+      LUseUnicodeOk := (Accessor.Connector.UseUnicode = Value)
+    else if InstantDefaultConnector <> nil then
+      LUseUnicodeOk := (InstantDefaultConnector.UseUnicode = Value)
+    else
+      LUseUnicodeOk := True;
+  Except
+    on EInstantError do //Ignora l'errore che non trova il connector
+      LUseUnicodeOK := True
+    else
+      raise;
+  End;
+  if not LUseUnicodeOk then
+    raise EInstantError.Create(SUseUnicodeWrong);
+  FUseUnicode := Value;
+end;
+
 procedure TInstantCustomExposer.Undo;
 var
   I: Integer;
@@ -4572,23 +4606,6 @@ end;
 procedure TInstantCustomExposer.UpdateCalcFields;
 begin
   GetCalcFields(ActiveBuffer);
-end;
-
-function TInstantCustomExposer.UseUnicode: boolean;
-begin
-  Try
-    if Assigned(Accessor) and Assigned(Accessor.Connector) then
-      Result := Accessor.Connector.UseUnicode
-    else if InstantDefaultConnector <> nil then
-      Result := InstantDefaultConnector.UseUnicode
-    else
-      Result := False;
-  Except
-    on EInstantError do
-      Result := True //Default for Design-Time
-    else
-      raise;
-  End;
 end;
 
 procedure TInstantCustomExposer.WriteProperty(Field: TField;
