@@ -182,6 +182,8 @@ type
     procedure SetCurrentObject(const AValue: TObject);
     function GetContentEditor: TWinControl;
     function CreateFieldList: TStrings;
+    function GetBorderStyle: TBorderStyle;
+    procedure SetBorderStyle(const Value: TBorderStyle);
   protected
     function AddNode(NodeType: TInstantExplorerNodeType; Parent: TTreeNode;
       Name: string; AObject: TObject; Value: string = ''): TTreeNode; virtual;
@@ -257,6 +259,7 @@ type
     property OnMouseMove;
     property OnMouseUp;
     property OnResize;
+    property BorderStyle: TBorderStyle read GetBorderStyle write SetBorderStyle default bsSingle;
   end;
 
 procedure InstantExploreObject(AObject: TObject);
@@ -820,6 +823,7 @@ begin
       OnGetImageIndex := TreeViewGetImageIndex;
       Align := alClient;
       Parent := FTreePanel;
+      BorderStyle := bsSingle;
     end;
     Parent := Self;
   end;
@@ -949,6 +953,14 @@ end;
 function TInstantExplorer.GetAttributesCount(Instance: TInstantObject): integer;
 begin
   Result := Instance.Metadata.MemberMap.Count;
+end;
+
+function TInstantExplorer.GetBorderStyle: TBorderStyle;
+begin
+  if Assigned(FTreeView) then
+    Result := FTreeView.BorderStyle
+  else
+    Result := bsSingle;
 end;
 
 function TInstantExplorer.GetAttribute(Instance: TInstantObject; I: integer): TObject;
@@ -1130,6 +1142,12 @@ begin
     if FAutoAdjust then
       ResizeControls;
   end;
+end;
+
+procedure TInstantExplorer.SetBorderStyle(const Value: TBorderStyle);
+begin
+  if Assigned(FTreeView) then
+    FTreeView.BorderStyle := Value;
 end;
 
 procedure TInstantExplorer.SetCurrentObject(const AValue: TObject);
