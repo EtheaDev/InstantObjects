@@ -1730,7 +1730,8 @@ end;
 
 procedure TInstantConnectionBasedConnector.CheckConnection;
 begin
-  InstantCheckConnection(FConnection);
+  if not (csDesigning in ComponentState) then
+    InstantCheckConnection(FConnection);
 end;
 
 procedure TInstantConnectionBasedConnector.DoAfterConnectionChange;

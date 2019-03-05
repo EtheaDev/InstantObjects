@@ -7870,7 +7870,6 @@ end;
 function TInstantQuery.GetConnector: TInstantConnector;
 begin
   Result := FConnector;
-  InstantCheckConnector(Result);
 end;
 
 function TInstantQuery.GetObjectClass: TClass;
