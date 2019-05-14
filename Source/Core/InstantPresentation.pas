@@ -423,7 +423,7 @@ type
       DoCheck: Boolean): TGetResult; virtual;
     procedure CopyBufferToObject(Buffer: TRecBuf; AObject: TObject);
     procedure AutoDispose(AObject: TObject);
-    procedure AutoStore(AObject: TObject);
+    procedure AutoStore(AObject: TObject; ForceStore: Boolean = False);
     function CreateAccessor: TInstantAccessor; virtual;
     procedure CreateFields; override;
     function CreateNestedDataSet(DataSetField: TDataSetField): TDataSet; override;
@@ -555,7 +555,7 @@ type
       Options: TLocateOptions): Boolean; override;
     function Lookup(const KeyFields: string; const KeyValues: Variant;
       const ResultFields: string): Variant; override;
-    procedure PostChanges;
+    procedure PostChanges(const ForceStore: Boolean = False);
     procedure RefreshCurrentObject;
     procedure RefreshData;
     procedure RefreshDataView;
@@ -2419,7 +2419,7 @@ end;
 
 procedure TInstantCustomExposer.ApplyChanges;
 begin
-  PostChanges;
+  PostChanges(True);
   Accessor.ApplyChanges;
   if Assigned(FContentBuffer) then
   begin
@@ -2448,9 +2448,9 @@ begin
         Dispose;
 end;
 
-procedure TInstantCustomExposer.AutoStore(AObject: TObject);
+procedure TInstantCustomExposer.AutoStore(AObject: TObject; ForceStore: Boolean = False);
 begin
-  if AutoApplyChanges and (AObject is TInstantObject) then
+  if (ForceStore or AutoApplyChanges) and (AObject is TInstantObject) then
     with TInstantObject(AObject) do
       if CanStore then
       begin
@@ -3978,7 +3978,7 @@ begin
   RefreshObjectBuffer(AObject);
 end;
 
-procedure TInstantCustomExposer.PostChanges;
+procedure TInstantCustomExposer.PostChanges(const ForceStore: Boolean = False);
 var
   I: Integer;
   List: TDetailDataSetList;
@@ -3999,7 +3999,7 @@ begin
   begin
     AObject := TInstantObject(CurrentObject);
     if AObject.IsChanged then
-      AutoStore(AObject);
+      AutoStore(AObject, ForceStore);
   end;
 end;
 
