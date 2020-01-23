@@ -58,6 +58,7 @@ type
   TInstantChangeEvent = procedure(Sender: TObject; ChangeType: TInstantChangeType) of object;
   TInstantCompareObjectsEvent = procedure(Sender: TObject; AObject1, AObject2: TObject; var Compare: Integer) of object;
   TInstantLimitObjectsEvent = procedure(Sender: TObject; AObject: TObject; var Accept: Boolean) of object;
+  TInstantWaitEvent = procedure(Sender: TObject; const AWait: Integer) of object;
 
   TInstantAccessorClass = class of TInstantAccessor;
 
@@ -509,6 +510,7 @@ type
     procedure WriteProperty(Field: TField; Instance: TObject; Value: Variant); virtual;
     function BreakThorough( const FieldName : string ) : boolean; virtual;
     procedure DoBeforeRefresh; override;
+    function GetNextRecords: Integer; override;
     property Accessor: TInstantAccessor read GetAccessor;
     property AutoApplyChanges: Boolean read GetAutoApplyChanges;
     property CanDispose: Boolean read GetCanDispose;
@@ -743,8 +745,8 @@ type
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     procedure SetActive(Value: Boolean); override;
     procedure UpdateParams; virtual;
-    property Query: TInstantQuery read GetQuery;
   public
+    property Query: TInstantQuery read GetQuery;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     property ObjectClass;
@@ -804,12 +806,18 @@ function InstantFindAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 function InstantGetAccessorClass(ObjectClass: TClass): TInstantAccessorClass;
 procedure InstantRegisterAccessorClass(AClass: TInstantAccessorClass);
 procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
+procedure InstantRegisterWaitProc(AWaitProcedure: TInstantWaitEvent);
+procedure InstantUnregisterWaitProc;
+procedure InstantStartWaitProcess(Sender: TObject);
+procedure InstantStopWaitProcess(Sender: TObject);
 
 var
   // StringFields for unlimited-length string attributes are created of the
   // size indicated by this variable. Fields for attributes that do have a
   // maximum length of that length instead.
   InstantDefaultStringFieldSize: Integer = 255;
+  WaitProc: TInstantWaitEvent;
+  WaitCount: Integer;
 
 implementation
 
@@ -1085,6 +1093,34 @@ end;
 procedure InstantUnregisterAccessorClass(AClass: TInstantAccessorClass);
 begin
   AccessorClasses.Remove(AClass);
+end;
+
+procedure InstantRegisterWaitProc(AWaitProcedure: TInstantWaitEvent);
+begin
+  WaitProc := AWaitProcedure;
+end;
+
+procedure InstantUnregisterWaitProc;
+begin
+  WaitProc := nil;
+end;
+
+procedure InstantStartWaitProcess(Sender: TObject);
+begin
+  if Assigned(WaitProc) then
+  begin
+    Inc(WaitCount);
+    WaitProc(Sender, WaitCount);
+  end;
+end;
+
+procedure InstantStopWaitProcess(Sender: TObject);
+begin
+  if Assigned(WaitProc) then
+  begin
+    Dec(WaitCount);
+    WaitProc(Sender, WaitCount);
+  end;
 end;
 
 { TInstantAccessor }
@@ -3057,6 +3093,16 @@ begin
   Result := Accessor.Mode;
 end;
 
+function TInstantCustomExposer.GetNextRecords: Integer;
+begin
+  InstantStartWaitProcess(Self);
+  Try
+    Result := inherited GetNextRecords;
+  Finally
+    InstantStopWaitProcess(Self);
+  End;
+end;
+
 function TInstantCustomExposer.GetObjectClass: TClass;
 begin
   Result := Accessor.ObjectClass;
@@ -3905,13 +3951,15 @@ procedure TInstantCustomExposer.LoadRecord(RecNo: Integer; Buffer: TRecBuf);
 var
   BM: TInstantBookmark;
   Obj: TObject;
+  LRecno: Integer;
 begin
   if (RecNo <= 0) or (RecNo > RecordCount) then
     ClearRecord(Buffer)
   else begin
-    Obj := Objects[Pred(RecNo)];
+    LRecno := Pred(RecNo);
+    Obj := Objects[LRecno];
     if not Assigned(Obj) then
-      raise Exception.Create('Critical error: object not found!');
+      raise Exception.CreateFmt('Critical error: object not found at record n.%d!',[LRecno+1]);
     CopyObjectToBuffer(Obj, Buffer);
     with GetRecInfo(Buffer)^ do
     begin
@@ -5311,6 +5359,8 @@ initialization
   InstantRegisterAccessorClass(TInstantObjectAccessor);
   InstantRegisterAccessorClass(TInstantListAccessor);
   InstantRegisterAccessorClass(TInstantCollectionAccessor);
+  WaitCount := 0;
+  WaitProc := nil;
 
 finalization
   AccessorClasses.Free;

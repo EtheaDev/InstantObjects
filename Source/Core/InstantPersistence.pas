@@ -3686,9 +3686,13 @@ begin
 end;
 
 procedure TInstantBlob.SetAsVariant(AValue: Variant);
+var
+  LNewValue: string;
 begin
+  LNewValue := VarToStr(AValue);
   try
-    Value := AValue;
+    if Value <> LNewValue then
+    Value := LNewValue;
   except
     on E: Exception do
       raise InvalidValueError(AValue, E);

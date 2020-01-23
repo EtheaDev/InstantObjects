@@ -109,7 +109,7 @@ type
     function CheckConflict(AObject: TInstantObject;
       const AStorageName, AObjectId: string): Boolean;
     procedure LoadFileList(const AFileList: TStringList;
-      const AStorageNames: TStrings); virtual;
+      const AStorageNames: TStrings; const AFilterWildCard: string = ''); virtual;
   published
     property RootFolder: string read GetRootFolder write SetRootFolder;
     property XMLFileFormat: TXMLFileFormat read FXMLFileFormat write FXMLFileFormat default xffUtf8;
@@ -230,6 +230,7 @@ type
     FStorageNames: TStringList;
     FObjectClassNames: TStringList;
     FIQLCommand: TInstantIQLCommand;
+    FFilterWildCard: string;
     procedure DestroyObjectReferenceList;
     function GetObjectReferenceCount: Integer;
     function GetObjectReferenceList: TObjectList;
@@ -247,6 +248,7 @@ type
     procedure CreateIQLCommand;
     procedure QuickSortObjectReferenceList(List: TList; L, R: Integer;
       Compare: TInstantSortCompare);
+    procedure SetFilterWildCard(const Value: string);
   protected
     class function TranslatorClass: TInstantRelationalTranslatorClass; override;
     function GetActive: Boolean; override;
@@ -276,6 +278,8 @@ type
     procedure AfterConstruction; override;
     // List of folders from which files should be loaded in InternalOpen.
     property StorageNames: TStringList read FStorageNames write SetStorageNames;
+    // Filter objects by WildCard
+    property FilterWildCard: string read FFilterWildCard write SetFilterWildCard;
     // Used to filter by class name the files loaded during InternalOpen.
     property ObjectClassNames: TStringList read FObjectClassNames write SetObjectClassNames;
     destructor Destroy; override;
@@ -320,7 +324,8 @@ type
     property TableMetadata: TInstantTableMetadata read GetTableMetadata;
   end;
 
-procedure GlobalLoadFileList(const Path: string; FileList: TStringList);
+procedure GlobalLoadFileList(const Path: string; FileList: TStringList;
+  const AFilterWildCard: string = '');
 
 implementation
 
@@ -347,14 +352,17 @@ begin
 end;
 {$ENDIF}
 
-procedure GlobalLoadFileList(const Path: string; FileList: TStringList);
+procedure GlobalLoadFileList(const Path: string; FileList: TStringList;
+  const AFilterWildCard: string = '');
 var
   SearchRec: TSearchRec;
   R: Integer;
   PathWithWildCards: string;
 begin
-  
-  PathWithWildCards := IncludeTrailingPathDelimiter(Path) + XML_WILDCARD;
+  if AFilterWildCard <> '' then
+    PathWithWildCards := IncludeTrailingPathDelimiter(Path) + AFilterWildCard
+  else
+    PathWithWildCards := IncludeTrailingPathDelimiter(Path) + XML_WILDCARD;
   //Find the first file
   R := SysUtils.FindFirst(PathWithWildCards, faAnyFile, SearchRec);
   try
@@ -989,7 +997,7 @@ begin
   vFileList := TStringList.Create;
   try
     Connector.Connection.Open;
-    Connector.Connection.LoadFileList(vFileList, FStorageNames);
+    Connector.Connection.LoadFileList(vFileList, FStorageNames, FFilterWildCard);
     InitObjectReferences(vFileList);
 
     if Assigned(FIQLCommand.Order) then
@@ -1030,6 +1038,16 @@ end;
 function TInstantXMLQuery.ObjectFetched(Index: Integer): Boolean;
 begin
   Result := ObjectReferences[Index].HasInstance;
+end;
+
+procedure TInstantXMLQuery.SetFilterWildCard(const Value: string);
+begin
+  FFilterWildCard := Value;
+  if Active then
+  begin
+    Close;
+    Open;
+  end;
 end;
 
 procedure TInstantXMLQuery.SetObjectClassNames(const Value: TStringList);
@@ -1364,13 +1382,13 @@ begin
 end;
 
 procedure TXMLFilesAccessor.LoadFileList(const AFileList: TStringList;
-  const AStorageNames: TStrings);
+  const AStorageNames: TStrings; const AFilterWildCard: string = '');
 var
   I: Integer;
 begin
   AFileList.Clear;
   for I := 0 to AStorageNames.Count - 1 do
-    GlobalLoadFileList(RootFolder + AStorageNames[I], AFileList);
+    GlobalLoadFileList(RootFolder + AStorageNames[I], AFileList, AFilterWildCard);
 end;
 
 procedure TXMLFilesAccessor.DoConnect;

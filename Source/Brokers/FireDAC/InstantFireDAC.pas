@@ -71,6 +71,7 @@ type
     FProtocol           : string;
     FUseDelimitedIdents : boolean;
     FUserName           : string;
+    FEncryptedPassword  : string;
   protected
     procedure InitConnector(Connector: TInstantConnector); override;
   public
@@ -83,6 +84,7 @@ type
     property HostName: string read FHostName write FHostName;
     property LoginPrompt: boolean read FLoginPrompt write FLoginPrompt;
     property Password: string read FPassword write FPassword;
+    property EncryptedPassword: string read FEncryptedPassword write FEncryptedPassword;
     property Port: Integer read FPort write FPort;
     property Properties: string read FProperties write FProperties;
     property Protocol: string read FProtocol write FProtocol;
@@ -747,6 +749,22 @@ begin
     {$ELSE}
       TargetParam.AsBlob := SourceParam.AsBlob;
     {$ENDIF}
+    ftDateTime:
+      begin
+        TargetParam.DataType := ftTimeStamp;
+        TargetParam.Value := SourceParam.AsDateTime;
+      end;
+    ftCurrency:
+      begin
+        TargetParam.DataType := ftBCD;
+        TargetParam.Value := SourceParam.AsCurrency;
+      end;
+    ftString:
+      begin
+        TargetParam.DataType := ftWideString;
+        TargetParam.Value := SourceParam.AsWideString;
+      end;
+
     else
       TargetParam.Assign(SourceParam);
   end;
@@ -891,9 +909,7 @@ end;
 
 function TInstantFireDACBroker.InternalCreateQuery: TInstantQuery;
 begin
-  if UseBooleanFields then
-    Result := TInstantSQLQuery.Create(Connector) else
-    Result := TInstantFireDACQuery.Create(Connector);
+  Result := TInstantFireDACQuery.Create(Connector);
 end;
 
 function TInstantFireDACBroker.InternalDBNotExistsErrorCode: Integer;
@@ -923,8 +939,11 @@ begin
   begin
     Writer.WriteChar('0');
     Result := True;
-  end
-  else
+  end else if (Copy(Constant.Value,1,1) = '[') and (Copy(Constant.Value,length(Constant.Value),1) = ']') then
+  begin
+    Writer.WriteString(Copy(Constant.Value,2,length(Constant.Value)-2));
+    Result := True;
+  end else
     Result := inherited TranslateConstant(Constant, Writer);
 end;
 
@@ -1096,9 +1115,9 @@ function TInstantFireDACOracleBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'NUMBER(10)',
+    'INTEGER',
     'FLOAT',
-    'NUMBER(14,4)',
+    'DECIMAL(14,4)',
     'NUMBER(1)',
     'VARCHAR2',
     'CLOB',
@@ -1167,7 +1186,7 @@ const
     'INTEGER',
     'FLOAT',
     'DECIMAL(14,4)',
-    'BOOL',
+    'TINYINT(1)',
     'VARCHAR',
     'TEXT',
     'DATETIME',

@@ -4,7 +4,7 @@
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
     <LoginPrompt>FALSE</LoginPrompt>
-    <ConnectionString>127.0.0.1:C:\ETHEA\ISF6\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB</ConnectionString>
+    <ConnectionString>127.0.0.1:D:\ETHEA\ISF7\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB</ConnectionString>
     <Options></Options>
     <Params>user_name=SYSDBA
 password=masterkey
@@ -23,7 +23,7 @@ lc_ctype=ISO8859_1</Params>
     <ConnectionName>FBConnection</ConnectionName>
     <DriverName>Firebird</DriverName>
     <Params>DriverName=Firebird
-Database=127.0.0.1:C:\ETHEA\ISF6\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB
+Database=127.0.0.1:D:\ETHEA\ISF7\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB
 RoleName=RoleName
 User_Name=sysdba
 Password=masterkey
@@ -42,7 +42,7 @@ Trim Char=False
     <Name>FireDAC_Firebird</Name>
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
-    <Database>C:\ETHEA\ISF6\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB</Database>
+    <Database>D:\ETHEA\ISF7\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB</Database>
     <HostName>127.0.0.1</HostName>
     <LoginPrompt>FALSE</LoginPrompt>
     <Password>masterkey</Password>
@@ -50,5 +50,18 @@ Trim Char=False
     <Protocol>FB</Protocol>
     <UseDelimitedIdents>FALSE</UseDelimitedIdents>
     <UserName>SYSDBA</UserName>
+  </TInstantFireDACConnectionDef>
+  <TInstantFireDACConnectionDef>
+    <Name>FireDac_MSSQL</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <Database>PRIMERDB</Database>
+    <HostName>NB-CARLO\SQLEXPRESS</HostName>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <Password>12345</Password>
+    <Port>0</Port>
+    <Protocol>MSSQL</Protocol>
+    <UseDelimitedIdents>TRUE</UseDelimitedIdents>
+    <UserName>SA</UserName>
   </TInstantFireDACConnectionDef>
 </TInstantConnectionDefs>
