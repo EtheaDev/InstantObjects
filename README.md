@@ -1,4 +1,4 @@
-# **InstantObjects for Delphi**
+# **InstantObjects for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
