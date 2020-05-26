@@ -3,7 +3,7 @@
         <ProjectGuid>{4995B4F1-FCC0-4866-ADDA-1C36D5E59A38}</ProjectGuid>
         <MainSource>IOIBFbCatalog.dpk</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>None</FrameworkType>

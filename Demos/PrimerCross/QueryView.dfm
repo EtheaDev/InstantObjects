@@ -1,6 +1,8 @@
 inherited QueryViewForm: TQueryViewForm
   Width = 745
   Height = 320
+  Font.Name = 'Segoe UI'
+  ParentFont = False
   ExplicitWidth = 745
   ExplicitHeight = 320
   object Splitter: TSplitter
@@ -21,14 +23,13 @@ inherited QueryViewForm: TQueryViewForm
     Align = alTop
     BevelOuter = bvLowered
     TabOrder = 0
-    ExplicitWidth = 772
     DesignSize = (
       745
       35)
     object ExampleLabel: TLabel
       Left = 27
       Top = 16
-      Width = 40
+      Width = 42
       Height = 13
       Caption = 'E&xample'
       FocusControl = ExampleComboBox
@@ -54,14 +55,13 @@ inherited QueryViewForm: TQueryViewForm
     BevelOuter = bvLowered
     BorderWidth = 30
     TabOrder = 1
-    ExplicitWidth = 772
     DesignSize = (
       745
       147)
     object CommandLabel: TLabel
       Left = 30
       Top = 14
-      Width = 47
+      Width = 52
       Height = 13
       Caption = '&Command'
       FocusControl = CommandEdit
@@ -81,12 +81,11 @@ inherited QueryViewForm: TQueryViewForm
     object Label1: TLabel
       Left = 448
       Top = 125
-      Width = 26
+      Width = 30
       Height = 13
       Anchors = [akTop, akRight]
       Caption = 'Mode'
       FocusControl = LoadModeComboBox
-      ExplicitLeft = 449
     end
     object CommandEdit: TMemo
       Left = 31
@@ -95,7 +94,6 @@ inherited QueryViewForm: TQueryViewForm
       Height = 85
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 708
     end
     object ExecuteButton: TButton
       Left = 30
@@ -115,7 +113,6 @@ inherited QueryViewForm: TQueryViewForm
       MaxLength = 9
       TabOrder = 5
       Text = '0        '
-      ExplicitLeft = 671
     end
     object LoadModeComboBox: TComboBox
       Left = 482
@@ -131,7 +128,6 @@ inherited QueryViewForm: TQueryViewForm
         'Keys First'
         'Partial Burst'
         'Full Burst')
-      ExplicitLeft = 483
     end
     object FetchAllCheckBox: TCheckBox
       Left = 102
@@ -160,13 +156,8 @@ inherited QueryViewForm: TQueryViewForm
     ActivePage = ResultTabSheet
     Align = alClient
     TabOrder = 2
-    ExplicitWidth = 772
     object ResultTabSheet: TTabSheet
       Caption = 'Result'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 764
-      ExplicitHeight = 0
       object ResultGrid: TDBGrid
         Left = 0
         Top = 0
@@ -178,7 +169,7 @@ inherited QueryViewForm: TQueryViewForm
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
-        TitleFont.Name = 'Tahoma'
+        TitleFont.Name = 'Segoe UI'
         TitleFont.Style = []
       end
     end

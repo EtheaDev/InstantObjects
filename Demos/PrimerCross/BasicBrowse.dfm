@@ -6,7 +6,11 @@ object BasicBrowseForm: TBasicBrowseForm
   ClientHeight = 280
   ClientWidth = 241
   Color = clBtnFace
-  ParentFont = True
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Segoe UI'
+  Font.Style = []
   KeyPreview = True
   OldCreateOrder = False
   Position = poScreenCenter
@@ -20,8 +24,6 @@ object BasicBrowseForm: TBasicBrowseForm
     Width = 241
     Height = 19
     Panels = <>
-    ExplicitTop = 273
-    ExplicitWidth = 249
   end
   object ToolBar: TToolBar
     Left = 0
@@ -35,52 +37,52 @@ object BasicBrowseForm: TBasicBrowseForm
     ShowHint = True
     TabOrder = 1
     OnResize = ToolBarResize
-    ExplicitWidth = 249
-    object NewButton: TToolButton
+    object SearchEdit: TEdit
       Left = 0
+      Top = 0
+      Width = 111
+      Height = 22
+      TabOrder = 0
+    end
+    object NewButton: TToolButton
+      Left = 111
       Top = 0
       Action = NewAction
     end
     object EditButton: TToolButton
-      Left = 23
+      Left = 134
       Top = 0
       Action = EditAction
     end
     object DeleteButton: TToolButton
-      Left = 46
+      Left = 157
       Top = 0
       Action = DeleteAction
     end
     object SelectButton: TToolButton
-      Left = 69
+      Left = 180
       Top = 0
       Action = SelectAction
     end
     object ToolSep1: TToolButton
-      Left = 92
+      Left = 203
       Top = 0
       Width = 8
       ImageIndex = 3
       Style = tbsSeparator
     end
     object SearchButton: TToolButton
-      Left = 100
+      Left = 211
       Top = 0
       Action = SearchAction
     end
     object ToolSep2: TToolButton
-      Left = 123
+      Left = 0
       Top = 0
       Width = 8
       ImageIndex = 4
+      Wrap = True
       Style = tbsSeparator
-    end
-    object SearchEdit: TEdit
-      Left = 131
-      Top = 0
-      Width = 111
-      Height = 22
-      TabOrder = 0
     end
   end
   object BrowseGridPanel: TPanel
@@ -92,13 +94,11 @@ object BasicBrowseForm: TBasicBrowseForm
     BevelOuter = bvNone
     BorderWidth = 1
     TabOrder = 2
-    ExplicitWidth = 249
-    ExplicitHeight = 247
     object BrowseGrid: TDBGrid
       Left = 1
       Top = 1
-      Width = 247
-      Height = 245
+      Width = 239
+      Height = 233
       Align = alClient
       DataSource = BrowseSource
       Options = [dgEditing, dgTitles, dgIndicator, dgColLines, dgRowLines, dgTabs, dgCancelOnExit]
@@ -107,7 +107,7 @@ object BasicBrowseForm: TBasicBrowseForm
       TitleFont.Charset = DEFAULT_CHARSET
       TitleFont.Color = clWindowText
       TitleFont.Height = -11
-      TitleFont.Name = 'Tahoma'
+      TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
       OnDblClick = BrowseGridDblClick
       OnKeyUp = BrowseGridKeyUp

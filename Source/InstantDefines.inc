@@ -304,6 +304,32 @@
   {$DEFINE D26+}
 {$ENDIF}
 
+// Delphi 10.4
+{$IFDEF VER340}
+  {$DEFINE D5+}
+  {$DEFINE D6+}
+  {$DEFINE D7+}
+  {$DEFINE D9+}
+  {$DEFINE D10+}
+  {$DEFINE D11+}
+  {$DEFINE D12+}
+  {$DEFINE D14+}
+  {$DEFINE D15+}
+  {$DEFINE D16+}
+  {$DEFINE D17+}
+  {$DEFINE D18+}
+  {$DEFINE D19+}
+  {$DEFINE D20+}
+  {$DEFINE D21+}
+  {$DEFINE D22+}
+  {$DEFINE D23+}
+  {$DEFINE D24+}
+  {$DEFINE D25+}
+  {$DEFINE D26+}
+  {$DEFINE D27}
+  {$DEFINE D27+}
+{$ENDIF}
+
 {$IFDEF FPC}
   {$DEFINE D5+}
   {$DEFINE D6+}

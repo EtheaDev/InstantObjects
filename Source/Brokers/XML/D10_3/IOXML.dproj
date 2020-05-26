@@ -3,7 +3,7 @@
         <ProjectGuid>{24846E7C-894C-484E-950C-B528292DF63E}</ProjectGuid>
         <MainSource>IOXML.dpk</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>VCL</FrameworkType>

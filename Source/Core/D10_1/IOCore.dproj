@@ -3,7 +3,7 @@
         <ProjectGuid>{88335780-E45F-415E-A8E7-E2819510020D}</ProjectGuid>
         <MainSource>IOCore.dpk</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>VCL</FrameworkType>

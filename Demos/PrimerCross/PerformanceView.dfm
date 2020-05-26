@@ -1,6 +1,8 @@
 inherited PerformanceViewForm: TPerformanceViewForm
   Width = 749
   Height = 564
+  Font.Name = 'Segoe UI'
+  ParentFont = False
   ExplicitWidth = 749
   ExplicitHeight = 564
   object ClientPanel: TPanel
@@ -25,7 +27,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object TitleLabel: TLabel
         Left = 16
         Top = 4
-        Width = 134
+        Width = 138
         Height = 13
         Caption = 'Database Performance Test'
       end
@@ -40,14 +42,14 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object ConnectionLabel: TLabel
         Left = 280
         Top = 4
-        Width = 133
+        Width = 144
         Height = 13
         Caption = 'Connection: Not Connected'
       end
       object ObjectsLabel: TLabel
         Left = 16
         Top = 72
-        Width = 82
+        Width = 85
         Height = 13
         Caption = '&Objects to store:'
         FocusControl = ObjectsEdit
@@ -55,7 +57,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object CacheSizeLabel: TLabel
         Left = 328
         Top = 72
-        Width = 109
+        Width = 112
         Height = 13
         Caption = 'Statement &Cache Size:'
         FocusControl = CacheSizeEdit
@@ -197,7 +199,6 @@ inherited PerformanceViewForm: TPerformanceViewForm
           Top = 0
           Width = 536
           Height = 439
-          BackWall.Brush.Color = clWhite
           LeftWall.Color = clWhite
           Title.Text.Strings = (
             'Results')
@@ -210,15 +211,12 @@ inherited PerformanceViewForm: TPerformanceViewForm
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
+          DefaultCanvas = 'TGDIPlusCanvas'
+          ColorPaletteIndex = 13
           object TestResultStoreSeries: TBarSeries
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
-            Marks.Visible = True
             SeriesColor = clGreen
             Title = 'Store'
-            Gradient.Direction = gdTopBottom
             XValues.Name = 'X'
             XValues.Order = loAscending
             YValues.Name = 'Bar'
@@ -227,14 +225,9 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 344
           end
           object TestResultRetrieveSeries: TBarSeries
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
-            Marks.Visible = True
             SeriesColor = 8454143
             Title = 'Retrieve'
-            Gradient.Direction = gdTopBottom
             XValues.Name = 'X'
             XValues.Order = loAscending
             YValues.Name = 'Bar'
@@ -243,14 +236,9 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 288
           end
           object Series1: TBarSeries
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
-            Marks.Visible = True
             SeriesColor = 16744576
             Title = 'Query'
-            Gradient.Direction = gdTopBottom
             XValues.Name = 'X'
             XValues.Order = loAscending
             YValues.Name = 'Bar'
@@ -259,13 +247,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 224
           end
           object TestResultDisposeSeries: TBarSeries
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
-            Marks.Visible = True
             Title = 'Dispose'
-            Gradient.Direction = gdTopBottom
             XValues.Name = 'X'
             XValues.Order = loAscending
             YValues.Name = 'Bar'

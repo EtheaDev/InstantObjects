@@ -5,6 +5,11 @@ object WelcomeForm: TWelcomeForm
   ClientHeight = 230
   ClientWidth = 420
   Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Segoe UI'
+  Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -20,8 +25,6 @@ object WelcomeForm: TWelcomeForm
     BorderWidth = 1
     Color = clBlack
     TabOrder = 0
-    ExplicitWidth = 428
-    ExplicitHeight = 235
     object BackPanel: TPanel
       Left = 1
       Top = 1
@@ -29,8 +32,6 @@ object WelcomeForm: TWelcomeForm
       Height = 228
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 426
-      ExplicitHeight = 233
       object TitleLabel: TLabel
         Left = 88
         Top = 4

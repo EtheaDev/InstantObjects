@@ -3,7 +3,7 @@
         <ProjectGuid>{37B6762C-756F-45CE-9421-BFD7D9FC105F}</ProjectGuid>
         <MainSource>IOMSSqlCatalog.dpk</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>None</FrameworkType>

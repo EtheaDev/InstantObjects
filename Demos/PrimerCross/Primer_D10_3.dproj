@@ -5,7 +5,7 @@
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
         <DCC_DependencyCheckOutputName>Primer.exe</DCC_DependencyCheckOutputName>
-        <ProjectVersion>18.5</ProjectVersion>
+        <ProjectVersion>18.8</ProjectVersion>
         <Config Condition="'$(Config)'==''">Release</Config>
         <Base>True</Base>
         <AppType>Application</AppType>
@@ -86,7 +86,7 @@
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <Version>7.0</Version>
-        <DCC_Define>DEBUG;IO_STATEMENT_LOGGING;$(DCC_Define)</DCC_Define>
+        <DCC_Define>DEBUG;$(DCC_Define)</DCC_Define>
         <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_ResourcePath)</DCC_ResourcePath>
         <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_ObjPath)</DCC_ObjPath>
         <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_IncludePath)</DCC_IncludePath>

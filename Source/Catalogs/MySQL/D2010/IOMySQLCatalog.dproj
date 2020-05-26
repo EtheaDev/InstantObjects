@@ -20,6 +20,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
 			<DCC_DependencyCheckOutputName>C:\Users\Public\Documents\RAD Studio\7.0\Bpl\IOMySQLCatalog_D14.bpl</DCC_DependencyCheckOutputName>
 			<DCC_TypedAtParameter>true</DCC_TypedAtParameter>
 			<RuntimeOnlyPackage>true</RuntimeOnlyPackage>

@@ -86,6 +86,11 @@ type
   TInstantUpdateOperation = procedure(ConflictAction: TInstantConflictAction)
     of object;
 
+  TInstantAttributeProc = reference to procedure(
+    const AAttribute: TInstantAttribute;
+    const AParentContainer: TInstantContainer;
+    const AItemIndex: Integer);
+
   TInstantObjectReference = class(TInstantStreamable)
   private
     FInstance: TInstantObject;
@@ -951,6 +956,7 @@ type
     procedure Unchanged;
     procedure GetDetailsStatementValues(var FromClause,
       SequenceNoFieldName, OrderByClause: string); virtual;
+    procedure ForEachAttribute(Proc: TInstantAttributeProc); virtual;
     property Caption: string read GetCaption;
     property ClassId: string read GetClassId;
     property Connector: TInstantConnector read GetConnector;
@@ -3828,6 +3834,7 @@ begin
     Dest.Bitmap := nil;
 end;
 {$ELSE}
+{$IFNDEF CONSOLE}
 procedure TInstantBlob.AssignPicture(Source: TPicture);
 begin
   if Assigned(Source.Graphic) then
@@ -3867,6 +3874,7 @@ begin
     Dest.Graphic := nil;
 end;
 {$ENDIF}
+{$ENDIF}
 
 procedure TInstantBlob.AssignTo(Dest: TPersistent);
 begin
@@ -3875,9 +3883,11 @@ begin
     AssignToPicture(TImage(Dest))
   else
 {$ELSE}
+  {$IFNDEF CONSOLE}
   if Dest is TPicture then
     AssignToPicture(TPicture(Dest))
   else
+  {$ENDIF}
 {$ENDIF}
     inherited;
 end;
@@ -6367,6 +6377,66 @@ begin
   end;
   DestroyAttributes;
   DestroyInternalFields;
+end;
+
+procedure TInstantObject.ForEachAttribute(Proc: TInstantAttributeProc);
+var
+  LAttribute: TInstantAttribute;
+  I, J: Integer;
+  LMetadata: TInstantClassMetadata;
+  LAttributeMetaData: TInstantAttributeMetadata;
+  LContainer: TInstantContainer;
+  LElement: TInstantElement;
+  LObject: TInstantObject;
+begin
+  if not Assigned(Proc) then
+    Exit;
+  LMetadata := Metadata;
+  //Ciclo su tutti gli attributi dell'oggetto
+  for I := 0 to LMetadata.AttributeMetadatas.Count - 1 do
+  begin
+    LAttributeMetaData := LMetadata.AttributeMetadatas.Items[I];
+    LAttribute := Self.FindAttribute(LAttributeMetaData.Name);
+    if Assigned(LAttribute) then
+    begin
+      if LAttribute is TInstantContainer then
+      begin
+        LContainer := TInstantContainer(LAttribute);
+        Proc(LAttribute, LContainer, 0);
+        for J := 0 to LContainer.Count -1 do
+        begin
+          LObject := LContainer.GetItems(J);
+          if Assigned(LObject) then
+          begin
+            LObject.ForEachAttribute(
+              procedure(const AAttribute: TInstantAttribute;
+                const AParentContainer: TInstantContainer;
+                const AItemIndex: Integer)
+              begin
+                Proc(AAttribute, LContainer, J+1);
+              end);
+          end;
+        end;
+      end
+      else
+      begin
+        Proc(LAttribute, nil, 0);
+        if LAttribute is TInstantElement then
+        begin
+          LElement := TInstantElement(LAttribute);
+          LObject := LElement.Value;
+          if Assigned(LObject) then
+            LObject.ForEachAttribute(
+              procedure(const AAttribute: TInstantAttribute;
+                const AParentContainer: TInstantContainer;
+                const AItemIndex: Integer)
+              begin
+                Proc(AAttribute, AParentContainer, AItemIndex);
+              end);
+        end;
+      end;
+    end;
+  end;
 end;
 
 {$IFNDEF IO_NO_CIRCULAR_REFERENCE_CHECK}

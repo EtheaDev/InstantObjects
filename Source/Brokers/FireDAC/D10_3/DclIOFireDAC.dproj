@@ -3,7 +3,7 @@
         <ProjectGuid>{CB435DE7-30BA-4476-B10C-2E9D28A55F90}</ProjectGuid>
         <MainSource>DclIOFireDAC.dpk</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>None</FrameworkType>

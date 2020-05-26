@@ -5,7 +5,11 @@ object MainForm: TMainForm
   ClientHeight = 619
   ClientWidth = 1071
   Color = clBtnFace
-  ParentFont = True
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Segoe UI'
+  Font.Style = []
   Menu = MainMenu
   OldCreateOrder = False
   Position = poScreenCenter
@@ -119,7 +123,7 @@ object MainForm: TMainForm
       object WorkTitleLabel: TLabel
         Left = 6
         Top = 5
-        Width = 20
+        Width = 22
         Height = 13
         Caption = 'Title'
       end

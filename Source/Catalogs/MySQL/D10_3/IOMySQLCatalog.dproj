@@ -3,7 +3,7 @@
         <ProjectGuid>{FF600F15-7E26-41A7-A1BC-D17C24CA3A46}</ProjectGuid>
         <MainSource>IOMySQLCatalog.dpk</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Package</AppType>
         <FrameworkType>None</FrameworkType>
