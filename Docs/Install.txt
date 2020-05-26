@@ -2,10 +2,10 @@
 
   InstantObjects for Delphi
 
-  Mozilla Public License 1.1
+  Mozilla Public License 2.0
   Based on Seleqt InstantObjects.
   Portions created by Seleqt are Copyright (c) 2001-2003 Seleqt.
-  Other portions and changes are Copyright (c) the authors.
+  Other portions and changes are Copyright (c) Ethea S.r.l.
   All rights reserved.
 
 ------------------------------------------------------------------

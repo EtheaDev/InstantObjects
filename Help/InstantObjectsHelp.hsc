@@ -61,7 +61,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;\red0\green0\blue255;\red0\green128\blue0;}
 \viewkind4\uc1\pard\sb25\sa25\cf1\lang1040\b\f0\fs32 Welcome to \f1 InstantObjects \f0 for Delphi
 \par \cf2\b0\f2\fs16\{keepn\}\cf1\b\f1 
-\par \b0\fs18 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi\f0  (from 2010 to 10.3 Rio version)\f1 
+\par \b0\fs18 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi\f0  (from 2010 to 10.4 Sydney version)\f1 
 \par 
 \par InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-marke\lang1033\f0 t\lang1040\f1 , and helps keep business focus.
 \par 
@@ -69,7 +69,7 @@ FALSE
 \par 
 \par \f0 You can find more information about this Open-Source project at:  \cf3\strike\f3\fs20 github.com/EtheaDev/InstantObjects\cf2\strike0\f4\{link=*! ExecFile("https://github.com/EtheaDev/InstantObjects\f3 /\f4 ")\}\cf1\f1\fs18 
 \par \f0 
-\par \pard\sb25\sa25\tx200 InstantObjects source files are released under the Mozilla Public License Version 1.1. \f1 You may obtain a copy of the License at\f0  \cf3\strike\f4\fs20 www.mozilla.org/MPL/MPL-1.1.html\cf2\strike0\{link=*! ExecFile("http://www.mozilla.org/MPL/MPL-1.1.html")\}\cf1\f0\fs18 .\b\fs32 
+\par \pard\sb25\sa25\tx200 InstantObjects source files are released under the Mozilla Public License Version 2.0. \f1 You may obtain a copy of the License at\f0  \cf3\strike\f4\fs20 www.mozilla.org/en-US/MPL/2.0/\cf2\strike0\{link=*! ExecFile("https://www.mozilla.org/en-US/MPL/2.0/")\}\cf1\f0\fs18 .\b\fs32 
 \par \pard\sb25\sa25 
 \par \fs24 See also:
 \par \cf4\b0\strike\fs18 Installing InstantObjects\cf2\strike0\f1\{linkID=\f0 4\f1 0>main\}\cf1\f0 
