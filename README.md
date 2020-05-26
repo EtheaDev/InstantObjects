@@ -1,8 +1,8 @@
 # **InstantObjects for Delphi**
 
-![img](http://ethea.it/docs/InstantObjects/instantobjects_logo.gif)
+![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
-Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from 2010 to 10.3 Rio version)
+Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from 2010 to 10.4 Sydney version)
 
 InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-market, and helps keep business focus.
 
@@ -17,13 +17,13 @@ Even though it is still a bolted-on technology, InstantObjects integrates with t
 * Object presentation via standard data-aware controls.
 
 **Project Status**
-The project is still managed by [Ethea S.r.l.](http://ethea.it/eng_default.asp), an italian company that uses InstantObjects for [InstantSolution Framework](http://ethea.it/eng_instantsolutions.htm#panoramica).
+The project is still managed by [Ethea S.r.l.](https://www.ethea.it), an italian company that uses InstantObjects for [InstantSolution Framework](https://ethea.it/prodotti/instantsolutions/).
 
 You can find more information about this Open-Source project in the wiki section.
 
-InstantObjects source files are released under the Mozilla Public License Version 1.1. You may obtain a copy of the License at 
+InstantObjects source files are released under the Mozilla Public License Version 2.0. You may obtain a copy of the License at 
 
-[www.mozilla.org/MPL/MPL-1.1.html](http://www.mozilla.org/MPL/MPL-1.1.html)
+[www.mozilla.org/en-US/MPL/2.0/](https://www.mozilla.org/en-US/MPL/2.0/)
 
 **Contributors are welcome**
 
