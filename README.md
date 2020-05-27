@@ -4,6 +4,8 @@
 
 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from 2010 to 10.4 Sydney version)
 
+![Delphi10.4Sydney Support](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi10.4Sydney_small.jpg)
+
 InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-market, and helps keep business focus.
 
 Even though it is still a bolted-on technology, InstantObjects integrates with the Delphi IDE and Object Pascal in a simple, flexible and intuitive manner. There are no sophisticated environments that have to be comprehended before application development can begin.
