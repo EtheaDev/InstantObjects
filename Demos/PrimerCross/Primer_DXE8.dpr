@@ -75,7 +75,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'InstantObjects Primer Demo (Delphi XE8 version)';
+  Application.Title := 'InstantObjects Primer Demo'+sLineBreak+'(Delphi XE8 version)';
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TMainDataModule, MainDataModule);
   Application.Run;

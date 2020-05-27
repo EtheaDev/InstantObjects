@@ -203,7 +203,7 @@ inherited InstantAboutForm: TInstantAboutForm
       Top = 51
       Width = 106
       Height = 13
-      Caption = '2.7 for Delphi 10.3 Rio'
+      Caption = '2.8 for Delphi 10.4 Sydney'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11

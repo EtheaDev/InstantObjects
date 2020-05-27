@@ -32,7 +32,12 @@
 
 program Primer_D2010;
 
+{$IFDEF LINUX}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
+
 
 uses
   Forms,
@@ -68,7 +73,7 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'InstantObjects Primer Demo (Delphi 2010 version)';
+  Application.Title := 'InstantObjects Primer Demo'+sLineBreak+'(Delphi 2010 version)';
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TMainDataModule, MainDataModule);
   Application.Run;

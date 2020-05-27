@@ -8,7 +8,7 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs, Mask,
   Grids, DBGrids, StdCtrls, ExtCtrls, ActnList, Menus, Buttons,
-  BasicView, Db, InstantPresentation, ComCtrls, System.Actions;
+  BasicView, Db, InstantPresentation, ComCtrls;
 
 type
   TQueryViewForm = class(TBasicViewForm)

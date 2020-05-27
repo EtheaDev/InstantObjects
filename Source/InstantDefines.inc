@@ -304,7 +304,7 @@
   {$DEFINE D26+}
 {$ENDIF}
 
-// Delphi 10.4
+// Delphi 10.4 Sydney
 {$IFDEF VER340}
   {$DEFINE D5+}
   {$DEFINE D6+}
