@@ -9,7 +9,7 @@ InstantObjects Help
 
 TRUE
 0x0409   English (U.S.)
-D:\SELEQT\InstantObjectsCVS\Help,D:\L\InstantObjects\Help,D:\ETHEA\GitHub_EtheaDev\InstantObjects\InstantObjects\Help
+D:\ETHEA\GitHub_EtheaDev\InstantObjects\InstantObjects\Help
 1
 BrowseButtons()
 0
@@ -56,7 +56,7 @@ Done
 
 
 FALSE
-24
+25
 {\rtf1\ansi\ansicpg1252\deff0{\fonttbl{\f0\fswiss\fcharset0 Arial;}{\f1\fswiss Arial;}{\f2\fnil Arial;}{\f3\fnil\fcharset0 Courier New;}{\f4\fnil Courier New;}}
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;\red0\green0\blue255;\red0\green128\blue0;}
 \viewkind4\uc1\pard\sb25\sa25\cf1\lang1040\b\f0\fs32 Welcome to \f1 InstantObjects \f0 for Delphi
@@ -79,7 +79,8 @@ FALSE
 \par \cf2\b0\f1\fs18 
 \par \{bmc instantobjects_logo.gif\}
 \par 
-\par \cf1 
+\par \cf1\f0 Copyright (c) - original developer Seleqt
+\par Project maintainer - Ethea S.r.l.\f1 
 \par }
 20
 Scribble20
