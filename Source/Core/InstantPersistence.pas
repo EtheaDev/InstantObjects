@@ -468,8 +468,10 @@ type
     procedure AssignPicture(Source: TImage);
     procedure AssignToPicture(Dest: TImage);
 {$ELSE}
+    {$IFNDEF CONSOLE}
     procedure AssignPicture(Source: TPicture);
     procedure AssignToPicture(Dest: TPicture);
+    {$ENDIF}
 {$ENDIF}
     procedure Clear;
     procedure LoadDataFromStream(AStream: TStream);
@@ -2130,8 +2132,12 @@ begin
     if Assigned(FInstance) then
       FInstance.Release
     else
+      {$IFDEF WIN64}
+      Int64(FInstance) := -1;
+      {$ELSE}
       Integer(FInstance) := -1;
-  end;
+      {$ENDIF}
+    end;
   Result := Instance;
 end;
 
@@ -2293,7 +2299,11 @@ begin
   if Assigned(FInstance) then
     FInstance.Release
   else
+    {$IFDEF WIN64}
+    Int64(FInstance) := -1;
+    {$ELSE}
     Integer(FInstance) := -1;
+    {$ENDIF}
 end;
 
 procedure TInstantObjectReference.Reset;
@@ -7039,7 +7049,7 @@ begin
     begin
       Destroy;
       Self := nil;
-      {$IFNDEF FPC} //UB it raise an error in FPC, surely there'd be better ways to accomplish this
+      {$IFNDEF WIN64}
       asm
         MOV     [EBP - $09], EAX // Avoid calling AfterConstruction
         POP     dword ptr fs:[$00000000]

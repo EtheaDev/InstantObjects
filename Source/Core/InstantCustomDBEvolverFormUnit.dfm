@@ -8,7 +8,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
@@ -33,7 +33,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   object EvolutionLogLabel: TLabel
     Left = 8
     Top = 176
-    Width = 61
+    Width = 69
     Height = 13
     Anchors = [akLeft, akBottom]
     Caption = 'Evolution log'
@@ -49,7 +49,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   object SequenceListView: TListView
     Left = 8
     Top = 40
-    Width = 441
+    Width = 437
     Height = 129
     Anchors = [akLeft, akTop, akRight, akBottom]
     Checkboxes = True
@@ -70,7 +70,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     TabOrder = 1
   end
   object MoveCommandUpButton: TButton
-    Left = 456
+    Left = 450
     Top = 40
     Width = 129
     Height = 25
@@ -79,7 +79,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     TabOrder = 3
   end
   object MoveCommandDownButton: TButton
-    Left = 456
+    Left = 450
     Top = 72
     Width = 129
     Height = 25
@@ -90,7 +90,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
   object EvolutionLogMemo: TMemo
     Left = 8
     Top = 192
-    Width = 577
+    Width = 571
     Height = 105
     Anchors = [akLeft, akRight, akBottom]
     ReadOnly = True
@@ -99,7 +99,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     WordWrap = False
   end
   object EnableAllButton: TButton
-    Left = 456
+    Left = 450
     Top = 112
     Width = 129
     Height = 25
@@ -108,7 +108,7 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     TabOrder = 5
   end
   object DisableAllButton: TButton
-    Left = 456
+    Left = 450
     Top = 144
     Width = 129
     Height = 25

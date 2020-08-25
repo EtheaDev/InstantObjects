@@ -23,7 +23,7 @@ lc_ctype=ISO8859_1</Params>
     <ConnectionName>FBConnection</ConnectionName>
     <DriverName>Firebird</DriverName>
     <Params>DriverName=Firebird
-Database=127.0.0.1:D:\ETHEA\ISF7\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB
+Database=PRIMERDB
 RoleName=RoleName
 User_Name=sysdba
 Password=masterkey
@@ -42,7 +42,7 @@ Trim Char=False
     <Name>FireDAC_Firebird</Name>
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
-    <Database>D:\ETHEA\ISF7\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB</Database>
+    <Database>PRIMERDB</Database>
     <HostName>127.0.0.1</HostName>
     <LoginPrompt>FALSE</LoginPrompt>
     <Password>masterkey</Password>

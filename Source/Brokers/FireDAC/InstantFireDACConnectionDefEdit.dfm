@@ -9,7 +9,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
@@ -33,102 +33,102 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     BevelOuter = bvNone
     TabOrder = 0
     object HostNameLabel: TLabel
-      Left = 16
+      Left = 7
       Top = 16
-      Width = 53
+      Width = 56
       Height = 13
       Caption = '&Host Name'
       FocusControl = HostNameEdit
     end
     object PortLabel: TLabel
-      Left = 152
+      Left = 143
       Top = 16
-      Width = 78
+      Width = 87
       Height = 13
       Caption = '&Port (0 = default)'
       FocusControl = PortEdit
     end
     object ProtocolLabel: TLabel
-      Left = 240
+      Left = 231
       Top = 16
-      Width = 42
+      Width = 46
       Height = 13
       Caption = '&Protocol:'
       FocusControl = ProtocolComboBox
     end
     object DatabaseLabel: TLabel
-      Left = 16
+      Left = 7
       Top = 56
-      Width = 46
+      Width = 48
       Height = 13
       Caption = '&Database'
       FocusControl = DatabaseEdit
     end
     object CatalogLabel: TLabel
-      Left = 240
+      Left = 231
       Top = 56
-      Width = 36
+      Width = 40
       Height = 13
       Caption = '&Catalog'
       FocusControl = CatalogComboBox
     end
     object UserNameLabel: TLabel
-      Left = 16
+      Left = 7
       Top = 96
-      Width = 51
+      Width = 54
       Height = 13
       Caption = '&User name'
       FocusControl = UserNameEdit
     end
     object PasswordLabel: TLabel
-      Left = 168
+      Left = 159
       Top = 96
-      Width = 46
+      Width = 49
       Height = 13
       Caption = '&Password'
       FocusControl = PasswordEdit
     end
     object PropertiesLabel: TLabel
-      Left = 16
+      Left = 7
       Top = 144
-      Width = 50
+      Width = 55
       Height = 13
       Caption = 'Pr&operties:'
       FocusControl = PropertiesEditor
     end
     object StreamFormatLabel: TLabel
-      Left = 216
+      Left = 207
       Top = 144
-      Width = 53
+      Width = 60
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
     end
     object IdDataTypeLabel: TLabel
-      Left = 216
+      Left = 207
       Top = 184
-      Width = 62
+      Width = 63
       Height = 13
       Caption = 'Id Data Type'
       FocusControl = IdDataTypeComboBox
     end
     object IdSizeLabel: TLabel
-      Left = 216
+      Left = 207
       Top = 224
-      Width = 32
+      Width = 33
       Height = 13
       Caption = 'Id Size'
       FocusControl = IdSizeEdit
     end
     object HostNameEdit: TEdit
-      Left = 16
+      Left = 7
       Top = 32
       Width = 129
       Height = 21
       TabOrder = 0
     end
     object PortEdit: TEdit
-      Left = 152
+      Left = 143
       Top = 32
       Width = 81
       Height = 21
@@ -136,7 +136,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       OnExit = PortEditExit
     end
     object ProtocolComboBox: TComboBox
-      Left = 240
+      Left = 231
       Top = 32
       Width = 113
       Height = 21
@@ -145,21 +145,21 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       TabOrder = 2
     end
     object DatabaseEdit: TEdit
-      Left = 16
+      Left = 7
       Top = 72
       Width = 193
       Height = 21
       TabOrder = 3
     end
     object CatalogComboBox: TComboBox
-      Left = 240
+      Left = 231
       Top = 72
       Width = 113
       Height = 21
       TabOrder = 5
     end
     object DatabaseButton: TButton
-      Left = 214
+      Left = 205
       Top = 72
       Width = 21
       Height = 21
@@ -168,14 +168,14 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       OnClick = DatabaseButtonClick
     end
     object UserNameEdit: TEdit
-      Left = 16
+      Left = 7
       Top = 112
       Width = 145
       Height = 21
       TabOrder = 6
     end
     object PasswordEdit: TEdit
-      Left = 168
+      Left = 159
       Top = 112
       Width = 89
       Height = 21
@@ -183,7 +183,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       TabOrder = 7
     end
     object LoginPromptCheckBox: TCheckBox
-      Left = 272
+      Left = 263
       Top = 112
       Width = 81
       Height = 17
@@ -191,14 +191,14 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       TabOrder = 8
     end
     object PropertiesEditor: TMemo
-      Left = 16
+      Left = 7
       Top = 160
       Width = 185
       Height = 129
       TabOrder = 9
     end
     object StreamFormatComboBox: TComboBox
-      Left = 216
+      Left = 207
       Top = 160
       Width = 137
       Height = 21
@@ -207,7 +207,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       TabOrder = 10
     end
     object IdDataTypeComboBox: TComboBox
-      Left = 216
+      Left = 207
       Top = 200
       Width = 137
       Height = 21
@@ -215,14 +215,14 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       TabOrder = 11
     end
     object IdSizeEdit: TEdit
-      Left = 216
+      Left = 207
       Top = 240
       Width = 65
       Height = 21
       TabOrder = 12
     end
     object UseDelimitedIdentsCheckBox: TCheckBox
-      Left = 216
+      Left = 207
       Top = 272
       Width = 137
       Height = 17

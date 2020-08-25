@@ -175,6 +175,7 @@ begin
   //CB
   ConnectionDef.BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
   ConnectionDef.LoginPrompt := LoginPromptCheckBox.Checked;
+  ConnectionDef.UseUnicode := UseUnicodeCheckBox.Checked;
 end;
 
 procedure TInstantDBXConnectionDefEditForm.SetConnectionName(

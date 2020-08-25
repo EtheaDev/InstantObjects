@@ -3,22 +3,22 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   Top = 196
   Caption = 'Class Editor'
   ClientHeight = 365
-  ClientWidth = 400
+  ClientWidth = 384
   OldCreateOrder = True
   OnCreate = FormCreate
-  ExplicitWidth = 416
+  ExplicitWidth = 400
   ExplicitHeight = 404
   PixelsPerInch = 96
   TextHeight = 13
   inherited EditPanel: TPanel
-    Width = 400
+    Width = 384
     Height = 334
-    ExplicitWidth = 400
+    ExplicitWidth = 384
     ExplicitHeight = 334
     object PageControl: TPageControl
       Left = 4
       Top = 4
-      Width = 392
+      Width = 376
       Height = 326
       ActivePage = ClassSheet
       Align = alClient
@@ -69,7 +69,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object ClassNameEdit: TDBEdit
           Left = 16
           Top = 32
-          Width = 353
+          Width = 347
           Height = 21
           DataField = 'Name'
           DataSource = SubjectSource
@@ -79,7 +79,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object BaseClassEdit: TDBComboBox
           Left = 16
           Top = 80
-          Width = 353
+          Width = 347
           Height = 21
           DataField = 'BaseClassName'
           DataSource = SubjectSource
@@ -89,7 +89,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object UnitEdit: TDBComboBox
           Left = 16
           Top = 128
-          Width = 353
+          Width = 347
           Height = 21
           Style = csDropDownList
           DataField = 'PascalUnitName'
@@ -99,7 +99,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object StorageEdit: TDBEdit
           Left = 148
           Top = 176
-          Width = 217
+          Width = 215
           Height = 21
           DataField = 'StorageName'
           DataSource = SubjectSource
@@ -124,24 +124,45 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         inline InstantAttributeViewFrame: TInstantAttributeViewFrame
           Left = 0
           Top = 0
-          Width = 376
+          Width = 360
           Height = 290
           Align = alClient
           TabOrder = 0
+          ExplicitWidth = 360
           ExplicitHeight = 290
           inherited AttributesSplitter: TSplitter
             Top = 186
+            Width = 360
             ExplicitTop = 186
+            ExplicitWidth = 360
           end
           inherited InheritedAttributesPanel: TPanel
             Top = 190
+            Width = 360
             ExplicitTop = 190
+            ExplicitWidth = 360
+            inherited InheritedAttributesLabel: TLabel
+              Width = 360
+              ExplicitWidth = 360
+            end
+            inherited InheritedAttributesView: TListView
+              Width = 360
+              ExplicitWidth = 360
+            end
           end
           inherited IntroducedAttributesPanel: TPanel
+            Width = 360
             Height = 186
+            ExplicitWidth = 360
             ExplicitHeight = 186
+            inherited IntroducedAttributesLabel: TLabel
+              Width = 360
+              ExplicitWidth = 360
+            end
             inherited IntroducedAttributesView: TListView
+              Width = 360
               Height = 170
+              ExplicitWidth = 360
               ExplicitHeight = 170
             end
           end
@@ -151,12 +172,12 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   end
   inherited BottomPanel: TPanel
     Top = 334
-    Width = 400
+    Width = 384
     ExplicitTop = 334
-    ExplicitWidth = 400
+    ExplicitWidth = 384
     inherited ButtonPanel: TPanel
-      Left = 240
-      ExplicitLeft = 240
+      Left = 224
+      ExplicitLeft = 224
       inherited OkButton: TButton
         Left = -1
         Top = 2

@@ -33,8 +33,6 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitWidth = 391
-    ExplicitHeight = 271
     object DriverNameLabel: TLabel
       Left = 16
       Top = 16
@@ -128,8 +126,6 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 273
-    ExplicitWidth = 391
     object OkButton: TButton
       Left = 233
       Top = 6

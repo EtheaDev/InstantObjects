@@ -9,7 +9,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
@@ -48,8 +48,6 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
     TabOrder = 0
     ViewStyle = vsReport
     OnDblClick = ConnectionViewDblClick
-    ExplicitWidth = 342
-    ExplicitHeight = 222
   end
   object BottomPanel: TPanel
     Left = 0
@@ -58,8 +56,6 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
     Height = 32
     Align = alBottom
     TabOrder = 1
-    ExplicitTop = 222
-    ExplicitWidth = 342
     object BuildButton: TButton
       Left = 4
       Top = 4
@@ -69,7 +65,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       TabOrder = 0
     end
     object ButtonsPanel: TPanel
-      Left = 180
+      Left = 172
       Top = 1
       Width = 161
       Height = 30

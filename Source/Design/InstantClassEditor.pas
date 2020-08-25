@@ -233,6 +233,8 @@ begin
               Add(AClassName);
           end;
         end;
+      BaseClassEdit.ItemIndex :=
+        BaseClassEdit.Items.IndexOf(TInstantObject.ClassName);
     finally
       EndUpdate;
     end;
