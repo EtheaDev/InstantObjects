@@ -38,9 +38,10 @@ InstantObjects source files are released under the Mozilla Public License Versio
 
 VERSION HISTORY
 ---------------
-Version 2.8 (2.8.0.0) (2020-05-27)
+Version 2.8 (2.8.0.0) (2020-08-25)
 - Added support for Delphi 10.4 Sydney
 - Minor bug-fixing
+- Editor font updated
 
 Version 2.7 (2.7.0.0) (2018-12-06)
 - Added support for Delphi 10.3 Rio
