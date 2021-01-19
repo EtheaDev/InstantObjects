@@ -6,9 +6,7 @@ Welcome to InstantObjects, the integrated framework for developing object-orient
 
 ![Delphi10.4Sydney Support](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi10.4Sydney_small.jpg)
 
-https://www.embarcadero.com/
-
-https://learndelphi.org/
+Related links: https://www.embarcadero.com/ - https://learndelphi.org/
 
 InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-market, and helps keep business focus.
 
