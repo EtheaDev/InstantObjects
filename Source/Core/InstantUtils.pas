@@ -57,6 +57,7 @@ function InstantCompareValues(V1, V2: Variant;
 function InstantCompareText(const S1, S2: string; IgnoreCase: Boolean): Integer;
 function InstantConstArrayToVariant(AValues : array of const) : Variant;
 function InstantDateTimeToStr(DateTime: TDateTime): string;
+function InstantDateTimeToJStr(ADate: TDateTime): string;
 function InstantEmbrace(const S, Delimiters: string): string;
 function InstantFileAge(const FileName: string; out FileDateTime: TDateTime): boolean;
 function InstantFileVersionValue(const FileName, ValueName: string): string;
@@ -96,7 +97,8 @@ implementation
 
 uses
   Windows, ActiveX, ComObj,
-  {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti;
+  {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti,
+  DateUtils;
 
 
 {$IFDEF IO_MEM_OVERRUN_CHECK}
@@ -320,6 +322,19 @@ end;
 function InstantDateTimeToStr(DateTime: TDateTime): string;
 begin
   Result := FormatDateTime(InstantDateTimeFormat, DateTime)
+end;
+
+function InstantDateTimeToJStr(ADate: TDateTime): string;
+const
+  SDateFormat: string = '%.4d-%.2d-%.2dT%.2d:%.2d:%.2d.%.3dZ';
+  SOffsetFormat: string = '%s%s%.02d:%.02d';
+  Neg: array[Boolean] of string = ('+', '-');
+var
+  y, mo, d, h, mi, se, ms: Word;
+begin
+  DecodeDate(ADate, y, mo, d);
+  DecodeTime(ADate, h, mi, se, ms);
+  Result := Format(SDateFormat, [y, mo, d, h, mi, se, ms]);
 end;
 
 function InstantEmbrace(const S, Delimiters: string): string;

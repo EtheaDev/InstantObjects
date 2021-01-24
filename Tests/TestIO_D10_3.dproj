@@ -1,11 +1,11 @@
 ﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{015d41df-eb42-4172-b75c-3e0f464f00cc}</ProjectGuid>
-        <MainSource>TestIO_D10_3.dpr</MainSource>
+        <MainSource>TestIO_D10_2.dpr</MainSource>
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
         <DCC_DependencyCheckOutputName>TestIO_DXE2.exe</DCC_DependencyCheckOutputName>
-        <ProjectVersion>18.5</ProjectVersion>
+        <ProjectVersion>18.8</ProjectVersion>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <Base>True</Base>
         <AppType>Application</AppType>
@@ -49,9 +49,11 @@
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <VerInfo_Locale>3081</VerInfo_Locale>
-        <DCC_UnitSearchPath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src;.\DUnit\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src;.\DUnit\src;..\..\ext\delphi-neon\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DependencyCheckOutputName>TestIO_DXE2.exe</DCC_DependencyCheckOutputName>
+        <DCC_Define>DELPHI_NEON;$(DCC_Define)</DCC_Define>
+        <DCC_DcuOutput>..\Dcu\$(Platform)\$(Config)</DCC_DcuOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
@@ -101,7 +103,6 @@
         <DCCReference Include="InstantMock.pas"/>
         <DCCReference Include="TestMockConnector.pas"/>
         <DCCReference Include="TestMockBroker.pas"/>
-        <DCCReference Include="TestModel.pas"/>
         <DCCReference Include="TestInstantMetadata.pas"/>
         <DCCReference Include="TestInstantFieldMetadata.pas"/>
         <DCCReference Include="TestInstantClassMetadata.pas"/>
@@ -111,7 +112,8 @@
         <DCCReference Include="TestInstantScheme.pas"/>
         <DCCReference Include="TestInstantClasses.pas"/>
         <DCCReference Include="TestInstantRtti.pas"/>
-        <DCCReference Include="TestMinimalModel.pas"/>
+        <DCCReference Include="TestModel.pas"/>
+        <DCCReference Include="TestFullModel.pas"/>
         <DCCReference Include="TestInstantAttributeMap.pas"/>
         <DCCReference Include="TestInstantAttribute.pas"/>
         <DCCReference Include="TestInstantNumeric.pas"/>
@@ -192,7 +194,7 @@
                     <VersionInfoKeys Name="Comments"/>
                 </VersionInfoKeys>
                 <Source>
-                    <Source Name="MainSource">TestIO_D10_3.dpr</Source>
+                    <Source Name="MainSource">TestIO_D10_2.dpr</Source>
                 </Source>
                 <Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k220.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
@@ -201,11 +203,12 @@
             </Delphi.Personality>
             <Platforms>
                 <Platform value="Win32">True</Platform>
+                <Platform value="Win64">False</Platform>
             </Platforms>
             <Deployment Version="3">
-                <DeployFile LocalName="TestIO_D10_3.exe" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="TestIO_D10_2.exe" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
-                        <RemoteName>TestIO_D10_3.exe</RemoteName>
+                        <RemoteName>TestIO_D10_2.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
@@ -220,12 +223,6 @@
                 <DeployClass Name="AndroidClassesDexFile">
                     <Platform Name="Android">
                         <RemoteDir>classes</RemoteDir>
-                        <Operation>1</Operation>
-                    </Platform>
-                </DeployClass>
-                <DeployClass Name="AndroidFileProvider">
-                    <Platform Name="Android">
-                        <RemoteDir>res\xml</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -263,12 +260,6 @@
                 <DeployClass Name="AndroidSplashStyles">
                     <Platform Name="Android">
                         <RemoteDir>res\values</RemoteDir>
-                        <Operation>1</Operation>
-                    </Platform>
-                </DeployClass>
-                <DeployClass Name="AndroidSplashStylesV21">
-                    <Platform Name="Android">
-                        <RemoteDir>res\values-v21</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
@@ -348,20 +339,12 @@
                         <Operation>1</Operation>
                         <Extensions>.framework</Extensions>
                     </Platform>
-                    <Platform Name="OSX64">
-                        <Operation>1</Operation>
-                        <Extensions>.framework</Extensions>
-                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                     </Platform>
                 </DeployClass>
                 <DeployClass Name="DependencyModule">
                     <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
-                    <Platform Name="OSX64">
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
@@ -387,10 +370,6 @@
                         <Operation>1</Operation>
                         <Extensions>.dylib</Extensions>
                     </Platform>
-                    <Platform Name="OSX64">
-                        <Operation>1</Operation>
-                        <Extensions>.dylib</Extensions>
-                    </Platform>
                     <Platform Name="Win32">
                         <Operation>0</Operation>
                         <Extensions>.bpl</Extensions>
@@ -410,9 +389,6 @@
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="OSX32">
-                        <Operation>0</Operation>
-                    </Platform>
-                    <Platform Name="OSX64">
                         <Operation>0</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -525,15 +501,10 @@
                         <Operation>1</Operation>
                     </Platform>
                 </DeployClass>
-                <DeployClass Name="ProjectOSXDebug"/>
                 <DeployClass Name="ProjectOSXEntitlements"/>
                 <DeployClass Name="ProjectOSXInfoPList"/>
                 <DeployClass Name="ProjectOSXResource">
                     <Platform Name="OSX32">
-                        <RemoteDir>Contents\Resources</RemoteDir>
-                        <Operation>1</Operation>
-                    </Platform>
-                    <Platform Name="OSX64">
                         <RemoteDir>Contents\Resources</RemoteDir>
                         <Operation>1</Operation>
                     </Platform>
@@ -556,9 +527,6 @@
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="OSX32">
-                        <Operation>1</Operation>
-                    </Platform>
-                    <Platform Name="OSX64">
                         <Operation>1</Operation>
                     </Platform>
                     <Platform Name="Win32">
@@ -600,7 +568,6 @@
                 <ProjectRoot Platform="Linux64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="OSX32" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="Android" Name="$(PROJECTNAME)"/>
-                <ProjectRoot Platform="OSX64" Name="$(PROJECTNAME)"/>
                 <ProjectRoot Platform="iOSSimulator" Name="$(PROJECTNAME).app"/>
             </Deployment>
         </BorlandProject>

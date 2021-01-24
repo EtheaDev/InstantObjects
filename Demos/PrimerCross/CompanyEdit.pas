@@ -161,10 +161,6 @@ end;
 procedure TCompanyEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
-  Font.Assign(Screen.IconFont);
-  Font.Height := -11;
-  EmployeeGrid.TitleFont.Assign(Screen.IconFont);
-
   LoadMultipleImages(ActionImages,'COMPANYEDITACTIONIMAGES',HInstance);
   //getting glyph images
   EmployeeNewButton.Action := EmployeeNewAction;

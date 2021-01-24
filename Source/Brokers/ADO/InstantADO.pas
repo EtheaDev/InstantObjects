@@ -30,7 +30,11 @@
 
 unit InstantADO;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -193,13 +197,16 @@ type
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override; 
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams;
+      OnAssignParamValue: TAssignParamValue = nil); override;
   public
     function CreateDBBuildCommand(
       const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
-    function CreateDataSet(const Statement: string; Params: TParams): TDataSet; override;
+    function CreateDataSet(const Statement: string; Params: TParams;
+      OnAssignParamValue: TAssignParamValue = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
-    function Execute(const AStatement: string; AParams: TParams): Integer; override;
+    function Execute(const AStatement: string; AParams: TParams;
+      OnAssignParamValue: TAssignParamValue = nil): Integer; override;
     class function GeneratorClass: TInstantSQLGeneratorClass; override;
   end;
 
@@ -219,7 +226,8 @@ uses
 const
   ADOLinkPrefix = 'FILE NAME=';
 
-procedure AssignParamsToParameters(Params: TParams; Parameters: TParameters);
+procedure AssignParamsToParameters(Params: TParams; Parameters: TParameters;
+  OnAssignParamValue: TAssignParamValue = nil);
 var
   I: Integer;
   Parameter: TParameter;
@@ -236,6 +244,8 @@ begin
       begin
         Parameter := Items[I];
         Param := Params.ParamByName(Parameter.Name);
+        if Assigned(OnAssignParamValue) then
+          OnAssignParamValue(Param);
         Parameter.DataType := Param.DataType;
         if Param.ParamType = DB.ptUnknown then
           Parameter.Direction := pdInput
@@ -280,7 +290,7 @@ end;
 
 function TInstantADOConnectionDef.Edit: Boolean;
 begin
-  with TInstantADOConnectionDefEditForm.Create(nil) do
+  with TInstantADOConnectionDefEditForm.CreateForConnectionDef(nil, Self) do
   try
     LoadData(Self);
     Result := ShowModal = mrOk;
@@ -1066,9 +1076,10 @@ begin
 end;
 
 procedure TInstantADOMSSQLBroker.AssignDataSetParams(DataSet: TDataSet;
-  AParams: TParams);
+  AParams: TParams; OnAssignParamValue: TAssignParamValue);
 begin
-  AssignParamsToParameters(AParams, TADOQuery(DataSet).Parameters);
+  AssignParamsToParameters(AParams, TADOQuery(DataSet).Parameters,
+    OnAssignParamValue);
 end;
 
 function TInstantADOMSSQLBroker.CreateCatalog(
@@ -1078,7 +1089,7 @@ begin
 end;
 
 function TInstantADOMSSQLBroker.CreateDataSet(const Statement: string;
-  Params: TParams): TDataSet;
+  Params: TParams; OnAssignParamValue: TAssignParamValue = nil): TDataSet;
 var
   Query: TADOQuery;
 begin
@@ -1089,7 +1100,7 @@ begin
     Query.Connection := (Connector as TInstantADOConnector).Connection;
     Query.SQL.Text := Statement;
     if Assigned(Params) then
-      AssignParamsToParameters(Params, Query.Parameters);
+      AssignParamsToParameters(Params, Query.Parameters, OnAssignParamValue);
     Result := Query;
   Except
     Query.Free;
@@ -1146,11 +1157,11 @@ begin
 end;
 
 function TInstantADOMSSQLBroker.Execute(const AStatement: string;
-  AParams: TParams): Integer;
+  AParams: TParams; OnAssignParamValue: TAssignParamValue): Integer;
 var
   DataSet : TADOQuery;
 begin
-  DataSet := AcquireDataSet(AStatement, AParams) as TADOQuery;
+  DataSet := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TADOQuery;
   try
     Result := DataSet.ExecSQL;
   finally

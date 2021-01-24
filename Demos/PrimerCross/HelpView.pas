@@ -9,17 +9,17 @@ uses
   BasicView, OleCtrls, SHDocVw, StdCtrls, ExtCtrls, ComCtrls;
 
 type
-  THelpViewForm = class(TBasicViewForm)
+  THelpViewForm = class(TBasicViewFrame)
     Browser: TWebBrowser;
   public
-    procedure FormCreate(Sender: TObject); override;
+    procedure FrameCreate(Sender: TObject); override;
   end;
 
 implementation
 
 {$R *.dfm}
 
-procedure THelpViewForm.FormCreate(Sender: TObject);
+procedure THelpViewForm.FrameCreate(Sender: TObject);
 begin
   inherited;
   Caption := 'Overview';

@@ -14,6 +14,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
@@ -43,34 +44,18 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     object PortLabel: TLabel
       Left = 143
       Top = 16
-      Width = 87
+      Width = 81
       Height = 13
-      Caption = '&Port (0 = default)'
+      Caption = 'Por&t (0=default)'
       FocusControl = PortEdit
-    end
-    object ProtocolLabel: TLabel
-      Left = 231
-      Top = 16
-      Width = 46
-      Height = 13
-      Caption = '&Protocol:'
-      FocusControl = ProtocolComboBox
     end
     object DatabaseLabel: TLabel
       Left = 7
       Top = 56
-      Width = 48
+      Width = 282
       Height = 13
-      Caption = '&Database'
+      Caption = '&Database Name (or filename for Firebird and Interbase)'
       FocusControl = DatabaseEdit
-    end
-    object CatalogLabel: TLabel
-      Left = 231
-      Top = 56
-      Width = 40
-      Height = 13
-      Caption = '&Catalog'
-      FocusControl = CatalogComboBox
     end
     object UserNameLabel: TLabel
       Left = 7
@@ -81,7 +66,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       FocusControl = UserNameEdit
     end
     object PasswordLabel: TLabel
-      Left = 159
+      Left = 102
       Top = 96
       Width = 49
       Height = 13
@@ -91,10 +76,10 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     object PropertiesLabel: TLabel
       Left = 7
       Top = 144
-      Width = 55
+      Width = 96
       Height = 13
-      Caption = 'Pr&operties:'
-      FocusControl = PropertiesEditor
+      Caption = 'Additional Par&ams:'
+      FocusControl = AdditionalParamsEditor
     end
     object StreamFormatLabel: TLabel
       Left = 207
@@ -120,6 +105,14 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Caption = 'Id Size'
       FocusControl = IdSizeEdit
     end
+    object DriverIdLabel: TLabel
+      Left = 231
+      Top = 16
+      Width = 47
+      Height = 13
+      Caption = 'D&river ID:'
+      FocusControl = DriverIdComboBox
+    end
     object HostNameEdit: TEdit
       Left = 7
       Top = 32
@@ -135,31 +128,15 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       TabOrder = 1
       OnExit = PortEditExit
     end
-    object ProtocolComboBox: TComboBox
-      Left = 231
-      Top = 32
-      Width = 113
-      Height = 21
-      Style = csDropDownList
-      Sorted = True
-      TabOrder = 2
-    end
     object DatabaseEdit: TEdit
       Left = 7
       Top = 72
-      Width = 193
+      Width = 310
       Height = 21
       TabOrder = 3
     end
-    object CatalogComboBox: TComboBox
-      Left = 231
-      Top = 72
-      Width = 113
-      Height = 21
-      TabOrder = 5
-    end
     object DatabaseButton: TButton
-      Left = 205
+      Left = 323
       Top = 72
       Width = 21
       Height = 21
@@ -170,31 +147,31 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     object UserNameEdit: TEdit
       Left = 7
       Top = 112
-      Width = 145
+      Width = 90
       Height = 21
-      TabOrder = 6
+      TabOrder = 5
     end
     object PasswordEdit: TEdit
-      Left = 159
+      Left = 102
       Top = 112
       Width = 89
       Height = 21
       PasswordChar = '*'
-      TabOrder = 7
+      TabOrder = 6
     end
     object LoginPromptCheckBox: TCheckBox
-      Left = 263
-      Top = 112
-      Width = 81
+      Left = 209
+      Top = 99
+      Width = 104
       Height = 17
       Caption = '&Login Prompt'
-      TabOrder = 8
+      TabOrder = 7
     end
-    object PropertiesEditor: TMemo
+    object AdditionalParamsEditor: TMemo
       Left = 7
       Top = 160
       Width = 185
-      Height = 129
+      Height = 142
       TabOrder = 9
     end
     object StreamFormatComboBox: TComboBox
@@ -203,12 +180,11 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Width = 137
       Height = 21
       Style = csDropDownList
-      Sorted = True
       TabOrder = 10
     end
     object IdDataTypeComboBox: TComboBox
       Left = 207
-      Top = 200
+      Top = 199
       Width = 137
       Height = 21
       Style = csDropDownList
@@ -216,17 +192,42 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     end
     object IdSizeEdit: TEdit
       Left = 207
-      Top = 240
+      Top = 238
       Width = 65
       Height = 21
       TabOrder = 12
     end
+    object OSAuthCheckBox: TCheckBox
+      Left = 209
+      Top = 121
+      Width = 104
+      Height = 17
+      Caption = '&OS Authent'
+      TabOrder = 8
+    end
+    object DriverIdComboBox: TComboBox
+      Left = 231
+      Top = 32
+      Width = 113
+      Height = 21
+      Style = csDropDownList
+      Sorted = True
+      TabOrder = 2
+    end
     object UseDelimitedIdentsCheckBox: TCheckBox
       Left = 207
-      Top = 272
-      Width = 137
+      Top = 285
+      Width = 157
       Height = 17
-      Caption = '&Use delimited identifiers'
+      Caption = 'Use &delimited identifiers'
+      TabOrder = 14
+    end
+    object UseUnicodeCheckBox: TCheckBox
+      Left = 207
+      Top = 265
+      Width = 104
+      Height = 17
+      Caption = 'Use &Unicode'
       TabOrder = 13
     end
   end
@@ -246,7 +247,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Caption = 'OK'
       Default = True
       ModalResult = 1
-      TabOrder = 0
+      TabOrder = 1
     end
     object CancelButton: TButton
       Left = 289
@@ -256,7 +257,16 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Cancel = True
       Caption = 'Cancel'
       ModalResult = 2
-      TabOrder = 1
+      TabOrder = 2
+    end
+    object TestButton: TButton
+      Left = 7
+      Top = 6
+      Width = 106
+      Height = 25
+      Caption = 'Test connection...'
+      TabOrder = 0
+      OnClick = TestButtonClick
     end
   end
 end

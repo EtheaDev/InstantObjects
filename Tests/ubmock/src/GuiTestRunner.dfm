@@ -5,11 +5,7 @@ object GUITestRunner: TGUITestRunner
   ClientHeight = 625
   ClientWidth = 502
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
+  ParentFont = True
   OldCreateOrder = False
   OnCreate = FormCreate
   OnShow = FormShow
@@ -55,7 +51,7 @@ object GUITestRunner: TGUITestRunner
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clBlue
       Font.Height = -13
-      Font.Name = 'MS Sans Serif'
+      Font.Name = 'Segoe UI'#224
       Font.Style = []
       ParentFont = False
       WordWrap = True
@@ -260,14 +256,8 @@ object GUITestRunner: TGUITestRunner
           Width = 494
           Height = 437
           Align = alClient
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -15
-          Font.Name = 'Arial'
-          Font.Style = []
           Images = ImageList1
           Indent = 19
-          ParentFont = False
           TabOrder = 0
           OnChange = TestTreeChange
         end
@@ -310,7 +300,7 @@ object GUITestRunner: TGUITestRunner
     Left = 192
     Top = 200
     Bitmap = {
-      494C010108000900080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010108000900040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000003000000001002000000000000030
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

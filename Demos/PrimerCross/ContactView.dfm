@@ -58,8 +58,6 @@ inherited ContactViewForm: TContactViewForm
           Width = 22
           Height = 21
           Action = FindAction
-          DoubleBuffered = True
-          ParentDoubleBuffered = False
           ParentShowHint = False
           ShowHint = True
           TabOrder = 1
@@ -197,16 +195,19 @@ inherited ContactViewForm: TContactViewForm
         TabWidth = 30
         OnChange = IndexTabControlChange
         object ExplorerSplitter: TSplitter
-          Left = 497
+          Left = 454
           Top = 6
           Width = 4
           Height = 422
           Align = alRight
+          AutoSnap = False
+          MinSize = 100
+          ExplicitLeft = 497
         end
         object ExplorerPanel: TPanel
-          Left = 501
+          Left = 458
           Top = 6
-          Width = 122
+          Width = 165
           Height = 422
           Align = alRight
           BevelOuter = bvNone
@@ -214,7 +215,7 @@ inherited ContactViewForm: TContactViewForm
           object Explorer: TInstantExplorer
             Left = 0
             Top = 0
-            Width = 122
+            Width = 165
             Height = 422
             Align = alClient
             Images = ExplorerImages
@@ -227,7 +228,7 @@ inherited ContactViewForm: TContactViewForm
         object ContactGridPanel: TPanel
           Left = 4
           Top = 6
-          Width = 493
+          Width = 450
           Height = 422
           Align = alClient
           BevelOuter = bvNone
@@ -236,18 +237,24 @@ inherited ContactViewForm: TContactViewForm
           object ContactGrid: TDBGrid
             Left = 0
             Top = 0
-            Width = 493
+            Width = 450
             Height = 422
             Align = alClient
             DataSource = ContactSource
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
             Options = [dgTitles, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgAlwaysShowSelection, dgConfirmDelete, dgCancelOnExit]
+            ParentFont = False
             PopupMenu = ContactGridMenu
             ReadOnly = True
             TabOrder = 0
             TitleFont.Charset = DEFAULT_CHARSET
             TitleFont.Color = clWindowText
             TitleFont.Height = -11
-            TitleFont.Name = 'Tahoma'
+            TitleFont.Name = 'Segoe UI'
             TitleFont.Style = []
             OnDblClick = ContactGridDblClick
             OnKeyDown = ContactGridKeyDown

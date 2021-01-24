@@ -1,8 +1,6 @@
 inherited PerformanceViewForm: TPerformanceViewForm
   Width = 749
   Height = 564
-  Font.Name = 'Segoe UI'
-  ParentFont = False
   ExplicitWidth = 749
   ExplicitHeight = 564
   object ClientPanel: TPanel
@@ -27,7 +25,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object TitleLabel: TLabel
         Left = 16
         Top = 4
-        Width = 138
+        Width = 134
         Height = 13
         Caption = 'Database Performance Test'
       end
@@ -42,14 +40,14 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object ConnectionLabel: TLabel
         Left = 280
         Top = 4
-        Width = 144
+        Width = 133
         Height = 13
         Caption = 'Connection: Not Connected'
       end
       object ObjectsLabel: TLabel
         Left = 16
         Top = 72
-        Width = 85
+        Width = 82
         Height = 13
         Caption = '&Objects to store:'
         FocusControl = ObjectsEdit
@@ -57,14 +55,14 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object CacheSizeLabel: TLabel
         Left = 328
         Top = 72
-        Width = 112
+        Width = 109
         Height = 13
         Caption = 'Statement &Cache Size:'
         FocusControl = CacheSizeEdit
       end
       object RunButton: TButton
         Left = 608
-        Top = 36
+        Top = 81
         Width = 105
         Height = 25
         Caption = '&Run Now'
@@ -74,7 +72,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object InfoMemo: TMemo
         Left = 16
         Top = 23
-        Width = 585
+        Width = 697
         Height = 46
         TabStop = False
         Enabled = False

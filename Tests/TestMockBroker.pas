@@ -45,6 +45,9 @@ type
   public
   published
     procedure TestModelFromToFile;
+    {$IFDEF DELPHI_NEON}
+    procedure TestModelFromToFileJSON;
+    {$ENDIF}
     procedure TestGetBroker;
     procedure TestBuildDatabase;
     procedure TestModelFromToResFile;
@@ -73,7 +76,7 @@ type
 
 implementation
 
-uses InstantMetadata;
+uses InstantMetadata, InstantClasses;
 
 procedure TTestMockBroker.TestModelFromToFile;
 var
@@ -83,23 +86,51 @@ begin
 
   // This ensures that the exported file is synchronised
   // with the current model resource file.
-  InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdx'));
+  InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdx'), sfXML);
   InstantModel.ClassMetadatas.Clear;
 
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdx'));
+  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdx'), sfXML);
   vReturnValue := InstantModel.ClassMetadatas.Find('TCategory');
   AssertNotNull(vReturnValue);
 
   InstantModel.ClassMetadatas.Remove(vReturnValue);
   AssertNull('TCategory was found!',
     InstantModel.ClassMetadatas.Find('TCategory'));
-  InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdxt'));
+  InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdxt'), sfXML);
 
   InstantModel.ClassMetadatas.Clear;
-  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdxt'));
+  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdxt'), sfXML);
   AssertNotNull(InstantModel.ClassMetadatas.Find('TContact'));
   AssertNull(InstantModel.ClassMetadatas.Find('TCategory'));
 end;
+
+{$IFDEF DELPHI_NEON}
+procedure TTestMockBroker.TestModelFromToFileJSON;
+var
+  vReturnValue: TInstantClassMetadata;
+begin
+  AssertTrue('ClassMetadatas.Count', InstantModel.ClassMetadatas.Count > 0);
+
+  // This ensures that the exported file is synchronised
+  // with the current model resource file.
+  InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdj'), sfJSON);
+  InstantModel.ClassMetadatas.Clear;
+
+  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdj'), sfJSON);
+  vReturnValue := InstantModel.ClassMetadatas.Find('TCategory');
+  AssertNotNull(vReturnValue);
+
+  InstantModel.ClassMetadatas.Remove(vReturnValue);
+  AssertNull('TCategory was found!',
+    InstantModel.ClassMetadatas.Find('TCategory'));
+  InstantModel.SaveToFile(ChangeFileExt(ParamStr(0), '.mdjt'), sfJSON);
+
+  InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromFile(ChangeFileExt(ParamStr(0), '.mdjt'), sfJSON);
+  AssertNotNull(InstantModel.ClassMetadatas.Find('TContact'));
+  AssertNull(InstantModel.ClassMetadatas.Find('TCategory'));
+end;
+{$ENDIF}
 
 procedure TTestMockBroker.TestModelFromToResFile;
 var

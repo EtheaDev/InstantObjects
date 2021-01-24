@@ -136,8 +136,10 @@ type
     FMock: TUbMockObject;
     procedure SetMock(const Value: TUbMockObject);
   protected
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
-    function CreateDataSet(const AStatement: string; AParams: TParams = nil):
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams;
+      OnAssignParamValue: TAssignParamValue = nil); override;
+    function CreateDataSet(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil):
         TDataSet; override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver;
         override;
@@ -470,16 +472,15 @@ begin
 end;
 
 procedure TInstantMockSQLBroker.AssignDataSetParams(DataSet : TDataSet;
-    AParams: TParams);
+  AParams: TParams; OnAssignParamValue: TAssignParamValue);
 begin
   MockManager.AddExpectation('AssignDataSetParams');
 end;
 
-function TInstantMockSQLBroker.CreateDataSet(const AStatement: string; AParams:
-    TParams = nil): TDataSet;
+function TInstantMockSQLBroker.CreateDataSet(const AStatement: string; AParams: TParams = nil;
+  OnAssignParamValue: TAssignParamValue = nil): TDataSet;
 begin
   MockManager.AddExpectation('CreateDataSet');
-//  Result := nil;
   Result := TInstantMockDataset.Create(nil);
 end;
 

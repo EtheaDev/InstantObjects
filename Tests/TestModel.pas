@@ -1,4 +1,3 @@
-unit TestModel;
 (*
  *   InstantObjects Test Suite
  *   TestModel
@@ -28,12 +27,18 @@ unit TestModel;
  * Steven Mitchell
  *
  * ***** END LICENSE BLOCK ***** *)
-
+unit TestModel;
 
 interface
 
 uses
-  InstantPersistence, InstantTypes;
+  InstantPersistence, InstantTypes
+  {$IFDEF DELPHI_NEON}
+  , Neon.Core.Types
+  , Neon.Core.Nullables
+  , Neon.Core.Attributes
+  {$ENDIF}
+  ;
 
 type
   TAddress = class;
@@ -51,6 +56,7 @@ type
   TProjectBox = class;
   TProjectItem = class;
   TProjectItems = class;
+  TSampleClass = class;
 
   TAddress = class(TInstantObject)
   {IOMETADATA City: String(30) index;
@@ -59,6 +65,7 @@ type
     Street: Memo;
     Zip: String(10); }
     _City: TInstantString;
+    [NeonInclude, NeonProperty('Country')]
     _Country: TInstantReference;
     _State: TInstantString;
     _Street: TInstantMemo;
@@ -76,6 +83,7 @@ type
     procedure SetZip(const Value: string);
   published
     property City: string read GetCity write SetCity;
+    [NeonIgnore]
     property Country: TCountry read GetCountry write SetCountry;
     property State: string read GetState write SetState;
     property Street: string read GetStreet write SetStreet;
@@ -98,7 +106,6 @@ type
 
   TPhone = class(TInstantObject)
   {IOMETADATA Name: String(20);
-    Name: String(30);
     Number: String(20) mask '(000) 000-0000;0;_'; }
     _Name: TInstantString;
     _Number: TInstantString;
@@ -147,12 +154,16 @@ type
     ExternalAddress: Part(TExternalAddress) external;
     ExternalPhones: Parts(TExternalPhone) external 'Contact_ExternalPhones'; }
     _Address: TInstantPart;
+    [NeonInclude, NeonProperty('Category')]
     _Category: TInstantReference;
     _City: TInstantString;
+    [NeonInclude, NeonProperty('ExternalPhones')]
     _ExternalPhones: TInstantParts;
     _Name: TInstantString;
     _ExternalAddress: TInstantPart;
+    [NeonInclude, NeonProperty('Phones')]
     _Phones: TInstantParts;
+    [NeonInclude, NeonProperty('Country')]
     _Projects: TInstantReferences;
   private
     function GetAddress: TAddress;
@@ -208,6 +219,7 @@ type
         write SetProjects;
   published
     property Address: TAddress read GetAddress write SetAddress;
+    [NeonIgnore]
     property Category: TCategory read GetCategory write SetCategory;
     property City: string read GetCity write SetCity;
     property MainPhoneNumber: string read GetMainPhoneNumber
@@ -241,8 +253,10 @@ type
     _AL_hours: TInstantFloat;
     _BirthDate: TInstantDateTime;
     _BirthTime: TInstantTime;
+    [NeonInclude, NeonProperty('Emails')]
     _Emails: TInstantParts;
     _Employed: TInstantBoolean;
+    [NeonInclude, NeonProperty('Employer')]
     _Employer: TInstantReference;
     _EmploymentDate: TInstantDate;
     _Picture: TInstantGraphic;
@@ -286,6 +300,7 @@ type
     property BirthDate: TDateTime read GetBirthDate write SetBirthDate;
     property BirthTime: TDateTime read GetBirthTime write SetBirthTime;
     property Employed: Boolean read GetEmployed write SetEmployed;
+    [NeonIgnore]
     property Employer: TCompany read GetEmployer write SetEmployer;
     property EmploymentDate: TDateTime read GetEmploymentDate write SetEmploymentDate;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
@@ -298,8 +313,10 @@ type
     Employees: References(TPerson);
     NoOfBranches: Integer;
     Subsidiaries: References(TCompany); }
+    [NeonInclude, NeonProperty('Employees')]
     _Employees: TInstantReferences;
     _NoOfBranches: TInstantInteger;
+    [NeonInclude, NeonProperty('Subsidiaries')]
     _Subsidiaries: TInstantReferences;
   private
     function GetEmployeeCount: Integer;
@@ -338,11 +355,15 @@ type
     Manager: Reference(TContact);
     Participants: References(TContact) external 'Project_Participants';
     Items: Part(TProjectItems); }
+    [NeonInclude, NeonProperty('Addresses')]
     _Addresses: TInstantParts;
     _Items: TInstantPart;
+    [NeonInclude, NeonProperty('Manager')]
     _Manager: TInstantReference;
     _Name: TInstantString;
+    [NeonInclude, NeonProperty('Participants')]
     _Participants: TInstantReferences;
+    [NeonInclude, NeonProperty('Subprojects')]
     _SubProjects: TInstantParts;
   private
     function GetAddressCount: Integer;
@@ -387,6 +408,7 @@ type
     property SubProjects[Index: Integer]: TProject read GetSubProjects write SetSubProjects;
   published
     property Items: TProjectItems read GetItems write SetItems;
+    [NeonIgnore]
     property Manager: TContact read GetManager write SetManager;
     property Name: string read GetName write SetName;
   end;
@@ -396,8 +418,10 @@ type
     Name: String(30);
     Category: Reference(TCategory);
     Site_Contact: Reference(TPerson); }
+    [NeonInclude, NeonProperty('Category')]
     _Category: TInstantReference;
     _Name: TInstantString;
+    [NeonInclude, NeonProperty('Site_Contact')]
     _Site_Contact: TInstantReference;
   private
     function GetCategory: TCategory;
@@ -409,6 +433,7 @@ type
   published
     property Category: TCategory read GetCategory write SetCategory;
     property Name: string read GetName write SetName;
+    [NeonIgnore]
     property Site_Contact: TPerson read GetSite_Contact write SetSite_Contact;
   end;
 
@@ -433,6 +458,7 @@ type
     Project: Part(TProject);
     RelatedProjectBoxes: References(TProjectBox); }
     _Project: TInstantPart;
+    [NeonInclude, NeonProperty('RelatedProjectBoxes')]
     _RelatedProjectBoxes: TInstantReferences;
   private
     function GetProject: TProject;
@@ -457,6 +483,7 @@ type
   {IOMETADATA stored;
     Description: String(50);
     Country: Reference(TCountry); }
+    [NeonInclude, NeonProperty('Country')]
     _Country: TInstantReference;
     _Description: TInstantString;
   private
@@ -465,6 +492,7 @@ type
     procedure SetCountry(Value: TCountry);
     procedure SetDescription(const Value: string);
   published
+    [NeonIgnore]
     property Country: TCountry read GetCountry write SetCountry;
     property Description: string read GetDescription write SetDescription;
   end;
@@ -472,6 +500,7 @@ type
   TProjectItems = class(TInstantObject)
   {IOMETADATA stored;
     Items: Parts(TProjectItem); }
+    [NeonInclude, NeonProperty('Items')]
     _Items: TInstantParts;
   private
     function GetItemCount: Integer;
@@ -487,6 +516,114 @@ type
     property ItemCount: Integer read GetItemCount;
     property Items[Index: Integer]: TProjectItem read GetItems write SetItems;
   end;
+
+  TSampleClass = class(TInstantObject)
+  {IOMETADATA stored;
+    CharacterListAttribute: String(20) stored 'CHARLISTATTR' width 20 required;
+    CharacterFileName: String(50) stored 'CHARFILENAME' width 50;
+    CharacterDirAttribute: String(50) stored 'CHARDIRATTR' width 50;
+    TimeAttribute: DateTime stored 'TIMEATTRIB' mask '!99:99;1; ' width 8 usenull;
+    DateAttribute: DateTime stored 'DATEATTR' mask '!99/99/9999;1; ' width 10 usenull;
+    DateTimeAttribute: DateTime stored 'DATETIMEATTR' mask '!99/99/9999 99:99;1; ' width 19 usenull;
+    MemoAttribute: Memo stored 'MEMOATTR' width 100;
+    ImageLinkAttribute: String(100) stored 'IMAGELINKATTR' width 100;
+    BLobAttribute: Blob stored 'BLOBATTR' width 100;
+    MemoHTMLAttribute: Memo stored 'MEMOHTMLATTR' width 200;
+    SmallIntegerAttribute: Integer stored 'SMALLINTATTR' width 3;
+    IntegerAttribute: Integer stored 'INTEGERATTR' width 10;
+    BooleanAttribute: Boolean stored 'BOOLEANATTR' width 5 default "False" required;
+    FloatingPointAttribute: Float stored 'FLOATATTR' width 14;
+    CurrencyAttribute: Currency stored 'CURRENCYATTR' width 12;
+    ColorAttribute: Integer stored 'COLORATTR' width 10;
+    CalculatedAttribute: String(20) stored 'CALCATTR' width 20;
+    MultiReference: String(200) stored 'MULTIREF' width 10 required;
+    MultiLangDesc: String(100) stored 'MULTILANGDESC' width 100;
+    MultiLangMemo: Memo stored 'MULTILANGMEMO'; }
+    _CharacterListAttribute: TInstantString;
+    _CharacterFileName: TInstantString;
+    _CharacterDirAttribute: TInstantString;
+    _TimeAttribute: TInstantDateTime;
+    _DateAttribute: TInstantDateTime;
+    _DateTimeAttribute: TInstantDateTime;
+    _MemoAttribute: TInstantMemo;
+    _ImageLinkAttribute: TInstantString;
+    _BLobAttribute: TInstantBlob;
+    _MemoHTMLAttribute: TInstantMemo;
+    _SmallIntegerAttribute: TInstantInteger;
+    _IntegerAttribute: TInstantInteger;
+    _BooleanAttribute: TInstantBoolean;
+    _FloatingPointAttribute: TInstantFloat;
+    _CurrencyAttribute: TInstantCurrency;
+    _ColorAttribute: TInstantInteger;
+    _CalculatedAttribute: TInstantString;
+    _MultiReference: TInstantString;
+    _MultiLangDesc: TInstantString;
+    _MultiLangMemo: TInstantMemo;
+  private
+  protected
+    function GetCharacterListAttribute: string; virtual;
+    function GetCharacterFileName: string; virtual;
+    function GetCharacterDirAttribute: string; virtual;
+    function GetTimeAttribute: TDateTime; virtual;
+    function GetDateAttribute: TDateTime; virtual;
+    function GetDateTimeAttribute: TDateTime; virtual;
+    function GetMemoAttribute: string; virtual;
+    function GetImageLinkAttribute: string; virtual;
+    function GetBLobAttribute: string; virtual;
+    function GetMemoHTMLAttribute: string; virtual;
+    function GetSmallIntegerAttribute: Integer; virtual;
+    function GetIntegerAttribute: Integer; virtual;
+    function GetBooleanAttribute: Boolean; virtual;
+    function GetFloatingPointAttribute: Double; virtual;
+    function GetCurrencyAttribute: Currency; virtual;
+    function GetColorAttribute: Integer; virtual;
+    function GetCalculatedAttribute: string; virtual;
+    function GetMultiReference: string; virtual;
+    function GetMultiLangDesc: string; virtual;
+    function GetMultiLangMemo: string; virtual;
+    procedure SetCharacterListAttribute(const Value: string); virtual;
+    procedure SetCharacterFileName(const Value: string); virtual;
+    procedure SetCharacterDirAttribute(const Value: string); virtual;
+    procedure SetTimeAttribute(Value: TDateTime); virtual;
+    procedure SetDateAttribute(Value: TDateTime); virtual;
+    procedure SetDateTimeAttribute(Value: TDateTime); virtual;
+    procedure SetMemoAttribute(const Value: string); virtual;
+    procedure SetImageLinkAttribute(const Value: string); virtual;
+    procedure SetBLobAttribute(const Value: string); virtual;
+    procedure SetMemoHTMLAttribute(const Value: string); virtual;
+    procedure SetSmallIntegerAttribute(Value: Integer); virtual;
+    procedure SetIntegerAttribute(Value: Integer); virtual;
+    procedure SetBooleanAttribute(Value: Boolean); virtual;
+    procedure SetFloatingPointAttribute(Value: Double); virtual;
+    procedure SetCurrencyAttribute(Value: Currency); virtual;
+    procedure SetColorAttribute(Value: Integer); virtual;
+    procedure SetMultiReference(const Value: string); virtual;
+    procedure SetMultiLangDesc(const Value: string); virtual;
+    procedure SetMultiLangMemo(const Value: string); virtual;
+    procedure AfterCreate; override;
+  published
+    property CharacterListAttribute: string read GetCharacterListAttribute write SetCharacterListAttribute;
+    property CharacterFileName: string read GetCharacterFileName write SetCharacterFileName;
+    property CharacterDirAttribute: string read GetCharacterDirAttribute write SetCharacterDirAttribute;
+    property TimeAttribute: TDateTime read GetTimeAttribute write SetTimeAttribute;
+    property DateAttribute: TDateTime read GetDateAttribute write SetDateAttribute;
+    property DateTimeAttribute: TDateTime read GetDateTimeAttribute write SetDateTimeAttribute;
+    property MemoAttribute: string read GetMemoAttribute write SetMemoAttribute;
+    property ImageLinkAttribute: string read GetImageLinkAttribute write SetImageLinkAttribute;
+    property BLobAttribute: string read GetBLobAttribute write SetBLobAttribute;
+    property MemoHTMLAttribute: string read GetMemoHTMLAttribute write SetMemoHTMLAttribute;
+    property SmallIntegerAttribute: Integer read GetSmallIntegerAttribute write SetSmallIntegerAttribute;
+    property IntegerAttribute: Integer read GetIntegerAttribute write SetIntegerAttribute;
+    property BooleanAttribute: Boolean read GetBooleanAttribute write SetBooleanAttribute;
+    property FloatingPointAttribute: Double read GetFloatingPointAttribute write SetFloatingPointAttribute;
+    property CurrencyAttribute: Currency read GetCurrencyAttribute write SetCurrencyAttribute;
+    property ColorAttribute: Integer read GetColorAttribute write SetColorAttribute;
+    property CalculatedAttribute: string read GetCalculatedAttribute;
+    property MultiReference: string read GetMultiReference write SetMultiReference;
+    property MultiLangDesc: string read GetMultiLangDesc write SetMultiLangDesc;
+    property MultiLangMemo: string read GetMultiLangMemo write SetMultiLangMemo;
+  end;
+
 
 var
   TestUseUnicode: Boolean;
@@ -1552,6 +1689,174 @@ begin
   _Items[Index] := Value;
 end;
 
+{ TSampleClass }
+function TSampleClass.GetCharacterListAttribute: string;
+begin
+  Result := _CharacterListAttribute.Value;
+end;
+function TSampleClass.GetCharacterFileName: string;
+begin
+  Result := _CharacterFileName.Value;
+end;
+function TSampleClass.GetCharacterDirAttribute: string;
+begin
+  Result := _CharacterDirAttribute.Value;
+end;
+function TSampleClass.GetTimeAttribute: TDateTime;
+begin
+  Result := _TimeAttribute.Value;
+end;
+function TSampleClass.GetDateAttribute: TDateTime;
+begin
+  Result := _DateAttribute.Value;
+end;
+function TSampleClass.GetDateTimeAttribute: TDateTime;
+begin
+  Result := _DateTimeAttribute.Value;
+end;
+function TSampleClass.GetMemoAttribute: string;
+begin
+  Result := _MemoAttribute.Value;
+end;
+function TSampleClass.GetImageLinkAttribute: string;
+begin
+  Result := _ImageLinkAttribute.Value;
+end;
+procedure TSampleClass.AfterCreate;
+begin
+  inherited;
+  Id := InstantGenerateId;
+end;
+
+function TSampleClass.GetBLobAttribute: string;
+begin
+  Result := _BLobAttribute.Value;
+end;
+function TSampleClass.GetMemoHTMLAttribute: string;
+begin
+  Result := _MemoHTMLAttribute.Value;
+end;
+function TSampleClass.GetSmallIntegerAttribute: Integer;
+begin
+  Result := _SmallIntegerAttribute.Value;
+end;
+
+function TSampleClass.GetIntegerAttribute: Integer;
+begin
+  Result := _IntegerAttribute.Value;
+end;
+function TSampleClass.GetBooleanAttribute: Boolean;
+begin
+  Result := _BooleanAttribute.Value;
+end;
+function TSampleClass.GetFloatingPointAttribute: Double;
+begin
+  Result := _FloatingPointAttribute.Value;
+end;
+function TSampleClass.GetCurrencyAttribute: Currency;
+begin
+  Result := _CurrencyAttribute.Value;
+end;
+function TSampleClass.GetColorAttribute: Integer;
+begin
+  Result := _ColorAttribute.Value;
+end;
+function TSampleClass.GetCalculatedAttribute: string;
+begin
+  Result := _CalculatedAttribute.Value;
+end;
+function TSampleClass.GetMultiReference: string;
+begin
+  Result := _MultiReference.Value;
+end;
+function TSampleClass.GetMultiLangDesc: string;
+begin
+  Result := _MultiLangDesc.Value;
+end;
+function TSampleClass.GetMultiLangMemo: string;
+begin
+  Result := _MultiLangMemo.Value;
+end;
+
+procedure TSampleClass.SetCharacterListAttribute(const Value: string);
+begin
+  _CharacterListAttribute.Value := Value;
+end;
+procedure TSampleClass.SetCharacterFileName(const Value: string);
+begin
+  _CharacterFileName.Value := Value;
+end;
+procedure TSampleClass.SetCharacterDirAttribute(const Value: string);
+begin
+  _CharacterDirAttribute.Value := Value;
+end;
+procedure TSampleClass.SetTimeAttribute(Value: TDateTime);
+begin
+  _TimeAttribute.Value := Value;
+end;
+procedure TSampleClass.SetDateAttribute(Value: TDateTime);
+begin
+  _DateAttribute.Value := Value;
+end;
+procedure TSampleClass.SetDateTimeAttribute(Value: TDateTime);
+begin
+  _DateTimeAttribute.Value := Value;
+end;
+procedure TSampleClass.SetMemoAttribute(const Value: string);
+begin
+  _MemoAttribute.Value := Value;
+end;
+procedure TSampleClass.SetImageLinkAttribute(const Value: string);
+begin
+  _ImageLinkAttribute.Value := Value;
+end;
+procedure TSampleClass.SetBLobAttribute(const Value: string);
+begin
+  _BLobAttribute.Value := Value;
+end;
+procedure TSampleClass.SetMemoHTMLAttribute(const Value: string);
+begin
+  _MemoHTMLAttribute.Value := Value;
+end;
+procedure TSampleClass.SetSmallIntegerAttribute(Value: Integer);
+begin
+  _SmallIntegerAttribute.Value := Value;
+end;
+
+procedure TSampleClass.SetIntegerAttribute(Value: Integer);
+begin
+  _IntegerAttribute.Value := Value;
+end;
+procedure TSampleClass.SetBooleanAttribute(Value: Boolean);
+begin
+  _BooleanAttribute.Value := Value;
+end;
+procedure TSampleClass.SetFloatingPointAttribute(Value: Double);
+begin
+  _FloatingPointAttribute.Value := Value;
+end;
+procedure TSampleClass.SetCurrencyAttribute(Value: Currency);
+begin
+  _CurrencyAttribute.Value := Value;
+end;
+procedure TSampleClass.SetColorAttribute(Value: Integer);
+begin
+  _ColorAttribute.Value := Value;
+end;
+procedure TSampleClass.SetMultiReference(const Value: string);
+begin
+  _MultiReference.Value := Value;
+end;
+procedure TSampleClass.SetMultiLangDesc(const Value: string);
+begin
+  _MultiLangDesc.Value := Value;
+end;
+procedure TSampleClass.SetMultiLangMemo(const Value: string);
+begin
+  _MultiLangMemo.Value := Value;
+end;
+
+
 initialization
   InstantRegisterClasses([
     TAddress,
@@ -1568,7 +1873,8 @@ initialization
     TProject,
     TProjectBox,
     TProjectItem,
-    TProjectItems
+    TProjectItems,
+    TSampleClass
   ]);
 
   TestUseUnicode := True;

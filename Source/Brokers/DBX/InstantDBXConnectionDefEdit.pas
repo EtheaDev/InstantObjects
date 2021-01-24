@@ -58,11 +58,15 @@ type
     StreamFormatComboBox: TComboBox;
     LoginPromptCheckBox: TCheckBox;
     UseUnicodeCheckBox: TCheckBox;
+    TestButton: TButton;
     procedure FormCreate(Sender: TObject);
     procedure DriverNameEditChange(Sender: TObject);
     procedure ConnectionNameListBoxClick(Sender: TObject);
+    procedure TestButtonClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FConnection: TSQLConnection;
+    FOwnerConnectionDef: TInstantDBXConnectionDef;
     function GetConnection: TSQLConnection;
     function GetConnectionName: string;
     function GetDriverName: string;
@@ -76,6 +80,8 @@ type
   protected
     property Connection: TSQLConnection read GetConnection;
   public
+    constructor CreateForConnectionDef(AOwner: TComponent;
+      AConnectionDef: TInstantDBXConnectionDef);
     procedure LoadData(ConnectionDef: TInstantDBXConnectionDef);
     procedure SaveData(ConnectionDef: TInstantDBXConnectionDef);
     property ConnectionName: string read GetConnectionName write SetConnectionName;
@@ -88,7 +94,7 @@ implementation
 {$R *.dfm}
 
 uses
-  InstantPersistence, InstantClasses;
+  InstantPersistence, InstantClasses, InstantConsts;
   
 const
   SAllDrivers = '[All]';
@@ -105,6 +111,13 @@ begin
   UpdateParams;
 end;
 
+constructor TInstantDBXConnectionDefEditForm.CreateForConnectionDef(
+  AOwner: TComponent; AConnectionDef: TInstantDBXConnectionDef);
+begin
+  inherited Create(AOwner);
+  FOwnerConnectionDef := AConnectionDef;
+end;
+
 procedure TInstantDBXConnectionDefEditForm.DriverNameEditChange(
   Sender: TObject);
 begin
@@ -117,6 +130,11 @@ begin
   AssignInstantStreamFormat(StreamFormatComboBox.Items); //CB
   BorderStyle := bsDialog;
   UpdateDriverNames;
+end;
+
+procedure TInstantDBXConnectionDefEditForm.FormShow(Sender: TObject);
+begin
+  TestButton.Visible := Assigned(FOwnerConnectionDef);
 end;
 
 function TInstantDBXConnectionDefEditForm.GetConnection: TSQLConnection;
@@ -203,6 +221,16 @@ end;
 procedure TInstantDBXConnectionDefEditForm.SetParams(const Value: TStrings);
 begin
   ParamsEditor.Lines := Value;
+end;
+
+procedure TInstantDBXConnectionDefEditForm.TestButtonClick(Sender: TObject);
+begin
+  if Assigned(FOwnerConnectionDef) then
+  begin
+    SaveData(FOwnerConnectionDef);
+    FOwnerConnectionDef.TestConnection;
+    ShowMessage(SConnectionSuccess);
+  end;
 end;
 
 procedure TInstantDBXConnectionDefEditForm.UpdateConnectionNames;

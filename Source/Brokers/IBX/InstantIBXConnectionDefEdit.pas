@@ -66,15 +66,21 @@ type
     SQLRoleEdit: TEdit;
     CharacterSetLabel: TLabel;
     CharacterSetComboBox: TComboBox;
+    TestButton: TButton;
     procedure ConnectionStringButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure UserNameEditChange(Sender: TObject);
     procedure PasswordEditChange(Sender: TObject);
     procedure SQLRoleEditChange(Sender: TObject);
     procedure CharacterSetComboBoxChange(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure TestButtonClick(Sender: TObject);
   private
+    FOwnerConnectionDef: TInstantIBXConnectionDef;
     function GetIsValid: Boolean;
   public
+    constructor CreateForConnectionDef(AOwner: TComponent;
+      AConnectionDef: TInstantIBXConnectionDef);
     procedure LoadData(ConnectionDef: TInstantIBXConnectionDef);
     procedure SaveData(ConnectionDef: TInstantIBXConnectionDef);
     property IsValid: Boolean read GetIsValid;
@@ -105,6 +111,13 @@ begin
   end;
 end;
 
+constructor TInstantIBXConnectionDefEditForm.CreateForConnectionDef(
+  AOwner: TComponent; AConnectionDef: TInstantIBXConnectionDef);
+begin
+  inherited Create(AOwner);
+  FOwnerConnectionDef := AConnectionDef;
+end;
+
 procedure TInstantIBXConnectionDefEditForm.FormCreate(Sender: TObject);
 begin
   Font.Assign(Screen.IconFont);
@@ -112,6 +125,11 @@ begin
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
   IdDataTypeComboBox.ItemIndex := Ord(dtString);
   IdSizeEdit.Text := IntToStr(InstantDefaultFieldSize);
+end;
+
+procedure TInstantIBXConnectionDefEditForm.FormShow(Sender: TObject);
+begin
+  TestButton.Visible := Assigned(FOwnerConnectionDef);
 end;
 
 function TInstantIBXConnectionDefEditForm.GetIsValid: Boolean;
@@ -171,6 +189,16 @@ procedure TInstantIBXConnectionDefEditForm.SQLRoleEditChange(
   Sender: TObject);
 begin
   ParamsEditor.Lines.Values['sql_role_name'] := SQLRoleEdit.Text;
+end;
+
+procedure TInstantIBXConnectionDefEditForm.TestButtonClick(Sender: TObject);
+begin
+  if Assigned(FOwnerConnectionDef) then
+  begin
+    SaveData(FOwnerConnectionDef);
+    FOwnerConnectionDef.TestConnection;
+    ShowMessage(SConnectionSuccess);
+  end;
 end;
 
 procedure TInstantIBXConnectionDefEditForm.CharacterSetComboBoxChange(

@@ -7,6 +7,12 @@ program TestIO_D10_1;
 {$ENDIF}
 
 uses
+{$IFNDEF D9+}
+  FastMM4,
+{$ENDIF}
+{$IFDEF FPC}
+  Interfaces,
+{$ENDIF}
   Forms,
   guitestrunner,
   fpcunit,
@@ -17,7 +23,6 @@ uses
   InstantMock in 'InstantMock.pas',
   TestMockConnector in 'TestMockConnector.pas',
   TestMockBroker in 'TestMockBroker.pas',
-  TestModel in 'TestModel.pas',
   TestInstantMetadata in 'TestInstantMetadata.pas',
   TestInstantFieldMetadata in 'TestInstantFieldMetadata.pas',
   TestInstantClassMetadata in 'TestInstantClassMetadata.pas',
@@ -27,7 +32,8 @@ uses
   TestInstantScheme in 'TestInstantScheme.pas',
   TestInstantClasses in 'TestInstantClasses.pas',
   TestInstantRtti in 'TestInstantRtti.pas',
-  TestMinimalModel in 'TestMinimalModel.pas',
+  TestModel in 'TestModel.pas',
+  TestFullModel in 'TestFullModel.pas',
   TestInstantAttributeMap in 'TestInstantAttributeMap.pas',
   TestInstantAttribute in 'TestInstantAttribute.pas',
   TestInstantNumeric in 'TestInstantNumeric.pas',

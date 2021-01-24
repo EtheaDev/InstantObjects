@@ -3226,9 +3226,11 @@ end;
 function TInstantCustomExposer.GetUseUnicode: Boolean;
 begin
   if Assigned(Accessor) and Assigned(Accessor.Connector) then
-    FUseUnicode := Accessor.Connector.UseUnicode
+    FUseUnicode := Accessor.Connector.UseUnicode{$IFDEF MARS_FIREDAC};
+  {$ELSE}
   else if InstantDefaultConnector <> nil then
     FUseUnicode := InstantDefaultConnector.UseUnicode;
+  {$ENDIF}
   Result := FUseUnicode;
 end;
 
@@ -3850,6 +3852,7 @@ var
   D: TDateTimeRec;
   T: TTimeStamp;
   L: WordBool;
+  LPropInfo: PPropInfo;
 begin
   if not Assigned(AObject) or IsBlobField(Field) or IsCalcField(Field) then
     Exit;
@@ -3894,7 +3897,16 @@ begin
     ftInteger:
       begin
         if Empty then
-          N := 0 else
+          N := 0
+        else if VarIsStr(Value) then
+        begin
+          LPropInfo := GetPropInfo(PTypeInfo(AObject.ClassInfo), Field.FieldName);
+          if Assigned(LPropInfo) then
+            N := GetEnumValue(LPropInfo^.PropType^, Value)
+          else
+            N := 0;
+        end
+        else
           N := Value;
         Move(N, Buffer^, SizeOf(N));
       end;
@@ -4340,7 +4352,7 @@ begin
     ftDateTime:
       begin
         Move(Buffer^, D, FieldDataSize(Field));
-        //if (D.Date = 0) and (D.Time = 0) then WRONG TEST, FAIL WITH DATE 30/09/1974!
+        //if (D.Date = 0) and (D.Time = 0) then WRONG TEST, FAILS WITH DATE 30/09/1974!
         if (D.DateTime = 0) then
           Value := 0
         else begin
@@ -4599,8 +4611,10 @@ begin
   Try
     if Assigned(Accessor) and Assigned(Accessor.Connector) then
       LUseUnicodeOk := (Accessor.Connector.UseUnicode = Value)
+    {$IFNDEF MARS_FIREDAC}
     else if InstantDefaultConnector <> nil then
       LUseUnicodeOk := (InstantDefaultConnector.UseUnicode = Value)
+    {$ENDIF}
     else
       LUseUnicodeOk := True;
   Except
@@ -5059,7 +5073,11 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
+  {$IFNDEF MARS_FIREDAC}
     Result := InstantDefaultConnector;
+  {$ELSE}
+    Result := nil;
+  {$ENDIF}
 end;
 
 function TInstantSelector.GetParams: TParams;

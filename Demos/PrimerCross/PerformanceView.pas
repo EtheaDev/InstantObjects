@@ -9,7 +9,8 @@ uses
   Windows, Messages, Graphics, Controls, Forms, Dialogs, ToolWin, Menus,
   ExtCtrls, StdCtrls, Contnrs, ComCtrls, TeEngine, Mask,
   Series, TeeProcs, Chart,
-  InstantPersistence, InstantPresentation, InstantClasses, Stopwatch, DB, BasicView;
+  InstantPersistence, InstantPresentation, InstantClasses, Stopwatch, DB, BasicView,
+  VclTee.TeeGDIPlus;
 
 type
   TMeasureType = (mtStore, mtRetrieve, mtQuery, mtDispose);
@@ -85,7 +86,7 @@ type
     property Count: Integer read FCount write FCount;
   end;
 
-  TPerformanceViewForm = class(TBasicViewForm)
+  TPerformanceViewForm = class(TBasicViewFrame)
     ChartPanel: TPanel;
     ClientPanel: TPanel;
     InfoBevel: TBevel;
@@ -137,9 +138,9 @@ type
     property TestResults: TTestResults read GetTestResults;
     property TestResultsFileName: string read GetTestResultsFileName;
   public
-    procedure FormCreate(Sender: TObject); override;
-    procedure FormHide(Sender: TObject); override;
-    procedure FormShow(Sender: TObject); override;
+    procedure FrameCreate(Sender: TObject); override;
+    procedure FrameHide(Sender: TObject); override;
+    procedure FrameShow(Sender: TObject); override;
     destructor Destroy; override;
     procedure UpdateControls; override;
   end;
@@ -419,19 +420,14 @@ begin
   FTestResults.Free;
 end;
 
-procedure TPerformanceViewForm.FormCreate(Sender: TObject);
+procedure TPerformanceViewForm.FrameCreate(Sender: TObject);
 begin
-  Font.Assign(Screen.IconFont);
   Caption := 'Performance';
-  InfoMemo.BorderStyle := bsNone;
-
   TestResultListView.OnEdited := TestResultListViewEditedVCL;
   TestResultListView.SortType := stText;
-  SetTitleLabel(TitleLabel);
-  SetTitleLabel(ConnectionLabel);
 end;
 
-procedure TPerformanceViewForm.FormHide(Sender: TObject);
+procedure TPerformanceViewForm.FrameHide(Sender: TObject);
 begin
   inherited;
   SaveTestResults;
@@ -604,6 +600,9 @@ end;
 
 procedure TPerformanceViewForm.UpdateControls;
 begin
+  SetTitleLabel(TitleLabel);
+  SetTitleLabel(ConnectionLabel);
+
   RunButton.Enabled := IsConnected;
   TransactionsCheckBox.Enabled := IsConnected;
   TransactionsCheckBox.Checked := IsConnected and Connector.UseTransactions;
@@ -637,7 +636,7 @@ end;
 
 procedure TPerformanceViewForm.SetTitleLabel(TitleLabel: TLabel);
 begin
-  TitleLabel.Font.Size := 10;
+  TitleLabel.ParentFont := True;
   TitleLabel.Font.Style := [fsBold];
 end;
 
@@ -655,7 +654,7 @@ begin
     TestDisposeCheckBox.Checked := False;
 end;
 
-procedure TPerformanceViewForm.FormShow(Sender: TObject);
+procedure TPerformanceViewForm.FrameShow(Sender: TObject);
 begin
   inherited;
   Try

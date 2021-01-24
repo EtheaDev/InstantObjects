@@ -11,7 +11,7 @@ object InstantEditForm: TInstantEditForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
@@ -26,7 +26,6 @@ object InstantEditForm: TInstantEditForm
     BevelOuter = bvNone
     BorderWidth = 4
     TabOrder = 0
-    ExplicitHeight = 150
   end
   object BottomPanel: TPanel
     Left = 0
@@ -36,7 +35,6 @@ object InstantEditForm: TInstantEditForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 150
     object ButtonPanel: TPanel
       Left = 121
       Top = 0

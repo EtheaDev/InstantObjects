@@ -1,28 +1,30 @@
 inherited InstantModelImportForm: TInstantModelImportForm
-  Width = 424
-  Height = 154
   Caption = 'Import Model'
+  ClientWidth = 409
+  ExplicitWidth = 425
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel [0]
-    Left = 16
+    Left = 8
     Top = 19
-    Width = 78
+    Width = 90
     Height = 13
+    Alignment = taRightJustify
     Caption = 'Import to module'
   end
   object Label2: TLabel [1]
-    Left = 16
+    Left = 8
     Top = 46
-    Width = 45
+    Width = 90
     Height = 13
+    Alignment = taRightJustify
     Caption = 'File name'
   end
   inherited ButtonPanel: TPanel
-    Top = 79
-    Width = 416
+    Width = 409
     inherited ButtonBevel: TBevel
-      Width = 416
+      Width = 409
+      ExplicitWidth = 416
     end
     object ImportButton: TButton
       Left = 246
@@ -51,7 +53,6 @@ inherited InstantModelImportForm: TInstantModelImportForm
     Width = 299
     Height = 21
     Style = csDropDownList
-    ItemHeight = 13
     TabOrder = 1
     OnChange = ImportModuleComboChange
   end

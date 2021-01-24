@@ -2,8 +2,8 @@ inherited CompanyEditForm: TCompanyEditForm
   Left = 282
   Top = 250
   Caption = 'Company'
-  ClientHeight = 282
-  ClientWidth = 452
+  ClientHeight = 294
+  ClientWidth = 534
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
     00000100040000000000C0000000000000000000000000000000000000000000
@@ -15,32 +15,35 @@ inherited CompanyEditForm: TCompanyEditForm
     9BB9007778000009B9007778800000090087788000000000000880000000C07F
     0000801F0000C0070000C0030000C0030000C0030000C0030000C0030000C003
     0000C0030000C0030000C0030000C0030000C0070000C01F0000CE7F0000}
-  ExplicitWidth = 468
-  ExplicitHeight = 321
+  ExplicitWidth = 550
+  ExplicitHeight = 333
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 251
-    Width = 452
+    Top = 263
+    Width = 534
     ExplicitTop = 263
-    ExplicitWidth = 460
+    ExplicitWidth = 452
     inherited AnchorPanel: TPanel
-      Left = 293
-      ExplicitLeft = 293
+      Left = 367
+      ExplicitLeft = 285
     end
   end
   inherited ClientPanel: TPanel
-    Width = 452
-    Height = 251
-    ExplicitWidth = 460
+    Width = 534
+    Height = 263
+    ExplicitWidth = 452
     ExplicitHeight = 263
     inherited PageControl: TPageControl
-      Width = 448
-      Height = 247
-      ExplicitWidth = 456
+      Width = 530
+      Height = 259
+      ExplicitWidth = 448
       ExplicitHeight = 259
       inherited DetailsSheet: TTabSheet
         TabVisible = True
+        ExplicitTop = 24
+        ExplicitWidth = 440
+        ExplicitHeight = 231
         inherited ZipLabel: TLabel
           Left = 176
           ExplicitLeft = 176
@@ -92,23 +95,21 @@ inherited CompanyEditForm: TCompanyEditForm
       object EmployeeSheet: TTabSheet
         Caption = 'Employees'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitWidth = 440
         object EmployeeGridPanel: TPanel
           Left = 0
           Top = 0
-          Width = 353
+          Width = 427
           Height = 231
           Align = alClient
           BevelOuter = bvNone
           BorderWidth = 2
           TabOrder = 0
+          ExplicitWidth = 345
           object EmployeeGrid: TDBGrid
             Left = 2
             Top = 2
-            Width = 349
+            Width = 423
             Height = 227
             Align = alClient
             DataSource = EmployeeSource
@@ -116,6 +117,10 @@ inherited CompanyEditForm: TCompanyEditForm
             PopupMenu = EmployeeGridMenu
             ReadOnly = True
             TabOrder = 0
+            TitleFont.Charset = DEFAULT_CHARSET
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -11
+            TitleFont.Name = 'Tahoma'
             TitleFont.Style = []
             Columns = <
               item
@@ -141,13 +146,14 @@ inherited CompanyEditForm: TCompanyEditForm
           end
         end
         object EmployeeButtonPanel: TPanel
-          Left = 353
+          Left = 427
           Top = 0
           Width = 95
           Height = 231
           Align = alRight
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitLeft = 345
           object EmployeeNewButton: TBitBtn
             Left = 10
             Top = 8
@@ -155,8 +161,6 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeNewAction
             Caption = '&New...'
-            DoubleBuffered = True
-            ParentDoubleBuffered = False
             TabOrder = 0
           end
           object EmployeeEditButton: TBitBtn
@@ -166,8 +170,6 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeEditAction
             Caption = '&Edit...'
-            DoubleBuffered = True
-            ParentDoubleBuffered = False
             TabOrder = 2
           end
           object EmployeeDeleteButton: TBitBtn
@@ -177,8 +179,6 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeDeleteAction
             Caption = '&Delete'
-            DoubleBuffered = True
-            ParentDoubleBuffered = False
             TabOrder = 4
           end
           object EmployeeLookupButton: TBitBtn
@@ -188,8 +188,6 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeLookupAction
             Caption = '&Lookup...'
-            DoubleBuffered = True
-            ParentDoubleBuffered = False
             TabOrder = 1
           end
           object EmployeeRemoveButton: TBitBtn
@@ -199,8 +197,6 @@ inherited CompanyEditForm: TCompanyEditForm
             Height = 25
             Action = EmployeeRemoveAction
             Caption = '&Remove'
-            DoubleBuffered = True
-            ParentDoubleBuffered = False
             TabOrder = 3
           end
         end
@@ -208,17 +204,17 @@ inherited CompanyEditForm: TCompanyEditForm
     end
   end
   inherited PhonesExposer: TInstantExposer
-    Top = 265
+    Top = 258
   end
   inherited PhonesSource: TDataSource
-    Top = 265
+    Top = 258
   end
   inherited SubjectExposer: TInstantExposer
     ObjectClassName = 'TCompany'
-    Top = 265
+    Top = 258
   end
   inherited SubjectSource: TDataSource
-    Top = 265
+    Top = 258
   end
   object EmployeeExposer: TInstantExposer
     Sorted = True
@@ -228,12 +224,12 @@ inherited CompanyEditForm: TCompanyEditForm
     Mode = amContent
     ObjectClassName = 'TPerson'
     Left = 130
-    Top = 265
+    Top = 258
   end
   object EmployeeSource: TDataSource
     DataSet = EmployeeExposer
     Left = 162
-    Top = 265
+    Top = 258
   end
   object Actions: TActionList
     Images = ActionImages

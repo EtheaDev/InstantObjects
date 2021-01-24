@@ -30,7 +30,11 @@
 
 unit InstantIBX;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -106,13 +110,16 @@ type
     function GetSQLDelimiters: string; override;
     function GetSQLQuote: Char; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams;
+      OnAssignParamValue: TAssignParamValue = nil); override;
   public
     function CreateDBBuildCommand(
       const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
-    function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
+    function CreateDataSet(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
-    function Execute(const AStatement: string; AParams: TParams = nil): Integer; override;
+    function Execute(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil): Integer; override;
     property Connector: TInstantIBXConnector read GetConnector;
     property Dialect: Integer read GetDialect;
   end;
@@ -163,7 +170,7 @@ var
 begin
   Connection := TIBDatabase.Create(AOwner);
   try
-    Connection.DatabaseName := ConnectionString;
+    Connection.DatabaseName := ExpandDatabaseName(ConnectionString);
     Connection.SQLDialect := 3;
     Connection.Params.Text := Params;
   except
@@ -175,7 +182,7 @@ end;
 
 function TInstantIBXConnectionDef.Edit: Boolean;
 begin
-  with TInstantIBXConnectionDefEditForm.Create(nil) do
+  with TInstantIBXConnectionDefEditForm.CreateForConnectionDef(nil, Self) do
   try
     LoadData(Self);
     Result := ShowModal = mrOk;
@@ -337,7 +344,8 @@ end;
 
 { TInstantIBXBroker}
 
-procedure TInstantIBXBroker.AssignDataSetParams(DataSet : TDataSet; AParams: TParams);
+procedure TInstantIBXBroker.AssignDataSetParams(DataSet : TDataSet; AParams: TParams;
+  OnAssignParamValue: TAssignParamValue);
 var
   I: Integer;
   TargetParams : TParams;
@@ -348,6 +356,8 @@ begin
   for I := 0 to Pred(AParams.Count) do
   begin
     SourceParam := AParams[I];
+    if Assigned(OnAssignParamValue) then
+      OnAssignParamValue(SourceParam);
     TargetParam := TargetParams.FindParam(SourceParam.Name);
     if Assigned(TargetParam) then
       case SourceParam.DataType of
@@ -366,7 +376,7 @@ begin
 end;
 
 function TInstantIBXBroker.CreateDataSet(const AStatement: string;
-  AParams: TParams): TDataSet;
+  AParams: TParams = nil; OnAssignParamValue: TAssignParamValue = nil): TDataSet;
 var
   Query: TIBQuery;
 begin
@@ -377,7 +387,7 @@ begin
     Transaction := Connector.Transaction;
     SQL.Text := AStatement;
     if Assigned(AParams) then
-      AssignDataSetParams(Query, AParams);
+      AssignDataSetParams(Query, AParams, OnAssignParamValue);
   end;
   Result := Query;
 end;
@@ -438,11 +448,11 @@ begin
 end;
 
 function TInstantIBXBroker.Execute(const AStatement: string;
-  AParams: TParams): Integer;
+  AParams: TParams; OnAssignParamValue: TAssignParamValue): Integer;
 var
   DataSet: TIBQuery;
 begin
-  DataSet := AcquireDataSet(AStatement, AParams) as TIBQuery;
+  DataSet := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TIBQuery;
   try
     DataSet.ExecSQL;
     Result := DataSet.RowsAffected;

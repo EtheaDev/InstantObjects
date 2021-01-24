@@ -1,7 +1,7 @@
 ------------------------------------------------------------------
 
   InstantObjects for Delphi - Full Unicode version
-  ver. 2.8 for Delphi 10.4 Sydney
+  ver. 2.9 for Delphi 10.4 Sydney
 
   Mozilla Public License 1.1 Edition
   Based on Seleqt InstantObjects.

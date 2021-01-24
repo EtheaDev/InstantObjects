@@ -486,7 +486,7 @@ begin
       with EditView.GetEditWindow.GetForm do
       begin
         Editor := FindComponent('Editor') as TWinControl;
-        if Assigned(Editor) then
+        if Assigned(Editor) and Editor.CanFocus then
           Editor.SetFocus;
       end;
       EditPos.Line := Line;

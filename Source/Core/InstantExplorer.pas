@@ -52,6 +52,7 @@ type
     FInstance: TObject;
     FValue: string;
     FLevel: integer;
+    procedure FreeCurrentObject;
   protected
     function GetCaption: string; virtual;
     function GetImageIndex: Integer; virtual;
@@ -211,6 +212,7 @@ type
     procedure UpdateDetails(ForceRefresh: boolean = False);
     function GetAttributesCount(Instance: TInstantObject): integer; virtual;
     function GetAttribute(Instance: TInstantObject; I: integer): TObject; virtual;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
   public
     procedure SetupContentEditor; virtual;
     constructor Create(AOwner: TComponent); override;
@@ -267,8 +269,8 @@ procedure InstantExploreObject(AObject: TObject);
 implementation
 
 uses
-  SysUtils, Math, InstantClasses, InstantRtti, InstantMetadata,
-  InstantTypes,
+  SysUtils, Messages, Math,
+  InstantClasses, InstantRtti, InstantMetadata, InstantTypes,
   Graphics, StdCtrls, Windows;
 
 const
@@ -337,10 +339,18 @@ begin
   FValue := AValue;
 end;
 
-destructor TInstantExplorerNodeData.Destroy;
+procedure TInstantExplorerNodeData.FreeCurrentObject;
 begin
   if (FNodeType = ntObject) and (FInstance is TInstantObject) then
+  begin
     TInstantObject(FInstance).Free;
+    FInstance := nil;
+  end;
+end;
+
+destructor TInstantExplorerNodeData.Destroy;
+begin
+  FreeCurrentObject;
   inherited;
 end;
 
@@ -511,6 +521,13 @@ begin
     FOnChangeNode(Self, Node);
 end;
 
+procedure TInstantExplorer.ChangeScale(M, D: Integer; isDpiChange: Boolean);
+begin
+  inherited;
+  DestroyObjectEditor;
+  UpdateDetails(False);
+end;
+
 procedure TInstantExplorer.Clear;
 begin
   RootObject := nil;
@@ -621,8 +638,15 @@ const
     PropInfo: PPropInfo; ADataSource: TDataSource);
   var
     LControl: TWinControl;
+    LLabel: TLabel;
     LAllowedValues: TStrings;
   begin
+    LLabel := TLabel.Create(AParent);
+    LLabel.Left := LABEL_LEFT;
+    LLabel.Caption := Beautify(InstantGetPropName(PropInfo))+':';
+    LLabel.Parent := AParent;
+    LLabel.Top := ATop + 4;
+
     case DataSource.DataSet.FieldByName(InstantGetPropName(PropInfo)).DataType of
       ftMemo:
       begin
@@ -630,12 +654,11 @@ const
         with TDBMemo(LControl) do
         begin
           Left := LABEL_LEFT + LABEL_WIDTH;
-          Top := ATop;
           Anchors := [akLeft, akTop, akRight];
-          Constraints.MinWidth := MIN_CONTROL_WIDTH;
           Parent := AParent;
-          Anchors := [akLeft, akTop, akRight];
-          Width := Parent.Width - Left - 8;
+          Constraints.MinWidth := MIN_CONTROL_WIDTH;
+          Width := AParent.Width - Left - 8;
+          Top := ATop;
           DataField := InstantGetPropName(PropInfo);
           DataSource := ADataSource;
           if not Assigned(PropInfo.SetProc) then
@@ -651,9 +674,9 @@ const
         with TDBCheckBox(LControl) do
         begin
           Left := LABEL_LEFT + LABEL_WIDTH;
-          Top := ATop;
-          Width := 16;
           Parent := AParent;
+          Width := 16;
+          Top := ATop;
           DataField := InstantGetPropName(PropInfo);
           DataSource := ADataSource;
           if not Assigned(PropInfo.SetProc) then
@@ -674,12 +697,12 @@ const
             with TInstantExplorerDBComboBox(LControl) do
             begin
               Left := LABEL_LEFT + LABEL_WIDTH;
-              Top := ATop;
-              Anchors := [akLeft, akTop, akRight];
-              Constraints.MinWidth := MIN_CONTROL_WIDTH;
-              Width := AParent.Width - Left - 8;
               Anchors := [akLeft, akTop, akRight];
               Parent := AParent;
+              Constraints.MinWidth := MIN_CONTROL_WIDTH;
+              Width := AParent.Width - Left - 8;
+              Top := ATop;
+              Anchors := [akLeft, akTop, akRight];
               Items := LAllowedValues;
               Style := csDropDownList;
               DataField := InstantGetPropName(PropInfo);
@@ -697,12 +720,11 @@ const
             with TDBEdit(LControl) do
             begin
               Left := LABEL_LEFT + LABEL_WIDTH;
-              Top := ATop;
-              Anchors := [akLeft, akTop, akRight];
-              Constraints.MinWidth := MIN_CONTROL_WIDTH;
-              Width := AParent.Width - Left - 8;
               Anchors := [akLeft, akTop, akRight];
               Parent := AParent;
+              Constraints.MinWidth := MIN_CONTROL_WIDTH;
+              Width := AParent.Width - Left - 8;
+              Top := ATop;
               DataField := InstantGetPropName(PropInfo);
               DataSource := ADataSource;
               if not Assigned(PropInfo.SetProc) then
@@ -717,15 +739,8 @@ const
         end;
       end;
     end;
+    LLabel.FocusControl := LControl;
 
-    with TLabel.Create(AParent) do
-    begin
-      Left := LABEL_LEFT;
-      Top := ATop + 3;
-      Parent := AParent;
-      Caption := Beautify(InstantGetPropName(PropInfo));
-      FocusControl := LControl;
-    end;
     Inc(ATop, LControl.Height);
   end;
 
@@ -825,7 +840,6 @@ begin
       Parent := FTreePanel;
       BorderStyle := bsSingle;
     end;
-    Parent := Self;
   end;
 end;
 
@@ -845,6 +859,8 @@ end;
 
 procedure TInstantExplorer.DestroyObjectEditor;
 begin
+  if Assigned(ObjectExposer.Subject) then
+    ObjectExposer.Subject := nil;
   FreeAndNil(FObjectEditor);
 end;
 
@@ -1307,13 +1323,13 @@ begin
   end
   else if Assigned(AObject) then
   begin
-    if AObject.ClassType <> ObjectExposer.ObjectClass then
+    //if AObject.ClassType <> ObjectExposer.ObjectClass then
       DestroyObjectEditor;
     ObjectExposer.Subject := nil;
     ObjectExposer.Mode := amObject;
     ObjectExposer.ContainerName := '';
     ObjectExposer.Subject := AObject;
-    if not Assigned(FObjectEditor) then
+    if not Assigned(FObjectEditor) and Assigned(Parent) then
       FObjectEditor := CreateObjectEditor(Self, ObjectSource);
     DetailView := ObjectView;
   end else

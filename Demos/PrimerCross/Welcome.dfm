@@ -27,8 +27,6 @@ object WelcomeForm: TWelcomeForm
     BorderWidth = 1
     Color = clBlack
     TabOrder = 0
-    ExplicitWidth = 420
-    ExplicitHeight = 268
     object BackPanel: TPanel
       Left = 1
       Top = 1
@@ -36,8 +34,6 @@ object WelcomeForm: TWelcomeForm
       Height = 305
       Align = alClient
       TabOrder = 0
-      ExplicitWidth = 418
-      ExplicitHeight = 266
       object TitleLabel: TLabel
         AlignWithMargins = True
         Left = 4
@@ -59,7 +55,6 @@ object WelcomeForm: TWelcomeForm
         Top = 4
         Width = 58
         Height = 56
-        AutoSize = True
         Picture.Data = {
           07544269746D617056110000424D561100000000000036040000280000003A00
           0000380000000100080000000000200D0000840E0000840E0000000100000001
@@ -201,13 +196,13 @@ object WelcomeForm: TWelcomeForm
           8888881100000011111111111111111111111111111111111111111111111111
           1111111111111111111111111111111111111111111111111111111111111100
           0000}
+        Stretch = True
       end
       object DelphiImage: TImage
         Left = 369
         Top = 5
         Width = 58
         Height = 58
-        AutoSize = True
         Picture.Data = {
           07544269746D617016280000424D162800000000000036000000280000003A00
           00003A0000000100180000000000E0270000130B0000130B0000000000000000
@@ -531,6 +526,7 @@ object WelcomeForm: TWelcomeForm
           0000000000000000000000000000000000000000000000000000000000000000
           0000000000000000000000000000000000000000000000000000000000000000
           0000}
+        Stretch = True
       end
       object Memo: TMemo
         AlignWithMargins = True
@@ -546,7 +542,6 @@ object WelcomeForm: TWelcomeForm
         Lines.Strings = (
           '')
         TabOrder = 0
-        ExplicitTop = 76
       end
       object BottomPanel: TPanel
         Left = 1
@@ -556,8 +551,6 @@ object WelcomeForm: TWelcomeForm
         Align = alBottom
         BevelOuter = bvNone
         TabOrder = 1
-        ExplicitTop = 229
-        ExplicitWidth = 416
         object OkButton: TButton
           Left = 351
           Top = 6

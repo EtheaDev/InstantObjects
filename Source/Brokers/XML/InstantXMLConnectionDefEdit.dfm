@@ -8,7 +8,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = True
   Position = poScreenCenter
@@ -34,7 +34,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
     object XMLLabel: TLabel
       Left = 8
       Top = 11
-      Width = 110
+      Width = 120
       Height = 13
       Caption = '&XML data root directory'
       FocusControl = RootDirEdit
@@ -42,7 +42,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
     object Label1: TLabel
       Left = 8
       Top = 60
-      Width = 69
+      Width = 73
       Height = 13
       Caption = 'XML &encoding'
       FocusControl = RootDirEdit
@@ -66,7 +66,7 @@ object InstantXMLConnectionDefEditForm: TInstantXMLConnectionDefEditForm
     object EncodingComboBox: TComboBox
       Left = 8
       Top = 75
-      Width = 145
+      Width = 251
       Height = 21
       Style = csDropDownList
       TabOrder = 2

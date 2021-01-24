@@ -87,8 +87,6 @@ type
   TInstantWarningEvent = procedure (const Sender: TObject;
     const AWarningText: string) of object;
 
-  TTime = type TDateTime;
-  TDate = type TDateTime;
 
   {$IFDEF D12+}
   TInstantBytes = TBytes;

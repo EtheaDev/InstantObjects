@@ -39,18 +39,28 @@ const
   InstantClassFieldName = 'Class';
   InstantClassIdPropName = InstantClassFieldName + 'Id';
   InstantDateFormat = 'yyyymmdd';
+  InstantDateJFormat = 'yyyy-mm-dd';
   InstantDateString = 'DATE';
   InstantDefaultFieldSize = 32;
   InstantTimeFormat = 'hhnnsszzz';
+  InstantTimeJFormat = 'hh:nn:ss:zzz';
   InstantDateTimeFormat = InstantDateFormat + InstantTimeFormat;
+  InstantDateTimeJFormat = InstantDateJFormat +'T' + InstantTimeJFormat + 'Z';
+  InstantFloatJFormat = '0.0';
   InstantDot = '.';
   InstantFalseString = 'FALSE';
+  InstantFalseJString = 'false';
   InstantNowString = 'NOW';
   InstantTagEnd = '>';
   InstantTagStart = '<';
+  JsonObjectEnd = '}';
+  JsonObjectStart = '{';
+  JsonArrayEnd = ']';
+  JsonArrayStart = '[';
   InstantProcessingInstructionStart = '?';
   InstantTimeString = 'TIME';
   InstantTrueString = 'TRUE';
+  InstantTrueJString = 'true';
   InstantEndTagFormat= InstantTagStart + '/%s' + InstantTagEnd;
   InstantIdFieldName = 'Id';
   InstantIdPropName = InstantIdFieldName;
@@ -59,7 +69,8 @@ const
   InstantPaletteName = 'InstantObjects';
   InstantStartTagFormat= InstantTagStart + '%s' + InstantTagEnd;
   InstantUpdateCountFieldName = 'UpdateCount';
-  
+  InstantClassMetadatasTagName = 'ClassMetadatas';
+
   InstantParentIdFieldName = 'ParentId';
   InstantParentClassFieldName = 'ParentClass';
   InstantChildIdFieldName = 'ChildId';
@@ -76,6 +87,7 @@ const
 
 var
   InstantXMLIndentationSize: Byte = 2;
+  InstantJSONIndentationSize: Byte = 2;
 
 resourcestring
 {$IFDEF CBLIB_ITA}
@@ -98,6 +110,7 @@ resourcestring
   SConnectionName = 'Nome connessione';
   SConnectorInUse = 'Connettore %s in uso dall''oggetto %d';
   SConnectorMismatch = 'Connector sbagliato';
+  SConnectionSuccess = 'Connesso con successo!';
   SContainerNotFound = 'Contenitore: ''%s'' non trovato per la classe %s';
   SDatabaseBuildConfirmation = 'Creare il database con connessione "%s" e cancellare tutti i dati?';
   SDatabaseBuilt = 'Database creato correttamente';
@@ -156,7 +169,7 @@ resourcestring
   SObjectNotAvailable = 'Oggetto non disponibile!';
   SOwnershipRecursion = 'Ricorsione del proprietario dell''oggetto %s(''%s'')';
   SPersistentObjectNotAllowed = 'Oggetto persistente %s(''%s'') non permesso.';
-  SProtocolNotSupported = 'Protocollo ''%s'' non supportato';
+  SProtocolNotSupported = 'Protocol/DriverId ''%s'' non supportato';
   SSpecifierMissing = 'Specifica non definita';
   SSplashScreenTitle = 'InstantObjects - Object Persistence Framework';
   SSQLStatementIndexOutOfBounds = 'Indice dell''istruzione SQL fuori limite.';
@@ -205,7 +218,8 @@ resourcestring
   SUsingAttributeMustBeAReference = 'L''attributo (''%s'') non è un reference: l''attributo USING deve essere un reference.';
   SUsingAttributeMetadataNotFound = 'Impossibile ottenere i metadati per l''attributo USING (''%s'')';
   SSQLExecuteError = 'Errore in esecuzione SQL. Comando: ''%s''. Errore: ''%s''';
-  SUseUnicodeWrong = 'Error: Unicode dell''exposer non corrisponde a Unicode del connector in uso.';
+  SUseUnicodeWrong = 'Errore: Unicode dell''exposer non corrisponde a Unicode del connector in uso.';
+  SDefaultConnectorNotAvailable = 'Errore: InstantDefaultConnector non è disponibile in una app. console.';
 {$ELSE}
   SAccessError = 'Cannot access attribute %s(''%s'') as type: %s';
   SAccessorClassNotFoundFor = 'Accessor class not found for class %s ';
@@ -226,6 +240,7 @@ resourcestring
   SConnectionName = 'Connection Name';
   SConnectorInUse = 'Connector %s in use by %d object(s)';
   SConnectorMismatch = 'Connector mismatch';
+  SConnectionSuccess = 'Successfully connected!';
   SContainerNotFound = 'Container: ''%s'' not found for class %s';
   SDatabaseBuildConfirmation = 'Build database via connection "%s" and clear all data?';
   SDatabaseBuilt = 'Database was built successfully';
@@ -284,7 +299,7 @@ resourcestring
   SObjectNotAvailable = 'Object is not available!';
   SOwnershipRecursion = 'Ownership Recursion for object %s(''%s'')';
   SPersistentObjectNotAllowed = 'Persistent object %s(''%s'') not allowed.';
-  SProtocolNotSupported = 'Protocol ''%s'' not supported';
+  SProtocolNotSupported = 'Protocol/DriverId ''%s'' not supported';
   SSpecifierMissing = 'Specifier missing';
   SSplashScreenTitle = 'InstantObjects - Object Persistence Framework';
   SSQLStatementIndexOutOfBounds = 'SQL statement index out of bounds.';
@@ -330,10 +345,11 @@ resourcestring
   SUsingAttributeNotInitialized = 'Error initializing USING attribute';
   SSubContextNotFoundForSubQuery = 'SubContext object not found for subquery (''%s'')';
   SParentContextNotFoundForSubQuery = 'Parent context object not found for subquery (''%s'')';
-  SUsingAttributeMustBeAReference = 'Attribute (''%s'') is not a reference: USING attribute must be a reference.';  
+  SUsingAttributeMustBeAReference = 'Attribute (''%s'') is not a reference: USING attribute must be a reference.';
   SUsingAttributeMetadataNotFound = 'Cannot get metadata for USING attribute (''%s'')';
   SSQLExecuteError = 'SQL execute error. Statement: ''%s''. Error: ''%s''';
   SUseUnicodeWrong = 'Error: Unicode of exposer don''t match with Unicode of connector in use.';
+  SDefaultConnectorNotAvailable = 'Error: InstantDefaultConnector is not available in console app.';
 {$ENDIF}
 
 implementation

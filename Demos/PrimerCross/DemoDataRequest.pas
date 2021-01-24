@@ -50,7 +50,6 @@ end;
 procedure TDemoDataRequestForm.FormCreate(Sender: TObject);
 begin
   inherited;
-  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
 end;
 

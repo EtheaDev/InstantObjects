@@ -68,8 +68,9 @@ type
     procedure ImportItemClick(Sender: TObject);
     procedure ExportModelItemClick(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
-    FActiveSubView: TBasicViewForm;
+    FActiveSubView: TBasicViewFrame;
     FConnectionDef: TInstantConnectionDef;
     FConnector: TInstantConnector;
     FStopwatch: TStopwatch;
@@ -81,27 +82,28 @@ type
     function GetStopwatch: TStopwatch;
     function GetSubViewList: TList;
     function GetSubViewCount: Integer;
-    function GetSubViews(Index: Integer): TBasicViewForm;
+    function GetSubViews(Index: Integer): TBasicViewFrame;
     procedure InitSideBar;
-    procedure SetActiveSubView(const Value: TBasicViewForm);
+    procedure SetActiveSubView(const Value: TBasicViewFrame);
     procedure SetStatusText(const Value: string);
     property SubViewList: TList read GetSubViewList;
     function GetConnectionName: string;
     procedure AssignRandomPicture(Male: boolean; InstantBlob : TInstantBlob);
   protected
+    procedure Loaded; override;
     procedure UpdateActions; override;
     procedure UpdateControls;
     procedure UpdateStatus;
     property StatusText: string read GetStatusText write SetStatusText;
     property Stopwatch: TStopwatch read GetStopwatch;
     property SubViewCount: Integer read GetSubViewCount;
-    property SubViews[Index: Integer]: TBasicViewForm read GetSubViews;
+    property SubViews[Index: Integer]: TBasicViewFrame read GetSubViews;
   public
     destructor Destroy; override;
     procedure Connect;
     procedure Disconnect;
     procedure Reset;
-    property ActiveSubView: TBasicViewForm read FActiveSubView
+    property ActiveSubView: TBasicViewFrame read FActiveSubView
       write SetActiveSubView;
     property Connector: TInstantConnector read FConnector;
     property ConnectionName: string read GetConnectionName;
@@ -420,20 +422,20 @@ end;
 
 procedure TMainForm.CreateSubViews;
 
-  procedure CreateSubView(FormClass: TBasicViewFormClass);
+  procedure CreateSubView(FrameClass: TBasicViewFrameClass);
   var
-    Form: TBasicViewForm;
+    Frame: TBasicViewFrame;
   begin
-    Form := FormClass.Create(Self);
-    Form.FormCreate(Form);
-    Form.OnShowStatus := SubViewShowStatus;
-    SubViewList.Add(Form);
+    Frame := FrameClass.Create(Self);
+    Frame.OnShowStatus := SubViewShowStatus;
+    SubViewList.Add(Frame);
+    Frame.FrameCreate(Frame);
   end;
 
 begin
   CreateSubView(THelpViewForm);
   CreateSubView(TContactViewForm);
-  CreateSubView(TQueryViewForm);
+  CreateSubView(TQueryViewFrame);
   CreateSubView(TPerformanceViewForm);
   InitSideBar;
 end;
@@ -495,17 +497,12 @@ procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   Disconnect;
   if FActiveSubView <> nil then
-    FActiveSubView.FormHide(FActiveSubView);
+    FActiveSubView.FrameHide(FActiveSubView);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   Caption := Application.Title;
-  Font.Assign(Screen.IconFont);
-  WorkTitleLabel.Color := clHighLightText;
-  WorkTitleLabel.Font.Height := -13;
-  WorkTitleLabel.Font.Style := [fsBold];
-  SideBar.Font.Color := clCaptionText;
 
   LoadMultipleImages(SideBarImages,'MAINSIDEBARIMAGES',HInstance);
   LoadMultipleImages(ActionImages,'MAINACTIONIMAGES',HInstance);
@@ -524,7 +521,10 @@ begin
 // To use binary format for ConnectionManager file:
 //  ConnectionManager.FileFormat := sfBinary;
 //  ConnectionManager.FileName := ChangeFileExt(Application.ExeName, '.con');
+end;
 
+procedure TMainForm.FormShow(Sender: TObject);
+begin
   CreateSubViews;
   UpdateStatus;
 end;
@@ -570,7 +570,7 @@ begin
   Result := FSubViewList;
 end;
 
-function TMainForm.GetSubViews(Index: Integer): TBasicViewForm;
+function TMainForm.GetSubViews(Index: Integer): TBasicViewFrame;
 begin
   Result := SubViewList[Index];
 end;
@@ -592,7 +592,7 @@ end;
 
 procedure TMainForm.InitSideBar;
 
-  procedure AddShortcut(Form: TBasicViewForm; Index: Integer);
+  procedure AddShortcut(Form: TBasicViewFrame; Index: Integer);
   begin
     with SideBar.Items.Add do
     begin
@@ -609,6 +609,16 @@ begin
   for I := 0 to Pred(SubViewCount) do
     AddShortcut(SubViews[I], I);
   SideBar.Selected := SideBar.Items[0];
+end;
+
+procedure TMainForm.Loaded;
+begin
+  WorkTitleLabel.Color := clHighLightText;
+  WorkTitleLabel.Font.Height := -13;
+  WorkTitleLabel.Font.Style := [fsBold];
+  inherited;
+  Font.Assign(Screen.IconFont);
+  SideBar.Font.Color := clCaptionText;
 end;
 
 procedure TMainForm.RandomDataActionExecute(Sender: TObject);
@@ -643,13 +653,13 @@ begin
   end;
 end;
 
-procedure TMainForm.SetActiveSubView(const Value: TBasicViewForm);
+procedure TMainForm.SetActiveSubView(const Value: TBasicViewFrame);
 begin
   if Value <> FActiveSubView then
   begin
     if Assigned(FActiveSubView) then
     begin
-      FActiveSubView.FormHide(FActiveSubView);
+      FActiveSubView.FrameHide(FActiveSubView);
     end;  
     FActiveSubView := Value;
     if Assigned(FActiveSubView) then
@@ -664,7 +674,7 @@ begin
         Align := alClient;
         Height := Parent.ClientHeight;
         Width := Parent.ClientWidth;
-        FormShow(FActiveSubView);
+        FrameShow(FActiveSubView);
       end;
     end;
     StatusText := '';

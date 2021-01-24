@@ -13,9 +13,9 @@ uses
 type
   TShowStatusEvent = procedure(Sender: TObject; Text: string) of object;
 
-  TBasicViewFormClass = class of TBasicViewForm;
+  TBasicViewFrameClass = class of TBasicViewFrame;
 
-  TBasicViewForm = class(TFrame)
+  TBasicViewFrame = class(TFrame)
   private
     FOnShowStatus: TShowStatusEvent;
     FCaption: TCaption;
@@ -25,9 +25,9 @@ type
   protected
     procedure ShowStatus(Text: string);
   public
-    procedure FormCreate(Sender: TObject); virtual;
-    procedure FormHide(Sender: TObject); virtual;
-    procedure FormShow(Sender: TObject); virtual;
+    procedure FrameCreate(Sender: TObject); virtual;
+    procedure FrameHide(Sender: TObject); virtual;
+    procedure FrameShow(Sender: TObject); virtual;
     procedure Connect; virtual;
     procedure Disconnect; virtual;
     procedure Reset; virtual;
@@ -48,30 +48,29 @@ uses
 
 { TBasicViewForm }
 
-procedure TBasicViewForm.Connect;
+procedure TBasicViewFrame.Connect;
 begin
 end;
 
-procedure TBasicViewForm.Disconnect;
+procedure TBasicViewFrame.Disconnect;
 begin
 end;
 
-procedure TBasicViewForm.FormCreate(Sender: TObject);
+procedure TBasicViewFrame.FrameCreate(Sender: TObject);
 begin
-  Font.Assign(Screen.IconFont);
 end;
 
-procedure TBasicViewForm.FormHide(Sender: TObject);
+procedure TBasicViewFrame.FrameHide(Sender: TObject);
 begin
   Self.Hide;
 end;
 
-procedure TBasicViewForm.FormShow(Sender: TObject);
+procedure TBasicViewFrame.FrameShow(Sender: TObject);
 begin
   Self.Show;
 end;
 
-function TBasicViewForm.GetConnectionName: string;
+function TBasicViewFrame.GetConnectionName: string;
 begin
   if Owner is TMainForm then
     Result := TMainForm(Owner).ConnectionName
@@ -79,7 +78,7 @@ begin
     Result := '';
 end;
 
-function TBasicViewForm.GetConnector: TInstantConnector;
+function TBasicViewFrame.GetConnector: TInstantConnector;
 begin
   if Owner is TMainForm then
     Result := TMainForm(Owner).Connector
@@ -87,7 +86,7 @@ begin
     Result := nil;
 end;
 
-function TBasicViewForm.GetIsConnected: Boolean;
+function TBasicViewFrame.GetIsConnected: Boolean;
 begin
   if Owner is TMainForm then
     Result := TMainForm(Owner).IsConnected
@@ -95,17 +94,17 @@ begin
     Result := False;
 end;
 
-procedure TBasicViewForm.Reset;
+procedure TBasicViewFrame.Reset;
 begin
 end;
 
-procedure TBasicViewForm.ShowStatus(Text: string);
+procedure TBasicViewFrame.ShowStatus(Text: string);
 begin
   if Assigned(FOnShowStatus) then
     FOnShowStatus(Self, Text);
 end;
 
-procedure TBasicViewForm.UpdateControls;
+procedure TBasicViewFrame.UpdateControls;
 begin
 end;
 

@@ -22,6 +22,8 @@ type
     OkButton: TButton;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
+  protected
+    procedure Loaded; override;
   end;
 
 implementation
@@ -34,12 +36,6 @@ procedure TWelcomeForm.FormCreate(Sender: TObject);
 var
   LLib, LPersonality: string;
 begin
-  Font.Assign(Screen.IconFont);
-  TitleLabel.Caption := Application.Title;
-  Font.Assign(Screen.IconFont);
-  TitleLabel.Font.Color := clWindowText;
-  TitleLabel.Font.Style := [fsBold];
-  TitleLabel.Font.Height := -16;
   LPersonality := 'Delphi';
   LLib := 'VCL';
   Memo.Lines.Clear;
@@ -53,6 +49,16 @@ procedure TWelcomeForm.FormShow(Sender: TObject);
 begin
   if OkButton.CanFocus then
     OkButton.SetFocus;
+end;
+
+procedure TWelcomeForm.Loaded;
+begin
+  TitleLabel.Caption := Application.Title;
+  TitleLabel.Font.Color := clWindowText;
+  TitleLabel.Font.Style := [fsBold];
+  TitleLabel.Font.Height := -16;
+
+  inherited;
 end;
 
 end.

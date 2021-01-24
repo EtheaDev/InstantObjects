@@ -5,43 +5,44 @@ inherited ContactEditForm: TContactEditForm
   BorderIcons = [biSystemMenu]
   Caption = 'Contact'
   ClientHeight = 295
-  ClientWidth = 425
+  ClientWidth = 508
+  ParentFont = True
   OldCreateOrder = True
-  ExplicitWidth = 441
+  ExplicitWidth = 524
   ExplicitHeight = 334
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
     Top = 264
-    Width = 425
+    Width = 508
     TabOrder = 1
-    ExplicitTop = 269
-    ExplicitWidth = 433
+    ExplicitTop = 264
+    ExplicitWidth = 425
     inherited AnchorPanel: TPanel
-      Left = 266
-      ExplicitLeft = 266
+      Left = 341
+      ExplicitLeft = 258
     end
   end
   inherited ClientPanel: TPanel
-    Width = 425
+    Width = 508
     Height = 264
     TabOrder = 0
-    ExplicitWidth = 433
-    ExplicitHeight = 269
+    ExplicitWidth = 425
+    ExplicitHeight = 264
     inherited PageControl: TPageControl
-      Width = 421
+      Width = 504
       Height = 260
-      ExplicitWidth = 429
-      ExplicitHeight = 265
+      ExplicitWidth = 421
+      ExplicitHeight = 260
       inherited DetailsSheet: TTabSheet
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitLeft = 4
+        ExplicitTop = 6
+        ExplicitWidth = 413
+        ExplicitHeight = 250
         object NameLabel: TLabel
           Left = 8
           Top = 8
-          Width = 28
+          Width = 27
           Height = 13
           Caption = '&Name'
           FocusControl = NameEdit
@@ -49,7 +50,7 @@ inherited ContactEditForm: TContactEditForm
         object StreetLabel: TLabel
           Left = 8
           Top = 48
-          Width = 28
+          Width = 30
           Height = 13
           Caption = '&Street'
           FocusControl = StreetEdit
@@ -57,7 +58,7 @@ inherited ContactEditForm: TContactEditForm
         object CityLabel: TLabel
           Left = 8
           Top = 104
-          Width = 17
+          Width = 19
           Height = 13
           Caption = '&City'
           FocusControl = CityEdit
@@ -65,7 +66,7 @@ inherited ContactEditForm: TContactEditForm
         object ZipLabel: TLabel
           Left = 152
           Top = 104
-          Width = 15
+          Width = 14
           Height = 13
           Caption = '&Zip'
           FocusControl = ZipEdit
@@ -73,7 +74,7 @@ inherited ContactEditForm: TContactEditForm
         object StateLabel: TLabel
           Left = 136
           Top = 144
-          Width = 72
+          Width = 71
           Height = 13
           Caption = 'S&tate/Province'
           FocusControl = StateEdit
@@ -81,7 +82,7 @@ inherited ContactEditForm: TContactEditForm
         object PhonesLabel: TLabel
           Left = 240
           Top = 8
-          Width = 36
+          Width = 35
           Height = 13
           Caption = '&Phones'
           FocusControl = PhonesGrid
@@ -89,7 +90,7 @@ inherited ContactEditForm: TContactEditForm
         object CountryLabel: TLabel
           Left = 8
           Top = 144
-          Width = 36
+          Width = 39
           Height = 13
           Caption = 'C&ountry'
           FocusControl = CountryEdit
@@ -104,7 +105,7 @@ inherited ContactEditForm: TContactEditForm
         object CategoryLabel: TLabel
           Left = 8
           Top = 184
-          Width = 42
+          Width = 45
           Height = 13
           Caption = 'C&ategory'
           FocusControl = CategoryEdit
@@ -157,11 +158,16 @@ inherited ContactEditForm: TContactEditForm
         object PhonesGrid: TDBGrid
           Left = 240
           Top = 24
-          Width = 169
+          Width = 253
           Height = 197
           DataSource = PhonesSource
           Options = [dgEditing, dgTitles, dgColLines, dgCancelOnExit]
           TabOrder = 7
+          TitleFont.Charset = DEFAULT_CHARSET
+          TitleFont.Color = clWindowText
+          TitleFont.Height = -11
+          TitleFont.Name = 'Tahoma'
+          TitleFont.Style = []
           Columns = <
             item
               Expanded = False
@@ -173,6 +179,11 @@ inherited ContactEditForm: TContactEditForm
               Expanded = False
               FieldName = 'Number'
               Width = 92
+              Visible = True
+            end
+            item
+              Expanded = False
+              FieldName = 'PhoneType'
               Visible = True
             end>
         end

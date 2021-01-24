@@ -12,7 +12,7 @@ uses
   Dialogs,
   testreport, fpcunit, testregistry,
   ExtCtrls, StdCtrls, Buttons,
-  ComCtrls, ImgList;
+  ComCtrls, ImgList, System.ImageList;
 
 type
 

@@ -38,6 +38,9 @@ interface
 
 uses
   SysUtils, Classes, Db, InstantPersistence, InstantTypes, InstantMetadata,
+  {$IFDEF D17+}
+  System.Generics.Collections,
+  {$ENDIF}
   InstantConsts, InstantClasses, Contnrs, InstantCommand;
 
 type
@@ -75,6 +78,7 @@ type
     Conflict: Boolean;
   end;
 
+  TAssignParamValue = procedure(const AParam: TParam) of Object;
   TInstantBrokerOperation = procedure(AObject: TInstantObject;
     const AObjectId: string; Map: TInstantAttributeMap;
     ConflictAction: TInstantConflictAction = caFail;
@@ -124,8 +128,8 @@ type
   public
     constructor Create(AConnector: TInstantConnector); override;
     destructor Destroy; override;
-    function Execute(const AStatement: string; AParams: TParams = nil): Integer;
-      virtual;
+    function Execute(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil): Integer; virtual;
     property Connector: TInstantRelationalConnector read GetConnector;
     property DBMSName: string read GetDBMSName;
     property SQLDelimiters: string read GetSQLDelimiters;
@@ -174,13 +178,14 @@ type
       override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     property ResolverList: TObjectList read GetResolverList;
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams);
-      virtual;
-    function CreateDataSet(const AStatement: string; AParams: TParams = nil):
-      TDataSet; virtual; abstract;
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams;
+      OnAssignParamValue: TAssignParamValue = nil); virtual;
+    function CreateDataSet(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil): TDataSet; virtual; abstract;
   public
     destructor Destroy; override;
-    function AcquireDataSet(const AStatement: string; AParams: TParams = nil):
+    function AcquireDataSet(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil):
       TDataSet; virtual;
     procedure ReleaseDataSet(const ADataSet: TDataSet); virtual;
     function DataTypeToColumnType(DataType: TInstantDataType;
@@ -1072,7 +1077,7 @@ type
     FDataSet: TDataSet;
     procedure DestroyObjectReferenceList;
     function GetObjectReferenceCount: Integer;
-    function GetObjectReferenceList: TInstantObjectReferenceList;
+    function GetObjectReferenceList: TInstantObjectReferenceList; overload;
     function GetParamsObject: TParams;
     procedure InitObjectReferences;
   protected
@@ -1084,8 +1089,7 @@ type
     function GetStatement: string; override;
     function InternalAddObject(AObject: TObject): Integer; override;
     procedure InternalClose; override;
-    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList);
-      override;
+    procedure InternalGetInstantObjectRefs(List: TInstantObjectReferenceList); override;
     function InternalGetObjectCount: Integer; override;
     function InternalGetObjects(Index: Integer): TObject; override;
     function InternalIndexOfObject(AObject: TObject): Integer; override;
@@ -1096,14 +1100,15 @@ type
     procedure SetParams(Value: TParams); override;
     function ObjectFetched(Index: Integer): Boolean; override;
     procedure SetStatement(const Value: string); override;
-    procedure Notification(AComponent: TComponent; Operation: TOperation);
-      override;
-    property ObjectReferenceCount: Integer read GetObjectReferenceCount;
-    property ObjectReferenceList: TInstantObjectReferenceList read
-        GetObjectReferenceList;
-    property ParamsObject: TParams read GetParamsObject;
+    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
+    property ObjectReferenceList: TInstantObjectReferenceList read GetObjectReferenceList;
   public
     destructor Destroy; override;
+    {$IFDEF D17+}
+    procedure GetObjectReferenceList(const AList: TList<TInstantObjectReference>); overload;
+    {$ENDIF}
+    property ObjectReferenceCount: Integer read GetObjectReferenceCount;
+    property ParamsObject: TParams read GetParamsObject;
   end;
 
   TInstantRelationalConnectionDef = class(TInstantConnectionDef)
@@ -1113,6 +1118,7 @@ type
   private
     FLoginPrompt: Boolean;
   protected
+    function ExpandDatabaseName(const ADatabaseName: string): string;
     function CreateConnection(AOwner: TComponent): TCustomConnection; virtual;
       abstract;
     procedure InitConnector(Connector: TInstantConnector); override;
@@ -1162,7 +1168,7 @@ begin
         ' = ' + AParams[g].AsString;
     end;
   end;
-  OutputDebugString(PChar(S));
+  OutputDebugString(PWideChar(S));
   if Assigned(InstantLogProc) then
     InstantLogProc(S);
 end;
@@ -1246,7 +1252,7 @@ begin
 end;
 
 function TInstantCustomRelationalBroker.Execute(const AStatement: string;
-  AParams: TParams): Integer;
+  AParams: TParams; OnAssignParamValue: TAssignParamValue): Integer;
 begin
   Result := 0;
 end;
@@ -1493,7 +1499,7 @@ end;
 { TInstantSQLBroker }
 
 function TInstantSQLBroker.AcquireDataSet(const AStatement: string;
-  AParams: TParams): TDataSet;
+  AParams: TParams; OnAssignParamValue: TAssignParamValue): TDataSet;
 var
   CachedStatement: TInstantStatement;
 begin
@@ -1516,17 +1522,17 @@ begin
         else
         begin
           Result.Close;
-          AssignDataSetParams(Result, AParams);
+          AssignDataSetParams(Result, AParams, OnAssignParamValue);
           Result.Open;
         end;
       end
       else
-        AssignDataSetParams(Result, AParams);
+        AssignDataSetParams(Result, AParams, OnAssignParamValue);
     end;
   end;
   if not Assigned(Result) then
   begin
-    Result := CreateDataSet(AStatement, AParams);
+    Result := CreateDataSet(AStatement, AParams, OnAssignParamValue);
     try
       if Assigned(AParams) and (FStatementCacheCapacity <> 0) then
         StatementCache.AddStatement(AStatement, Result);
@@ -1539,9 +1545,11 @@ begin
   end;
 end;
 
-procedure TInstantSQLBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
+procedure TInstantSQLBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams;
+  OnAssignParamValue: TAssignParamValue = nil);
 begin
-  raise EInstantError.CreateFmt(SMissingImplementation, ['AssignDataSetParams', ClassName]);
+  raise EInstantError.CreateFmt(SMissingImplementation,
+    ['AssignDataSetParams', ClassName]);
 end;
 
 function TInstantSQLBroker.EnsureResolver(
@@ -3917,9 +3925,13 @@ begin
   if Field is TBlobField then
   begin
     MemoryStream := TMemoryStream.Create;
-    TBlobField(Field).SaveToStream(MemoryStream);
-    MemoryStream.Position := 0;
-    BlobAttr.LoadDataFromStream(MemoryStream);
+    Try
+      TBlobField(Field).SaveToStream(MemoryStream);
+      MemoryStream.Position := 0;
+      BlobAttr.LoadDataFromStream(MemoryStream);
+    Finally
+      MemoryStream.Free;
+    End;
   end
   else
     BlobAttr.Value := DataSet.FieldByName(FieldName).AsString;
@@ -5201,8 +5213,14 @@ end;
 { TInstantCustomRelationalQuery }
 
 function TInstantCustomRelationalQuery.GetConnector: TInstantRelationalConnector;
+var
+  LConnector: TInstantConnector;
 begin
-  Result := inherited Connector as TInstantRelationalConnector;
+  LConnector := inherited Connector;
+  if Assigned(LConnector) then
+    Result := LConnector as TInstantRelationalConnector
+  else
+    Result := nil;
 end;
 
 function TInstantCustomRelationalQuery.GetStatement: string;
@@ -6112,6 +6130,17 @@ begin
   Result := ObjectReferenceList.Count;
 end;
 
+{$IFDEF D17+}
+procedure TInstantSQLQuery.GetObjectReferenceList(
+  const AList: TList<TInstantObjectReference>);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(ObjectReferenceCount) do
+    AList.Add(ObjectReferenceList.RefItems[I]);
+end;
+{$ENDIF}
+
 function TInstantSQLQuery.GetObjectReferenceList: TInstantObjectReferenceList;
 begin
   if not Assigned(FObjectReferenceList) then
@@ -6296,6 +6325,13 @@ constructor TInstantConnectionBasedConnectionDef.Create(
 begin
   inherited;
   FLoginPrompt := True;
+end;
+
+function TInstantConnectionBasedConnectionDef.ExpandDatabaseName(
+  const ADatabaseName: string): string;
+begin
+  Result := StringReplace(ADatabaseName,
+    '{app}\', ExtractFilePath(ParamStr(0)), [rfIgnoreCase]);
 end;
 
 procedure TInstantConnectionBasedConnectionDef.InitConnector(Connector: TInstantConnector);

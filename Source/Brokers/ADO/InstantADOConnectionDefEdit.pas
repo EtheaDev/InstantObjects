@@ -56,14 +56,20 @@ type
     IdDataTypeComboBox: TComboBox;
     Label2: TLabel;
     IdSizeEdit: TEdit;
+    TestButton: TButton;
     procedure ConnectionStringButtonClick(Sender: TObject);
     procedure DataLinkButtonClick(Sender: TObject);
     procedure DataChanged(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure TestButtonClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
+    FOwnerConnectionDef: TInstantADOConnectionDef;
     function GetIsValid: Boolean;
     procedure UpdateControls;
   public
+    constructor CreateForConnectionDef(AOwner: TComponent;
+      AConnectionDef: TInstantADOConnectionDef);
     procedure LoadData(ConnectionDef: TInstantADOConnectionDef);
     procedure SaveData(ConnectionDef: TInstantADOConnectionDef);
     property IsValid: Boolean read GetIsValid;
@@ -85,6 +91,13 @@ begin
     Text := PromptDataSource(Handle, Text);
 end;
 
+constructor TInstantADOConnectionDefEditForm.CreateForConnectionDef(
+  AOwner: TComponent; AConnectionDef: TInstantADOConnectionDef);
+begin
+  inherited Create(AOwner);
+  FOwnerConnectionDef := AConnectionDef;
+end;
+
 procedure TInstantADOConnectionDefEditForm.DataChanged(Sender: TObject);
 begin
   UpdateControls;
@@ -104,6 +117,11 @@ begin
   IdDataTypeComboBox.ItemIndex := Ord(dtString);
   IdSizeEdit.Text := IntToStr(InstantDefaultFieldSize);
   UpdateControls;
+end;
+
+procedure TInstantADOConnectionDefEditForm.FormShow(Sender: TObject);
+begin
+  TestButton.Visible := Assigned(FOwnerConnectionDef);
 end;
 
 function TInstantADOConnectionDefEditForm.GetIsValid: Boolean;
@@ -149,6 +167,16 @@ begin
     LoginPrompt := LoginPromptCheckBox.Checked;
     IdDataType := TInstantDataType(IdDataTypeComboBox.ItemIndex);
     IdSize := StrToInt(IdSizeEdit.Text);
+  end;
+end;
+
+procedure TInstantADOConnectionDefEditForm.TestButtonClick(Sender: TObject);
+begin
+  if Assigned(FOwnerConnectionDef) then
+  begin
+    SaveData(FOwnerConnectionDef);
+    FOwnerConnectionDef.TestConnection;
+    ShowMessage(SConnectionSuccess);
   end;
 end;
 

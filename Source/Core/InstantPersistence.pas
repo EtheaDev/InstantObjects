@@ -37,9 +37,22 @@ unit InstantPersistence;
 interface
 
 uses
-  {$IFDEF INSTANTOBJECTS_FMX}FMX.Objects,{$ELSE}Graphics,{$ENDIF}
+  {$IFNDEF IO_CONSOLE}Graphics,{$ENDIF}
   Classes, {$IFNDEF NEXTGEN}Contnrs,{$ENDIF} SysUtils, DB, InstantClasses, InstantCommand, InstantConsts,
-  InstantMetadata, InstantTypes, AnsiStrings;
+  InstantMetadata, InstantTypes
+  {$IFDEF DELPHI_NEON}
+  , Neon.Core.Types
+  , Neon.Core.Nullables
+  , Neon.Core.Attributes
+  {$ENDIF}
+  {$IFDEF D17+}
+  , System.Generics.Collections
+  {$ENDIF}
+  , AnsiStrings;
+
+const
+  IO_SER_CLASSNAME = 'ClassName';
+  IO_SER_ID = 'Id';
 
 type
   TInstantAttribute = class;
@@ -139,7 +152,9 @@ type
     procedure WriteAsObject(Writer: TInstantWriter); virtual;
     property Instance: TInstantObject read GetInstance write SetInstance;
     property ObjectClass: TInstantObjectClass read GetObjectClass;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty(IO_SER_CLASSNAME)]{$ENDIF}
     property ObjectClassName: string read GetObjectClassName;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty(IO_SER_ID)]{$ENDIF}
     property ObjectId: string read GetObjectId;
     property OwnsInstance: Boolean read FOwnsInstance write SetOwnsInstance;
     property Signature: string read GetSignature;
@@ -468,7 +483,7 @@ type
     procedure AssignPicture(Source: TImage);
     procedure AssignToPicture(Dest: TImage);
 {$ELSE}
-    {$IFNDEF CONSOLE}
+    {$IFNDEF IO_CONSOLE}
     procedure AssignPicture(Source: TPicture);
     procedure AssignToPicture(Dest: TPicture);
     {$ENDIF}
@@ -531,6 +546,7 @@ type
     procedure LoadObjectFromStream(AStream: TStream); virtual;
     procedure SaveObjectToStream(AStream: TStream); virtual;
   published
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Value: TInstantObject read GetValue write SetValue;
   end;
 
@@ -575,7 +591,6 @@ type
     function SameInstance(AObjectClass: TInstantObjectClass;
       AObjectId: string): Boolean; overload;
     procedure SetInstance(AValue: TInstantObject);
-    property ObjectReference: TInstantObjectReference read GetObjectReference;
   protected
     class function AttributeType: TInstantAttributeType; override;
     function CreateObject: TInstantObject; override;
@@ -603,11 +618,14 @@ type
       const AObjectId: string); overload;
     procedure ReferenceObject(const AObjectClassName, AObjectId: string); overload;
     procedure Reset; override;
+    property ObjectReference: TInstantObjectReference read GetObjectReference;
     property AllowOwned write SetAllowOwned;
     property Connector write SetConnector;
     property IsBroken: Boolean read GetIsBroken;
     property ObjectClass: TInstantObjectClass read GetObjectClass;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty(IO_SER_CLASSNAME)]{$ENDIF}
     property ObjectClassName: string read GetObjectClassName;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty(IO_SER_ID)]{$ENDIF}
     property ObjectId: string read GetObjectId;
   end;
 
@@ -912,6 +930,7 @@ type
     property DefaultContainer: TInstantContainer read GetDefaultContainer;
     property RefByList: TObjectList read GetRefByList;
   public
+    class function ReformatID(const Id : string) : string; virtual;
     constructor Clone(Source: TInstantObject;
       AConnector: TInstantConnector = nil); overload; virtual;
     constructor Create(AConnector: TInstantConnector = nil); virtual;
@@ -960,6 +979,8 @@ type
       SequenceNoFieldName, OrderByClause: string); virtual;
     procedure ForEachAttribute(Proc: TInstantAttributeProc); virtual;
     property Caption: string read GetCaption;
+    class function GetSerializedIdPropertyName: string; virtual;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty(IO_SER_CLASSNAME)]{$ENDIF}
     property ClassId: string read GetClassId;
     property Connector: TInstantConnector read GetConnector;
     property HasDefaultContainer: Boolean read GetHasDefaultContainer;
@@ -972,6 +993,7 @@ type
     property ObjectChangeCount: Integer read GetObjectChangeCount;
     property ObjectClass: TInstantAbstractObjectClass read GetObjectClass;
     property ObjectCount: Integer read GetObjectCount;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty(IO_SER_ID)]{$ENDIF}
     property Id: string read GetId write SetId;
     property InUpdate: Boolean read FInUpdate write FInUpdate;
     property Objects[Index: Integer]: TInstantObject read GetObjects
@@ -1208,11 +1230,15 @@ type
     property ObjectClass: TClass read GetObjectClass;
     property ObjectClassName: string read GetObjectClassName;
     property ObjectCount: Integer read GetObjectCount;
+    property ObjectReferenceId[Index: Integer]: string read InternalGetObjectReferenceId;
     property Objects[Index: Integer]: TObject read GetObjects;
     property Params: TParams read GetParams write SetParams;
     property RequestedLoadMode: TInstantLoadMode
       read FRequestedLoadMode write FRequestedLoadMode default lmKeysFirst;
     property ActualLoadMode: TInstantLoadMode read FActualLoadMode;
+    {$IFDEF D17+}
+    procedure GetObjectList(const AList: TList<TInstantObject>);
+    {$ENDIF}
   end;
 
   EInstantConflict = class(EInstantError)
@@ -1458,6 +1484,8 @@ type
     procedure RestoreTransactedObjectStates;
     procedure SetConnected(Value: Boolean);
     procedure SetIsDefault(const Value: Boolean);
+    function GetUseUnicode: Boolean;
+    procedure SetUseUnicode(const Value: Boolean);
     property TransactedObjectList: TList read GetTransactedObjectList;
   protected
     function AddTransactedObject(AObject: TInstantObject): Integer;
@@ -1523,7 +1551,7 @@ type
       default False;
     property UseTransactions: Boolean read FUseTransactions
       write FUseTransactions default True;
-    property UseUnicode: Boolean read FUseUnicode write FUseUnicode
+    property UseUnicode: Boolean read GetUseUnicode write SetUseUnicode
       default False;
     property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase
       write FBeforeBuildDatabase;
@@ -1549,6 +1577,7 @@ type
     procedure InitConnector(Connector: TInstantConnector); virtual;
   public
     constructor Create(Collection: TCollection); override;
+    procedure TestConnection;
     class function ConnectionTypeName: string; virtual; abstract;
     class function ConnectorClass: TInstantConnectorClass; virtual; abstract;
     function CreateConnector(AOwner: TComponent): TInstantConnector;
@@ -1576,6 +1605,24 @@ type
       write SetItems; default;
   end;
 
+  {$IFDEF D17+}
+  TInstantObjectListEnumerator = record
+  private
+    FIndex: Integer;
+    FList: TObjectList<TInstantObject>;
+  public
+    constructor Create(AList: TObjectList<TInstantObject>);
+    function GetCurrent: TInstantObject;
+    function MoveNext: Boolean;
+    property Current: TInstantObject read GetCurrent;
+  end;
+
+  TInstantObjectList<T : TInstantObject> = class(TObjectList<TInstantObject>)
+  public
+    function GetEnumerator: TInstantObjectListEnumerator;
+  end;
+  {$ENDIF}
+
 procedure AssignInstantStreamFormat(Strings: TStrings);
 function InstantAttributeTypeToDataType(AttributeType: TInstantAttributeType;
   BlobStreamFormat: TInstantStreamFormat = sfBinary): TInstantDataType;
@@ -1584,7 +1631,9 @@ procedure InstantCheckConnection(Connection: TCustomConnection);
 function InstantCheckConnector(var Connector: TInstantConnector): TInstantConnector;
 function InstantClassNameToName(const ClassName: string): string;
 function InstantCreateStorageMaps(Metadatas: TInstantClassMetadatas = nil): TInstantAttributeMaps;
+{$IFNDEF MARS_FIREDAC}
 function InstantDefaultConnector: TInstantConnector;
+{$ENDIF}
 procedure InstantDisableNotifiers;
 procedure InstantEnableNotifiers;
 function InstantFindAttribute(const Path: string; AObject: TInstantObject; RaiseExceptions: Boolean = True): TInstantAttribute;
@@ -1604,7 +1653,7 @@ procedure InstantUnregisterClass(AClass: TInstantObjectClass);
 procedure InstantUnregisterClasses(AClasses: array of TInstantObjectClass);
 
 function InstantResolveGraphicFileType(AStream: TStream ): TInstantGraphicFileFormat;
-{$IFNDEF INSTANTOBJECTS_FMX}
+{$IFNDEF IO_CONSOLE}
 procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
   AGraphicClass: TGraphicClass);
 function InstantGraphicFileFormatToGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat) : TGraphicClass;
@@ -1650,7 +1699,7 @@ uses
 var
   ConnectorClasses: TList;
   ClassList: TList;
-{$IFNDEF INSTANTOBJECTS_FMX}
+{$IFNDEF IO_CONSOLE}
   GraphicClassList: array[TInstantGraphicFileFormat] OF TGraphicClass;
 {$ENDIF}
   RuntimeModel: TInstantModel;
@@ -1835,10 +1884,12 @@ begin
   end;
 end;
 
+{$IFNDEF MARS_FIREDAC}
 function InstantDefaultConnector: TInstantConnector;
 begin
   Result := DefaultConnector;
 end;
+{$ENDIF}
 
 procedure InstantDisableNotifiers;
 begin
@@ -2051,7 +2102,7 @@ begin
   end;
 end;
 
-{$IFNDEF INSTANTOBJECTS_FMX}
+{$IFNDEF IO_CONSOLE}
 procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
   AGraphicClass: TGraphicClass);
 begin
@@ -2191,7 +2242,11 @@ end;
 
 function TInstantObjectReference.GetInstance: TInstantObject;
 begin
-  if Integer(FInstance) <= 0 then
+  {$IFDEF WIN64}
+  if (Int64(FInstance) = -1) or (Int64(FInstance) = 0)) then
+  {$ELSE}
+  if (Integer(FInstance) = -1) or (Integer(FInstance) = 0) then
+  {$ENDIF}
     Result := nil
   else
     Result := FInstance;
@@ -3752,8 +3807,10 @@ function TInstantBlob.UseUnicode: boolean;
 begin
   if Assigned(Owner) and Assigned(Owner.Connector) then
     Result := Owner.Connector.UseUnicode
+  {$IFNDEF MARS_FIREDAC}
   else if InstantDefaultConnector <> nil then
     Result := InstantDefaultConnector.UseUnicode
+  {$ENDIF}
   else
     Result := False;
 end;
@@ -3844,7 +3901,7 @@ begin
     Dest.Bitmap := nil;
 end;
 {$ELSE}
-{$IFNDEF CONSOLE}
+{$IFNDEF IO_CONSOLE}
 procedure TInstantBlob.AssignPicture(Source: TPicture);
 begin
   if Assigned(Source.Graphic) then
@@ -3893,7 +3950,7 @@ begin
     AssignToPicture(TImage(Dest))
   else
 {$ELSE}
-  {$IFNDEF CONSOLE}
+  {$IFNDEF IO_CONSOLE}
   if Dest is TPicture then
     AssignToPicture(TPicture(Dest))
   else
@@ -4058,9 +4115,10 @@ begin
   if not Assigned(AStream) then
     Exit;
 
+  Obj := nil;
   if Connector.BlobStreamFormat = sfBinary then
     Obj := InstantReadObjectFromStream(AStream, nil, nil, Connector)
-  else
+  else if Connector.BlobStreamFormat = sfXML then
   begin
     MemoryStream := TMemoryStream.Create;
     try
@@ -4072,11 +4130,14 @@ begin
     end;
   end;
 
-  try
-    Value := TInstantObject(Obj) as TInstantObject
-  except
-    Obj.Free;
-    raise;
+  if Assigned(Obj) then
+  begin
+    try
+      Value := TInstantObject(Obj) as TInstantObject
+    except
+      Obj.Free;
+      raise;
+    end;
   end;
 end;
 
@@ -4576,9 +4637,14 @@ end;
 
 procedure TInstantContainer.Clear;
 begin
-  BeforeContentChange(ctClear, -1, nil);
-  InternalClear;
-  AfterContentChange(ctClear, -1, nil);
+  Owner.AddRef;
+  try
+    BeforeContentChange(ctClear, -1, nil);
+    InternalClear;
+    AfterContentChange(ctClear, -1, nil);
+  finally
+    Owner.Release;
+  end;
 end;
 
 procedure TInstantContainer.Delete(Index: Integer);
@@ -5433,7 +5499,7 @@ begin
       end;
     end;
   end
-  else
+  else if Connector.BlobStreamFormat = sfXML then
   begin
     XMLReferencesTag := Self.ClassName;
     ObjectEnd := InstantBuildEndTag(XMLReferencesTag);
@@ -5457,8 +5523,8 @@ begin
       end;
     finally
       Processor.Free;
-      end;
-    end;
+    end
+  end;
   Changed;
 end;
 
@@ -5794,7 +5860,7 @@ class procedure TInstantObject.ConvertToBinary(Converter: TInstantTextToBinaryCo
   procedure ConvertAttribute(AttributeMetadata: TInstantAttributeMetadata);
   var
     Count: Integer;
-    AttributeName, AttributeEnd, Bin, Hex: string;
+    LValue, AttributeName, AttributeEnd, Bin, Hex: string;
   begin
     with Converter do
     begin
@@ -5835,6 +5901,11 @@ class procedure TInstantObject.ConvertToBinary(Converter: TInstantTextToBinaryCo
             while not SameText(Processor.PeekTag, AttributeEnd) do
               Convert;
             Writer.WriteListEnd;
+          end;
+        atEnum:
+          begin
+            LValue := Processor.ReadData;
+            Writer.WriteInteger(StrToInt(LValue));
           end;
       end;
       Processor.ReadTag;
@@ -6588,6 +6659,11 @@ begin
   Result := FId;
 end;
 
+class function TInstantObject.GetSerializedIdPropertyName: string;
+begin
+  Result := IO_SER_ID;
+end;
+
 function TInstantObject.GetIsAbandoned: Boolean;
 begin
   Result := not Assigned(Connector);
@@ -6889,6 +6965,11 @@ begin
   finally
     EnableChanges;
   end;
+end;
+
+class function TInstantObject.ReformatID(const Id: string): string;
+begin
+  Result := Id;
 end;
 
 procedure TInstantObject.Refresh;
@@ -7808,6 +7889,8 @@ end;
 function TInstantObjectStore.RetrieveObject(const AObjectId: string;
   const AObject: TInstantObject;
   const AObjectData: TInstantAbstractObjectData = nil): Boolean;
+var
+  LObjectId: string;
 begin
   Result := Assigned(AObject) and AObject.Metadata.IsStored;
   if not Result then
@@ -7817,9 +7900,10 @@ begin
   try
     AObject.DisableChanges;
     try
-      Result := Broker.RetrieveObject(AObject, AObjectId, caFail, AObjectData);
+      LObjectId := AObject.ReformatID(AObjectId);
+      Result := Broker.RetrieveObject(AObject, LObjectId, caFail, AObjectData);
       if Result then
-        AObject.SetPersistentId(AObjectId)
+        AObject.SetPersistentId(LObjectId)
       else begin
         AObject.SetPersistentId('');
         AObject.SetUpdateCount(0);
@@ -7835,7 +7919,7 @@ begin
         raise
       else
         raise EInstantError.CreateFmt(SErrorRetrievingObject,
-          [AObject.ClassName, AObjectId, E.Message], E);
+          [AObject.ClassName, LObjectId, E.Message], E);
   end;
 end;
 
@@ -7978,6 +8062,16 @@ begin
   if (MaxCount <> 0) and (Result > MaxCount) then
     Result := MaxCount;
 end;
+
+{$IFDEF D17+}
+procedure TInstantQuery.GetObjectList(const AList: TList<TInstantObject>);
+var
+  I: Integer;
+begin
+  for I := 0 to Pred(ObjectCount) do
+    AList.Add(Objects[I] as TInstantObject);
+end;
+{$ENDIF}
 
 function TInstantQuery.GetObjects(Index: Integer): TObject;
 begin
@@ -8573,7 +8667,11 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
+  {$IFNDEF MARS_FIREDAC}
     Result := InstantDefaultConnector;
+  {$ELSE}
+    Result := nil;
+  {$ENDIF}
 end;
 
 function TInstantDBBuildCommand.GetDescription: string;
@@ -9151,6 +9249,11 @@ begin
   Result := TransactedObjectList[Index];
 end;
 
+function TInstantConnector.GetUseUnicode: Boolean;
+begin
+  Result := FUseUnicode;
+end;
+
 procedure TInstantConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
   if Assigned(Scheme) then
@@ -9254,6 +9357,11 @@ begin
       DefaultConnector := nil;
 end;
 
+procedure TInstantConnector.SetUseUnicode(const Value: Boolean);
+begin
+  FUseUnicode := Value;
+end;
+
 procedure TInstantConnector.StartTransaction;
 begin
   if not UseTransactions then
@@ -9318,6 +9426,19 @@ begin
   Connector.IdDataType := IdDataType;
   Connector.IdSize := IdSize;
   Connector.UseUnicode := UseUnicode;
+end;
+
+procedure TInstantConnectionDef.TestConnection;
+var
+  LConnector: TInstantConnector;
+begin
+  LConnector := CreateConnector(nil);
+  try
+    LConnector.Connect;
+    LConnector.Disconnect;
+  finally
+    LConnector.Free;
+  end;
 end;
 
 { TInstantConnectionDefs }
@@ -9395,12 +9516,41 @@ begin
   end;
 end;
 
+
+{ TInstantObjectListEnumerator }
+{$IFDEF D17+}
+constructor TInstantObjectListEnumerator.Create(AList: TObjectList<TInstantObject>);
+begin
+  FIndex := -1;
+  FList := AList;
+end;
+
+function TInstantObjectListEnumerator.GetCurrent;
+begin
+  Result := FList[FIndex];
+end;
+
+function TInstantObjectListEnumerator.MoveNext: Boolean;
+begin
+  Result := FIndex < FList.Count - 1;
+  if Result then
+    Inc(FIndex);
+end;
+
+{ TInstantObjectList<T> }
+
+function TInstantObjectList<T>.GetEnumerator: TInstantObjectListEnumerator;
+begin
+  Result := TInstantObjectListEnumerator.Create(Self);
+end;
+{$ENDIF}
+
 initialization
   RegisterClasses([TInstantClassMetadatas, TInstantClassMetadata,
     TInstantAttributeMetadatas, TInstantAttributeMetadata,
     TInstantObjectReference, TInstantConnectionDefs, TInstantConnectionDef]);
   ClassList := TList.Create;
-{$IFNDEF INSTANTOBJECTS_FMX}
+{$IFNDEF IO_CONSOLE}
   GraphicClassList[gffIco] := Graphics.TIcon;
   GraphicClassList[gffBmp] := Graphics.TBitmap;
   {$IFNDEF FPC}

@@ -11,7 +11,7 @@ object InstantDialogForm: TInstantDialogForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
@@ -26,7 +26,6 @@ object InstantDialogForm: TInstantDialogForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitTop = 212
     object ButtonBevel: TBevel
       Left = 0
       Top = 0

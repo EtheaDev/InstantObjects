@@ -3,6 +3,12 @@ object InstantAttributeViewFrame: TInstantAttributeViewFrame
   Top = 0
   Width = 376
   Height = 188
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  ParentFont = False
   TabOrder = 0
   object AttributesSplitter: TSplitter
     Left = 0

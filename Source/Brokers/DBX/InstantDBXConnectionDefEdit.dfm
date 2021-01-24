@@ -2,22 +2,23 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
   Left = 287
   Top = 34
   Caption = 'dbExpress Connection'
-  ClientHeight = 303
+  ClientHeight = 307
   ClientWidth = 383
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
-    Top = 266
+    Top = 270
     Width = 383
     Height = 2
     Align = alBottom
@@ -29,14 +30,14 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     Left = 0
     Top = 0
     Width = 383
-    Height = 266
+    Height = 270
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
     object DriverNameLabel: TLabel
       Left = 16
       Top = 16
-      Width = 59
+      Width = 62
       Height = 13
       Caption = '&Driver Name'
       FocusControl = DriverNameEdit
@@ -44,7 +45,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     object ConnectionNameLabel: TLabel
       Left = 16
       Top = 60
-      Width = 85
+      Width = 92
       Height = 13
       Caption = '&Connection Name'
       FocusControl = ConnectionNameListBox
@@ -52,7 +53,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     object ParamsLabel: TLabel
       Left = 168
       Top = 16
-      Width = 95
+      Width = 105
       Height = 13
       Caption = 'Connection &Settings'
       FocusControl = ParamsEditor
@@ -60,7 +61,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     object StreamFormatLabel: TLabel
       Left = 16
       Top = 228
-      Width = 53
+      Width = 60
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
@@ -98,7 +99,6 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Width = 145
       Height = 21
       Style = csDropDownList
-      Sorted = True
       TabOrder = 5
     end
     object LoginPromptCheckBox: TCheckBox
@@ -120,14 +120,14 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 268
+    Top = 272
     Width = 383
     Height = 35
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     object OkButton: TButton
-      Left = 233
+      Left = 222
       Top = 6
       Width = 75
       Height = 25
@@ -137,7 +137,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       TabOrder = 0
     end
     object CancelButton: TButton
-      Left = 313
+      Left = 302
       Top = 6
       Width = 75
       Height = 25
@@ -145,6 +145,15 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
+    end
+    object TestButton: TButton
+      Left = 7
+      Top = 6
+      Width = 106
+      Height = 25
+      Caption = 'Test connection...'
+      TabOrder = 2
+      OnClick = TestButtonClick
     end
   end
 end

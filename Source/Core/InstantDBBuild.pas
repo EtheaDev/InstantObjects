@@ -439,10 +439,14 @@ end;
 
 function TInstantCustomDBBuilder.GetConnector: TInstantConnector;
 begin
-  if not Assigned(FConnector) then
-    Result := InstantDefaultConnector
+  if Assigned(FConnector) then
+    Result := FConnector
   else
-    Result := FConnector;
+    {$IFNDEF MARS_FIREDAC}
+    Result := InstantDefaultConnector;
+    {$ELSE}
+    raise Exception.Create(SDefaultConnectorNotAvailable);
+    {$ENDIF}
 end;
 
 procedure TInstantCustomDBBuilder.Notification(AComponent: TComponent;
@@ -775,7 +779,11 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
+    {$IFNDEF MARS_FIREDAC}
     Result := InstantDefaultConnector;
+    {$ELSE}
+    raise Exception.Create(SDefaultConnectorNotAvailable);
+    {$ENDIF}
 end;
 
 function TInstantDBBuildCommandSequence.GetCount: Integer;

@@ -53,7 +53,9 @@ type
   protected
     function CreateConnection(AOwner: TComponent): TCustomConnection; override;
   public
+    {$IFNDEF IO_CONSOLE}
     function Edit: Boolean; override;
+    {$ENDIF}
     class function ConnectionTypeName: string; override;
     class function ConnectorClass: TInstantConnectorClass; override;
   published
@@ -99,18 +101,22 @@ type
     function GetConnector: TInstantDBXConnector;
   protected
     procedure AssignParam(SourceParam, TargetParam: TParam); virtual;
-    procedure AssignParams(SourceParams, TargetParams: TParams);
+    procedure AssignParams(SourceParams, TargetParams: TParams;
+      OnAssignParamValue: TAssignParamValue = nil);
     function ColumnTypeByDataType(DataType: TInstantDataType): string; virtual; abstract;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetDatabaseName: string; override;
     function InternalCreateQuery: TInstantQuery; override;
-    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams); override;
+    procedure AssignDataSetParams(DataSet : TDataSet; AParams: TParams;
+      OnAssignParamValue: TAssignParamValue = nil); override;
   public
     function CreateDBBuildCommand(
       const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
-    function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
+    function CreateDataSet(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil): TDataSet; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
-    function Execute(const AStatement: string; AParams: TParams = nil): Integer; override;
+    function Execute(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil): Integer; override;
     property Connector: TInstantDBXConnector read GetConnector;
   end;
 
@@ -446,7 +452,7 @@ end;
 
 function TInstantDBXConnectionDef.Edit: Boolean;
 begin
-  with TInstantDBXConnectionDefEditForm.Create(nil) do
+  with TInstantDBXConnectionDefEditForm.CreateForConnectionDef(nil, Self) do
   try
     LoadData(Self);
     Result := ShowModal = mrOk;
@@ -460,10 +466,10 @@ end;
 { TInstantDBXBroker }
 
 procedure TInstantDBXBroker.AssignDataSetParams(DataSet: TDataSet;
-  AParams: TParams);
+  AParams: TParams; OnAssignParamValue: TAssignParamValue = nil);
 begin
   //don't call inherited!
-  AssignParams(AParams, TSQLQuery(DataSet).Params);
+  AssignParams(AParams, TSQLQuery(DataSet).Params, OnAssignParamValue);
 end;
 
 procedure TInstantDBXBroker.AssignParam(SourceParam, TargetParam: TParam);
@@ -497,7 +503,8 @@ begin
   end;
 end;
 
-procedure TInstantDBXBroker.AssignParams(SourceParams, TargetParams: TParams);
+procedure TInstantDBXBroker.AssignParams(SourceParams, TargetParams: TParams;
+  OnAssignParamValue: TAssignParamValue = nil);
 var
   I: Integer;
   SourceParam, TargetParam: TParam;
@@ -507,12 +514,16 @@ begin
     SourceParam := SourceParams[I];
     TargetParam := TargetParams.FindParam(SourceParam.Name);
     if Assigned(TargetParam) then
+    begin
+      if Assigned(OnAssignParamValue) then
+        OnAssignParamValue(SourceParam);
       AssignParam(SourceParam, TargetParam);
+    end;
   end;
 end;
 
 function TInstantDBXBroker.CreateDataSet(const AStatement: string;
-  AParams: TParams): TDataSet;
+  AParams: TParams = nil; OnAssignParamValue: TAssignParamValue = nil): TDataSet;
 var
   Query: TSQLQuery;
 begin
@@ -522,7 +533,7 @@ begin
     SQLConnection := Connector.Connection;
     SQL.Text := AStatement;
     if Assigned(AParams) then
-      AssignParams(AParams, Params);
+      AssignParams(AParams, Params, OnAssignParamValue);
 {$IFNDEF D9+}
     NoMetadata := True;
 {$ENDIF}
@@ -568,11 +579,11 @@ begin
 end;
 
 function TInstantDBXBroker.Execute(const AStatement: string;
-  AParams: TParams): Integer;
+  AParams: TParams = nil; OnAssignParamValue: TAssignParamValue = nil): Integer;
 var
   LQuery: TSQLQuery;
 begin
-  LQuery := CreateDataSet(AStatement, AParams) as TSQLQuery;
+  LQuery := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TSQLQuery;
   try try
     Result := LQuery.ExecSQL;
   except

@@ -36,8 +36,10 @@ unit InstantClasses;
 interface
 
 uses
-  Windows,
-  Classes, InstantConsts, SysUtils;
+  Windows
+  , Classes
+  , InstantConsts
+  , SysUtils;
 
 const
   InstantBufferSize = 4096;
@@ -83,7 +85,7 @@ type
 
   TInstantStreamable = class(TPersistent)
   protected
-    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter); virtual;
+    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter); overload; virtual;
     class procedure ConvertToText(Converter: TInstantBinaryToTextConverter); virtual;
     class function CreateInstance(Arg: Pointer = nil): TInstantStreamable; virtual;
     procedure ReadObject(Reader: TInstantReader); virtual;
@@ -110,7 +112,7 @@ type
   private
     FName: string;
   protected
-    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter); virtual;
+    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter); overload; virtual;
     class procedure ConvertToText(Converter: TInstantBinaryToTextConverter); virtual;
     class function CreateInstance(Arg: Pointer = nil): TInstantCollectionItem; virtual;
     function GetDisplayName: string; override;
@@ -129,7 +131,7 @@ type
 
   TInstantCollection = class(TCollection)
   protected
-    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter); virtual;
+    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter); overload; virtual;
     class procedure ConvertToText(Converter: TInstantBinaryToTextConverter); virtual;
     class function CreateInstance(Arg: Pointer = nil): TInstantCollection; virtual;
     procedure ReadObject(Reader: TInstantReader); virtual;
@@ -418,12 +420,22 @@ type
       AMetadata: TInstantCollectionItem); virtual;
   end;
 
-  TInstantStreamFormat = (sfBinary, sfXML);
+  TInstantStreamFormat = (
+    sfBinary
+    , sfXML
+    {$IFDEF DELPHI_NEON}
+    , sfJSON
+    {$ENDIF}
+    );
 
 const
   AInstantStreamFormatStr : Array[TInstantStreamFormat] of string =
-   ('Binary format',
-    'XML format');
+   ('Binary format'
+    ,'XML format'
+    {$IFDEF DELPHI_NEON}
+    ,'JSON format'
+    {$ENDIF}
+    );
 
 function InstantBuildEndTag(const TagName: string): string;
 function InstantBuildStartTag(const TagName: string): string;
@@ -444,7 +456,13 @@ procedure InstantWriteObjects(Stream: TStream; Format: TInstantStreamFormat; Obj
 implementation
 
 uses
-  TypInfo, StrUtils, InstantUtils, InstantRtti;
+  TypInfo
+  , StrUtils
+  {$IFDEF DELPHI_NEON}
+  , Instant.Neon.Serializers
+  {$ENDIF}
+  , InstantUtils
+  , InstantRtti;
 
 const
   ResourceHeader : packed array[0..31] of Byte = ($00,$00,$00,$00,$20,$00,$00,
@@ -479,6 +497,7 @@ begin
       raise EInstantError.CreateFmt(SInvalidClass,
         [AClass.ClassName, MinimumClass.ClassName]);
 end;
+
 procedure InstantObjectBinaryToText(Input, Output: TStream);
 begin
   with TInstantBinaryToTextConverter.Create(Input, Output) do
@@ -511,7 +530,8 @@ var
 begin
   if Format = sfBinary then
     Result := InstantReadObjectFromStream(Stream, AObject)
-  else begin
+  else if Format = sfXML then
+  begin
     MemoryStream := TMemoryStream.Create;
     try
       {$IFDEF UNICODE}
@@ -531,14 +551,28 @@ begin
         StringStream.Free;
       end;
       {$ELSE}
-      InstantObjectTextToBinary(Stream, MemoryStream);
+      InstantObjectTextToBinary(Stream, MemoryStream)
       MemoryStream.Position := 0;
       Result := InstantReadObjectFromStream(MemoryStream, AObject);
       {$ENDIF}
     finally
       MemoryStream.Free;
     end;
-  end;
+  {$IFDEF DELPHI_NEON}
+  end
+  else if Format = sfJSON then
+  begin
+    StringStream := TStringStream.Create('', TEncoding.UTF8);
+    try
+      StringStream.CopyFrom(Stream, Stream.Size);
+      Result := JSONToPersistentObject(StringStream.datastring, AObject);
+    finally
+      StringStream.Free;
+    end;
+  {$ENDIF}
+  end
+  else
+    Result := nil;
 end;
 
 function InstantReadObjectFromStream(Stream: TStream;
@@ -570,13 +604,15 @@ begin
       Objects.Add(InstantReadObject(Stream, Format));
 end;
 
-procedure InstantWriteObject(Stream: TStream; Format: TInstantStreamFormat; AObject: TPersistent);
+procedure InstantWriteObject(Stream: TStream; Format: TInstantStreamFormat;
+  AObject: TPersistent);
 var
   MemoryStream: TMemoryStream;
 begin
   if Format = sfBinary then
     InstantWriteObjectToStream(Stream, AObject)
-  else begin
+  else if Format = sfXML then
+  begin
     MemoryStream := TMemoryStream.Create;
     try
       InstantWriteObjectToStream(MemoryStream, AObject);
@@ -585,6 +621,12 @@ begin
     finally
       MemoryStream.Free;
     end;
+  {$IFDEF DELPHI_NEON}
+  end
+  else if Format = sfJSON then
+  begin
+    PersistentObjectToStream(AObject, Stream);
+  {$ENDIF}
   end;
 end;
 

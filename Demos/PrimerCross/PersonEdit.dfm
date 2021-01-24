@@ -2,8 +2,7 @@ inherited PersonEditForm: TPersonEditForm
   Left = 298
   Top = 244
   Caption = 'Person'
-  ClientHeight = 344
-  Font.Name = 'Segoe UI'
+  ClientHeight = 354
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
     00000100040000000000C0000000000000000000000000000000000000000000
@@ -16,59 +15,21 @@ inherited PersonEditForm: TPersonEditForm
     0000FFFF0000FF9F0000F20F0000E0070000F0070000F8070000F8070000F807
     0000FC0F0000FE3F0000FC1F0000FC1F0000FC1F0000FE3F0000FFFF0000}
   OnShow = FormShow
-  ExplicitHeight = 383
+  ExplicitHeight = 393
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 313
-    ExplicitTop = 313
-    ExplicitWidth = 425
-    inherited AnchorPanel: TPanel
-      Left = 258
-      ExplicitLeft = 258
-    end
+    Top = 323
+    ExplicitTop = 323
   end
   inherited ClientPanel: TPanel
-    Height = 313
-    ExplicitWidth = 425
-    ExplicitHeight = 313
+    Height = 323
+    ExplicitHeight = 323
     inherited PageControl: TPageControl
-      Height = 309
-      ExplicitWidth = 421
-      ExplicitHeight = 309
+      Height = 319
+      ExplicitHeight = 319
       inherited DetailsSheet: TTabSheet
-        ExplicitLeft = 4
-        ExplicitTop = 6
-        ExplicitWidth = 413
-        ExplicitHeight = 299
-        inherited NameLabel: TLabel
-          Width = 29
-          ExplicitWidth = 29
-        end
-        inherited StreetLabel: TLabel
-          Width = 30
-          ExplicitWidth = 30
-        end
-        inherited CityLabel: TLabel
-          Width = 19
-          ExplicitWidth = 19
-        end
-        inherited ZipLabel: TLabel
-          Width = 16
-          ExplicitWidth = 16
-        end
-        inherited StateLabel: TLabel
-          Width = 73
-          ExplicitWidth = 73
-        end
-        inherited PhonesLabel: TLabel
-          Width = 38
-          ExplicitWidth = 38
-        end
-        inherited CountryLabel: TLabel
-          Width = 41
-          ExplicitWidth = 41
-        end
+        ExplicitHeight = 309
         inherited MidBevel: TBevel
           Height = 290
           ExplicitHeight = 290
@@ -76,7 +37,7 @@ inherited PersonEditForm: TPersonEditForm
         object BirthDateLabel: TLabel [8]
           Left = 136
           Top = 184
-          Width = 51
+          Width = 48
           Height = 13
           Caption = '&Birth Date'
           FocusControl = BirthDateEdit
@@ -84,7 +45,7 @@ inherited PersonEditForm: TPersonEditForm
         object EmployerLabel: TLabel [9]
           Left = 8
           Top = 224
-          Width = 47
+          Width = 44
           Height = 13
           Caption = '&Employer'
           FocusControl = EmployerEdit
@@ -92,14 +53,10 @@ inherited PersonEditForm: TPersonEditForm
         object EmailsLabel: TLabel [10]
           Left = 240
           Top = 104
-          Width = 36
+          Width = 33
           Height = 13
           Caption = 'E-&mails'
           FocusControl = EmailsGrid
-        end
-        inherited CategoryLabel: TLabel
-          Width = 46
-          ExplicitWidth = 46
         end
         object SalaryLabel: TLabel [12]
           Left = 8
@@ -111,19 +68,19 @@ inherited PersonEditForm: TPersonEditForm
         object Label1: TLabel [13]
           Left = 136
           Top = 264
-          Width = 48
+          Width = 44
           Height = 13
           Caption = 'BirthTime'
           FocusControl = BirthTimeEdit
         end
         object PicturePanel: TPanel [14]
-          Left = 332
+          Left = 417
           Top = 203
           Width = 76
           Height = 96
           BevelOuter = bvLowered
           Caption = 'Picture'
-          TabOrder = 14
+          TabOrder = 13
           object PictureImage: TImage
             Left = 3
             Top = 2
@@ -136,25 +93,7 @@ inherited PersonEditForm: TPersonEditForm
           Height = 37
           ExplicitHeight = 37
         end
-        inherited PhonesGrid: TDBGrid
-          Height = 76
-          TabOrder = 11
-          TitleFont.Name = 'Segoe UI'
-          Columns = <
-            item
-              Expanded = False
-              FieldName = 'Name'
-              Width = 56
-              Visible = True
-            end
-            item
-              Expanded = False
-              FieldName = 'Number'
-              Width = 90
-              Visible = True
-            end>
-        end
-        object BirthDateEdit: TDBEdit [21]
+        object BirthDateEdit: TDBEdit [20]
           Left = 136
           Top = 200
           Width = 73
@@ -163,7 +102,7 @@ inherited PersonEditForm: TPersonEditForm
           DataSource = SubjectSource
           TabOrder = 7
         end
-        object EmployerEdit: TDBEdit [22]
+        object EmployerEdit: TDBEdit [21]
           Left = 8
           Top = 240
           Width = 129
@@ -173,28 +112,28 @@ inherited PersonEditForm: TPersonEditForm
           ReadOnly = True
           TabOrder = 8
         end
-        object EmailsGrid: TDBGrid [23]
+        object EmailsGrid: TDBGrid [22]
           Left = 240
           Top = 120
-          Width = 169
+          Width = 253
           Height = 76
           DataSource = EmailsSource
           Options = [dgEditing, dgColLines, dgCancelOnExit]
-          TabOrder = 12
+          TabOrder = 11
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -11
-          TitleFont.Name = 'Segoe UI'
+          TitleFont.Name = 'Tahoma'
           TitleFont.Style = []
           Columns = <
             item
               Expanded = False
               FieldName = 'Address'
-              Width = 146
+              Width = 220
               Visible = True
             end>
         end
-        object EmployerToolBar: TToolBar [24]
+        object EmployerToolBar: TToolBar [23]
           Left = 140
           Top = 237
           Width = 69
@@ -233,16 +172,20 @@ inherited PersonEditForm: TPersonEditForm
             OnClick = EmployerClearButtonClick
           end
         end
-        object PictureButton: TButton [25]
-          Left = 240
+        object PictureButton: TButton [24]
+          Left = 330
           Top = 246
           Width = 81
           Height = 25
           Caption = 'Load &Picture...'
-          TabOrder = 13
+          TabOrder = 12
           OnClick = PictureButtonClick
         end
-        object SalaryEdit: TDBEdit
+        inherited PhonesGrid: TDBGrid
+          Height = 77
+          TabOrder = 16
+        end
+        object SalaryEdit: TDBEdit [27]
           Left = 8
           Top = 280
           Width = 121
@@ -251,23 +194,23 @@ inherited PersonEditForm: TPersonEditForm
           DataSource = SubjectSource
           TabOrder = 10
         end
-        object ClearButton: TButton
-          Left = 240
+        object ClearButton: TButton [28]
+          Left = 330
           Top = 274
           Width = 81
           Height = 25
           Caption = '&Clear Picture'
-          TabOrder = 15
+          TabOrder = 14
           OnClick = ClearButtonClick
         end
-        object BirthTimeEdit: TDBEdit
+        object BirthTimeEdit: TDBEdit [29]
           Left = 136
           Top = 280
           Width = 81
           Height = 21
           DataField = 'BirthTime'
           DataSource = SubjectSource
-          TabOrder = 16
+          TabOrder = 15
         end
       end
     end

@@ -16,6 +16,7 @@ object MainForm: TMainForm
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object SideBarSplitter: TSplitter

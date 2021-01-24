@@ -30,7 +30,11 @@
 
 unit TestInstantScheme;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -85,6 +89,9 @@ begin
   FInstantScheme.BlobStreamFormat := sfXML;
   AssertTrue('BlobStreamFormat',
     sfXML = FInstantScheme.BlobStreamFormat);
+  FInstantScheme.BlobStreamFormat := sfJSON;
+  AssertTrue('BlobStreamFormat',
+    sfJSON = FInstantScheme.BlobStreamFormat);
 end;
 
 procedure TestTInstantScheme.TestFindTableMetadata;

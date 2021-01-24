@@ -133,7 +133,6 @@ end;
 procedure TBasicEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
-  Font.Assign(Screen.IconFont);
   BorderStyle := bsSingle;
 end;
 

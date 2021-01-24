@@ -2,24 +2,26 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
   Left = 319
   Top = 196
   Caption = 'Class Editor'
-  ClientHeight = 365
+  ClientHeight = 461
   ClientWidth = 384
+  Font.Name = 'Segoe UI'
   OldCreateOrder = True
   OnCreate = FormCreate
+  OnShow = FormShow
   ExplicitWidth = 400
-  ExplicitHeight = 404
+  ExplicitHeight = 500
   PixelsPerInch = 96
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 384
-    Height = 334
+    Height = 430
     ExplicitWidth = 384
-    ExplicitHeight = 334
+    ExplicitHeight = 430
     object PageControl: TPageControl
       Left = 4
       Top = 4
       Width = 376
-      Height = 326
+      Height = 422
       ActivePage = ClassSheet
       Align = alClient
       TabOrder = 0
@@ -29,7 +31,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object ClassNameLabel: TLabel
           Left = 16
           Top = 16
-          Width = 56
+          Width = 58
           Height = 13
           Caption = 'Class &Name'
           FocusControl = ClassNameEdit
@@ -45,7 +47,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object UnitLabel: TLabel
           Left = 16
           Top = 112
-          Width = 19
+          Width = 22
           Height = 13
           Caption = '&Unit'
           FocusControl = UnitEdit
@@ -53,7 +55,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object StorageLabel: TLabel
           Left = 148
           Top = 160
-          Width = 68
+          Width = 72
           Height = 13
           Caption = '&Storage Name'
           FocusControl = StorageEdit
@@ -61,7 +63,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object PersistenceLabel: TLabel
           Left = 16
           Top = 160
-          Width = 55
+          Width = 57
           Height = 13
           Caption = '&Persistence'
           FocusControl = PersistenceComboBox
@@ -125,21 +127,27 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           Left = 0
           Top = 0
           Width = 360
-          Height = 290
+          Height = 386
           Align = alClient
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
           TabOrder = 0
           ExplicitWidth = 360
-          ExplicitHeight = 290
+          ExplicitHeight = 386
           inherited AttributesSplitter: TSplitter
-            Top = 186
+            Top = 282
             Width = 360
             ExplicitTop = 186
             ExplicitWidth = 360
           end
           inherited InheritedAttributesPanel: TPanel
-            Top = 190
+            Top = 286
             Width = 360
-            ExplicitTop = 190
+            ExplicitTop = 286
             ExplicitWidth = 360
             inherited InheritedAttributesLabel: TLabel
               Width = 360
@@ -152,18 +160,18 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
           end
           inherited IntroducedAttributesPanel: TPanel
             Width = 360
-            Height = 186
+            Height = 282
             ExplicitWidth = 360
-            ExplicitHeight = 186
+            ExplicitHeight = 282
             inherited IntroducedAttributesLabel: TLabel
               Width = 360
               ExplicitWidth = 360
             end
             inherited IntroducedAttributesView: TListView
               Width = 360
-              Height = 170
+              Height = 266
               ExplicitWidth = 360
-              ExplicitHeight = 170
+              ExplicitHeight = 266
             end
           end
         end
@@ -171,9 +179,9 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
     end
   end
   inherited BottomPanel: TPanel
-    Top = 334
+    Top = 430
     Width = 384
-    ExplicitTop = 334
+    ExplicitTop = 430
     ExplicitWidth = 384
     inherited ButtonPanel: TPanel
       Left = 224

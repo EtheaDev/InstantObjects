@@ -1,8 +1,6 @@
-inherited QueryViewForm: TQueryViewForm
+inherited QueryViewFrame: TQueryViewFrame
   Width = 745
   Height = 320
-  Font.Name = 'Segoe UI'
-  ParentFont = False
   ExplicitWidth = 745
   ExplicitHeight = 320
   object Splitter: TSplitter
@@ -29,7 +27,7 @@ inherited QueryViewForm: TQueryViewForm
     object ExampleLabel: TLabel
       Left = 27
       Top = 16
-      Width = 42
+      Width = 40
       Height = 13
       Caption = 'E&xample'
       FocusControl = ExampleComboBox
@@ -53,7 +51,6 @@ inherited QueryViewForm: TQueryViewForm
     Height = 147
     Align = alTop
     BevelOuter = bvLowered
-    BorderWidth = 30
     TabOrder = 1
     DesignSize = (
       745
@@ -61,7 +58,7 @@ inherited QueryViewForm: TQueryViewForm
     object CommandLabel: TLabel
       Left = 30
       Top = 14
-      Width = 52
+      Width = 47
       Height = 13
       Caption = '&Command'
       FocusControl = CommandEdit
@@ -81,17 +78,19 @@ inherited QueryViewForm: TQueryViewForm
     object Label1: TLabel
       Left = 448
       Top = 125
-      Width = 30
+      Width = 26
       Height = 13
       Anchors = [akTop, akRight]
       Caption = 'Mode'
       FocusControl = LoadModeComboBox
     end
     object CommandEdit: TMemo
-      Left = 31
-      Top = 31
-      Width = 683
-      Height = 85
+      AlignWithMargins = True
+      Left = 4
+      Top = 4
+      Width = 737
+      Height = 112
+      Margins.Bottom = 30
       Align = alClient
       TabOrder = 0
     end
@@ -169,7 +168,7 @@ inherited QueryViewForm: TQueryViewForm
         TitleFont.Charset = DEFAULT_CHARSET
         TitleFont.Color = clWindowText
         TitleFont.Height = -11
-        TitleFont.Name = 'Segoe UI'
+        TitleFont.Name = 'Tahoma'
         TitleFont.Style = []
       end
     end
@@ -178,7 +177,7 @@ inherited QueryViewForm: TQueryViewForm
       ImageIndex = 1
       ExplicitLeft = 0
       ExplicitTop = 0
-      ExplicitWidth = 764
+      ExplicitWidth = 0
       ExplicitHeight = 0
       object TranslatedQueryMemo: TMemo
         Left = 0
@@ -187,7 +186,6 @@ inherited QueryViewForm: TQueryViewForm
         Height = 104
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 764
       end
     end
     object StatsTabSheet: TTabSheet
@@ -195,7 +193,7 @@ inherited QueryViewForm: TQueryViewForm
       ImageIndex = 2
       ExplicitLeft = 0
       ExplicitTop = 0
-      ExplicitWidth = 764
+      ExplicitWidth = 0
       ExplicitHeight = 0
       object StatsMemo: TMemo
         Left = 0
@@ -204,7 +202,6 @@ inherited QueryViewForm: TQueryViewForm
         Height = 104
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 764
       end
     end
   end

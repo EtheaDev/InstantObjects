@@ -143,6 +143,7 @@ type
       Sender: TObject);
     procedure InstantAttributeViewFrameAttributeEditActionExecute(
       Sender: TObject);
+    procedure FormResize(Sender: TObject);
   private
     FError: TInstantModelError;
     FModel: TInstantCodeModel;
@@ -161,6 +162,7 @@ type
     procedure SetAttributePanelVisible(Visible: Boolean);
     procedure RestoreLayout;
     procedure StoreLayout;
+    procedure RealignForm;
   protected
     procedure ApplyClass(AClass: TInstantCodeClass;
       ChangeType: TInstantCodeChangeType; OldName: string = '';
@@ -534,9 +536,22 @@ begin
   end;
 end;
 
+procedure TInstantModelExplorerForm.RealignForm;
+begin
+  AttributePanel.Height := Height div 2;
+  InstantAttributeViewFrame.InheritedAttributesPanel.height :=
+    AttributePanel.Height div 2 - AttributeCaptionPanel.Height;
+end;
+
+procedure TInstantModelExplorerForm.FormResize(Sender: TObject);
+begin
+  RealignForm;
+end;
+
 procedure TInstantModelExplorerForm.FormShow(Sender: TObject);
 begin
   FModelView.Repaint; // Avoid wrong icon for first node
+  RealignForm;
 end;
 
 function TInstantModelExplorerForm.GetFocusedClass: TInstantCodeClass;

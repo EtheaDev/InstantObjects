@@ -67,6 +67,7 @@ type
     procedure OkButtonClick(Sender: TObject);
     procedure CancelButtonClick(Sender: TObject);
     procedure ClassSheetResize(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
     FModel: TInstantCodeModel;
     FTitle: string;
@@ -350,6 +351,13 @@ begin
   PageControl.ActivePage := ClassSheet;
   ActiveControl := ClassNameEdit;
   ClassSheetResize(nil);
+end;
+
+procedure TInstantClassEditorForm.FormShow(Sender: TObject);
+begin
+  inherited;
+  if height < 500 then
+    height := 500;
 end;
 
 procedure TInstantClassEditorForm.ClassSheetResize(Sender: TObject);

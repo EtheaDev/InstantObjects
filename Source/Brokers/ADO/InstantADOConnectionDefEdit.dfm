@@ -9,11 +9,12 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnShow = FormShow
   PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
@@ -35,7 +36,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
     object StreamFormatLabel: TLabel
       Left = 32
       Top = 152
-      Width = 53
+      Width = 60
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
@@ -43,7 +44,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
     object Label1: TLabel
       Left = 134
       Top = 152
-      Width = 62
+      Width = 63
       Height = 13
       Caption = 'Id Data Type'
       FocusControl = IdDataTypeComboBox
@@ -51,7 +52,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
     object Label2: TLabel
       Left = 259
       Top = 152
-      Width = 32
+      Width = 33
       Height = 13
       Caption = 'Id Size'
       FocusControl = IdDataTypeComboBox
@@ -116,7 +117,6 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
       Width = 97
       Height = 21
       Style = csDropDownList
-      Sorted = True
       TabOrder = 7
     end
     object LoginPromptCheckBox: TCheckBox
@@ -175,6 +175,15 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
       Caption = 'Cancel'
       ModalResult = 2
       TabOrder = 1
+    end
+    object TestButton: TButton
+      Left = 7
+      Top = 6
+      Width = 106
+      Height = 25
+      Caption = 'Test connection...'
+      TabOrder = 2
+      OnClick = TestButtonClick
     end
   end
 end

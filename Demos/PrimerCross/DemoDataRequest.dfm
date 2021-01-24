@@ -5,6 +5,11 @@ object DemoDataRequestForm: TDemoDataRequestForm
   ClientHeight = 156
   ClientWidth = 297
   Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Segoe UI'
+  Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
@@ -13,7 +18,7 @@ object DemoDataRequestForm: TDemoDataRequestForm
   object AmountLabel: TLabel
     Left = 40
     Top = 75
-    Width = 138
+    Width = 141
     Height = 13
     Caption = 'Number of contacts to create'
   end

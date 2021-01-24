@@ -1,4 +1,4 @@
-object BasicViewForm: TBasicViewForm
+object BasicViewFrame: TBasicViewFrame
   Left = 0
   Top = 0
   Width = 425

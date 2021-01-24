@@ -146,7 +146,6 @@ end;
 
 procedure TBasicBrowseForm.FormCreate(Sender: TObject);
 begin
-  Font.Assign(Screen.IconFont);
   LoadMultipleImages(ActionImages,'BROWSEACTIONIMAGES',HInstance);
   BorderStyle := bsSingle;
   SelectItem.Default := True;

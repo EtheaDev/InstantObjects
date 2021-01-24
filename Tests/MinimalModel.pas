@@ -44,6 +44,7 @@ type
     function GetStringProperty: string;
     procedure SetStringProperty(const Value: string);
   published
+    property Id;
     property StringProperty: string read GetStringProperty write SetStringProperty;
   end;
 

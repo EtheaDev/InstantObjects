@@ -59,60 +59,64 @@ uses
   {$IFDEF D10+}, Variants, DBCommonTypes{$ENDIF};
 
 type
-  TInstantFireDACConnectionDef = class(TInstantRelationalConnectionDef)
+  TInstantFireDACConnectionDef = class(TInstantConnectionBasedConnectionDef)
   private
-    FCatalog            : string;
-    FDatabase           : string;
-    FHostName           : string;
-    FLoginPrompt        : boolean;
-    FPassword           : string;
-    FPort               : integer;
-    FProperties         : string;
-    FProtocol           : string;
+    FCatalog: string;
+    FDatabase: string;
+    FHostName: string;
+    FAdditionalParams: string;
+    FDriverId: string;
+    FProtocol: string;
     FUseDelimitedIdents : boolean;
-    FUserName           : string;
-    FEncryptedPassword  : string;
+    FUser_Name: string;
+    FPassword: string;
+    FEncryptedPassword: string;
+    FOSAuthent: Boolean;
+    FServer: string;
+    FPort: integer;
   protected
+    function CreateConnection(AOwner: TComponent): TCustomConnection; override;
     procedure InitConnector(Connector: TInstantConnector); override;
   public
+    {$IFNDEF IO_CONSOLE}
     function Edit: Boolean; override;
+    {$ENDIF}
     class function ConnectionTypeName: string; override;
     class function ConnectorClass: TInstantConnectorClass; override;
+    function GetConnectionParams: string;
+    procedure UpdateConnectionParams(const AParams: string);
+  public
   published
-    property Catalog: string read FCatalog write FCatalog;
+    property Catalog: string read FCatalog write FCatalog stored False;
     property Database: string read FDatabase write FDatabase;
     property HostName: string read FHostName write FHostName;
-    property LoginPrompt: boolean read FLoginPrompt write FLoginPrompt;
+    property Server: string read FServer write FServer;
     property Password: string read FPassword write FPassword;
     property EncryptedPassword: string read FEncryptedPassword write FEncryptedPassword;
-    property Port: Integer read FPort write FPort;
-    property Properties: string read FProperties write FProperties;
-    property Protocol: string read FProtocol write FProtocol;
+    property Port: Integer read FPort write FPort stored False;
+    property AdditionalParams: string read FAdditionalParams write FAdditionalParams;
+    property Protocol: string read FProtocol write FProtocol stored False;
+    property DriverId: string read FDriverId write FDriverId;
     property UseDelimitedIdents: boolean read FUseDelimitedIdents write FUseDelimitedIdents;
-    property UserName: string read FUserName write FUserName;
+    property User_Name: string read FUser_Name write FUser_Name;
+    property OSAuthent: Boolean read FOSAuthent write FOSAuthent;
+    property ConnectionParams: string read GetConnectionParams;
   end;
 
   TInstantFireDACBroker = class;
 
-  TInstantFireDACConnector = class(TInstantRelationalConnector)
+  TInstantFireDACConnector = class(TInstantConnectionBasedConnector)
   private
-    FConnection         : TFDConnection;
-    FLoginPrompt        : Boolean;
-    FOnLogin            : TLoginEvent;
+    FOnLogin: TFDConnectionLoginEvent;
     FUseDelimitedIdents : Boolean;
-    procedure DoAfterConnectionChange;
-    procedure DoBeforeConnectionChange;
     function GetBroker: TInstantFireDACBroker;
     function GetConnection: TFDConnection;
-    function GetLoginPrompt: Boolean;
     procedure SetConnection(Value: TFDConnection);
-    procedure SetLoginPrompt(const Value: Boolean);
     procedure SetUseDelimitedIdents(const Value: Boolean);
   protected
-    procedure AfterConnectionChange; virtual;
-    procedure BeforeConnectionChange; virtual;
-    procedure AssignLoginOptions; virtual;
-    procedure CheckConnection;
+    procedure AfterConnectionChange; override;
+    procedure BeforeConnectionChange; override;
+    procedure AssignLoginOptions; override;
     function CreateBroker: TInstantBroker; override;
     {$IFDEF D22+}
     procedure DoLogin(AConnection: TFDCustomConnection;
@@ -125,22 +129,15 @@ type
     function GetDatabaseExists: Boolean; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
     procedure InternalCommitTransaction; override;
-    procedure InternalConnect; override;
     procedure InternalCreateDatabase; override;
-    procedure InternalDisconnect; override;
     procedure InternalRollbackTransaction; override;
     procedure InternalStartTransaction; override;
-    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     function ParamByName(const AName: string): string;
   public
-    constructor Create(AOwner: TComponent); override;
     class function ConnectionDefClass: TInstantConnectionDefClass; override;
-    function HasConnection: Boolean;
     property Broker: TInstantFireDACBroker read GetBroker;
   published
     property Connection: TFDConnection read GetConnection write SetConnection;
-    property LoginPrompt: Boolean read GetLoginPrompt write SetLoginPrompt default False;
-    property OnLogin: TLoginEvent read FOnLogin write FOnLogin;
     property UseDelimitedIdents: Boolean read FUseDelimitedIdents write SetUseDelimitedIdents default False;
   end;
 
@@ -148,7 +145,8 @@ type
   private
     function GetConnector: TInstantFireDACConnector;
   protected
-    procedure AssignDataSetParams(DataSet: TDataSet; AParams: TParams); override;
+    procedure AssignDataSetParams(DataSet: TDataSet; AParams: TParams;
+      OnAssignParamValue: TAssignParamValue = nil); override;
     procedure AssignParam(SourceParam: TParam; TargetParam: TFDParam); virtual;
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
@@ -163,10 +161,12 @@ type
     function UseBooleanFields: Boolean; virtual; abstract;
   public
     procedure CreateDatabase;
-    function CreateDataSet(const AStatement: string; AParams: TParams = nil): TDataSet; override;
+    function CreateDataSet(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil): TDataSet; override;
     function CreateDBBuildCommand(const CommandType: TInstantDBBuildCommandType): TInstantDBBuildCommand; override;
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
-    function Execute(const AStatement: string; AParams: TParams = nil): Integer; override;
+    function Execute(const AStatement: string; AParams: TParams = nil;
+      OnAssignParamValue: TAssignParamValue = nil): Integer; override;
     function DBNotExistsErrorCode: Integer;
     property Connector: TInstantFireDACConnector read GetConnector;
   end;
@@ -209,11 +209,6 @@ type
   protected
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
     function UseBooleanFields: Boolean; override;
-  end;
-
-  TInstantFireDACMSSQL2005Broker = class(TInstantFireDACMSSQLBroker)
-  protected
-    function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
   end;
   {$ENDIF}
 
@@ -314,13 +309,14 @@ type
   end;
   {$ENDIF}
 
-procedure AssignFireDACProtocols(Strings: TStrings);
+procedure AssignFireDACDriverIds(Strings: TStrings);
 
 implementation
 
 uses
-  SysUtils, {$IFDEF D7+}Types,{$ENDIF} Controls, {$IFDEF D5}DBLogDlg,{$ENDIF}
-  InstantConsts, InstantClasses, InstantFireDACConnectionDefEdit,
+  SysUtils, Types, StrUtils,
+  {$IFNDEF IO_CONSOLE}Controls, InstantFireDACConnectionDefEdit, FireDAC.VCLUI.Login,{$ENDIF}
+  InstantConsts, InstantClasses,
   InstantFireDACCatalog, InstantUtils,
   FireDAC.Stan.Consts;
 
@@ -332,11 +328,7 @@ const
   STmpTableSuffix = '_IOTmp_';
 {$ENDIF}
 
-{$IFDEF MSSQL_SUPPORT}
-  S_FD_MSSQL2005Id = S_FD_MSSQLId + ' 2005';
-{$ENDIF}
-
-procedure AssignFireDACProtocols(Strings: TStrings);
+procedure AssignFireDACDriverIds(Strings: TStrings);
 begin
   if assigned(Strings) then
     begin
@@ -348,7 +340,6 @@ begin
 
       {$IFDEF MSSQL_SUPPORT}
       Strings.Add(S_FD_MSSQLId);
-      Strings.Add(S_FD_MSSQL2005Id);
       {$ENDIF}
 
       {$IFDEF IBFB_SUPPORT}
@@ -374,18 +365,54 @@ begin
     end;
 end;
 
-
 { Local routines }
 
-{$IFDEF D5}
-function LoginDialogProcCompatibility(const ADatabaseName: string;
- var AUserName, APassword: string): Boolean;
-begin
-  Result := LoginDialogEx(ADatabaseName, AUserName, APassword, False);
-end;
-{$ENDIF}
-
 { TInstantFireDACConnectionDef }
+
+function TInstantFireDACConnectionDef.GetConnectionParams: string;
+var
+  LServer: string;
+begin
+  if DriverId = '' then
+    Result := 'DriverID='+Protocol+sLineBreak
+  else
+    Result := 'DriverID='+DriverId+sLineBreak;
+  LServer := Server;
+  if LServer = '' then
+  begin
+    //HostName + Port (old configuration)
+    LServer := HostName;
+    if (Port > 0) then
+      LServer := LServer + ', ' + IntToStr(Port);
+  end;
+  Result := Result + 'Server='+LServer+sLineBreak;
+  if Port <> 0 then
+    Result := Result + 'Port='+IntToStr(Port)+sLineBreak;
+  if User_Name <> '' then
+    Result := Result +'User_Name='+User_Name+sLineBreak;
+  if EncryptedPassword <> '' then
+    Result := Result + 'EncryptedPassword='+EncryptedPassword+sLineBreak
+  else if Password <> '' then
+    Result := Result + 'Password='+Password+sLineBreak;
+  if Database <> '' then
+    Result := Result + 'Database='+ExpandDatabaseName(Database)+sLineBreak;
+  if OSAuthent then
+    Result := Result + 'OSAuthent=Yes'+sLineBreak
+  else
+    Result := Result + 'OSAuthent=No'+sLineBreak;
+  if LoginPrompt then
+    Result := Result + 'LoginPrompt=True'+sLineBreak;
+  if UseDelimitedIdents then
+    Result := Result + 'UseDelimitedIdents=True'+sLineBreak;
+  case BlobStreamFormat of
+    sfBinary: Result := Result + 'BlobStreamFormat=sfBinary'+sLineBreak;
+    sfXML: Result := Result + 'BlobStreamFormat=sfXML'+sLineBreak;
+    sfJSON: Result := Result + 'BlobStreamFormat=sfJSON'+sLineBreak;
+  end;
+  if UseUnicode then
+    Result := Result + 'CharacterSet=utf8'+sLineBreak;
+  Result := Result + AdditionalParams;
+end;
 
 class function TInstantFireDACConnectionDef.ConnectionTypeName: string;
 begin
@@ -397,11 +424,13 @@ begin
   Result := TInstantFireDACConnector;
 end;
 
+{$IFNDEF IO_CONSOLE}
 function TInstantFireDACConnectionDef.Edit: Boolean;
 var
   EditForm : TInstantFireDACConnectionDefEditForm;
 begin
-  EditForm := TInstantFireDACConnectionDefEditForm.Create(nil);
+  EditForm := TInstantFireDACConnectionDefEditForm.CreateForConnectionDef(nil,
+    Self);
   try
     EditForm.LoadData(Self);
     Result := (EditForm.ShowModal = mrOk);
@@ -411,41 +440,66 @@ begin
     EditForm.Free;
   end;
 end;
+{$ENDIF}
 
-procedure TInstantFireDACConnectionDef.InitConnector(Connector: TInstantConnector);
+function TInstantFireDACConnectionDef.CreateConnection(
+  AOwner: TComponent): TCustomConnection;
 var
   Connection  : TFDConnection;
-  FDConnector : TInstantFireDACConnector;
 begin
-  inherited;
-  Connection := TFDConnection.Create(Connector);
+  Connection := TFDConnection.Create(AOwner);
   try
-    FDConnector := (Connector as TInstantFireDACConnector);
-    FDConnector.Connection := Connection;
-    FDConnector.LoginPrompt := LoginPrompt;
-    FDConnector.UseDelimitedIdents := UseDelimitedIdents;
-
-    // Use FireDAC MSSQL driver name for MSSQL 2005 protocol
-    if (SameText(Protocol, S_FD_MSSQL2005Id)) then
-      Connection.DriverName := S_FD_MSSQLId else
-      Connection.DriverName := Protocol;
-
     Connection.TxOptions.AutoCommit := false;
     Connection.TxOptions.Isolation := xiReadCommitted;
-    Connection.Params.Values['User_Name'] := UserName;
-    Connection.Params.Values['Password'] := Password;
-    Connection.Params.Values['Database'] := Database;
-    Connection.Params.Values['MetaDefCatalog'] := Catalog;
-
-    if (trim(HostName) = '') then
-      HostName := '127.0.0.1';
-
-    if (Port <= 0) then
-      Connection.Params.Values['Server'] := HostName else
-      Connection.Params.Values['Server'] := HostName + ', ' + IntToStr(Port)
+    Connection.Params.Text := ConnectionParams;
   except
     Connection.Free;
     raise;
+  end;
+  Result := Connection;
+end;
+
+procedure TInstantFireDACConnectionDef.InitConnector(
+  Connector: TInstantConnector);
+begin
+  inherited;
+  (Connector as TInstantFireDACConnector).UseDelimitedIdents := UseDelimitedIdents;
+end;
+
+procedure TInstantFireDACConnectionDef.UpdateConnectionParams(
+  const AParams: string);
+var
+  LParams: TStringList;
+  LPort: string;
+begin
+  LParams := TStringList.Create;
+  try
+    LParams.Text := AParams;
+    Server             := LParams.Values['Server'];
+    if Server = '' then
+    begin
+      HostName           := LParams.Values['HostName'];
+      LPort := LParams.Values['Port'];
+      if (LPort <> '') and (LPort<> '0') then
+        Port := StrToInt(LPort);
+    end;
+    DriverId           := LParams.Values['DriverId'];
+    if DriverId = '' then
+      Protocol         := LParams.Values['Protocol'];
+    Database           := LParams.Values['Database'];
+    User_Name          := LParams.Values['User_Name'];
+    Password           := LParams.Values['Password'];
+    LoginPrompt        := SameText(LParams.Values['LoginPrompt'],'True');
+    OSAuthent          := SameText(LParams.Values['OSAuthent'],'Yes');
+    if SameText(LParams.Values['BlobStreamFormat'], 'sfBinary') then
+      BlobStreamFormat := sfBinary
+    else if SameText(LParams.Values['BlobStreamFormat'], 'sfJSON') then
+      BlobStreamFormat := sfJSON
+    else
+      BlobStreamFormat := sfXML; //Default for FireDAC
+    UseDelimitedIdents := SameText(LParams.Values['UseDelimitedIdents'],'TRUE');
+  finally
+    LParams.Free;
   end;
 end;
 
@@ -455,39 +509,32 @@ procedure TInstantFireDACConnector.AfterConnectionChange;
 begin
   if (HasConnection) then
     begin
-      FConnection.Close;
-      FConnection.TxOptions.AutoCommit := true;
-      FConnection.TxOptions.Isolation := xiReadCommitted;
-      FConnection.OnLogin := DoLogin;
+      Connection.Close;
+      Connection.TxOptions.AutoCommit := true;
+      Connection.TxOptions.Isolation := xiReadCommitted;
+      if Assigned(FOnLogin) then
+        Connection.OnLogin := DoLogin;
     end;
 end;
 
 procedure TInstantFireDACConnector.AssignLoginOptions;
 begin
-  if (HasConnection) then
-    FConnection.LoginPrompt := FLoginPrompt;
+  inherited;
+  if HasConnection then
+  begin
+    if Assigned(FOnLogin) and not Assigned(Connection.OnLogin) then
+      Connection.OnLogin := FOnLogin;
+  end;
 end;
 
 procedure TInstantFireDACConnector.BeforeConnectionChange;
 begin
-end;
-
-procedure TInstantFireDACConnector.CheckConnection;
-begin
-  if not assigned(FConnection) then
-    raise EInstantError.Create(SUnassignedConnection);
+  inherited;
 end;
 
 class function TInstantFireDACConnector.ConnectionDefClass: TInstantConnectionDefClass;
 begin
   Result := TInstantFireDACConnectionDef;
-end;
-
-constructor TInstantFireDACConnector.Create(AOwner: TComponent);
-begin
-  inherited Create(AOwner);
-  FLoginPrompt := False;
-  FUseDelimitedIdents := False;
 end;
 
 function TInstantFireDACConnector.CreateBroker: TInstantBroker;
@@ -496,46 +543,43 @@ begin
   Result := nil;
 
   {$IFDEF SYBASE_SUPPORT}
-  if SameText(FConnection.DriverName, S_FD_ASAId) then
+  if SameText(Connection.DriverName, S_FD_ASAId) then
     Result := TInstantFireDACSybaseBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF MSSQL_SUPPORT}
-  if SameText(FConnection.DriverName, S_FD_MSSQLId) then
+  if SameText(Connection.DriverName, S_FD_MSSQLId) then
     Result := TInstantFireDACMSSQLBroker.Create(Self);
-
-  if SameText(FConnection.DriverName, S_FD_MSSQL2005Id) then
-    Result := TInstantFireDACMSSQL2005Broker.Create(Self);
   {$ENDIF}
 
   {$IFDEF IBFB_SUPPORT}
-  if SameText(FConnection.DriverName, S_FD_IBId) or SameText(FConnection.DriverName, S_FD_FBId) then
+  if SameText(Connection.DriverName, S_FD_IBId) or SameText(Connection.DriverName, S_FD_FBId) then
     Result := TInstantFireDACIbFbBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF ORACLE_SUPPORT}
-  if SameText(FConnection.DriverName, S_FD_OraId) then
+  if SameText(Connection.DriverName, S_FD_OraId) then
     Result := TInstantFireDACOracleBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF PGSQL_SUPPORT}
-  if SameText(FConnection.DriverName, S_FD_PGId) then
+  if SameText(Connection.DriverName, S_FD_PGId) then
     Result := TInstantFireDACPgSQLBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF MYSQL_SUPPORT}
-  if SameText(FConnection.DriverName, S_FD_MySQLId) then
+  if SameText(Connection.DriverName, S_FD_MySQLId) then
     Result := TInstantFireDACMySQLBroker.Create(Self);
   {$ENDIF}
 
   {$IFDEF SQLITE_SUPPORT}
-  if SameText(FConnection.DriverName, S_FD_SQLiteId) then
+  if SameText(Connection.DriverName, S_FD_SQLiteId) then
     Result := TInstantFireDACSQLiteBroker.Create(Self);
   {$ENDIF}
 
   if (Result = nil) then
     raise EInstantError.CreateFmt(SProtocolNotSupported,
-     [FConnection.DriverName]);
+     [Connection.DriverName]);
 end;
 
 {$IFDEF D22+}
@@ -547,25 +591,7 @@ procedure TInstantFireDACConnector.DoLogin(AConnection: TFDCustomConnection;
 {$ENDIF}
 begin
   if (assigned(FOnLogin)) then
-    FOnLogin(AConnection, AConnection.Params.Values['User_Name'],
-             AConnection.Params.Values['Password']);
-end;
-
-procedure TInstantFireDACConnector.DoAfterConnectionChange;
-begin
-  if (HasConnection) then
-    FConnection.FreeNotification(Self);
-  AfterConnectionChange;
-end;
-
-procedure TInstantFireDACConnector.DoBeforeConnectionChange;
-begin
-  try
-    BeforeConnectionChange;
-  finally
-    if HasConnection then
-      FConnection.RemoveFreeNotification(Self);
-  end;
+    FOnLogin(AConnection, AParams);
 end;
 
 function TInstantFireDACConnector.GetBroker: TInstantFireDACBroker;
@@ -582,9 +608,7 @@ end;
 
 function TInstantFireDACConnector.GetConnection: TFDConnection;
 begin
-  if not (csDesigning in ComponentState) then
-    CheckConnection;
-  Result := FConnection;
+  Result := inherited Connection as TFDConnection;
 end;
 
 function TInstantFireDACConnector.GetDatabaseExists: Boolean;
@@ -605,18 +629,6 @@ begin
   end;
 end;
 
-function TInstantFireDACConnector.GetLoginPrompt: Boolean;
-begin
-  if (HasConnection) then
-    FLoginPrompt := FConnection.LoginPrompt;
-  Result := FLoginPrompt;
-end;
-
-function TInstantFireDACConnector.HasConnection: Boolean;
-begin
-  Result := assigned(FConnection);
-end;
-
 procedure TInstantFireDACConnector.InternalBuildDatabase(
   Scheme: TInstantScheme);
 begin
@@ -633,14 +645,8 @@ end;
 procedure TInstantFireDACConnector.InternalCommitTransaction;
 begin
   CheckConnection;
-  if (FConnection.InTransaction) then
-    FConnection.Commit;
-end;
-
-procedure TInstantFireDACConnector.InternalConnect;
-begin
-  CheckConnection;
-  FConnection.Open;
+  if (Connection.InTransaction) then
+    Connection.Commit;
 end;
 
 procedure TInstantFireDACConnector.InternalCreateDatabase;
@@ -650,32 +656,18 @@ begin
   Broker.CreateDatabase;
 end;
 
-procedure TInstantFireDACConnector.InternalDisconnect;
-begin
-  if (HasConnection) then
-    FConnection.Close;
-end;
-
 procedure TInstantFireDACConnector.InternalRollbackTransaction;
 begin
   CheckConnection;
-  if (FConnection.InTransaction) then
-    FConnection.Rollback;
+  if (Connection.InTransaction) then
+    Connection.Rollback;
 end;
 
 procedure TInstantFireDACConnector.InternalStartTransaction;
 begin
   CheckConnection;
-  if (not FConnection.InTransaction) then
-    FConnection.StartTransaction;
-end;
-
-procedure TInstantFireDACConnector.Notification(AComponent: TComponent;
-  Operation: TOperation);
-begin
-  inherited;
-  if (AComponent = FConnection) and (Operation = opRemove) then
-    FConnection := nil;
+  if (not Connection.InTransaction) then
+    Connection.StartTransaction;
 end;
 
 function TInstantFireDACConnector.ParamByName(const AName: string): string;
@@ -685,20 +677,7 @@ end;
 
 procedure TInstantFireDACConnector.SetConnection(Value: TFDConnection);
 begin
-  if (Value <> FConnection) then
-    begin
-      Disconnect;
-      DoBeforeConnectionChange;
-      FConnection := Value;
-      AssignLoginOptions;
-      DoAfterConnectionChange;
-    end;
-end;
-
-procedure TInstantFireDACConnector.SetLoginPrompt(const Value: Boolean);
-begin
-  FLoginPrompt := Value;
-  AssignLoginOptions;
+  inherited Connection := Value;
 end;
 
 procedure TInstantFireDACConnector.SetUseDelimitedIdents(const Value: Boolean);
@@ -708,22 +687,39 @@ end;
 
 { TInstantFireDACBroker }
 
-procedure TInstantFireDACBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams);
+procedure TInstantFireDACBroker.AssignDataSetParams(DataSet: TDataSet; AParams: TParams;
+  OnAssignParamValue: TAssignParamValue = nil);
 var
   SourceParam : TParam;
   TargetParam : TFDParam;
   i           : Integer;
-  Params      : TFDParams;
+  TargetParams: TFDParams;
 begin
+  TargetParams := (DataSet as TFDQuery).Params;
   // Don't call inherited
-  Params := (DataSet as TFDQuery).Params;
-  for i := 0 to Pred(AParams.Count) do
+  if Assigned(OnAssignParamValue) and (AParams.Count = 0) then
+  begin
+    for i := 0 to Pred(TargetParams.Count) do
     begin
-      SourceParam := AParams[i];
-      TargetParam := Params.FindParam(SourceParam.Name);
-      if assigned(TargetParam) then
-        AssignParam(SourceParam, TargetParam);
+      TargetParam := TargetParams[i];
+      SourceParam := AParams.FindParam(TargetParam.Name);
+      if not Assigned(SourceParam) then
+      begin
+        SourceParam := AParams.AddParameter;
+        SourceParam.Name := TargetParam.Name;
+      end;
+      OnAssignParamValue(SourceParam);
     end;
+  end;
+  for i := 0 to Pred(AParams.Count) do
+  begin
+    SourceParam := AParams[i];
+    TargetParam := TargetParams.FindParam(SourceParam.Name);
+    if assigned(TargetParam) then
+    begin
+      AssignParam(SourceParam, TargetParam);
+    end;
+  end;
 end;
 
 procedure TInstantFireDACBroker.AssignParam(SourceParam: TParam; TargetParam: TFDParam);
@@ -787,7 +783,7 @@ begin
 end;
 
 function TInstantFireDACBroker.CreateDataSet(const AStatement: string;
-  AParams: TParams): TDataSet;
+  AParams: TParams; OnAssignParamValue: TAssignParamValue): TDataSet;
 var
   Query: TFDQuery;
 begin
@@ -796,7 +792,7 @@ begin
     Query.Connection := Connector.Connection;
     Query.SQL.Text := AStatement;
     if assigned(AParams) then
-      AssignDatasetParams(Query, AParams);
+      AssignDatasetParams(Query, AParams, OnAssignParamValue);
     Result := Query;
   except
     Query.Free;
@@ -848,11 +844,11 @@ begin
 end;
 
 function TInstantFireDACBroker.Execute(const AStatement: string;
-  AParams: TParams): Integer;
+  AParams: TParams; OnAssignParamValue: TAssignParamValue): Integer;
 var
   DataSet: TFDQuery;
 begin
-  DataSet := AcquireDataSet(AStatement,AParams) as TFDQuery;
+  DataSet := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TFDQuery;
   try
     DataSet.ExecSQL;
     Result := DataSet.RowsAffected;
@@ -1008,25 +1004,6 @@ function TInstantFireDACMSSQLBroker.UseBooleanFields: Boolean;
 begin
   Result := True;
 end;
-
-function TInstantFireDACMSSQL2005Broker.InternalDataTypeToColumnType(
-  DataType: TInstantDataType): string;
-const
-  Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT',
-    'MONEY',
-    'BIT',
-    'VARCHAR',
-    'VARBINARY(MAX)',
-    'DATETIME',
-    'VARCHAR(MAX)',
-    'DATETIME',
-    'DATETIME',
-    'INTEGER');
-begin
-  Result := Types[DataType];
-end;
 {$ENDIF}
 
 { TInstantFireDACIbFbBroker }
@@ -1034,7 +1011,7 @@ end;
 {$IFDEF IBFB_SUPPORT}
 procedure TInstantFireDACIbFbBroker.InternalCreateDatabase;
 var
-  OldProperties : string;
+  OldParams     : string;
   CharacterSet  : string;
   PageSizeStr   : string;
   PageSize      : integer;
@@ -1044,14 +1021,14 @@ begin
   // do not call inherited
   with Connector do
     begin
-      OldProperties := Connection.Params.Text;
+      OldParams := Connection.Params.Text;
 
       try
         CharacterSet := trim(Connection.Params.Values['CharacterSet']);
         PageSizeStr := trim(Connection.Params.Values['PageSize']);
 
         if (CharacterSet = '') then
-          CharacterSet := 'UTF8';
+          CharacterSet := 'utf8';
 
         if (PageSizeStr <> '') then
           begin
@@ -1074,7 +1051,7 @@ begin
         Connect;
         Disconnect;
       finally
-        Connection.Params.Text := OldProperties;
+        Connection.Params.Text := OldParams;
       end;
     end;
 end;
@@ -1437,10 +1414,6 @@ end;
 initialization
   RegisterClass(TInstantFireDACConnectionDef);
   TInstantFireDACConnector.RegisterClass;
-  {$IFDEF D5}
-  if (not assigned(LoginDialogProc)) then
-    LoginDialogProc := LoginDialogProcCompatibility;
-  {$ENDIF}
 
 finalization
   TInstantFireDACConnector.UnregisterClass;

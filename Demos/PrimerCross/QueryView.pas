@@ -1,4 +1,4 @@
-unit QueryView;
+﻿unit QueryView;
 
 interface
 
@@ -11,7 +11,7 @@ uses
   BasicView, Db, InstantPresentation, ComCtrls;
 
 type
-  TQueryViewForm = class(TBasicViewForm)
+  TQueryViewFrame = class(TBasicViewFrame)
     Actions: TActionList;
     CommandEdit: TMemo;
     CommandLabel: TLabel;
@@ -50,8 +50,8 @@ type
   protected
     procedure LoadExamples;
   public
-    procedure FormCreate(Sender: TObject); override;
-    procedure FormShow(Sender: TObject); override;
+    procedure FrameCreate(Sender: TObject); override;
+    procedure FrameShow(Sender: TObject); override;
     procedure Disconnect; override;
     procedure Connect; override;
     destructor Destroy; override;
@@ -92,26 +92,26 @@ const
     'SELECT * FROM TCompany WHERE EXISTS(SELECT * FROM TPerson WHERE City = ''San Diego'' USING Employer)')
   );
 
-destructor TQueryViewForm.Destroy;
+destructor TQueryViewFrame.Destroy;
 begin
   InstantLogProc := nil;
   inherited;
 end;
 
-procedure TQueryViewForm.Disconnect;
+procedure TQueryViewFrame.Disconnect;
 begin
   TestSelector.Close;
   inherited;
 end;
 
-procedure TQueryViewForm.ExampleComboBoxClick(Sender: TObject);
+procedure TQueryViewFrame.ExampleComboBoxClick(Sender: TObject);
 begin
   with ExampleComboBox do
     if ItemIndex <> -1 then
       CommandEdit.Text := Examples[ItemIndex, 1];
 end;
 
-procedure TQueryViewForm.ExecuteActionExecute(Sender: TObject);
+procedure TQueryViewFrame.ExecuteActionExecute(Sender: TObject);
 var
   LStartTime: Cardinal;
 begin
@@ -152,7 +152,7 @@ begin
   end;
 end;
 
-procedure TQueryViewForm.FormCreate(Sender: TObject);
+procedure TQueryViewFrame.FrameCreate(Sender: TObject);
 begin
   Caption := 'Query';
   LoadExamples;
@@ -160,7 +160,7 @@ begin
 end;
 
 {$IFDEF IO_STATEMENT_LOGGING}
-procedure TQueryViewForm.LogStatement(const AString: string);
+procedure TQueryViewFrame.LogStatement(const AString: string);
 begin
   //Log only first statement
   if TranslatedQueryMemo.Lines.Count = 0 then
@@ -169,7 +169,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TQueryViewForm.LoadExamples;
+procedure TQueryViewFrame.LoadExamples;
 var
   I: Integer;
 begin
@@ -185,26 +185,26 @@ begin
   end;
 end;
 
-procedure TQueryViewForm.TestSelectorAfterScroll(DataSet: TDataSet);
+procedure TQueryViewFrame.TestSelectorAfterScroll(DataSet: TDataSet);
 begin
   with DataSet do
     ShowStatus(Format('%d/%d', [RecNo, RecordCount]));
 end;
 
-procedure TQueryViewForm.ActionsUpdate(Action: TBasicAction;
+procedure TQueryViewFrame.ActionsUpdate(Action: TBasicAction;
   var Handled: Boolean);
 begin
   inherited;
   ExecuteAction.Enabled := IsConnected and (CommandEdit.Text <> '') and Visible;
 end;
 
-procedure TQueryViewForm.FormShow(Sender: TObject);
+procedure TQueryViewFrame.FrameShow(Sender: TObject);
 begin
   inherited;
   UpdateTabSheets;
 end;
 
-procedure TQueryViewForm.UpdateTabSheets;
+procedure TQueryViewFrame.UpdateTabSheets;
 begin
 {$IFDEF IO_STATEMENT_LOGGING}
   TranslatedQueryTabSheet.TabVisible := Assigned(Connector) and (Connector.Broker is TInstantSQLBroker);
@@ -215,13 +215,13 @@ begin
 {$ENDIF}
 end;
 
-procedure TQueryViewForm.Connect;
+procedure TQueryViewFrame.Connect;
 begin
   inherited;
   UpdateTabSheets;
 end;
 
-procedure TQueryViewForm.TestSelectorAfterClose(DataSet: TDataSet);
+procedure TQueryViewFrame.TestSelectorAfterClose(DataSet: TDataSet);
 begin
   inherited;
 {$IFDEF IO_STATEMENT_LOGGING}

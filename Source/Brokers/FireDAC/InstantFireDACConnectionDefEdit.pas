@@ -44,9 +44,7 @@ type
     ClientPanel                : TPanel;
     HostNameLabel              : TLabel;
     PortLabel                  : TLabel;
-    ProtocolLabel              : TLabel;
     DatabaseLabel              : TLabel;
-    CatalogLabel               : TLabel;
     UserNameLabel              : TLabel;
     PasswordLabel              : TLabel;
     PropertiesLabel            : TLabel;
@@ -55,14 +53,12 @@ type
     IdSizeLabel                : TLabel;
     HostNameEdit               : TEdit;
     PortEdit                   : TEdit;
-    ProtocolComboBox           : TComboBox;
     DatabaseEdit               : TEdit;
-    CatalogComboBox            : TComboBox;
     DatabaseButton             : TButton;
     UserNameEdit               : TEdit;
     PasswordEdit               : TEdit;
     LoginPromptCheckBox        : TCheckBox;
-    PropertiesEditor           : TMemo;
+    AdditionalParamsEditor     : TMemo;
     StreamFormatComboBox       : TComboBox;
     IdDataTypeComboBox         : TComboBox;
     IdSizeEdit                 : TEdit;
@@ -71,14 +67,24 @@ type
     BottomPanel                : TPanel;
     OkButton                   : TButton;
     CancelButton               : TButton;
+    OSAuthCheckBox: TCheckBox;
+    TestButton: TButton;
+    DriverIdLabel: TLabel;
+    DriverIdComboBox: TComboBox;
+    UseUnicodeCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure PortEditExit(Sender: TObject);
     procedure DatabaseButtonClick(Sender: TObject);
+    procedure TestButtonClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
-    procedure UpdateControls;
+    FOwnerConnectionDef: TInstantFireDACConnectionDef;
   public
+    constructor CreateForConnectionDef(AOwner: TComponent;
+      AConnectionDef: TInstantFireDACConnectionDef);
     procedure LoadData(ConnectionDef: TInstantFireDACConnectionDef);
     procedure SaveData(ConnectionDef: TInstantFireDACConnectionDef);
+    procedure TestConnection(ConnectionDef: TInstantFireDACConnectionDef);
   end;
 
 implementation
@@ -86,7 +92,7 @@ implementation
 {$R *.dfm}
 
 uses
-  InstantPersistence, InstantClasses, InstantTypes;
+  InstantPersistence, InstantClasses, InstantTypes, InstantConsts;
 
 { TInstantFireDACConnectionDefEditForm }
 
@@ -95,8 +101,12 @@ begin
   Font.Assign(Screen.IconFont);
   AssignInstantStreamFormat(StreamFormatComboBox.Items);
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
-  AssignFireDACProtocols(ProtocolComboBox.Items);
-  UpdateControls;
+  AssignFireDACDriverIds(DriverIdComboBox.Items);
+end;
+
+procedure TInstantFireDACConnectionDefEditForm.FormShow(Sender: TObject);
+begin
+  TestButton.Visible := Assigned(FOwnerConnectionDef);
 end;
 
 procedure TInstantFireDACConnectionDefEditForm.PortEditExit(Sender: TObject);
@@ -105,11 +115,20 @@ begin
     PortEdit.Text := IntToStr(StrToInt(PortEdit.Text));
 end;
 
+constructor TInstantFireDACConnectionDefEditForm.CreateForConnectionDef(
+  AOwner: TComponent; AConnectionDef: TInstantFireDACConnectionDef);
+begin
+  inherited Create(AOwner);
+  FOwnerConnectionDef := AConnectionDef;
+end;
+
 procedure TInstantFireDACConnectionDefEditForm.DatabaseButtonClick(Sender: TObject);
 begin
   with TOpenDialog.Create(nil) do
   try
-    Filter := 'All Files (*.*)|*.*';
+    Filter :=
+      'Firebird Database (*.fdb)|*.fdb|'+
+      'Interbase Database (*.gdb)|*.gdb';
     if Execute then
       DatabaseEdit.Text := FileName;
   finally
@@ -121,39 +140,66 @@ procedure TInstantFireDACConnectionDefEditForm.LoadData(ConnectionDef: TInstantF
 begin
   HostNameEdit.Text                  := ConnectionDef.HostName;
   PortEdit.Text                      := InttoStr(ConnectionDef.Port);
-  ProtocolComboBox.ItemIndex         := ProtocolComboBox.Items.IndexOf(ConnectionDef.Protocol);
+  DriverIdComboBox.ItemIndex         := DriverIdComboBox.Items.IndexOf(ConnectionDef.DriverId);
   DatabaseEdit.Text                  := ConnectionDef.Database;
-  CatalogComboBox.Text               := ConnectionDef.Catalog;
-  UserNameEdit.Text                  := ConnectionDef.UserName;
+  UserNameEdit.Text                  := ConnectionDef.User_Name;
   PasswordEdit.Text                  := ConnectionDef.Password;
   LoginPromptCheckBox.Checked        := ConnectionDef.LoginPrompt;
-  PropertiesEditor.Lines.Text        := ConnectionDef.Properties;
+  OSAuthCheckBox.Checked             := ConnectionDef.OSAuthent;
+  AdditionalParamsEditor.Lines.Text  := ConnectionDef.AdditionalParams;
   StreamFormatComboBox.ItemIndex     := Ord(ConnectionDef.BlobStreamFormat);
   IdDataTypeComboBox.ItemIndex       := Ord(ConnectionDef.IdDataType);
   IdSizeEdit.Text                    := InttoStr(ConnectionDef.IdSize);
   UseDelimitedIdentsCheckBox.Checked := ConnectionDef.UseDelimitedIdents;
-  UpdateControls;
+  UseUnicodeCheckBox.Checked         := ConnectionDef.UseUnicode;
 end;
 
 procedure TInstantFireDACConnectionDefEditForm.SaveData(ConnectionDef: TInstantFireDACConnectionDef);
 begin
   ConnectionDef.HostName           := HostNameEdit.Text;
   ConnectionDef.Port               := StrToIntDef(PortEdit.Text,0);
-  ConnectionDef.Protocol           := ProtocolComboBox.Text;
+  ConnectionDef.DriverId           := DriverIdComboBox.Text;
   ConnectionDef.Database           := DatabaseEdit.Text;
-  ConnectionDef.Catalog            := CatalogComboBox.Text;
-  ConnectionDef.UserName           := UserNameEdit.Text;
+  ConnectionDef.User_Name          := UserNameEdit.Text;
   ConnectionDef.Password           := PasswordEdit.Text;
   ConnectionDef.LoginPrompt        := LoginPromptCheckBox.Checked;
-  ConnectionDef.Properties         := PropertiesEditor.Lines.Text;
+  ConnectionDef.OSAuthent          := OSAuthCheckBox.Checked;
   ConnectionDef.BlobStreamFormat   := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
   ConnectionDef.IdDataType         := TInstantDataType(IdDataTypeComboBox.ItemIndex);
   ConnectionDef.IdSize             := StrToInt(IdSizeEdit.Text);
   ConnectionDef.UseDelimitedIdents := UseDelimitedIdentsCheckBox.Checked;
+  ConnectionDef.UseUnicode         := UseUnicodeCheckBox.Checked;
+  ConnectionDef.AdditionalParams   := AdditionalParamsEditor.Lines.Text;
 end;
 
-procedure TInstantFireDACConnectionDefEditForm.UpdateControls;
+procedure TInstantFireDACConnectionDefEditForm.TestButtonClick(Sender: TObject);
 begin
+  if Assigned(FOwnerConnectionDef) then
+  begin
+    SaveData(FOwnerConnectionDef);
+    Screen.Cursor := crHourGlass;
+    try
+      FOwnerConnectionDef.TestConnection;
+    finally
+      Screen.Cursor := crDefault;
+    end;
+    ShowMessage(SConnectionSuccess);
+  end;
+end;
+
+procedure TInstantFireDACConnectionDefEditForm.TestConnection(
+  ConnectionDef: TInstantFireDACConnectionDef);
+var
+  LConnector: TInstantConnector;
+begin
+  SaveData(ConnectionDef);
+  LConnector := ConnectionDef.CreateConnector(nil);
+  try
+    LConnector.Connect;
+    ShowMessage(SConnectionSuccess);
+  finally
+    LConnector.Free;
+  end;
 end;
 
 end.

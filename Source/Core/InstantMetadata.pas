@@ -37,7 +37,17 @@ unit InstantMetadata;
 interface
 
 uses
-  Classes, Contnrs, Db, InstantClasses, InstantTypes, InstantConsts;
+  Classes
+  , Contnrs
+  , Db
+  {$IFDEF DELPHI_NEON}
+  , Neon.Core.Types
+  , Neon.Core.Nullables
+  , Neon.Core.Attributes
+  {$ENDIF}
+  , InstantClasses
+  , InstantTypes
+  , InstantConsts;
 
 type
   TInstantAttributeMap = class;
@@ -100,15 +110,14 @@ type
     procedure SetTableName(const Value: string);
   protected
     procedure ClearParent;
-    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter);
-      override;
-    class procedure ConvertToText(Converter: TInstantBinaryToTextConverter);
-      override;
+    class procedure ConvertToBinary(Converter: TInstantTextToBinaryConverter); override;
+    class procedure ConvertToText(Converter: TInstantBinaryToTextConverter); override;
     procedure ReadObject(Reader: TInstantReader); override;
     procedure WriteObject(Writer: TInstantWriter); override;
   public
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
+    //{$IFDEF DELPHI_NEON}[neoninclude]{$ENDIF}
     property AttributeMetadatas: TInstantAttributeMetadatas
       read GetAttributeMetadatas;
     property Collection: TInstantClassMetadatas read GetCollection
@@ -119,6 +128,7 @@ type
     property Parent: TInstantClassMetadata read GetParent write SetParent;
     property StorageMap: TInstantAttributeMap read GetStorageMap;
     property StorageMaps: TInstantAttributeMaps read GetStorageMaps;
+    {$IFDEF DELPHI_NEON}[neoninclude]{$ENDIF}
     property TableName: string read GetTableName write SetTableName;
   published
     property DefaultContainerName: string read FDefaultContainerName
@@ -220,8 +230,7 @@ type
     function GetItems(Index: Integer): TInstantClassMetadata;
     procedure SetItems(Index: Integer; Value: TInstantClassMetadata);
   protected
-    class function CreateInstance(Arg: Pointer = nil): TInstantCollection;
-      override;
+    class function CreateInstance(Arg: Pointer = nil): TInstantCollection; override;
   public
     constructor Create(AOwner: TPersistent);
     function Add: TInstantClassMetadata;
@@ -283,11 +292,12 @@ type
     procedure DestroyClassMetadatas;
   public
     destructor Destroy; override;
-    procedure LoadFromFile(const FileName: string);
+    procedure LoadFromFile(const FileName: string; Format: TInstantStreamFormat = sfXML);
     procedure LoadFromResFile(const FileName: string);
     procedure MergeFromResFile(const FileName: string);
-    procedure SaveToFile(const FileName: string);
+    procedure SaveToFile(const FileName: string; Format: TInstantStreamFormat = sfXML);
     procedure SaveToResFile(const FileName: string);
+    {$IFDEF DELPHI_NEON}[neoninclude]{$ENDIF}
     property ClassMetadatas: TInstantClassMetadatas read GetClassMetadatas;
   end;
 
@@ -536,8 +546,10 @@ type
   published
     property AttributeType: TInstantAttributeType read FAttributeType
       write FAttributeType default atUnknown;
+    {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property AttributeTypeName: string read GetAttributeTypeName
       write SetAttributeTypeName stored False;
+    {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property ClassMetadata: TInstantClassMetadata read GetClassMetadata;
     property DefaultValue: string read FDefaultValue write FDefaultValue;
     property UseNull: Boolean read FUseNull write FUseNull default False;
@@ -554,12 +566,14 @@ type
     property IsLocalized: Boolean read FIsLocalized write FIsLocalized default False;
     property IsUnique: Boolean read FIsUnique write FIsUnique;
     property IndexName: string read FIndexName write FIndexName;
+    {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property ObjectClassName: string read FObjectClassName
       write FObjectClassName;
     property Size: Integer read FSize write FSize default 0;
     property StorageName: string read FStorageName write FStorageName;
     property ValidCharsString: string read GetValidCharsString
       write SetValidCharsString;
+    {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property EnumName: string read FEnumName write FEnumName;
   end;
 
@@ -1405,13 +1419,18 @@ begin
   Result := FClassMetadatas;
 end;
 
-procedure TInstantModel.LoadFromFile(const FileName: string);
+procedure TInstantModel.LoadFromFile(const FileName: string; Format: TInstantStreamFormat = sfXML);
 var
   Stream: TInstantFileStream;
 begin
   Stream := TInstantFileStream.Create(FileName, fmOpenRead);
   try
-    InstantReadObject(Stream, sfXML, ClassMetadatas);
+    {$IFDEF DELPHI_NEON}
+    if Format = sfJSON then
+      InstantReadObject(Stream, Format, Self)
+    else
+    {$ENDIF}
+      InstantReadObject(Stream, Format, ClassMetadatas);
   finally
     Stream.Free;
   end;
@@ -1460,13 +1479,18 @@ begin
   end;
 end;
 
-procedure TInstantModel.SaveToFile(const FileName: string);
+procedure TInstantModel.SaveToFile(const FileName: string; Format: TInstantStreamFormat = sfXML);
 var
   Stream: TInstantFileStream;
 begin
   Stream := TInstantFileStream.Create(FileName, fmCreate);
   try
-    InstantWriteObject(Stream, sfXML, ClassMetadatas);
+    {$IFDEF DELPHI_NEON}
+    if Format = sfJSON then
+      InstantWriteObject(Stream, Format, Self)
+    else
+    {$ENDIF}
+      InstantWriteObject(Stream, Format, ClassMetadatas);
   finally
     Stream.Free;
   end;

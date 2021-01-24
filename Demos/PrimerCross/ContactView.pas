@@ -13,7 +13,7 @@ uses
   BasicView, Model, InstantPresentation, InstantExplorer;
 
 type
-  TContactViewForm = class(TBasicViewForm)          
+  TContactViewForm = class(TBasicViewFrame)
     ActionList: TActionList;
     ActionImages: TImageList;
     ClientPanel: TPanel;
@@ -119,13 +119,13 @@ type
     property ExplorerVisible: Boolean read GetExplorerVisible write SetExplorerVisible;
     property IsFiltered: Boolean read GetIsFiltered write SetIsFiltered;
   public
-    procedure FormCreate(Sender: TObject); override;
+    procedure FrameCreate(Sender: TObject); override;
     destructor Destroy; override;
     procedure Connect; override;
     procedure Disconnect; override;
     procedure Reset; override;
-    procedure FormHide(Sender: TObject); override;
-    procedure FormShow(Sender: TObject); override;
+    procedure FrameHide(Sender: TObject); override;
+    procedure FrameShow(Sender: TObject); override;
   end;
 
 implementation
@@ -309,8 +309,8 @@ end;
 
 procedure TContactViewForm.EditActionExecute(Sender: TObject);
 begin
-  EditObject(ContactSelector.CurrentObject);
-  ContactSelector.RefreshData;
+  if EditObject(ContactSelector.CurrentObject) then
+    ContactSelector.RefreshData;
 end;
 
 procedure TContactViewForm.ExplorerActionExecute(Sender: TObject);
@@ -390,21 +390,18 @@ begin
   PerformFindQuery;
 end;
 
-procedure TContactViewForm.FormCreate(Sender: TObject);
+procedure TContactViewForm.FrameCreate(Sender: TObject);
 begin
   Caption := 'Contacts';
   ContactGrid.OnDrawColumnCell := ContactGridDrawColumnCell;
-  Font.Assign(Screen.IconFont);
-  Font.Height := -11;
-  ContactGrid.TitleFont.Assign(Screen.IconFont);
 
   LoadMultipleImages(ActionImages,'CONTACTACTIONIMAGES',HInstance);
   LoadMultipleImages(ExplorerImages,'EXPLORERCONTACTIMAGES',HInstance);
   FindButton.Action := FindAction; //to get glyph image
 
   FSortOrder := 'Name';
-  ExplorerPanel.Width := Screen.Width div 3;
-  ExplorerVisible := False;
+  ExplorerPanel.Width := (Sender as TFrame).Width div 3;
+  ExplorerVisible := True;
 
   with IndexTabControl.Tabs do
   begin
@@ -422,16 +419,18 @@ begin
   end;
 end;
 
-procedure TContactViewForm.FormHide(Sender: TObject);
+procedure TContactViewForm.FrameHide(Sender: TObject);
 begin
   inherited;
   ActionList.State := asSuspended;
 end;
 
-procedure TContactViewForm.FormShow(Sender: TObject);
+procedure TContactViewForm.FrameShow(Sender: TObject);
 begin
   inherited;
   ActionList.State := asNormal;
+  if ExplorerVisible then
+    Explorer.Refresh;
 end;
 
 function TContactViewForm.GetContactFilter: TContactFilter;
@@ -567,11 +566,21 @@ end;
 
 procedure TContactViewForm.SetExplorerVisible(const Value: Boolean);
 begin
-  ExplorerPanel.Visible := Value;
-  ExplorerSplitter.Visible := Value;
-  ExplorerButton.Down := Value;
-  if Visible then
+  if Value then
+  begin
+    ExplorerPanel.Width := Width div 3;
+    ExplorerPanel.Visible := Value;
+    ExplorerSplitter.Visible := Value;
+    ExplorerSplitter.Left := ExplorerPanel.Left -1;
+    ExplorerButton.Down := Value;
     UpdateExplorer;
+  end
+  else
+  begin
+    ExplorerPanel.Visible := False;
+    ExplorerSplitter.Visible := False;
+    ExplorerButton.Down := False;
+  end;
 end;
 
 procedure TContactViewForm.SetIsFiltered(const Value: Boolean);
@@ -633,5 +642,8 @@ begin
   else if Assigned(Explorer.RootObject) then
     Explorer.Clear;
 end;
+
+initialization
+  ReportMemoryLeaksOnShutdown := True;
 
 end.

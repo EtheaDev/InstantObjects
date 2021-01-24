@@ -7,19 +7,6 @@ interface
 uses
   Classes, Model, InstantPersistence, RandomData;
 
-procedure CreateCategories;
-procedure CreateCountries;
-function CreateRandomCompany: TCompany;
-function CreateRandomPerson(Company: TCompany; out Gender : TGender): TPerson;
-
-implementation
-
-uses
-  SysUtils,
-  Windows,
-  InstantUtils;
-
-procedure CreateCategories;
 const
   CategoryNames: array[0..5] of string = (
     'Undefined',
@@ -29,8 +16,23 @@ const
     'Friend',
     'Colleague'
   );
+
+procedure CreateCategories;
+procedure CreateCountries;
+function CreateRandomCompany: TCompany;
+function CreateRandomPerson(Company: TCompany; out Gender : TGender): TPerson;
+function CreateRandomAddress: TAddress;
+
+implementation
+
+uses
+  SysUtils,
+  Windows,
+  InstantUtils;
+
+procedure CreateCategories;
 var
-  I: Integer; 
+  I: Integer;
 begin
   for I := Low(CategoryNames) to High(CategoryNames) do
     with TCategory.Create do
@@ -120,7 +122,7 @@ var
   Phone: TPhone;
 begin
   for I := Low(Names) to High(Names) do
-    if Random(3) > 0 then
+    //if Random(3) > 0 then
     begin
       Phone := TPhone.Create;
       try

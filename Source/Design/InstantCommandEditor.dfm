@@ -8,7 +8,7 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
@@ -26,7 +26,7 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
     object FromClassLabel: TLabel
       Left = 8
       Top = 11
-      Width = 51
+      Width = 55
       Height = 13
       Caption = '&From Class'
       FocusControl = FromClassEdit
@@ -34,14 +34,14 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
     object AttributeLabel: TLabel
       Left = 8
       Top = 42
-      Width = 31
+      Width = 34
       Height = 13
       Caption = '&Object'
     end
     object CommandTextLabel: TLabel
       Left = 8
       Top = 72
-      Width = 71
+      Width = 75
       Height = 13
       Caption = '&Command Text'
       FocusControl = CommandTextEdit
@@ -132,9 +132,5 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
     BevelInner = bvNone
     TabOrder = 1
     OnChange = CommandTextEditChange
-    ExplicitLeft = 0
-    ExplicitTop = 89
-    ExplicitWidth = 385
-    ExplicitHeight = 114
   end
 end

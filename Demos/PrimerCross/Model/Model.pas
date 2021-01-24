@@ -8,7 +8,13 @@ unit Model;
 interface
 
 uses
-  InstantPersistence, InstantTypes;
+  InstantPersistence, InstantTypes
+  {$IFDEF DELPHI_NEON}
+  , Neon.Core.Types
+  , Neon.Core.Nullables
+  , Neon.Core.Attributes
+  {$ENDIF}
+  ;
 
 type
   TAddress = class;
@@ -21,6 +27,8 @@ type
   TPerson = class;
   TPhone = class;
 
+  TPhoneType = (ptHome, ptMobile, ptOffice, ptOther);
+
 
   TAddress = class(TInstantObject)
     {IOMETADATA City: String(30) index;
@@ -29,6 +37,7 @@ type
     Street: Memo;
     Zip: String(10); }
     _City: TInstantString;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Country')]{$ENDIF}
     _Country: TInstantReference;
     _State: TInstantString;
     _Street: TInstantMemo;
@@ -46,6 +55,7 @@ type
     procedure SetZip(const Value: string);
   published
     property City: string read GetCity write SetCity;
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Country: TCountry read GetCountry write SetCountry;
     property State: string read GetState write SetState;
     property Street: string read GetStreet write SetStreet;
@@ -63,23 +73,27 @@ type
     procedure BeforeStore; override;
     function GetCaption: string; override;
   published
-    property Id;
     property Name: string read GetName write SetName;
   end;
 
   TPhone = class(TInstantObject)
-    {IOMETADATA Name: String(20);
-    Number: String(20) mask '(000) 000-0000;0;_'; }
+  {IOMETADATA Name: String(20);
+    Number: String(20) mask '(000) 000-0000;0;_';
+    PhoneType: Enum(TPhoneType); }
     _Name: TInstantString;
     _Number: TInstantString;
+    _PhoneType: TInstantEnum;
   private
     function GetName: string;
     function GetNumber: string;
+    function GetPhoneType: TPhoneType;
     procedure SetName(const Value: string);
     procedure SetNumber(const Value: string);
+    procedure SetPhoneType(Value: TPhoneType);
   published
     property Name: string read GetName write SetName;
     property Number: string read GetNumber write SetNumber;
+    property PhoneType: TPhoneType read GetPhoneType write SetPhoneType;
   end;
 
   TEmail = class(TInstantObject)
@@ -101,6 +115,8 @@ type
     procedure SetName(const Value: string);
   protected
     function GetCaption: string; override;
+  public
+    constructor Create(AConnector: TInstantConnector = nil); override;
   published
     property Name: string read GetName write SetName;
   end;
@@ -113,9 +129,11 @@ type
     Name: String(50) index;
     Phones: Parts(TPhone); }
     _Address: TInstantPart;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Category')]{$ENDIF}
     _Category: TInstantReference;
     _City: TInstantString;
     _Name: TInstantString;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Phones')]{$ENDIF}
     _Phones: TInstantParts;
   private
     function GetAddress: TAddress;
@@ -146,6 +164,7 @@ type
     property Phones[Index: Integer]: TPhone read GetPhones write SetPhones;
   published
     property Address: TAddress read GetAddress write SetAddress;
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Category: TCategory read GetCategory write SetCategory;
     property City: string read GetCity write SetCity;
     property MainPhoneNumber: string read GetMainPhoneNumber write SetMainPhoneNumber;
@@ -174,7 +193,9 @@ type
     BirthTime: Time; }
     _BirthDate: TInstantDate;
     _BirthTime: TInstantTime;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Emails')]{$ENDIF}
     _Emails: TInstantParts;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Employer')]{$ENDIF}
     _Employer: TInstantReference;
     _Picture: TInstantGraphic;
     _Salary: TInstantCurrency;
@@ -196,6 +217,7 @@ type
   protected
     procedure BeforeDispose; override;
   public
+    procedure FreeInstance; override;
     function AddEmail(Email: TEmail): Integer;
     procedure ClearEmails;
     procedure DeleteEmail(Index: Integer);
@@ -208,6 +230,7 @@ type
   published
     property BirthDate: TDate read GetBirthDate write SetBirthDate;
     property BirthTime: TTime read GetBirthTime write SetBirthTime;
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Employer: TCompany read GetEmployer;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
     property Picture: string read GetPicture write SetPicture;
@@ -217,6 +240,7 @@ type
   TCompany = class(TContact)
     {IOMETADATA stored;
     Employees: References(TPerson); }
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Employees')]{$ENDIF}
     _Employees: TInstantReferences;
   private
     function GetEmployeeCount: Integer;
@@ -397,6 +421,18 @@ begin
   end;
 end;
 
+procedure TPerson.FreeInstance;
+begin
+  inherited;
+  //Avoid circular reference of object TCompany:
+  //When releasing TPerson object that is the only reference to
+  //the TCompany object we must dereference TCompany so it can be
+  //freed from memory.
+  if (RefCount <> 0) and (_Employer.Value is TInstantObject) and
+    (TInstantObject(_Employer.Value).RefCount = RefCount) then
+    _Employer.Value := nil;
+end;
+
 function TPerson.GetBirthDate: TDate;
 begin
   Result := _BirthDate.Value;
@@ -508,6 +544,11 @@ begin
   Result := _Number.Value;
 end;
 
+function TPhone.GetPhoneType: TPhoneType;
+begin
+  Result := TPhoneType(_PhoneType.Value);
+end;
+
 procedure TPhone.SetName(const Value: string);
 begin
   _Name.Value := Value;
@@ -516,6 +557,11 @@ end;
 procedure TPhone.SetNumber(const Value: string);
 begin
   _Number.Value := Value;
+end;
+
+procedure TPhone.SetPhoneType(Value: TPhoneType);
+begin
+  _PhoneType.Value := Ord(Value);
 end;
 
 { TEmail }
@@ -531,6 +577,12 @@ begin
 end;
 
 { TCategory }
+
+constructor TCategory.Create(AConnector: TInstantConnector = nil);
+begin
+  inherited;
+  ;
+end;
 
 function TCategory.GetCaption: string;
 begin

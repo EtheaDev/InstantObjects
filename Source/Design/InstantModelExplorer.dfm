@@ -12,15 +12,15 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = 11
-  Font.Name = 'MS Sans Serif'
-  Font.Pitch = fpVariable
+  Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
   OldCreateOrder = True
   Position = poScreenCenter
+  OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 11
   object AttributeSplitter: TSplitter
     Left = 0
     Top = 242
@@ -113,16 +113,9 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       object AttributeCaptionLabel: TLabel
         Left = 12
         Top = 6
-        Width = 89
-        Height = 13
+        Width = 55
+        Height = 11
         Caption = 'Class Attributes'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = 11
-        Font.Name = 'MS Sans Serif'
-        Font.Pitch = fpVariable
-        Font.Style = [fsBold]
-        ParentFont = False
       end
     end
     inline InstantAttributeViewFrame: TInstantAttributeViewFrame
@@ -131,6 +124,12 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       Width = 394
       Height = 218
       Align = alClient
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 1
       ExplicitTop = 25
       ExplicitWidth = 394
@@ -159,7 +158,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
           Top = 22
           Width = 394
           Height = 78
-          Font.Pitch = fpVariable
           ExplicitTop = 22
           ExplicitWidth = 394
           ExplicitHeight = 78

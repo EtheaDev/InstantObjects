@@ -93,7 +93,11 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
+  {$IFNDEF MARS_FIREDAC}
     Result := InstantDefaultConnector;
+  {$ELSE}
+    Result := nil;
+  {$ENDIF}
 end;
 
 function TInstantDataBrowser.GetParams: TParams;
