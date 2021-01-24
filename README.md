@@ -20,6 +20,8 @@ Even though it is still a bolted-on technology, InstantObjects integrates with t
 
 * Object presentation via standard data-aware controls.
 
+* Serialization/Deserialization of object using [delphi-neon](https://github.com/paolo-rossi/delphi-neon) library
+
 **Documentation**
 
 Follow the complete manual present in this [wiki section](https://github.com/EtheaDev/InstantObjects/wiki) and look at the PrimerCross demo to find out how to build applications with an Object Persistence Layer very flexible.
