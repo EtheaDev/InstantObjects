@@ -40,6 +40,14 @@ InstantObjects source files are released under the Mozilla Public License Versio
 
 VERSION HISTORY
 ---------------
+Version 2.9 (2.9.0.0) (2021-01-24)
+- Added support delphi-NEON library
+  for serialization/deserialization of objects
+- Added support for MARS Rest server library
+- Refactoring FireDAC connector/broker
+- Changed font for editor to Segoe UI
+- Added OnAssignParamValue event for Brokers
+
 Version 2.8 (2.8.0.0) (2020-08-25)
 - Added support for Delphi 10.4 Sydney
 - Minor bug-fixing
