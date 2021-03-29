@@ -6,7 +6,7 @@ inherited CompanyEditForm: TCompanyEditForm
   object Label6: TLabel [5]
     Left = 8
     Top = 168
-    Width = 70
+    Width = 71
     Height = 13
     Caption = 'ContactPerson'
   end
@@ -28,19 +28,10 @@ inherited CompanyEditForm: TCompanyEditForm
   inherited ContactExposer: TInstantExposer
     FieldOptions = [foObjects, foThorough]
     ObjectClassName = 'TCompany'
-    Top = 208
+    Top = 224
     object ContactExposerContactPerson: TIntegerField
       FieldName = 'ContactPerson'
     end
-  end
-  inherited ContactSource: TDataSource
-    Top = 208
-  end
-  inherited PhonesExposer: TInstantExposer
-    Top = 208
-  end
-  inherited PhonesSource: TDataSource
-    Top = 208
   end
   object PersonsSelector: TInstantSelector
     FieldOptions = [foObjects, foThorough]
@@ -49,11 +40,11 @@ inherited CompanyEditForm: TCompanyEditForm
       'SELECT * FROM TPerson')
     Connector = MainForm.InstantXMLConnector
     Left = 136
-    Top = 208
+    Top = 224
   end
   object PersonsSource: TDataSource
     DataSet = PersonsSelector
     Left = 168
-    Top = 208
+    Top = 224
   end
 end

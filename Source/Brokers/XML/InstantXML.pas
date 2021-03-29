@@ -33,6 +33,7 @@ unit InstantXML;
 {$IFDEF D6+}
 {$WARN SYMBOL_PLATFORM OFF}
 {$WARN UNIT_PLATFORM OFF}
+{$WARN IMPLICIT_STRING_CAST OFF}
 {$ENDIF}
 
 interface
@@ -333,7 +334,9 @@ uses
   SysUtils, InstantConsts,
   TypInfo, InstantXMLCatalog, InstantUtils,
 {$IFNDEF INSTANTOBJECTS_FMX}
+{$IFNDEF IO_CONSOLE}
 InstantXMLConnectionDefEdit, FileCtrl, Controls,
+{$ENDIF}
 {$ENDIF}
   Windows;
 
@@ -456,6 +459,7 @@ end;
 function TInstantXMLConnectionDef.Edit: Boolean;
 begin
 {$IFNDEF INSTANTOBJECTS_FMX}
+{$IFNDEF IO_CONSOLE}
   with TInstantXMLConnectionDefEditForm.Create(nil) do
   try
     LoadData(Self);
@@ -467,6 +471,7 @@ begin
   end;
 {$ELSE}
   Result := False;
+{$ENDIF}
 {$ENDIF}
 end;
 

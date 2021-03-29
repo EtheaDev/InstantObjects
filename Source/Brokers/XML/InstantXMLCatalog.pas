@@ -29,7 +29,11 @@
 
 unit InstantXMLCatalog;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 {$IFDEF D6+}
 {$WARN UNIT_PLATFORM OFF}
@@ -38,7 +42,7 @@ unit InstantXMLCatalog;
 interface
 
 uses
-{$IFNDEF INSTANTOBJECTS_FMX}
+{$IFNDEF IO_CONSOLE}
   FileCtrl,
 {$ENDIF}
   InstantPersistence, InstantBrokers, InstantMetadata, InstantTypes;

@@ -100,10 +100,9 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     object IdSizeLabel: TLabel
       Left = 207
       Top = 224
-      Width = 33
+      Width = 71
       Height = 13
-      Caption = 'Id Size'
-      FocusControl = IdSizeEdit
+      Caption = 'Isolation level'
     end
     object DriverIdLabel: TLabel
       Left = 231
@@ -184,18 +183,11 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     end
     object IdDataTypeComboBox: TComboBox
       Left = 207
-      Top = 199
+      Top = 198
       Width = 137
       Height = 21
       Style = csDropDownList
       TabOrder = 11
-    end
-    object IdSizeEdit: TEdit
-      Left = 207
-      Top = 238
-      Width = 65
-      Height = 21
-      TabOrder = 12
     end
     object OSAuthCheckBox: TCheckBox
       Left = 209
@@ -229,6 +221,14 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Height = 17
       Caption = 'Use &Unicode'
       TabOrder = 13
+    end
+    object cbIsolation: TComboBox
+      Left = 207
+      Top = 238
+      Width = 137
+      Height = 21
+      Style = csDropDownList
+      TabOrder = 12
     end
   end
   object BottomPanel: TPanel

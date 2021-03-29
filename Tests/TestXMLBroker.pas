@@ -30,7 +30,11 @@
 
 unit TestXMLBroker;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 

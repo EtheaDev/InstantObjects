@@ -36,7 +36,7 @@ interface
 
 uses
   Forms, Dialogs, StdCtrls, Controls, ExtCtrls, SysUtils, Classes,
-  InstantFireDAC,
+  InstantFireDAC, FireDAC.Stan.Option,
   FireDAC.UI.Intf, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, FireDAC.Stan.Intf;
 
 type
@@ -61,7 +61,6 @@ type
     AdditionalParamsEditor     : TMemo;
     StreamFormatComboBox       : TComboBox;
     IdDataTypeComboBox         : TComboBox;
-    IdSizeEdit                 : TEdit;
     UseDelimitedIdentsCheckBox : TCheckBox;
     BottomBevel                : TBevel;
     BottomPanel                : TPanel;
@@ -72,6 +71,7 @@ type
     DriverIdLabel: TLabel;
     DriverIdComboBox: TComboBox;
     UseUnicodeCheckBox: TCheckBox;
+    cbIsolation: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure PortEditExit(Sender: TObject);
     procedure DatabaseButtonClick(Sender: TObject);
@@ -102,6 +102,7 @@ begin
   AssignInstantStreamFormat(StreamFormatComboBox.Items);
   AssignInstantDataTypeStrings(IdDataTypeComboBox.Items);
   AssignFireDACDriverIds(DriverIdComboBox.Items);
+  AssignFireDACIsolation(cbIsolation.Items);
 end;
 
 procedure TInstantFireDACConnectionDefEditForm.FormShow(Sender: TObject);
@@ -149,7 +150,7 @@ begin
   AdditionalParamsEditor.Lines.Text  := ConnectionDef.AdditionalParams;
   StreamFormatComboBox.ItemIndex     := Ord(ConnectionDef.BlobStreamFormat);
   IdDataTypeComboBox.ItemIndex       := Ord(ConnectionDef.IdDataType);
-  IdSizeEdit.Text                    := InttoStr(ConnectionDef.IdSize);
+  cbIsolation.ItemIndex              := Ord(ConnectionDef.Isolation);
   UseDelimitedIdentsCheckBox.Checked := ConnectionDef.UseDelimitedIdents;
   UseUnicodeCheckBox.Checked         := ConnectionDef.UseUnicode;
 end;
@@ -166,7 +167,7 @@ begin
   ConnectionDef.OSAuthent          := OSAuthCheckBox.Checked;
   ConnectionDef.BlobStreamFormat   := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
   ConnectionDef.IdDataType         := TInstantDataType(IdDataTypeComboBox.ItemIndex);
-  ConnectionDef.IdSize             := StrToInt(IdSizeEdit.Text);
+  ConnectionDef.Isolation          := TFDTxIsolation(cbIsolation.ItemIndex);
   ConnectionDef.UseDelimitedIdents := UseDelimitedIdentsCheckBox.Checked;
   ConnectionDef.UseUnicode         := UseUnicodeCheckBox.Checked;
   ConnectionDef.AdditionalParams   := AdditionalParamsEditor.Lines.Text;

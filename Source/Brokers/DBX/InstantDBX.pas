@@ -450,6 +450,7 @@ begin
   Result := Connection;
 end;
 
+{$IFNDEF IO_CONSOLE}
 function TInstantDBXConnectionDef.Edit: Boolean;
 begin
   with TInstantDBXConnectionDefEditForm.CreateForConnectionDef(nil, Self) do
@@ -462,6 +463,7 @@ begin
     Free;
   end;
 end;
+{$ENDIF}
 
 { TInstantDBXBroker }
 

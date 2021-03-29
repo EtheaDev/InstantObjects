@@ -74,6 +74,8 @@ type
 
   TInstantAttributeChangeEvent = procedure(Sender: TInstantObject; Attribute:
     TInstantAttribute) of object;
+  TInstantIdChangeEvent = procedure(Sender: TInstantObject;
+    const AIdValue: string) of object;
   TInstantConnectorEvent = procedure(Sender: TObject;
     Connector: TInstantConnector) of object;
   TInstantContentChangeEvent = procedure(Sender: TInstantObject;
@@ -807,6 +809,7 @@ type
     FState: TInstantObjectState;
     FOnAfterContentChange: TInstantContentChangeEvent;
     FOnAttributeChanged: TInstantAttributeChangeEvent;
+    FOnIdChanged: TInstantIdChangeEvent;
     FOnBeforeContentChange: TInstantContentChangeEvent;
     FOnChange: TInstantNotifyEvent;
     FOnError: TInstantErrorEvent;
@@ -1015,6 +1018,7 @@ type
       read FOnBeforeContentChange write FOnBeforeContentChange;
     property OnChange: TInstantNotifyEvent read FOnChange write FOnChange;
     property OnError: TInstantErrorEvent read FOnError write FOnError;
+    property OnIdChanged: TInstantIdChangeEvent read FOnIdChanged write FOnIdChanged;
   end;
 
   TInstantCacheNode = class(TObject)
@@ -2243,7 +2247,7 @@ end;
 function TInstantObjectReference.GetInstance: TInstantObject;
 begin
   {$IFDEF WIN64}
-  if (Int64(FInstance) = -1) or (Int64(FInstance) = 0)) then
+  if (Int64(FInstance) = -1) or (Int64(FInstance) = 0) then
   {$ELSE}
   if (Integer(FInstance) = -1) or (Integer(FInstance) = 0) then
   {$ENDIF}
@@ -7177,6 +7181,8 @@ begin
   if Value <> FId then
   begin
     FId := Value;
+    if Assigned(FOnIdChanged) then
+      FOnIdChanged(Self, FId);
     Changed;
   end;
 end;

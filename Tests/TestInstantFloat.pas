@@ -30,9 +30,19 @@
 
 unit TestInstantFloat;
 
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
+
+{$IFDEF LINUX}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
+{$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 uses fpcunit, InstantPersistence, InstantMock, TestModel;
 

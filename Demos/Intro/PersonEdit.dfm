@@ -6,7 +6,7 @@ inherited PersonEditForm: TPersonEditForm
   object Label6: TLabel [5]
     Left = 8
     Top = 168
-    Width = 55
+    Width = 57
     Height = 13
     Caption = 'DateOfBirth'
   end

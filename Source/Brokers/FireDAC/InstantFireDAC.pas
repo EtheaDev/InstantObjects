@@ -56,7 +56,7 @@ uses
   {$IFDEF SQLITE_SUPPORT}FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteWrapper,{$ENDIF}
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Intf, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet
-  {$IFDEF D10+}, Variants, DBCommonTypes{$ENDIF};
+  {$IFDEF D10+}, Variants, DBCommonTypes{$ENDIF}, System.Typinfo;
 
 type
   TInstantFireDACConnectionDef = class(TInstantConnectionBasedConnectionDef)
@@ -74,6 +74,7 @@ type
     FOSAuthent: Boolean;
     FServer: string;
     FPort: integer;
+    FIsolation: TFDTxIsolation;
   protected
     function CreateConnection(AOwner: TComponent): TCustomConnection; override;
     procedure InitConnector(Connector: TInstantConnector); override;
@@ -100,6 +101,7 @@ type
     property UseDelimitedIdents: boolean read FUseDelimitedIdents write FUseDelimitedIdents;
     property User_Name: string read FUser_Name write FUser_Name;
     property OSAuthent: Boolean read FOSAuthent write FOSAuthent;
+    property Isolation: TFDTxIsolation read FIsolation write FIsolation;
     property ConnectionParams: string read GetConnectionParams;
   end;
 
@@ -310,6 +312,7 @@ type
   {$ENDIF}
 
 procedure AssignFireDACDriverIds(Strings: TStrings);
+procedure AssignFireDACIsolation(Strings: TStrings);
 
 implementation
 
@@ -365,6 +368,16 @@ begin
     end;
 end;
 
+
+procedure AssignFireDACIsolation(Strings: TStrings);
+begin
+  Strings.Clear;
+  for var I: TFDTxIsolation := low(TFDTxIsolation) to High(TFDTxIsolation) do
+    Strings.Add(GetEnumName(TypeInfo(TFDTxIsolation), Ord(I)));
+
+end;
+
+
 { Local routines }
 
 { TInstantFireDACConnectionDef }
@@ -407,7 +420,9 @@ begin
   case BlobStreamFormat of
     sfBinary: Result := Result + 'BlobStreamFormat=sfBinary'+sLineBreak;
     sfXML: Result := Result + 'BlobStreamFormat=sfXML'+sLineBreak;
+    {$IFDEF DELPHI_NEON}
     sfJSON: Result := Result + 'BlobStreamFormat=sfJSON'+sLineBreak;
+    {$ENDIF}
   end;
   if UseUnicode then
     Result := Result + 'CharacterSet=utf8'+sLineBreak;
@@ -450,7 +465,7 @@ begin
   Connection := TFDConnection.Create(AOwner);
   try
     Connection.TxOptions.AutoCommit := false;
-    Connection.TxOptions.Isolation := xiReadCommitted;
+    Connection.TxOptions.Isolation := Isolation;
     Connection.Params.Text := ConnectionParams;
   except
     Connection.Free;
@@ -471,6 +486,8 @@ procedure TInstantFireDACConnectionDef.UpdateConnectionParams(
 var
   LParams: TStringList;
   LPort: string;
+  LValue: Integer;
+  LIsolation: string;
 begin
   LParams := TStringList.Create;
   try
@@ -491,13 +508,29 @@ begin
     Password           := LParams.Values['Password'];
     LoginPrompt        := SameText(LParams.Values['LoginPrompt'],'True');
     OSAuthent          := SameText(LParams.Values['OSAuthent'],'Yes');
+    LIsolation         := LParams.Values['Isolation'];
+
+    if LIsolation <> '' then
+    begin
+      LValue := GetEnumValue(TypeInfo(TFDTxIsolation), LIsolation);
+      if LValue <> -1 then
+        Isolation := TFDTxIsolation(LValue)
+      else
+        Isolation := xiReadCommitted;
+    end
+    else
+      Isolation := xiReadCommitted;
+
     if SameText(LParams.Values['BlobStreamFormat'], 'sfBinary') then
       BlobStreamFormat := sfBinary
+    {$IFDEF DELPHI_NEON}
     else if SameText(LParams.Values['BlobStreamFormat'], 'sfJSON') then
       BlobStreamFormat := sfJSON
+    {$ENDIF}
     else
       BlobStreamFormat := sfXML; //Default for FireDAC
     UseDelimitedIdents := SameText(LParams.Values['UseDelimitedIdents'],'TRUE');
+    EncryptedPassword := LParams.Values['EncryptedPassword'];
   finally
     LParams.Free;
   end;
@@ -510,8 +543,6 @@ begin
   if (HasConnection) then
     begin
       Connection.Close;
-      Connection.TxOptions.AutoCommit := true;
-      Connection.TxOptions.Isolation := xiReadCommitted;
       if Assigned(FOnLogin) then
         Connection.OnLogin := DoLogin;
     end;

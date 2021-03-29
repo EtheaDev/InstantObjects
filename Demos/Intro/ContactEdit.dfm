@@ -6,11 +6,7 @@ object ContactEditForm: TContactEditForm
   ClientHeight = 272
   ClientWidth = 431
   Color = clBtnFace
-  Font.Charset = DEFAULT_CHARSET
-  Font.Color = clWindowText
-  Font.Height = -11
-  Font.Name = 'MS Sans Serif'
-  Font.Style = []
+  ParentFont = True
   OldCreateOrder = False
   Position = poScreenCenter
   PixelsPerInch = 96
@@ -18,7 +14,7 @@ object ContactEditForm: TContactEditForm
   object Label1: TLabel
     Left = 8
     Top = 8
-    Width = 28
+    Width = 27
     Height = 13
     Caption = 'Name'
     FocusControl = DBEdit1
@@ -26,7 +22,7 @@ object ContactEditForm: TContactEditForm
   object Label2: TLabel
     Left = 8
     Top = 48
-    Width = 69
+    Width = 73
     Height = 13
     Caption = 'Address.Street'
     FocusControl = DBEdit2
@@ -34,7 +30,7 @@ object ContactEditForm: TContactEditForm
   object Label3: TLabel
     Left = 8
     Top = 88
-    Width = 58
+    Width = 62
     Height = 13
     Caption = 'Address.City'
     FocusControl = DBEdit3
@@ -42,7 +38,7 @@ object ContactEditForm: TContactEditForm
   object Label4: TLabel
     Left = 8
     Top = 128
-    Width = 95
+    Width = 97
     Height = 13
     Caption = 'Address.PostalCode'
     FocusControl = DBEdit4
@@ -50,7 +46,7 @@ object ContactEditForm: TContactEditForm
   object Label5: TLabel
     Left = 200
     Top = 8
-    Width = 36
+    Width = 35
     Height = 13
     Caption = 'Phones'
   end
@@ -100,7 +96,7 @@ object ContactEditForm: TContactEditForm
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
-    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Name = 'Tahoma'
     TitleFont.Style = []
     Columns = <
       item
@@ -140,7 +136,7 @@ object ContactEditForm: TContactEditForm
   object ContactExposer: TInstantExposer
     ObjectClassName = 'TContact'
     Left = 8
-    Top = 176
+    Top = 223
     object ContactExposerName: TStringField
       FieldName = 'Name'
       Size = 30
@@ -164,7 +160,7 @@ object ContactEditForm: TContactEditForm
   object ContactSource: TDataSource
     DataSet = ContactExposer
     Left = 40
-    Top = 176
+    Top = 223
   end
   object PhonesExposer: TInstantExposer
     ContainerName = 'Phones'
@@ -172,11 +168,11 @@ object ContactEditForm: TContactEditForm
     Mode = amContent
     ObjectClassName = 'TPhone'
     Left = 72
-    Top = 176
+    Top = 223
   end
   object PhonesSource: TDataSource
     DataSet = PhonesExposer
     Left = 104
-    Top = 176
+    Top = 223
   end
 end

@@ -8,7 +8,7 @@ object MainForm: TMainForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
@@ -37,7 +37,7 @@ object MainForm: TMainForm
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
-    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Name = 'Segoe UI'
     TitleFont.Style = []
     OnDblClick = ContactGridDblClick
     Columns = <
@@ -61,9 +61,9 @@ object MainForm: TMainForm
       end>
   end
   object AddPersonButton: TButton
-    Left = 131
+    Left = 119
     Top = 280
-    Width = 75
+    Width = 80
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Add Person'
@@ -71,9 +71,9 @@ object MainForm: TMainForm
     OnClick = AddPersonButtonClick
   end
   object AddCompanyButton: TButton
-    Left = 211
+    Left = 201
     Top = 280
-    Width = 75
+    Width = 80
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Add Company'
@@ -81,9 +81,9 @@ object MainForm: TMainForm
     OnClick = AddCompanyButtonClick
   end
   object EditContactButton: TButton
-    Left = 291
+    Left = 283
     Top = 280
-    Width = 75
+    Width = 80
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Edit Contact'
@@ -91,9 +91,9 @@ object MainForm: TMainForm
     OnClick = EditContactButtonClick
   end
   object ExploreButton: TButton
-    Left = 371
+    Left = 367
     Top = 280
-    Width = 75
+    Width = 80
     Height = 25
     Anchors = [akRight, akBottom]
     Caption = 'Explore'
@@ -102,7 +102,7 @@ object MainForm: TMainForm
   end
   object GenerateDataButton: TButton
     Left = 8
-    Top = 279
+    Top = 280
     Width = 97
     Height = 25
     Anchors = [akRight, akBottom]

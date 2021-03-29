@@ -1,5 +1,11 @@
 VERSION HISTORY
 ---------------
+Versione 2.10 (2.10.0.0) (2021-03-29)
+- Fixed InstantDBX for compilation with IO_CONSOLE directive
+- Fixed FireDAC Broker for EncryptedPassword
+- Added OnIdChanged for TInstantObject class
+- Added Isolation property to FireDAC Broker
+
 Version 2.9 (2.9.0.0) (2021-01-24)
 - Added support delphi-NEON library
   for serialization/deserialization of objects

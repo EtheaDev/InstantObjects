@@ -44,7 +44,7 @@ uses
   Main in 'Main.pas' {MainForm},
   Model in 'Model\Model.pas',
   ContactView in 'ContactView.pas' {ContactViewForm: TFrame},
-  BasicView in 'BasicView.pas' {BasicViewForm: TFrame},
+  BasicView in 'BasicView.pas' {BasicViewFrame: TFrame},
   BasicEdit in 'BasicEdit.pas' {BasicEditForm},
   ContactEdit in 'ContactEdit.pas' {ContactEditForm},
   PersonEdit in 'PersonEdit.pas' {PersonEditForm},

@@ -89,9 +89,11 @@ begin
   FInstantScheme.BlobStreamFormat := sfXML;
   AssertTrue('BlobStreamFormat',
     sfXML = FInstantScheme.BlobStreamFormat);
+  {$IFDEF DELPHI_NEON}
   FInstantScheme.BlobStreamFormat := sfJSON;
   AssertTrue('BlobStreamFormat',
     sfJSON = FInstantScheme.BlobStreamFormat);
+  {$ENDIF}
 end;
 
 procedure TestTInstantScheme.TestFindTableMetadata;

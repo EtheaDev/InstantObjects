@@ -1,7 +1,7 @@
 ------------------------------------------------------------------
 
   InstantObjects for Delphi - Full Unicode version
-  ver. 2.9 for Delphi 10.4 Sydney
+  ver. 2.10 for Delphi 10.4 Sydney
 
   Mozilla Public License 1.1 Edition
   Based on Seleqt InstantObjects.
@@ -115,8 +115,8 @@ Please note that this guide is not entirely up-to-date for IO v2. Most of the
 new features, though, are documented in text files you can find in the Docs
 folder.
 
-You can also use our support newsgroups; more details at
-http://www.instantobjects.org/.
+You can also use read the wiki page at:
+https://github.com/EtheaDev/InstantObjects/wiki
 
 
 GETTING STARTED
@@ -143,10 +143,6 @@ uses external storage for collection attributes (see documentation).
 The Demos folder also features a few other programs that help demonstrate or test
 specific features:
 
-IntroIW is an IntraWeb version of the Intro application. It shows how to use IO on
-the server side of a web application (which, thanks to IntraWeb's paradigm, is
-exactly the same as in a standard application).
-
 EvolveTest is a testbed application for the database structure evolution feature.
 Please see the documentation to know more about database evolution and the
 TInstantDBEvolver component.
@@ -160,5 +156,3 @@ The Test folder contains test applications of various sorts.
 VERSION HISTORY
 ---------------
 Please see the "Changes.txt" file in the <installdir>/Docs folder.
-
-

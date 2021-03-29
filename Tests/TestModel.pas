@@ -1184,7 +1184,7 @@ procedure TContact.AfterCreate;
 begin
   inherited;
   Id := InstantGenerateId;
-  _Category.ReferenceObject(TCategory, 'CAT000');
+  Category := TCategory.Retrieve('CAT000', False, False, Connector);
 end;
 
 procedure TContact.BeforeStore;
