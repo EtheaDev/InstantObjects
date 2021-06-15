@@ -107,13 +107,14 @@ type
     TestResultRenameItem: TMenuItem;
     TransactionsCheckBox: TCheckBox;
     ObjectsLabel: TLabel;
-    ObjectsEdit: TMaskEdit;
+    ObjectsEdit: TEdit;
     TestRetrieveCheckBox: TCheckBox;
     TestDisposeCheckBox: TCheckBox;
     TestQueryCheckBox: TCheckBox;
     Series1: TBarSeries;
     CacheSizeLabel: TLabel;
-    CacheSizeEdit: TMaskEdit;
+    CacheSizeEdit: TEdit;
+    ClearAllButton: TButton;
     procedure RunButtonClick(Sender: TObject);
     procedure TestResultListViewChange(Sender: TObject; Item: TListItem;
       Change: TItemChange);
@@ -125,6 +126,7 @@ type
     procedure TransactionsCheckBoxClick(Sender: TObject);
     procedure TestDisposeCheckBoxClick(Sender: TObject);
     procedure TestRetrieveCheckBoxClick(Sender: TObject);
+    procedure ClearAllButtonClick(Sender: TObject);
   private
     FTestResults: TTestResults;
     function GetTestResults: TTestResults;
@@ -134,6 +136,7 @@ type
     procedure LoadTestResults;
     procedure ShowTestResults;
     procedure SaveTestResults;
+    procedure ClearTestResults;
     procedure UpdateChart;
     property TestResults: TTestResults read GetTestResults;
     property TestResultsFileName: string read GetTestResultsFileName;
@@ -150,7 +153,7 @@ implementation
 {$R *.dfm}
 
 uses
-  InstantBrokers, Model, DemoData, IniFiles, Utility;
+  InstantBrokers, Model, DemoData, IniFiles, Utility, UITypes;
 
 { TTestResult }
 
@@ -414,6 +417,14 @@ end;
 
 { TPerformanceViewForm }
 
+procedure TPerformanceViewForm.ClearAllButtonClick(Sender: TObject);
+begin
+  inherited;
+  if MessageDlg('Confirm deletion of all Test Results?', TMsgDlgType.mtWarning,
+    [mbYes, mbNo], 0) = mrYes then
+    ClearTestResults;
+end;
+
 destructor TPerformanceViewForm.Destroy;
 begin
   inherited;
@@ -445,6 +456,14 @@ begin
   Result := ChangeFileExt(Application.ExeName, '.tst');
 end;
 
+procedure TPerformanceViewForm.ClearTestResults;
+begin
+  TestResults.Clear;
+  if FileExists(TestResultsFileName) then
+    DeleteFile(PWideChar(TestResultsFileName));
+  ShowTestResults;
+end;
+
 procedure TPerformanceViewForm.LoadTestResults;
 var
   Stream: TStream;
@@ -473,7 +492,8 @@ begin
     Count := StrToInt(Trim(ObjectsEdit.text));
     Execute(TestRetrieveCheckBox.Checked, TestQueryCheckBox.Checked, TestDisposeCheckBox.Checked);
     AResult := ExtractResult;
-    AResult.Name := ConnectionName + ' (Cache: ' + Trim(CacheSizeEdit.Text) + ')';
+    AResult.Name := Format('%s - Objs:(%d) - Cache:(%d)',
+      [ConnectionName, StrToInt(ObjectsEdit.Text), StrToInt(CacheSizeEdit.Text)]);
     AResult.IsChecked := True;
     TestResults.AddResult(AResult);
     ShowTestResults;

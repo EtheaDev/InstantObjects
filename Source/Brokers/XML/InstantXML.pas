@@ -167,11 +167,10 @@ type
     property ResolverList: TObjectList read GetResolverList;
     function GetConnector: TInstantXMLConnector;
   protected
-    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
-      override;
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
+    class function GetCatalogClass: TInstantCatalogClass; override;
     function CreateResolver(const StorageName: string): TInstantXMLResolver;
-    function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver;
-      override;
+    function EnsureResolver(Map: TInstantAttributeMap): TInstantCustomResolver; override;
     function FindResolver(const StorageName: string): TInstantXMLResolver;
     property ResolverCount: Integer read GetResolverCount;
     property Resolvers[Index: Integer]: TInstantXMLResolver read GetResolvers;
@@ -793,6 +792,11 @@ begin
       Exit;
   end;
   Result := nil;
+end;
+
+class function TInstantXMLBroker.GetCatalogClass: TInstantCatalogClass;
+begin
+  Result := TInstantXMLCatalog;
 end;
 
 function TInstantXMLBroker.GetConnector: TInstantXMLConnector;

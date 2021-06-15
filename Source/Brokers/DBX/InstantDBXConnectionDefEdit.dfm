@@ -66,6 +66,14 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
     end
+    object Label1: TLabel
+      Left = 168
+      Top = 228
+      Width = 127
+      Height = 13
+      Caption = 'Default Statement Cache'
+      FocusControl = DefaultStatementCacheEdit
+    end
     object DriverNameEdit: TComboBox
       Left = 16
       Top = 32
@@ -90,7 +98,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Left = 168
       Top = 32
       Width = 209
-      Height = 233
+      Height = 190
       TabOrder = 4
     end
     object StreamFormatComboBox: TComboBox
@@ -116,6 +124,15 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
       Height = 17
       Caption = '&Use Unicode'
       TabOrder = 3
+    end
+    object DefaultStatementCacheEdit: TEdit
+      Left = 168
+      Top = 243
+      Width = 81
+      Height = 21
+      NumbersOnly = True
+      TabOrder = 6
+      Text = '0'
     end
   end
   object BottomPanel: TPanel

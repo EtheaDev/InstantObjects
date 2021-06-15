@@ -42,6 +42,9 @@ uses
 {$ENDIF}
 
 type
+  TInstantSQLEngine = (seGenericSQL, seMSSQL, seOracle, seFirebird, seInterbase,
+    seMySQL, sePostgres, seSQLLite, seSybase);
+
   {$IFNDEF D6+}
   IInterface = interface (IUnknown)
   end;
@@ -111,12 +114,21 @@ type
   );
 
 function IsBurstLoadMode(const ALoadMode: TInstantLoadMode): Boolean; {$IFDEF D10+}inline;{$ENDIF}
+function GetTableNoLockDirective(AEngine: TInstantSQLEngine): string;
 
 implementation
 
 function IsBurstLoadMode(const ALoadMode: TInstantLoadMode): Boolean; {$IFDEF D10+}inline;{$ENDIF}
 begin
   Result := ALoadMode in [lmPartialBurst, lmFullBurst];
+end;
+
+function GetTableNoLockDirective(AEngine: TInstantSQLEngine): string;
+begin
+  if AEngine = seMSSQL then
+    Result := ' WITH(NOLOCK)'
+  else
+    Result := '';
 end;
 
 end.

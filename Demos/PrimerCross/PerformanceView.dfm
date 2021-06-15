@@ -61,10 +61,11 @@ inherited PerformanceViewForm: TPerformanceViewForm
         FocusControl = CacheSizeEdit
       end
       object RunButton: TButton
-        Left = 608
+        Left = 513
         Top = 81
         Width = 105
         Height = 25
+        Anchors = [akTop, akRight]
         Caption = '&Run Now'
         TabOrder = 7
         OnClick = RunButtonClick
@@ -72,9 +73,10 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object InfoMemo: TMemo
         Left = 16
         Top = 23
-        Width = 697
+        Width = 713
         Height = 46
         TabStop = False
+        Anchors = [akLeft, akTop, akRight]
         Enabled = False
         Lines.Strings = (
           
@@ -95,15 +97,14 @@ inherited PerformanceViewForm: TPerformanceViewForm
         TabOrder = 5
         OnClick = TransactionsCheckBoxClick
       end
-      object ObjectsEdit: TMaskEdit
+      object ObjectsEdit: TEdit
         Left = 16
         Top = 86
-        Width = 81
+        Width = 79
         Height = 21
-        EditMask = '#########;1; '
-        MaxLength = 9
+        NumbersOnly = True
         TabOrder = 1
-        Text = '500      '
+        Text = '1000'
       end
       object TestRetrieveCheckBox: TCheckBox
         Left = 109
@@ -137,15 +138,24 @@ inherited PerformanceViewForm: TPerformanceViewForm
         State = cbChecked
         TabOrder = 3
       end
-      object CacheSizeEdit: TMaskEdit
+      object CacheSizeEdit: TEdit
         Left = 328
         Top = 86
         Width = 113
         Height = 21
-        EditMask = '#########;1; '
-        MaxLength = 9
+        NumbersOnly = True
         TabOrder = 6
-        Text = '-1       '
+        Text = '-1'
+      end
+      object ClearAllButton: TButton
+        Left = 624
+        Top = 81
+        Width = 105
+        Height = 25
+        Anchors = [akTop, akRight]
+        Caption = '&Clear all results'
+        TabOrder = 8
+        OnClick = ClearAllButtonClick
       end
     end
     object ResultPanel: TPanel
@@ -215,6 +225,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Marks.Style = smsValue
             SeriesColor = clGreen
             Title = 'Store'
+            ValueFormat = '#,##0'
             XValues.Name = 'X'
             XValues.Order = loAscending
             YValues.Name = 'Bar'
@@ -226,6 +237,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Marks.Style = smsValue
             SeriesColor = 8454143
             Title = 'Retrieve'
+            ValueFormat = '#,##0'
             XValues.Name = 'X'
             XValues.Order = loAscending
             YValues.Name = 'Bar'
@@ -237,6 +249,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Marks.Style = smsValue
             SeriesColor = 16744576
             Title = 'Query'
+            ValueFormat = '#,##0'
             XValues.Name = 'X'
             XValues.Order = loAscending
             YValues.Name = 'Bar'
@@ -247,6 +260,7 @@ inherited PerformanceViewForm: TPerformanceViewForm
           object TestResultDisposeSeries: TBarSeries
             Marks.Style = smsValue
             Title = 'Dispose'
+            ValueFormat = '#,##0'
             XValues.Name = 'X'
             XValues.Order = loAscending
             YValues.Name = 'Bar'

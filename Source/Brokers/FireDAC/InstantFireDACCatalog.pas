@@ -47,7 +47,7 @@ type
   // A TInstantCatalog that reads catalog information from a
   // Embarcadero FireDAC connection
   //
-  TInstantFireDACCatalog = class(TInstantBrokerCatalog)
+  TInstantFireDACCatalog = class(TInstantSQLBrokerCatalog)
   protected
     procedure AddFieldMetadatas(TableMetadata: TInstantTableMetadata;
       const Catalog : string; Schema : string);

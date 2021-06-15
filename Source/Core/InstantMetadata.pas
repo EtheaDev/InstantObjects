@@ -375,6 +375,8 @@ type
       read FOnWarning write FOnWarning;
   end;
 
+  TInstantCatalogClass = class of TInstantCatalog;
+
   // A TInstantCatalog that gathers its info from a TInstantModel.
   TInstantModelCatalog = class(TInstantCatalog)
   private

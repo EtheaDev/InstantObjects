@@ -55,7 +55,9 @@ Trim Char=False
     <Name>FireDac_MSSQL</Name>
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <DefaultStatementCacheCapacity>100</DefaultStatementCacheCapacity>
     <LoginPrompt>FALSE</LoginPrompt>
+    <ReadObjectListWithNoLock>TRUE</ReadObjectListWithNoLock>
     <Database>PRIMERDB</Database>
     <HostName>.\SQLEXPRESS</HostName>
     <AdditionalParams>MetaDefSchema=dbo</AdditionalParams>

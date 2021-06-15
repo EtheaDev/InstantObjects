@@ -32,7 +32,7 @@ unit InstantFireDAC;
 
 {$I '..\..\InstantDefines.inc'}
 
-// Supported databases  (only MSSQL and Firebird have been tested as of 8/18/2009)
+// Supported databases  (only MSSQL and Firebird have been tested)
 
 {$DEFINE SYBASE_SUPPORT}
 {$DEFINE MSSQL_SUPPORT}
@@ -101,7 +101,7 @@ type
     property UseDelimitedIdents: boolean read FUseDelimitedIdents write FUseDelimitedIdents;
     property User_Name: string read FUser_Name write FUser_Name;
     property OSAuthent: Boolean read FOSAuthent write FOSAuthent;
-    property Isolation: TFDTxIsolation read FIsolation write FIsolation;
+    property Isolation: TFDTxIsolation read FIsolation write FIsolation default xiUnspecified;
     property ConnectionParams: string read GetConnectionParams;
   end;
 
@@ -151,6 +151,7 @@ type
       OnAssignParamValue: TAssignParamValue = nil); override;
     procedure AssignParam(SourceParam: TParam; TargetParam: TFDParam); virtual;
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
+    class function GetCatalogClass: TInstantCatalogClass; override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function GetDatabaseName: string; override;
     function GetDBMSName: string; override;
@@ -370,11 +371,12 @@ end;
 
 
 procedure AssignFireDACIsolation(Strings: TStrings);
+var
+  I: TFDTxIsolation;
 begin
   Strings.Clear;
-  for var I: TFDTxIsolation := low(TFDTxIsolation) to High(TFDTxIsolation) do
+  for I := low(TFDTxIsolation) to High(TFDTxIsolation) do
     Strings.Add(GetEnumName(TypeInfo(TFDTxIsolation), Ord(I)));
-
 end;
 
 
@@ -467,6 +469,10 @@ begin
     Connection.TxOptions.AutoCommit := false;
     Connection.TxOptions.Isolation := Isolation;
     Connection.Params.Text := ConnectionParams;
+
+    //Those parameters speed-up reading
+    Connection.ResourceOptions.DirectExecute := True;
+    Connection.FetchOptions.Mode := fmAll;
   except
     Connection.Free;
     raise;
@@ -575,37 +581,63 @@ begin
 
   {$IFDEF SYBASE_SUPPORT}
   if SameText(Connection.DriverName, S_FD_ASAId) then
+  begin
     Result := TInstantFireDACSybaseBroker.Create(Self);
+    SQLEngine := seSybase;
+  end;
   {$ENDIF}
 
   {$IFDEF MSSQL_SUPPORT}
   if SameText(Connection.DriverName, S_FD_MSSQLId) then
+  begin
     Result := TInstantFireDACMSSQLBroker.Create(Self);
+    SQLEngine := seMSSQL;
+  end;
   {$ENDIF}
 
   {$IFDEF IBFB_SUPPORT}
-  if SameText(Connection.DriverName, S_FD_IBId) or SameText(Connection.DriverName, S_FD_FBId) then
+  if SameText(Connection.DriverName, S_FD_IBId) then
+  begin
     Result := TInstantFireDACIbFbBroker.Create(Self);
+    SQLEngine := seInterbase;
+  end;
+  if SameText(Connection.DriverName, S_FD_FBId) then
+  begin
+    Result := TInstantFireDACIbFbBroker.Create(Self);
+    SQLEngine := seFirebird;
+  end;
   {$ENDIF}
 
   {$IFDEF ORACLE_SUPPORT}
   if SameText(Connection.DriverName, S_FD_OraId) then
+  begin
     Result := TInstantFireDACOracleBroker.Create(Self);
+    SQLEngine := seOracle;
+  end;
   {$ENDIF}
 
   {$IFDEF PGSQL_SUPPORT}
   if SameText(Connection.DriverName, S_FD_PGId) then
+  begin
     Result := TInstantFireDACPgSQLBroker.Create(Self);
+    SQLEngine := sePostGres;
+  end;
   {$ENDIF}
 
   {$IFDEF MYSQL_SUPPORT}
   if SameText(Connection.DriverName, S_FD_MySQLId) then
+  begin
     Result := TInstantFireDACMySQLBroker.Create(Self);
+    SQLEngine := seMySQL;
+  end;
   {$ENDIF}
 
   {$IFDEF SQLITE_SUPPORT}
   if SameText(Connection.DriverName, S_FD_SQLiteId) then
+  begin
     Result := TInstantFireDACSQLiteBroker.Create(Self);
+    SQLEngine := seSQLLite;
+  end;
   {$ENDIF}
 
   if (Result = nil) then
@@ -877,15 +909,25 @@ end;
 function TInstantFireDACBroker.Execute(const AStatement: string;
   AParams: TParams; OnAssignParamValue: TAssignParamValue): Integer;
 var
-  DataSet: TFDQuery;
+  LQuery: TFDQuery;
 begin
-  DataSet := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TFDQuery;
-  try
-    DataSet.ExecSQL;
-    Result := DataSet.RowsAffected;
-  finally
-    ReleaseDataSet(DataSet);
+  LQuery := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TFDQuery;
+  try try
+    LQuery.ExecSQL;
+    Result := LQuery.RowsAffected;
+  except
+    on E: Exception do
+      raise EInstantError.CreateFmt(SSQLExecuteError,
+        [AStatement, E.Message], E);
   end;
+  finally
+    ReleaseDataSet(LQuery);
+  end;
+end;
+
+class function TInstantFireDACBroker.GetCatalogClass: TInstantCatalogClass;
+begin
+  Result := TInstantFireDACCatalog;
 end;
 
 function TInstantFireDACBroker.GetConnector: TInstantFireDACConnector;

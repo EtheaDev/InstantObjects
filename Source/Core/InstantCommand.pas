@@ -1168,10 +1168,14 @@ end;
 
 procedure TInstantIQLConstant.ReadObject(Reader: TInstantIQLReader);
 var
-  Token, LastToken: string;
+  Token: string;
+  {$IFNDEF IO_CONSOLE}
+  LastToken: string;
+ {$ENDIF}
 begin
   inherited;
   Token := Reader.ReadToken;
+  {$IFNDEF IO_CONSOLE}
   if Token = '[' then
   begin
     FValue := Token;
@@ -1183,7 +1187,9 @@ begin
       else
         FValue := FValue + ' ' + Token;
     until Token = ']'
-  end else
+  end
+  else
+  {$ENDIF}
     FValue := Token;
 end;
 

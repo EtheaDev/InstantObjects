@@ -1403,8 +1403,8 @@ type
     // evolution. The predefined implementation just returns nil. Call
     // IsCatalogSupported to know if CreateCatalog will return an instance of
     // the catalog object or nil.
-    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog;
-      virtual;
+    function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; virtual;
+    class function GetCatalogClass: TInstantCatalogClass; virtual;
     function GetDatabaseName: string; virtual;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); virtual;
     function InternalCreateQuery: TInstantQuery; virtual;
@@ -1468,6 +1468,7 @@ type
     FIdSize: Integer;
     FIdDataType: TInstantDataType;
     FUseUnicode: Boolean;
+    FDefaultStatementCacheCapacity: integer;
     procedure AbandonObjects;
     procedure ApplyTransactedObjectStates;
     procedure ClearTransactedObjects;
@@ -1567,6 +1568,8 @@ type
       default dtString;
     property IdSize: Integer read FIdSize write FIdSize
       default InstantDefaultFieldSize;
+    property DefaultStatementCacheCapacity: Integer read FDefaultStatementCacheCapacity
+      write FDefaultStatementCacheCapacity default 0;
   end;
 
   TInstantConnectionDef = class(TInstantCollectionItem)
@@ -1576,6 +1579,7 @@ type
     FIdSize: Integer;
     FIdDataType: TInstantDataType;
     FUseUnicode: Boolean;
+    FDefaultStatementCacheCapacity: integer;
   protected
     function GetCaption: string; virtual;
     procedure InitConnector(Connector: TInstantConnector); virtual;
@@ -1597,6 +1601,8 @@ type
       default InstantDefaultFieldSize;
     property UseUnicode: Boolean read FUseUnicode write FUseUnicode
       default False;
+    property DefaultStatementCacheCapacity: Integer read FDefaultStatementCacheCapacity
+      write FDefaultStatementCacheCapacity default 0;
   end;
 
   TInstantConnectionDefs = class(TInstantCollection)
@@ -1657,6 +1663,7 @@ procedure InstantUnregisterClass(AClass: TInstantObjectClass);
 procedure InstantUnregisterClasses(AClasses: array of TInstantObjectClass);
 
 function InstantResolveGraphicFileType(AStream: TStream ): TInstantGraphicFileFormat;
+function InstantGetAttributeValue(const Attribute: TInstantAttribute): Variant;
 {$IFNDEF IO_CONSOLE}
 procedure InstantRegisterGraphicClass(InstantGraphicFileFormat : TInstantGraphicFileFormat;
   AGraphicClass: TGraphicClass);
@@ -2118,6 +2125,24 @@ begin
   Result := GraphicClassList[InstantGraphicFileFormat];
 end;
 {$ENDIF}
+
+function InstantGetAttributeValue(const Attribute: TInstantAttribute): Variant;
+begin
+  if Attribute is TInstantString then
+    Result := TInstantString(Attribute).Value
+  else if Attribute is TInstantInteger then
+    Result := TInstantInteger(Attribute).Value
+  else if Attribute is TInstantFloat then
+    Result := TInstantFloat(Attribute).Value
+  else if Attribute is TInstantCurrency then
+    Result := TInstantCurrency(Attribute).Value
+  else if Attribute is TInstantBoolean then
+    Result := TInstantBoolean(Attribute).Value
+  else if Attribute is TInstantCustomDateTime then
+    Result := TInstantCustomDateTime(Attribute).Value
+  else
+    Result := Attribute.Value;
+end;
 
 { TInstantObjectReference }
 
@@ -8908,6 +8933,11 @@ begin
   Result := InternalDisposeObject(AObject, ConflictAction);
 end;
 
+class function TInstantBroker.GetCatalogClass: TInstantCatalogClass;
+begin
+  Result := nil;
+end;
+
 function TInstantBroker.GetConnector: TInstantConnector;
 begin
   Result := FConnector;
@@ -9398,6 +9428,7 @@ begin
   FIdDataType := dtString;
   FIdSize := InstantDefaultFieldSize;
   FUseUnicode := False;
+  FDefaultStatementCacheCapacity := 0;
 end;
 
 function TInstantConnectionDef.CreateConnector(AOwner: TComponent): TInstantConnector;
@@ -9432,6 +9463,7 @@ begin
   Connector.IdDataType := IdDataType;
   Connector.IdSize := IdSize;
   Connector.UseUnicode := UseUnicode;
+  Connector.DefaultStatementCacheCapacity := DefaultStatementCacheCapacity;
 end;
 
 procedure TInstantConnectionDef.TestConnection;

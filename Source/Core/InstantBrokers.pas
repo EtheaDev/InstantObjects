@@ -201,6 +201,8 @@ type
   private
     FOnGetDataSet: TInstantGetDataSetEvent;
     FOnInitDataSet: TInstantInitDataSetEvent;
+    FSQLEngine: TInstantSQLEngine;
+    FReadObjectListWithNoLock: boolean;
   protected
     procedure DoGetDataSet(const CommandText: string; var DataSet: TDataSet);
     procedure DoInitDataSet(const CommandText: string; DataSet: TDataSet);
@@ -208,18 +210,16 @@ type
     procedure GetDataSet(const CommandText: string; var DataSet: TDataSet);
       virtual;
     function GetDBMSName: string; virtual;
-    procedure InitDataSet(const CommandText: string; DataSet: TDataSet);
-      virtual;
-    function InternalCreateScheme(Model: TInstantModel): TInstantScheme;
-      override;
+    procedure InitDataSet(const CommandText: string; DataSet: TDataSet); virtual;
+    function InternalCreateScheme(Model: TInstantModel): TInstantScheme; override;
   public
     property Broker: TInstantCustomRelationalBroker read GetBroker;
     property DBMSName: string read GetDBMSName;
+    property SQLEngine: TInstantSQLEngine read FSQLEngine write FSQLEngine default seGenericSQL;
   published
-    property OnGetDataSet: TInstantGetDataSetEvent read FOnGetDataSet
-      write FOnGetDataSet;
-    property OnInitDataSet: TInstantInitDataSetEvent read FOnInitDataSet
-      write FOnInitDataSet;
+    property OnGetDataSet: TInstantGetDataSetEvent read FOnGetDataSet write FOnGetDataSet;
+    property OnInitDataSet: TInstantInitDataSetEvent read FOnInitDataSet write FOnInitDataSet;
+    property ReadObjectListWithNoLock: boolean read FReadObjectListWithNoLock write FReadObjectListWithNoLock;
   end;
 
   TInstantConnectionBasedConnector = class(TInstantRelationalConnector)
@@ -691,8 +691,11 @@ type
   private
     function GetBroker: TInstantSQLBroker;
   public
+    class function FormatOffset(const APageCount, ARecordCount: integer): string; virtual;
     property Broker: TInstantSQLBroker read GetBroker;
   end;
+
+  TInstantSQLBrokerCatalogClass = class of TInstantSQLBrokerCatalog;
 
   TInstantSQLGenerator = class(TObject)
   private
@@ -867,6 +870,7 @@ type
     FIdDataType: TInstantDataType;
     FRequestedLoadMode: TInstantLoadMode;
     FActualLoadMode: TInstantLoadMode;
+    FTableWithNoLockDirective: string;
     procedure AddJoin(const FromPath, FromField, ToPath, ToField: string;
       const IsOuter: Boolean);
     function GetClassTablePath: string;
@@ -956,6 +960,8 @@ type
     // Equals the value of RequestedLoadMode if the mode is supported for the
     // particular IQL query. Otherwise it will contain the fallback mode.
     property ActualLoadMode: TInstantLoadMode read FActualLoadMode;
+    // Property to get NoLock statement reading SQL Table
+    property TableWithNoLockDirective: string read FTableWithNoLockDirective write FTableWithNoLockDirective;
   end;
 
   TInstantRelationalTranslator = class(TInstantQueryTranslator)
@@ -1075,6 +1081,8 @@ type
     FParamsObject: TParams;
     FStatement: string;
     FDataSet: TDataSet;
+    FPageCount: integer;
+    FRecordCount: integer;
     procedure DestroyObjectReferenceList;
     function GetObjectReferenceCount: Integer;
     function GetObjectReferenceList: TInstantObjectReferenceList; overload;
@@ -1104,11 +1112,14 @@ type
     property ObjectReferenceList: TInstantObjectReferenceList read GetObjectReferenceList;
   public
     destructor Destroy; override;
+    constructor Create(AConnector: TInstantConnector); override;
     {$IFDEF D17+}
     procedure GetObjectReferenceList(const AList: TList<TInstantObjectReference>); overload;
     {$ENDIF}
     property ObjectReferenceCount: Integer read GetObjectReferenceCount;
     property ParamsObject: TParams read GetParamsObject;
+    property PageCount: integer read FPageCount write FPageCount default -1;
+    property RecordCount: integer read FRecordCount write FRecordCount default -1;
   end;
 
   TInstantRelationalConnectionDef = class(TInstantConnectionDef)
@@ -1117,6 +1128,7 @@ type
   TInstantConnectionBasedConnectionDef = class(TInstantRelationalConnectionDef)
   private
     FLoginPrompt: Boolean;
+    FReadObjectListWithNoLock: boolean;
   protected
     function ExpandDatabaseName(const ADatabaseName: string): string;
     function CreateConnection(AOwner: TComponent): TCustomConnection; virtual;
@@ -1125,8 +1137,8 @@ type
   public
     constructor Create(Collection: TCollection); override;
   published
-    property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt
-      default True;
+    property LoginPrompt: Boolean read FLoginPrompt write FLoginPrompt default True;
+    property ReadObjectListWithNoLock: boolean read FReadObjectListWithNoLock write FReadObjectListWithNoLock default False;
   end;
 
 var
@@ -1235,7 +1247,7 @@ end;
 constructor TInstantCustomRelationalBroker.Create(AConnector: TInstantConnector);
 begin
   inherited;
-  FStatementCacheCapacity := 0;
+  FStatementCacheCapacity := AConnector.DefaultStatementCacheCapacity;
 end;
 
 destructor TInstantCustomRelationalBroker.Destroy;
@@ -4695,6 +4707,12 @@ end;
 
 { TInstantSQLBrokerCatalog }
 
+class function TInstantSQLBrokerCatalog.FormatOffset(const APageCount,
+  ARecordCount: integer): string;
+begin
+  Result := Format('OFFSET %d ROWS FETCH NEXT %d ROWS ONLY ', [((APageCount-1)*ARecordCount), ARecordCount]);
+end;
+
 function TInstantSQLBrokerCatalog.GetBroker: TInstantSQLBroker;
 begin
   Result := inherited Broker as TInstantSQLBroker;
@@ -5356,6 +5374,9 @@ begin
   FContext := TInstantTranslationContext.Create(Command, Quote,
     Delimiters, Connector.IdDataType, RequestedLoadMode);
   SetActualLoadMode(FContext.ActualLoadMode);
+  if (Connector is TInstantRelationalConnector) and
+    TInstantRelationalConnector(Connector).ReadObjectListWithNoLock then
+    FContext.TableWithNoLockDirective := GetTableNoLockDirective(TInstantRelationalConnector(Connector).SQLEngine);
 end;
 
 procedure TInstantRelationalTranslator.Clear;
@@ -6107,6 +6128,13 @@ begin
     AParams);
 end;
 
+constructor TInstantSQLQuery.Create(AConnector: TInstantConnector);
+begin
+  inherited;
+  FPageCount := -1;
+  FRecordCount := -1;
+end;
+
 destructor TInstantSQLQuery.Destroy;
 begin
   DestroyObjectReferenceList;
@@ -6162,8 +6190,16 @@ begin
 end;
 
 function TInstantSQLQuery.GetStatement: string;
+var
+  LCatalogClass: TInstantCatalogClass;
 begin
   Result := FStatement;
+  if (RecordCount >= 0) and (PageCount > 0) then
+  begin
+    LCatalogClass := Connector.Broker.GetCatalogClass;
+    if LCatalogClass.InheritsFrom(TInstantSQLBrokerCatalog) then
+      Result := Result+' '+TInstantSQLBrokerCatalogClass(LCatalogClass).FormatOffset(PageCount, RecordCount);
+  end;
 end;
 
 procedure TInstantSQLQuery.InitObjectReferences;
@@ -6341,8 +6377,10 @@ begin
   inherited;
   Connection := CreateConnection(Connector);
   try
-    (Connector as TInstantConnectionBasedConnector).Connection := Connection;
-    (Connector as TInstantConnectionBasedConnector).LoginPrompt := LoginPrompt;
+    TInstantConnectionBasedConnector(Connector).Connection := Connection;
+    TInstantConnectionBasedConnector(Connector).LoginPrompt := LoginPrompt;
+    TInstantConnectionBasedConnector(Connector).ReadObjectListWithNoLock :=
+      ReadObjectListWithNoLock;
   except
     Connection.Free;
     raise;
@@ -7005,6 +7043,7 @@ end;
 procedure TInstantTranslationContext.WriteTables(Writer: TInstantIQLWriter);
 var
   I, J: Integer;
+  LTablePathName: string;
 begin
   for I := 0 to Pred(TablePathCount) do
   begin
@@ -7013,8 +7052,10 @@ begin
         Writer.WriteString(' LEFT OUTER');
       Writer.WriteString(' JOIN ');
     end;
-    Writer.WriteString(Format('%s %s',[InstantEmbrace(
-      ExtractTarget(TablePaths[I]), Delimiters), TablePathAliases[I]]));
+    LTablePathName := Format('%s %s',[InstantEmbrace(
+      ExtractTarget(TablePaths[I]), Delimiters), TablePathAliases[I]]);
+    Writer.WriteString(LTablePathName);
+    Writer.WriteString(TableWithNoLockDirective);
     if (I > 0) and (TablePathList[I].Count > 0) then begin
       Writer.WriteString(' ON (');
       for J := 0 to TablePathList[I].Count - 1 do begin

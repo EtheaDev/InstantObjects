@@ -59,6 +59,8 @@ type
     LoginPromptCheckBox: TCheckBox;
     UseUnicodeCheckBox: TCheckBox;
     TestButton: TButton;
+    Label1: TLabel;
+    DefaultStatementCacheEdit: TEdit;
     procedure FormCreate(Sender: TObject);
     procedure DriverNameEditChange(Sender: TObject);
     procedure ConnectionNameListBoxClick(Sender: TObject);
@@ -178,6 +180,7 @@ begin
   StreamFormatComboBox.ItemIndex := Ord(ConnectionDef.BlobStreamFormat);
   LoginPromptCheckBox.Checked := ConnectionDef.LoginPrompt;
   UseUnicodeCheckBox.Checked := ConnectionDef.UseUnicode;
+  DefaultStatementCacheEdit.Text := IntToStr(ConnectionDef.DefaultStatementCacheCapacity);
 end;
 
 procedure TInstantDBXConnectionDefEditForm.SaveData(
@@ -194,6 +197,7 @@ begin
   ConnectionDef.BlobStreamFormat := TInstantStreamFormat(StreamFormatComboBox.ItemIndex);
   ConnectionDef.LoginPrompt := LoginPromptCheckBox.Checked;
   ConnectionDef.UseUnicode := UseUnicodeCheckBox.Checked;
+  ConnectionDef.DefaultStatementCacheCapacity := StrToIntDef(DefaultStatementCacheEdit.Text,0);
 end;
 
 procedure TInstantDBXConnectionDefEditForm.SetConnectionName(

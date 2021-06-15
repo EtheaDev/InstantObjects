@@ -143,6 +143,7 @@ type
   protected
     function ColumnTypeByDataType(DataType: TInstantDataType): string; override;
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
+    class function GetCatalogClass: TInstantCatalogClass; override;
     function GetSQLQuote: Char; override;
   public
     property Dialect: Integer read GetDialect;
@@ -189,6 +190,7 @@ type
   TInstantDBXMSSQLBroker = class(TInstantDBXBroker)
   protected
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
+    class function GetCatalogClass: TInstantCatalogClass; override;
     procedure AssignParam(SourceParam, TargetParam: TParam); override;
     function CreateResolver(Map: TInstantAttributeMap): TInstantSQLResolver; override;
     function ColumnTypeByDataType(DataType: TInstantDataType): string; override;
@@ -242,6 +244,7 @@ type
     function GetDBMSName: string; override;
     function GetSQLQuote: Char; override;
     function CreateCatalog(const AScheme: TInstantScheme): TInstantCatalog; override;
+    class function GetCatalogClass: TInstantCatalogClass; override;
   public
     function DataTypeToColumnType(DataType: TInstantDataType; Size: Integer): string; override;
   end;
@@ -294,7 +297,8 @@ implementation
 
 uses
   SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math, InstantClasses,
-  InstantDBBuild, InstantIBFbCatalog, InstantMSSqlCatalog, InstantMySQLCatalog;
+  InstantDBBuild,
+  InstantIBFbCatalog, InstantMSSqlCatalog, InstantMySQLCatalog;
 
 { TInstantDBXConnector }
 
@@ -594,7 +598,7 @@ begin
         [AStatement, E.Message], E);
   end;
   finally
-    LQuery.Free;
+    ReleaseDataSet(LQuery);
   end;
 end;
 
@@ -677,6 +681,11 @@ begin
   Result := TInstantIBFbCatalog.Create(AScheme, Self);
 end;
 
+class function TInstantDBXInterBaseFirebirdBroker.GetCatalogClass: TInstantCatalogClass;
+begin
+  Result := TInstantIBFbCatalog;
+end;
+
 function TInstantDBXInterBaseFirebirdBroker.GetDialect: Integer;
 begin
   Result := StrToIntDef(Connector.ParamByName('SQLDialect'), 3);
@@ -731,6 +740,11 @@ end;
 class function TInstantDBXMSSQLBroker.GeneratorClass: TInstantSQLGeneratorClass;
 begin
   Result := TInstantDBXMSSQLSQLGenerator;
+end;
+
+class function TInstantDBXMSSQLBroker.GetCatalogClass: TInstantCatalogClass;
+begin
+  Result := TInstantMSSqlCatalog;
 end;
 
 function TInstantDBXMSSQLBroker.GetDBMSName: string;
@@ -948,6 +962,11 @@ begin
   if (DataType = dtString) and (Size > 255) then
     DataType := dtMemo;
   Result := inherited DataTypeToColumnType(DataType, Size);
+end;
+
+class function TInstantDBXMySQLBroker.GetCatalogClass: TInstantCatalogClass;
+begin
+  Result := TInstantMySQLCatalog;
 end;
 
 function TInstantDBXMySQLBroker.GetDBMSName: string;

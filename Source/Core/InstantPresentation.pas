@@ -4389,8 +4389,8 @@ procedure TInstantCustomExposer.ConvertToInstantBookmark(Bookmark : TBookmark;
 begin
 {$IFDEF D12+}
   // TBookmark is a dynamic byte array for D2009+
-  if (Length(Bookmark) = sizeof(TBookmark)) then
-    Move(Bookmark[0], BookmarkOut, sizeof(BookmarkOut))
+  if (Length(Bookmark) = BookmarkSize) then
+    Move(Bookmark[0], BookmarkOut, BookmarkSize)
   else
     fillchar(BookmarkOut, sizeof(BookmarkOut), 0);
 {$ELSE}

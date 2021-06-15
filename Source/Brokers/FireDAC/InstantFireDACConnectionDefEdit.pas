@@ -72,8 +72,10 @@ type
     DriverIdComboBox: TComboBox;
     UseUnicodeCheckBox: TCheckBox;
     cbIsolation: TComboBox;
+    DefaultStatementCacheEdit: TEdit;
+    Label1: TLabel;
+    WithNoLockCheckBox: TCheckBox;
     procedure FormCreate(Sender: TObject);
-    procedure PortEditExit(Sender: TObject);
     procedure DatabaseButtonClick(Sender: TObject);
     procedure TestButtonClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -108,12 +110,6 @@ end;
 procedure TInstantFireDACConnectionDefEditForm.FormShow(Sender: TObject);
 begin
   TestButton.Visible := Assigned(FOwnerConnectionDef);
-end;
-
-procedure TInstantFireDACConnectionDefEditForm.PortEditExit(Sender: TObject);
-begin
-  if Length(PortEdit.Text) > 0 then
-    PortEdit.Text := IntToStr(StrToInt(PortEdit.Text));
 end;
 
 constructor TInstantFireDACConnectionDefEditForm.CreateForConnectionDef(
@@ -153,6 +149,8 @@ begin
   cbIsolation.ItemIndex              := Ord(ConnectionDef.Isolation);
   UseDelimitedIdentsCheckBox.Checked := ConnectionDef.UseDelimitedIdents;
   UseUnicodeCheckBox.Checked         := ConnectionDef.UseUnicode;
+  DefaultStatementCacheEdit.Text     := IntToStr(ConnectionDef.DefaultStatementCacheCapacity);
+  WithNoLockCheckBox.Checked         := ConnectionDef.ReadObjectListWithNoLock;
 end;
 
 procedure TInstantFireDACConnectionDefEditForm.SaveData(ConnectionDef: TInstantFireDACConnectionDef);
@@ -171,6 +169,8 @@ begin
   ConnectionDef.UseDelimitedIdents := UseDelimitedIdentsCheckBox.Checked;
   ConnectionDef.UseUnicode         := UseUnicodeCheckBox.Checked;
   ConnectionDef.AdditionalParams   := AdditionalParamsEditor.Lines.Text;
+  ConnectionDef.DefaultStatementCacheCapacity := StrToIntDef(DefaultStatementCacheEdit.Text,0);
+  ConnectionDef.ReadObjectListWithNoLock := WithNoLockCheckBox.Checked;
 end;
 
 procedure TInstantFireDACConnectionDefEditForm.TestButtonClick(Sender: TObject);

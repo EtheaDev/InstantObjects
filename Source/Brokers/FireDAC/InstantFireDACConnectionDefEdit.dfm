@@ -112,6 +112,14 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Caption = 'D&river ID:'
       FocusControl = DriverIdComboBox
     end
+    object Label1: TLabel
+      Left = 7
+      Top = 265
+      Width = 127
+      Height = 13
+      Caption = 'Default Statement Cache'
+      FocusControl = DefaultStatementCacheEdit
+    end
     object HostNameEdit: TEdit
       Left = 7
       Top = 32
@@ -124,8 +132,8 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Top = 32
       Width = 81
       Height = 21
+      NumbersOnly = True
       TabOrder = 1
-      OnExit = PortEditExit
     end
     object DatabaseEdit: TEdit
       Left = 7
@@ -170,7 +178,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Left = 7
       Top = 160
       Width = 185
-      Height = 142
+      Height = 99
       TabOrder = 9
     end
     object StreamFormatComboBox: TComboBox
@@ -212,7 +220,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Width = 157
       Height = 17
       Caption = 'Use &delimited identifiers'
-      TabOrder = 14
+      TabOrder = 15
     end
     object UseUnicodeCheckBox: TCheckBox
       Left = 207
@@ -220,7 +228,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Width = 104
       Height = 17
       Caption = 'Use &Unicode'
-      TabOrder = 13
+      TabOrder = 14
     end
     object cbIsolation: TComboBox
       Left = 207
@@ -229,6 +237,23 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
       Height = 21
       Style = csDropDownList
       TabOrder = 12
+    end
+    object DefaultStatementCacheEdit: TEdit
+      Left = 7
+      Top = 281
+      Width = 81
+      Height = 21
+      NumbersOnly = True
+      TabOrder = 13
+      Text = '0'
+    end
+    object WithNoLockCheckBox: TCheckBox
+      Left = 102
+      Top = 285
+      Width = 104
+      Height = 17
+      Caption = 'With No Lock'
+      TabOrder = 16
     end
   end
   object BottomPanel: TPanel
