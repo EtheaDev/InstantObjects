@@ -472,6 +472,9 @@ begin
 
     //Those parameters speed-up reading
     Connection.ResourceOptions.DirectExecute := True;
+    //Esclude use of Macros for SQL-Statements
+    Connection.ResourceOptions.MacroCreate := False;
+    Connection.ResourceOptions.MacroExpand := False;
     Connection.FetchOptions.Mode := fmAll;
   except
     Connection.Free;
