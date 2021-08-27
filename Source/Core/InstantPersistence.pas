@@ -3729,7 +3729,7 @@ begin
     if (Metadata.Defaultvalue <> '') then
     begin
       try
-        Write(Metadata.DefaultValue[1], 0, Length(Metadata.DefaultValue) * SizeOf(Char));
+        AsString := Metadata.Defaultvalue;
       except
         on E: Exception do
           raise ConversionError(E);
