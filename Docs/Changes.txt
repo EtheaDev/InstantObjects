@@ -1,6 +1,10 @@
 VERSION HISTORY
 ---------------
-Versione 2.10 (2.10.0.0) (2021-03-29)
+Version 3.0 (3.0.0.0) (2021-08-27)
+- Added support for Delphi 11
+- Updated Test Framework to DUNITX / TestInsight (only for D10.2, D10.3, D10.4, D11.0)
+
+Version 2.10 (2.10.0.0) (2021-03-29)
 - Fixed InstantDBX for compilation with IO_CONSOLE directive
 - Fixed FireDAC Broker for EncryptedPassword
 - Added OnIdChanged for TInstantObject class

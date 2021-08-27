@@ -1,12 +1,13 @@
 ------------------------------------------------------------------
 
   InstantObjects for Delphi - Full Unicode version
-  ver. 2.10 for Delphi 10.4 Sydney
+  ver. 3.0 for Delphi 11.0 Olympus
 
   Mozilla Public License 1.1 Edition
   Based on Seleqt InstantObjects.
   Portions created by Seleqt are Copyright (c) 2001-2003 Seleqt.
   Other portions and changes are Copyright (c) the authors.
+  Actual Maintainers: Ethea S.r.l. Copyright (c) 2004-2021
   All rights reserved.
 
 ------------------------------------------------------------------
