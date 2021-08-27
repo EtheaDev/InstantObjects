@@ -39,17 +39,22 @@ unit TestXMLBroker;
 interface
 
 uses
-  fpcunit, testregistry, InstantXML;
+  {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantXML,
+  DUnitX.TestFramework;
 
 type
-  TTestXMLBroker = class(TTestCase)
+  [TestFixture]
+  TTestXMLBroker = class(TInstantTestCase)
   private
   protected
     FConn: TInstantXMLConnector;
     FAcc: TXMLFilesAccessor;
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestStoreAndRetrieveContact;
     procedure TestOrderBy;
   end;
@@ -114,18 +119,17 @@ var
   t: TPhone;
   LQuery: TInstantQuery;
 begin
-  FConn.IsDefault := True;
 
-  c1 := TContact.Create;
+  c1 := TContact.Create(FConn);
   try
     c1.Name := 'ZZTop';
     c1.Address.City := 'Dallas';
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Home';
     t.Number := '012 12345678';
     c1.AddPhone(t);
     AssertEquals(1, c1.PhoneCount);
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Office';
     t.Number := '012 23456781';
     c1.AddPhone(t);
@@ -135,16 +139,16 @@ begin
     FreeAndNil(c1);
   end;
 
-  c2 := TContact.Create;
+  c2 := TContact.Create(FConn);
   try
     c2.Name := 'Aaronson';
     c2.Address.City := 'Las Vegas';
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Home';
     t.Number := '012 12345678';
     c2.AddPhone(t);
     AssertEquals(1, c2.PhoneCount);
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Office';
     t.Number := '012 23456781';
     c2.AddPhone(t);
@@ -182,20 +186,19 @@ var
   old_id: string;
   t: TPhone;
 begin
-  FConn.IsDefault := True;
-  c := TContact.Create;
+  c := TContact.Create(FConn);
   try
     if FConn.UseUnicode then
       c.Name := DEF_NAME_UNICODE
     else
       c.Name := DEF_NAME;
     c.Address.City := DEF_CITY;
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Home';
     t.Number := '012 12345678';
     c.AddPhone(t);
     AssertEquals(1, c.PhoneCount);
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Office';
     t.Number := '012 23456781';
     c.AddPhone(t);
@@ -206,7 +209,7 @@ begin
     FreeAndNil(c);
   end;
   AssertNull(c);
-  c := TContact.Retrieve(old_id);
+  c := TContact.Retrieve(old_id, False, False, FConn);
   try
     AssertNotNull('Object not retrieved', c);
     AssertEquals(old_id, c.Id);
@@ -223,7 +226,7 @@ begin
 end;
 
 initialization
-{$IFNDEF CURR_TESTS}
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TTestXMLBroker]);
 {$ENDIF}
 end.

@@ -32,20 +32,24 @@ unit TestInstantReferences;
 
 interface
 
-uses fpcunit, InstantMock, InstantPersistence, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMock, InstantPersistence, TestModel,
+  DUnitX.TestFramework;
 
 type
-
-  TestTInstantEmbReferences = class(TTestCase)
+  [TestFixture]
+  TestTInstantEmbReferences = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantReferences: TInstantReferences;
     FOwner: TCompany;
     function RefsEmbeddedCompare(Holder, Obj1, Obj2: TInstantObject): Integer;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAdd;
     procedure TestAddReference;
     procedure TestAssign;
@@ -67,16 +71,20 @@ type
     procedure TestUnchanged;
   end;
 
-  TestTInstantExtReferences = class(TTestCase)
+  [TestFixture]
+  TestTInstantExtReferences = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantReferences: TInstantReferences;
     FOwner: TCompany;
     function RefsExternalCompare(Holder, Obj1, Obj2: TInstantObject): Integer;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAdd;
     procedure TestAddReference;
     procedure TestAssign;
@@ -101,7 +109,7 @@ type
 implementation
 
 uses
-  SysUtils, Windows, Classes, testregistry, InstantClasses, InstantMetadata;
+  SysUtils, Windows, Classes, InstantClasses, InstantMetadata;
 
 function TestTInstantEmbReferences.RefsEmbeddedCompare(Holder, Obj1, Obj2:
     TInstantObject): Integer;
@@ -165,14 +173,13 @@ end;
 
 procedure TestTInstantEmbReferences.TestAddReference;
 begin
-  try
-    FInstantReferences.AddReference('TPerson', 'NewPersonId');
-    Fail('Should never get here!!');
-  except
-    on E: EInstantError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
+  assert.WillRaise(
+    procedure begin
+      FInstantReferences.AddReference('TPerson', 'NewPersonId');
+    end,
+    EInstantError,
+    'Exception was not thrown for InstantReferences.AddReference'
+  );
 end;
 
 procedure TestTInstantEmbReferences.TestAssign;
@@ -724,8 +731,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantExtReferences,
                 TestTinstantEmbReferences]);
 {$ENDIF}

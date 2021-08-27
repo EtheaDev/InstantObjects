@@ -38,20 +38,25 @@ unit TestInstantNumeric;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantNumeric
-  TestTInstantNumeric = class(TTestCase)
+  [TestFixture]
+  TestTInstantNumeric = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantNumeric: TInstantInteger;
     FOwner: TCompany;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAsBoolean;
     procedure TestAsDateTime;
     procedure TestAsObject;
@@ -65,7 +70,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, testregistry, InstantClasses;
+  SysUtils, InstantClasses;
 
 procedure TestTInstantNumeric.SetUp;
 begin
@@ -112,25 +117,23 @@ var
 begin
   vObj := TInstantObject.Create(FConn);
   try
-    try
-      FInstantNumeric.AsObject := vObj;
-      Fail('Exception was not thrown for Set AsObject!'); // should never get here
-    except
-      on E: EInstantAccessError do ; // do nothing as this is expected
-      else
-        raise;
-    end;
+    Assert.WillRaise(
+      procedure begin
+        FInstantNumeric.AsObject := vObj;
+      end,
+      EInstantAccessError,
+      'Exception was not thrown for Set InstantNumeric.AsObject!'
+      );
+
+    Assert.WillRaise(
+      procedure begin
+        FInstantNumeric.AsObject;
+      end,
+      EInstantAccessError,
+      'Exception was not thrown for Get InstantNumeric.AsObject!'
+      );
   finally
     vObj.Free;
-  end;
-
-  try
-    FInstantNumeric.AsObject;
-    Fail('Exception was not thrown for Get AsObject!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
   end;
 end;
 
@@ -157,8 +160,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantNumeric]);
 {$ENDIF}
 

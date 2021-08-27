@@ -32,66 +32,71 @@ unit TestInstantAttributeMetadata;
 
 interface
 
-uses SysUtils, fpcunit, InstantMock, InstantPersistence, InstantTypes,
-InstantMetadata, InstantClasses;
+uses SysUtils, {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMock, InstantPersistence, InstantTypes,
+InstantMetadata, InstantClasses,
+  DUnitX.TestFramework;
 
 type
   TRunMethodCategory = procedure(Category: TInstantAttributeCategory) of object;
   TRunMethodIAClass = procedure(AClass: TInstantAbstractAttributeClass) of object;
 
   // Extended test methods for class TTestCase
-  TTestCaseEx = class(TTestCase)
+  TTestCaseEx = class(TInstantTestCase)
   private
     FTempAttr: TInstantAttribute;
   public
-    class procedure AssertException(const AMessage: string;
+    procedure AssertException(const AMessage: string;
                                     AExceptionClass: ExceptClass;
                                     ACategory: TInstantAttributeCategory;
                                     AMethod: TRunMethodCategory);
                                     overload;
-    class procedure AssertException(AExceptionClass: ExceptClass;
+    procedure AssertException(AExceptionClass: ExceptClass;
                                     ACategory: TInstantAttributeCategory;
                                     AMethod: TRunMethodCategory);
                                     overload;
-    class procedure AssertException(const AMessage: string;
-                                    AExceptionClass: ExceptClass;
-                                    AClass: TInstantAbstractAttributeClass;
-                                    AMethod: TRunMethodIAClass);
-                                    overload;
-    class procedure AssertException(AExceptionClass: ExceptClass;
-                                    AClass: TInstantAbstractAttributeClass;
-                                    AMethod: TRunMethodIAClass);
-                                    overload;
-    class procedure AssertNoException(const AMessage: string;
-                                    AExceptionClass: ExceptClass;
-                                    ACategory: TInstantAttributeCategory;
-                                    AMethod: TRunMethodCategory);
-                                    overload;
-    class procedure AssertNoException(AExceptionClass: ExceptClass;
-                                    ACategory: TInstantAttributeCategory;
-                                    AMethod: TRunMethodCategory);
-                                    overload;
-    class procedure AssertNoException(const AMessage: string;
+    procedure AssertException(const AMessage: string;
                                     AExceptionClass: ExceptClass;
                                     AClass: TInstantAbstractAttributeClass;
                                     AMethod: TRunMethodIAClass);
                                     overload;
-    class procedure AssertNoException(AExceptionClass: ExceptClass;
+    procedure AssertException(AExceptionClass: ExceptClass;
+                                    AClass: TInstantAbstractAttributeClass;
+                                    AMethod: TRunMethodIAClass);
+                                    overload;
+    procedure AssertNoException(const AMessage: string;
+                                    AExceptionClass: ExceptClass;
+                                    ACategory: TInstantAttributeCategory;
+                                    AMethod: TRunMethodCategory);
+                                    overload;
+    procedure AssertNoException(AExceptionClass: ExceptClass;
+                                    ACategory: TInstantAttributeCategory;
+                                    AMethod: TRunMethodCategory);
+                                    overload;
+    procedure AssertNoException(const AMessage: string;
+                                    AExceptionClass: ExceptClass;
+                                    AClass: TInstantAbstractAttributeClass;
+                                    AMethod: TRunMethodIAClass);
+                                    overload;
+    procedure AssertNoException(AExceptionClass: ExceptClass;
                                     AClass: TInstantAbstractAttributeClass;
                                     AMethod: TRunMethodIAClass);
                                     overload;
   end;
 
   // Test methods for class TInstantAttributeMetadata
+  [TestFixture]
   TestTInstantAttributeMetadata = class(TTestCaseEx)
   private
     FConn: TInstantMockConnector;
     FInstantAttributeMetadata: TInstantAttributeMetadata;
     procedure SetInvalidValueInTempAttr;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestCreateAttribute;
     procedure TestAssign;
     procedure TestCheckAttributeClass;
@@ -102,14 +107,18 @@ type
   end;
 
   // Test methods for class TInstantAttributeMetadatas
-  TestTInstantAttributeMetadatas = class(TTestCase)
+  [TestFixture]
+  TestTInstantAttributeMetadatas = class(TInstantTestCase)
   private
     FOwner: TInstantClassMetadata;
     FInstantAttributeMetadatas: TInstantAttributeMetadatas;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAddRemove;
     procedure TestClear;
     procedure TestFind;
@@ -118,11 +127,11 @@ type
 
 implementation
 
-uses Classes, TypInfo, testregistry;
+uses Classes, TypInfo;
 
-class procedure TTestCaseEx.AssertException(const AMessage: string;
-AExceptionClass: ExceptClass; ACategory: TInstantAttributeCategory;
-AMethod: TRunMethodCategory);
+procedure TTestCaseEx.AssertException(const AMessage: string;
+  AExceptionClass: ExceptClass; ACategory: TInstantAttributeCategory;
+  AMethod: TRunMethodCategory);
 var
   Passed : Boolean;
   ExceptionName: string;
@@ -144,9 +153,9 @@ begin
     [AExceptionClass.ClassName, ExceptionName])+ ': ' + AMessage, Passed);
 end;
 
-class procedure TTestCaseEx.AssertException(const AMessage: string;
-    AExceptionClass: ExceptClass; AClass: TInstantAbstractAttributeClass;
-    AMethod: TRunMethodIAClass);
+procedure TTestCaseEx.AssertException(const AMessage: string;
+  AExceptionClass: ExceptClass; AClass: TInstantAbstractAttributeClass;
+  AMethod: TRunMethodIAClass);
 var
   Passed : Boolean;
   ExceptionName: string;
@@ -168,21 +177,21 @@ begin
     [AExceptionClass.ClassName, ExceptionName])+ ': ' + AMessage, Passed);
 end;
 
-class procedure TTestCaseEx.AssertException(AExceptionClass: ExceptClass;
+procedure TTestCaseEx.AssertException(AExceptionClass: ExceptClass;
   ACategory: TInstantAttributeCategory; AMethod: TRunMethodCategory);
 begin
   AssertException('', AExceptionClass, ACategory, AMethod);
 end;
 
-class procedure TTestCaseEx.AssertException(AExceptionClass: ExceptClass;
-    AClass: TInstantAbstractAttributeClass; AMethod: TRunMethodIAClass);
+procedure TTestCaseEx.AssertException(AExceptionClass: ExceptClass;
+  AClass: TInstantAbstractAttributeClass; AMethod: TRunMethodIAClass);
 begin
   AssertException('', AExceptionClass, AClass, AMethod);
 end;
 
-class procedure TTestCaseEx.AssertNoException(const AMessage: string;
-AExceptionClass: ExceptClass; ACategory: TInstantAttributeCategory;
-AMethod: TRunMethodCategory);
+procedure TTestCaseEx.AssertNoException(const AMessage: string;
+  AExceptionClass: ExceptClass; ACategory: TInstantAttributeCategory;
+  AMethod: TRunMethodCategory);
 var
   Passed : Boolean;
 begin
@@ -192,12 +201,12 @@ begin
   except
     Passed := False;
   end;
-  AssertTrue(AMessage, Passed);
+  Assert.IsTrue(Passed, AMessage);
 end;
 
-class procedure TTestCaseEx.AssertNoException(const AMessage: string;
-    AExceptionClass: ExceptClass; AClass: TInstantAbstractAttributeClass;
-    AMethod: TRunMethodIAClass);
+procedure TTestCaseEx.AssertNoException(const AMessage: string;
+  AExceptionClass: ExceptClass; AClass: TInstantAbstractAttributeClass;
+  AMethod: TRunMethodIAClass);
 var
   Passed : Boolean;
 begin
@@ -207,16 +216,16 @@ begin
   except
     Passed := False;
   end;
-  AssertTrue(AMessage, Passed);
+  Assert.IsTrue(Passed, AMessage);
 end;
 
-class procedure TTestCaseEx.AssertNoException(AExceptionClass: ExceptClass;
+procedure TTestCaseEx.AssertNoException(AExceptionClass: ExceptClass;
   ACategory: TInstantAttributeCategory; AMethod: TRunMethodCategory);
 begin
   AssertNoException('', AExceptionClass, ACategory, AMethod);
 end;
 
-class procedure TTestCaseEx.AssertNoException(AExceptionClass: ExceptClass;
+procedure TTestCaseEx.AssertNoException(AExceptionClass: ExceptClass;
     AClass: TInstantAbstractAttributeClass; AMethod: TRunMethodIAClass);
 begin
   AssertNoException('', AExceptionClass, AClass, AMethod);
@@ -282,8 +291,8 @@ begin
     AssertEquals('DisplayWidth incorrect', 10, vDest.DisplayWidth);
     AssertEquals('DisplayLabel incorrect', 'FieldLabel', vDest.DisplayLabel);
     AssertEquals('EditMask incorrect', '', vDest.EditMask);
-    AssertEquals('IsIndexed incorrect', False, vDest.IsIndexed);
-    AssertEquals('IsRequired incorrect', True, vDest.IsRequired);
+    AssertTrue('IsIndexed incorrect', not vDest.IsIndexed);
+    AssertTrue('IsRequired incorrect', vDest.IsRequired);
     AssertEquals('ObjectClassName incorrect', 'ObjectClassName',
       vDest.ObjectClassName);
     AssertEquals('Size incorrect', 40, vDest.Size);
@@ -375,7 +384,7 @@ end;
 
 procedure TestTInstantAttributeMetadata.SetInvalidValueInTempAttr;
 begin
-  Assert(Assigned(FTempAttr));
+  Assert.IsNotNull(FTempAttr);
   FTempAttr.AsString := 'char z not allowed';
 end;
 
@@ -446,8 +455,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantAttributeMetadata,
                  TestTInstantAttributeMetadatas]);
 {$ENDIF}

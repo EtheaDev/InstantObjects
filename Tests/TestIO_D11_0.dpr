@@ -1,4 +1,4 @@
-program TestIO_D10_3;
+program TestIO_D11_0;
 
 {$I '..\Source\InstantDefines.inc'}
 

@@ -32,22 +32,26 @@ unit TestInstantCircularReferences;
 
 interface
 
-uses fpcunit, InstantMock, InstantPersistence, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMock, InstantPersistence, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // For leak testing, run these tests in conjunction 
   // with a memory leak test utility.
-  
-  TestCircularReferences = class(TTestCase)
+  [TestFixture]
+  TestCircularReferences = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantReferences: TInstantReferences;
     FCompany: TCompany;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAddEmbeddedObject;
     procedure TestAddExternalObject;
 
@@ -99,7 +103,7 @@ type
 
 implementation
 
-uses SysUtils, Classes, Windows, testregistry;
+uses SysUtils, Classes, Windows;
 
 procedure TestCircularReferences.SetUp;
 begin
@@ -950,8 +954,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestCircularReferences]);
 {$ENDIF}
 

@@ -39,11 +39,14 @@ unit TestInstantCode;
 interface
 
 uses
-  InstantCode, fpcunit, InstantMock, TestModel;
+  InstantCode, {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
-  TTestInstantCodeModel = class(TTestCase)
+  [TestFixture]
+  TTestInstantCodeModel = class(TInstantTestCase)
   published
+    [Test]
     {
       This test uses TInstantCodeModel to: read the actual TestModel.pas unit
       from disk; parse it; rename class TCategory to TCategory2, and checks
@@ -56,7 +59,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes, testregistry;
+  SysUtils, Classes;
 
 { TTestInstantCodeModel }
 
@@ -122,7 +125,7 @@ begin
 end;
 
 initialization
-{$IFNDEF CURR_TESTS}
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TTestInstantCodeModel]);
 {$ENDIF}
 end.

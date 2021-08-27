@@ -38,20 +38,25 @@ unit TestInstantAttribute;
 
 interface
 
-uses fpcunit, InstantPersistence, TestModel, InstantMock;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, TestModel, InstantMock,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantAttribute
-  TestTInstantAttribute = class(TTestCase)
+  [TestFixture]
+  TestTInstantAttribute = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantAttribute: TInstantString;
     FOwner: TContact;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestChange;
     procedure TestCheckHasMetadata;
     procedure TestDisplayText;
@@ -68,7 +73,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, testregistry, InstantClasses, InstantMetadata;
+  SysUtils, InstantClasses, InstantMetadata;
 
 procedure TestTInstantAttribute.SetUp;
 begin
@@ -181,8 +186,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantAttribute]);
 {$ENDIF}
 

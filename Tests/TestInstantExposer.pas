@@ -33,19 +33,24 @@ unit TestInstantExposer;
 interface
 
 uses
-  fpcunit, testregistry, InstantXML, InstantPresentation, DB;
+  {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantXML, InstantPresentation, DB,
+  DUnitX.TestFramework;
 
 type
-  TTestExposer = class(TTestCase)
+  [TestFixture]
+  TTestExposer = class(TInstantTestCase)
   private
     procedure AssignNameField(const Exp: TDataSet);
   protected
     FConn: TInstantXMLConnector;
     FAcc: TXMLFilesAccessor;
     FExp: TInstantExposer;
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestStoreAndRetrieveContact;
     procedure TestStoreAndRetrievePerson;
     procedure TestStoreAndRetrievePicture;
@@ -79,7 +84,7 @@ begin
   ForceDirectories(FAcc.RootFolder);
   FConn := TInstantXMLConnector.Create(nil);
   FConn.Connection := FAcc;
-  FConn.IsDefault := True;
+  //FConn.IsDefault := True;
   FConn.UseUnicode := TestModel.TestUseUnicode;
   FExp := TInstantExposer.Create(nil);
 
@@ -126,7 +131,7 @@ var
   Field: TField;
 begin
   FExp.ObjectClass := TContact;
-  c := TContact.Create;
+  c := TContact.Create(FConn);
   try
     FExp.Subject := c;
     FExp.Edit;
@@ -167,7 +172,7 @@ begin
     FreeAndNil(c);
   end;
   AssertNull(c);
-  c := TContact.Retrieve(old_id);
+  c := TContact.Retrieve(old_id, False, False, FConn);
   try
     AssertNotNull('Object not retrieved', c);
     AssertEquals(old_id, c.Id);
@@ -211,7 +216,7 @@ var
   c: TContact;
 begin
   FExp.ObjectClass := TContact;
-  c := TContact.Create;
+  c := TContact.Create(FConn);
   try
     FExp.Subject := c;
     FExp.Edit;
@@ -229,7 +234,7 @@ var
   DataSetField: TDataSetField;
 begin
   FExp.ObjectClass := TContact;
-  c := TContact.Create;
+  c := TContact.Create(FConn);
   try
     FExp.Subject := c;
     FExp.Edit;
@@ -257,7 +262,7 @@ begin
     FreeAndNil(c);
   end;
   AssertNull(c);
-  c := TContact.Retrieve(old_id);
+  c := TContact.Retrieve(old_id, False, False, FConn);
   try
     AssertNotNull('Object not retrieved', c);
     AssertEquals(old_id, c.Id);
@@ -284,7 +289,7 @@ var
   LBirthDate: TDateTime;
 begin
   FExp.ObjectClass := TPerson;
-  p := TPerson.Create;
+  p := TPerson.Create(FConn);
   try
     FExp.Subject := p;
     FExp.Edit;
@@ -294,14 +299,14 @@ begin
     LBirthDate := EncodeDate(1974, 09, 30);
     Field := FExp.FieldByName('BirthDate');
     Field.Value := LBirthDate;
-    AssertEqualsDateTime(LBirthDate, p.BirthDate);
+    AssertEquals(LBirthDate, p.BirthDate);
     FExp.Post;
     old_id := p.id;
   finally
     FreeAndNil(p);
   end;
   AssertNull(p);
-  p := TPerson.Retrieve(old_id);
+  p := TPerson.Retrieve(old_id, False, False, FConn);
   try
     AssertNotNull('Object not retrieved', p);
     AssertEquals(old_id, p.Id);
@@ -318,7 +323,7 @@ var
   BlobContentBefore, BlobContentAfter: string;
 begin
   FExp.ObjectClass := TPerson;
-  c := TPerson.Create;
+  c := TPerson.Create(FConn);
   try
     FExp.Subject := c;
     FExp.Edit;
@@ -348,7 +353,7 @@ begin
 end;
 
 initialization
-{$IFNDEF CURR_TESTS}
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TTestExposer]);
 {$ENDIF}
 end.

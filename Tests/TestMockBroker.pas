@@ -33,17 +33,22 @@ unit TestMockBroker;
 interface
 
 uses
-  Classes, SysUtils, InstantPersistence, fpcunit, testregistry, InstantMock,
-  TestModel;
+  Classes, SysUtils, InstantPersistence, {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMock,
+  TestModel,
+  DUnitX.TestFramework;
 
 type
-  TTestMockBroker = class(TTestCase)
+  [TestFixture]
+  TTestMockBroker = class(TInstantTestCase)
   protected
     FConn: TInstantMockConnector;
-    procedure SetUp; override;
-    procedure TearDown; override;
   public
+    [Setup]
+    procedure SetUp; override;
+    [TearDown]
+    procedure TearDown; override;
   published
+    [Test]
     procedure TestModelFromToFile;
     {$IFDEF DELPHI_NEON}
     procedure TestModelFromToFileJSON;
@@ -54,10 +59,14 @@ type
     procedure TestStoreAndRetrieveProject;
   end;
 
-  TTestMockRelationalBroker = class(TTestCase)
+  [TestFixture]
+  TTestMockRelationalBroker = class(TInstantTestCase)
   protected
     FConn: TInstantMockConnector;
+  public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
     procedure TestGetBroker;
@@ -65,10 +74,14 @@ type
     procedure TestStoreAndRetrieveContact;
   end;
 
-  TTestMockSQLbroker = class(TTestCase)
+  [TestFixture]
+  TTestMockSQLbroker = class(TInstantTestCase)
   protected
     FConn: TInstantMockConnector;
+  public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
     procedure TestQuery;
@@ -180,11 +193,11 @@ var
   old_id: string;
   brok: TInstantMockBroker;
 begin
-  FConn.IsDefault := True;
+  //FConn.IsDefault := True;
   FConn.StartTransaction;
   brok := FConn.Broker as TInstantMockBroker;
   brok.MockManager.StartSetUp;
-  a := TProject.Create;
+  a := TProject.Create(FConn);
   try
     a.Name := 'Bongo';
     a.Store;
@@ -198,7 +211,7 @@ begin
   brok.MockManager.Verify;
   FConn.CommitTransaction;
   brok.MockManager.StartSetUp;
-  a := TProject.Retrieve(old_id);
+  a := TProject.Retrieve(old_id, False, False, FConn);
   try
     AssertEquals(old_id, a.Id);
   finally
@@ -261,12 +274,12 @@ var
   c: TContact;
   t: TPhone;
 begin
-  FConn.IsDefault := True;
-  c := TContact.Create;
+  //FConn.IsDefault := True;
+  c := TContact.Create(FConn);
   try
     AssertNotNull(c._Phones);
     AssertEquals(0, c.PhoneCount);
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Home';
     t.Number := '012 12345678';
     c.AddPhone(t);
@@ -283,19 +296,19 @@ var
   brok: TInstantMockCRBroker;
   t: TPhone;
 begin
-  FConn.IsDefault := True;
+  //FConn.IsDefault := True;
   brok := FConn.Broker as TInstantMockCRBroker;
   brok.MockManager.StartSetUp;
-  c := TContact.Create;
+  c := TContact.Create(FConn);
   try
     c.Name := 'Mike';
     c.Address.City := 'Milan';
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Home';
     t.Number := '012 12345678';
     c.AddPhone(t);
     AssertEquals(1, c.PhoneCount);
-    t := TPhone.Create;
+    t := TPhone.Create(FConn);
     t.Name := 'Office';
     t.Number := '012 23456781';
     c.AddPhone(t);
@@ -312,7 +325,7 @@ begin
   brok.MockManager.StartSetUp;
   brok.MockManager.AddExpectation('InternalRetrieveObject caFail ' + old_id);
   brok.MockManager.EndSetUp;
-  c := TContact.Retrieve(old_id);
+  c := TContact.Retrieve(old_id, False, False, FConn);
   try
     AssertEquals(old_id, c.Id);
     AssertNotNull(c.Address);
@@ -356,7 +369,7 @@ begin
 end;
 
 initialization
-{$IFNDEF CURR_TESTS}
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TTestMockBroker, TTestMockRelationalBroker, TTestMockSQLbroker]);
 {$ENDIF}
 end.

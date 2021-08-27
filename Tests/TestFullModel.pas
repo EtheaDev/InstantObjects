@@ -36,13 +36,15 @@ unit TestFullModel;
 interface
 
 uses
-  Classes, SysUtils, fpcunit, InstantMock, StrUtils,
+  Classes, SysUtils, {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMock, StrUtils,
   InstantXML, InstantConsts, InstantClasses,
-  TestRandomData, TestModel, InstantMetadata;
+  TestRandomData, TestModel, InstantMetadata,
+  DUnitX.TestFramework;
 
 type
   { TTestFullModel }
-  TTestFullModel = class(TTestCase)
+  [TestFixture]
+  TTestFullModel = class(TInstantTestCase)
   private
     function CompanyFileName(c: TCompany; s: TInstantStreamFormat): string;
     function PersonFileName(p: TPerson; s: TInstantStreamFormat): string;
@@ -50,12 +52,13 @@ type
   protected
     FStoragePath: string;
     FConn: TInstantXMLConnector;
+    [Setup]
     procedure SetUp; override;
+    [Teardown]
     procedure TearDown; override;
   public
-    constructor Create; override;
-    destructor Destroy; override;
   published
+    [Test]
     procedure TestInstantObjectToXML;
     procedure TestInstantObjectToXMLMetadata;
     procedure TestStoreObjects;
@@ -69,8 +72,7 @@ type
 implementation
 
 uses
-  InstantPersistence, testregistry,
-  InstantTypes, TestDemoData;
+  InstantPersistence, InstantTypes, TestDemoData;
 
 { TTestFullModel }
 
@@ -85,32 +87,6 @@ begin
     sfJSON: Result := Result + 'json';
     {$ENDIF}
   end;
-end;
-
-constructor TTestFullModel.Create;
-begin
-  inherited;
-  FConn := TInstantXMLConnector.Create(nil);
-  FConn.Connection := TXMLFilesAccessor.Create(FConn);
-  FStoragePath := ExtractFilePath(ParamStr(0))+'XMLTestData'+PathDelim;
-  FConn.Connection.RootFolder := FStoragePath;
-  ForceDirectories(FConn.Connection.RootFolder);
-  ForceDirectories(FConn.Connection.RootFolder+'SampleClass\');
-  ForceDirectories(FConn.Connection.RootFolder+'Person\');
-  ForceDirectories(FConn.Connection.RootFolder+'Company\');
-  ForceDirectories(FConn.Connection.RootFolder+'MetaData\');
-
-  TInstantXMLBroker.Create(FConn);
-  FConn.Connect;
-  FConn.IsDefault := True;
-  CreateCategories;
-  CreateCountries;
-end;
-
-destructor TTestFullModel.Destroy;
-begin
-  FConn.Free;
-  inherited;
 end;
 
 function TTestFullModel.MetaDataFileName(cm: TInstantClassMetadata;
@@ -141,14 +117,34 @@ end;
 
 procedure TTestFullModel.SetUp;
 begin
-  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+  FConn := TInstantXMLConnector.Create(nil);
+  FConn.Connection := TXMLFilesAccessor.Create(FConn);
+  FStoragePath := ExtractFilePath(ParamStr(0))+'XMLTestData'+PathDelim;
+  FConn.Connection.RootFolder := FStoragePath;
+  ForceDirectories(FConn.Connection.RootFolder);
+  ForceDirectories(FConn.Connection.RootFolder+'SampleClass\');
+  ForceDirectories(FConn.Connection.RootFolder+'Person\');
+  ForceDirectories(FConn.Connection.RootFolder+'Company\');
+  ForceDirectories(FConn.Connection.RootFolder+'MetaData\');
+  ForceDirectories(FConn.Connection.RootFolder+'Categories\');
+  ForceDirectories(FConn.Connection.RootFolder+'Country\');
+
+  TInstantXMLBroker.Create(FConn);
   FConn.Connect;
-  FConn.IsDefault := True;
+
+  if InstantModel.ClassMetadatas.Count > 0 then
+    InstantModel.ClassMetadatas.Clear;
+  InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+
+  CreateCategories(FConn);
+  CreateCountries(FConn);
 end;
 
 procedure TTestFullModel.TearDown;
 begin
   FConn.Disconnect;
+  FConn.Free;
+  InstantModel.ClassMetadatas.Clear;
 end;
 
 procedure TTestFullModel.TestInstantObjectToXML;
@@ -162,8 +158,8 @@ var
 begin
   s := '';
   ss := TStringStream.Create(s, TEncoding.UTF8);
-  c := CreateRandomCompany;
-  p := CreateRandomPerson(c, LGender);
+  c := CreateRandomCompany(FConn);
+  p := CreateRandomPerson(FConn, c, LGender);
   try
     //Save Company to file
     InstantWriteObject(ss, sfXML, c);
@@ -196,16 +192,32 @@ procedure TTestFullModel.TestInstantObjectToXMLMetadata;
 var
   LIOMetadata: TInstantClassMetadata;
   LStringStream: TStringStream;
+  LFileName: string;
   lClassName: string;
+  LExpected, LActual: string;
 begin
   lClassName := 'TSampleClass';
-  LIOMetadata := InstantFindClassMetadata(lClassName);
+  LIOMetadata := InstantFindClassMetadata(LClassName);
   if Assigned(LIOMetadata) then
   begin
-    LStringStream := TStringStream.Create;
+    LFileName := MetaDataFileName(LIOMetadata, sfXML);
+    //Save Metadata to file
+    LStringStream := TStringStream.Create('', TEncoding.UTF8);
     try
       InstantWriteObject(LStringStream, sfXML, LIOMetadata);
-      LStringStream.SaveToFile(MetaDataFileName(LIOMetadata, sfXML));
+      LStringStream.SaveToFile(LFileName);
+      LExpected := LStringStream.DataString;
+    finally
+      LStringStream.Free;
+    end;
+    //Load Metadata from file
+    LStringStream := TStringStream.Create('', TEncoding.UTF8);
+    try
+      LStringStream.LoadFromFile(LFileName);
+      InstantReadObject(LStringStream, sfXML, LIOMetadata);
+      LActual := LStringStream.DataString;
+
+      AssertEqualsXML(LExpected, LActual, 'InstantObject Metadata for '+LClassName);
     finally
       LStringStream.Free;
     end;
@@ -224,8 +236,8 @@ var
 begin
   s := '';
   ss := TStringStream.Create(s, TEncoding.UTF8);
-  c := CreateRandomCompany;
-  p := CreateRandomPerson(c, LGender);
+  c := CreateRandomCompany(FConn);
+  p := CreateRandomPerson(FConn, c, LGender);
   try
     //Save Company to file
     InstantWriteObject(ss, sfJSON, c);
@@ -256,7 +268,7 @@ end;
 
 procedure TTestFullModel.TestInstantObjectToJSONMetadata;
 var
-  LIOMetadata, LIO: TInstantClassMetadata;
+  LIOMetadata: TInstantClassMetadata;
   LStringStream: TStringStream;
   LClassName: string;
   LBefore: string;
@@ -288,12 +300,12 @@ begin
   for i := 0 to 1 do
   begin
     p := nil;
-    c := CreateRandomCompany;
+    c := CreateRandomCompany(FConn);
     try
       c.Store;
       LCompanyFileName := CompanyFileName(c, sfXML);
       AssertTrue(FileExists(LCompanyFileName));
-      p := CreateRandomPerson(c, LGender);
+      p := CreateRandomPerson(FConn, c, LGender);
       p.Store;
       LPersonFileName := PersonFileName(p, sfXML);
       AssertTrue(FileExists(LPersonFileName));
@@ -317,12 +329,12 @@ var
 begin
   for i := 0 to 1 do
   begin
-    c := CreateRandomCompany;
+    c := CreateRandomCompany(FConn);
     try
       LCompanyName := c.Name;
       c.Store;
       LCompanyId := c.Id;
-      p := CreateRandomPerson(c, LGender);
+      p := CreateRandomPerson(FConn, c, LGender);
       LPersonName := p.Name;
       p.Store;
       LPersonId := p.Id;
@@ -340,8 +352,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TTestFullModel]);
 {$ENDIF}
 

@@ -32,21 +32,26 @@ unit TestInstantParts;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantParts
-  TestTInstantExtParts = class(TTestCase)
+  [TestFixture]
+  TestTInstantExtParts = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantParts: TInstantParts;
     FOwner: TContact;
     function PartsExternalCompare(Holder, Obj1, Obj2: TInstantObject): Integer;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAdd;
     procedure TestAddReference;
     procedure TestAssign;
@@ -67,16 +72,20 @@ type
     procedure TestSort;
   end;
 
-  TestTinstantEmbParts = class(TTestCase)
+  [TestFixture]
+  TestTinstantEmbParts = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantParts: TInstantParts;
     FOwner: TContact;
     function PartsEmbeddedCompare(Holder, Obj1, Obj2: TInstantObject): Integer;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAdd;
     procedure TestAddReference;
     procedure TestAssign;
@@ -96,15 +105,19 @@ type
     procedure TestUnchanged;
   end;
 
-  TestTInstantParts_Leak = class(TTestCase)
+  [TestFixture]
+  TestTInstantParts_Leak = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantParts: TInstantParts;
     FOwner: TContact;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAddEmbeddedObject;
     procedure TestAddExternalObject;
   end;
@@ -112,7 +125,7 @@ type
 implementation
 
 uses
-  SysUtils, Windows, Classes, testregistry, InstantClasses, InstantMetadata,
+  SysUtils, Windows, Classes, InstantClasses, InstantMetadata,
   InstantTypes;
 
 procedure TestTInstantExtParts.SetUp;
@@ -420,14 +433,13 @@ end;
 
 procedure TestTinstantEmbParts.TestAddReference;
 begin
-  try
-    FInstantParts.AddReference('TPhone', 'NewPhoneId');
-    Fail('Should never get here!!');
-  except
-    on E: EInstantError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
+  Assert.WillRaise(
+    procedure begin
+      FInstantParts.AddReference('TPhone', 'NewPhoneId');
+    end,
+    EInstantError,
+    'Exception was not thrown for Add wrong Reference to Embedded Parts!'
+    );
 end;
 
 procedure TestTinstantEmbParts.TestAssign;
@@ -500,12 +512,12 @@ var
   vReturnValue: Boolean;
 begin
   vReturnValue := FInstantParts.HasItem(1);
-  AssertTrue('Initial', vReturnValue);
+  Assert.IsTrue(vReturnValue, 'Initial');
 
   // This should do nothing for embedded parts
   FInstantParts.DestroyObject(1);
   vReturnValue := FInstantParts.HasItem(1);
-  AssertTrue('After', vReturnValue);
+  Assert.IsTrue(vReturnValue, 'After');
 end;
 
 procedure TestTinstantEmbParts.TestIndexOfInstance;
@@ -676,10 +688,9 @@ begin
 //  AssertException(EAccessViolation, vPart.Free);
 end;
 
-
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantExtParts,
                 TestTinstantEmbParts,
                 TestTInstantParts_Leak]);

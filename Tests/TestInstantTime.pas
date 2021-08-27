@@ -38,20 +38,25 @@ unit TestInstantTime;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantTime
-  TestTInstantTime = class(TTestCase)
+  [TestFixture]
+  TestTInstantTime = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantTime: TInstantTime;
     FOwner: TPerson;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAsBoolean;
     procedure TestAsCurrency;
     procedure TestAsDate;
@@ -75,7 +80,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, testregistry, InstantClasses;
+  SysUtils, InstantClasses;
 
 procedure TestTInstantTime.SetUp;
 begin
@@ -101,62 +106,56 @@ end;
 
 procedure TestTInstantTime.TestAsBoolean;
 begin
-  try
-    FInstantTime.AsBoolean := True;
-    Fail('Exception was not thrown for Set AsBoolean!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
-  try
-    FInstantTime.AsBoolean;
-    Fail('Exception was not thrown for Get AsBoolean!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsBoolean := True;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Set InstantTime.AsBoolean!'
+    );
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsBoolean;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Get InstantTime.AsBoolean!'
+    );
 end;
 
 procedure TestTInstantTime.TestAsCurrency;
 begin
-  try
-    FInstantTime.AsCurrency := 20.5;
-    Fail('Exception was not thrown for Set AsCurrency!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
-  try
-    FInstantTime.AsCurrency;
-    Fail('Exception was not thrown for Get AsCurrency!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsCurrency := 20.5;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Set InstantTime.AsCurrency!'
+    );
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsCurrency;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Get InstantTime.AsCurrency!'
+    );
 end;
 
 procedure TestTInstantTime.TestAsDate;
 begin
-  try
-    FInstantTime.AsDate := 12;
-    Fail('Exception was not thrown for Set AsDate!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
-  try
-    FInstantTime.AsDate;
-    Fail('Exception was not thrown for Get AsDate!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsDate := 12;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Set InstantTime.AsDate!'
+    );
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsDate;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Get InstantTime.AsDate!'
+    );
 end;
 
 procedure TestTInstantTime.TestAsDateTime;
@@ -177,42 +176,40 @@ end;
 
 procedure TestTInstantTime.TestAsFloat;
 begin
-  try
-    FInstantTime.AsFloat := 20.5;
-    Fail('Exception was not thrown for Set AsFloat!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
-  try
-    FInstantTime.AsFloat;
-    Fail('Exception was not thrown for Get AsFloat!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsFloat := 20.5;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Set InstantTime.AsFloat!'
+    );
+
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsFloat;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Get InstantTime.AsFloat!'
+    );
 end;
 
 procedure TestTInstantTime.TestAsInteger;
 begin
-  try
-    FInstantTime.AsInteger := 20;
-    Fail('Exception was not thrown for Set AsInteger!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
-  try
-    FInstantTime.AsInteger;
-    Fail('Exception was not thrown for Get AsInteger!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
-  end;
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsInteger := 20;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Set InstantTime.AsInteger!'
+    );
+
+  Assert.WillRaise(
+    procedure begin
+      FInstantTime.AsInteger;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Get InstantTime.AsInteger!'
+    );
 end;
 
 procedure TestTInstantTime.TestAsObject;
@@ -221,25 +218,23 @@ var
 begin
   vObj := TInstantObject.Create(FConn);
   try
-    try
-      FInstantTime.AsObject := vObj;
-      Fail('Exception was not thrown for Set AsObject!'); // should never get here
-    except
-      on E: EInstantAccessError do ; // do nothing as this is expected
-      else
-        raise;
-    end;
+    Assert.WillRaise(
+      procedure begin
+        FInstantTime.AsObject := vObj;
+      end,
+      EInstantAccessError,
+      'Exception was not thrown for Set InstantTime.AsObject!'
+      );
+
+    Assert.WillRaise(
+      procedure begin
+        FInstantTime.AsObject;
+      end,
+      EInstantAccessError,
+      'Exception was not thrown for Get InstantTime.AsObject!'
+      );
   finally
     vObj.Free;
-  end;
-
-  try
-    FInstantTime.AsObject;
-    Fail('Exception was not thrown for Get AsObject!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
   end;
 end;
 
@@ -330,8 +325,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantTime]);
 {$ENDIF}
 

@@ -38,12 +38,12 @@ unit TestInstantPresentation;
 
 interface
 
-uses fpcunit, InstantPresentation, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPresentation, InstantMock, TestModel;
 
 type
 
   // Test methods for class TInstantExposer
-  TestTInstantExposer = class(TTestCase)
+  TestTInstantExposer = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantExposer: TInstantExposer;
@@ -113,8 +113,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantExposer]);
 {$ENDIF}
 

@@ -35,18 +35,22 @@ interface
 uses
   Classes, SysUtils,
   InstantPersistence,
-  fpcunit,
-  testregistry,
-  InstantMock;
+  {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF}
+  InstantMock,
+  DUnitX.TestFramework;
 
 type
-  TTestMockConnector = class(TTestCase)
+  [TestFixture]
+  TTestMockConnector = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestBuildDatabase;
     procedure TestConnectDisconnect;
     procedure TestTransaction;
@@ -121,10 +125,11 @@ procedure TTestMockConnector.TestDefault;
 begin
   FConn.IsDefault := True;
   AssertSame(InstantDefaultConnector, FConn);
+  FConn.IsDefault := False;
 end;
 
 initialization
-{$IFNDEF CURR_TESTS}
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TTestMockConnector]);
 {$ENDIF}
 end.

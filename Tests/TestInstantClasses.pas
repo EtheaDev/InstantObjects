@@ -37,30 +37,14 @@ unit TestInstantClasses;
 {$ENDIF}
 
 interface
-
 uses
   Classes, SysUtils,
   InstantClasses,
-  fpcunit,
-  testregistry;
+  {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF}
+  DUnitX.TestFramework;
 
 type
-
-  { TTestInstantClasses }
-
-  TTestInstantClasses = class(TTestCase)
-  published
-    procedure TestInstantCollection;
-    procedure TestInstantWriter;
-    procedure TestInstantReader;
-    procedure TestInstantReadWriteProperty;
-    procedure TestInstantReadWriteClass;
-    procedure TestInstantReadWriteObjectToStream;
-    procedure TestInstantConverters;
-    procedure TestInstantXMLProducer;
-  end;
-
-
+  [TestFixture]
   TInstantGuineaPig = class(TInstantCollectionItem)
   private
     FPigName: string;
@@ -75,6 +59,22 @@ type
     property Age: integer read FAge write SetAge;
     property Weight: double read FWeight write SetWeight;
     property PigName: string read FPigName write SetPigName;
+  end;
+
+
+  { TTestInstantClasses }
+  [TestFixture]
+  TTestInstantClasses = class(TInstantTestCase)
+  published
+    [Test]
+    procedure TestInstantCollection;
+    procedure TestInstantWriter;
+    procedure TestInstantReader;
+    procedure TestInstantReadWriteProperty;
+    procedure TestInstantReadWriteClass;
+    procedure TestInstantReadWriteObjectToStream;
+    procedure TestInstantConverters;
+    procedure TestInstantXMLProducer;
   end;
 
 implementation
@@ -499,9 +499,10 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
-  RegisterTests([TTestInstantClasses]);
   RegisterClass(TInstantGuineaPig);
+
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
+  RegisterTests([TTestInstantClasses]);
 {$ENDIF}
 end.

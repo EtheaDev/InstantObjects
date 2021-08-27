@@ -32,19 +32,24 @@ unit TestInstantObject;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantObject
-  TestTInstantObject = class(TTestCase)
+  [TestFixture]
+  TestTInstantObject = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantObject: TPerson;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestObjectsArrayMethods;
     procedure TestAddRef_Release;
     procedure TestAssign_Clone_ResetAttributes;
@@ -84,7 +89,7 @@ type
 
 implementation
 
-uses SysUtils, Classes, Db, InstantClasses, testregistry,
+uses SysUtils, Classes, Db, InstantClasses,
   InstantMetadata, InstantTypes;
 
 procedure TestTInstantObject.SetUp;
@@ -286,7 +291,7 @@ end;
 
 procedure TestTInstantObject.TestClassType;
 begin
-  AssertEquals(TPerson, FInstantObject.ClassType);
+  Assert.AreEqual(TPerson, FInstantObject.ClassType);
 end;
 
 procedure TestTInstantObject.TestContainerByName;
@@ -341,7 +346,7 @@ begin
   vObjectClassName := 'TPerson';
   FInstantObject.Id := 'PersonID';
   vReturnValue := FInstantObject.EqualsSignature(vObjectClassName, vObjectId);
-  AssertTrue('EqualsSignature', vReturnValue);
+  Assert.IsTrue(vReturnValue, 'EqualsSignature');
 end;
 
 procedure TestTInstantObject.TestFindAttribute;
@@ -380,7 +385,7 @@ procedure TestTInstantObject.TestFreeInstance;
 begin
   FInstantObject.FreeInstance;
   FInstantObject := nil;
-  AssertNull(FInstantObject);
+  Assert.IsNull(FInstantObject);
 end;
 
 procedure TestTInstantObject.TestGetNamePath;
@@ -475,7 +480,7 @@ end;
 
 procedure TestTInstantObject.TestObjectClass;
 begin
-  AssertEquals(TEmail, FInstantObject.ObjectClass);
+  Assert.AreEqual(TEmail, FInstantObject.ObjectClass);
 end;
 
 procedure TestTInstantObject.TestOwner;
@@ -600,8 +605,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantObject]);
 {$ENDIF}
 

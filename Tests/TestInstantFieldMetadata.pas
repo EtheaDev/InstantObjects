@@ -38,19 +38,24 @@ unit TestInstantFieldMetadata;
 
 interface
 
-uses fpcunit, InstantMetadata;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMetadata,
+  DUnitX.TestFramework;
 
 type
   // Test methods for class TInstantFieldMetadata
-  TestTInstantFieldMetadata = class(TTestCase)
+  [TestFixture]
+  TestTInstantFieldMetadata = class(TInstantTestCase)
   private
     FOwner: TInstantTableMetadata;
     FCollection: TInstantFieldMetadatas;
     FInstantFieldMetadata: TInstantFieldMetadata;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAssign;
     procedure TestCollection;
     procedure TestDataType;
@@ -60,14 +65,18 @@ type
   end;
 
   // Test methods for class TInstantFieldMetadatas
-  TestTInstantFieldMetadatas = class(TTestCase)
+  [TestFixture]
+  TestTInstantFieldMetadatas = class(TInstantTestCase)
   private
     FOwner: TInstantTableMetadata;
     FInstantFieldMetadatas: TInstantFieldMetadatas;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAddFieldMetadata;
     procedure TestAddRemoveItems;
     procedure TestOwner;
@@ -79,7 +88,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, TypInfo, testregistry, InstantTypes;
+  SysUtils, TypInfo, InstantTypes;
 
 procedure TestTInstantFieldMetadata.SetUp;
 begin
@@ -205,11 +214,9 @@ begin
   AssertSame(FOwner, FInstantFieldMetadatas.Owner);
 end;
 
-
-
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantFieldMetadata,
                  TestTInstantFieldMetadatas]);
 {$ENDIF}

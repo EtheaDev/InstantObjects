@@ -32,24 +32,29 @@ unit TestInstantObjectState;
 
 interface
 
-uses fpcunit, InstantPersistence;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantObjectState
-  TestTInstantObjectState = class(TTestCase)
+  [TestFixture]
+  TestTInstantObjectState = class(TInstantTestCase)
   private
     FInstantObjectState: TInstantObjectState;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAssign;
   end;
 
 implementation
 
-uses SysUtils, Classes, testregistry, InstantClasses;
+uses SysUtils, Classes, InstantClasses;
 
 procedure TestTInstantObjectState.SetUp;
 begin
@@ -87,8 +92,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantObjectState]);
 {$ENDIF}
 

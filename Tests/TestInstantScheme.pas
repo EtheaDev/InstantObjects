@@ -38,18 +38,23 @@ unit TestInstantScheme;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMetadata;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMetadata,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantScheme
-  TestTInstantScheme = class(TTestCase)
+  [TestFixture]
+  TestTInstantScheme = class(TInstantTestCase)
   private
     FInstantScheme: TInstantScheme;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestBlobStreamFormat;
     procedure TestFindTableMetadata;
     procedure TestIdDataType;
@@ -64,7 +69,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, testregistry, InstantClasses, InstantTypes, InstantConsts;
+  SysUtils, InstantClasses, InstantTypes, InstantConsts;
 
 procedure TestTInstantScheme.SetUp;
 begin
@@ -84,15 +89,15 @@ end;
 
 procedure TestTInstantScheme.TestBlobStreamFormat;
 begin
-  AssertTrue('BlobStreamFormat',
-    sfBinary = FInstantScheme.BlobStreamFormat);
+  Assert.IsTrue(sfBinary = FInstantScheme.BlobStreamFormat,
+  'BlobStreamFormat');
   FInstantScheme.BlobStreamFormat := sfXML;
-  AssertTrue('BlobStreamFormat',
-    sfXML = FInstantScheme.BlobStreamFormat);
+  Assert.IsTrue(sfXML = FInstantScheme.BlobStreamFormat,
+    'BlobStreamFormat' );
   {$IFDEF DELPHI_NEON}
   FInstantScheme.BlobStreamFormat := sfJSON;
-  AssertTrue('BlobStreamFormat',
-    sfJSON = FInstantScheme.BlobStreamFormat);
+  Assert.IsTrue(sfJSON = FInstantScheme.BlobStreamFormat,
+    'BlobStreamFormat');
   {$ENDIF}
 end;
 
@@ -109,9 +114,9 @@ end;
 
 procedure TestTInstantScheme.TestIdDataType;
 begin
-  AssertTrue('IdDataType', dtString = FInstantScheme.IdDataType);
+  Assert.IsTrue( dtString = FInstantScheme.IdDataType, 'IdDataType');
   FInstantScheme.IdDataType := dtInteger;
-  AssertTrue('IdDataType', dtInteger = FInstantScheme.IdDataType);
+  Assert.IsTrue(dtInteger = FInstantScheme.IdDataType, 'IdDataType');
 end;
 
 procedure TestTInstantScheme.TestIdSize;
@@ -142,10 +147,9 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantScheme]);
 {$ENDIF}
 
 end.
- 

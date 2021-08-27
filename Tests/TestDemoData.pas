@@ -7,11 +7,12 @@ interface
 uses
   Classes, TestModel, InstantPersistence, TestRandomData;
 
-procedure CreateCategories;
-procedure CreateCountries;
-function CreateRandomCompany: TCompany;
-function CreateRandomPerson(Company: TCompany; out Gender : TGender): TPerson;
-function CreateRandomSampleClass: TSampleClass;
+procedure CreateCategories(AConnector: TInstantConnector);
+procedure CreateCountries(AConnector: TInstantConnector);
+function CreateRandomCompany(AConnector: TInstantConnector): TCompany;
+function CreateRandomPerson(AConnector: TInstantConnector;
+  Company: TCompany; out Gender : TGender): TPerson;
+function CreateRandomSampleClass(AConnector: TInstantConnector): TSampleClass;
 
 implementation
 
@@ -20,7 +21,7 @@ uses
   Windows,
   InstantUtils;
 
-procedure CreateCategories;
+procedure CreateCategories(AConnector: TInstantConnector);
 const
   CategoryNames: array[0..5] of string = (
     'Undefined',
@@ -31,20 +32,23 @@ const
     'Colleague'
   );
 var
-  I: Integer; 
+  I: Integer;
+  LCategory: TCategory;
 begin
   for I := Low(CategoryNames) to High(CategoryNames) do
-    with TCategory.Create do
+  begin
+    LCategory := TCategory.Create(AConnector);
     try
-      Id := Format('CAT%.3d', [I]);
-      Name := CategoryNames[I];
-      Store;
+      LCategory.Id := Format('CAT%.3d', [I]);
+      LCategory.Name := CategoryNames[I];
+      LCategory.Store;
     finally
-      Free;
+      LCategory.Free;
     end;
+  end;
 end;
 
-procedure CreateCountries;
+procedure CreateCountries(AConnector: TInstantConnector);
 const
   CountryNames: array[0..29] of string = (
     'AR:Argentina',
@@ -83,7 +87,7 @@ var
   S: string;
 begin
   for I := Low(CountryNames) to High(CountryNames) do
-    with TCountry.Create do
+    with TCountry.Create(AConnector) do
     try
       S := CountryNames[I];
       Id := Copy(S, 1, 2);
@@ -94,16 +98,16 @@ begin
     end;
 end;
 
-function CreateRandomAddress: TAddress;
+function CreateRandomAddress(AConnector: TInstantConnector): TAddress;
 var
   Country: TCountry;
 begin
-  Result := TAddress.Create;
+  Result := TAddress.Create(AConnector);
   try
     Result.Street := RandomStreet;
     Result.City := RandomCity;
     Result.Zip := RandomNumber(6);
-    Country := TCountry.Retrieve('US');
+    Country := TCountry.Retrieve('US', False, False, AConnector);
     try
       Result.Country := Country;
     finally
@@ -115,7 +119,8 @@ begin
   end;
 end;
 
-procedure CreateRandomPhones(Contact: TContact; Names: array of string);
+procedure CreateRandomPhones(AConnector: TInstantConnector;
+  Contact: TContact; Names: array of string);
 var
   I: Integer;
   Phone: TPhone;
@@ -123,7 +128,7 @@ begin
   for I := Low(Names) to High(Names) do
     if Random(3) > 0 then
     begin
-      Phone := TPhone.Create;
+      Phone := TPhone.Create(AConnector);
       try
         Phone.Name := Names[I];
         Phone.Number := RandomNumber(10);
@@ -135,7 +140,8 @@ begin
     end;
 end;
 
-procedure CreateRandomEmails(Person: TPerson; Domains: array of string);
+procedure CreateRandomEmails(AConnector: TInstantConnector;
+  Person: TPerson; Domains: array of string);
 var
   I: Integer;
   Email: TEmail;
@@ -143,7 +149,7 @@ begin
   for I := Low(Domains) to High(Domains) do
     if Random(3) > 0 then
     begin
-      Email := TEmail.Create;
+      Email := TEmail.Create(AConnector);
       try
         Email.Address := RandomEmail(Person.Name, Domains[I]);
         Person.AddEmail(Email);
@@ -154,49 +160,50 @@ begin
     end;
 end;
 
-function CreateRandomCompany: TCompany;
+function CreateRandomCompany(AConnector: TInstantConnector): TCompany;
 begin
-  Result := TCompany.Create;
+  Result := TCompany.Create(AConnector);
   try
     Result.Name := RandomCompanyName;
-    Result.Address := CreateRandomAddress;
-    CreateRandomPhones(Result, ['Business', 'Fax', 'Mobile']);
+    Result.Address := CreateRandomAddress(AConnector);
+    CreateRandomPhones(AConnector, Result, ['Business', 'Fax', 'Mobile']);
   except
     Result.Free;
     raise;
   end;
 end;
 
-function CreateRandomPerson(Company: TCompany; out Gender : TGender): TPerson;
+function CreateRandomPerson(AConnector: TInstantConnector;
+  Company: TCompany; out Gender : TGender): TPerson;
 var
   CompanyName: string;
 begin
-  Result := TPerson.Create;
+  Result := TPerson.Create(AConnector);
   try
     Gender := TGender(Random(2));
     Result.Name := RandomFullName(Gender);
     Result.BirthDate := Date - (20 * 365 + Random(365 * 50)); // 20 - 70 years old
     Result.BirthTime := Random;
-    Result.Address := CreateRandomAddress;
+    Result.Address := CreateRandomAddress(AConnector);
 //    Result.Salary := 922337203685470;
     Result.Salary := 500 + Random(5000);
-    CreateRandomPhones(Result, ['Home', 'Mobile']);
+    CreateRandomPhones(AConnector, Result, ['Home', 'Mobile']);
     if Assigned(Company) then
     begin
       Result.EmployBy(Company);
       CompanyName := InstantPartStr(Company.Name, 1, ' ');
     end else
       CompanyName := LowerCase(RandomName);
-    CreateRandomEmails(Result, [CompanyName, 'hotmail']);
+    CreateRandomEmails(AConnector, Result, [CompanyName, 'hotmail']);
   except
     Result.Free;
     raise;
   end;
 end;
 
-function CreateRandomSampleClass: TSampleClass;
+function CreateRandomSampleClass(AConnector: TInstantConnector): TSampleClass;
 begin
-  Result := TSampleClass.Create;
+  Result := TSampleClass.Create(AConnector);
   Try
     Result.CharacterListAttribute:=   RandomName;
     Result.CharacterFileName:=   RandomName;

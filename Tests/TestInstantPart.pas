@@ -32,20 +32,25 @@ unit TestInstantPart;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantPart
-  TestTInstantEmbPart = class(TTestCase)
+  [TestFixture]
+  TestTInstantEmbPart = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantPart: TInstantPart;
     FOwner: TContact;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAssign;
     procedure TestAllowOwned;
     procedure TestAttach_DetachObject;
@@ -57,15 +62,19 @@ type
     procedure TestValue_Reset;
   end;
 
-  TestTInstantExtPart = class(TTestCase)
+  [TestFixture]
+  TestTInstantExtPart = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantPart: TInstantPart;
     FOwner: TContact;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAllowOwned;
     procedure TestAssign;
     procedure TestAttach_DetachObject;
@@ -79,7 +88,7 @@ type
 
 implementation
 
-uses SysUtils, Classes, InstantClasses, testregistry, InstantMetadata,
+uses SysUtils, Classes, InstantClasses, InstantMetadata,
   InstantTypes;
 
 procedure TestTInstantEmbPart.SetUp;
@@ -457,8 +466,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantEmbPart,
                   TestTInstantExtPart]);
 {$ENDIF}

@@ -32,19 +32,24 @@ unit TestInstantAttributeMap;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMetadata;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMetadata,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantAttributeMap
-  TestTInstantAttributeMap = class(TTestCase)
+  [TestFixture]
+  TestTInstantAttributeMap = class(TInstantTestCase)
   private
     FClassMetadata: TInstantClassMetadata;
     FInstantAttributeMap: TInstantAttributeMap;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAdd;
     procedure TestAddUnique;
     procedure TestClassMetadata;
@@ -57,14 +62,18 @@ type
   end;
 
   // Test methods for class TInstantAttributeMaps
-  TestTInstantAttributeMaps = class(TTestCase)
+  [TestFixture]
+  TestTInstantAttributeMaps = class(TInstantTestCase)
   private
     FClassMetadata: TInstantClassMetadata;
     FInstantAttributeMaps: TInstantAttributeMaps;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAdd;
     procedure TestAddItem;
     procedure TestFind;
@@ -79,7 +88,7 @@ type
 
 implementation
 
-uses SysUtils, testregistry;
+uses SysUtils;
 
 procedure TestTInstantAttributeMap.SetUp;
 var
@@ -456,8 +465,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantAttributeMap,
                  TestTInstantAttributeMaps]);
 {$ENDIF}

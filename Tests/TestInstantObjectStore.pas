@@ -38,32 +38,41 @@ unit TestInstantObjectStore;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantObjectStore
-  TestTInstantObjectStore = class(TTestCase)
+  [TestFixture]
+  TestTInstantObjectStore = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantObjectStore: TInstantObjectStore;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestFind_AbandonObjects;
     procedure TestDispose_Refresh_StoreObject_ObjectDestroyed;
   end;
 
   // Test methods for class TInstantObjectStores
-  TestTInstantObjectStores = class(TTestCase)
+  [TestFixture]
+  TestTInstantObjectStores = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantObjectStores: TInstantObjectStores;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAddObjectStore;
     procedure TestFindObjectStore;
   end;
@@ -74,13 +83,13 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, testregistry, InstantClasses, InstantMetadata, InstantTypes;
+  SysUtils, InstantClasses, InstantMetadata, InstantTypes;
 
 procedure TestTInstantObjectStore.SetUp;
 begin
   FConn := TInstantMockConnector.Create(nil);
   FConn.BrokerClass := TInstantMockCRBroker;
-  FConn.IsDefault := True;
+  FConn.IsDefault := False;
   FConn.UseUnicode := TestModel.TestUseUnicode;
 
   if InstantModel.ClassMetadatas.Count > 0 then
@@ -263,8 +272,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantObjectStore,
                  TestTInstantObjectStores]);
 {$ENDIF}

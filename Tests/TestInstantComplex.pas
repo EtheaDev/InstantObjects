@@ -38,20 +38,25 @@ unit TestInstantComplex;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantComplex
-  TestTInstantComplex = class(TTestCase)
+  [TestFixture]
+  TestTInstantComplex = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantComplex: TInstantPart;
     FOwner: TContact;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAllowOwned;
     procedure TestAttachObject;
     procedure TestConnector;
@@ -66,7 +71,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, testregistry;
+  SysUtils;
 
 procedure TestTInstantComplex.SetUp;
 begin
@@ -111,7 +116,7 @@ end;
 
 procedure TestTInstantComplex.TestRequiredClass;
 begin
-  AssertEquals(TAddress, FInstantComplex.RequiredClass);
+  Assert.AreEqual(TAddress, FInstantComplex.RequiredClass);
 end;
 
 procedure TestTInstantComplex.TestRequiredClassName;
@@ -120,10 +125,9 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantComplex]);
 {$ENDIF}
 
 end.
- 

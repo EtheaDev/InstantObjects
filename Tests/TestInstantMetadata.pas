@@ -32,34 +32,42 @@ unit TestInstantMetadata;
 
 interface
 
-uses SysUtils, fpcunit, InstantMetadata;
+uses SysUtils, {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMetadata,
+  DUnitX.TestFramework;
 
 type
+
   // Test methods for class TInstantMetadata
-  TestTInstantMetadata = class(TTestCase)
+  [TestFixture]
+  TestTInstantMetadata = class(TInstantTestCase)
   private
     FInstantMetadata: TInstantMetadata;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestCollectionExists;
   end;
 
   // Test methods for class TInstantMetadatas
-  TestTInstantMetadatas = class(TTestCase)
+  [TestFixture]
+  TestTInstantMetadatas = class(TInstantTestCase)
   private
     FInstantMetadatas: TInstantMetadatas;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestFind;
   end;
 
 implementation
-
-uses testregistry;
 
 procedure TestTInstantMetadata.SetUp;
 var
@@ -113,8 +121,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantMetadata,
                  TestTInstantMetadatas]);
 {$ENDIF}

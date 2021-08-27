@@ -32,20 +32,25 @@ unit TestInstantBlob;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
   // Test methods for class TInstantBlob
-  TestTInstantBlob = class(TTestCase)
+  [TestFixture]
+  TestTInstantBlob = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantBlob: TInstantBlob;
     FOwner: TPerson;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAssign;
     procedure TestAssignPicture_ToPicture;
     procedure TestAsString;
@@ -59,7 +64,7 @@ type
 
 implementation
 
-uses SysUtils, Classes, Graphics, testregistry, InstantClasses;
+uses SysUtils, Classes, Graphics, InstantClasses;
 
 procedure TestTInstantBlob.SetUp;
 begin
@@ -275,8 +280,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantBlob]);
 {$ENDIF}
 

@@ -32,11 +32,13 @@ unit TestInstantObjectReference;
 
 interface
 
-uses fpcunit, InstantMock, InstantPersistence, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantMock, InstantPersistence, TestModel,
+  DUnitX.TestFramework;
 
 type
   // Test methods for class TInstantObjectReference
-  TestTInstantObjectReference = class(TTestCase)
+  [TestFixture]
+  TestTInstantObjectReference = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantObjectReference: TInstantObjectReference;
@@ -44,9 +46,12 @@ type
     FInstantReferences: TInstantReferences;
     FInstantObject: TCompany;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAssign;
     procedure TestAssignInstance_DestroyInstance;
     procedure TestDereference;
@@ -63,7 +68,7 @@ type
 
 implementation
 
-uses Classes, SysUtils, TypInfo, InstantClasses, testregistry;
+uses Classes, SysUtils, TypInfo, InstantClasses;
 
 procedure TestTInstantObjectReference.SetUp;
 begin
@@ -379,8 +384,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantObjectReference]);
 {$ENDIF}
 

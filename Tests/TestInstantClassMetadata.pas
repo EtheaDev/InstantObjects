@@ -38,18 +38,23 @@ unit TestInstantClassMetadata;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, InstantMetadata;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, InstantMetadata,
+  DUnitX.TestFramework;
 
 type
   // Test methods for class TInstantClassMetadata
-  TestTInstantClassMetadata = class(TTestCase)
+  [TestFixture]
+  TestTInstantClassMetadata = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantClassMetadata: TInstantClassMetadata;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAssign;
     procedure TestAttributeMetadatas;
     procedure TestCollection;
@@ -65,14 +70,18 @@ type
   end;
 
   // Test methods for class TInstantClassMetadatas
-  TestTInstantClassMetadatas = class(TTestCase)
+  [TestFixture]
+  TestTInstantClassMetadatas = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantClassMetadatas: TInstantClassMetadatas;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAdd;
     procedure TestFind;
     procedure TestItems;
@@ -84,7 +93,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, TypInfo, testregistry, InstantTypes;
+  SysUtils, TypInfo, InstantTypes;
 
 procedure TestTInstantClassMetadata.SetUp;
 begin
@@ -264,8 +273,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantClassMetadata,
                  TestTInstantClassMetadatas]);
 {$ENDIF}

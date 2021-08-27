@@ -3,7 +3,10 @@ unit UbMockObject;
 interface
 
 uses
-  Classes, SysUtils, NotRefCountIObject;
+  Classes
+  , SysUtils
+  , NotRefCountIObject
+  , DUnitX.TestFramework;
 
 type
 
@@ -16,11 +19,11 @@ type
 
   TUbMockObject = class(TNotRefCount, IUbMockObject)
   protected
+
+  public
     FSetUpMode: Boolean;
     FSetUpList: TStringList;
     FCallsList: TStringList;
-
-  public
     constructor Create; virtual;
     destructor Destroy; override;
     procedure AddExpectation(const ASignatureCall: string);
@@ -35,7 +38,7 @@ type
 implementation
 
 uses
-  fpcunit;
+  InstantTest;
 
 { TUbMockObject }
 
@@ -84,13 +87,13 @@ var
   i: integer;
   s1, s2: string;
 begin
-  TAssert.AssertEquals('Wrong Expectation number!', FSetUpList.Count, FCallsList.Count);
+  Assert.IsTrue(FSetUpList.Count = FCallsList.Count, 'Wrong Expectation number!');
 
   for i := 0 to FSetUpList.Count - 1 do
   begin
     s1 := FSetUpList[i];
     s2 := FCallsList[i];
-    TAssert.AssertEquals(s1, s2);
+    Assert.IsTrue(s1 = s2);
   end;
 
   FSetUpList.Clear;

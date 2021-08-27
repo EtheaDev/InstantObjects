@@ -102,8 +102,8 @@ begin
     if TTest(aSuite.Tests.Items[i]) is TTestSuite then
       Result := Result + TestSuiteAsXML(TTestSuite(aSuite.Tests.Items[i]))
     else
-      if TTest(aSuite.Tests.Items[i]) is TTestCase then
-        Result := Result +'<test>' + TTestcase(aSuite.Tests.Items[i]).TestName + '</test>' + System.sLineBreak;
+      if TTest(aSuite.Tests.Items[i]) is TInstantTestCase then
+        Result := Result +'<test>' + TInstantTestCase(aSuite.Tests.Items[i]).TestName + '</test>' + System.sLineBreak;
   Result := Result + '</TestSuite>' + System.sLineBreak;
 end;
 
@@ -119,8 +119,8 @@ begin
     Result := Result + s.TestSuiteName + System.sLineBreak;
     Result := Result + '\begin{itemize}'+ System.sLineBreak;
     for j := 0 to s.Tests.Count - 1 do
-      if TTest(s.Tests.Items[j]) is TTestCase then
-        Result := Result + '\item[-] ' + TTestcase(s.Tests.Items[j]).TestName  + System.sLineBreak;
+      if TTest(s.Tests.Items[j]) is TInstantTestCase then
+        Result := Result + '\item[-] ' + TInstantTestCase(s.Tests.Items[j]).TestName  + System.sLineBreak;
     Result := Result +'\end{itemize}' + System.sLineBreak;
   end;
 end;

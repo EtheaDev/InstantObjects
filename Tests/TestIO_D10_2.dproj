@@ -52,7 +52,6 @@
         <DCC_UnitSearchPath>..\Source\Core;..\Source\Brokers\XML;.\ubmock\src;.\DUnit\src;..\..\ext\delphi-neon\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DependencyCheckOutputName>TestIO_DXE2.exe</DCC_DependencyCheckOutputName>
-        <DCC_Define>DELPHI_NEON;$(DCC_Define)</DCC_Define>
         <DCC_DcuOutput>..\Dcu\$(Platform)\$(Config)</DCC_DcuOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
@@ -100,6 +99,7 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="TestModel.pas"/>
         <DCCReference Include="InstantMock.pas"/>
         <DCCReference Include="TestMockConnector.pas"/>
         <DCCReference Include="TestMockBroker.pas"/>
@@ -112,7 +112,7 @@
         <DCCReference Include="TestInstantScheme.pas"/>
         <DCCReference Include="TestInstantClasses.pas"/>
         <DCCReference Include="TestInstantRtti.pas"/>
-        <DCCReference Include="TestModel.pas"/>
+        <DCCReference Include="MinimalModel.pas"/>
         <DCCReference Include="TestFullModel.pas"/>
         <DCCReference Include="TestInstantAttributeMap.pas"/>
         <DCCReference Include="TestInstantAttribute.pas"/>
@@ -137,7 +137,6 @@
         <DCCReference Include="TestInstantReferences.pas"/>
         <DCCReference Include="TestInstantCircularReferences.pas"/>
         <DCCReference Include="TestInstantObjectReference.pas"/>
-        <DCCReference Include="MinimalModel.pas"/>
         <DCCReference Include="TestXMLBroker.pas"/>
         <DCCReference Include="TestInstantCode.pas"/>
         <DCCReference Include="TestInstantExposer.pas"/>

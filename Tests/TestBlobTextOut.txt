@@ -1,1 +1,0 @@
-The following notes document the structure of the InstantObjects tree as stored in CVS, explaining what each folder is for.

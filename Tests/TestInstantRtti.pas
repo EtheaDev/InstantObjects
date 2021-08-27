@@ -41,7 +41,7 @@ interface
 uses
   Classes, SysUtils,
   InstantRtti,
-  fpcunit,
+  {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF}
   {$IFNDEF FPC}
     {$IFDEF VER130}
       Mask,
@@ -50,14 +50,15 @@ uses
     {$ENDIF}
   {$ENDIF}
   {$IFDEF FPC}InstantFpcUtils,{$ENDIF}
-  testregistry;
+  DUnitX.TestFramework;
 
 type
 
   { TTestInstantRtti }
-
-  TTestInstantRtti = class(TTestCase)
+  [TestFixture]
+  TTestInstantRtti = class(TInstantTestCase)
   published
+    [Test]
     //procedure TestHexToBin;
     procedure TestInheritsFrom;
     procedure TestMaskUtils;
@@ -123,27 +124,27 @@ var
   
   procedure CheckClass(AClass: TGuineaPigClass);
   begin
-    AssertTrue(AClass.InheritsFrom(TGuineaPig));
+    Assert.IsTrue(AClass.InheritsFrom(TGuineaPig));
   end;
   
 begin
-  AssertTrue(TGuineaPig.InheritsFrom(TPersistent));
-  AssertFalse(TGuineaPig.InheritsFrom(TTestInstantRtti));
-  AssertTrue(TGuineaPig.InheritsFrom(TGuineaPig));
+  Assert.IsTrue(TGuineaPig.InheritsFrom(TPersistent));
+  Assert.IsFalse(TGuineaPig.InheritsFrom(TTestInstantRtti));
+  Assert.IsTrue(TGuineaPig.InheritsFrom(TGuineaPig));
   c := TGuineaPig.Create;
   try
-    AssertTrue(c.InheritsFrom(TPersistent));
-    AssertFalse(c.InheritsFrom(TTestInstantRtti));
-    AssertTrue(c.InheritsFrom(TGuineaPig));
+    Assert.IsTrue(c.InheritsFrom(TPersistent));
+    Assert.IsFalse(c.InheritsFrom(TTestInstantRtti));
+    Assert.IsTrue(c.InheritsFrom(TGuineaPig));
     
     cc := TGuineaPig;
-    AssertTrue(cc.InheritsFrom(TPersistent));
-    AssertFalse(cc.InheritsFrom(TTestInstantRtti));
-    AssertTrue(cc.InheritsFrom(TGuineaPig));
+    Assert.IsTrue(cc.InheritsFrom(TPersistent));
+    Assert.IsFalse(cc.InheritsFrom(TTestInstantRtti));
+    Assert.IsTrue(cc.InheritsFrom(TGuineaPig));
 
-    AssertTrue(c.InheritsFrom(cc));
-    AssertTrue(c.ClassType.InheritsFrom(cc));
-    AssertTrue(cc.InheritsFrom(cc));
+    Assert.IsTrue(c.InheritsFrom(cc));
+    Assert.IsTrue(c.ClassType.InheritsFrom(cc));
+    Assert.IsTrue(cc.InheritsFrom(cc));
 
     CheckClass(TGuineaPigClass(c.ClassType));
   finally
@@ -165,7 +166,7 @@ begin
     for i := 0 to p.Count - 1 do
       if p.Names[i] = 'PigName' then
         t := i;
-    AssertTrue('t >= 0', t >= 0);
+    Assert.IsTrue(t >= 0, 't >= 0' );
     AssertEquals(c.PigName, VarToStr(p.Values[t]));
   finally
     c.Free;
@@ -251,8 +252,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TTestInstantRtti]);
 {$ENDIF}
 

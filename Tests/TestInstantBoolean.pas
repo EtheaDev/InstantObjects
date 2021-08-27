@@ -38,20 +38,25 @@ unit TestInstantBoolean;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 Type
 
   // Test methods for class TInstantBoolean
-  TestTInstantBoolean = class(TTestCase)
+  [TestFixture]
+  TestTInstantBoolean = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantBoolean: TInstantBoolean;
     FOwner: TPerson;
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAsBoolean;
     procedure TestAsCurrency;
     procedure TestAsDateTime;
@@ -73,7 +78,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, testregistry, InstantClasses, InstantConsts;
+  SysUtils, InstantClasses, InstantConsts;
 
 procedure TestTInstantBoolean.SetUp;
 begin
@@ -120,22 +125,21 @@ end;
 
 procedure TestTInstantBoolean.TestAsDateTime;
 begin
-  try
-    FInstantBoolean.AsDateTime := 12.45;
-    Fail('Exception was not thrown for Set AsDateTime!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-  else
-    raise;
-  end;
-  try
-    FInstantBoolean.AsDateTime;
-    Fail('Exception was not thrown for Get AsDateTime!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-  else
-    raise;
-  end;
+  Assert.WillRaise(
+    procedure
+    begin
+      FInstantBoolean.AsDateTime := 12.45;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Set InstantBoolean.AsDateTime!');
+
+  Assert.WillRaise(
+    procedure
+    begin
+      FInstantBoolean.AsDateTime;
+    end,
+    EInstantAccessError,
+    'Exception was not thrown for Get InstantBoolean.AsDateTime!');
 end;
 
 procedure TestTInstantBoolean.TestAsFloat;
@@ -158,25 +162,23 @@ var
 begin
   vObj := TInstantObject.Create(FConn);
   try
-    try
-      FInstantBoolean.AsObject := vObj;
-      Fail('Exception was not thrown for Set AsObject!'); // should never get here
-    except
-      on E: EInstantAccessError do ; // do nothing as this is expected
-      else
-        raise;
-    end;
+    Assert.WillRaise(
+      procedure begin
+        FInstantBoolean.AsObject := vObj;
+      end,
+      EInstantAccessError,
+      'Exception was not thrown for Set InstantBoolean.AsObject!'
+      );
+
+    Assert.WillRaise(
+      procedure begin
+        FInstantBoolean.AsObject;
+      end,
+      EInstantAccessError,
+      'Exception was not thrown for Get InstantBoolean.AsObject!'
+      );
   finally
     vObj.Free;
-  end;
-
-  try
-    FInstantBoolean.AsObject;
-    Fail('Exception was not thrown for Get AsObject!'); // should never get here
-  except
-    on E: EInstantAccessError do ; // do nothing as this is expected
-    else
-      raise;
   end;
 end;
 
@@ -249,14 +251,14 @@ end;
 
 procedure TestTInstantBoolean.TestValue;
 begin
-  AssertEquals(False, FInstantBoolean.Value);
+  Assert.AreEqual(False, FInstantBoolean.Value);
   FInstantBoolean.Value := True;
-  AssertEquals(True, FInstantBoolean.Value);
+  Assert.AreEqual(True, FInstantBoolean.Value);
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantBoolean]);
 {$ENDIF}
 

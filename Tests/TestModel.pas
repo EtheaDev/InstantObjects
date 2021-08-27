@@ -65,7 +65,7 @@ type
     Street: Memo;
     Zip: String(10); }
     _City: TInstantString;
-    [NeonInclude, NeonProperty('Country')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Country')]{$ENDIF}
     _Country: TInstantReference;
     _State: TInstantString;
     _Street: TInstantMemo;
@@ -83,7 +83,7 @@ type
     procedure SetZip(const Value: string);
   published
     property City: string read GetCity write SetCity;
-    [NeonIgnore]
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Country: TCountry read GetCountry write SetCountry;
     property State: string read GetState write SetState;
     property Street: string read GetStreet write SetStreet;
@@ -154,16 +154,16 @@ type
     ExternalAddress: Part(TExternalAddress) external;
     ExternalPhones: Parts(TExternalPhone) external 'Contact_ExternalPhones'; }
     _Address: TInstantPart;
-    [NeonInclude, NeonProperty('Category')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Category')]{$ENDIF}
     _Category: TInstantReference;
     _City: TInstantString;
-    [NeonInclude, NeonProperty('ExternalPhones')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('ExternalPhones')]{$ENDIF}
     _ExternalPhones: TInstantParts;
     _Name: TInstantString;
     _ExternalAddress: TInstantPart;
-    [NeonInclude, NeonProperty('Phones')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Phones')]{$ENDIF}
     _Phones: TInstantParts;
-    [NeonInclude, NeonProperty('Country')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Country')]{$ENDIF}
     _Projects: TInstantReferences;
   private
     function GetAddress: TAddress;
@@ -219,7 +219,7 @@ type
         write SetProjects;
   published
     property Address: TAddress read GetAddress write SetAddress;
-    [NeonIgnore]
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Category: TCategory read GetCategory write SetCategory;
     property City: string read GetCity write SetCity;
     property MainPhoneNumber: string read GetMainPhoneNumber
@@ -253,10 +253,10 @@ type
     _AL_hours: TInstantFloat;
     _BirthDate: TInstantDateTime;
     _BirthTime: TInstantTime;
-    [NeonInclude, NeonProperty('Emails')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Emails')]{$ENDIF}
     _Emails: TInstantParts;
     _Employed: TInstantBoolean;
-    [NeonInclude, NeonProperty('Employer')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Employer')]{$ENDIF}
     _Employer: TInstantReference;
     _EmploymentDate: TInstantDate;
     _Picture: TInstantGraphic;
@@ -300,7 +300,7 @@ type
     property BirthDate: TDateTime read GetBirthDate write SetBirthDate;
     property BirthTime: TDateTime read GetBirthTime write SetBirthTime;
     property Employed: Boolean read GetEmployed write SetEmployed;
-    [NeonIgnore]
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Employer: TCompany read GetEmployer write SetEmployer;
     property EmploymentDate: TDateTime read GetEmploymentDate write SetEmploymentDate;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
@@ -313,10 +313,10 @@ type
     Employees: References(TPerson);
     NoOfBranches: Integer;
     Subsidiaries: References(TCompany); }
-    [NeonInclude, NeonProperty('Employees')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Employees')]{$ENDIF}
     _Employees: TInstantReferences;
     _NoOfBranches: TInstantInteger;
-    [NeonInclude, NeonProperty('Subsidiaries')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Subsidiaries')]{$ENDIF}
     _Subsidiaries: TInstantReferences;
   private
     function GetEmployeeCount: Integer;
@@ -355,15 +355,15 @@ type
     Manager: Reference(TContact);
     Participants: References(TContact) external 'Project_Participants';
     Items: Part(TProjectItems); }
-    [NeonInclude, NeonProperty('Addresses')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Addresses')]{$ENDIF}
     _Addresses: TInstantParts;
     _Items: TInstantPart;
-    [NeonInclude, NeonProperty('Manager')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Manager')]{$ENDIF}
     _Manager: TInstantReference;
     _Name: TInstantString;
-    [NeonInclude, NeonProperty('Participants')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Participants')]{$ENDIF}
     _Participants: TInstantReferences;
-    [NeonInclude, NeonProperty('Subprojects')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Subprojects')]{$ENDIF}
     _SubProjects: TInstantParts;
   private
     function GetAddressCount: Integer;
@@ -408,7 +408,7 @@ type
     property SubProjects[Index: Integer]: TProject read GetSubProjects write SetSubProjects;
   published
     property Items: TProjectItems read GetItems write SetItems;
-    [NeonIgnore]
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Manager: TContact read GetManager write SetManager;
     property Name: string read GetName write SetName;
   end;
@@ -418,10 +418,10 @@ type
     Name: String(30);
     Category: Reference(TCategory);
     Site_Contact: Reference(TPerson); }
-    [NeonInclude, NeonProperty('Category')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Category')]{$ENDIF}
     _Category: TInstantReference;
     _Name: TInstantString;
-    [NeonInclude, NeonProperty('Site_Contact')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Site_Contact')]{$ENDIF}
     _Site_Contact: TInstantReference;
   private
     function GetCategory: TCategory;
@@ -433,7 +433,7 @@ type
   published
     property Category: TCategory read GetCategory write SetCategory;
     property Name: string read GetName write SetName;
-    [NeonIgnore]
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Site_Contact: TPerson read GetSite_Contact write SetSite_Contact;
   end;
 
@@ -458,7 +458,7 @@ type
     Project: Part(TProject);
     RelatedProjectBoxes: References(TProjectBox); }
     _Project: TInstantPart;
-    [NeonInclude, NeonProperty('RelatedProjectBoxes')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('RelatedProjectBoxes')]{$ENDIF}
     _RelatedProjectBoxes: TInstantReferences;
   private
     function GetProject: TProject;
@@ -483,7 +483,7 @@ type
   {IOMETADATA stored;
     Description: String(50);
     Country: Reference(TCountry); }
-    [NeonInclude, NeonProperty('Country')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Country')]{$ENDIF}
     _Country: TInstantReference;
     _Description: TInstantString;
   private
@@ -492,7 +492,7 @@ type
     procedure SetCountry(Value: TCountry);
     procedure SetDescription(const Value: string);
   published
-    [NeonIgnore]
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Country: TCountry read GetCountry write SetCountry;
     property Description: string read GetDescription write SetDescription;
   end;
@@ -500,7 +500,7 @@ type
   TProjectItems = class(TInstantObject)
   {IOMETADATA stored;
     Items: Parts(TProjectItem); }
-    [NeonInclude, NeonProperty('Items')]
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Items')]{$ENDIF}
     _Items: TInstantParts;
   private
     function GetItemCount: Integer;
@@ -914,7 +914,7 @@ begin
   begin
     if EmailCount = 0 then
     begin
-      Email := TEmail.Create;
+      Email := TEmail.Create(Connector);
       AddEmail(Email);
     end else
       Email := Emails[0];
@@ -1184,7 +1184,7 @@ procedure TContact.AfterCreate;
 begin
   inherited;
   Id := InstantGenerateId;
-  Category := TCategory.Retrieve('CAT000', False, False, Connector);
+  _Category.ReferenceObject(TCategory, 'CAT000');
 end;
 
 procedure TContact.BeforeStore;
@@ -1366,7 +1366,7 @@ begin
   begin
     if PhoneCount = 0 then
     begin
-      Phone := TPhone.Create;
+      Phone := TPhone.Create(Connector);
       AddPhone(Phone);
       Phone.Name := 'Main';
     end else

@@ -38,7 +38,8 @@ unit TestInstantCache;
 
 interface
 
-uses fpcunit, InstantPersistence, InstantMock, TestModel;
+uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantPersistence, InstantMock, TestModel,
+  DUnitX.TestFramework;
 
 type
 
@@ -46,15 +47,19 @@ type
   // TInstantCacheNode and TInstantCacheEnumerator
   // are not tested seperately as they are only used
   // internally by TInstantCache.
-  TestTInstantCache = class(TTestCase)
+  [TestFixture]
+  TestTInstantCache = class(TInstantTestCase)
   private
     FConn: TInstantMockConnector;
     FInstantCache: TInstantCache;
     procedure InitSalary(aPerson: TInstantObject);
   public
+    [Setup]
     procedure SetUp; override;
+    [TearDown]
     procedure TearDown; override;
   published
+    [Test]
     procedure TestAdd_Remove;
     procedure TestFind_Clear;
     procedure TestForEach;
@@ -66,7 +71,7 @@ uses
   {$IFDEF D17+}
   System.Classes,
   {$ENDIF}
-  SysUtils, testregistry, InstantClasses;
+  SysUtils, InstantClasses;
 
 procedure TestTInstantCache.SetUp;
 begin
@@ -216,8 +221,8 @@ begin
 end;
 
 initialization
-  // Register any test cases with the test runner
-{$IFNDEF CURR_TESTS}
+  // Register any test cases with the test runner (old version)
+{$IFNDEF DUNITX_TESTS}
   RegisterTests([TestTInstantCache]);
 {$ENDIF}
 
