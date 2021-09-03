@@ -4,7 +4,7 @@
 
 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from 2010 to 11.0 Olympus version)
 
-![Delphi10.4Sydney Support](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi10.4Sydney_small.jpg)
+![Delphi10.4Sydney Support](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi.jpg)
 
 Related links: https://www.embarcadero.com/ - https://learndelphi.org/
 
