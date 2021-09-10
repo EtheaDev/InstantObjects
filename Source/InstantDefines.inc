@@ -330,7 +330,7 @@
   {$DEFINE D27+}
 {$ENDIF}
 
-// Delphi 11.0 Olympus
+// Delphi 11.0 Alexandria
 {$IFDEF VER350}
   {$DEFINE D5+}
   {$DEFINE D6+}
