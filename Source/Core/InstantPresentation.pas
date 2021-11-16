@@ -1334,7 +1334,7 @@ end;
 function TInstantAccessor.GetSubject: TObject;
 begin
   if not Assigned(FSubject) then
-    raise Exception.Create('Subject unassigned');
+    raise Exception.Create(SUnassignedSubject);
   Result := FSubject;
 end;
 
@@ -3280,10 +3280,10 @@ begin
     FOnFieldError(Self, E, Field, Value, Write, Result)
   else if Write then
     raise EInstantError.CreateFmt(SFieldWriteError,
-      [VarToStr(Value), Field.FieldName, E.Message], E)
+      [VarToStr(Value), Field.DisplayName, E.Message], E)
   else
     raise EInstantError.CreateFmt(SFieldReadError,
-      [Field.FieldName, E.Message], E);
+      [Field.DisplayName, E.Message], E);
 end;
 
 function TInstantCustomExposer.HasAccessor: Boolean;

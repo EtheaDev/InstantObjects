@@ -23,6 +23,12 @@ inherited CompanyEditForm: TCompanyEditForm
     TabOrder = 4
   end
   inherited DBGrid1: TDBGrid
+    TabOrder = 5
+  end
+  inherited OkButton: TButton
+    TabOrder = 6
+  end
+  inherited CancelButton: TButton
     TabOrder = 7
   end
   inherited ContactExposer: TInstantExposer

@@ -5,13 +5,14 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ContactEdit, Db, InstantPresentation, StdCtrls, Grids, DBGrids, Mask,
-  DBCtrls, Vcl.ComCtrls;
+  DBCtrls, Vcl.ComCtrls, Vcl.WinXCalendars;
 
 type
   TPersonEditForm = class(TContactEditForm)
     ContactExposerDateOfBirth: TDateTimeField;
     Label6: TLabel;
     DBEdit5: TDBEdit;
+    DateTimePicker1: TDateTimePicker;
   private
     { Private declarations }
   public

@@ -6,7 +6,11 @@ object ContactEditForm: TContactEditForm
   ClientHeight = 272
   ClientWidth = 431
   Color = clBtnFace
-  ParentFont = True
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
   PixelsPerInch = 96
@@ -92,6 +96,7 @@ object ContactEditForm: TContactEditForm
     Width = 223
     Height = 209
     DataSource = PhonesSource
+    Options = [dgEditing, dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
     TabOrder = 4
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
@@ -113,7 +118,7 @@ object ContactEditForm: TContactEditForm
       end>
   end
   object OkButton: TButton
-    Left = 268
+    Left = 267
     Top = 239
     Width = 75
     Height = 25

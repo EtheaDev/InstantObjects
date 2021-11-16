@@ -1,15 +1,4 @@
 <TInstantConnectionDefs>
-  <TInstantIBXConnectionDef>
-    <Name>IBX_Firebird</Name>
-    <IsBuilt>TRUE</IsBuilt>
-    <BlobStreamFormat>sfXML</BlobStreamFormat>
-    <LoginPrompt>FALSE</LoginPrompt>
-    <ConnectionString>.\FirebirdDB\PRIMERDB.FDB</ConnectionString>
-    <Options></Options>
-    <Params>user_name=SYSDBA
-password=masterkey
-lc_ctype=ISO8859_1</Params>
-  </TInstantIBXConnectionDef>
   <TInstantXMLConnectionDef>
     <Name>XmlDB</Name>
     <IsBuilt>TRUE</IsBuilt>
@@ -20,9 +9,8 @@ lc_ctype=ISO8859_1</Params>
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
     <LoginPrompt>FALSE</LoginPrompt>
+    <ConnectionName>FBConnection</ConnectionName>
     <DriverName>Firebird</DriverName>
-    <GetDriverFunc>getSQLDriverINTERBASE</GetDriverFunc>
-    <LibraryName>dbxfb.dll</LibraryName>
     <Params>DriverName=Firebird
 Database=.\FirebirdDB\PRIMERDB.FDB
 RoleName=RoleName
@@ -38,6 +26,5 @@ WaitOnLocks=True
 IsolationLevel=ReadCommitted
 Trim Char=False
 </Params>
-    <VendorLib>fbclient.dll</VendorLib>
   </TInstantDBXConnectionDef>
 </TInstantConnectionDefs>

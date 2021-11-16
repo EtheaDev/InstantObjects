@@ -195,6 +195,7 @@ resourcestring
   SUnassignedResolver = 'Risolutore non assegnato';
   SUnassignedStream = 'Stream non assegnato';
   SUnassignedTranslator = 'Traduttore non assegnato';
+  SUnassignedSubject = 'Subject non assegnato';
   SUndefinedCatalog = 'Catalogo non definito per %s';
   SUnexpectedAttributeCategory = 'Categoria dell''attributo %s inaspettata per %s(''%s'') nella classe %s. Avrebbe dovuto essere %s';
   SUnexpectedAttributeClass = 'Classe inaspettata per l''attributo %s(''%s'') nella classe %s. Avrebbe dovuto essere %s';
@@ -217,7 +218,7 @@ resourcestring
   SParentContextNotFoundForSubQuery = 'Oggetto del contesto padre non trovato per la subquery (''%s'')';
   SUsingAttributeMustBeAReference = 'L''attributo (''%s'') non è un reference: l''attributo USING deve essere un reference.';
   SUsingAttributeMetadataNotFound = 'Impossibile ottenere i metadati per l''attributo USING (''%s'')';
-  SSQLExecuteError = 'Errore in esecuzione SQL. Comando: ''%s''. Errore: ''%s''';
+  SSQLExecuteError = 'Errore in esecuzione SQL. Comando: ''%s''. Parametri: ''%s''. Errore: ''%s''';
   SUseUnicodeWrong = 'Errore: Unicode dell''exposer non corrisponde a Unicode del connector in uso.';
   SDefaultConnectorNotAvailable = 'Errore: InstantDefaultConnector non è disponibile in una app. console.';
 {$ELSE}
@@ -325,6 +326,7 @@ resourcestring
   SUnassignedResolver = 'Unassigned resolver';
   SUnassignedStream = 'Unassigned stream';
   SUnassignedTranslator = 'Unassigned translator';
+  SUnassignedSubject = 'Subject unassigned';
   SUndefinedCatalog = 'Catalog not defined for %s';
   SUnexpectedAttributeCategory = 'Unexpected attribute category %s for %s(''%s'') in class %s. Expected attribute category %s';
   SUnexpectedAttributeClass = 'Unexpected attribute class for %s(''%s'') in class %s. Expected attribute class %s';
@@ -347,7 +349,7 @@ resourcestring
   SParentContextNotFoundForSubQuery = 'Parent context object not found for subquery (''%s'')';
   SUsingAttributeMustBeAReference = 'Attribute (''%s'') is not a reference: USING attribute must be a reference.';
   SUsingAttributeMetadataNotFound = 'Cannot get metadata for USING attribute (''%s'')';
-  SSQLExecuteError = 'SQL execute error. Statement: ''%s''. Error: ''%s''';
+  SSQLExecuteError = 'SQL execute error. Statement: ''%s''. Parameters: ''%s''. Error: ''%s''';
   SUseUnicodeWrong = 'Error: Unicode of exposer don''t match with Unicode of connector in use.';
   SDefaultConnectorNotAvailable = 'Error: InstantDefaultConnector is not available in console app.';
 {$ENDIF}

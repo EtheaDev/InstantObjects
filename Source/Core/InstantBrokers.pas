@@ -43,6 +43,9 @@ uses
   {$ENDIF}
   InstantConsts, InstantClasses, Contnrs, InstantCommand;
 
+const
+  CLASSNAME_PARAM_SIZE = 32;
+
 type
   TInstantBrokerCatalog = class;
   TInstantConnectionBasedConnector = class;
@@ -191,6 +194,7 @@ type
     function DataTypeToColumnType(DataType: TInstantDataType;
       Size: Integer): string; virtual; abstract;
     function FindResolver(AMap: TInstantAttributeMap): TInstantSQLResolver;
+    function GetParamsStr(AParams: TParams): string;
     class function GeneratorClass: TInstantSQLGeneratorClass; virtual;
     property Generator: TInstantSQLGenerator read GetGenerator;
     property ResolverCount: Integer read GetResolverCount;
@@ -219,7 +223,7 @@ type
   published
     property OnGetDataSet: TInstantGetDataSetEvent read FOnGetDataSet write FOnGetDataSet;
     property OnInitDataSet: TInstantInitDataSetEvent read FOnInitDataSet write FOnInitDataSet;
-    property ReadObjectListWithNoLock: boolean read FReadObjectListWithNoLock write FReadObjectListWithNoLock;
+    property ReadObjectListWithNoLock: boolean read FReadObjectListWithNoLock write FReadObjectListWithNoLock default false;
   end;
 
   TInstantConnectionBasedConnector = class(TInstantRelationalConnector)
@@ -427,7 +431,8 @@ type
     FSelectVirtualSQL: string;
     function AddIntegerParam(Params: TParams; const ParamName: string;
       Value: Integer): TParam;
-    function AddStringParam(Params: TParams; const ParamName, Value: string): TParam;
+    function AddStringParam(Params: TParams; const ParamName, Value: string;
+      const Size: Integer = 0): TParam;
     // Adds an "Id" param, whose data type and size depends on connector
     // settings.
     procedure AddIdParam(Params: TParams; const ParamName, Value: string);
@@ -1599,6 +1604,35 @@ begin
   if not Assigned(FGenerator) then
     FGenerator := GeneratorClass.Create(Self);
   Result := FGenerator;
+end;
+
+function TInstantSQLBroker.GetParamsStr(AParams: TParams): string;
+var
+  LParamValue: string;
+  S: string;
+  g: Integer;
+begin
+  S := '';
+  if Assigned(AParams) then
+  begin
+    for g := 0 to AParams.Count - 1 do
+    begin
+
+      Try
+        LParamValue := AParams[g].Name + ': ' + GetEnumName(TypeInfo(TFieldType),
+          Ord(AParams[g].DataType)) +
+          ' = ' + AParams[g].AsString;
+      Except
+        LParamValue := '';
+      End;
+      if S <> '' then
+        S := S + ', ';
+
+      S := S  + LParamValue;
+
+    end;
+  end;
+  Result := S;
 end;
 
 function TInstantSQLBroker.GetResolverCount: Integer;
@@ -3028,7 +3062,7 @@ var
     if Attribute.Metadata.StorageKind = skExternal then
     begin
       Part := Attribute as TInstantPart;
-      AddStringParam(Params, FieldName + InstantClassFieldName, Part.Value.ClassName);
+      AddStringParam(Params, FieldName + InstantClassFieldName, Part.Value.ClassName, CLASSNAME_PARAM_SIZE);
       Part.Value.CheckId;
       AddIdParam(Params, FieldName + InstantIdFieldName, Part.Value.Id);
     end
@@ -3063,7 +3097,7 @@ var
   begin
     Reference := Attribute as TInstantReference;
     AddStringParam(Params, FieldName + InstantClassFieldName,
-      Reference.ObjectClassName);
+      Reference.ObjectClassName, CLASSNAME_PARAM_SIZE);
     AddIdParam(Params, FieldName + InstantIdFieldName, Reference.ObjectId);
   end;
 
@@ -3084,7 +3118,9 @@ var
   var
     LParam: TParam;
   begin
-    LParam := AddStringParam(Params, FieldName, (Attribute as TInstantString).Value);
+    LParam := AddStringParam(Params, FieldName, TInstantString(Attribute).Value
+      , Attribute.Metadata.Size
+      );
     if Attribute.IsNull then
       LParam.Clear;
   end;
@@ -3147,7 +3183,7 @@ procedure TInstantSQLResolver.AddBaseParams(Params: TParams; AClassName,
 begin
   if Assigned(Params) then
   begin
-    AddStringParam(Params, InstantClassFieldName, AClassName);
+    AddStringParam(Params, InstantClassFieldName, AClassName, CLASSNAME_PARAM_SIZE);
     AddIdParam(Params, InstantIdFieldName, AObjectId);
     if AUpdateCount <> -1 then
       AddIntegerParam(Params, InstantUpdateCountFieldName, AUpdateCount);
@@ -3195,8 +3231,11 @@ procedure TInstantSQLResolver.AddIdParam(Params: TParams;
   const ParamName, Value: string);
 var
   Param: TParam;
+  LFieldType: TFieldType;
 begin
-  Param := AddParam(Params, ParamName, InstantDataTypeToFieldType(Broker.Connector.IdDataType, Broker.Connector.UseUnicode));
+  LFieldType := InstantDataTypeToFieldType(Broker.Connector.IdDataType, Broker.Connector.UseUnicode);
+  Param := AddParam(Params, ParamName, LFieldType);
+  Param.Size := Broker.Connector.IdSize;
   if Value <> '' then
     Param.Value := Value;
 end;
@@ -3223,14 +3262,15 @@ begin
 end;
 
 function TInstantSQLResolver.AddStringParam(Params: TParams;
-  const ParamName, Value: string): TParam;
+  const ParamName, Value: string; const Size: Integer = 0): TParam;
 begin
   if Broker.Connector.UseUnicode then
     Result := AddParam(Params, ParamName, ftWideString)
   else
     Result := AddParam(Params, ParamName, ftString);
+  Result.Size := Size;
   if Value <> '' then
-    Result.AsString := Value;
+    Result.Value := Value;
 end;
 
 procedure TInstantSQLResolver.CheckConflict(Info: PInstantOperationInfo;
@@ -3380,7 +3420,7 @@ var
             [AttributeMetadata.FieldName + InstantClassFieldName,
              AttributeMetadata.FieldName + InstantIdFieldName,
              AttributeMetadata.ClassMetadata.TableName]);
-          AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
+          AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName, CLASSNAME_PARAM_SIZE);
           AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
           DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
           try
@@ -3588,7 +3628,7 @@ var
                 [AttributeMetadata.FieldName + InstantClassFieldName,
                  AttributeMetadata.FieldName + InstantIdFieldName,
                  AttributeMetadata.ClassMetadata.TableName]);
-              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName);
+              AddStringParam(SelectParams, InstantClassFieldName, AObject.ClassName, CLASSNAME_PARAM_SIZE);
               AddIdParam(SelectParams, InstantIdFieldName, AObject.Id);
               DataSet := Broker.AcquireDataSet(SelectStatement, SelectParams);
               try
@@ -4390,7 +4430,7 @@ begin
       InstantParentClassFieldName,
       InstantParentIdFieldName]);
     Resolver.AddStringParam(Params, InstantParentClassFieldName,
-        AttributeOwner.ClassName);
+        AttributeOwner.ClassName, CLASSNAME_PARAM_SIZE);
     Resolver.AddIdParam(Params, InstantParentIdFieldName,
         AttributeOwner.Id);
     Broker.Execute(Statement, Params);
@@ -4413,7 +4453,7 @@ begin
     Statement := Format(Resolver.SelectExternalSQL, [TableName]);
     Resolver.AddIdParam(Params, InstantParentIdFieldName, AttributeOwner.Id);
     Resolver.AddStringParam(Params, InstantParentClassFieldName,
-        AttributeOwner.ClassName);
+        AttributeOwner.ClassName, CLASSNAME_PARAM_SIZE);
     DataSet := Broker.AcquireDataSet(Statement, Params);
     try
       DataSet.Open;
@@ -4475,7 +4515,7 @@ begin
     end;
     Resolver.AddIdParam(Params, InstantParentIdFieldName, AObjectId);
     Resolver.AddStringParam(Params, InstantParentClassFieldName,
-      AttributeOwner.ClassName);
+      AttributeOwner.ClassName, CLASSNAME_PARAM_SIZE);
     DataSet := Broker.AcquireDataSet(Statement, Params);
     try
       DataSet.Open;
@@ -4522,11 +4562,11 @@ begin
       Resolver.AddIdParam(Params, InstantIdFieldName,
           Attribute.Connector.GenerateId);
       Resolver.AddStringParam(Params, InstantParentClassFieldName,
-          AttributeOwner.ClassName);
+          AttributeOwner.ClassName, CLASSNAME_PARAM_SIZE);
       Resolver.AddIdParam(Params, InstantParentIdFieldName,
           AttributeOwner.Id);
       Resolver.AddStringParam(Params, InstantChildClassFieldName,
-          Obj.ClassName);
+          Obj.ClassName, CLASSNAME_PARAM_SIZE);
       Resolver.AddIdParam(Params, InstantChildIdFieldName,
           Obj.Id);
       Resolver.AddIntegerParam(Params, InstantSequenceNoFieldName, Succ(I));

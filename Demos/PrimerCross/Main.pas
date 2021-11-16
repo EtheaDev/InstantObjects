@@ -10,7 +10,7 @@ uses
   Menus, ExtCtrls, ComCtrls, ToolWin, Grids, DBGrids, ImgList, ActnList,
   InstantPersistence, BasicView, Stopwatch,
   InstantConnectionManagerFormUnit, InstantConnectionManager,
-  {$IFDEF D17+}System.Actions,{$ENDIF}
+  System.Actions, //if don't compile, remove this unit
   WideStrings, SqlExpr;
 
 type
@@ -133,7 +133,8 @@ uses
   {$IFNDEF VER130}
   InstantDBX,
   {$ENDIF}
-  InstantADO, InstantIBX,
+  InstantADO,
+  //InstantIBX, remome comment if you want to use IbExpress
   {$IFDEF D19+}
   InstantFireDAC,
   {$ENDIF}

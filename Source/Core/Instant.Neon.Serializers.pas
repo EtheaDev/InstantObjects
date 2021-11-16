@@ -489,14 +489,20 @@ begin
   end;
 
   //Remove referenced objects not found
-  for I := LReferences.Count - 1 downto 0 do
-  begin
-    LInstantObject := LReferences.Items[I];
-    if LObjectsFound.IndexOf(LInstantObject) < 0 then
+  LReferences.Owner.AddRef;
+  Try
+    for I := LReferences.Count - 1 downto 0 do
     begin
-      LReferences.Delete(I);
+      LInstantObject := LReferences[I];
+      if LObjectsFound.IndexOf(LInstantObject) < 0 then
+      begin
+        LInstantObject.Dispose;
+        LReferences.Delete(I);
+      end;
     end;
-  end;
+  Finally
+    LReferences.Owner.Free;
+  End;
 
   Result := LReferences;
 end;

@@ -9,8 +9,8 @@ uses
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   ComCtrls, Grids, DBGrids, ExtCtrls, Buttons, ShellApi,
   StdCtrls, ActnList, ToolWin, ImgList, Menus,
-  {$IFDEF D17+}Actions,{$ENDIF}
-  BasicView, Model, InstantPresentation, InstantExplorer;
+  BasicView, Model, InstantPresentation, InstantExplorer, System.ImageList,
+  System.Actions; //if don't compile remove this unit
 
 type
   TContactViewForm = class(TBasicViewFrame)

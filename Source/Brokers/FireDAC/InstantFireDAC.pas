@@ -823,10 +823,28 @@ begin
       end;
     ftString:
       begin
+        TargetParam.DataType := ftString;
+        TargetParam.Value := SourceParam.Value;
+        TargetParam.Size := SourceParam.Size;
+      end;
+    ftWideString:
+      begin
         TargetParam.DataType := ftWideString;
         TargetParam.Value := SourceParam.AsWideString;
+        TargetParam.Size := SourceParam.Size;
       end;
-
+    ftMemo, ftFmtMemo:
+      begin
+        TargetParam.DataType := ftMemo;
+        TargetParam.Value := SourceParam.Value;
+        //TargetParam.Size := SourceParam.Size;
+      end;
+    ftWideMemo:
+      begin
+        TargetParam.DataType := ftWideMemo;
+        TargetParam.Value := SourceParam.Value;
+        //TargetParam.Size := SourceParam.Size;
+      end;
     else
       TargetParam.Assign(SourceParam);
   end;
@@ -921,7 +939,7 @@ begin
   except
     on E: Exception do
       raise EInstantError.CreateFmt(SSQLExecuteError,
-        [AStatement, E.Message], E);
+        [AStatement, GetParamsStr(AParams), E.Message], E);
   end;
   finally
     ReleaseDataSet(LQuery);

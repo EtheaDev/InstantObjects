@@ -55,8 +55,11 @@ const
 type
   TXMLFileFormat = (xffUtf8, xffIso);
 
-  TXMLFileOpenEvent = function (const AObject: TInstantObject;
+  TXMLFileOpenEvent = function(const AObject: TInstantObject;
       const AObjectId, AFileName: string): Boolean of Object;
+
+  TXMLFileSaveEvent = function(const AObject: TInstantObject;
+      const AFileName: string): Boolean of Object;
 
   TXMLFilesAccessor = class(TCustomConnection)
   private
@@ -64,6 +67,7 @@ type
     FRootFolder: string;
     FXMLFileFormat: TXMLFileFormat;
     FOnCustomLoadXMLFile: TXMLFileOpenEvent;
+    FOnCustomSaveToXMLFile: TXMLFileSaveEvent;
     function GetRootFolder: string;
     procedure SetRootFolder(const AValue: string);
     function ObjectUpdateCountFromFileName(const AFileName: string): Integer;
@@ -115,6 +119,7 @@ type
     property RootFolder: string read GetRootFolder write SetRootFolder;
     property XMLFileFormat: TXMLFileFormat read FXMLFileFormat write FXMLFileFormat default xffUtf8;
     property OnCustomLoadXMLFile: TXMLFileOpenEvent read FOnCustomLoadXMLFile write FOnCustomLoadXMLFile;
+    property OnCustomSaveToXMLFile: TXMLFileSaveEvent read FOnCustomSaveToXMLFile write FOnCustomSaveToXMLFile;
   end;
 
   TInstantXMLConnectionDef = class(TInstantConnectionBasedConnectionDef)
@@ -326,6 +331,7 @@ type
 
 procedure GlobalLoadFileList(const Path: string; FileList: TStringList;
   const AFilterWildCard: string = '');
+function GetXMLLineBreak: string;
 
 implementation
 
@@ -1171,39 +1177,25 @@ function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
 var
   strstream: TStringStream;
   fileStream: TFileStream;
-{$IFDEF UNICODE}
   DataStr: UTF8String;
-{$ELSE}
-  DataStr: string;
-{$ENDIF}
 begin
-{$IFDEF UNICODE}
-  strstream := TStringStream.Create('', TEncoding.UTF8);
-{$ELSE}
-  strstream := TStringStream.Create('');
-{$ENDIF}
-  try
-    InstantWriteObject(strStream, sfXML, AObject);
-{$IFDEF UNICODE}
-    DataStr := XML_UTF8_HEADER + UTF8String(GetXMLLineBreak) + UTF8String(strStream.DataString);
-{$ELSE}
-  {$IFDEF D6+}
-    if FXMLFileFormat = xffUtf8 then
-      DataStr := AnsiToUtf8(XML_UTF8_HEADER + GetXMLLineBreak + strStream.DataString)
-    else
-      DataStr := XML_ISO_HEADER + GetXMLLineBreak + strStream.DataString;
-  {$ELSE}
-    DataStr := strStream.DataString;
-  {$ENDIF}
-{$ENDIF}
-  finally
-    strStream.Free;
-  end;
-  fileStream := TFileStream.Create(AFileName, fmCreate);
-  try
-    Result := fileStream.Write(DataStr[1], Length(DataStr)) <> 0;
-  finally
-    fileStream.Free;
+  if Assigned(FOnCustomSaveToXMLFile) then
+    Result := FOnCustomSaveToXMLFile(AObject, AFileName)
+  else
+  begin
+    strstream := TStringStream.Create('', TEncoding.UTF8);
+    try
+      InstantWriteObject(strStream, sfXML, AObject);
+      DataStr := XML_UTF8_HEADER + UTF8String(GetXMLLineBreak) + UTF8String(strStream.DataString);
+    finally
+      strStream.Free;
+    end;
+    fileStream := TFileStream.Create(AFileName, fmCreate);
+    try
+      Result := fileStream.Write(DataStr[1], Length(DataStr)) <> 0;
+    finally
+      fileStream.Free;
+    end;
   end;
 end;
 
@@ -1360,9 +1352,12 @@ begin
 end;
 
 procedure TXMLFilesAccessor.CreateStorageDir(const AStorageName: string);
+var
+  LPath: string;
 begin
-  if not SysUtils.DirectoryExists(RootFolder + AStorageName) then
-    MkDir(RootFolder + AStorageName);
+  LPath := IncludeTrailingBackslash(RootFolder) + AStorageName;
+  if not SysUtils.DirectoryExists(LPath) then
+    MkDir(LPath);
 end;
 
 function TXMLFilesAccessor.ObjectUpdateCountFromFileName(

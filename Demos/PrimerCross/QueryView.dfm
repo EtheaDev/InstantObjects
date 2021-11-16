@@ -175,10 +175,6 @@ inherited QueryViewFrame: TQueryViewFrame
     object TranslatedQueryTabSheet: TTabSheet
       Caption = 'Translated Query'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object TranslatedQueryMemo: TMemo
         Left = 0
         Top = 0
@@ -191,10 +187,6 @@ inherited QueryViewFrame: TQueryViewFrame
     object StatsTabSheet: TTabSheet
       Caption = 'Stats'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       object StatsMemo: TMemo
         Left = 0
         Top = 0

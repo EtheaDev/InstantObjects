@@ -15,87 +15,63 @@ inherited CompanyEditForm: TCompanyEditForm
     9BB9007778000009B9007778800000090087788000000000000880000000C07F
     0000801F0000C0070000C0030000C0030000C0030000C0030000C0030000C003
     0000C0030000C0030000C0030000C0030000C0070000C01F0000CE7F0000}
-  ExplicitWidth = 550
-  ExplicitHeight = 333
   PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
     Top = 263
     Width = 534
-    ExplicitTop = 263
-    ExplicitWidth = 452
     inherited AnchorPanel: TPanel
       Left = 367
-      ExplicitLeft = 285
     end
   end
   inherited ClientPanel: TPanel
     Width = 534
     Height = 263
-    ExplicitWidth = 452
-    ExplicitHeight = 263
     inherited PageControl: TPageControl
       Width = 530
       Height = 259
-      ExplicitWidth = 448
-      ExplicitHeight = 259
       inherited DetailsSheet: TTabSheet
         TabVisible = True
-        ExplicitTop = 24
-        ExplicitWidth = 440
-        ExplicitHeight = 231
         inherited ZipLabel: TLabel
           Left = 176
-          ExplicitLeft = 176
         end
         inherited StateLabel: TLabel
           Left = 160
-          ExplicitLeft = 160
         end
         inherited PhonesLabel: TLabel
           Left = 264
-          ExplicitLeft = 264
         end
         inherited MidBevel: TBevel
           Left = 248
-          ExplicitLeft = 248
         end
         inherited NameEdit: TDBEdit
           Width = 225
-          ExplicitWidth = 225
         end
         inherited StreetEdit: TDBMemo
           Width = 225
-          ExplicitWidth = 225
         end
         inherited CityEdit: TDBEdit
           Width = 161
-          ExplicitWidth = 161
         end
         inherited ZipEdit: TDBEdit
           Left = 176
-          ExplicitLeft = 176
         end
         inherited StateEdit: TDBEdit
           Left = 160
-          ExplicitLeft = 160
         end
         inherited PhonesGrid: TDBGrid
           Left = 264
         end
         inherited CountryEdit: TDBLookupComboBox
           Width = 145
-          ExplicitWidth = 145
         end
         inherited CategoryEdit: TDBLookupComboBox
           Width = 145
-          ExplicitWidth = 145
         end
       end
       object EmployeeSheet: TTabSheet
         Caption = 'Employees'
         ImageIndex = 1
-        ExplicitWidth = 440
         object EmployeeGridPanel: TPanel
           Left = 0
           Top = 0
@@ -105,7 +81,6 @@ inherited CompanyEditForm: TCompanyEditForm
           BevelOuter = bvNone
           BorderWidth = 2
           TabOrder = 0
-          ExplicitWidth = 345
           object EmployeeGrid: TDBGrid
             Left = 2
             Top = 2
@@ -153,7 +128,6 @@ inherited CompanyEditForm: TCompanyEditForm
           Align = alRight
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitLeft = 345
           object EmployeeNewButton: TBitBtn
             Left = 10
             Top = 8

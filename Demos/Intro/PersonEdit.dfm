@@ -11,14 +11,14 @@ inherited PersonEditForm: TPersonEditForm
     Caption = 'DateOfBirth'
   end
   inherited DBGrid1: TDBGrid
-    TabOrder = 5
+    TabOrder = 6
   end
   inherited OkButton: TButton
-    TabOrder = 6
+    TabOrder = 7
   end
   object DBEdit5: TDBEdit [12]
     Left = 8
-    Top = 184
+    Top = 187
     Width = 95
     Height = 21
     DataField = 'DateOfBirth'
@@ -26,7 +26,16 @@ inherited PersonEditForm: TPersonEditForm
     TabOrder = 4
   end
   inherited CancelButton: TButton
-    TabOrder = 7
+    TabOrder = 8
+  end
+  object DateTimePicker1: TDateTimePicker [14]
+    Left = 8
+    Top = 232
+    Width = 107
+    Height = 21
+    Date = 44508.000000000000000000
+    Time = 0.774214386576204500
+    TabOrder = 5
   end
   inherited ContactExposer: TInstantExposer
     ObjectClassName = 'TPerson'

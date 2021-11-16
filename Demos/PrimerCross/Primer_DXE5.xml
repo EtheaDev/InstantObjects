@@ -1,15 +1,4 @@
 <TInstantConnectionDefs>
-  <TInstantIBXConnectionDef>
-    <Name>IBX_Firebird</Name>
-    <IsBuilt>TRUE</IsBuilt>
-    <BlobStreamFormat>sfXML</BlobStreamFormat>
-    <LoginPrompt>FALSE</LoginPrompt>
-    <ConnectionString>127.0.0.1:C:\ETHEA\ISF6\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB</ConnectionString>
-    <Options></Options>
-    <Params>user_name=SYSDBA
-password=masterkey
-lc_ctype=ISO8859_1</Params>
-  </TInstantIBXConnectionDef>
   <TInstantXMLConnectionDef>
     <Name>XmlDB</Name>
     <IsBuilt>TRUE</IsBuilt>
@@ -23,7 +12,7 @@ lc_ctype=ISO8859_1</Params>
     <ConnectionName>FBConnection</ConnectionName>
     <DriverName>Firebird</DriverName>
     <Params>DriverName=Firebird
-Database=127.0.0.1:C:\ETHEA\ISF6\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB
+Database=PRIMERDB
 RoleName=RoleName
 User_Name=sysdba
 Password=masterkey
@@ -42,13 +31,13 @@ Trim Char=False
     <Name>FireDAC_Firebird</Name>
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
-    <Database>C:\ETHEA\ISF6\InstantObjects\Demos\PrimerCross\FirebirdDB\PRIMERDB.FDB</Database>
-    <HostName>127.0.0.1</HostName>
     <LoginPrompt>FALSE</LoginPrompt>
+    <Database>PRIMERDB</Database>
+    <HostName>127.0.0.1</HostName>
     <Password>masterkey</Password>
-    <Port>0</Port>
-    <Protocol>FB</Protocol>
+    <DriverId>FB</DriverId>
     <UseDelimitedIdents>FALSE</UseDelimitedIdents>
-    <UserName>SYSDBA</UserName>
+    <User_Name>SYSDBA</User_Name>
+    <OSAuthent>FALSE</OSAuthent>
   </TInstantFireDACConnectionDef>
 </TInstantConnectionDefs>

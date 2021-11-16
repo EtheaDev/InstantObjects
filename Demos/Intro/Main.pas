@@ -120,8 +120,12 @@ begin
 end;
 
 procedure TMainForm.GenerateDataButtonClick(Sender: TObject);
+var
+  LValue: string;
 begin
-  GenerateRandomData(10);
+  LValue := '10';
+  if InputQuery('Generate Random Data', 'How many contacts do you want to generate?', LValue) then
+    GenerateRandomData(StrToInt(LValue));
 end;
 
 procedure TMainForm.GenerateRandomData(const ANumber: Integer);

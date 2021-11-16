@@ -12,8 +12,6 @@ inherited CountryBrowseForm: TCountryBrowseForm
     00007E6300003001000000000000000000000000000000000000000000000000
     000080040000C0060000F0070000F0070000F8070000FCE70000FFF70000}
   OldCreateOrder = True
-  ExplicitWidth = 320
-  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   inherited BrowseGridPanel: TPanel

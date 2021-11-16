@@ -12,8 +12,6 @@ inherited CategoryBrowseForm: TCategoryBrowseForm
     0000FC1F0000F80F0000F0070000E0030000C0030000C0030000C0070000C00F
     0000C01F0000C03F0000E07F0000D0FF0000DFFF0000E7FF0000FBFF0000}
   OldCreateOrder = True
-  ExplicitWidth = 320
-  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   inherited BrowseGridPanel: TPanel
