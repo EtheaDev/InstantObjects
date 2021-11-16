@@ -109,6 +109,7 @@ object BasicBrowseForm: TBasicBrowseForm
       TitleFont.Height = -11
       TitleFont.Name = 'Segoe UI'
       TitleFont.Style = []
+      OnDrawColumnCell = DbGridDrawColumnCellFixW11
       OnDblClick = BrowseGridDblClick
       OnKeyUp = BrowseGridKeyUp
     end

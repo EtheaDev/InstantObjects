@@ -33,8 +33,8 @@ inherited PersonEditForm: TPersonEditForm
     Top = 232
     Width = 107
     Height = 21
-    Date = 44508.000000000000000000
-    Time = 0.774214386576204500
+    Date = 44508.774214386580000000
+    Time = 44508.774214386580000000
     TabOrder = 5
   end
   inherited ContactExposer: TInstantExposer

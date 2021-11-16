@@ -14,30 +14,24 @@ inherited ContactEditForm: TContactEditForm
   TextHeight = 13
   inherited ButtonPanel: TPanel
     Top = 264
+    Left = 341
     Width = 508
     TabOrder = 1
     ExplicitTop = 264
-    ExplicitWidth = 425
     inherited AnchorPanel: TPanel
       Left = 341
-      ExplicitLeft = 258
     end
   end
   inherited ClientPanel: TPanel
     Width = 508
     Height = 264
     TabOrder = 0
-    ExplicitWidth = 425
     ExplicitHeight = 264
     inherited PageControl: TPageControl
       Width = 504
       Height = 260
-      ExplicitWidth = 421
       ExplicitHeight = 260
       inherited DetailsSheet: TTabSheet
-        ExplicitLeft = 4
-        ExplicitTop = 6
-        ExplicitWidth = 413
         ExplicitHeight = 250
         object NameLabel: TLabel
           Left = 8
@@ -168,6 +162,7 @@ inherited ContactEditForm: TContactEditForm
           TitleFont.Height = -11
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = []
+          OnDrawColumnCell = DbGridDrawColumnCellFixW11
           Columns = <
             item
               Expanded = False

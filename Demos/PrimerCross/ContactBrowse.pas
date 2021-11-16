@@ -37,7 +37,7 @@ function TContactBrowseForm.Find(const Text: string): Boolean;
 var
   S: string;
 begin
-  S := 'SELECT * FROM ' + ObjectClass.ClassName;
+  S := 'SELECT * FROM Any ' + ObjectClass.ClassName;
   if Text <> '' then
     S := S + ' WHERE Name LIKE "%' + Text + '%"';
   S := S + ' ORDER BY Name';

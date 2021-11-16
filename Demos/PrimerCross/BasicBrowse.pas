@@ -53,6 +53,8 @@ type
     procedure SearchActionExecute(Sender: TObject);
     procedure BrowseGridKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure DbGridDrawColumnCellFixW11(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
   private
     FLookupMode: Boolean;
     function GetExposer: TInstantCustomExposer;
@@ -78,7 +80,8 @@ implementation
 {$R *.dfm}
 
 uses
-  BasicEdit, Utility, InstantPersistence, InstantImageUtils;
+  BasicEdit, Utility, InstantPersistence, InstantImageUtils,
+  Themes;
 
 { TBasicBrowseForm }
 
@@ -100,6 +103,23 @@ begin
   with SelectAction do
     if Visible then
       Execute;
+end;
+
+procedure TBasicBrowseForm.DbGridDrawColumnCellFixW11(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var
+  LDbGrid: TDbGrid;
+begin
+  LDbGrid := Sender as TDbGrid;
+  //Resolve bad painting of selected cell in Windows 11
+  if not StyleServices.Enabled or (StyleServices.IsSystemStyle) then
+  begin
+    if ((gdSelected in State) and (gdFocused in State))
+      or ((gdSelected in State) and (dgRowSelect in LDbGrid.Options) and LDbGrid.Focused)
+      then
+      LDbGrid.Canvas.Brush.Color := clHighlight;
+    LDbGrid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  end;
 end;
 
 function TBasicBrowseForm.ConfirmDelete: Boolean;

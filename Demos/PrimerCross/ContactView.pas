@@ -9,8 +9,8 @@ uses
   Windows, Messages, Graphics, Controls, Forms, Dialogs,
   ComCtrls, Grids, DBGrids, ExtCtrls, Buttons, ShellApi,
   StdCtrls, ActnList, ToolWin, ImgList, Menus,
-  BasicView, Model, InstantPresentation, InstantExplorer, System.ImageList,
-  System.Actions; //if don't compile remove this unit
+  System.Actions,
+  BasicView, Model, InstantPresentation, InstantExplorer;
 
 type
   TContactViewForm = class(TBasicViewFrame)
@@ -217,6 +217,8 @@ var
   Contact: TContact;
   Index: Integer;
 begin
+  inherited DbGridDrawColumnCellFixW11(Sender, Rect, DataCol, Column, State);
+
   if gdSelected in State then
     with ContactGrid do
       if not Focused then

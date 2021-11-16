@@ -589,6 +589,7 @@ function TInstantDBXBroker.Execute(const AStatement: string;
 var
   LQuery: TSQLQuery;
 begin
+  Result := 0;
   LQuery := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TSQLQuery;
   try try
     Result := LQuery.ExecSQL;

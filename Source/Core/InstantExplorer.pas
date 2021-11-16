@@ -212,7 +212,7 @@ type
     procedure UpdateDetails(ForceRefresh: boolean = False);
     function GetAttributesCount(Instance: TInstantObject): integer; virtual;
     function GetAttribute(Instance: TInstantObject; I: integer): TObject; virtual;
-    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
+    procedure ChangeScale(M, D: Integer{$IFDEF D20+};  isDpiChange: Boolean{$ENDIF}); override;
   public
     procedure SetupContentEditor; virtual;
     constructor Create(AOwner: TComponent); override;
@@ -521,7 +521,7 @@ begin
     FOnChangeNode(Self, Node);
 end;
 
-procedure TInstantExplorer.ChangeScale(M, D: Integer; isDpiChange: Boolean);
+procedure TInstantExplorer.ChangeScale(M, D: Integer{$IFDEF D20+};  isDpiChange: Boolean{$ENDIF});
 begin
   inherited;
   DestroyObjectEditor;
@@ -646,6 +646,9 @@ const
     LLabel.Caption := Beautify(InstantGetPropName(PropInfo))+':';
     LLabel.Parent := AParent;
     LLabel.Top := ATop + 4;
+    LLabel.Alignment := taRightJustify;
+    LLabel.AutoSize := False;
+    LLabel.Width := LABEL_WIDTH - 4;
 
     case DataSource.DataSet.FieldByName(InstantGetPropName(PropInfo)).DataType of
       ftMemo:

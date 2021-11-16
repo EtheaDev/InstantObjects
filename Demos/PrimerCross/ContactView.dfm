@@ -256,6 +256,7 @@ inherited ContactViewForm: TContactViewForm
             TitleFont.Height = -11
             TitleFont.Name = 'Segoe UI'
             TitleFont.Style = []
+            OnDrawColumnCell = ContactGridDrawColumnCell
             OnDblClick = ContactGridDblClick
             OnKeyDown = ContactGridKeyDown
             Columns = <

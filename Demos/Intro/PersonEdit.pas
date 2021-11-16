@@ -5,7 +5,7 @@ interface
 uses
   Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   ContactEdit, Db, InstantPresentation, StdCtrls, Grids, DBGrids, Mask,
-  DBCtrls, Vcl.ComCtrls, Vcl.WinXCalendars;
+  DBCtrls, Vcl.ComCtrls;
 
 type
   TPersonEditForm = class(TContactEditForm)

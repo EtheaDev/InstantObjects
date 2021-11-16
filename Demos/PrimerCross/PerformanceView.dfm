@@ -219,10 +219,13 @@ inherited PerformanceViewForm: TPerformanceViewForm
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
-          DefaultCanvas = 'TGDIPlusCanvas'
           ColorPaletteIndex = 13
           object TestResultStoreSeries: TBarSeries
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
+            Marks.Visible = True
             SeriesColor = clGreen
             Title = 'Store'
             ValueFormat = '#,##0'
@@ -234,7 +237,11 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 344
           end
           object TestResultRetrieveSeries: TBarSeries
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
+            Marks.Visible = True
             SeriesColor = 8454143
             Title = 'Retrieve'
             ValueFormat = '#,##0'
@@ -246,7 +253,11 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 288
           end
           object Series1: TBarSeries
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
+            Marks.Visible = True
             SeriesColor = 16744576
             Title = 'Query'
             ValueFormat = '#,##0'
@@ -258,7 +269,11 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 224
           end
           object TestResultDisposeSeries: TBarSeries
+            Marks.Arrow.Visible = True
+            Marks.Callout.Brush.Color = clBlack
+            Marks.Callout.Arrow.Visible = True
             Marks.Style = smsValue
+            Marks.Visible = True
             Title = 'Dispose'
             ValueFormat = '#,##0'
             XValues.Name = 'X'

@@ -125,6 +125,7 @@ inherited PersonEditForm: TPersonEditForm
           TitleFont.Height = -11
           TitleFont.Name = 'Tahoma'
           TitleFont.Style = []
+          OnDrawColumnCell = DbGridDrawColumnCellFixW11
           Columns = <
             item
               Expanded = False

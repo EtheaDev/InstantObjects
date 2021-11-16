@@ -5,7 +5,7 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes, DB,
+  SysUtils, Classes, DB, DBGrids, Grids,
   Windows, Messages, Graphics, Controls, Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls,
   InstantPresentation;
 
@@ -24,6 +24,8 @@ type
     CancelButton: TButton;
     procedure OkButtonClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure DbGridDrawColumnCellFixW11(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
   private
     function GetSubject: TObject;
     procedure SetSubject(const Value: TObject);
@@ -45,6 +47,9 @@ procedure RegisterEditFormClass(EditFormClass: TBasicEditFormClass);
 implementation
 
 {$R *.dfm}
+
+uses
+  Themes;
 
 var
   EditFormClasses: TList;
@@ -128,6 +133,23 @@ procedure TBasicEditForm.UpdateActions;
 begin
   inherited;
   OkButton.Enabled := IsValid;
+end;
+
+procedure TBasicEditForm.DbGridDrawColumnCellFixW11(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var
+  LDbGrid: TDbGrid;
+begin
+  LDbGrid := Sender as TDbGrid;
+  //Resolve bad painting of selected cell in Windows 11
+  if not StyleServices.Enabled or (StyleServices.IsSystemStyle) then
+  begin
+    if ((gdSelected in State) and (gdFocused in State))
+      or ((gdSelected in State) and (dgRowSelect in LDbGrid.Options) and LDbGrid.Focused)
+      then
+      LDbGrid.Canvas.Brush.Color := clHighlight;
+    LDbGrid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  end;
 end;
 
 procedure TBasicEditForm.FormCreate(Sender: TObject);

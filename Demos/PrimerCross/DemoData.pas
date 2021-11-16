@@ -171,6 +171,7 @@ end;
 function CreateRandomPerson(Company: TCompany; out Gender : TGender): TPerson;
 var
   CompanyName: string;
+  LCategoryId: string;
 begin
   Result := TPerson.Create;
   try
@@ -179,8 +180,11 @@ begin
     Result.BirthDate := Date - (20 * 365 + Random(365 * 50)); // 20 - 70 years old
     Result.BirthTime := Random;
     Result.Address := CreateRandomAddress;
-//    Result.Salary := 922337203685470;
     Result.Salary := 500 + Random(5000);
+    LCategoryId := Format('CAT%.3d', [Random(5)+1]);
+    Result.Category := TCategory.Retrieve(LCategoryId);
+    if Assigned(Result.Category) then
+      Result.Category.Free; //dereference Retrieve
     CreateRandomPhones(Result, ['Home', 'Mobile']);
     if Assigned(Company) then
     begin
@@ -188,7 +192,7 @@ begin
       CompanyName := InstantPartStr(Company.Name, 1, ' ');
     end else
       CompanyName := LowerCase(RandomName);
-    CreateRandomEmails(Result, [CompanyName, 'hotmail']);
+    CreateRandomEmails(Result, [CompanyName, 'gmail']);
   except
     Result.Free;
     raise;

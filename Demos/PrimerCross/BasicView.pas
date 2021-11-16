@@ -6,7 +6,7 @@ interface
 
 uses
   SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
+  Windows, Messages, Graphics, Controls, Forms, Dialogs, DBGrids, Grids,
   InstantPersistence;
 
 
@@ -16,6 +16,8 @@ type
   TBasicViewFrameClass = class of TBasicViewFrame;
 
   TBasicViewFrame = class(TFrame)
+    procedure DbGridDrawColumnCellFixW11(Sender: TObject; const Rect: TRect;
+      DataCol: Integer; Column: TColumn; State: TGridDrawState);
   private
     FOnShowStatus: TShowStatusEvent;
     FCaption: TCaption;
@@ -44,9 +46,26 @@ implementation
 {$R *.dfm}
 
 uses
-  Main;
+  Main, Themes;
 
 { TBasicViewForm }
+
+procedure TBasicViewFrame.DbGridDrawColumnCellFixW11(Sender: TObject;
+  const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);
+var
+  LDbGrid: TDbGrid;
+begin
+  LDbGrid := Sender as TDbGrid;
+  //Resolve bad painting of selected cell in Windows 11
+  if not StyleServices.Enabled or (StyleServices.IsSystemStyle) then
+  begin
+    if ((gdSelected in State) and (gdFocused in State))
+      or ((gdSelected in State) and (dgRowSelect in LDbGrid.Options) and LDbGrid.Focused)
+      then
+      LDbGrid.Canvas.Brush.Color := clHighlight;
+    LDbGrid.DefaultDrawColumnCell(Rect, DataCol, Column, State);
+  end;
+end;
 
 procedure TBasicViewFrame.Connect;
 begin

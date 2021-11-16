@@ -48,7 +48,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MainData;
+  MainData, Themes;
 
 { TContactEditForm }
 
