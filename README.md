@@ -2,7 +2,7 @@
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
-Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from 2010 to 11.0 Alexandria version)
+Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from 2010 to 11 Alexandria version)
 
 ![Delphi10.4Sydney Support](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi.jpg)
 
