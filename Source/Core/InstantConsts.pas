@@ -124,7 +124,7 @@ resourcestring
   SDeniedRefresh = 'Impossibile recuperare i dati per l''oggetto %s(''%s'')';
   SDeniedRetrieve = 'Impossibile recuperare l''oggetto %s(''%s'')';
   SDeniedStore = 'Impossibile memorizzare l''oggetto %s(''%s'')';
-  SDisposeConflict = 'L''oggetto %s(''%s'') è stato disposto da un''altra sessione';
+  SDisposeConflict = 'L''oggetto %s(''%s'') è stato cancellato da un''altra sessione';
   SErrorDisposingObject = 'Errore di disposizione dell''oggetto %s(''%s''): "%s"';
   SErrorLoadingConnectionDefs = 'Errore nel caricare le definizioni di connessione da %s: %s';
   SErrorLoadingFile = 'Errore nel caricamento del file "%s": %s';

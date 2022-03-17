@@ -2289,12 +2289,12 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
     else
     if ATypeInfo = TypeInfo(TDateTime) then
       Result := DB.ftDateTime
-(*
+    (*
     else if ATypeInfo = TypeInfo(TDate) then
       Result := DB.ftDate
     else if ATypeInfo = TypeInfo(TTime) then
       Result := DB.ftTime
-*)
+    *)
     else
       Result := DB.ftFloat;
   end;
@@ -2969,7 +2969,8 @@ begin
   if Assigned(Buffer) then
     Move(TRecordBuffer(CurrentBuffer)[GetFieldOffset(Field)], Buffer[0], FieldDataSize(Field));
   // Show null dates as blanks
-  if (Field is TDateTimeField) and Assigned(Buffer) then
+  if ((Field is TDateTimeField) or (Field is TDateField) or (Field is TTimeField))
+    and Assigned(Buffer) then
   begin
     Move(Buffer[0], D, SizeOf(TDateTimeRec));
     //Result := (D.Date <> 0) and (D.Time <> 0); WRONG TEST, FAIL WITH DATE 30/09/1974!
@@ -2987,7 +2988,8 @@ begin
   if Assigned(Buffer) then
     Move(TRecordBuffer(CurrentBuffer)[GetFieldOffset(Field)], Buffer^, FieldDataSize(Field));
   // Show null dates as blanks
-  if (Field is TDateTimeField) and Assigned(Buffer) then
+  if ((Field is TDateTimeField) or (Field is TDateField) or (Field is TTimeField))
+    and Assigned(Buffer) then
   begin
     D := TDateTimeRec(Buffer^);
     //Result := (D.Date <> 0) and (D.Time <> 0); WRONG TEST, FAIL WITH DATE 30/09/1974!
@@ -4533,7 +4535,7 @@ end;
 
 procedure TInstantCustomExposer.SetObjectClassName(const Value: string);
 begin
-  if Value <> ObjectClassName then
+  if Value <> FObjectClassName then
   begin
     FObjectClassName := Value;
     if HasAccessor then
@@ -4609,8 +4611,8 @@ var
   LUseUnicodeOk: Boolean;
 begin
   Try
-    if Assigned(Accessor) and Assigned(Accessor.Connector) then
-      LUseUnicodeOk := (Accessor.Connector.UseUnicode = Value)
+    if Assigned(FAccessor) and Assigned(FAccessor.Connector) then
+      LUseUnicodeOk := (FAccessor.Connector.UseUnicode = Value)
     {$IFNDEF MARS_FIREDAC}
     else if InstantDefaultConnector <> nil then
       LUseUnicodeOk := (InstantDefaultConnector.UseUnicode = Value)

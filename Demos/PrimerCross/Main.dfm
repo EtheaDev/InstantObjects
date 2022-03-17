@@ -208,11 +208,12 @@ object MainForm: TMainForm
     Top = 332
   end
   object ConnectionManager: TInstantConnectionManager
+    FileFormat = sfXML
     OnConnect = ConnectionManagerConnect
     OnDisconnect = ConnectionManagerDisconnect
     OnIsConnected = ConnectionManagerIsConnected
     OnPrepare = ConnectionManagerPrepare
     Left = 147
-    Top = 116
+    Top = 118
   end
 end

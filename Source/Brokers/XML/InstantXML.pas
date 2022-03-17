@@ -79,13 +79,13 @@ type
     // Override this method to redirect storage to different folders with a
     // class-level or object-level granularity.
     function LoadInstantObjectFromXmlFile(const AObject: TInstantObject;
-      const AObjectId, AFileName: string): Boolean;
+      const AObjectId, AFileName: string): Boolean; virtual;
     function SaveInstantObjectToXmlFile(const AObject: TInstantObject;
-      const AFileName: string): Boolean;
+      const AFileName: string): Boolean; virtual;
     function LocateInstantObjectXmlFile(const AObjectClassName,
-      AObjectId, AFileName: string): Boolean;
+      AObjectId, AFileName: string): Boolean; virtual;
     function DeleteInstantObjectXmlFile(const AObject: TInstantObject;
-      const AFileName: string): Boolean;
+      const AFileName: string): Boolean; virtual;
     // Override InternalReadInstantObject, InternalSaveInstantObject,
     // InternalLocateInstantObject and InternalDeleteInstantObject to redirect
     // storage to media other than the file system.

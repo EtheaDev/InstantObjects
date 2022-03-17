@@ -61,7 +61,7 @@ FALSE
 {\colortbl ;\red0\green0\blue0;\red128\green0\blue0;\red0\green0\blue255;\red0\green128\blue0;}
 \viewkind4\uc1\pard\sb25\sa25\cf1\lang1040\b\f0\fs32 Welcome to \f1 InstantObjects \f0 for Delphi
 \par \cf2\b0\f2\fs16\{keepn\}\cf1\b\f1 
-\par \b0\fs18 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi\f0  (from 2010 to 10.4 Sydney version)\f1 
+\par \b0\fs18 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi\f0  (from 2010 to 11 Alexandria version)\f1 
 \par 
 \par InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-marke\lang1033\f0 t\lang1040\f1 , and helps keep business focus.
 \par 

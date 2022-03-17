@@ -428,7 +428,8 @@ begin
   //When releasing TPerson object that is the only reference to
   //the TCompany object we must dereference TCompany so it can be
   //freed from memory.
-  if (RefCount > 0) and Assigned(_Employer) and Assigned(_Employer.Value) then
+  if (RefCount <> 0) and (_Employer.Value is TInstantObject) and
+    (TInstantObject(_Employer.Value).RefCount = RefCount) then
     _Employer.Value := nil;
 end;
 

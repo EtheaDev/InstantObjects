@@ -1377,18 +1377,15 @@ type
     procedure Clear;
     procedure Delete(Index: Integer);
     procedure Exchange(Index1, Index2: Integer);
-    function IndexOf(Item: TInstantObject; NeedInstance: Boolean = False):
-      Integer;
+    function IndexOf(Item: TInstantObject; NeedInstance: Boolean = False): Integer;
     function IndexOfInstance(Item: TInstantObject): Integer;
-    function IndexOfReference(AObjectReference: TInstantObjectReference):
-      Integer;
+    function IndexOfReference(AObjectReference: TInstantObjectReference): Integer;
     procedure Insert(Index: Integer; Item: TInstantObject);
     procedure Move(CurIndex, NewIndex: Integer);
     function Remove(Item: TInstantObject): Integer;
     property Capacity: Integer read GetCapacity write SetCapacity;
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: TInstantObject read GetItems write SetItems;
-        default;
+    property Items[Index: Integer]: TInstantObject read GetItems write SetItems; default;
     property RefItems[Index: Integer]: TInstantObjectReference read GetRefItems;
   end;
 
@@ -1504,11 +1501,9 @@ type
     procedure InternalCommitTransaction; virtual;
     procedure InternalCreateDatabase; virtual;
     function InternalCreateQuery: TInstantQuery; virtual;
-    function InternalCreateScheme(Model: TInstantModel): TInstantScheme;
-      virtual; abstract;
+    function InternalCreateScheme(Model: TInstantModel): TInstantScheme; virtual; abstract;
     procedure InternalDisconnect; virtual; abstract;
-    function InternalGenerateId(const AObject: TInstantObject = nil): string;
-      virtual;
+    function InternalGenerateId(const AObject: TInstantObject = nil): string; virtual;
     procedure InternalRollbackTransaction; virtual;
     procedure InternalStartTransaction; virtual;
     function RemoveTransactedObject(AObject: TInstantObject): Integer;
@@ -1523,8 +1518,7 @@ type
     procedure BuildDatabase(AClasses: array of TInstantObjectClass); overload;
     procedure CommitTransaction;
     procedure Connect;
-    class function ConnectionDefClass: TInstantConnectionDefClass; virtual;
-      abstract;
+    class function ConnectionDefClass: TInstantConnectionDefClass; virtual; abstract;
     procedure CreateDatabase;
     function CreateScheme(Model: TInstantModel = nil): TInstantScheme;
     function CreateQuery: TInstantQuery;
@@ -1550,24 +1544,15 @@ type
     property Objects[Index: Integer]: TInstantObject read GetObjects;
     property ObjectStores: TInstantObjectStores read GetObjectStores;
   published
-    property Connected: Boolean read GetConnected write SetConnected
-      stored False;
-    property IsDefault: Boolean read GetIsDefault write SetIsDefault
-      default False;
-    property UseTransactions: Boolean read FUseTransactions
-      write FUseTransactions default True;
-    property UseUnicode: Boolean read GetUseUnicode write SetUseUnicode
-      default False;
-    property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase
-      write FBeforeBuildDatabase;
-    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat
-      write FBlobStreamFormat default sfBinary;
-    property OnGenerateId: TInstantGenerateIdEvent read FOnGenerateId
-      write FOnGenerateId;
-    property IdDataType: TInstantDataType read FIdDataType write FIdDataType
-      default dtString;
-    property IdSize: Integer read FIdSize write FIdSize
-      default InstantDefaultFieldSize;
+    property Connected: Boolean read GetConnected write SetConnected stored False;
+    property IsDefault: Boolean read GetIsDefault write SetIsDefault default False;
+    property UseTransactions: Boolean read FUseTransactions write FUseTransactions default True;
+    property UseUnicode: Boolean read GetUseUnicode write SetUseUnicode default False;
+    property BeforeBuildDatabase: TInstantSchemeEvent read FBeforeBuildDatabase write FBeforeBuildDatabase;
+    property BlobStreamFormat: TInstantStreamFormat read FBlobStreamFormat write FBlobStreamFormat default sfBinary;
+    property OnGenerateId: TInstantGenerateIdEvent read FOnGenerateId write FOnGenerateId;
+    property IdDataType: TInstantDataType read FIdDataType write FIdDataType default dtString;
+    property IdSize: Integer read FIdSize write FIdSize default InstantDefaultFieldSize;
     property DefaultStatementCacheCapacity: Integer read FDefaultStatementCacheCapacity
       write FDefaultStatementCacheCapacity default 0;
   end;
@@ -2028,6 +2013,8 @@ end;
 procedure InstantRegisterClass(AClass: TInstantObjectClass);
 begin
   Classes.RegisterClass(AClass);
+  if not Assigned(ClassList) then
+    ClassList := TList.Create;
   if ClassList.IndexOf(AClass) = -1 then
     ClassList.Add(AClass);
 end;
@@ -9335,6 +9322,8 @@ end;
 
 class procedure TInstantConnector.RegisterClass;
 begin
+  if not Assigned(ConnectorClasses) then
+    ConnectorClasses := TList.Create;
   ConnectorClasses.Add(Self);
 end;
 
@@ -9587,7 +9576,6 @@ initialization
   RegisterClasses([TInstantClassMetadatas, TInstantClassMetadata,
     TInstantAttributeMetadatas, TInstantAttributeMetadata,
     TInstantObjectReference, TInstantConnectionDefs, TInstantConnectionDef]);
-  ClassList := TList.Create;
 {$IFNDEF IO_CONSOLE}
   GraphicClassList[gffIco] := Graphics.TIcon;
   GraphicClassList[gffBmp] := Graphics.TBitmap;
@@ -9595,7 +9583,6 @@ initialization
     GraphicClassList[gffEmf] := Graphics.TMetaFile;
   {$ENDIF}
 {$ENDIF}
-  ConnectorClasses := TList.Create;
   LoadClassMetadatas;
   ObjectNotifiers := TInstantObjectNotifiers.Create;
 

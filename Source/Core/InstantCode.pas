@@ -670,18 +670,15 @@ type
     procedure IncludeMethodTypes(AMethodTypes: TInstantCodeContainerMethodTypes;
       Include: Boolean);
     procedure Realize;
-    property AttributeClass: TInstantAbstractAttributeClass 
-      read GetAttributeClass  write SetAttributeClass;
-    property AttributeClassName: string read GetAttributeClassName
-      write SetAttributeClassName;
+    property AttributeClass: TInstantAbstractAttributeClass read GetAttributeClass write SetAttributeClass;
+    property AttributeClassName: string read GetAttributeClassName write SetAttributeClassName;
     property CanHaveStorageName: boolean read GetCanHaveStorageName;
     property CanBeExternal: boolean read GetCanBeExternal;
     property CountPropName: string read GetCountPropName;
     property FieldName: string read GetFieldName;
     property HostClass: TInstantCodeClass read GetHostClass;
     property ObjectClass: TInstantCodeClass read GetObjectClass;
-    property ObjectClassName: string read GetObjectClassName
-      write SetObjectClassName;
+    property ObjectClassName: string read GetObjectClassName write SetObjectClassName;
     property Owner: TInstantCodeMetadataInfo read GetOwner;
     property IsComplex: Boolean read GetIsComplex;
     property IsContainer: Boolean read GetIsContainer;
@@ -691,37 +688,26 @@ type
     property ValuePropName: string read GetValuePropName;
     property ValueSetterCode: string read GetValueSetterCode;
   published
-    property AttributeType: TInstantAttributeType read GetAttributeType
-      write SetAttributeType;
-    property AttributeTypeName: string read GetAttributeTypeName
-      write SetAttributeTypeName;
+    property AttributeType: TInstantAttributeType read GetAttributeType write SetAttributeType;
+    property AttributeTypeName: string read GetAttributeTypeName write SetAttributeTypeName;
     property AttributeTypeText: string read GetAttributeTypeText;
-    property ExternalStorageName: string read GetExternalStorageName
-      write SetExternalStorageName;
-    property IncludeAddMethod: Boolean read GetIncludeAddMethod
-      write SetIncludeAddMethod;
-    property IncludeClearMethod: Boolean read GetIncludeClearMethod
-      write SetIncludeClearMethod;
-    property IncludeDeleteMethod: Boolean read GetIncludeDeleteMethod
-      write SetIncludeDeleteMethod;
-    property IncludeIndexOfMethod: Boolean read GetIncludeIndexOfMethod
-      write SetIncludeIndexOfMethod;
-    property IncludeInsertMethod: Boolean read GetIncludeInsertMethod
-      write SetIncludeInsertMethod;
-    property IncludeRemoveMethod: Boolean read GetIncludeRemoveMethod
-      write SetIncludeRemoveMethod;
+    property ExternalStorageName: string read GetExternalStorageName write SetExternalStorageName;
+    property IncludeAddMethod: Boolean read GetIncludeAddMethod write SetIncludeAddMethod;
+    property IncludeClearMethod: Boolean read GetIncludeClearMethod write SetIncludeClearMethod;
+    property IncludeDeleteMethod: Boolean read GetIncludeDeleteMethod write SetIncludeDeleteMethod;
+    property IncludeIndexOfMethod: Boolean read GetIncludeIndexOfMethod write SetIncludeIndexOfMethod;
+    property IncludeInsertMethod: Boolean read GetIncludeInsertMethod write SetIncludeInsertMethod;
+    property IncludeRemoveMethod: Boolean read GetIncludeRemoveMethod write SetIncludeRemoveMethod;
     property IsDefault: Boolean read GetIsDefault write SetIsDefault;
     property UseNull: Boolean read GetUseNull write SetUseNull;
-    property StorageKind: TInstantStorageKind read GetStorageKind
-      write SetStorageKind;
+    property StorageKind: TInstantStorageKind read GetStorageKind write SetStorageKind;
     property IsIndexed: Boolean read GetIsIndexed write SetIsIndexed;
     property IsRequired: Boolean read GetIsRequired write SetIsRequired;
     property IsLocalized: Boolean read GetIsLocalized write SetIsLocalized;
     property IsUnique: Boolean read GetIsUnique write SetIsUnique;
     property IndexName: string read GetIndexName write SetIndexName;
     property Metadata: TInstantAttributeMetadata read GetMetadata;
-    property MethodTypes: TInstantCodeContainerMethodTypes read GetMethodTypes
-      write SetMethodTypes;
+    property MethodTypes: TInstantCodeContainerMethodTypes read GetMethodTypes write SetMethodTypes;
     property ReadOnly: Boolean read GetReadOnly write SetReadOnly;
     property SingularName: string read GetSingularName write SetSingularName;
     property StorageName: string read GetStorageName write SetStorageName;

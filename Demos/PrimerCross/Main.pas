@@ -615,37 +615,45 @@ end;
 
 procedure TMainForm.RandomDataActionExecute(Sender: TObject);
 var
-  LoadPictures : boolean;
-  InstantQuery : TInstantQuery;
+  LLoadPictures: boolean;
+  LInstantQuery:  TInstantQuery;
+  LCountry: TCountry;
 begin
   with TDemoDataRequestForm.Create(nil) do
   try
     Count := 100;
     if ShowModal = mrOk then
     begin
-      LoadPictures := PicturesCheckBox.Checked;
+      LLoadPictures := PicturesCheckBox.Checked;
       Connector.StartTransaction;
       try
-        InstantQuery := Connector.CreateQuery;
+        LInstantQuery := Connector.CreateQuery;
         try
-          InstantQuery.Command := 'SELECT * FROM TCountry';
-          InstantQuery.Open;
-          if InstantQuery.ObjectCount = 0 then
+          LInstantQuery.Command := 'SELECT * FROM TCountry';
+          LInstantQuery.Open;
+          for var I := 0 to LInstantQuery.ObjectCount - 1 do
+          begin
+            LCountry := LInstantQuery.Objects[I] as TCountry;
+            LCountry.Name := Uppercase(LCountry.Name);
+            LCountry.Store;
+          end;
+
+          if LInstantQuery.ObjectCount = 0 then
             CreateCountries;
 
-          InstantQuery.Command := 'SELECT * FROM TCategory';
-          InstantQuery.Open;
-          if InstantQuery.ObjectCount = 0 then
+          LInstantQuery.Command := 'SELECT * FROM TCategory';
+          LInstantQuery.Open;
+          if LInstantQuery.ObjectCount = 0 then
             CreateCategories;
         finally
-          InstantQuery.Free;
+          LInstantQuery.Free;
         end;
         Connector.CommitTransaction;
       except
         Connector.RollbackTransaction;
         raise;
       end;
-      CreateRandomContacts(Count, LoadPictures);
+      CreateRandomContacts(Count, LLoadPictures);
       Reset;
     end;
   finally

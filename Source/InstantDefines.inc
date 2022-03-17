@@ -330,7 +330,7 @@
   {$DEFINE D27+}
 {$ENDIF}
 
-// Delphi 11.0 Alexandria
+// Delphi 11 Alexandria
 {$IFDEF VER350}
   {$DEFINE D5+}
   {$DEFINE D6+}

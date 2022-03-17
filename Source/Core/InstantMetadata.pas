@@ -118,10 +118,8 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     //{$IFDEF DELPHI_NEON}[neoninclude]{$ENDIF}
-    property AttributeMetadatas: TInstantAttributeMetadatas
-      read GetAttributeMetadatas;
-    property Collection: TInstantClassMetadatas read GetCollection
-      write SetCollection;
+    property AttributeMetadatas: TInstantAttributeMetadatas read GetAttributeMetadatas;
+    property Collection: TInstantClassMetadatas read GetCollection write SetCollection;
     property IsEmpty: Boolean read GetIsEmpty;
     property IsStored: Boolean read GetIsStored;
     property MemberMap: TInstantAttributeMap read GetMemberMap;
@@ -518,26 +516,21 @@ type
   protected
     property Validator: TInstantValidator read GetValidator;
   public
-    function CreateAttribute(
-      AObject: TInstantAbstractObject): TInstantAbstractAttribute;
+    function CreateAttribute(AObject: TInstantAbstractObject): TInstantAbstractAttribute;
     procedure Assign(Source: TPersistent); override;
     procedure CheckAttributeClass(AClass: TInstantAbstractAttributeClass);
     procedure CheckCategory(ACategory: TInstantAttributeCategory);
     procedure CheckIsIndexed;
     function IsAttributeClass(AClass: TInstantAbstractAttributeClass): Boolean;
     destructor Destroy; override;
-    property AttributeClass: TInstantAbstractAttributeClass 
-      read GetAttributeClass  write SetAttributeClass;
-    property AttributeClassName: string read GetAttributeClassName
-      write SetAttributeClassName;
+    property AttributeClass: TInstantAbstractAttributeClass read GetAttributeClass  write SetAttributeClass;
+    property AttributeClassName: string read GetAttributeClassName write SetAttributeClassName;
     property Category: TInstantAttributeCategory read GetCategory;
     property ClassMetadataName: string read GetClassMetadataName;
-    property Collection: TInstantAttributeMetadatas read GetCollection
-      write SetCollection;
+    property Collection: TInstantAttributeMetadatas read GetCollection write SetCollection;
     property IsDefault: Boolean read GetIsDefault write SetIsDefault;
     property ObjectClass: TInstantAbstractObjectClass read GetObjectClass;
-    property ObjectClassMetadata: TInstantClassMetadata
-      read GetObjectClassMetadata;
+    property ObjectClassMetadata: TInstantClassMetadata read GetObjectClassMetadata;
     property FieldName: string read GetFieldName write SetFieldName;
     property HasValidChars: Boolean read GetHasValidChars;
     property HasDisplayLabel: Boolean read GetHasDisplayLabel;
@@ -549,32 +542,26 @@ type
     property AttributeType: TInstantAttributeType read FAttributeType
       write FAttributeType default atUnknown;
     {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
-    property AttributeTypeName: string read GetAttributeTypeName
-      write SetAttributeTypeName stored False;
+    property AttributeTypeName: string read GetAttributeTypeName write SetAttributeTypeName stored False;
     {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property ClassMetadata: TInstantClassMetadata read GetClassMetadata;
     property DefaultValue: string read FDefaultValue write FDefaultValue;
     property UseNull: Boolean read FUseNull write FUseNull default False;
-    property DisplayWidth: Integer read FDisplayWidth write FDisplayWidth
-      default 0;
+    property DisplayWidth: Integer read FDisplayWidth write FDisplayWidth default 0;
     property DisplayLabel: string read FDisplayLabel write FDisplayLabel;
     property EditMask: string read FEditMask write FEditMask;
-    property ExternalStorageName: string read FExternalStorageName
-      write FExternalStorageName;
-    property StorageKind: TInstantStorageKind read FStorageKind
-      write FStorageKind default skEmbedded;
+    property ExternalStorageName: string read FExternalStorageName write FExternalStorageName;
+    property StorageKind: TInstantStorageKind read FStorageKind write FStorageKind default skEmbedded;
     property IsIndexed: Boolean read FIsIndexed write FIsIndexed;
     property IsRequired: Boolean read FIsRequired write FIsRequired;
     property IsLocalized: Boolean read FIsLocalized write FIsLocalized default False;
     property IsUnique: Boolean read FIsUnique write FIsUnique;
     property IndexName: string read FIndexName write FIndexName;
     {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
-    property ObjectClassName: string read FObjectClassName
-      write FObjectClassName;
+    property ObjectClassName: string read FObjectClassName write FObjectClassName;
     property Size: Integer read FSize write FSize default 0;
     property StorageName: string read FStorageName write FStorageName;
-    property ValidCharsString: string read GetValidCharsString
-      write SetValidCharsString;
+    property ValidCharsString: string read GetValidCharsString write SetValidCharsString;
     {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property EnumName: string read FEnumName write FEnumName;
   end;
@@ -592,8 +579,7 @@ type
     function Find(const AName: string): TInstantAttributeMetadata;
     procedure Remove(Item: TInstantAttributeMetadata);
     procedure Assign(Source: TPersistent); override;
-    property Items[Index: Integer]: TInstantAttributeMetadata read GetItems
-      write SetItems; default;
+    property Items[Index: Integer]: TInstantAttributeMetadata read GetItems write SetItems; default;
     function Owner: TInstantClassMetadata;
   end;
 
