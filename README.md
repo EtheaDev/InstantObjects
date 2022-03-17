@@ -48,6 +48,10 @@ InstantObjects contains over 400 Tests written for DUnitX framework. From 3.0 ve
 
 VERSION HISTORY
 ---------------
+Version 3.0 (3.0.1.0) (2022-03-17)
+- Added support for Delphi 11.1 Alexandria
+- Minor fixes
+
 Version 3.0 (3.0.0.0) (2021-08-27)
 - Added support for Delphi 11.0 Alexandria
 - Updated Test Framework to DUnitX / TestInsight (only for D10.2, D10.3, D10.4, D11.0)
