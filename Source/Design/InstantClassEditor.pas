@@ -347,6 +347,7 @@ end;
 
 procedure TInstantClassEditorForm.FormCreate(Sender: TObject);
 begin
+  inherited;
   FTitle := Caption;
   PageControl.ActivePage := ClassSheet;
   ActiveControl := ClassNameEdit;
@@ -356,8 +357,8 @@ end;
 procedure TInstantClassEditorForm.FormShow(Sender: TObject);
 begin
   inherited;
-  if height < 500 then
-    height := 500;
+  if height < 600 then
+    height := 600;
 end;
 
 procedure TInstantClassEditorForm.ClassSheetResize(Sender: TObject);

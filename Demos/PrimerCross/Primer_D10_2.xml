@@ -44,7 +44,9 @@ Trim Char=False
     <Name>FireDac_MSSQL</Name>
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <DefaultStatementCacheCapacity>10</DefaultStatementCacheCapacity>
     <LoginPrompt>FALSE</LoginPrompt>
+    <ReadObjectListWithNoLock>TRUE</ReadObjectListWithNoLock>
     <Database>PRIMERDB</Database>
     <HostName>.\SQLEXPRESS</HostName>
     <AdditionalParams>MetaDefSchema=dbo</AdditionalParams>
@@ -61,7 +63,7 @@ Trim Char=False
   </TInstantADOConnectionDef>
   <TInstantDBXConnectionDef>
     <Name>DBX_MSSQL</Name>
-    <IsBuilt>FALSE</IsBuilt>
+    <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
     <LoginPrompt>FALSE</LoginPrompt>
     <ConnectionName>MSSQLConnection</ConnectionName>
@@ -77,6 +79,6 @@ IsolationLevel=ReadCommitted
 OS Authentication=True
 Prepare SQL=False
 ConnectTimeout=60
-Mars_Connection=False</Params>
+Mars_Connection=True</Params>
   </TInstantDBXConnectionDef>
 </TInstantConnectionDefs>

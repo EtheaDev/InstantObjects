@@ -3,11 +3,11 @@ object InstantEditForm: TInstantEditForm
   Top = 273
   BorderIcons = [biSystemMenu]
   Caption = 'Edit'
-  ClientHeight = 211
-  ClientWidth = 281
+  ClientHeight = 461
+  ClientWidth = 404
   Color = clBtnFace
-  Constraints.MaxWidth = 400
-  Constraints.MinHeight = 250
+  Constraints.MaxWidth = 500
+  Constraints.MinHeight = 300
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
@@ -15,13 +15,14 @@ object InstantEditForm: TInstantEditForm
   Font.Style = []
   OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object EditPanel: TPanel
     Left = 0
     Top = 0
-    Width = 281
-    Height = 180
+    Width = 404
+    Height = 430
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 4
@@ -29,16 +30,16 @@ object InstantEditForm: TInstantEditForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 180
-    Width = 281
+    Top = 430
+    Width = 404
     Height = 31
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
     object ButtonPanel: TPanel
-      Left = 121
+      Left = 236
       Top = 0
-      Width = 160
+      Width = 168
       Height = 31
       Align = alRight
       BevelOuter = bvNone
@@ -55,7 +56,7 @@ object InstantEditForm: TInstantEditForm
         OnClick = OkButtonClick
       end
       object CancelButton: TButton
-        Left = 82
+        Left = 83
         Top = 4
         Width = 75
         Height = 25
@@ -68,12 +69,12 @@ object InstantEditForm: TInstantEditForm
     end
   end
   object SubjectExposer: TInstantExposer
-    Left = 4
-    Top = 162
+    Left = 20
+    Top = 402
   end
   object SubjectSource: TDataSource
     DataSet = SubjectExposer
-    Left = 36
-    Top = 162
+    Left = 52
+    Top = 402
   end
 end

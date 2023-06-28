@@ -50,10 +50,39 @@ implementation
 
 {$R *.dfm}
 
+uses
+  Vcl.Themes, ToolsAPI, BrandingAPI
+  {$IF (CompilerVersion >= 32.0)}, IDETheme.Utils{$IFEND};
+
 procedure TInstantDialogForm.FormCreate(Sender: TObject);
+{$IF (CompilerVersion >= 32.0)}
+var
+  LStyle: TCustomStyleServices;
+{$IFEND}
 begin
-  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
+{$IF (CompilerVersion >= 32.0)}
+  {$IF (CompilerVersion <= 34.0)}
+  if UseThemeFont then
+    Self.Font.Assign(GetThemeFont);
+  {$IFEND}
+  {$IF CompilerVersion > 34.0}
+  if TIDEThemeMetrics.Font.Enabled then
+    Self.Font.Assign(TIDEThemeMetrics.Font.GetFont);
+  {$IFEND}
+
+  if ThemeProperties <> nil then
+  begin
+    LStyle := ThemeProperties.StyleServices;
+    StyleElements := StyleElements - [seClient];
+    Color := LStyle.GetSystemColor(clWindow);
+    ButtonPanel.StyleElements := ButtonPanel.StyleElements - [seClient];
+    ButtonPanel.ParentBackground := False;
+    ButtonPanel.Color := LStyle.GetSystemColor(clBtnFace);
+    IDEThemeManager.RegisterFormClass(TCustomFormClass(Self.ClassType));
+    ThemeProperties.ApplyTheme(Self);
+  end;
+{$IFEND}
 end;
 
 end.

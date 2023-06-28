@@ -9,21 +9,21 @@ package IOCore;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS ON}
+{$LOCALSYMBOLS OFF}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION OFF}
+{$OPTIMIZATION ON}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
-{$REFERENCEINFO ON}
+{$REFERENCEINFO OFF}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES ON}
+{$STACKFRAMES OFF}
 {$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE DEBUG}
+{$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'InstantObjects Run-Time Package (Delphi 11)'}
 {$LIBSUFFIX '_D28'}
@@ -33,7 +33,8 @@ package IOCore;
 requires
   vcl,
   vcldb,
-  rtl;
+  rtl,
+  Neon;
 
 contains
   InstantUtils in '..\InstantUtils.pas',
@@ -62,6 +63,7 @@ contains
   InstantMetadata in '..\InstantMetadata.pas',
   InstantStandardValidators in '..\InstantStandardValidators.pas',
   InstantValidation in '..\InstantValidation.pas',
-  InstantRttiAttributes in '..\InstantRttiAttributes.pas';
+  InstantRttiAttributes in '..\InstantRttiAttributes.pas',
+  Instant.Neon.Serializers in '..\Instant.Neon.Serializers.pas';
 
 end.

@@ -135,6 +135,7 @@ end;
 
 procedure TEvolverTestForm.FormCreate(Sender: TObject);
 begin
+  inherited;
   ConnectionManager.FileName := ChangeFileExt(Application.ExeName,'.con');
 end;
 

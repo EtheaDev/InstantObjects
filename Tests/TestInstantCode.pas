@@ -76,7 +76,7 @@ var
 begin
   LCodeModel := TInstantCodeModel.Create;
   try
-    LFile := TFileStream.Create(ExtractFilePath(ParamStr(0)) + 'TestModel.pas', fmOpenRead);
+    LFile := TFileStream.Create(ExtractFilePath(ParamStr(0)) + 'TestModel.pas', fmOpenRead or fmShareDenyNone);
     try
       LSource := TStringStream.Create('');
       try

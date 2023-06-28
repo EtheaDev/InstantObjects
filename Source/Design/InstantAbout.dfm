@@ -2,29 +2,28 @@ inherited InstantAboutForm: TInstantAboutForm
   Left = 374
   Top = 232
   Caption = 'About InstantObjects'
-  ClientHeight = 391
-  OldCreateOrder = True
-  ExplicitWidth = 410
-  ExplicitHeight = 430
+  ClientHeight = 402
+  ClientWidth = 434
+  OldCreateOrder = False
   PixelsPerInch = 96
   TextHeight = 13
   object TopBevel: TBevel [0]
     Left = 0
     Top = 70
-    Width = 394
+    Width = 402
     Height = 1
     Align = alTop
     Shape = bsTopLine
-    ExplicitWidth = 402
   end
   inherited ButtonPanel: TPanel
-    Top = 354
-    Height = 37
-    ExplicitTop = 354
-    ExplicitHeight = 37
+    Top = 360
+    Width = 430
+    inherited ButtonBevel: TBevel
+      Width = 434
+    end
     object CloseButton: TButton
-      Left = 318
-      Top = 8
+      Left = 342
+      Top = 6
       Width = 75
       Height = 25
       Cancel = True
@@ -37,7 +36,7 @@ inherited InstantAboutForm: TInstantAboutForm
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 394
+    Width = 430
     Height = 70
     Align = alTop
     BevelOuter = bvNone
@@ -194,22 +193,16 @@ inherited InstantAboutForm: TInstantAboutForm
     object TitleLabel: TLabel
       Left = 88
       Top = 16
-      Width = 68
+      Width = 75
       Height = 13
       Caption = 'InstantObjects'
     end
     object VersionLabel: TLabel
       Left = 88
-      Top = 51
-      Width = 106
+      Top = 50
+      Width = 122
       Height = 13
-      Caption = '2.8 for Delphi 10.4 Sydney'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
+      Caption = 'Copyright (c) Ethea S.r.l.'
     end
     object TMLabel: TLabel
       Left = 222
@@ -223,8 +216,8 @@ inherited InstantAboutForm: TInstantAboutForm
   object ClientPanel: TPanel
     Left = 0
     Top = 71
-    Width = 394
-    Height = 283
+    Width = 434
+    Height = 290
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 8
@@ -232,8 +225,8 @@ inherited InstantAboutForm: TInstantAboutForm
     object LicenseBorderPanel: TPanel
       Left = 8
       Top = 8
-      Width = 378
-      Height = 267
+      Width = 418
+      Height = 274
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 1
@@ -242,8 +235,8 @@ inherited InstantAboutForm: TInstantAboutForm
       object LicensePanel: TPanel
         Left = 1
         Top = 1
-        Width = 376
-        Height = 265
+        Width = 416
+        Height = 272
         Align = alClient
         BevelOuter = bvNone
         BorderWidth = 8
@@ -252,8 +245,8 @@ inherited InstantAboutForm: TInstantAboutForm
         object LicenseMemo: TMemo
           Left = 8
           Top = 8
-          Width = 360
-          Height = 249
+          Width = 400
+          Height = 256
           Align = alClient
           BorderStyle = bsNone
           Color = clWhite

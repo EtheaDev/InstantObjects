@@ -50,7 +50,7 @@ type
   end;
   {$ENDIF}
 
-  TInstantStorageKind = (skEmbedded, skExternal, skVirtual);
+  TInstantStorageKind = (skEmbedded, skExternal, skVirtual, skForeignKeys);
   TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean,
     atString, atDateTime, atBlob, atMemo, atGraphic,
     atPart, atReference, atParts, atReferences, atDate, atTime, atEnum);
@@ -64,7 +64,7 @@ type
   TInstantDataType = (dtInteger, dtFloat, dtCurrency, dtBoolean, dtString,
     dtMemo, dtDateTime, dtBlob, dtDate, dtTime, dtEnum);
   TInstantDataTypes = set of TInstantDataType;
-  TInstantFieldOption = (foRequired, foIndexed, foUnique, foMultiLanguage);
+  TInstantFieldOption = (foRequired, foIndexed, foUnique, foPrimaryKey, foMultiLanguage);
   TInstantFieldOptions = set of TInstantFieldOption;
 
   TInstantCatalogFeature = (cfReadTableInfo, cfReadColumnInfo, cfReadIndexInfo);

@@ -65,6 +65,10 @@ implementation
 
 {$R *.dfm}
 
+uses
+  Vcl.Themes, ToolsAPI, BrandingAPI
+  {$IF (CompilerVersion >= 32.0)}, IDETheme.Utils{$IFEND};
+
 { TInstantEditForm }
 
 procedure TInstantEditForm.CancelButtonClick(Sender: TObject);
@@ -117,9 +121,37 @@ begin
 end;
 
 procedure TInstantEditForm.FormCreate(Sender: TObject);
+{$IF (CompilerVersion >= 32.0)}
+var
+  LStyle: TCustomStyleServices;
+{$IFEND}
 begin
-  Font.Assign(Screen.IconFont);
   BorderStyle := bsDialog;
+{$IF (CompilerVersion >= 32.0)}
+  {$IF (CompilerVersion <= 34.0)}
+  if UseThemeFont then
+    Self.Font.Assign(GetThemeFont);
+  {$IFEND}
+  {$IF CompilerVersion > 34.0}
+  if TIDEThemeMetrics.Font.Enabled then
+    Self.Font.Assign(TIDEThemeMetrics.Font.GetFont);
+  {$IFEND}
+
+  if ThemeProperties <> nil then
+  begin
+    LStyle := ThemeProperties.StyleServices;
+    StyleElements := StyleElements - [seClient];
+    Color := LStyle.GetSystemColor(clWindow);
+    EditPanel.StyleElements := BottomPanel.StyleElements - [seClient];
+    EditPanel.ParentBackground := False;
+    EditPanel.Color := LStyle.GetSystemColor(clBtnFace);
+    BottomPanel.StyleElements := BottomPanel.StyleElements - [seClient];
+    BottomPanel.ParentBackground := False;
+    BottomPanel.Color := LStyle.GetSystemColor(clBtnFace);
+    IDEThemeManager.RegisterFormClass(TCustomFormClass(Self.ClassType));
+    ThemeProperties.ApplyTheme(Self);
+  end;
+{$IFEND}
 end;
 
 end.

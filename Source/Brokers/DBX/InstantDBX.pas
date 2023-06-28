@@ -122,7 +122,8 @@ type
 
   TInstantDBXResolver = class(TInstantSQLResolver)
   protected
-    function ReadBooleanField(DataSet: TDataSet; const FieldName: string): Boolean; override;
+    function ReadBooleanField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): Boolean; override;
   end;
 
   TInstantDBXTranslator = class(TInstantRelationalTranslator)
@@ -589,14 +590,20 @@ function TInstantDBXBroker.Execute(const AStatement: string;
 var
   LQuery: TSQLQuery;
 begin
-  Result := 0;
   LQuery := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TSQLQuery;
   try try
     Result := LQuery.ExecSQL;
   except
     on E: Exception do
+    begin
+      {$IFDEF DEBUG}
       raise EInstantError.CreateFmt(SSQLExecuteError,
         [AStatement, GetParamsStr(AParams), E.Message], E);
+      {$ELSE}
+      raise EInstantError.CreateFmt(SSQLExecuteErrorShort,
+        [E.Message], E);
+      {$ENDIF}
+    end;
   end;
   finally
     ReleaseDataSet(LQuery);
@@ -621,9 +628,13 @@ end;
 { TInstantDBXResolver }
 
 function TInstantDBXResolver.ReadBooleanField(DataSet: TDataSet;
-  const FieldName: string): Boolean;
+  const FieldName: string; out AWasNull: boolean): Boolean;
+var
+  LField: TField;
 begin
-  Result := Boolean(DataSet.FieldByName(FieldName).AsInteger);
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := Boolean(LField.AsInteger);
 end;
 
 { TInstantDBXTranslator }

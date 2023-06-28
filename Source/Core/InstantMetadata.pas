@@ -41,7 +41,7 @@ uses
   , Contnrs
   , Db
   {$IFDEF DELPHI_NEON}
-  , Neon.Core.Types
+  , Neon.Core.Types //If don't compile, add ..\..\..\ext\delphi-neon\Source to search path of Project
   , Neon.Core.Nullables
   , Neon.Core.Attributes
   {$ENDIF}
@@ -473,10 +473,12 @@ type
     FDisplayWidth: Integer;
     FDisplayLabel: string;
     FEditMask: string;
+    FIsDescription: Boolean;
     FIsIndexed: Boolean;
     FIsRequired: Boolean;
     FIsLocalized: Boolean;
     FIsUnique: Boolean;
+    FIsPrimaryKey: Boolean;
     FIndexName: string;
     FObjectClassName: string;
     FSize: Integer;
@@ -484,6 +486,7 @@ type
     FValidCharsString: string;
     FStorageKind: TInstantStorageKind;
     FExternalStorageName: string;
+    FForeignKeyFields: string;
     FValidator: TInstantValidator;
     FEnumName: string;
     function GetAttributeClass: TInstantAbstractAttributeClass;
@@ -507,6 +510,9 @@ type
     procedure SetAttributeTypeName(const Value: string);
     procedure SetCollection(Value: TInstantAttributeMetadatas);
     procedure SetFieldName(const Value: string);
+    procedure SetIsPrimaryKey(const Value: Boolean);
+    procedure SetUseNull(const Value: Boolean);
+    procedure SetIsRequired(const Value: Boolean);
     procedure SetIsDefault(const Value: Boolean);
     procedure SetValidCharsString(const AValue: string);
     function GetValidator: TInstantValidator;
@@ -546,21 +552,24 @@ type
     {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property ClassMetadata: TInstantClassMetadata read GetClassMetadata;
     property DefaultValue: string read FDefaultValue write FDefaultValue;
-    property UseNull: Boolean read FUseNull write FUseNull default False;
+    property UseNull: Boolean read FUseNull write SetUseNull default False;
     property DisplayWidth: Integer read FDisplayWidth write FDisplayWidth default 0;
     property DisplayLabel: string read FDisplayLabel write FDisplayLabel;
     property EditMask: string read FEditMask write FEditMask;
     property ExternalStorageName: string read FExternalStorageName write FExternalStorageName;
     property StorageKind: TInstantStorageKind read FStorageKind write FStorageKind default skEmbedded;
+    property IsDescription: Boolean read FIsDescription write FIsDescription default false;
     property IsIndexed: Boolean read FIsIndexed write FIsIndexed;
-    property IsRequired: Boolean read FIsRequired write FIsRequired;
+    property IsRequired: Boolean read FIsRequired write SetIsRequired;
     property IsLocalized: Boolean read FIsLocalized write FIsLocalized default False;
     property IsUnique: Boolean read FIsUnique write FIsUnique;
+    property IsPrimaryKey: Boolean read FIsPrimaryKey write SetIsPrimaryKey default false;
     property IndexName: string read FIndexName write FIndexName;
     {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property ObjectClassName: string read FObjectClassName write FObjectClassName;
     property Size: Integer read FSize write FSize default 0;
     property StorageName: string read FStorageName write FStorageName;
+    property ForeignKeyFields: string read FForeignKeyFields write FForeignKeyFields;
     property ValidCharsString: string read GetValidCharsString write SetValidCharsString;
     {$IFDEF DELPHI_NEON}[neonignore]{$ENDIF}
     property EnumName: string read FEnumName write FEnumName;
@@ -1305,12 +1314,14 @@ var
         AttributeMetadata := Map[I];
         if AttributeMetadata.AttributeType = atReference then
         begin
+          if AttributeMetadata.IsRequired then
+            Options := Options + [foRequired];
           FieldMetadatas.AddFieldMetadata(
             AttributeMetadata.FieldName + InstantClassFieldName,
-            Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize);
+            Scheme.AttributeTypeToDataType(atString), InstantDefaultFieldSize, Options);
           FieldMetadatas.AddFieldMetadata(
             AttributeMetadata.FieldName + InstantIdFieldName,
-            Scheme.IdDataType, Scheme.IdSize);
+            Scheme.IdDataType, Scheme.IdSize, Options);
         end
         else if AttributeMetadata.AttributeType = atPart then
         begin
@@ -1320,13 +1331,15 @@ var
               AttributeMetadata.Size)
           else if AttributeMetadata.StorageKind = skExternal then
           begin
+            if AttributeMetadata.IsRequired then
+              Options := Options + [foRequired];
             FieldMetadatas.AddFieldMetadata(
               AttributeMetadata.FieldName + InstantClassFieldName,
               Scheme.AttributeTypeToDataType(atString),
-              InstantDefaultFieldSize);
+              InstantDefaultFieldSize, Options);
             FieldMetadatas.AddFieldMetadata(
               AttributeMetadata.FieldName + InstantIdFieldName,
-              Scheme.IdDataType, Scheme.IdSize);
+              Scheme.IdDataType, Scheme.IdSize, Options);
           end;
         end
         else if AttributeMetadata.AttributeType in [atParts, atReferences] then
@@ -1346,6 +1359,12 @@ var
               IndexName := AttributeMetadata.IndexName else
               IndexName := Map.Name + AttributeMetadata.FieldName;
 
+            if AttributeMetadata.IsUnique and AttributeMetadata.IsPrimaryKey then
+            begin
+              IndexMetadatas.AddIndexMetadata(IndexName,
+                AttributeMetadata.FieldName, [ixUnique, ixPrimary]);
+              Options := Options + [foIndexed, foUnique, foPrimaryKey];
+            end else
             if AttributeMetadata.IsUnique then
             begin
               IndexMetadatas.AddIndexMetadata(IndexName,
@@ -1411,7 +1430,7 @@ procedure TInstantModel.LoadFromFile(const FileName: string; Format: TInstantStr
 var
   Stream: TInstantFileStream;
 begin
-  Stream := TInstantFileStream.Create(FileName, fmOpenRead);
+  Stream := TInstantFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   try
     {$IFDEF DELPHI_NEON}
     if Format = sfJSON then
@@ -1767,10 +1786,12 @@ begin
     FDisplayWidth := LSource.DisplayWidth;
     FDisplayLabel := LSource.DisplayLabel;
     FEditMask := LSource.EditMask;
+    FIsDescription := LSource.IsDescription;
     FIsIndexed := LSource.IsIndexed;
     FIsRequired := LSource.IsRequired;
     FIsLocalized := LSource.IsLocalized;
     FIsUnique := LSource.IsUnique;
+    FIsPrimaryKey := LSource.IsPrimaryKey;
     FUseNull := LSource.UseNull;
     FIndexName := LSource.IndexName;
     FObjectClassName := LSource.ObjectClassName;
@@ -1778,6 +1799,7 @@ begin
     FStorageName := LSource.StorageName;
     FStorageKind := LSource.StorageKind;
     FExternalStorageName := LSource.ExternalStorageName;
+    FForeignKeyFields := LSource.FForeignKeyFields;
     FValidCharsString := LSource.ValidCharsString;
     FEnumName := LSource.EnumName;
   end;
@@ -2009,6 +2031,35 @@ procedure TInstantAttributeMetadata.SetCollection(
   Value: TInstantAttributeMetadatas);
 begin
   inherited Collection := Value;
+end;
+
+procedure TInstantAttributeMetadata.SetIsPrimaryKey(const Value: Boolean);
+begin
+  FIsPrimaryKey := Value;
+  if FIsPrimaryKey then
+  begin
+    FIsRequired := True;
+    FUseNull := False;
+  end;
+end;
+
+procedure TInstantAttributeMetadata.SetUseNull(const Value: Boolean);
+begin
+  FUseNull := Value;
+  if FUseNull then
+  begin
+    FIsRequired := False;
+    FIsPrimaryKey := False;
+  end;
+end;
+
+procedure TInstantAttributeMetadata.SetIsRequired(const Value: Boolean);
+begin
+  FIsRequired := Value;
+  if FIsRequired then
+    FUseNull := False
+  else
+    FIsPrimaryKey := False;
 end;
 
 procedure TInstantAttributeMetadata.SetFieldName(const Value: string);

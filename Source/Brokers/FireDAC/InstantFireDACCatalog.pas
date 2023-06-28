@@ -149,7 +149,7 @@ begin
   for I := 0 to Indexes.Rows.Count - 1 do
     begin
       IndexRow := Indexes.Rows[I];
-      FDIndexName := VarToStr(IndexRow.GetData('PKEY_NAME'));
+      FDIndexName := VarToStr(IndexRow.GetData('INDEX_NAME'));
       FDIndexKind := TFDPhysIndexKind(IndexRow.GetData('INDEX_TYPE'));
 
       // Only add primary key (no other indexes should be present!)

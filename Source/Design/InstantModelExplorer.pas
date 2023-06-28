@@ -39,7 +39,8 @@ uses
   SysUtils, Classes, IniFiles,
   Windows, Messages, ExtCtrls, ComCtrls, ImgList, DockForm,
   ToolWin, Graphics, Controls, Forms, Dialogs, Menus, StdCtrls, ActnList,
-  InstantCode, InstantAttributeView;
+  InstantCode, InstantAttributeView, System.Actions, System.ImageList,
+  Vcl.Samples.Spin;
 
 type
   TInstantModelStyle = (msInheritance, msRelations);
@@ -64,6 +65,8 @@ type
     procedure WMLButtonDblClk(var Message: TWMLButtonDblClk); message WM_LBUTTONDBLCLK;
   protected
     procedure DoNodeDblClick(Node: TTreeNode); virtual;
+  public
+    constructor Create(AOwner: TComponent); override;
   published
     property OnNodeDblClick: TNotifyEvent read FOnNodeDblClick write FOnNodeDblClick;
   end;
@@ -117,6 +120,9 @@ type
     ViewAttributesAction: TAction;
     ViewAttributes: TMenuItem;
     InstantAttributeViewFrame: TInstantAttributeViewFrame;
+    TopPanel: TPanel;
+    cbEnableModelUpdate: TCheckBox;
+    edInterval: TSpinEdit;
     procedure AboutActionExecute(Sender: TObject);
     procedure BuildDatabaseActionExecute(Sender: TObject);
     procedure CollapseAllActionExecute(Sender: TObject);
@@ -144,6 +150,9 @@ type
     procedure InstantAttributeViewFrameAttributeEditActionExecute(
       Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure cbEnableModelUpdateClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure edIntervalChange(Sender: TObject);
   private
     FError: TInstantModelError;
     FModel: TInstantCodeModel;
@@ -163,6 +172,8 @@ type
     procedure RestoreLayout;
     procedure StoreLayout;
     procedure RealignForm;
+    procedure UpdateModelExpertTimer;
+    function GetModelView: TModelTreeView;
   protected
     procedure ApplyClass(AClass: TInstantCodeClass;
       ChangeType: TInstantCodeChangeType; OldName: string = '';
@@ -186,7 +197,7 @@ type
     procedure UpdateModel;
     property FocusedClass: TInstantCodeClass read GetFocusedClass;
     property Model: TInstantCodeModel read FModel;
-    property ModelView: TModelTreeView read FModelView;
+    property ModelView: TModelTreeView read GetModelView;
     property Style: TInstantModelStyle read FStyle write SetStyle;
     property OnApplyClass: TInstantCodeClassApplyEvent read FOnApplyClass write FOnApplyClass;
     property OnGotoSource: TInstantGotoSourceEvent read FOnGotoSource write FOnGotoSource;
@@ -202,7 +213,9 @@ uses
   TypInfo, InstantClassEditor, InstantClasses, DeskUtil,
   InstantModelExpert,
   InstantDesignUtils, InstantPersistence, InstantDesignHook, InstantAbout,
-  InstantImageUtils, InstantMetadata, InstantModelImport, Registry;
+  InstantImageUtils, InstantMetadata, InstantModelImport, Registry,
+  Vcl.Themes, ToolsAPI, BrandingAPI
+  {$IF (CompilerVersion >= 32.0)}, IDETheme.Utils{$IFEND};
 
 resourcestring
   SDeleteClass = 'Delete Class ''%s''?';
@@ -212,6 +225,11 @@ resourcestring
 {$R *.dfm}
 
 { TModelTreeView }
+
+constructor TModelTreeView.Create(AOwner: TComponent);
+begin
+  inherited;
+end;
 
 procedure TModelTreeView.DoNodeDblClick(Node: TTreeNode);
 begin
@@ -271,6 +289,22 @@ begin
     ModelExpert.BuildDatabase(Model);
 end;
 
+procedure TInstantModelExplorerForm.UpdateModelExpertTimer;
+begin
+  if Assigned(ModelExpert) then
+  begin
+    ModelExpert.TimerDisabled := not cbEnableModelUpdate.Checked;
+    ModelExpert.TimerInterval := edInterval.Value * 1000;
+  end;
+end;
+
+procedure TInstantModelExplorerForm.cbEnableModelUpdateClick(Sender: TObject);
+begin
+  UpdateModelExpertTimer;
+  if cbEnableModelUpdate.Checked then
+    ModelExpert.UpdateModel;
+end;
+
 function TInstantModelExplorerForm.ClassFromNode(
   Node: TTreeNode): TInstantCodeClass;
 var
@@ -308,21 +342,6 @@ begin
   LoadMultipleImages(ActionImages, 'IO_MODELEXPLORERACTIONIMAGES', HInstance);
   LoadMultipleImages(ModelImages, 'IO_MODELEXPLORERMODELIMAGES', HInstance);
   LoadMultipleImages(AttributeImages, 'IO_MODELEXPLORERATTRIBUTEIMAGES', HInstance);
-
-  FModelView := TModelTreeView.Create(Self);
-  with FModelView do
-  begin
-    Align := alClient;
-    Parent := Self;
-    Images := ModelImages;
-    PopupMenu := TreeMenu;
-    ReadOnly := True;
-    HideSelection := False;
-    RightClickSelect := True;
-    OnChange := ModelViewChange;
-    OnNodeDblClick := ModelViewNodeDblClick;
-    OnGetImageIndex := ModelViewGetImageIndex;
-  end;
 
 //  FAttributeFrame := TInstantAttributeViewFrame.Create(Self);
 //  with FAttributeFrame do
@@ -368,6 +387,11 @@ procedure TInstantModelExplorerForm.DoApplyClass(AClass: TInstantCodeClass;
 begin
   if Assigned(FOnApplyClass) then
     FOnApplyClass(Self, AClass, ChangeInfo);
+end;
+
+procedure TInstantModelExplorerForm.edIntervalChange(Sender: TObject);
+begin
+  UpdateModelExpertTimer;
 end;
 
 function TInstantModelExplorerForm.EditClass(AClass: TInstantCodeClass;
@@ -442,7 +466,7 @@ begin
       ImportModel.LoadFromResFile(ImportFileName) else
       ImportModel.LoadFromFile(ImportFileName);
 
-    FModelView.Items.BeginUpdate;
+    ModelView.Items.BeginUpdate;
     try
       NewClasses := TInstantCodeClassList.Create;
       try
@@ -488,7 +512,7 @@ begin
         NewClasses.Free;
       end;
     finally
-      FModelView.Items.EndUpdate;
+      ModelView.Items.EndUpdate;
     end;
   finally
     ImportModel.Free;
@@ -543,6 +567,40 @@ begin
     AttributePanel.Height div 2 - AttributeCaptionPanel.Height;
 end;
 
+procedure TInstantModelExplorerForm.FormCreate(Sender: TObject);
+{$IF (CompilerVersion >= 32.0)}
+var
+  LStyle: TCustomStyleServices;
+{$IFEND}
+begin
+  inherited;
+{$IF (CompilerVersion >= 32.0)}
+  {$IF (CompilerVersion <= 34.0)}
+  if UseThemeFont then
+    Self.Font.Assign(GetThemeFont);
+  {$IFEND}
+  {$IF CompilerVersion > 34.0}
+  if TIDEThemeMetrics.Font.Enabled then
+    Self.Font.Assign(TIDEThemeMetrics.Font.GetFont);
+  {$IFEND}
+
+  if ThemeProperties <> nil then
+  begin
+    LStyle := ThemeProperties.StyleServices;
+    StyleElements := StyleElements - [seClient];
+    Color := LStyle.GetSystemColor(clWindow);
+    TopPanel.StyleElements := TopPanel.StyleElements - [seClient];
+    TopPanel.ParentBackground := False;
+    TopPanel.Color := LStyle.GetSystemColor(clBtnFace);
+    ModelView.StyleElements := FModelView.StyleElements - [seClient];
+    //ModelView.ParentBackground := False;
+    ModelView.Color := LStyle.GetSystemColor(clWindow);
+    IDEThemeManager.RegisterFormClass(TInstantModelExplorerForm);
+    ThemeProperties.ApplyTheme(Self);
+  end;
+{$IFEND}
+end;
+
 procedure TInstantModelExplorerForm.FormResize(Sender: TObject);
 begin
   RealignForm;
@@ -550,7 +608,9 @@ end;
 
 procedure TInstantModelExplorerForm.FormShow(Sender: TObject);
 begin
-  FModelView.Repaint; // Avoid wrong icon for first node
+  if height < 600 then
+    height := 600;
+  ModelView.Repaint; // Avoid wrong icon for first node
   RealignForm;
 end;
 
@@ -558,6 +618,29 @@ function TInstantModelExplorerForm.GetFocusedClass: TInstantCodeClass;
 begin
   Result := ClassFromNode(SelectedNode);
 end;
+
+function TInstantModelExplorerForm.GetModelView: TModelTreeView;
+begin
+  if not Assigned(FModelView) then
+  begin
+    FModelView := TModelTreeView.Create(Self);
+    with FModelView do
+    begin
+      Align := alClient;
+      Parent := Self;
+      Images := ModelImages;
+      PopupMenu := TreeMenu;
+      ReadOnly := True;
+      HideSelection := False;
+      RightClickSelect := True;
+      OnChange := ModelViewChange;
+      OnNodeDblClick := ModelViewNodeDblClick;
+      OnGetImageIndex := ModelViewGetImageIndex;
+    end;
+  end;
+  Result := FModelView;
+end;
+
 
 function TInstantModelExplorerForm.GetSelectedNode: TTreeNode;
 begin
@@ -874,6 +957,11 @@ var
   I: Integer;
   Level: Integer;
 begin
+  if Assigned(ModelExpert) then
+  begin
+    edInterval.Value := ModelExpert.TimerInterval div 1000;
+    cbEnableModelUpdate.Checked := not ModelExpert.TimerDisabled;
+  end;
   //FAttributeFrame.Clear;
   InstantAttributeViewFrame.Clear;
 

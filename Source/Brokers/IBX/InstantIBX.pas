@@ -126,7 +126,8 @@ type
 
   TInstantIBXResolver = class(TInstantSQLResolver)
   protected
-    function ReadBooleanField(DataSet: TDataSet; const FieldName: string): Boolean; override;
+    function ReadBooleanField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): Boolean; override;
   end;
 
   TInstantIBXTranslator = class(TInstantRelationalTranslator)
@@ -450,14 +451,26 @@ end;
 function TInstantIBXBroker.Execute(const AStatement: string;
   AParams: TParams; OnAssignParamValue: TAssignParamValue): Integer;
 var
-  DataSet: TIBQuery;
+  LQuery: TIBQuery;
 begin
-  DataSet := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TIBQuery;
-  try
-    DataSet.ExecSQL;
-    Result := DataSet.RowsAffected;
+  LQuery := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TIBQuery;
+  try try
+    LQuery.ExecSQL;
+    Result := LQuery.RowsAffected;
+  except
+    on E: Exception do
+    begin
+      {$IFDEF DEBUG}
+      raise EInstantError.CreateFmt(SSQLExecuteError,
+        [AStatement, GetParamsStr(AParams), E.Message], E);
+      {$ELSE}
+      raise EInstantError.CreateFmt(SSQLExecuteErrorShort,
+        [E.Message], E);
+      {$ENDIF}
+    end;
+  end;
   finally
-    ReleaseDataSet(DataSet);
+    ReleaseDataSet(LQuery);
   end;
 end;
 
@@ -530,9 +543,13 @@ end;
 { TInstantIBXResolver }
 
 function TInstantIBXResolver.ReadBooleanField(DataSet: TDataSet;
-  const FieldName: string): Boolean;
+  const FieldName: string; out AWasNull: boolean): Boolean;
+var
+  LField: TField;
 begin
-  Result := Boolean(DataSet.FieldByName(FieldName).AsInteger);
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := Boolean(LField.AsInteger);
 end;
 
 initialization

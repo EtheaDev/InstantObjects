@@ -88,6 +88,7 @@ type
     OptionReadOnlyCheckBox: TCheckBox;
     OptionRequiredCheckBox: TCheckBox;
     OptionUniqueCheckBox: TCheckBox;
+    OptionPrimaryKeyCheckBox: TCheckBox;
     OptionsGroupBox: TGroupBox;
     PageControl: TPageControl;
     PresentationSheet: TTabSheet;
@@ -115,6 +116,9 @@ type
     EnumeratedTypeEdit: TDBComboBox;
     IndexNameLabel: TLabel;
     IndexNameEdit: TDBEdit;
+    OptionIsDescriptionCheckBox: TCheckBox;
+    ForeignKeyFieldsLabel: TLabel;
+    ForeignKeyFieldsEdit: TDBEdit;
     procedure NameEditKeyPress(Sender: TObject; var Key: Char);
     procedure FormCreate(Sender: TObject);
     procedure NameEditChange(Sender: TObject);
@@ -134,6 +138,7 @@ type
     procedure EnumeratedTypeEditChange(Sender: TObject);
     procedure EnumeratedTypeEditEnter(Sender: TObject);
     procedure OptionIndexedCheckBoxClick(Sender: TObject);
+    procedure ForeignKeyFieldsEditChange(Sender: TObject);
   private
     FBaseClassStorageName: string;
     FLimited: Boolean;
@@ -162,6 +167,7 @@ type
     procedure SubjectChanged; override;
     procedure UpdateControls;
     procedure ComputeExternalStorageName;
+    procedure ComputeForeignKeyFields;
     function IsClassPersistent(const AClassName: String): Boolean;
   public
     property BaseClassStorageName: string read FBaseClassStorageName write
@@ -252,6 +258,8 @@ procedure TInstantAttributeEditorForm.LoadData;
     OptionIndexedCheckBox.Checked := Subject.IsIndexed;
     OptionRequiredCheckBox.Checked := Subject.IsRequired;
     OptionUniqueCheckBox.Checked := Subject.IsUnique;
+    OptionPrimaryKeyCheckBox.Checked := Subject.IsPrimaryKey;
+    OptionIsDescriptionCheckBox.Checked := Subject.IsDescription;
     OptionReadOnlyCheckBox.Checked := Subject.ReadOnly;
     OptionDefaultCheckBox.Checked := Subject.IsDefault;
     OptionUseNullCheckBox.Checked := Subject.UseNull;
@@ -510,11 +518,9 @@ procedure TInstantAttributeEditorForm.SaveData;
     Boolean;
   begin
     Result := False;
-    if SubjectExposer.FieldByName(AFieldName).AsBoolean <>
-      ACheckBoxChecked then
+    if SubjectExposer.FieldByName(AFieldName).AsBoolean <> ACheckBoxChecked then
     begin
-      SubjectExposer.FieldByName(AFieldName).AsBoolean :=
-        ACheckBoxChecked;
+      SubjectExposer.FieldByName(AFieldName).AsBoolean := ACheckBoxChecked;
       Result := True;
     end;
   end;
@@ -527,6 +533,10 @@ procedure TInstantAttributeEditorForm.SaveData;
     if SetChangedField('IsRequired', OptionRequiredCheckBox.Checked) then
       Result := True;
     if SetChangedField('IsUnique', OptionUniqueCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IsPrimaryKey', OptionPrimaryKeyCheckBox.Checked) then
+      Result := True;
+    if SetChangedField('IsDescription', OptionIsDescriptionCheckBox.Checked) then
       Result := True;
     if SetChangedField('ReadOnly', OptionReadOnlyCheckBox.Checked) then
       Result := True;
@@ -681,15 +691,19 @@ procedure TInstantAttributeEditorForm.UpdateControls;
 
 var
   HasName, HasClass, HasEnum, IsComplex, IsContainer, IsEnum, CanBeExternal,
-    CanHaveStorageName, IsMaskable, IsString, IsValid: Boolean;
+    CanHaveForeignKeyFields, CanHaveStorageName, CanHaveExternalStorageName,
+    IsMaskable, IsString, IsValid, CanPk: Boolean;
 begin
   CanBeExternal := False;
   CanHaveStorageName := True;
+  CanHaveExternalStorageName := False;
+  CanHaveForeignKeyFields := False;
   IsComplex := False;
   IsMaskable := False;
   IsContainer := False;
   IsString := False;
   IsEnum := False;
+  CanPk := False;
 
   if Assigned(Subject) then
   begin
@@ -703,8 +717,11 @@ begin
       atCurrency, atInteger];
     IsContainer := Subject.IsContainer;
     CanHaveStorageName := Subject.CanHaveStorageName;
+    CanHaveExternalStorageName := Subject.CanHaveExternalStorageName;
+    CanHaveForeignKeyFields := Subject.CanHaveForeignKeyFields;
     IsString := Subject.AttributeType in [atString, atMemo];
     IsEnum := Subject.IsEnum;
+    CanPk := Subject.AttributeType in [atInteger, atString, atDateTime, atDate, atTime];
   end;
 
   HasName := NameEdit.Text <> '';
@@ -739,12 +756,12 @@ begin
   EnableCtrl(StorageNameLabel, CanHaveStorageName);
   EnableCtrl(StorageNameEdit, CanHaveStorageName);
 
-  EnableCtrl(ExternalStorageNameLabel, not CanHaveStorageName and
-    IsObjectClassPersistent);
-  EnableCtrl(ExternalStorageNameEdit, not CanHaveStorageName and 
-    IsObjectClassPersistent);
-  EnableCtrl(AutoExternalStorageNameCheckBox, not CanHaveStorageName and 
-    IsObjectClassPersistent);
+  EnableCtrl(ForeignKeyFieldsLabel, CanHaveForeignKeyFields);
+  EnableCtrl(ForeignKeyFieldsEdit, CanHaveForeignKeyFields);
+
+  EnableCtrl(ExternalStorageNameLabel, CanHaveExternalStorageName);
+  EnableCtrl(ExternalStorageNameEdit, CanHaveExternalStorageName);
+  EnableCtrl(AutoExternalStorageNameCheckBox, CanHaveExternalStorageName);
 
   EnableCtrl(SizeLabel, IsString);
   EnableCtrl(SizeEdit, IsString);
@@ -752,6 +769,8 @@ begin
   EnableCtrl(OptionIndexedCheckBox, True);
   EnableCtrl(OptionRequiredCheckBox, True);
   EnableCtrl(OptionUniqueCheckBox, True);
+  EnableCtrl(OptionPrimaryKeyCheckBox, CanPk);
+  EnableCtrl(OptionIsDescriptionCheckBox, IsString);
   EnableCtrl(OptionUseNullCheckBox, not IsContainer);
   EnableCtrl(IndexNameLabel, OptionIndexedCheckBox.Checked);
   EnableCtrl(IndexNameEdit, OptionIndexedCheckBox.Checked);
@@ -789,12 +808,36 @@ begin
   UpdateControls;
 end;
 
+procedure TInstantAttributeEditorForm.ForeignKeyFieldsEditChange(
+  Sender: TObject);
+begin
+  inherited;
+  if ForeignKeyFieldsEdit.Text <> '' then
+    SubjectExposer.AssignFieldValue(ForeignKeyFieldsEdit.Field,
+      ForeignKeyFieldsEdit.Text);
+  UpdateControls;
+end;
+
+
 procedure
   TInstantAttributeEditorForm.AutoExternalStorageNameCheckBoxClick(Sender:
   TObject);
 begin
   if AutoExternalStorageNameCheckBox.Checked then
-    ComputeExternalStorageName;
+    ComputeExternalStorageName
+  else
+    ExternalStorageNameEdit.Text := '';
+end;
+
+procedure TInstantAttributeEditorForm.ComputeForeignKeyFields;
+begin
+  if ForeignKeyFieldsEdit.Enabled then
+  begin
+    if (Subject.ForeignKeyFields <> '') then
+      ForeignKeyFieldsEdit.Text := Subject.ForeignKeyFields;
+  end
+  else
+    ForeignKeyFieldsEdit.Text := '';
 end;
 
 procedure TInstantAttributeEditorForm.ComputeExternalStorageName;
@@ -821,7 +864,6 @@ begin
   end
   else
     ExternalStorageNameEdit.Text := '';
-
 end;
 
 function TInstantAttributeEditorForm.IsClassPersistent(

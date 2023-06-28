@@ -6,7 +6,6 @@ inherited ContactEditForm: TContactEditForm
   Caption = 'Contact'
   ClientHeight = 295
   ClientWidth = 508
-  ParentFont = True
   OldCreateOrder = True
   ExplicitWidth = 524
   ExplicitHeight = 334

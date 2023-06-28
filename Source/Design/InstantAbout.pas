@@ -67,14 +67,15 @@ begin
   inherited;
   LicenseMemo.Text :=
     'InstantObjects Object Persistence Framework'+sLineBreak+
-    'Mozilla Public License 1.1 Edition'+sLineBreak+
-    'This product is subject to the Mozilla Public License Version 1.1 (the "License");'+sLineBreak+
+    'Mozilla Public License 2.0 Edition'+sLineBreak+
+    'This product is subject to the Mozilla Public License Version 2.0 (the "License");'+sLineBreak+
     'you may not use this product except in compliance with the License.'+sLineBreak+
     'You may obtain a copy of the License at http://www.mozilla.org/MPL/'+sLineBreak+
     'Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or implied.'+sLineBreak+
     'See the License for the specific language governing rights and limitations under the License.'+sLineBreak+
     'The Original Code is: Seleqt InstantObjects. The Initial Developer of the Original Code is: Seleqt'+sLineBreak+
-    'Portions created by the Initial Developer are Copyright (C) 2001-2003 the Initial Developer. All Rights Reserved.'+sLineBreak;
+    'Portions created by the Initial Developer are Copyright (C) 2001-2003 the Initial Developer.'+sLineBreak+
+    'Portions created by Ethea are Copyright (C) 2006-2023 Ethea S.r.l.'+sLineBreak;
   BorderStyle := bsDialog;
   //Fonts and sizes
   TitleLabel.Font.Size := 16;

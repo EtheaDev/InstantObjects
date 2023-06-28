@@ -1,4 +1,4 @@
-# **InstantObjects 3.0 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+# **InstantObjects 3.1 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
@@ -48,54 +48,81 @@ InstantObjects contains over 400 Tests written for DUnitX framework. From 3.0 ve
 
 VERSION HISTORY
 ---------------
-Version 3.0 (3.0.1.0) (2022-03-17)
-- Added support for Delphi 11.1 Alexandria
-- Minor fixes
+Version 3.1 (3.1.0.0) (2023-06-26)
+
+- Added support for JSON Serialization via delphi-neon, requires: [github.com/paolo-rossi/delphi-neon](https://github.com/paolo-rossi/delphi-neon))
+
+- Added TInstantJSONConnector,  TJSONFilesAccessor components
+
+- Added TInstantJSONBroker, TInstantJSONResolver, TInstantJSONTranslator, TInstantJSONQuery classes
 
 Version 3.0 (3.0.0.0) (2021-08-27)
-- Added support for Delphi 11.0 Alexandria
+
+- Added support for Delphi 11 Alexandria
+
 - Updated Test Framework to DUnitX / TestInsight (only for D10.2, D10.3, D10.4, D11.0)
 
 Version 2.10 (2.10.0.0) (2021-03-29)
+
 - Fixed InstantDBX for compilation with IO_CONSOLE directive
+
 - Fixed FireDAC Broker for EncryptedPassword
+
 - Added OnIdChanged for TInstantObject class
+
 - Added Isolation property to FireDAC Broker
 
 Version 2.9 (2.9.0.0) (2021-01-24)
+
 - Added support delphi-NEON library
   for serialization/deserialization of objects
+
 - Added support for MARS Rest server library
+
 - Refactoring FireDAC connector/broker
+
 - Changed font for editor to Segoe UI
+
 - Added OnAssignParamValue event for Brokers
 
 Version 2.8 (2.8.0.0) (2020-08-25)
+
 - Added support for Delphi 10.4 Sydney
+
 - Minor bug-fixing
+
 - Editor font updated
 
 Version 2.7 (2.7.0.0) (2018-12-06)
+
 - Added support for Delphi 10.3 Rio
+
 - Cleaned old LINUX/KYLIX support
 
 Version 2.6 (2.6.0.0) (2017-04-04)
+
 - Added support for Delphi 10.2 Tokyo
 
 Version 2.5 (2.5.0.0) (2016-05-31)
+
 - Added support for Delphi 10.1 Berlin
 
 Version 2.4 (2.4.0.0) (2015-09-01)
+
 - Added support for Delphi 10 Seattle
 
 Version 2.3 (2.3.0.0) (2015-04-08)
+
 - Added support for Delphi XE8
+
 - Added support for Delphi XE7
 
 Version 2.2 (2.2.0.0) (2014-05-12)
+
 - Full UNICODE support: based on UseUnicode flag of InstantConnection:
   Exposers uses TWideStringField or TWideMemoField mapping string attributes
   
+
 - Virtual Containers (for SQL brokers):
   Master-Detail relationship using a contaier without storage  
   (read VirtualContainers.txt for more informations)

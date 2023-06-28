@@ -1,3 +1,33 @@
+(*
+ *   InstantObjects
+ *   NEON Serializer
+ *)
+
+(* ***** BEGIN LICENSE BLOCK *****
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is: Seleqt InstantObjects
+ *
+ * The Initial Developer of the Original Code is: Seleqt
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2001-2003
+ * the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Carlo Barazzetta, Nicola Tambascia
+ *
+ * ***** END LICENSE BLOCK ***** *)
+
 unit Instant.Neon.Serializers;
 
 interface
@@ -87,6 +117,15 @@ type
     function Deserialize(AValue: TJSONValue; const AData: TValue; ANeonObject: TNeonRttiObject; AContext: IDeserializerContext): TValue; override;
   end;
 
+  TInstantGraphicSerializer = class(TInstantCustomSerializer)
+  protected
+    class function GetTargetInfo: PTypeInfo; override;
+    class function CanHandle(AType: PTypeInfo): Boolean; override;
+  public
+    function Serialize(const AValue: TValue; ANeonObject: TNeonRttiObject; AContext: ISerializerContext): TJSONValue; override;
+    function Deserialize(AValue: TJSONValue; const AData: TValue; ANeonObject: TNeonRttiObject; AContext: IDeserializerContext): TValue; override;
+  end;
+
 function JSONToPersistentObject(AJSONstring: string;
   var AObject: TPersistent): TPersistent;
 
@@ -145,6 +184,7 @@ begin
   InstantNeonSerializerConfig.GetSerializers.RegisterSerializer(TInstantObjectReferenceListSerializer);
   InstantNeonSerializerConfig.GetSerializers.RegisterSerializer(TInstantAttributeMetadatasSerializer);
   InstantNeonSerializerConfig.GetSerializers.RegisterSerializer(TInstantClassMetadatasSerializer);
+  InstantNeonSerializerConfig.GetSerializers.RegisterSerializer(TInstantGraphicSerializer);
 end;
 
 function JSONToPersistentObject(AJSONstring: string;
@@ -891,6 +931,78 @@ begin
     raise;
   end;
   Result := LJSON;
+end;
+
+{ TInstantGraphicSerializer }
+
+class function TInstantGraphicSerializer.CanHandle(
+  AType: PTypeInfo): Boolean;
+begin
+  Result := AType = TypeInfo(TInstantGraphic);
+end;
+
+function TInstantGraphicSerializer.Deserialize(AValue: TJSONValue;
+  const AData: TValue; ANeonObject: TNeonRttiObject;
+  AContext: IDeserializerContext): TValue;
+var
+  LInstantGraphic: TInstantGraphic;
+  LStream: TMemoryStream;
+  LBase64: string;
+begin
+  Result := AData;
+  LInstantGraphic := AData.AsObject as TInstantGraphic;
+
+  if AValue.Value.IsEmpty then
+  begin
+    LInstantGraphic.Clear;
+    Exit(AData);
+  end;
+
+  LStream := TMemoryStream.Create;
+  try
+    LBase64 := AValue.Value;
+    TBase64.Decode(LBase64, LStream);
+    LStream.Position := soFromBeginning;
+    LInstantGraphic.LoadDataFromStream(LStream);
+  finally
+    LStream.Free;
+  end;
+
+end;
+
+class function TInstantGraphicSerializer.GetTargetInfo: PTypeInfo;
+begin
+  Result := TypeInfo(TInstantGraphic);
+end;
+
+function TInstantGraphicSerializer.Serialize(const AValue: TValue;
+  ANeonObject: TNeonRttiObject; AContext: ISerializerContext): TJSONValue;
+var
+  LInstantGraphic: TInstantGraphic;
+  LStream: TMemoryStream;
+  LBase64: string;
+begin
+  LInstantGraphic := AValue.AsObject as TInstantGraphic;
+
+  if (not Assigned(LInstantGraphic)) or (LInstantGraphic.Size = 0) then
+  begin
+    //Empty Object: include or not
+    case ANeonObject.NeonInclude.Value of
+      IncludeIf.NotEmpty, IncludeIf.NotDefault: Exit(nil);
+    else
+      Exit(TJSONString.Create(''));
+    end;
+  end;
+
+  LStream := TMemoryStream.Create;
+  try
+    LInstantGraphic.SaveDataToStream(LStream);
+    LStream.Position := soFromBeginning;
+    LBase64 := TBase64.Encode(LStream);
+  finally
+    LStream.Free;
+  end;
+  Result := TJSONString.Create(LBase64);
 end;
 
 initialization

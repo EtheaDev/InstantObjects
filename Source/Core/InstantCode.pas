@@ -598,10 +598,12 @@ type
     function GetIncludeRemoveMethod: Boolean;
     function GetIsComplex: Boolean;
     function GetIsContainer: Boolean;
+    function GetIsDescription: Boolean;
     function GetIsEnum: Boolean;
     function GetIsIndexed: Boolean;
     function GetIsRequired: Boolean;
     function GetIsUnique: Boolean;
+    function GetIsPrimaryKey: Boolean;
     function GetIndexName: string;
     function GetMetadata: TInstantAttributeMetadata;
     function GetMethodTypes: TInstantCodeContainerMethodTypes;
@@ -623,9 +625,11 @@ type
     procedure SetIncludeIndexOfMethod(const Value: Boolean);
     procedure SetIncludeInsertMethod(const Value: Boolean);
     procedure SetIncludeRemoveMethod(const Value: Boolean);
+    procedure SetIsDescription(const Value: Boolean);
     procedure SetIsIndexed(const Value: Boolean);
     procedure SetIsRequired(const Value: Boolean);
     procedure SetIsUnique(const Value: Boolean);
+    procedure SetIsPrimaryKey(const Value: Boolean);
     procedure SetIndexName(const Value: string);
     procedure SetMethodTypes(const Value: TInstantCodeContainerMethodTypes);
     procedure SetObjectClassName(const Value: string);
@@ -634,10 +638,14 @@ type
     procedure SetStorageName(const Value: string);
     procedure SetVisibility(Value: TInstantCodeVisibility);
     function GetExternalStorageName: string;
+    function GetForeignKeyFields: string;
     function GetStorageKind: TInstantStorageKind;
     procedure SetExternalStorageName(const Value: string);
+    procedure SetForeignKeyFields(const Value: string);
     procedure SetStorageKind(const Value: TInstantStorageKind);
     function GetCanHaveStorageName: boolean;
+    function GetCanHaveExternalStorageName: boolean;
+    function GetCanHaveForeignKeyFields: boolean;
     function GetCanBeExternal: boolean;
     function GetUseNull: Boolean;
     procedure SetUseNull(const Value: Boolean);
@@ -673,6 +681,8 @@ type
     property AttributeClass: TInstantAbstractAttributeClass read GetAttributeClass write SetAttributeClass;
     property AttributeClassName: string read GetAttributeClassName write SetAttributeClassName;
     property CanHaveStorageName: boolean read GetCanHaveStorageName;
+    property CanHaveExternalStorageName: boolean read GetCanHaveExternalStorageName;
+    property CanHaveForeignKeyFields: boolean read GetCanHaveForeignKeyFields;
     property CanBeExternal: boolean read GetCanBeExternal;
     property CountPropName: string read GetCountPropName;
     property FieldName: string read GetFieldName;
@@ -692,6 +702,7 @@ type
     property AttributeTypeName: string read GetAttributeTypeName write SetAttributeTypeName;
     property AttributeTypeText: string read GetAttributeTypeText;
     property ExternalStorageName: string read GetExternalStorageName write SetExternalStorageName;
+    property ForeignKeyFields: string read GetForeignKeyFields write SetForeignKeyFields;
     property IncludeAddMethod: Boolean read GetIncludeAddMethod write SetIncludeAddMethod;
     property IncludeClearMethod: Boolean read GetIncludeClearMethod write SetIncludeClearMethod;
     property IncludeDeleteMethod: Boolean read GetIncludeDeleteMethod write SetIncludeDeleteMethod;
@@ -701,10 +712,12 @@ type
     property IsDefault: Boolean read GetIsDefault write SetIsDefault;
     property UseNull: Boolean read GetUseNull write SetUseNull;
     property StorageKind: TInstantStorageKind read GetStorageKind write SetStorageKind;
+    property IsDescription: Boolean read GetIsDescription write SetIsDescription;
     property IsIndexed: Boolean read GetIsIndexed write SetIsIndexed;
     property IsRequired: Boolean read GetIsRequired write SetIsRequired;
     property IsLocalized: Boolean read GetIsLocalized write SetIsLocalized;
     property IsUnique: Boolean read GetIsUnique write SetIsUnique;
+    property IsPrimaryKey: Boolean read GetIsPrimaryKey write SetIsPrimaryKey;
     property IndexName: string read GetIndexName write SetIndexName;
     property Metadata: TInstantAttributeMetadata read GetMetadata;
     property MethodTypes: TInstantCodeContainerMethodTypes read GetMethodTypes write SetMethodTypes;
@@ -1548,6 +1561,8 @@ type
   end;
 
   TObjectTypeProcessor = class(TComplexTypeProcessor)
+  protected
+    procedure InternalRead; override;
   end;
 
   TContainerTypeProcessor = class(TComplexTypeProcessor)
@@ -1571,14 +1586,17 @@ const
 
   MetadataInfoID = 'IOMETADATA';
   MetaKeyDefault = 'default';
+  MetaKeyDescription = 'description';
   MetaKeyUseNull = 'usenull';
   MetaKeyExternal = 'external';
   MetaKeyVirtual = 'virtual';
+  MetaKeyForeignKey = 'foreignkeyfields';
   MetaKeyFormat = 'format';
   MetaKeyIndex = 'index';
   MetaKeyRequired = 'required';
   MetaKeyLocalized = 'localized';
   MetaKeyUnique = 'unique';
+  MetaKeyPrimaryKey = 'primarykey';
   MetaKeyMask = 'mask';
   MetaKeyStored = 'stored';
   MetaKeyEmbedded = 'embedded';
@@ -3734,9 +3752,11 @@ begin
     with TInstantCodeAttribute(Source) do
     begin
       Self.IsDefault := IsDefault;
+      Self.IsDescription := IsDescription;
       Self.IsIndexed := IsIndexed;
       Self.IsRequired := IsRequired;
       Self.IsUnique := IsUnique;
+      Self.IsPrimaryKey := IsPrimaryKey;
       Self.ReadOnly := ReadOnly;
       Self.SingularName := SingularName;
       Self.Visibility := Visibility;
@@ -3857,6 +3877,11 @@ begin
   Result := Metadata.ExternalStorageName;
 end;
 
+function TInstantCodeAttribute.GetForeignKeyFields: string;
+begin
+  Result := Metadata.ForeignKeyFields;
+end;
+
 function TInstantCodeAttribute.GetFieldName: string;
 begin
   Result := InstantAttributePrefix + Name;
@@ -3912,6 +3937,11 @@ begin
     Metadata.AttributeClass.InheritsFrom(TInstantContainer);
 end;
 
+function TInstantCodeAttribute.GetIsDescription: Boolean;
+begin
+  Result := Metadata.IsDescription;
+end;
+
 function TInstantCodeAttribute.GetIsEnum: Boolean;
 begin
   Result := Assigned(Metadata.AttributeClass) and
@@ -3946,6 +3976,11 @@ end;
 function TInstantCodeAttribute.GetIsUnique: Boolean;
 begin
   Result := Metadata.IsUnique;
+end;
+
+function TInstantCodeAttribute.GetIsPrimaryKey: Boolean;
+begin
+  Result := Metadata.IsPrimaryKey;
 end;
 
 function TInstantCodeAttribute.GetIndexName: string;
@@ -4133,6 +4168,8 @@ begin
       Metadata.StorageName := Reader.ReadStringValue
     else if Token = MetaKeyDefault then
       Metadata.DefaultValue := Reader.ReadStringValue
+    else if Token = MetaKeyDescription then
+      IsDescription := True
     else if Token = MetaKeyUseNull then
       Metadata.UseNull := True
     else if Token = MetaKeyIndex then
@@ -4146,6 +4183,8 @@ begin
       IsLocalized := True
     else if Token = MetaKeyUnique then
       IsUnique := True
+    else if Token = MetaKeyPrimaryKey then
+      IsPrimaryKey := True
     else if Token = MetaKeyMask then
       Metadata.EditMask := Reader.ReadStringValue
     else if Token = MetaKeyValid then
@@ -4190,6 +4229,10 @@ begin
   begin
     WriteStr(MetaKeyVirtual, Metadata.ExternalStorageName, True);
   end
+  else if Metadata.StorageKind = skForeignKeys then
+  begin
+    WriteStr(MetaKeyForeignKey, Metadata.ForeignKeyFields, True);
+  end
   else
     WriteStr(MetaKeyStored, Metadata.StorageName);
   WriteStr(MetaKeyDefault, Metadata.DefaultValue);
@@ -4205,8 +4248,12 @@ begin
     if Metadata.HasIndexName then
       Writer.Write(' ''' + Metadata.IndexName + '''');
   end;
+  if IsDescription then
+    Writer.Write(' ' + MetaKeyDescription);
   if IsUnique then
     Writer.Write(' ' + MetaKeyUnique);
+  if IsPrimaryKey then
+    Writer.Write(' ' + MetaKeyPrimaryKey);
   if IsRequired then
     Writer.Write(' ' + MetaKeyRequired);
   if IsLocalized then
@@ -4262,6 +4309,11 @@ begin
   Metadata.ExternalStorageName := Value;
 end;
 
+procedure TInstantCodeAttribute.SetForeignKeyFields(const Value: string);
+begin
+  Metadata.ForeignKeyFields := Value;
+end;
+
 procedure TInstantCodeAttribute.SetIncludeAddMethod(const Value: Boolean);
 begin
   IncludeMethodTypes([mtAdd], Value);
@@ -4304,7 +4356,17 @@ end;
 
 procedure TInstantCodeAttribute.SetStorageKind(const Value: TInstantStorageKind);
 begin
+  if Metadata.AttributeType = atReference then
+  begin
+    if not (Value in [skForeignKeys, skEmbedded]) then
+      raise Exception.Create('Error assigning StorageKind for Metadata of Reference: only "skForeignKeys" or "skEmbedded" are accepted.');
+  end;
   Metadata.StorageKind := Value;
+end;
+
+procedure TInstantCodeAttribute.SetIsDescription(const Value: Boolean);
+begin
+  Metadata.IsDescription := Value;
 end;
 
 procedure TInstantCodeAttribute.SetIsIndexed(const Value: Boolean);
@@ -4325,6 +4387,11 @@ end;
 procedure TInstantCodeAttribute.SetIsUnique(const Value: Boolean);
 begin
   Metadata.IsUnique := Value;
+end;
+
+procedure TInstantCodeAttribute.SetIsPrimaryKey(const Value: Boolean);
+begin
+  Metadata.IsPrimaryKey := Value;
 end;
 
 procedure TInstantCodeAttribute.SetIndexName(const Value: string);
@@ -4397,7 +4464,17 @@ end;
 
 function TInstantCodeAttribute.GetCanHaveStorageName: boolean;
 begin
-  Result := (not (StorageKind in [skExternal, skVirtual])) or (AttributeType = atPart);
+  Result := (not (StorageKind in [skExternal, skVirtual, skForeignKeys])) or (AttributeType = atPart);
+end;
+
+function TInstantCodeAttribute.GetCanHaveExternalStorageName: boolean;
+begin
+  Result := (StorageKind in [skExternal]) and not (AttributeType = atPart);
+end;
+
+function TInstantCodeAttribute.GetCanHaveForeignKeyFields: boolean;
+begin
+  Result := (StorageKind = skForeignKeys) and (Metadata.AttributeType = atReference);
 end;
 
 function TInstantCodeAttribute.GetCanBeExternal: boolean;
@@ -7160,7 +7237,7 @@ procedure TInstantCodeModule.LoadFromFile(const FileName: string;
 var
   Stream: TFileStream;
 begin
-  Stream := TFileStream.Create(FileName, fmOpenRead);
+  Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   try
     LoadFromStream(Stream, Scope);
   finally
@@ -9062,14 +9139,20 @@ begin
       begin
         FMetadata.StorageKind := skExternal;
         FMetadata.ExternalStorageName := '';
+        FMetadata.ForeignKeyFields := '';
       end
       else if SameText(Token, MetaKeyVirtual) then
       begin
         FMetadata.StorageKind := skVirtual;
         FMetadata.ExternalStorageName := '';
+        FMetadata.ForeignKeyFields := '';
       end
       else if SameText(Token, MetaKeyStored) then
+      begin
+        FMetadata.ExternalStorageName := '';
+        FMetadata.ForeignKeyFields := '';
         FMetadata.StorageName := ReadStringValue;
+      end;
     end;
   end;
 end;
@@ -9114,6 +9197,32 @@ procedure TEnumTypeProcessor.InternalRead;
 begin
   inherited;
 
+end;
+
+{ TObjectTypeProcessor }
+
+procedure TObjectTypeProcessor.InternalRead;
+var
+  Token: string;
+begin
+  inherited;
+  with FReader do
+  begin
+    while not Finished do
+    begin
+      SkipSpace;
+      if NextChar = ';' then
+        Break;
+      Token := ReadToken;
+      if SameText(Token, MetaKeyStored) then
+        FMetadata.StorageName := ReadStringValue;
+      if SameText(Token, MetaKeyForeignKey) then
+      begin
+        FMetadata.StorageKind := skForeignKeys;
+        FMetadata.ForeignKeyFields := ReadStringValue;
+      end;
+    end;
+  end;
 end;
 
 initialization

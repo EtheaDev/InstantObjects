@@ -32,7 +32,7 @@ unit InstantFireDAC;
 
 {$I '..\..\InstantDefines.inc'}
 
-// Supported databases  (only MSSQL and Firebird have been tested)
+// Supported databases  (only MSSQL, Firebird and Oracle have been tested)
 
 {$DEFINE SYBASE_SUPPORT}
 {$DEFINE MSSQL_SUPPORT}
@@ -98,9 +98,9 @@ type
     property AdditionalParams: string read FAdditionalParams write FAdditionalParams;
     property Protocol: string read FProtocol write FProtocol stored False;
     property DriverId: string read FDriverId write FDriverId;
-    property UseDelimitedIdents: boolean read FUseDelimitedIdents write FUseDelimitedIdents;
+    property UseDelimitedIdents: boolean read FUseDelimitedIdents write FUseDelimitedIdents default False;
     property User_Name: string read FUser_Name write FUser_Name;
-    property OSAuthent: Boolean read FOSAuthent write FOSAuthent;
+    property OSAuthent: Boolean read FOSAuthent write FOSAuthent default False;
     property Isolation: TFDTxIsolation read FIsolation write FIsolation default xiUnspecified;
     property ConnectionParams: string read GetConnectionParams;
   end;
@@ -179,7 +179,8 @@ type
   //
   TInstantFireDACResolver = class(TInstantSQLResolver)
   protected
-    function ReadBooleanField(DataSet: TDataSet; const FieldName: string): Boolean; override;
+    function ReadBooleanField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): Boolean; override;
   end;
 
   //
@@ -466,9 +467,10 @@ var
 begin
   Connection := TFDConnection.Create(AOwner);
   try
-    Connection.TxOptions.AutoCommit := false;
     Connection.TxOptions.Isolation := Isolation;
     Connection.Params.Text := ConnectionParams;
+    if Connection.DriverName = 'MSSQL' then
+      Connection.Params.Values['ODBCAdvanced'] := 'TrustServerCertificate=yes';
 
     //Those parameters speed-up reading
     Connection.ResourceOptions.DirectExecute := True;
@@ -476,6 +478,58 @@ begin
     Connection.ResourceOptions.MacroCreate := False;
     Connection.ResourceOptions.MacroExpand := False;
     Connection.FetchOptions.Mode := fmAll;
+
+    if SameText(Connection.DriverName,'Ora') then
+    begin
+      //Mapping rules for InstantObjects
+      //DDL	           Driver data type	Preferred   data type
+      //============== ============================ ===================
+      //NUMBER(1,0)	   dtBcd, Precision=1, Scale=0  dtBoolean
+      //NUMBER(5,0)	   dtBcd, Precision=5, Scale=0  dtInt32
+      //NUMBER(10,0)	 dtBcd, Precision=8, Scale=0  dtInt32
+      //NUMBER(18,4)	 dtBcd, Precision=18, Scale=4	dtCurrency
+      with Connection.FormatOptions do
+      begin
+        OwnMapRules := True;
+        with MapRules.Add do
+        begin
+          ScaleMin := 0;
+          ScaleMax := 0;
+          PrecMin := 1;
+          PrecMax := 1;
+          SourceDataType := dtBcd;
+          TargetDataType := dtBoolean;
+        end;
+        with MapRules.Add do
+        begin
+          ScaleMin := 0;
+          ScaleMax := 0;
+          PrecMin := 5;
+          PrecMax := 5;
+          SourceDataType := dtBcd;
+          TargetDataType := dtInt32;
+        end;
+        with MapRules.Add do
+        begin
+          ScaleMin := 0;
+          ScaleMax := 0;
+          PrecMin := 10;
+          PrecMax := 10;
+          SourceDataType := dtBcd;
+          TargetDataType := dtInt32;
+        end;
+        with MapRules.Add do
+        begin
+          ScaleMin := 4;
+          ScaleMax := 4;
+          PrecMin := 18;
+          PrecMax := 18;
+          SourceDataType := dtBcd;
+          TargetDataType := dtCurrency;
+        end;
+      end;
+    end;
+
   except
     Connection.Free;
     raise;
@@ -501,23 +555,23 @@ begin
   LParams := TStringList.Create;
   try
     LParams.Text := AParams;
-    Server             := LParams.Values['Server'];
+    Server := LParams.Values['Server'];
     if Server = '' then
     begin
-      HostName           := LParams.Values['HostName'];
+      HostName := LParams.Values['HostName'];
       LPort := LParams.Values['Port'];
       if (LPort <> '') and (LPort<> '0') then
         Port := StrToInt(LPort);
     end;
-    DriverId           := LParams.Values['DriverId'];
+    DriverId := LParams.Values['DriverId'];
     if DriverId = '' then
-      Protocol         := LParams.Values['Protocol'];
-    Database           := LParams.Values['Database'];
-    User_Name          := LParams.Values['User_Name'];
-    Password           := LParams.Values['Password'];
-    LoginPrompt        := SameText(LParams.Values['LoginPrompt'],'True');
-    OSAuthent          := SameText(LParams.Values['OSAuthent'],'Yes');
-    LIsolation         := LParams.Values['Isolation'];
+      Protocol := LParams.Values['Protocol'];
+    Database := LParams.Values['Database'];
+    User_Name := LParams.Values['User_Name'];
+    Password := LParams.Values['Password'];
+    LoginPrompt := SameText(LParams.Values['LoginPrompt'],'True');
+    OSAuthent := SameText(LParams.Values['OSAuthent'],'Yes');
+    LIsolation := LParams.Values['Isolation'];
 
     if LIsolation <> '' then
     begin
@@ -934,8 +988,15 @@ begin
     Result := LQuery.RowsAffected;
   except
     on E: Exception do
+    begin
+      {$IFDEF DEBUG}
       raise EInstantError.CreateFmt(SSQLExecuteError,
         [AStatement, GetParamsStr(AParams), E.Message], E);
+      {$ELSE}
+      raise EInstantError.CreateFmt(SSQLExecuteErrorShort,
+        [E.Message], E);
+      {$ENDIF}
+    end;
   end;
   finally
     ReleaseDataSet(LQuery);
@@ -1006,9 +1067,16 @@ end;
 { TInstantFireDACResolver }
 
 function TInstantFireDACResolver.ReadBooleanField(DataSet: TDataSet;
-  const FieldName: string): Boolean;
+  const FieldName: string; out AWasNull: boolean): Boolean;
+var
+  LField: TField;
 begin
-  Result := (DataSet.FieldByName(FieldName).AsInteger <> 0);
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  if LField is TBooleanField then
+    Result := LField.AsBoolean
+  else
+    Result := (LField.AsInteger <> 0);
 end;
 
 { TInstantFireDACTranslator }
@@ -1149,17 +1217,17 @@ end;
 function TInstantFireDACIbFbBroker.InternalDataTypeToColumnType(DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'DOUBLE PRECISION',
-    'DECIMAL(14,4)',
-    'SMALLINT',
-    'VARCHAR',
-    'BLOB SUB_TYPE 1',
-    'TIMESTAMP',
-    'BLOB',
-    'TIMESTAMP',
-    'TIMESTAMP',
-    'INTEGER');
+    'INTEGER',          //dtInteger
+    'DOUBLE PRECISION', //dtFloat
+    'DECIMAL(18,4)',    //dtCurrency
+    'SMALLINT',         //dtBoolean
+    'VARCHAR',          //dtString
+    'BLOB SUB_TYPE 1',  //dtMemo
+    'TIMESTAMP',        //dtDateTime
+    'BLOB',             //dtBlob
+    'TIMESTAMP',        //dtDate
+    'TIMESTAMP',        //dtTime
+    'INTEGER');         //dtEnum
 begin
   Result := Types[DataType];
 end;
@@ -1182,17 +1250,17 @@ function TInstantFireDACOracleBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT',
-    'DECIMAL(14,4)',
-    'NUMBER(1)',
-    'VARCHAR2',
-    'CLOB',
-    'DATE',
-    'BLOB',
-    'DATE',
-    'DATE',
-    'INTEGER');
+    'NUMBER(10,0)', //dtInteger
+    'NUMBER(28,15)',//dtFloat
+    'NUMBER(18,4)', //dtCurrency
+    'NUMBER(1,0)',  //dtBoolean
+    'VARCHAR2',     //dtString
+    'CLOB',         //dtMemo
+    'DATE',         //dtDateTime
+    'BLOB',         //dtBlob
+    'DATE',         //dtDate
+    'DATE',         //dtTime
+    'NUMBER(10,0)');//dtEnum
 begin
   Result := Types[DataType];
 end;
@@ -1209,17 +1277,17 @@ end;
 function TInstantFireDACPgSQLBroker.InternalDataTypeToColumnType(DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT8',
-    'DECIMAL(14,4)',
-    'BOOLEAN',
-    'VARCHAR',
-    'TEXT',
-    'TIMESTAMP',
-    'BYTEA',
-    'TIMESTAMP',
-    'TIMESTAMP',
-    'INTEGER');
+    'INTEGER',       //dtInteger
+    'FLOAT8',        //dtFloat
+    'DECIMAL(18,4)', //dtCurrency
+    'BOOLEAN',       //dtBoolean
+    'VARCHAR',       //dtString
+    'TEXT',          //dtMemo
+    'TIMESTAMP',     //dtDateTime
+    'BYTEA',         //dtBlob
+    'TIMESTAMP',     //dtDate
+    'TIMESTAMP',     //dtTime
+    'INTEGER');      //dtEnum
 begin
   Result := Types[DataType];
 end;
@@ -1250,17 +1318,17 @@ end;
 function TInstantFireDACMySQLBroker.InternalDataTypeToColumnType(DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT',
-    'DECIMAL(14,4)',
-    'TINYINT(1)',
-    'VARCHAR',
-    'TEXT',
-    'DATETIME',
-    'BLOB',
-    'DATE',
-    'TIME',
-    'INTEGER');
+    'INTEGER',       //dtInteger
+    'FLOAT',         //dtFloat
+    'DECIMAL(18,4)', //dtCurrency
+    'TINYINT(1)',    //dtBoolean
+    'VARCHAR',       //dtString
+    'TEXT',          //dtMemo
+    'DATETIME',      //dtDateTime
+    'BLOB',          //dtBlob
+    'DATE',          //dtDate
+    'TIME',          //dtTime
+    'INTEGER');      //dtEnum
 begin
   Result := Types[DataType];
 end;
@@ -1480,17 +1548,17 @@ function TInstantFireDACSQLiteBroker.InternalDataTypeToColumnType(
   DataType: TInstantDataType): string;
 const
   Types: array[TInstantDataType] of string = (
-    'INTEGER',
-    'FLOAT',
-    'NUMERIC(14,4)',
-    'BOOLEAN',
-    'VARCHAR',
-    'TEXT',
-    'TIMESTAMP',
-    'BLOB',
-    'TIMESTAMP',
-    'TIMESTAMP',
-    'INTEGER');
+    'INTEGER',       //dtInteger
+    'FLOAT',         //dtFloat
+    'NUMERIC(18,4)', //dtCurrency
+    'BOOLEAN',       //dtBoolean
+    'VARCHAR',       //dtString
+    'TEXT',          //dtMemo
+    'TIMESTAMP',     //dtDateTime
+    'BLOB',          //dtBlob
+    'TIMESTAMP',     //dtDate
+    'TIMESTAMP',     //dtTime
+    'INTEGER');      //dtEnum
 begin
   Result := Types[DataType];
 end;

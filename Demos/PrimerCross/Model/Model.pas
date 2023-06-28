@@ -26,9 +26,106 @@ type
   TEmail = class;
   TPerson = class;
   TPhone = class;
+  TProfile = class;
+  TUser = class;
 
   TPhoneType = (ptHome, ptMobile, ptOffice, ptOther);
 
+
+  TProfile = class(TInstantObject)
+  {IOMETADATA stored 'APP_PROFILES';
+    AccessRoles: String(100) stored 'ACCESS_ROLES';}
+    _AccessRoles: TInstantString;
+  private
+    function GetAccessRoles: string;
+    procedure SetAccessRoles(const Value: string);
+  protected
+  public
+  published
+    property AccessRoles: string read GetAccessRoles write SetAccessRoles;
+  end;
+
+  TUser = class(TInstantObject)
+  {IOMETADATA stored 'APP_USERS';
+    Password: String(50) stored 'USER_PASSWORD' width 40;
+    Language: String(2) stored 'USER_LANGUAGE' required;
+    Profile: Reference(TProfile) stored 'USER_PROFILE' required;
+    Administrator: Boolean stored 'IS_ADMINISTRATOR' width 4;
+    System: Boolean stored 'IS_SYSTEM' width 4;
+    LastName: String(40) stored 'LAST_NAME' width 40;
+    FirstName: String(40) stored 'FIRST_NAME' width 40;
+    Email: String(100) stored 'EMAIL_ADDRESS' width 50;
+    PhoneNumber: String(15) stored 'PHONE_NUMBER' width 15;
+    AccessDenied: Boolean stored 'ACCESS_DENIED' width 4;
+    MustChangePassword: Boolean stored 'MUST_CHANGE_PASSWORD' width 4;
+    PrivacyConfirm: Boolean stored 'PRIVACY_CONFIRM' width 4;
+    CreationDate: DateTime stored 'CREATION_DATE' mask '!99/99/9999 99:99;1; ' width 16 usenull;
+    IPAddress: String(50) stored 'IP_ADDRESS' width 50; }
+    _Password: TInstantString;
+    [NeonInclude, NeonProperty('Profile')]
+    _Language: TInstantString;
+    _Profile: TInstantReference;
+    _Administrator: TInstantBoolean;
+    _System: TInstantBoolean;
+    _LastName: TInstantString;
+    _FirstName: TInstantString;
+    _Email: TInstantString;
+    _PhoneNumber: TInstantString;
+    _AccessDenied: TInstantBoolean;
+    _MustChangePassword: TInstantBoolean;
+    _PrivacyConfirm: TInstantBoolean;
+    _CreationDate: TInstantDateTime;
+    _IPAddress: TInstantString;
+  private
+  protected
+    function GetPassword: string; virtual;
+    function GetLanguage: string; virtual;
+    function GetProfile: TProfile; virtual;
+    function GetAdministrator: Boolean; virtual;
+    function GetSystem: Boolean; virtual;
+    function GetLastName: string; virtual;
+    function GetFirstName: string; virtual;
+    function GetEmail: string; virtual;
+    function GetPhoneNumber: string; virtual;
+    function GetAccessDenied: Boolean; virtual;
+    function GetMustChangePassword: Boolean; virtual;
+    function GetPrivacyConfirm: Boolean; virtual;
+    function GetCreationDate: TDateTime; virtual;
+    function GetIPAddress: string; virtual;
+    procedure SetPassword(const Value: string); virtual;
+    procedure SetLanguage(const AValue: string); virtual;
+    procedure SetProfile(Value: TProfile); virtual;
+    procedure SetAdministrator(Value: Boolean); virtual;
+    procedure SetSystem(Value: Boolean); virtual;
+    procedure SetLastName(const Value: string); virtual;
+    procedure SetFirstName(const Value: string); virtual;
+    procedure SetEmail(const Value: string); virtual;
+    procedure SetPhoneNumber(const Value: string); virtual;
+    procedure SetAccessDenied(Value: Boolean); virtual;
+    procedure SetMustChangePassword(Value: Boolean); virtual;
+    procedure SetPrivacyConfirm(Value: Boolean); virtual;
+    procedure SetCreationDate(Value: TDateTime); virtual;
+    procedure SetIPAddress(const Value: string); virtual;
+
+    procedure AfterCreate; override;
+  public
+  published
+    property Password: string read GetPassword write SetPassword;
+    property Language: string read GetLanguage write SetLanguage;
+    [NeonIgnore]
+    property Profile: TProfile read GetProfile write SetProfile;
+    property Administrator: Boolean read GetAdministrator write SetAdministrator;
+    property System: Boolean read GetSystem write SetSystem;
+    property LastName: string read GetLastName write SetLastName;
+    property FirstName: string read GetFirstName write SetFirstName;
+    property Email: string read GetEmail write SetEmail;
+    property PhoneNumber: string read GetPhoneNumber write SetPhoneNumber;
+    property AccessDenied: Boolean read GetAccessDenied write SetAccessDenied;
+    property MustChangePassword: Boolean read GetMustChangePassword write SetMustChangePassword;
+    property PrivacyConfirm: Boolean read GetPrivacyConfirm write SetPrivacyConfirm;
+    property CreationDate: TDateTime read GetCreationDate write SetCreationDate;
+    property IPAddress: string read GetIPAddress write SetIPAddress;
+  end;
 
   TAddress = class(TInstantObject)
     {IOMETADATA City: String(30) index;
@@ -197,6 +294,7 @@ type
     _Emails: TInstantParts;
     {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Employer')]{$ENDIF}
     _Employer: TInstantReference;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Picture')]{$ENDIF}
     _Picture: TInstantGraphic;
     _Salary: TInstantCurrency;
   private
@@ -228,11 +326,13 @@ type
     property EmailCount: Integer read GetEmailCount;
     property Emails[Index: Integer]: TEmail read GetEmails write SetEmails;
   published
+    [NeonInclude(IncludeIf.NotDefault)]
     property BirthDate: TDate read GetBirthDate write SetBirthDate;
     property BirthTime: TTime read GetBirthTime write SetBirthTime;
     {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Employer: TCompany read GetEmployer;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Picture: string read GetPicture write SetPicture;
     property Salary: Currency read GetSalary write SetSalary;
   end;
@@ -260,6 +360,143 @@ implementation
 
 uses
   SysUtils, InstantUtils, InstantMetadata;
+
+{ TProfile }
+function TProfile.GetAccessRoles: string;
+begin
+  Result := _AccessRoles.Value;
+end;
+procedure TProfile.SetAccessRoles(const Value: string);
+begin
+  _AccessRoles.Value := Value;
+end;
+
+{ TUser }
+function TUser.GetPassword: string;
+begin
+  Result := _Password.Value;
+end;
+function TUser.GetProfile: TProfile;
+begin
+  Result := _Profile.Value as TProfile;
+end;
+function TUser.GetLanguage: string;
+begin
+  Result := _Language.Value;
+end;
+function TUser.GetAdministrator: Boolean;
+begin
+  Result := _Administrator.Value;
+end;
+function TUser.GetSystem: Boolean;
+begin
+  Result := _System.Value;
+end;
+function TUser.GetLastName: string;
+begin
+  Result := _LastName.Value;
+end;
+function TUser.GetFirstName: string;
+begin
+  Result := _FirstName.Value;
+end;
+function TUser.GetEmail: string;
+begin
+  Result := _Email.Value;
+end;
+function TUser.GetPhoneNumber: string;
+begin
+  Result := _PhoneNumber.Value;
+end;
+procedure TUser.AfterCreate;
+begin
+  inherited;
+  CreationDate := Now;
+  MustChangePassword := False;
+end;
+
+function TUser.GetAccessDenied: Boolean;
+begin
+  Result := _AccessDenied.Value;
+end;
+function TUser.GetMustChangePassword: Boolean;
+begin
+  Result := _MustChangePassword.Value;
+end;
+function TUser.GetPrivacyConfirm: Boolean;
+begin
+  Result := _PrivacyConfirm.Value;
+end;
+function TUser.GetCreationDate: TDateTime;
+begin
+  Result := _CreationDate.Value;
+end;
+function TUser.GetIPAddress: string;
+begin
+  Result := _IPAddress.Value;
+end;
+procedure TUser.SetPassword(const Value: string);
+begin
+  _Password.Value := Value;
+end;
+procedure TUser.SetProfile(Value: TProfile);
+begin
+  _Profile.Value := Value;
+  if Assigned(Value) then
+  begin
+    Administrator := Value.Id = 'ADMIN';
+    System := Value.Id = 'SYSTEM';
+  end;
+end;
+procedure TUser.SetLanguage(const AValue: string);
+begin
+  _Language.Value := AValue;
+end;
+procedure TUser.SetAdministrator(Value: Boolean);
+begin
+  _Administrator.Value := Value;
+end;
+procedure TUser.SetSystem(Value: Boolean);
+begin
+  _System.Value := Value;
+end;
+procedure TUser.SetLastName(const Value: string);
+begin
+  _LastName.Value := Value;
+end;
+procedure TUser.SetFirstName(const Value: string);
+begin
+  _FirstName.Value := Value;
+end;
+procedure TUser.SetEmail(const Value: string);
+begin
+  _Email.Value := Value;
+end;
+procedure TUser.SetPhoneNumber(const Value: string);
+begin
+  _PhoneNumber.Value := Value;
+end;
+procedure TUser.SetAccessDenied(Value: Boolean);
+begin
+  _AccessDenied.Value := Value;
+end;
+procedure TUser.SetMustChangePassword(Value: Boolean);
+begin
+  _MustChangePassword.Value := Value;
+end;
+procedure TUser.SetPrivacyConfirm(Value: Boolean);
+begin
+  _PrivacyConfirm.Value := Value;
+end;
+procedure TUser.SetCreationDate(Value: TDateTime);
+begin
+  _CreationDate.Value := Value;
+end;
+
+procedure TUser.SetIPAddress(const Value: string);
+begin
+  _IPAddress.Value := Value;
+end;
 
 { TAddress }
 
@@ -820,7 +1057,9 @@ initialization
     TCountry,
     TEmail,
     TPerson,
-    TPhone
+    TPhone,
+    TProfile,
+    TUser
   ]);
 
 end.

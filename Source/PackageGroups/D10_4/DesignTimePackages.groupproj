@@ -21,6 +21,9 @@
         <Projects Include="..\..\Brokers\FireDAC\D10_4\DclIOFireDAC.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\..\Brokers\JSON\D10_4\DclIOJSON.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -83,14 +86,23 @@
     <Target Name="DclIOFireDAC:Make">
         <MSBuild Projects="..\..\Brokers\FireDAC\D10_4\DclIOFireDAC.dproj" Targets="Make"/>
     </Target>
+    <Target Name="DclIOJSON">
+        <MSBuild Projects="..\..\Brokers\JSON\D10_4\DclIOJSON.dproj"/>
+    </Target>
+    <Target Name="DclIOJSON:Clean">
+        <MSBuild Projects="..\..\Brokers\JSON\D10_4\DclIOJSON.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DclIOJSON:Make">
+        <MSBuild Projects="..\..\Brokers\JSON\D10_4\DclIOJSON.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="DclIOCore;DclIOADO;DclIODBX;DclIOIBX;DclIOXML;DclIOFireDAC"/>
+        <CallTarget Targets="DclIOCore;DclIOADO;DclIODBX;DclIOIBX;DclIOXML;DclIOFireDAC;DclIOJSON"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean;DclIOFireDAC:Clean"/>
+        <CallTarget Targets="DclIOCore:Clean;DclIOADO:Clean;DclIODBX:Clean;DclIOIBX:Clean;DclIOXML:Clean;DclIOFireDAC:Clean;DclIOJSON:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make;DclIOFireDAC:Make"/>
+        <CallTarget Targets="DclIOCore:Make;DclIOADO:Make;DclIODBX:Make;DclIOIBX:Make;DclIOXML:Make;DclIOFireDAC:Make;DclIOJSON:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

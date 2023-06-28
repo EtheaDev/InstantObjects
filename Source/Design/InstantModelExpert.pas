@@ -81,6 +81,8 @@ type
     FUpdateTimer: TTimer;
     MetaDataCheckState : TIOMetaDataCheckState;
     MetaDataCheckUnits : string;
+    FTimerDisabled: Boolean;
+    FTimerInterval: Integer;
     procedure ExplorerApplyClass(Sender: TObject; AClass: TInstantCodeClass;
       ChangeInfo: TInstantCodeClassChangeInfo);
     procedure ExplorerGotoSource(Sender: TObject; const FileName: string;
@@ -133,7 +135,6 @@ type
     function IsProjectUnit(FileName: string): Boolean;
     function IsModelUnit(FileName: string): Boolean;
     procedure ShowExplorer;
-    procedure UpdateModel;
     procedure UpdateTimerTick(Sender: TObject);
     procedure UpdateMenuActions;
     property CurrentSource: string read GetCurrentSource;
@@ -151,10 +152,13 @@ type
       CheckTime: TDateTime = 0): Boolean;
     procedure SelectUnits;
     function UpdateEnabled: Boolean;
+    procedure UpdateModel;
     procedure UpdateModelUnits;
     property ActiveProject: IOTAProject read GetActiveProject;
     property AllowContinue: Boolean read GetAllowContinue;
     property IsDirty: Boolean read GetIsDirty write SetIsDirty;
+    property TimerDisabled: Boolean read FTimerDisabled write FTimerDisabled default True;
+    property TimerInterval: Integer read FTimerInterval write FTimerInterval default 10000;
   end;
 
 var
@@ -177,7 +181,6 @@ const
   SExplorerItemActionName = 'InstantExplorerItemAction'; // Do not localize
   SBuilderItemActionName = 'InstantBuilderItemAction'; // Do not localize
   SResFileExt = '.mdr';
-  UpdateInterval = 500;
 
 procedure ReaderIdle(Reader: TInstantCodeReader; var Continue: Boolean);
 begin
@@ -546,7 +549,7 @@ begin
   try
     Caption := 'Database Builder';
     Model := CodeModel.Model;
-    FileName := ChangeFileExt(Project.FileName, '.con');
+    FileName := ChangeFileExt(Project.FileName, '.xml');
     VisibleActions := [atNew, atEdit, atDelete, atRename, atBuild, atEvolve, atOpen];
     Execute;
   finally
@@ -646,6 +649,8 @@ end;
 constructor TInstantModelExpert.Create;
 begin
   //CheckExpiration;
+  FTimerInterval := 10000;
+  FTimerDisabled := True;
   FResourceModule := TInstantDesignResourceModule.Create(nil);
   FIDEInterface := CreateIDEInterface;
   FUpdateTimer := CreateUpdateTimer;
@@ -673,7 +678,7 @@ begin
   with Result do
   begin
     Enabled := False;
-    Interval := UpdateInterval;
+    Interval := FTimerInterval;
     OnTimer := UpdateTimerTick;
   end;
 end;
@@ -1225,7 +1230,8 @@ end;
 
 function TInstantModelExpert.UpdateEnabled: Boolean;
 begin
-  Result := FUpdateDisableCount = 0;
+  Result := (FUpdateDisableCount = 0) and
+    not FTimerDisabled;
 end;
 
 procedure TInstantModelExpert.UpdateModel;

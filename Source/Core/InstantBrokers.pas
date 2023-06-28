@@ -97,6 +97,7 @@ type
 
   TInstantCustomRelationalBroker = class(TInstantBroker)
   private
+    FAutoGenerateStdFields: Boolean;
     FStatementCache: TInstantStatementCache;
     FStatementCacheCapacity: Integer;
     FObjectData: TInstantAbstractObjectData;
@@ -140,8 +141,9 @@ type
     property SQLDelimiters: string read GetSQLDelimiters;
     property SQLQuote: Char read GetSQLQuote;
     property SQLWildcard: string read GetSQLWildCard;
-    property StatementCacheCapacity: Integer read FStatementCacheCapacity
-      write SetStatementCacheCapacity;
+    property StatementCacheCapacity: Integer read FStatementCacheCapacity write SetStatementCacheCapacity;
+    //AutoGenerateStdFields uses Class, Id and UpdateCount standard fields for Primary Key and References
+    property AutoGenerateStdFields: Boolean read FAutoGenerateStdFields write FAutoGenerateStdFields default true;
   end;
 
   TInstantNavigationalBroker = class(TInstantCustomRelationalBroker)
@@ -187,11 +189,26 @@ type
       OnAssignParamValue: TAssignParamValue = nil); virtual;
     function CreateDataSet(const AStatement: string; AParams: TParams = nil;
       OnAssignParamValue: TAssignParamValue = nil): TDataSet; virtual; abstract;
+    function InternalAddPrimaryKeyParams(Map: TInstantAttributeMap;
+      Params: TParams; const AObjectId: string;
+      const APrefix: string = ''): Integer; virtual;
+    function InternalRemovePrimaryKeyParams(Map: TInstantAttributeMap;
+      Params: TParams; const APrefix: string = ''): Integer; virtual;
   public
+    constructor Create(AConnector: TInstantConnector); override;
+    function AddPrimaryKeyParams(Map: TInstantAttributeMap;
+      Params: TParams; const AObjectId: string; const APrefix: string = ''): Integer; virtual;
+    function RemovePrimaryKeyParams(Map: TInstantAttributeMap;
+      Params: TParams; const APrefix: string = ''): Integer; virtual;
+    function IsPrimarykeyAttribute(
+      const AttributeMetadata: TInstantAttributeMetadata): boolean; virtual;
+    function IsDescriptionAttribute(
+      const AttributeMetadata: TInstantAttributeMetadata): boolean; virtual;
     destructor Destroy; override;
     function AcquireDataSet(const AStatement: string; AParams: TParams = nil;
       OnAssignParamValue: TAssignParamValue = nil):
       TDataSet; virtual;
+    procedure UpdateProviderFlags(ADataSet: TDataSet; AMap: TInstantAttributeMap);
     procedure ReleaseDataSet(const ADataSet: TDataSet); virtual;
     function DataTypeToColumnType(DataType: TInstantDataType;
       Size: Integer): string; virtual; abstract;
@@ -431,6 +448,7 @@ type
     FDeleteExternalSQL: string;
     FInsertExternalSQL: string;
     FSelectVirtualSQL: string;
+    FSelectPrimaryKeysSQL: string;
     function AddIntegerParam(Params: TParams; const ParamName: string;
       Value: Integer): TParam;
     function AddStringParam(Params: TParams; const ParamName, Value: string;
@@ -460,13 +478,14 @@ type
     procedure RetrieveMapFromDataSet(const AObject: TInstantObject;
       const AObjectId: string; const AMap: TInstantAttributeMap;
       const ADataSet: TDataSet);
+    function GetSelectPrimaryKeysSQL: string;
   protected
     procedure AddAttributeParam(Attribute: TInstantAttribute;
       Params: TParams); virtual;
     procedure AddAttributeParams(Params: TParams; AObject: TInstantObject;
       Map: TInstantAttributeMap);
-    procedure AddBaseParams(Params: TParams; AClassName, AObjectId: string;
-      AUpdateCount: Integer = -1);
+    procedure AddBaseParams(Map: TInstantAttributeMap; Params: TParams;
+      AClassName, AObjectId: string; AUpdateCount: Integer = -1);
     procedure AddConcurrencyParam(Params: TParams; AUpdateCount: Integer);
     function AddParam(Params: TParams; const ParamName: string;
       ADataType: TFieldType): TParam;
@@ -487,24 +506,24 @@ type
       Map: TInstantAttributeMap; DataSet: TDataSet);
     procedure ReadBlobField(BlobAttr: TInstantBlob; DataSet: TDataSet;
       const FieldName: string); virtual;
-    function ReadBooleanField(DataSet: TDataSet; const FieldName: string):
-      Boolean; virtual;
-    function ReadDateTimeField(DataSet: TDataSet; const FieldName: string):
-      TDateTime; virtual;
-    function ReadDateField(DataSet: TDataSet; const FieldName: string):
-      TDateTime; virtual;
-    function ReadTimeField(DataSet: TDataSet; const FieldName: string):
-      TDateTime; virtual;
-    function ReadFloatField(DataSet: TDataSet; const FieldName: string): Double;
-      virtual;
-    function ReadCurrencyField(DataSet: TDataSet; const FieldName: string):
-      Currency; virtual;
-    function ReadIntegerField(DataSet: TDataSet; const FieldName: string):
-      Integer; virtual;
-    function ReadMemoField(DataSet: TDataSet; const FieldName: string): string;
-      virtual;
-    function ReadStringField(DataSet: TDataSet; const FieldName: string):
-      string; virtual;
+    function ReadBooleanField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): Boolean; virtual;
+    function ReadDateTimeField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): TDateTime; virtual;
+    function ReadDateField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): TDateTime; virtual;
+    function ReadTimeField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): TDateTime; virtual;
+    function ReadFloatField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): Double; virtual;
+    function ReadCurrencyField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): Currency; virtual;
+    function ReadIntegerField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): Integer; virtual;
+    function ReadMemoField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): string; virtual;
+    function ReadStringField(DataSet: TDataSet; const FieldName: string;
+      out AWasNull: boolean): string; virtual;
     procedure RemoveConcurrencyParam(Params: TParams);
     procedure RemovePersistentIdParam(Params: TParams);
     function TranslateError(AObject: TInstantObject;
@@ -518,18 +537,14 @@ type
     property DeleteSQL: string read GetDeleteSQL write FDeleteSQL;
     property DeleteExternalSQL: string read GetDeleteExternalSQL write FDeleteExternalSQL;
     property InsertSQL: string read GetInsertSQL write FInsertSQL;
-    property InsertExternalSQL: string read GetInsertExternalSQL
-      write FInsertExternalSQL;
+    property InsertExternalSQL: string read GetInsertExternalSQL write FInsertExternalSQL;
     property Map: TInstantAttributeMap read FMap;
     property SelectSQL: string read GetSelectSQL write FSelectSQL;
-    property SelectVirtualSQL: string read GetSelectVirtualSQL
-      write FSelectVirtualSQL;
-    property SelectExternalSQL: string read GetSelectExternalSQL
-      write FSelectExternalSQL;
-    property SelectExternalPartSQL: string read GetSelectExternalPartSQL
-      write FSelectExternalPartSQL;
-    property UpdateConcurrentSQL: string read GetUpdateConcurrentSQL
-      write FUpdateConcurrentSQL;
+    property SelectVirtualSQL: string read GetSelectVirtualSQL write FSelectVirtualSQL;
+    property SelectPrimaryKeysSQL: string read GetSelectPrimaryKeysSQL write FSelectPrimaryKeysSQL;
+    property SelectExternalSQL: string read GetSelectExternalSQL write FSelectExternalSQL;
+    property SelectExternalPartSQL: string read GetSelectExternalPartSQL write FSelectExternalPartSQL;
+    property UpdateConcurrentSQL: string read GetUpdateConcurrentSQL write FUpdateConcurrentSQL;
     property UpdateSQL: string read GetUpdateSQL write FUpdateSQL;
   end;
 
@@ -613,13 +628,14 @@ type
   private
     FAttributeOwner: TInstantObject;
     FTableName: string;
-    FParentObjectClassFieldName: string;
-    FParentObjectIdFieldName: string;
+    //FParentObjectClassFieldName: string;
+    //FParentObjectIdFieldName: string;
+    FMasterReferenceFieldNames: TArray<String>;
     function GetBroker: TInstantSQLBroker;
     function GetResolver: TInstantSQLResolver;
     property TableName: string read FTableName;
-    property ParentObjectClassFieldName: string read FParentObjectClassFieldName;
-    property ParentObjectIdFieldName: string read FParentObjectIdFieldName;
+    //property ParentObjectClassFieldName: string read FParentObjectClassFieldName;
+    //property ParentObjectIdFieldName: string read FParentObjectIdFieldName;
   protected
     procedure InternalStoreAttributeObjects(Attribute: TInstantContainer);
       override;
@@ -710,6 +726,8 @@ type
   protected
     function BuildList(Map: TInstantAttributeMap; Additional: array of string;
       StringFunc: TInstantStringFunc = nil; const Delimiter: string = ','): string;
+    function BuildKeyFieldList(Map: TInstantAttributeMap;
+      StringFunc: TInstantStringFunc = nil; const Delimiter: string = ','): string;
     function BuildAssignment(const AName: string): string;
     function BuildAssignmentList(Map: TInstantAttributeMap;
       Additional: array of string): string;
@@ -722,6 +740,7 @@ type
     function BuildParamList(Map: TInstantAttributeMap;
       Additional: array of string): string;
     function BuildWhereStr(Fields: array of string): string;
+    function BuildWhereStrByKeyFields(Map: TInstantAttributeMap): string;
     function EmbraceField(const FieldName: string): string; virtual;
     function EmbraceTable(const TableName: string): string; virtual;
     function GetDelimiters: string; virtual;
@@ -740,6 +759,7 @@ type
     function InternalGenerateInsertExternalSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectVirtualSQL(Map: TInstantAttributeMap): string; virtual;
+    function InternalGenerateSelectPrimaryKeysSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectExternalSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string; virtual;
     function InternalGenerateSelectTablesSQL: string; virtual;
@@ -766,6 +786,7 @@ type
     function GenerateInsertExternalSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectVirtualSQL(Map: TInstantAttributeMap): string;
+    function GenerateSelectPrimaryKeysSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectExternalSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectExternalPartSQL(Map: TInstantAttributeMap): string;
     function GenerateSelectTablesSQL: string;
@@ -860,6 +881,7 @@ type
     FRequestedLoadMode: TInstantLoadMode;
     FActualLoadMode: TInstantLoadMode;
     FTableWithNoLockDirective: string;
+    FUseStdFields: Boolean;
     procedure AddJoin(const FromPath, FromField, ToPath, ToField: string;
       const IsOuter: Boolean);
     function GetClassTablePath: string;
@@ -898,7 +920,8 @@ type
     property CriteriaList: TStringList read GetCriteriaList;
     property TablePathList: TInstantTablePathList read GetTablePathList;
   public
-    constructor Create(const AStatement: TInstantIQLObject; const AQuote: Char;
+    constructor Create(const AStatement: TInstantIQLObject;
+      const AUseStdFields: Boolean; const AQuote: Char;
       const ADelimiters: string; const AIdDataType: TInstantDataType;
       const ARequestedLoadMode: TInstantLoadMode;
       const AParentContext: TInstantTranslationContext = nil);
@@ -951,6 +974,8 @@ type
     property ActualLoadMode: TInstantLoadMode read FActualLoadMode;
     // Property to get NoLock statement reading SQL Table
     property TableWithNoLockDirective: string read FTableWithNoLockDirective write FTableWithNoLockDirective;
+    // Property to ask for use of standard Class and Id Fields
+    property UseStdFields: boolean read FUseStdFields write FUseStdFields;
   end;
 
   TInstantRelationalTranslator = class(TInstantQueryTranslator)
@@ -1232,6 +1257,7 @@ end;
 constructor TInstantCustomRelationalBroker.Create(AConnector: TInstantConnector);
 begin
   inherited;
+  FAutoGenerateStdFields := True;
   FStatementCacheCapacity := AConnector.DefaultStatementCacheCapacity;
 end;
 
@@ -1493,6 +1519,162 @@ begin
   FGenerator.Free;
   FResolverList.Free;
   inherited;
+end;
+
+constructor TInstantSQLBroker.Create(AConnector: TInstantConnector);
+begin
+  inherited;
+end;
+
+function TInstantSQLBroker.AddPrimaryKeyParams(Map: TInstantAttributeMap; Params: TParams;
+  const AObjectId: string; const APrefix: string = '') : Integer;
+begin
+  Result := InternalAddPrimaryKeyParams(Map, Params, AObjectId, APrefix);
+end;
+
+function TInstantSQLBroker.RemovePrimaryKeyParams(Map: TInstantAttributeMap;
+  Params: TParams; const APrefix: string = ''): Integer;
+begin
+  Result := InternalRemovePrimaryKeyParams(Map, Params, APrefix);
+end;
+
+procedure TInstantSQLBroker.UpdateProviderFlags(ADataSet: TDataSet;
+  AMap: TInstantAttributeMap);
+var
+  LAttributeMetadata: TInstantAttributeMetadata;
+  LField: TField;
+begin
+  if not AutoGenerateStdFields then
+  begin
+    //Update ProviderFlags for PK Fields
+    if Assigned(AMap) then
+    begin
+      for LAttributeMetadata in AMap do
+      begin
+        if IsPrimarykeyAttribute(LAttributeMetadata) then
+        begin
+          LField := ADataSet.FindField(LAttributeMetadata.FieldName);
+          if Assigned(LField) then
+            LField.ProviderFlags := LField.ProviderFlags + [pfInKey];
+        end;
+      end;
+    end;
+  end;
+end;
+
+function TInstantSQLBroker.InternalAddPrimaryKeyParams(
+  Map: TInstantAttributeMap; Params: TParams; const AObjectId: string;
+  const APrefix: string = ''): Integer;
+var
+  I: Integer;
+  AttributeMetadata: TInstantAttributeMetadata;
+  LInstantDataType: TInstantDataType;
+  LParam: TParam;
+  LIdValues: TArray<String>;
+ 
+  function ConvertStr(const AStr: string ): Variant;
+  begin
+    if AttributeMetadata.AttributeType = atDateTime then
+      Result := InstantStrToDateTime(AStr)
+    else if AttributeMetadata.AttributeType = atDate then
+      Result := InstantStrToDate(AStr)
+    else if AttributeMetadata.AttributeType = atTime then
+      Result := InstantStrToTime(AStr)
+    else
+      Result := AStr;
+  end;
+
+begin
+  Result := 0;
+  if Assigned(Map) then
+  begin
+    //splitting AObjectId value
+    LIdValues := AObjectId.Split(['|']);
+    for I := 0 to Pred(Map.Count) do
+    begin
+      AttributeMetadata := Map[I];
+      if IsPrimarykeyAttribute(AttributeMetadata) then
+      begin
+        LParam := TParam(Params.Add);
+        LParam.Name := APrefix+AttributeMetadata.FieldName;
+        LInstantDataType := InstantAttributeTypeToDataType(AttributeMetadata.AttributeType, sfXML);
+        LParam.DataType := InstantDataTypeToFieldType(LInstantDataType, self.Connector.UseUnicode);
+
+        if AttributeMetadata.Size <> 0 then
+          LParam.Size := AttributeMetadata.Size;
+
+        if LIdValues[I] <> '' then
+          LParam.Value := ConvertStr(LIdValues[I])
+        else
+          LParam.Value := '';
+        Inc(Result);
+      end;
+    end;
+  end;
+end;
+
+function TInstantSQLBroker.InternalRemovePrimaryKeyParams(Map: TInstantAttributeMap;
+  Params: TParams; const APrefix: string = ''): Integer;
+var
+  LParam: TParam;
+  AttributeMetadata: TInstantAttributeMetadata;
+  I: Integer;
+begin
+  Result := 0;
+  if Assigned(Map) then
+  begin
+    for I := 0 to Pred(Map.Count) do
+    begin
+      AttributeMetadata := Map[I];
+      if IsPrimarykeyAttribute(AttributeMetadata) then
+      begin
+        LParam := Params.FindParam(APrefix+AttributeMetadata.FieldName);
+        if Assigned(LParam) then
+          Params.Delete(LParam.Index);
+      end;
+    end;
+  end;
+end;
+
+function TInstantSQLBroker.IsPrimarykeyAttribute(
+  const AttributeMetadata: TInstantAttributeMetadata): boolean;
+var
+  LFieldName: string;
+begin
+  //A primary key field must be an IsPrimaryKey attribute
+  if Assigned(AttributeMetadata) then
+  begin
+    Result := not (AttributeMetadata.AttributeType in [atUnknown, atBlob, atMemo, atGraphic,
+      atPart, atReference, atParts, atReferences]) and
+      AttributeMetadata.IsPrimaryKey and not AttributeMetadata.UseNull;
+  end
+  else
+  begin
+    LFieldName := AttributeMetadata.FieldName;
+    //If not defined, uses the Class od Id Fields
+    Result := SameText(LFieldName, InstantClassFieldName) or
+      SameText(LFieldName, InstantIdFieldName);
+  end;
+end;
+
+function TInstantSQLBroker.IsDescriptionAttribute(
+  const AttributeMetadata: TInstantAttributeMetadata): boolean;
+var
+  LFieldName: string;
+begin
+  //A description field must be an IdDescription attribute
+  if Assigned(AttributeMetadata) then
+  begin
+    Result := not (AttributeMetadata.AttributeType in [atUnknown, atBlob, atMemo, atGraphic,
+      atPart, atReference, atParts, atReferences]) and
+      AttributeMetadata.IsDescription;
+  end
+  else
+  begin
+    LFieldName := AttributeMetadata.FieldName;
+    //If not defined, uses a field named "Description"
+    Result := SameText(LFieldName, InstantDescriptionAttrName)
+  end;
 end;
 
 function TInstantSQLBroker.AcquireDataSet(const AStatement: string;
@@ -2135,8 +2317,12 @@ var
 begin
   if Attribute.Metadata.StorageKind in [skExternal, skVirtual] then
   begin
-    LinkDatasetResolver :=
-        GetLinkDatasetResolver(Attribute.Metadata.ExternalStorageName);
+    LinkDatasetResolver := GetLinkDatasetResolver(Attribute.Metadata.ExternalStorageName);
+    LinkDatasetResolver.ClearAttributeLinkRecords;
+  end
+  else if Attribute.Metadata.StorageKind in [skForeignKeys] then
+  begin
+    LinkDatasetResolver := GetLinkDatasetResolver(Attribute.Metadata.ForeignKeyFields);
     LinkDatasetResolver.ClearAttributeLinkRecords;
   end;
 end;
@@ -2595,8 +2781,13 @@ begin
     if Metadata.StorageKind in [skExternal, skVirtual] then
     begin
       Clear;
-      LinkDatasetResolver :=
-          GetLinkDatasetResolver(Metadata.ExternalStorageName);
+      LinkDatasetResolver := GetLinkDatasetResolver(Metadata.ExternalStorageName);
+      LinkDatasetResolver.ReadAttributeObjects(Attribute, ObjectId);
+    end
+    else if Metadata.StorageKind in [skForeignKeys] then
+    begin
+      Clear;
+      LinkDatasetResolver := GetLinkDatasetResolver(Metadata.ForeignKeyFields);
       LinkDatasetResolver.ReadAttributeObjects(Attribute, ObjectId);
     end
     else
@@ -3158,15 +3349,22 @@ begin
     end;
 end;
 
-procedure TInstantSQLResolver.AddBaseParams(Params: TParams; AClassName,
-  AObjectId: string; AUpdateCount: Integer);
+procedure TInstantSQLResolver.AddBaseParams(Map: TInstantAttributeMap;
+  Params: TParams; AClassName, AObjectId: string; AUpdateCount: Integer);
 begin
   if Assigned(Params) then
   begin
-    AddStringParam(Params, InstantClassFieldName, AClassName, CLASSNAME_PARAM_SIZE);
-    AddIdParam(Params, InstantIdFieldName, AObjectId);
-    if AUpdateCount <> -1 then
-      AddIntegerParam(Params, InstantUpdateCountFieldName, AUpdateCount);
+    if Broker.AutoGenerateStdFields then
+    begin
+      AddStringParam(Params, InstantClassFieldName, AClassName, CLASSNAME_PARAM_SIZE);
+      AddIdParam(Params, InstantIdFieldName, AObjectId);
+      if AUpdateCount <> -1 then
+        AddIntegerParam(Params, InstantUpdateCountFieldName, AUpdateCount);
+    end
+    else
+    begin
+      Broker.AddPrimaryKeyParams(Map, Params, AObjectId);
+    end;
   end;
 end;
 
@@ -3215,7 +3413,10 @@ var
 begin
   LFieldType := InstantDataTypeToFieldType(Broker.Connector.IdDataType, Broker.Connector.UseUnicode);
   Param := AddParam(Params, ParamName, LFieldType);
-  Param.Size := Broker.Connector.IdSize;
+  if length(Value) > Broker.Connector.IdSize then
+    Param.Size := length(Value)
+  else
+    Param.Size := Broker.Connector.IdSize;
   if Value <> '' then
     Param.Value := Value;
 end;
@@ -3349,6 +3550,13 @@ begin
   Result := FSelectExternalSQL;
 end;
 
+function TInstantSQLResolver.GetSelectPrimaryKeysSQL: string;
+begin
+  if FSelectPrimaryKeysSQL = '' then
+    FSelectPrimaryKeysSQL := Broker.Generator.GenerateSelectPrimaryKeysSQL(Map);
+  Result := FSelectPrimaryKeysSQL;
+end;
+
 function TInstantSQLResolver.GetSelectSQL: string;
 begin
   if FSelectSQL = '' then
@@ -3477,7 +3685,7 @@ begin
   DeleteExternalContainerMaps;
   Params := TParams.Create;
   try
-    AddBaseParams(Params, AObject.ClassName, AObject.PersistentId);
+    AddBaseParams(Map, Params, AObject.ClassName, AObject.PersistentId);
     if Map.IsRootMap and (ConflictAction = caFail) then
     begin
       Statement := DeleteConcurrentSQL;
@@ -3510,6 +3718,7 @@ procedure TInstantSQLResolver.InternalRetrieveMap(AObject: TInstantObject;
 var
   LDataSet: TDataSet;
   LParams: TParams;
+  LSelectSQL: string;
 begin
   // This resolver supports retrieving data from TInstantDataSetObjectData.
   if Assigned(AObjectData) and (AObjectData is TInstantDataSetObjectData)
@@ -3524,10 +3733,13 @@ begin
   begin
     LParams := TParams.Create;
     try
-      AddBaseParams(LParams, AObject.ClassName, AObjectId);
-      LDataSet := Broker.AcquireDataSet(SelectSQL, LParams);
+      AddBaseParams(Map, LParams, AObject.ClassName, AObjectId);
+      LSelectSQL := SelectSQL;
+      LDataSet := Broker.AcquireDataSet(LSelectSQL, LParams);
       try
         LDataSet.Open;
+        Broker.UpdateProviderFlags(LDataSet, Map);
+
         AInfo.Success := not LDataSet.Eof;
         AInfo.Conflict := not AInfo.Success;
         if AInfo.Success then
@@ -3698,7 +3910,7 @@ begin
         NewUpdateCount := AObject.UpdateCount + 1
     else
       NewUpdateCount := AObject.UpdateCount;
-    AddBaseParams(Params, AObject.ClassName, AObject.Id, NewUpdateCount);
+    AddBaseParams(Map, Params, AObject.ClassName, AObject.Id, NewUpdateCount);
     AddAttributeParams(Params, AObject, Map);
     UpdateExternalPartMap;
     if AObject.IsPersistent then
@@ -3727,52 +3939,78 @@ var
   end;
 
   procedure ReadBooleanAttribute;
+  var
+    LWasNull: boolean;
   begin
     (Attribute as TInstantBoolean).Value :=
-      ReadBooleanField(DataSet, AFieldName);
+      ReadBooleanField(DataSet, AFieldName, LWasNull);
+    Attribute.WasNull := LWasNull;
   end;
 
   procedure ReadDateTimeAttribute;
+  var
+    LWasNull: boolean;
   begin
     (Attribute as TInstantDateTime).Value :=
-      ReadDateTimeField(DataSet, AFieldName);
+      ReadDateTimeField(DataSet, AFieldName, LWasNull);
+    Attribute.WasNull := LWasNull;
   end;
 
   procedure ReadDateAttribute;
+  var
+    LWasNull: boolean;
   begin
     (Attribute as TInstantDate).Value :=
-      ReadDateField(DataSet, AFieldName);
+      ReadDateField(DataSet, AFieldName, LWasNull);
+    Attribute.WasNull := LWasNull;
   end;
 
   procedure ReadTimeAttribute;
+  var
+    LWasNull: boolean;
   begin
     (Attribute as TInstantTime).Value :=
-      ReadTimeField(DataSet, AFieldName);
+      ReadTimeField(DataSet, AFieldName, LWasNull);
+    Attribute.WasNull := LWasNull;
   end;
 
   procedure ReadFloatAttribute;
+  var
+    LWasNull: boolean;
   begin
-    (Attribute as TInstantFloat).Value := ReadFloatField(DataSet, AFieldName);
+    (Attribute as TInstantFloat).Value := ReadFloatField(DataSet, AFieldName, LWasNull);
+    Attribute.WasNull := LWasNull;
   end;
 
   procedure ReadCurrencyAttribute;
+  var
+    LWasNull: boolean;
   begin
     (Attribute as TInstantCurrency).Value :=
-      ReadCurrencyField(DataSet, AFieldName);
+      ReadCurrencyField(DataSet, AFieldName, LWasNull);
+    Attribute.WasNull := LWasNull;
   end;
 
   procedure ReadIntegerAttribute;
+  var
+    LWasNull: boolean;
   begin
     (Attribute as TInstantInteger).Value :=
-      ReadIntegerField(DataSet, AFieldName);
+      ReadIntegerField(DataSet, AFieldName, LWasNull);
+    Attribute.WasNull := LWasNull;
   end;
 
   procedure ReadMemoAttribute;
+  var
+    LWasNull: boolean;
   begin
-    (Attribute as TInstantMemo).Value := ReadMemoField(DataSet, AFieldName);
+    (Attribute as TInstantMemo).Value := ReadMemoField(DataSet, AFieldName, LWasNull);
+    Attribute.WasNull := LWasNull;
   end;
 
   procedure ReadPartAttribute;
+  var
+    LWasNull: boolean;
   var
     Stream: TStream;
     LPartClassName: string;
@@ -3786,9 +4024,11 @@ var
         // as OldValue = NewValue.
         Value := nil;
         LPartClassName := ReadStringField(DataSet, AFieldName +
-          InstantClassFieldName);
+          InstantClassFieldName, LWasNull);
         LPartId := ReadStringField(DataSet, AFieldName +
-          InstantIdFieldName);
+          InstantIdFieldName, LWasNull);
+
+        Attribute.WasNull := LWasNull;
         // LPartClassName and LPartId will be empty if the attribute was
         // added to a class with existing instances in the database.
         if (LPartClassName = '') and (LPartId = '') then
@@ -3805,9 +4045,15 @@ var
         DataSet.FieldByName(AFieldName));
       try
         if Stream.Size = 0 then
-          (Attribute as TInstantPart).Reset
+        begin
+          (Attribute as TInstantPart).Reset;
+          Attribute.WasNull := True;
+        end
         else
+        begin
           (Attribute as TInstantPart).LoadObjectFromStream(Stream);
+          Attribute.WasNull := False;
+        end
       finally
         Stream.Free;
       end;
@@ -3841,9 +4087,15 @@ var
         DataSet.FieldByName(AFieldName));
       try
         if Stream.Size = 0 then
-          (Attribute as TInstantParts).Reset
+        begin
+          (Attribute as TInstantParts).Reset;
+          Attribute.WasNull := True;
+        end
         else
+        begin
           (Attribute as TInstantParts).LoadObjectsFromStream(Stream);
+          Attribute.WasNull := False;
+        end;
       finally
         Stream.Free;
       end;
@@ -3851,10 +4103,41 @@ var
   end;
 
   procedure ReadReferenceAttribute;
+  var
+    LReference: TInstantReference;
+    LFieldNames: TArray<String>;
+    LFieldName, LForeignKeyValue, LIdFieldValue: string;
+    LReferencedClass: string;
+    LWasNull: boolean;
   begin
-    (Attribute as TInstantReference).ReferenceObject(
-      ReadStringField(DataSet, AFieldName + InstantClassFieldName),
-      ReadStringField(DataSet, AFieldName + InstantIdFieldName));
+    LReference := (Attribute as TInstantReference);
+    if AttributeMetadata.StorageKind = skForeignKeys then
+    begin
+      //Uses Fields stored into ForeignKeyFields to reference another table by Primary Key
+      LFieldNames := AttributeMetadata.ForeignKeyFields.Split([';']);
+      LIdFieldValue := '';
+      for LFieldName in LFieldNames do
+      begin
+        LForeignKeyValue := ReadStringField(DataSet, LFieldName, LWasNull);
+
+        Attribute.WasNull := LWasNull;
+        if LIdFieldValue <> '' then
+          LIdFieldValue := LIdFieldValue + InstantPkSeparator + LForeignKeyValue
+        else
+          LIdFieldValue := LForeignKeyValue;
+      end;
+      LReferencedClass := AttributeMetadata.ObjectClassName;
+      LReference.ReferenceObject(
+        LReferencedClass,
+        LIdFieldValue);
+    end
+    else
+    begin
+      LReference.ReferenceObject(
+        ReadStringField(DataSet, AFieldName + InstantClassFieldName, LWasNull),
+        ReadStringField(DataSet, AFieldName + InstantIdFieldName, LWasNull));
+      Attribute.WasNull := LWasNull;
+    end;
   end;
 
   procedure ReadReferencesAttribute;
@@ -3865,10 +4148,22 @@ var
   begin
     if AttributeMetadata.StorageKind in [skExternal, skVirtual] then
     begin
-      LReferences := TInstantReferences(Attribute);
+      LReferences := (Attribute as TInstantReferences);
       LReferences.Clear;
       LinkResolver := TInstantSQLLinkResolver.Create(Self,
         AttributeMetadata.ExternalStorageName, AObject);
+      try
+        LinkResolver.ReadAttributeObjects(LReferences, AObjectId);
+      finally
+        LinkResolver.Free;
+      end;
+    end
+    else if AttributeMetadata.StorageKind in [skForeignKeys] then
+    begin
+      LReferences := TInstantReferences(Attribute);
+      LReferences.Clear;
+      LinkResolver := TInstantSQLLinkResolver.Create(Self,
+        AttributeMetadata.ForeignKeyFields, AObject);
       try
         LinkResolver.ReadAttributeObjects(LReferences, AObjectId);
       finally
@@ -3882,9 +4177,15 @@ var
         DataSet.FieldByName(AFieldName));
       try
         if Stream.Size = 0 then
-          (Attribute as TInstantReferences).Reset
+        begin
+          (Attribute as TInstantReferences).Reset;
+          Attribute.WasNull := True;
+        end
         else
+        begin
           (Attribute as TInstantReferences).LoadReferencesFromStream(Stream);
+          Attribute.WasNull := False;
+        end;
       finally
         Stream.Free;
       end;
@@ -3892,9 +4193,13 @@ var
   end;
 
   procedure ReadStringAttribute;
+  var
+    LWasNull: boolean;
   begin
     (Attribute as TInstantString).Value :=
-      ReadStringField(DataSet, AFieldName);
+      ReadStringField(DataSet, AFieldName, LWasNull);
+
+    Attribute.WasNull := LWasNull;
   end;
 
 begin
@@ -3964,61 +4269,99 @@ begin
     End;
   end
   else
-    BlobAttr.Value := DataSet.FieldByName(FieldName).AsString;
+    BlobAttr.Value := Field.AsString;
+
+  BlobAttr.WasNull := Field.IsNull;
 end;
 
 function TInstantSQLResolver.ReadBooleanField(DataSet: TDataSet;
-  const FieldName: string): Boolean;
+  const FieldName: string; out AWasNull: boolean): Boolean;
+var
+  LField: TField;
 begin
-  Result := DataSet.FieldByName(FieldName).AsBoolean;
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := LField.AsBoolean;
 end;
 
 function TInstantSQLResolver.ReadCurrencyField(DataSet: TDataSet;
-  const FieldName: string): Currency;
+  const FieldName: string; out AWasNull: boolean): Currency;
+var
+  LField: TField;
 begin
-  Result := DataSet.FieldByName(FieldName).AsCurrency;
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := LField.AsCurrency;
 end;
 
 function TInstantSQLResolver.ReadDateTimeField(DataSet: TDataSet;
-  const FieldName: string): TDateTime;
+  const FieldName: string; out AWasNull: boolean): TDateTime;
+var
+  LField: TField;
 begin
-  Result := DataSet.FieldByName(FieldName).AsDateTime;
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := LField.AsDateTime;
 end;
 
 function TInstantSQLResolver.ReadDateField(DataSet: TDataSet;
-  const FieldName: string): TDateTime;
+  const FieldName: string; out AWasNull: boolean): TDateTime;
+var
+  LField: TField;
 begin
-  Result := DateOf(DataSet.FieldByName(FieldName).AsDateTime);
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := DateOf(LField.AsDateTime);
 end;
 
 function TInstantSQLResolver.ReadTimeField(DataSet: TDataSet;
-  const FieldName: string): TDateTime;
+  const FieldName: string; out AWasNull: boolean): TDateTime;
+var
+  LField: TField;
 begin
-  Result := TimeOf(DataSet.FieldByName(FieldName).AsDateTime);
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := TimeOf(LField.AsDateTime);
 end;
 
 function TInstantSQLResolver.ReadFloatField(DataSet: TDataSet;
-  const FieldName: string): Double;
+  const FieldName: string; out AWasNull: boolean): Double;
+var
+  LField: TField;
 begin
-  Result := DataSet.FieldByName(FieldName).AsFloat;
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := LField.AsFloat;
 end;
 
 function TInstantSQLResolver.ReadIntegerField(DataSet: TDataSet;
-  const FieldName: string): Integer;
+  const FieldName: string; out AWasNull: boolean): Integer;
+var
+  LField: TField;
 begin
-  Result := DataSet.FieldByName(FieldName).AsInteger;
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := LField.AsInteger;
 end;
 
 function TInstantSQLResolver.ReadMemoField(DataSet: TDataSet;
-  const FieldName: string): string;
+  const FieldName: string; out AWasNull: boolean): string;
+var
+  LField: TField;
 begin
-  Result := TrimRight(DataSet.FieldByName(FieldName).AsString);
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := TrimRight(LField.AsString);
 end;
 
 function TInstantSQLResolver.ReadStringField(DataSet: TDataSet;
-  const FieldName: string): string;
+  const FieldName: string; out AWasNull: boolean): string;
+var
+  LField: TField;
 begin
-  Result := TrimRight(DataSet.FieldByName(FieldName).AsString);
+  LField := DataSet.FieldByName(FieldName);
+  AWasNull := LField.IsNull;
+  Result := TrimRight(LField.AsString);
 end;
 
 procedure TInstantSQLResolver.RemoveConcurrencyParam(Params: TParams);
@@ -4050,7 +4393,10 @@ begin
 
   if AMap.IsRootMap then
   begin
-    LUpdateField := ADataSet.FindField(InstantUpdateCountFieldName);
+    if Broker.AutoGenerateStdFields then
+      LUpdateField := ADataSet.FindField(InstantUpdateCountFieldName)
+    else
+      LUpdateField := nil;
     if Assigned(LUpdateField) then
       Broker.SetObjectUpdateCount(AObject, LUpdateField.AsInteger)
     else
@@ -4365,32 +4711,30 @@ constructor TInstantSQLLinkResolver.Create(AResolver: TInstantSQLResolver;
     const ATableName: string; AObject: TInstantObject);
 var
   p: integer;
+  LMasterReferenceFieldNames: string;
 begin
   inherited Create(AResolver);
+
   //A virtual external container can have a composite TableName like:
-  //'DETAILTABLENAME;MASTEROBJECTCLASS;MASTEROBJECTID'
+  //'DETAILTABLENAME;MASTEROBJECTCLASSFIELD;MASTEROBJECTIDFIELD'
   //If not specified the default fields for master/details relations are:
-  //InstantParentClassFieldName and InstantParentIdFieldName
+  //InstantParentClassFieldName and InstantParentIdFieldName.
+  //Using PrimaryKeys instead of Standard "Class" and "Id" Fields
+  //a virtual external container can have a composite TableName like:
+  //'DETAILTABLENAME;MASTERPKFIELD1;MASTERPKFIELD2;...'
   p := pos(';',ATableName);
   if p > 0 then
   begin
     FTableName := Copy(ATableName,1,p-1);
-    FParentObjectClassFieldName := Copy(ATableName,p+1,MaxInt);
-    p := pos(';',FParentObjectClassFieldName);
-    if p > 0 then
-    begin
-      FParentObjectIdFieldName := Copy(FParentObjectClassFieldName,p+1,MaxInt);
-      FParentObjectClassFieldName := Copy(FParentObjectClassFieldName,1,p-1);
-    end
-    else
-      FParentObjectIdFieldName := InstantParentIdFieldName;
+    LMasterReferenceFieldNames := Copy(ATableName,p+1,MaxInt);
   end
   else
   begin
     FTableName := ATableName;
-    FParentObjectClassFieldName := InstantParentClassFieldName;
-    FParentObjectIdFieldName := InstantParentIdFieldName;
+    LMasterReferenceFieldNames := InstantParentClassFieldName+';'+InstantParentIdFieldName;
   end;
+  //Save Master referece fields into an Array
+  FMasterReferenceFieldNames := LMasterReferenceFieldNames.Split([';']);
   FAttributeOwner := AObject;
 end;
 
@@ -4480,28 +4824,51 @@ var
 begin
   Params := TParams.Create;
   try
-    if Attribute.Metadata.StorageKind = skVirtual then
+    if Broker.AutoGenerateStdFields then
     begin
-      Statement := Resolver.SelectVirtualSQL;
-      //Default values
-      FromClause := TableName;
-      Attribute.Owner.GetDetailsStatementValues(FromClause,SequenceNoFieldName,OrderByClause);
-      //Statement custom
-      Statement := Format(Statement,
-        [TableName,TableName,
-         TableName+'.'+SequenceNoFieldName,
-         FromClause,
-         TableName+'.'+ParentObjectClassFieldName,
-         TableName+'.'+ParentObjectIdFieldName,
-         OrderByClause]);
+      if Attribute.Metadata.StorageKind = skVirtual then
+      begin
+        Statement := Resolver.SelectVirtualSQL;
+        //Default values
+        FromClause := TableName;
+        Attribute.Owner.GetDetailsStatementValues(FromClause,SequenceNoFieldName,OrderByClause);
+        //Statement custom
+        Statement := Format(Statement,
+          [TableName,TableName,
+           TableName+'.'+SequenceNoFieldName,
+           FromClause,
+           TableName+'.'+FMasterReferenceFieldNames[0],
+           TableName+'.'+FMasterReferenceFieldNames[1],
+           OrderByClause]);
+      end
+      else
+      begin
+        Statement := Format(Resolver.SelectExternalSQL, [TableName]);
+      end;
+      Resolver.AddIdParam(Params, InstantParentIdFieldName, AObjectId);
+      Resolver.AddStringParam(Params, InstantParentClassFieldName,
+        AttributeOwner.ClassName, CLASSNAME_PARAM_SIZE);
     end
     else
     begin
-      Statement := Format(Resolver.SelectExternalSQL, [TableName]);
+      if Attribute.Metadata.StorageKind = skVirtual then
+      begin
+        Statement := Resolver.SelectPrimaryKeysSQL;
+        //Default values
+        FromClause := TableName;
+        Attribute.Owner.GetDetailsStatementValues(FromClause,SequenceNoFieldName,OrderByClause);
+        //Statement custom
+        Statement := Format(Statement,
+          [TableName,TableName,
+           TableName+'.'+SequenceNoFieldName,
+           FromClause,
+           TableName+'.'+FMasterReferenceFieldNames[0],
+           TableName+'.'+FMasterReferenceFieldNames[1],
+           OrderByClause]);
+      end
+      else
+        raise Exception.Create('Cannot use an External Reference');
     end;
-    Resolver.AddIdParam(Params, InstantParentIdFieldName, AObjectId);
-    Resolver.AddStringParam(Params, InstantParentClassFieldName,
-      AttributeOwner.ClassName, CLASSNAME_PARAM_SIZE);
     DataSet := Broker.AcquireDataSet(Statement, Params);
     try
       DataSet.Open;
@@ -4765,8 +5132,11 @@ end;
 
 function TInstantSQLGenerator.BuildConcurrencyCriteria: string;
 begin
-  Result := Format(' AND %s = %s', [EmbraceField(InstantUpdateCountFieldName),
-    BuildParam(ConcurrencyParamName)]);
+  if Broker.AutoGenerateStdFields then
+    Result := Format(' AND %s = %s', [EmbraceField(InstantUpdateCountFieldName),
+      BuildParam(ConcurrencyParamName)])
+  else
+    Result := '';
 end;
 
 function TInstantSQLGenerator.BuildFieldList(const S: string): string;
@@ -4793,6 +5163,32 @@ begin
   Result := BuildList(Map, Additional, EmbraceField);
 end;
 
+function TInstantSQLGenerator.BuildKeyFieldList(Map: TInstantAttributeMap;
+  StringFunc: TInstantStringFunc = nil; const Delimiter: string = ','): string;
+var
+  I: Integer;
+  AttributeMetadata: TInstantAttributeMetadata;
+  FieldName: string;
+begin
+  if not Assigned(StringFunc) then
+    StringFunc := BuildAssignment;
+  Result := '';
+  if Assigned(Map) then
+  begin
+    for I := 0 to Pred(Map.Count) do
+    begin
+      AttributeMetadata := Map[I];
+      FieldName := AttributeMetadata.FieldName;
+      if Broker.IsPrimarykeyAttribute(AttributeMetadata) then
+      begin
+        Result := Result + StringFunc(FieldName);
+        Result := Result + Format(' %s ', [Delimiter]);
+      end;
+    end;
+  end;
+  Delete(Result, Length(Result) - Length(Delimiter), Length(Delimiter) + 2);
+end;
+
 function TInstantSQLGenerator.BuildList(Map: TInstantAttributeMap;
   Additional: array of string; StringFunc: TInstantStringFunc;
   const Delimiter: string): string;
@@ -4806,6 +5202,8 @@ var
   I: Integer;
   AttributeMetadata: TInstantAttributeMetadata;
   FieldName, RefClassFieldName, RefIdFieldName: string;
+//  LFieldNames: TArray<String>;
+//  LFieldName: string;
 begin
   if not Assigned(StringFunc) then
     StringFunc := EmbraceField;
@@ -4818,11 +5216,25 @@ begin
       FieldName := AttributeMetadata.FieldName;
       if AttributeMetadata.AttributeType = atReference then
       begin
-        RefClassFieldName := FieldName + InstantClassFieldName;
-        RefIdFieldName := FieldName + InstantIdFieldName;
-        Result := Result + StringFunc(RefClassFieldName) + SpaceDelimiter +
-          StringFunc(RefIdFieldName);
-        Result := Result + SpaceDelimiter;
+        if AttributeMetadata.StorageKind = skForeignKeys then
+        begin
+          (*
+          //Uses Fields stored into ForeignKeyFields to reference another table by Primary Key
+          LFieldNames := AttributeMetadata.ForeignKeyFields.Split([';']);
+          for LFieldName in LFieldNames do
+            Result := Result + StringFunc(LFieldName+'_Ref');
+          Result := Result + SpaceDelimiter;
+          *)
+        end
+        else
+        begin
+          //Uses FieldNameClass and FieldNameId fields to reference another table by Class and Id
+          RefClassFieldName := FieldName + InstantClassFieldName;
+          RefIdFieldName := FieldName + InstantIdFieldName;
+          Result := Result + StringFunc(RefClassFieldName) + SpaceDelimiter +
+            StringFunc(RefIdFieldName);
+          Result := Result + SpaceDelimiter;
+        end;
       end
       else if AttributeMetadata.AttributeType = atPart then
       begin
@@ -4880,6 +5292,12 @@ end;
 function TInstantSQLGenerator.BuildWhereStr(Fields: array of string): string;
 begin
   Result := BuildList(nil, Fields, BuildAssignment, 'AND');
+end;
+
+function TInstantSQLGenerator.BuildWhereStrByKeyFields(
+  Map: TInstantAttributeMap): string;
+begin
+  Result := BuildKeyFieldList(Map, BuildAssignment, 'AND');
 end;
 
 function TInstantSQLGenerator.EmbraceField(const FieldName: string): string;
@@ -4980,6 +5398,12 @@ function TInstantSQLGenerator.GenerateSelectVirtualSQL(
   Map: TInstantAttributeMap): string;
 begin
   Result := InternalGenerateSelectVirtualSQL(Map);
+end;
+
+function TInstantSQLGenerator.GenerateSelectPrimaryKeysSQL(
+  Map: TInstantAttributeMap): string;
+begin
+  Result := InternalGenerateSelectPrimaryKeysSQL(Map);
 end;
 
 function TInstantSQLGenerator.GenerateSelectSQL
@@ -5109,7 +5533,10 @@ function TInstantSQLGenerator.InternalGenerateDeleteSQL
 var
   WhereStr: string;
 begin
-  WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
+  if FBroker.AutoGenerateStdFields then
+    WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName])
+  else
+    WhereStr := BuildWhereStrByKeyFields(Map);
   Result := Format('DELETE FROM %s WHERE %s',
     [EmbraceTable(Map.Name), WhereStr]);
 end;
@@ -5161,10 +5588,18 @@ function TInstantSQLGenerator.InternalGenerateInsertSQL
 var
   FieldStr, ParamStr: string;
 begin
-  FieldStr := BuildFieldList(Map,
-    [InstantClassFieldName, InstantIdFieldName, InstantUpdateCountFieldName]);
-  ParamStr := BuildParamList(Map,
-    [InstantClassFieldName, InstantIdFieldName, InstantUpdateCountFieldName]);
+  if FBroker.AutoGenerateStdFields then
+  begin
+    FieldStr := BuildFieldList(Map,
+      [InstantClassFieldName, InstantIdFieldName, InstantUpdateCountFieldName]);
+    ParamStr := BuildParamList(Map,
+      [InstantClassFieldName, InstantIdFieldName, InstantUpdateCountFieldName]);
+  end
+  else
+  begin
+    FieldStr := BuildFieldList(Map, []);
+    ParamStr := BuildParamList(Map, []);
+  end;
   Result := Format('INSERT INTO %s (%s) VALUES (%s)',
     [EmbraceTable(Map.Name), FieldStr, ParamStr]);
   Result := Result + ' ';
@@ -5210,13 +5645,33 @@ begin
     [FieldStr, EmbraceTable('%s'), WhereStr, EmbraceField(InstantSequenceNoFieldName)]);
 end;
 
+function TInstantSQLGenerator.InternalGenerateSelectPrimaryKeysSQL(
+  Map: TInstantAttributeMap): string;
+var
+  FieldStr, WhereStr, OrderByStr: string;
+begin
+  FieldStr := BuildKeyFieldList(Map, EmbraceField);
+  WhereStr := BuildWhereStrByKeyFields(Map);
+  OrderByStr := FieldStr;
+  Result := Format('SELECT %s FROM %s WHERE %s ORDER BY %s',
+    [FieldStr, EmbraceTable(Map.Name), WhereStr, OrderByStr]);
+end;
+
 function TInstantSQLGenerator.InternalGenerateSelectSQL
   (Map: TInstantAttributeMap): string;
 var
   FieldStr, WhereStr: string;
 begin
-  FieldStr := BuildFieldList(Map, [InstantUpdateCountFieldName]);
-  WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
+  if FBroker.AutoGenerateStdFields then
+  begin
+    FieldStr := BuildFieldList(Map, [InstantUpdateCountFieldName]);
+    WhereStr := BuildWhereStr([InstantClassFieldName, InstantIdFieldName]);
+  end
+  else
+  begin
+    FieldStr := BuildFieldList(Map, []);
+    WhereStr := BuildWhereStrByKeyFields(Map);
+  end;
   Result := Format('SELECT %s FROM %s WHERE %s',
     [FieldStr, EmbraceTable(Map.Name), WhereStr]);
 end;
@@ -5247,9 +5702,17 @@ function TInstantSQLGenerator.InternalGenerateUpdateSQL
 var
   AssignmentStr, WhereStr: string;
 begin
-  AssignmentStr := BuildAssignmentList(Map,
-    [InstantIdFieldName, InstantUpdateCountFieldName]);
-  WhereStr := BuildWhereStr([InstantClassFieldName]) + BuildPersistentIdCriteria;
+  if FBroker.AutoGenerateStdFields then
+  begin
+    AssignmentStr := BuildAssignmentList(Map,
+      [InstantIdFieldName, InstantUpdateCountFieldName]);
+    WhereStr := BuildWhereStr([InstantClassFieldName]) + BuildPersistentIdCriteria;
+  end
+  else
+  begin
+    AssignmentStr := BuildAssignmentList(Map, []);
+    WhereStr := BuildWhereStrByKeyFields(Map);
+  end;
   Result := Format('UPDATE %s SET %s WHERE %s',
     [EmbraceTable(Map.Name), AssignmentStr, WhereStr]);
 end;
@@ -5397,7 +5860,8 @@ begin
   if not Assigned(Command.ClassRef) then
     Exit;
 
-  FContext := TInstantTranslationContext.Create(Command, Quote,
+  FContext := TInstantTranslationContext.Create(Command,
+    Connector.Broker.AutoGenerateStdFields, Quote,
     Delimiters, Connector.IdDataType, RequestedLoadMode);
   SetActualLoadMode(FContext.ActualLoadMode);
   if (Connector is TInstantRelationalConnector) and
@@ -5723,33 +6187,48 @@ function TInstantRelationalTranslator.TranslateSpecifier(
   end;
 
   procedure WriteAllFields(Writer: TInstantIQLWriter;
-    const AContext: TInstantTranslationContext);
+    const AContext: TInstantTranslationContext;
+    const OnlyPKFields: Boolean = False);
   var
     LMapIndex, LAttrIndex: Integer;
     LAttrMeta: TInstantAttributeMetadata;
-    LTablePath, LFieldName: string;
+    LTablePath, LFieldName, LDelimiter: string;
   begin
+    LDelimiter := '';
     for LMapIndex := 0 to AContext.ObjectClassMetadata.StorageMaps.Count - 1 do
     begin
       for LAttrIndex := 0 to AContext.ObjectClassMetadata.StorageMaps[LMapIndex].Count - 1 do
       begin
         LAttrMeta := AContext.ObjectClassMetadata.StorageMaps[LMapIndex][LAttrIndex];
-        if ((LAttrMeta.AttributeType = atPart) and (LAttrMeta.StorageKind = skExternal))
-          or (LAttrMeta.AttributeType = atReference) then
+        if OnlyPKFields then
         begin
-          // External part and reference attribute are treated akin:
-          // select Class and Id fields.
-          if Assigned(AContext.PathToTarget(LAttrMeta.Name, LTablePath, LFieldName)) then
-            Writer.WriteString(Format(', %s, %s', [
-              AContext.Qualify(LTablePath, LFieldName + InstantClassFieldName),
-              AContext.Qualify(LTablePath, LFieldName + InstantIdFieldName)]));
+          // Select only PK fields.
+          if (LAttrMeta.IsPrimaryKey) and not (LAttrMeta.AttributeType in [atPart, atReference, atParts, atReferences]) then
+          begin
+            Writer.WriteString(Format('%s %s', [LDelimiter, AContext.QualifyPath(LAttrMeta.Name)]));
+            LDelimiter := ', ';
+          end;
+
         end
-        else if (LAttrMeta.AttributeType in [atParts, atReferences])
-          and (LAttrMeta.StorageKind in [skExternal, skVirtual]) then
-          // No fields needed for external and virtual containers.
         else
-          // Select all other fields.
-          Writer.WriteString(Format(', %s', [AContext.QualifyPath(LAttrMeta.Name)]));
+        begin
+          if ((LAttrMeta.AttributeType = atPart) and (LAttrMeta.StorageKind = skExternal))
+            or (LAttrMeta.AttributeType = atReference) then
+          begin
+            // External part and reference attribute are treated akin:
+            // select Class and Id fields.
+            if Assigned(AContext.PathToTarget(LAttrMeta.Name, LTablePath, LFieldName)) then
+              Writer.WriteString(Format(', %s, %s', [
+                AContext.Qualify(LTablePath, LFieldName + InstantClassFieldName),
+                AContext.Qualify(LTablePath, LFieldName + InstantIdFieldName)]));
+          end
+          else if (LAttrMeta.AttributeType in [atParts, atReferences])
+            and (LAttrMeta.StorageKind in [skExternal, skVirtual]) then
+            // No fields needed for external and virtual containers.
+          else
+            // Select all other fields.
+            Writer.WriteString(Format(', %s', [AContext.QualifyPath(LAttrMeta.Name)]));
+        end;
       end;
     end;
   end;
@@ -5770,33 +6249,42 @@ begin
       LContext := Context.GetSubqueryContext(LSubQuery);
     end;
 
-    if Specifier.Operand is TInstantIQLPath then
+    if Query.Connector.Broker.AutoGenerateStdFields then
     begin
-      // This branch handles SELECT * FROM
-      PathText := TInstantIQLPath(Specifier.Operand).Text;
-      ClassQual := LContext.QualifyPath(ConcatPath(PathText, InstantClassFieldName));
-      IdQual := LContext.QualifyPath(ConcatPath(PathText, InstantIdFieldName));
-    end else
-    begin
-      // This branch handles SELECT <attribute> FROM
-      ClassQual := LContext.QualifyPath(InstantClassFieldName);
-      IdQual := LContext.QualifyPath(InstantIdFieldName);
-    end;
-    Writer.WriteString(Format('%s AS %s, %s AS %s', [ClassQual,
-      InstantClassFieldName, IdQual, InstantIdFieldName]));
+      if Specifier.Operand is TInstantIQLPath then
+      begin
+        // This branch handles SELECT * FROM
+        PathText := TInstantIQLPath(Specifier.Operand).Text;
+        ClassQual := LContext.QualifyPath(ConcatPath(PathText, InstantClassFieldName));
+        IdQual := LContext.QualifyPath(ConcatPath(PathText, InstantIdFieldName));
+      end
+      else
+      begin
+        // This branch handles SELECT <attribute> FROM
+        ClassQual := LContext.QualifyPath(InstantClassFieldName);
+        IdQual := LContext.QualifyPath(InstantIdFieldName);
+      end;
 
-    // Mind that LContext.ActualLoadMode might be different than
-    // Self.RequestedLoadMode.
-    if IsBurstLoadMode(LContext.ActualLoadMode) then
-    begin
-      // Use the Id just to get the table path needed to add the updatecount
-      // field. We could use anything we know is in the main table.
-      LContext.PathToTarget(InstantIdFieldName, LTablePath, LDummyFieldName);
-      Writer.WriteString(Format(', %s', [LContext.Qualify(LTablePath, InstantUpdateCountFieldName)]));
-      WriteAllFields(Writer, LContext);
+      Writer.WriteString(Format('%s AS %s, %s AS %s', [ClassQual,
+        InstantClassFieldName, IdQual, InstantIdFieldName]));
+
+      // Mind that LContext.ActualLoadMode might be different than
+      // Self.RequestedLoadMode.
+      if IsBurstLoadMode(LContext.ActualLoadMode) then
+      begin
+        // Use the Id just to get the table path needed to add the updatecount
+        // field. We could use anything we know is in the main table.
+        LContext.PathToTarget(InstantIdFieldName, LTablePath, LDummyFieldName);
+        Writer.WriteString(Format(', %s', [LContext.Qualify(LTablePath, InstantUpdateCountFieldName)]));
+        WriteAllFields(Writer, LContext);
+      end
+      else if IncludeOrderFields then
+        WriteOrderFields(Writer);
     end
-    else if IncludeOrderFields then
-      WriteOrderFields(Writer);
+    else
+    begin
+      WriteAllFields(Writer, LContext, True);
+    end;
   end;
 end;
 
@@ -6231,26 +6719,65 @@ end;
 procedure TInstantSQLQuery.InitObjectReferences;
 var
   LObjRef: TInstantObjectReference;
-  LClassField, LIdField: TField;
+  LKeyFields: TList<TField>;
+  LClassFieldValue, LIdFieldValue: string;
+  I: Integer;
+  LField: TField;
+  LForeignKeyValue: string;
 begin
   Assert(Assigned(Connector));
 
   if Assigned(FDataSet) then
   begin
+    LKeyFields := TList<TField>.Create;
     try
       FDataSet.DisableControls;
       try
-        LClassField := FDataSet.FieldByName(InstantClassFieldName);
-        LIdField := FDataSet.FieldByName(InstantIdFieldName);
+        if Connector.Broker.AutoGenerateStdFields then
+        begin
+          LKeyFields.Add(FDataSet.FieldByName(InstantClassFieldName));
+          LKeyFields.Add(FDataSet.FieldByName(InstantIdFieldName));
+        end
+        else
+        begin
+          for I := 0 to FDataSet.FieldCount -1 do
+          begin
+            //Using PrimaryKeys, add all fields as Key fields
+            LField := FDataSet.fields[I];
+            //if (pfInKey in LField.ProviderFlags) then
+              LKeyFields.Add(LField);
+          end;
+        end;
         while not FDataSet.Eof do
         begin
+          if Connector.Broker.AutoGenerateStdFields then
+          begin
+            //Uses standard Class and Id Fields to obtain Object Reference
+            LClassFieldValue := LKeyFields[0].AsString; //Class Field
+            LIdFieldValue := LKeyFields[1].AsString; //Id Field
+          end
+          else
+          begin
+            //Uses list of fields marked as Primary to obtain Object Reference
+            LClassFieldValue := ObjectClassName;
+            LIdFieldValue := '';
+            for I := 0 to LKeyFields.Count -1 do
+            begin
+              LField := LKeyFields[I];
+              LForeignKeyValue := TrimRight(LField.AsString);
+              if LIdFieldValue <> '' then
+                LIdFieldValue := LIdFieldValue + InstantPkSeparator + LForeignKeyValue
+              else
+                LIdFieldValue := LForeignKeyValue;
+            end;
+          end;
           LObjRef := ObjectReferenceList.Add;
           try
             if IsBurstLoadMode(ActualLoadMode) then
-              LObjRef.ReferenceObject(LClassField.AsString, LIdField.AsString,
+              LObjRef.ReferenceObject(LClassFieldValue, LIdFieldValue,
                 TInstantDataSetObjectData.CreateAndInit(FDataSet))
             else
-              LObjRef.ReferenceObject(LClassField.AsString, LIdField.AsString);
+              LObjRef.ReferenceObject(LClassFieldValue, LIdFieldValue);
             if ActualLoadMode = lmFullBurst then
               LObjRef.RetrieveObjectFromObjectData(Connector);
           except
@@ -6265,6 +6792,7 @@ begin
         FDataSet.EnableControls;
       end;
     finally
+      LKeyFields.Free;
       if ActualLoadMode = lmFullBurst then
         ReleaseDataSet;
     end;
@@ -6464,12 +6992,14 @@ begin
 end;
 
 constructor TInstantTranslationContext.Create(
-  const AStatement: TInstantIQLObject; const AQuote: Char;
+  const AStatement: TInstantIQLObject;
+  const AUseStdFields: Boolean; const AQuote: Char;
   const ADelimiters: string; const AIdDataType: TInstantDataType;
   const ARequestedLoadMode: TInstantLoadMode;
   const AParentContext: TInstantTranslationContext = nil);
 begin
   inherited Create;
+  FUseStdFields := AUseStdFields;
   FParentContext := AParentContext;
 
   if Assigned(FParentContext) then
@@ -6494,7 +7024,7 @@ begin
   // penalty as well) in constructing a burst load mode enabled subquery.
   // This decision might be revisited in the future if child contexts
   // are used for other things.
-  Result := TInstantTranslationContext.Create(AStatement, Quote, Delimiters,
+  Result := TInstantTranslationContext.Create(AStatement, UseStdFields, Quote, Delimiters,
     IdDataType, lmKeysFirst, Self);
 end;
 
@@ -6742,7 +7272,7 @@ procedure TInstantTranslationContext.Initialize;
     LClassMeta: TInstantClassMetadata;
     LTableName: string;
   begin
-    if not ClassRef.Any then
+    if not ClassRef.Any and UseStdFields then
       AddCriteria(Format('%s = %s',
         [Qualify(ClassTablePath, InstantClassFieldName),
         QuoteString(ClassRef.ObjectClassName)]));
@@ -6838,9 +7368,13 @@ procedure TInstantTranslationContext.MakeJoins(Path: TInstantIQLPath);
 
   procedure MakePathJoins(Path: TInstantIQLPath);
   var
-    I: Integer;
+    I, J: Integer;
     PathText, FromPath, ToPath, FromField, ToField: string;
     LIsRequiredAttribute: Boolean;
+    LClassMeta, LTargetMetadata: TInstantClassMetadata;
+    LAttributeMeta, LTargetAttributeMeta: TInstantAttributeMetadata;
+    LFieldNames: TArray<String>;
+    LCount: Integer;
   begin
     if Path.AttributeCount > 1 then
     begin
@@ -6852,10 +7386,42 @@ procedure TInstantTranslationContext.MakeJoins(Path: TInstantIQLPath);
         begin
           PathToTarget(PathText, ToPath, ToField);
           LIsRequiredAttribute := IsRequiredAttribute(FromField);
-          AddJoin(FromPath, FromField + InstantClassFieldName, ToPath,
-            InstantClassFieldName, not LIsRequiredAttribute);
-          AddJoin(FromPath, FromField + InstantIdFieldName, ToPath,
-            InstantIdFieldName, not LIsRequiredAttribute);
+          if UseStdFields then
+          begin
+            AddJoin(FromPath, FromField + InstantClassFieldName, ToPath,
+              InstantClassFieldName, not LIsRequiredAttribute);
+            AddJoin(FromPath, FromField + InstantIdFieldName, ToPath,
+              InstantIdFieldName, not LIsRequiredAttribute);
+          end
+          else
+          begin
+            //Fields of the JOIN are defined into ForeignKeys of the referece attribute named FromField
+            LClassMeta := ObjectClassMetadata;
+            if Assigned(LClassMeta) then
+            begin
+              LAttributeMeta := LClassMeta.AttributeMetadatas.Find(FromField);
+              if Assigned(LAttributeMeta) and
+                (LAttributeMeta.StorageKind in [skForeignKeys]) then
+              begin
+                //Split ForeignKeyFields fields into LFieldNames array
+                LFieldNames := LAttributeMeta.ForeignKeyFields.Split([';']);
+                //Acquire all the Primary Keys of the Referenced Class
+                //To map with the Fields contained into LFieldNames array
+                LTargetMetadata := InstantFindClassMetadata(LAttributeMeta.ObjectClassName);
+                LCount := 0;
+                for J := 0 to LTargetMetadata.AttributeMetadatas.Count -1 do
+                begin
+                  LTargetAttributeMeta := LTargetMetadata.AttributeMetadatas[J];
+                  if LTargetAttributeMeta.IsPrimaryKey then
+                  begin
+                    AddJoin(FromPath, LFieldNames[LCount], ToPath,
+                      LTargetAttributeMeta.FieldName, not LIsRequiredAttribute);
+                    Inc(LCount);
+                  end;
+                end;
+              end;
+            end;
+          end;
           FromPath := ToPath;
           FromField := ToField;
         end;

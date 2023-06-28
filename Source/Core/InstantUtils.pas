@@ -57,6 +57,8 @@ function InstantCompareValues(V1, V2: Variant;
 function InstantCompareText(const S1, S2: string; IgnoreCase: Boolean): Integer;
 function InstantConstArrayToVariant(AValues : array of const) : Variant;
 function InstantDateTimeToStr(DateTime: TDateTime): string;
+function InstantDateToStr(DateTime: TDateTime): string;
+function InstantTimeToStr(ADate: TDateTime): string;
 function InstantDateTimeToJStr(ADate: TDateTime): string;
 function InstantEmbrace(const S, Delimiters: string): string;
 function InstantFileAge(const FileName: string; out FileDateTime: TDateTime): boolean;
@@ -92,6 +94,7 @@ function TimeOf(const AValue: TDateTime): TDateTime;
 
 function InstantCharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean; overload;
 function InstantCharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean; overload;
+function InstantSmartConcat(const AArray: array of string; const ADelimiter: string = ' - '): string;
 
 implementation
 
@@ -322,6 +325,16 @@ end;
 function InstantDateTimeToStr(DateTime: TDateTime): string;
 begin
   Result := FormatDateTime(InstantDateTimeFormat, DateTime)
+end;
+
+function InstantDateToStr(DateTime: TDateTime): string;
+begin
+  Result := FormatDateTime(InstantDateFormat, DateTime)
+end;
+
+function InstantTimeToStr(ADate: TDateTime): string;
+begin
+  Result := FormatDateTime(InstantTimeFormat, ADate)
 end;
 
 function InstantDateTimeToJStr(ADate: TDateTime): string;
@@ -698,6 +711,22 @@ begin
 {$ELSE}
   Result := CharInSet(C, CharSet);
 {$ENDIF}
+end;
+
+function InstantSmartConcat(const AArray: array of string; const ADelimiter: string = ' - '): string;
+var
+  LValue: string;
+begin
+  Result := '';
+  for LValue in AArray do
+  begin
+    if LValue <> '' then
+    begin
+      if Result <> '' then
+        Result := Result + ADelimiter;
+      Result := Result + LValue;
+    end;
+  end;
 end;
 
 end.

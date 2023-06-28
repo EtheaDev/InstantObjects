@@ -30,11 +30,7 @@ unit InstantXML;
 
 {$I '..\..\InstantDefines.inc'}
 
-{$IFDEF D6+}
 {$WARN SYMBOL_PLATFORM OFF}
-{$WARN UNIT_PLATFORM OFF}
-{$WARN IMPLICIT_STRING_CAST OFF}
-{$ENDIF}
 
 interface
 
@@ -48,9 +44,6 @@ const
   XML_EXT = 'xml';
   DOT_XML_EXT = '.' + XML_EXT;
   XML_WILDCARD = '*' + DOT_XML_EXT;
-  {$IFNDEF D6+}
-  PathDelim = '\';
-  {$ENDIF}
 
 type
   TXMLFileFormat = (xffUtf8, xffIso);
@@ -144,6 +137,7 @@ type
     procedure SetConnection(const Value: TXMLFilesAccessor);
     procedure CheckConnection;
   protected
+    procedure SetBlobStreamFormat(const Value: TInstantStreamFormat); override;
     function CreateBroker: TInstantBroker; override;
     function GetDatabaseName: string; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
@@ -159,6 +153,9 @@ type
       SetConnection;
     property UseTransactions default False;
     property LoginPrompt default False;
+    property UseUnicode default False;
+    property BlobStreamFormat default sfXML;
+    property ReadObjectListWithNoLock default true;
   end;
 
   TInstantXMLResolver = class;
@@ -352,13 +349,6 @@ resourcestring
 function GetFileClassName(const FileName: string): string; forward;
 function GetFileId(const FileName: string): string; forward;
 function GetObjectUpdateCount(const FileName: string): Integer; forward;
-
-{$IFNDEF D6+}
-function IncludeTrailingPathDelimiter(const S: string): string;
-begin
-  Result := IncludeTrailingBackSlash(S);
-end;
-{$ENDIF}
 
 procedure GlobalLoadFileList(const Path: string; FileList: TStringList;
   const AFilterWildCard: string = '');
@@ -689,6 +679,9 @@ begin
   inherited;
   LoginPrompt := False;
   UseTransactions := False;
+  UseUnicode := False;
+  BlobStreamFormat := sfXML;
+  ReadObjectListWithNoLock := true;
 end;
 
 function TInstantXMLConnector.CreateBroker: TInstantBroker;
@@ -733,6 +726,14 @@ end;
 procedure TInstantXMLConnector.InternalStartTransaction;
 begin
   { TODO: Start transaction for Connection }
+end;
+
+procedure TInstantXMLConnector.SetBlobStreamFormat(
+  const Value: TInstantStreamFormat);
+begin
+  if Value <> sfXML then
+    Exit;
+  inherited;
 end;
 
 procedure TInstantXMLConnector.SetConnection(
@@ -1355,6 +1356,8 @@ procedure TXMLFilesAccessor.CreateStorageDir(const AStorageName: string);
 var
   LPath: string;
 begin
+  if not SysUtils.DirectoryExists(RootFolder) then
+    MkDir(RootFolder);
   LPath := IncludeTrailingBackslash(RootFolder) + AStorageName;
   if not SysUtils.DirectoryExists(LPath) then
     MkDir(LPath);
@@ -1397,8 +1400,9 @@ end;
 
 procedure TXMLFilesAccessor.DoConnect;
 begin
-  if SysUtils.DirectoryExists(RootFolder) then
-    FConnected := True;
+  if not SysUtils.DirectoryExists(RootFolder) then
+    MkDir(RootFolder);
+  FConnected := True;
 end;
 
 procedure TXMLFilesAccessor.DoDisconnect;

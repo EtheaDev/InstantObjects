@@ -96,7 +96,7 @@ begin
   AssertEquals(0, FInstantBlob.Size);
 
   vStream := TFileStream.Create(
-    ExtractFilePath(ParamStr(0)) + 'TestBlobText.txt', fmOpenRead);
+    ExtractFilePath(ParamStr(0)) + 'TestBlobText.txt', fmOpenRead or fmShareDenyNone);
   try
     AssertTrue(vStream.Size > 0);
     vSource := TInstantBlob.Create;
@@ -162,7 +162,7 @@ var
   vStream: TStream;
 begin
   vStream := TFileStream.Create(
-    ExtractFilePath(ParamStr(0)) + 'TestBlobText.txt', fmOpenRead);
+    ExtractFilePath(ParamStr(0)) + 'TestBlobText.txt', fmOpenRead or fmShareDenyNone);
   try
     AssertTrue(vStream.Size > 0);
     FInstantBlob.LoadDataFromStream(vStream);
@@ -181,7 +181,7 @@ begin
   AssertEquals(0, FInstantBlob.Size);
 
   vStream := TFileStream.Create(
-    ExtractFilePath(ParamStr(0)) + 'TestBlobText.txt', fmOpenRead);
+    ExtractFilePath(ParamStr(0)) + 'TestBlobText.txt', fmOpenRead or fmShareDenyNone);
   try
     AssertTrue(vStream.Size > 0);
     FInstantBlob.LoadDataFromStream(vStream);

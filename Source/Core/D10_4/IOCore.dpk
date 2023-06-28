@@ -33,7 +33,8 @@ package IOCore;
 requires
   vcl,
   vcldb,
-  rtl;
+  rtl,
+  Neon;
 
 contains
   InstantUtils in '..\InstantUtils.pas',
@@ -62,6 +63,7 @@ contains
   InstantMetadata in '..\InstantMetadata.pas',
   InstantStandardValidators in '..\InstantStandardValidators.pas',
   InstantValidation in '..\InstantValidation.pas',
-  InstantRttiAttributes in '..\InstantRttiAttributes.pas';
+  InstantRttiAttributes in '..\InstantRttiAttributes.pas',
+  Instant.Neon.Serializers in '..\Instant.Neon.Serializers.pas';
 
 end.

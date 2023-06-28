@@ -134,7 +134,7 @@ uses
   InstantDBX,
   {$ENDIF}
   InstantADO,
-  //InstantIBX, remome comment if you want to use IbExpress
+  //InstantIBX, remove comment if you want to use IbExpress
   {$IFDEF D19+}
   InstantFireDAC,
   {$ENDIF}
@@ -144,7 +144,7 @@ uses
     // don't have an Enterprise version of Delphi - just remove them.
     DBXFirebird, DBXInterBase, DBXDB2, DBXMSSql, DBXOracle,
   {$ENDIF}
-  InstantXML;
+  InstantXML, InstantJSON;
 
 {$R *.dfm}
 
@@ -359,9 +359,11 @@ var
       if Random(2) = 0 then
       begin
         if Companies.Count > 50 then
+        begin
           Companies.Delete(0);
-        Result.AddRef;
+        end;
         Companies.Add(Result);
+        Result.AddRef;
       end;
     end;
   end;
@@ -372,7 +374,7 @@ begin
   GetAsyncKeyState(VK_ESCAPE);
   CommitCount := 200;
   Randomize;
-  Companies := TObjectList.Create;
+  Companies := TObjectList.Create(True);
   Stopwatch.Start(Count);
   try
     InstantDefaultConnector.StartTransaction;
@@ -629,6 +631,7 @@ begin
       try
         LInstantQuery := Connector.CreateQuery;
         try
+          //Create Countries
           LInstantQuery.Command := 'SELECT * FROM TCountry';
           LInstantQuery.Open;
           for var I := 0 to LInstantQuery.ObjectCount - 1 do
@@ -641,10 +644,23 @@ begin
           if LInstantQuery.ObjectCount = 0 then
             CreateCountries;
 
+          //Create Categories
           LInstantQuery.Command := 'SELECT * FROM TCategory';
           LInstantQuery.Open;
           if LInstantQuery.ObjectCount = 0 then
             CreateCategories;
+
+          //Create Profiles
+          LInstantQuery.Command := 'SELECT * FROM TProfile';
+          LInstantQuery.Open;
+          if LInstantQuery.ObjectCount = 0 then
+            CreateProfiles;
+
+          //Create Users
+          LInstantQuery.Command := 'SELECT * FROM TUser';
+          LInstantQuery.Open;
+          if LInstantQuery.ObjectCount = 0 then
+            CreateUsers;
         finally
           LInstantQuery.Free;
         end;

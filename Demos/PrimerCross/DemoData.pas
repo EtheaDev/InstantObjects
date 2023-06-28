@@ -8,6 +8,11 @@ uses
   Classes, Model, InstantPersistence, RandomData;
 
 const
+  ProfileIds: array[0..3] of string = ('READONLY', 'USER', 'ADMIN', 'SYSTEM');
+  RoleNames: array[0..3] of string = ('reader', 'standard', 'admin', 'system');
+  UserNames: array[0..3] of string = ('ReadOnlyUser', 'StandardUser', 'AdminUser', 'SystemUser');
+  UserPasswords: array[0..3] of string = ('ReadOnlyPassword', 'StandardPassword', 'AdminPassword', 'SystemPassword');
+
   CategoryNames: array[0..5] of string = (
     'Undefined',
     'Customer',
@@ -17,6 +22,8 @@ const
     'Colleague'
   );
 
+procedure CreateProfiles;
+procedure CreateUsers;
 procedure CreateCategories;
 procedure CreateCountries;
 function CreateRandomCompany: TCompany;
@@ -29,6 +36,48 @@ uses
   SysUtils,
   Windows,
   InstantUtils;
+
+procedure CreateProfiles;
+var
+  I: Integer;
+  LProfile: TProfile;
+begin
+  for I := Low(ProfileIds) to High(ProfileIds) do
+  begin
+    LProfile := TProfile.Create;
+    try
+      LProfile.Id := ProfileIds[I];
+      LProfile.AccessRoles := RoleNames[I];
+      LProfile.Store;
+    finally
+      LProfile.Free;
+    end;
+  end;
+end;
+
+procedure CreateUsers;
+var
+  I: Integer;
+  LUser: TUser;
+begin
+  for I := Low(UserNames) to High(UserNames) do
+  begin
+    LUser := TUser.Create;
+    try
+      LUser.Id := UserNames[I];
+      LUser.Password := UserPasswords[I];
+      if Odd(I) then
+        LUser.Language := 'it'
+      else
+        LUser.Language := 'en';
+      LUser.Profile := TProfile.Retrieve(ProfileIds[I]);
+      LUser.Profile.Free;
+      LUser.Store;
+    finally
+      LUser.Free;
+    end;
+  end;
+end;
 
 procedure CreateCategories;
 var
@@ -85,17 +134,20 @@ const
 var
   I: Integer;
   S: string;
+  LCountry: TCountry;
 begin
   for I := Low(CountryNames) to High(CountryNames) do
-    with TCountry.Create do
+  begin
+    LCountry := TCountry.Create;
     try
       S := CountryNames[I];
-      Id := Copy(S, 1, 2);
-      Name := Copy(S, 4, Length(S));
-      Store;
+      LCountry.Id := Copy(S, 1, 2);
+      LCountry.Name := Copy(S, 4, Length(S));
+      LCountry.Store;
     finally
-      Free;
+      LCountry.Free;
     end;
+  end;
 end;
 
 function CreateRandomAddress: TAddress;
@@ -186,8 +238,7 @@ begin
 
     LCategoryId := Format('CAT%.3d', [Random(5)+1]);
     Result.Category := TCategory.Retrieve(LCategoryId);
-    if Assigned(Result.Category) then
-      Result.Category.Free; //dereference Retrieve
+    Result.Category.Free; //dereference Retrieve
     CreateRandomPhones(Result, ['Home', 'Mobile']);
     if Assigned(Company) then
     begin

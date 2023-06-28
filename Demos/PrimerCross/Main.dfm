@@ -2,8 +2,8 @@ object MainForm: TMainForm
   Left = 254
   Top = 225
   Caption = 'InstantObjects Primer'
-  ClientHeight = 619
-  ClientWidth = 1071
+  ClientHeight = 618
+  ClientWidth = 1067
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -11,25 +11,23 @@ object MainForm: TMainForm
   Font.Name = 'Segoe UI'
   Font.Style = []
   Menu = MainMenu
-  OldCreateOrder = False
   Position = poScreenCenter
   OnActivate = FormActivate
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object SideBarSplitter: TSplitter
     Left = 88
     Top = 26
-    Height = 574
+    Height = 573
     ResizeStyle = rsLine
     ExplicitHeight = 139
   end
   object ToolBar: TToolBar
     Left = 0
     Top = 0
-    Width = 1071
+    Width = 1063
     Height = 26
     AutoSize = True
     BorderWidth = 1
@@ -50,8 +48,8 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 600
-    Width = 1071
+    Top = 598
+    Width = 1063
     Height = 19
     Panels = <
       item
@@ -66,7 +64,7 @@ object MainForm: TMainForm
     Left = 0
     Top = 26
     Width = 88
-    Height = 574
+    Height = 572
     Align = alLeft
     BevelOuter = bvNone
     BorderStyle = bsSingle
@@ -84,7 +82,7 @@ object MainForm: TMainForm
       Left = 0
       Top = 8
       Width = 84
-      Height = 562
+      Height = 560
       Align = alClient
       BorderStyle = bsNone
       Color = clAppWorkSpace
@@ -98,15 +96,15 @@ object MainForm: TMainForm
   object WorkPanel: TPanel
     Left = 91
     Top = 26
-    Width = 980
-    Height = 574
+    Width = 972
+    Height = 572
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 3
     object WorkTitleSpacer: TBevel
       Left = 0
       Top = 27
-      Width = 980
+      Width = 976
       Height = 4
       Align = alTop
       Shape = bsSpacer
@@ -115,7 +113,7 @@ object MainForm: TMainForm
     object WorkTitlePanel: TPanel
       Left = 0
       Top = 0
-      Width = 980
+      Width = 972
       Height = 27
       Align = alTop
       BevelInner = bvLowered
@@ -132,8 +130,8 @@ object MainForm: TMainForm
     object WorkClientPanel: TPanel
       Left = 0
       Top = 31
-      Width = 980
-      Height = 543
+      Width = 972
+      Height = 541
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1

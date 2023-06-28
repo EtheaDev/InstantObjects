@@ -802,10 +802,10 @@ FALSE
 \par IBX\tab\cf0 TInstantIBXConnector\cf1\tab TIBDatabase
 \par \f1 D\f0 BX\tab\cf0 TInstant\f1 D\f0 BXConnector\cf1\tab TSQLConnection
 \par \f1 XML\tab\cf0\f0 TInstantX\f1 ML\f0 Connector\cf1\tab TXMLFilesAccessor
+\par \f1 JSON\tab TInstantJSONConnector\tab TJSON\f0 FilesAccessor
 \par \f1 FireDAC\tab\cf0\f0 TInstant\f1 FireDAC\f0 Connector\cf1\tab TFDConnection
 \par 
-\par \pard\f2\fs10 
-\par \pard\sb25\sa25\f1\fs18 InstantObjects supports a variety of databases and data-access technologies by means of packages called Brokers. You can build and install the broker(s) you need from the Brokers sub-folder of InstantObjects's Source folder.
+\par \pard\sb25\sa25\f1 InstantObjects supports a variety of databases and data-access technologies by means of packages called Brokers. You can build and install the broker(s) you need from the Brokers sub-folder of InstantObjects's Source folder.
 \par \pard\f2\fs10 
 \par \f0\fs18 Drop an appropriate connector component and a matching connection component on a form or a data module in your project. Configure the connection component to access the database and assign it to the Connection \f1 (or equivalent) \f0 property of the connector component. The connector will use the connection to gain access to the database. By setting the IsDefault property to True, the connector will be used as the default connector in the application.
 \par \f2\fs10 
@@ -1417,7 +1417,7 @@ FALSE
 {\colortbl ;\red128\green0\blue0;\red0\green0\blue0;}
 \viewkind4\uc1\pard\b\f0\fs24 Primer Demo: Streaming\fs26 
 \par \cf1\b0\f1\fs16\{keepn\}\cf0\fs20 
-\par \cf2\f0\fs18 All business objects created with InstantObjects can be written to and read from any standard VCL stream. The structure of the stream can be either binary or XML.
+\par \cf2\f0\fs18 All business objects created with InstantObjects can be written to and read from any standard VCL stream. The structure of the stream can be either binary\f1 , \f0 XML\f1  or JSON.\f0 
 \par 
 \par An example of streaming objects to an XML file is supplied by the Export to XML option on the toolbar of the Contacts view. This option can also be selected by right-clicking on a contact in the grid. When executed, the export function writes the currently selected contact to an XML file and launches your default XML viewer with the file. This would normally be your Internet browser.
 \par }

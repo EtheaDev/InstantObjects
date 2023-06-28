@@ -11,16 +11,17 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   Constraints.MinWidth = 400
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = 11
+  Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = True
+  OldCreateOrder = False
   Position = poScreenCenter
+  OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
   PixelsPerInch = 96
-  TextHeight = 11
+  TextHeight = 15
   object AttributeSplitter: TSplitter
     Left = 0
     Top = 242
@@ -35,61 +36,97 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   end
   object ModelPanel: TPanel
     Left = 0
-    Top = 29
+    Top = 31
     Width = 394
-    Height = 213
+    Height = 211
     Align = alClient
     BevelOuter = bvNone
     Constraints.MinHeight = 20
     TabOrder = 0
   end
-  object ToolBar: TToolBar
+  object TopPanel: TPanel
     Left = 0
     Top = 0
     Width = 394
-    Height = 29
-    BorderWidth = 1
-    ButtonHeight = 23
-    Images = ActionImages
-    ParentShowHint = False
-    ShowHint = True
-    TabOrder = 1
-    object SelectUnitsButton: TToolButton
-      Left = 0
-      Top = 0
-      Action = SelectUnitsAction
+    Height = 31
+    Align = alTop
+    TabOrder = 2
+    object cbEnableModelUpdate: TCheckBox
+      AlignWithMargins = True
+      Left = 222
+      Top = 4
+      Width = 120
+      Height = 23
+      Hint = 'Update InstantObject Model every seconds'
+      Margins.Left = 10
+      Align = alRight
+      Caption = 'Update every secs:'
+      TabOrder = 0
+      OnClick = cbEnableModelUpdateClick
     end
-    object BuildDatabaseButton: TToolButton
-      Left = 23
-      Top = 0
-      Action = BuildDatabaseAction
+    object ToolBar: TToolBar
+      Left = 1
+      Top = 1
+      Width = 211
+      Height = 29
+      Align = alClient
+      BorderWidth = 1
+      ButtonHeight = 23
+      Images = ActionImages
+      ParentShowHint = False
+      ShowHint = True
+      TabOrder = 1
+      object SelectUnitsButton: TToolButton
+        Left = 0
+        Top = 0
+        Action = SelectUnitsAction
+      end
+      object BuildDatabaseButton: TToolButton
+        Left = 23
+        Top = 0
+        Action = BuildDatabaseAction
+      end
+      object ToolSep1: TToolButton
+        Left = 46
+        Top = 0
+        Width = 8
+        Caption = 'ToolSep1'
+        ImageIndex = 4
+        Style = tbsSeparator
+      end
+      object ViewButton: TToolButton
+        Left = 54
+        Top = 0
+        Action = ViewRelationsAction
+      end
+      object ToolSep2: TToolButton
+        Left = 77
+        Top = 0
+        Width = 8
+        Caption = 'ToolSep2'
+        ImageIndex = 4
+        Style = tbsSeparator
+      end
+      object ViewAttributeButton: TToolButton
+        Left = 85
+        Top = 0
+        Action = ViewAttributesAction
+        ImageIndex = 12
+      end
     end
-    object ToolSep1: TToolButton
-      Left = 46
-      Top = 0
-      Width = 8
-      Caption = 'ToolSep1'
-      ImageIndex = 4
-      Style = tbsSeparator
-    end
-    object ViewButton: TToolButton
-      Left = 54
-      Top = 0
-      Action = ViewRelationsAction
-    end
-    object ToolSep2: TToolButton
-      Left = 77
-      Top = 0
-      Width = 8
-      Caption = 'ToolSep2'
-      ImageIndex = 4
-      Style = tbsSeparator
-    end
-    object ViewAttributeButton: TToolButton
-      Left = 85
-      Top = 0
-      Action = ViewAttributesAction
-      ImageIndex = 12
+    object edInterval: TSpinEdit
+      AlignWithMargins = True
+      Left = 348
+      Top = 4
+      Width = 42
+      Height = 24
+      Hint = 'Update InstantObject Model every seconds'
+      Align = alRight
+      MaxValue = 100
+      MinValue = 1
+      TabOrder = 2
+      Value = 10
+      OnChange = edIntervalChange
     end
   end
   object AttributePanel: TPanel
@@ -100,7 +137,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     Align = alBottom
     BevelOuter = bvNone
     Constraints.MinHeight = 45
-    TabOrder = 2
+    TabOrder = 1
     Visible = False
     object AttributeCaptionPanel: TPanel
       Left = 0
@@ -113,8 +150,8 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       object AttributeCaptionLabel: TLabel
         Left = 12
         Top = 6
-        Width = 55
-        Height = 11
+        Width = 82
+        Height = 15
         Caption = 'Class Attributes'
       end
     end
@@ -132,31 +169,23 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       ParentFont = False
       TabOrder = 1
       ExplicitTop = 25
-      ExplicitWidth = 394
       ExplicitHeight = 218
       inherited AttributesSplitter: TSplitter
         Top = 114
-        Width = 394
-        ExplicitTop = 114
-        ExplicitWidth = 410
+        Width = 410
       end
       inherited InheritedAttributesPanel: TPanel
         Top = 118
         Width = 394
-        ExplicitTop = 118
-        ExplicitWidth = 394
         inherited InheritedAttributesLabel: TLabel
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 388
-          ExplicitLeft = 3
-          ExplicitTop = 3
-          ExplicitWidth = 410
+          Width = 410
         end
         inherited InheritedAttributesView: TListView
           Top = 22
-          Width = 394
+          Width = 398
           Height = 78
           ExplicitTop = 22
           ExplicitWidth = 394
@@ -166,24 +195,16 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       inherited IntroducedAttributesPanel: TPanel
         Width = 394
         Height = 114
-        ExplicitWidth = 394
-        ExplicitHeight = 114
         inherited IntroducedAttributesLabel: TLabel
           AlignWithMargins = True
           Left = 3
           Top = 3
-          Width = 388
-          ExplicitLeft = 3
-          ExplicitTop = 3
-          ExplicitWidth = 410
+          Width = 410
         end
         inherited IntroducedAttributesView: TListView
           Top = 22
           Width = 394
           Height = 92
-          ExplicitTop = 22
-          ExplicitWidth = 394
-          ExplicitHeight = 92
         end
       end
       inherited Actions: TActionList

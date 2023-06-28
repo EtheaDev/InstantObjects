@@ -30,6 +30,9 @@
         <Projects Include="..\..\Brokers\FireDAC\D10_4\IOFireDAC.dproj">
             <Dependencies/>
         </Projects>
+        <Projects Include="..\..\Brokers\JSON\D10_4\IOJSON.dproj">
+            <Dependencies/>
+        </Projects>
     </ItemGroup>
     <ProjectExtensions>
         <Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -119,14 +122,23 @@
     <Target Name="IOFireDAC:Make">
         <MSBuild Projects="..\..\Brokers\FireDAC\D10_4\IOFireDAC.dproj" Targets="Make"/>
     </Target>
+    <Target Name="IOJSON">
+        <MSBuild Projects="..\..\Brokers\JSON\D10_4\IOJSON.dproj"/>
+    </Target>
+    <Target Name="IOJSON:Clean">
+        <MSBuild Projects="..\..\Brokers\JSON\D10_4\IOJSON.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IOJSON:Make">
+        <MSBuild Projects="..\..\Brokers\JSON\D10_4\IOJSON.dproj" Targets="Make"/>
+    </Target>
     <Target Name="Build">
-        <CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IODBX;IOIBX;IOXML;IOFireDAC"/>
+        <CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IODBX;IOIBX;IOXML;IOFireDAC;IOJSON"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean;IOFireDAC:Clean"/>
+        <CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean;IOFireDAC:Clean;IOJSON:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IODBX:Make;IOIBX:Make;IOXML:Make;IOFireDAC:Make"/>
+        <CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IODBX:Make;IOIBX:Make;IOXML:Make;IOFireDAC:Make;IOJSON:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>
