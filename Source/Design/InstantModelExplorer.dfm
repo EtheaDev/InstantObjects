@@ -121,7 +121,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       Width = 42
       Height = 24
       Hint = 'Update InstantObject Model every seconds'
-      Align = alRight
       MaxValue = 100
       MinValue = 1
       TabOrder = 2

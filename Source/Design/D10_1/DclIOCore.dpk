@@ -42,7 +42,8 @@ requires
   rtl,
   vcl,
   dbrtl,
-  IOCore;
+  IOCore,
+  VclSmp;
 
 contains
   InstantWizard in '..\InstantWizard.pas',

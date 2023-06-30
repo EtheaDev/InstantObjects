@@ -1,5 +1,6 @@
 package IOCore;
 
+{$I '..\..\InstantDefines.inc'}
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
@@ -9,21 +10,21 @@ package IOCore;
 {$EXTENDEDSYNTAX ON}
 {$IMPORTEDDATA ON}
 {$IOCHECKS ON}
-{$LOCALSYMBOLS ON}
+{$LOCALSYMBOLS OFF}
 {$LONGSTRINGS ON}
 {$OPENSTRINGS ON}
-{$OPTIMIZATION OFF}
+{$OPTIMIZATION ON}
 {$OVERFLOWCHECKS OFF}
 {$RANGECHECKS OFF}
-{$REFERENCEINFO ON}
+{$REFERENCEINFO OFF}
 {$SAFEDIVIDE OFF}
-{$STACKFRAMES ON}
+{$STACKFRAMES OFF}
 {$TYPEDADDRESS ON}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE DEBUG}
+{$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'InstantObjects Run-Time Package (Delphi 10.3 Rio)'}
 {$LIBSUFFIX '_D26'}
@@ -31,11 +32,17 @@ package IOCore;
 {$IMPLICITBUILD OFF}
 
 requires
+  {$IFDEF DELPHI_NEON}
+  Neon,
+  {$ENDIF}
+  rtl,
   vcl,
-  vcldb,
-  rtl;
+  vcldb;
 
 contains
+  {$IFDEF DELPHI_NEON}
+  Instant.Neon.Serializers in '..\Instant.Neon.Serializers.pas',
+  {$ENDIF}
   InstantUtils in '..\InstantUtils.pas',
   InstantClasses in '..\InstantClasses.pas',
   InstantConsts in '..\InstantConsts.pas',

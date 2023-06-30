@@ -1543,14 +1543,16 @@ procedure TInstantSQLBroker.UpdateProviderFlags(ADataSet: TDataSet;
 var
   LAttributeMetadata: TInstantAttributeMetadata;
   LField: TField;
+  I: Integer;
 begin
   if not AutoGenerateStdFields then
   begin
     //Update ProviderFlags for PK Fields
-    if Assigned(AMap) then
+    if AMap <> nil then
     begin
-      for LAttributeMetadata in AMap do
+      for I := 0 to AMap.Count -1 do
       begin
+        LAttributeMetadata := AMap.Items[I];
         if IsPrimarykeyAttribute(LAttributeMetadata) then
         begin
           LField := ADataSet.FindField(LAttributeMetadata.FieldName);

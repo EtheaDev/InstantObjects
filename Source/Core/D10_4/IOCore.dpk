@@ -1,5 +1,6 @@
 package IOCore;
 
+{$I '..\..\InstantDefines.inc'}
 {$R *.res}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
@@ -31,12 +32,17 @@ package IOCore;
 {$IMPLICITBUILD OFF}
 
 requires
-  vcl,
-  vcldb,
+  {$IFDEF DELPHI_NEON}
+  Neon,
+  {$ENDIF}
   rtl,
-  Neon;
+  vcl,
+  vcldb;
 
 contains
+  {$IFDEF DELPHI_NEON}
+  Instant.Neon.Serializers in '..\Instant.Neon.Serializers.pas',
+  {$ENDIF}
   InstantUtils in '..\InstantUtils.pas',
   InstantClasses in '..\InstantClasses.pas',
   InstantConsts in '..\InstantConsts.pas',
@@ -63,7 +69,6 @@ contains
   InstantMetadata in '..\InstantMetadata.pas',
   InstantStandardValidators in '..\InstantStandardValidators.pas',
   InstantValidation in '..\InstantValidation.pas',
-  InstantRttiAttributes in '..\InstantRttiAttributes.pas',
-  Instant.Neon.Serializers in '..\Instant.Neon.Serializers.pas';
+  InstantRttiAttributes in '..\InstantRttiAttributes.pas';
 
 end.
