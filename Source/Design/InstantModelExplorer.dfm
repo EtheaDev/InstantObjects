@@ -53,13 +53,14 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     TabOrder = 2
     object cbEnableModelUpdate: TCheckBox
       AlignWithMargins = True
-      Left = 222
+      Left = 213
       Top = 4
       Width = 120
       Height = 23
       Hint = 'Update InstantObject Model every seconds'
-      Margins.Left = 10
+      Margins.Right = 60
       Align = alRight
+      Alignment = taLeftJustify
       Caption = 'Update every secs:'
       TabOrder = 0
       OnClick = cbEnableModelUpdateClick
@@ -67,7 +68,7 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     object ToolBar: TToolBar
       Left = 1
       Top = 1
-      Width = 211
+      Width = 209
       Height = 29
       Align = alClient
       BorderWidth = 1
@@ -116,9 +117,9 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     end
     object edInterval: TSpinEdit
       AlignWithMargins = True
-      Left = 348
-      Top = 4
-      Width = 42
+      Left = 338
+      Top = 3
+      Width = 40
       Height = 24
       Hint = 'Update InstantObject Model every seconds'
       MaxValue = 100
