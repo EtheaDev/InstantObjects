@@ -30,11 +30,7 @@
 
 unit InstantIBX;
 
-{$IFDEF LINUX}
-{$I '../../InstantDefines.inc'}
-{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -460,7 +456,7 @@ begin
   except
     on E: Exception do
     begin
-      {$IFDEF DEBUG}
+      {$IF DEFINED(DEBUG) OR DEFINED(IO_CONSOLE)}
       raise EInstantError.CreateFmt(SSQLExecuteError,
         [AStatement, GetParamsStr(AParams), E.Message], E);
       {$ELSE}

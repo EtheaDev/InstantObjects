@@ -925,6 +925,7 @@ begin
   try
     Query.Connection := Connector.Connection;
     Query.SQL.Text := AStatement;
+    Query.FetchOptions.Unidirectional := True;
     if assigned(AParams) then
       AssignDatasetParams(Query, AParams, OnAssignParamValue);
     Result := Query;

@@ -1,10 +1,10 @@
-# **InstantObjects 3.1 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+# **InstantObjects 4.0 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from 2010 to 11 Alexandria version)
 
-![Delphi10.4Sydney Support](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi.jpg)
+![Support Delphi](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi.jpg)
 
 Related links: https://www.embarcadero.com/ - https://learndelphi.org/
 
@@ -48,6 +48,19 @@ InstantObjects contains over 400 Tests written for DUnitX framework. From 3.0 ve
 
 VERSION HISTORY
 ---------------
+Version 4.1 (4.1.0.0) (2023-10-22)
+- Added support for Delphi 12
+- Renamed packages (for Delphi 11 and Delphi 12)
+- Support for older Delphi Versions before Delphi 11 discontinued
+- Use Unidirectional cursors for optimize performances
+
+Version 4.0 (4.0.0.0) (2023-07-20)
+
+- Completed support for etherogeneus Databases (using IsDescription, IsPrimaryKey, ForeignKeys)
+- Refactoring Packages names:
+  - **RunTime**: (IOCore_4, IOIBFbCatalog_4, IOMSSqlCatalog_4, IOMySQLCatalog_4, IOADO_4, IODBX_4, IOIBX_4, IOXML_4, IOFireDAC_4, IOJSON_4)
+  - **DesignTime**: (dclIOCore_4, dclIOIBFbCatalog_4, dcldclIOMSSqlCatalog_4, dclIOMySQLCatalog_4, dclIOADO_4, dclIODBX_4, dclIOIBX_4, dclIOXML_4, dclIOFireDAC_4, dclIOJSON_4)
+
 Version 3.1 (3.1.0.0) (2023-06-26)
 
 - Added support for JSON Serialization via delphi-neon, requires: [github.com/paolo-rossi/delphi-neon](https://github.com/paolo-rossi/delphi-neon))

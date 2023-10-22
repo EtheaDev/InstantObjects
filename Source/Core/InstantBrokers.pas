@@ -628,14 +628,10 @@ type
   private
     FAttributeOwner: TInstantObject;
     FTableName: string;
-    //FParentObjectClassFieldName: string;
-    //FParentObjectIdFieldName: string;
     FMasterReferenceFieldNames: TArray<String>;
     function GetBroker: TInstantSQLBroker;
     function GetResolver: TInstantSQLResolver;
     property TableName: string read FTableName;
-    //property ParentObjectClassFieldName: string read FParentObjectClassFieldName;
-    //property ParentObjectIdFieldName: string read FParentObjectIdFieldName;
   protected
     procedure InternalStoreAttributeObjects(Attribute: TInstantContainer);
       override;
@@ -1605,8 +1601,8 @@ begin
         if AttributeMetadata.Size <> 0 then
           LParam.Size := AttributeMetadata.Size;
 
-        if LIdValues[I] <> '' then
-          LParam.Value := ConvertStr(LIdValues[I])
+        if LIdValues[Result] <> '' then
+          LParam.Value := ConvertStr(LIdValues[Result])
         else
           LParam.Value := '';
         Inc(Result);
@@ -5204,8 +5200,6 @@ var
   I: Integer;
   AttributeMetadata: TInstantAttributeMetadata;
   FieldName, RefClassFieldName, RefIdFieldName: string;
-//  LFieldNames: TArray<String>;
-//  LFieldName: string;
 begin
   if not Assigned(StringFunc) then
     StringFunc := EmbraceField;
@@ -6726,6 +6720,17 @@ var
   I: Integer;
   LField: TField;
   LForeignKeyValue: string;
+
+  function GetKeyFieldStrValue(AField: TField): string;
+  begin
+    if AField.DataType in [ftDateTime,ftTimeStamp,ftDate] then
+      Result := InstantDateToStr(AField.AsDateTime)
+    else if AField.DataType in [ftTime, ftTimeStampOffset] then
+      Result := InstantTimeToStr(AField.AsDateTime)
+    else
+      Result := TrimRight(AField.AsString);
+  end;
+
 begin
   Assert(Assigned(Connector));
 
@@ -6766,7 +6771,7 @@ begin
             for I := 0 to LKeyFields.Count -1 do
             begin
               LField := LKeyFields[I];
-              LForeignKeyValue := TrimRight(LField.AsString);
+              LForeignKeyValue := GetKeyFieldStrValue(LField);
               if LIdFieldValue <> '' then
                 LIdFieldValue := LIdFieldValue + InstantPkSeparator + LForeignKeyValue
               else
