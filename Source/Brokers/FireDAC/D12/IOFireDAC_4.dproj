@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{9F792E68-65D5-44CD-ADE9-52B4F1D0978D}</ProjectGuid>
         <MainSource>IOFireDAC_4.dpk</MainSource>
