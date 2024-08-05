@@ -12,9 +12,7 @@ implementation
 
 uses
   Forms, Dialogs, Controls,
-{$IFDEF D17+}
   System.UITypes,
-{$ENDIF}
   SysUtils;
 
 var

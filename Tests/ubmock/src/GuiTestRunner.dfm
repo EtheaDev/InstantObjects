@@ -1,16 +1,14 @@
 object GUITestRunner: TGUITestRunner
   Left = 574
   Top = 125
-  Caption = 'FPCUnit - Unit test runner'
+  Caption = 'Unit test runner'
   ClientHeight = 625
   ClientWidth = 502
   Color = clBtnFace
   ParentFont = True
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
-  TextHeight = 13
+  TextHeight = 15
   object Splitter1: TSplitter
     Left = 0
     Top = 555
@@ -20,7 +18,6 @@ object GUITestRunner: TGUITestRunner
     Align = alTop
     Beveled = True
     ResizeStyle = rsUpdate
-    ExplicitWidth = 510
   end
   object pbBar: TPaintBox
     Left = 0
@@ -29,7 +26,6 @@ object GUITestRunner: TGUITestRunner
     Height = 33
     Align = alTop
     OnPaint = pbBarPaint
-    ExplicitWidth = 510
   end
   object pnlToolbar: TPanel
     Left = 0

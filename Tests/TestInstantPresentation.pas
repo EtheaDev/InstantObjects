@@ -30,7 +30,7 @@
 
 unit TestInstantPresentation;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -43,7 +43,7 @@ uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} Ins
 type
 
   // Test methods for class TInstantExposer
-  TestTInstantExposer = class(TInstantTestCase)
+  TestTInstantExposer = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantExposer: TInstantExposer;
@@ -60,9 +60,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, testregistry, InstantPersistence;
 
 { TestTInstantExposer }

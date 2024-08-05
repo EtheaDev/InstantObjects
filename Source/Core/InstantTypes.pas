@@ -32,28 +32,50 @@
 
 unit InstantTypes;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
-{$IFDEF D12+}
 uses
-  Sysutils; // TBytes
-{$ENDIF}
+  Sysutils, DB; // TBytes
+
+const
+  {$IF DEFINED(WINLINUX64) OR DEFINED(USE_LARGEINT_FIELD_FOR_REF)}
+  IORefFieldType = ftLargeInt;
+  {$ELSE}
+  IORefFieldType = ftInteger;
+  {$IFEND}
 
 type
+  TIORefValueType = {$IFDEF WINLINUX64}NativeInt{$ELSE}Integer{$ENDIF};
+
   TInstantSQLEngine = (seGenericSQL, seMSSQL, seOracle, seFirebird, seInterbase,
     seMySQL, sePostgres, seSQLLite, seSybase);
 
-  {$IFNDEF D6+}
-  IInterface = interface (IUnknown)
-  end;
-  {$ENDIF}
-
   TInstantStorageKind = (skEmbedded, skExternal, skVirtual, skForeignKeys);
-  TInstantAttributeType = (atUnknown, atInteger, atFloat, atCurrency, atBoolean,
-    atString, atDateTime, atBlob, atMemo, atGraphic,
-    atPart, atReference, atParts, atReferences, atDate, atTime, atEnum);
+  TInstantAttributeType = (
+    atUnknown,
+    atInteger,
+    atFloat,
+    atCurrency,
+    atBoolean,
+    atString,
+    atDateTime,
+    atBlob,
+    atMemo,
+    atGraphic,
+    atPart,
+    atReference,
+    atParts,
+    atReferences,
+    atDate,
+    atTime,
+    atEnum
+    );
   TInstantAttributeCategory = (acUnknown, acSimple, acElement, acContainer);
 
   TInstantGraphicFileFormat = (gffUnknown, gffBmp, gffTiff, gffJpeg, gffPng,
@@ -91,11 +113,7 @@ type
     const AWarningText: string) of object;
 
 
-  {$IFDEF D12+}
   TInstantBytes = TBytes;
-  {$ELSE}
-  TInstantBytes = array of Byte;
-  {$ENDIF}
 
   // Defines the way data is loaded by an InstantSelector or InstantQuery when
   // working with a SQL broker. See documentation for implication of using the
@@ -113,12 +131,12 @@ type
     lmFullBurst
   );
 
-function IsBurstLoadMode(const ALoadMode: TInstantLoadMode): Boolean; {$IFDEF D10+}inline;{$ENDIF}
+function IsBurstLoadMode(const ALoadMode: TInstantLoadMode): Boolean; inline;
 function GetTableNoLockDirective(AEngine: TInstantSQLEngine): string;
 
 implementation
 
-function IsBurstLoadMode(const ALoadMode: TInstantLoadMode): Boolean; {$IFDEF D10+}inline;{$ENDIF}
+function IsBurstLoadMode(const ALoadMode: TInstantLoadMode): Boolean; inline;
 begin
   Result := ALoadMode in [lmPartialBurst, lmFullBurst];
 end;

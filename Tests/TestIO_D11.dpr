@@ -2,21 +2,18 @@ program TestIO_D11;
 
 {$I '..\Source\InstantDefines.inc'}
 
-{$IFNDEF TESTINSIGHT}
-{$APPTYPE CONSOLE}
-{$ENDIF}
-{$STRONGLINKTYPES ON}
 
 uses
-  SysUtils,
-  {$IFDEF TESTINSIGHT}
-  TestInsight.DUnitX,
-  {$ELSE}
-  DUnitX.Loggers.Console,
-  DUnitX.Loggers.Xml.NUnit,
-  {$ENDIF }
-  DUnitX.TestFramework,
+  Forms,
+  guitestrunner,
+  fpcunit,
+  testregistry,
+  testutils,
+  testreport,
+  MinimalModel in 'MinimalModel.pas',
   TestModel in 'TestModel.pas',
+  TestFullModel in 'TestFullModel.pas',
+  InstantPersistence,
   InstantMock in 'InstantMock.pas',
   TestMockConnector in 'TestMockConnector.pas',
   TestMockBroker in 'TestMockBroker.pas',
@@ -29,8 +26,6 @@ uses
   TestInstantScheme in 'TestInstantScheme.pas',
   TestInstantClasses in 'TestInstantClasses.pas',
   TestInstantRtti in 'TestInstantRtti.pas',
-  MinimalModel in 'MinimalModel.pas',
-  TestFullModel in 'TestFullModel.pas',
   TestInstantAttributeMap in 'TestInstantAttributeMap.pas',
   TestInstantAttribute in 'TestInstantAttribute.pas',
   TestInstantNumeric in 'TestInstantNumeric.pas',
@@ -56,56 +51,21 @@ uses
   TestInstantObjectReference in 'TestInstantObjectReference.pas',
   TestXMLBroker in 'TestXMLBroker.pas',
   TestInstantCode in 'TestInstantCode.pas',
-  TestInstantExposer in 'TestInstantExposer.pas',
-  InstantPersistence;
+  TestInstantSelector in 'TestInstantSelector.pas',
+  TestInstantExposer in 'TestInstantExposer.pas';
 
 {$R *.res}
 {$R *.mdr} {TestModel}
 
-{$IFNDEF TESTINSIGHT}
-var
-  runner : ITestRunner;
-  results : IRunResults;
-  logger : ITestLogger;
-  nunitLogger : ITestLogger;
-{$ENDIF}
 begin
-{$IFDEF TESTINSIGHT}
-  TestInsight.DUnitX.RunRegisteredTests;
-{$ELSE}
-  try
-    //Check command line options, will exit if invalid
-    TDUnitX.CheckCommandLine;
-    //Create the test runner
-    runner := TDUnitX.CreateRunner;
-    //Tell the runner to use RTTI to find Fixtures
-    runner.UseRTTI := True;
-    //tell the runner how we will log things
-    //Log to the console window
-    logger := TDUnitXConsoleLogger.Create(true);
-    runner.AddLogger(logger);
-    //Generate an NUnit compatible XML File
-    nunitLogger := TDUnitXXMLNUnitFileLogger.Create(TDUnitX.Options.XMLOutputFile);
-    runner.AddLogger(nunitLogger);
-    runner.FailsOnNoAsserts := False; //When true, Assertions must be made during tests;
-
-    //Run tests
-    results := runner.Execute;
-    if not results.AllPassed then
-      System.ExitCode := EXIT_ERRORS;
-
-    {$IFNDEF CI}
-    //We don't want this happening when running under CI.
-    if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
-    begin
-      System.Write('Done.. press <Enter> key to quit.');
-      System.Readln;
-    end;
-    {$ENDIF}
-  except
-    on E: Exception do
-      System.Writeln(E.ClassName, ': ', E.Message);
-  end;
-{$ENDIF}
+  Application.Initialize;
+  {$IFDEF WIN64}
+    Application.Title := 'InstantObjects Test Delphi 11 (64 bit)';
+  {$ELSE}
+    Application.Title := 'InstantObjects Test Delphi 11 (32 bit)';
+  {$ENDIF}
+  InstantModel.ClassMetadatas.Clear;
+  Application.CreateForm(TGUITestRunner, TestRunner);
+  Application.Run;
 end.
 

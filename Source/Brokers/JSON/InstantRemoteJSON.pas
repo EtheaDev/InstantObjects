@@ -26,7 +26,11 @@
  * ***** END LICENSE BLOCK ***** *)
 unit InstantRemoteJSON;
 
+{$IFDEF LINUX64}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 {$WARN SYMBOL_PLATFORM OFF}
 

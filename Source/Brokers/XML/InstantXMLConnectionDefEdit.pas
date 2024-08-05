@@ -27,11 +27,13 @@
 
 unit InstantXMLConnectionDefEdit;
 
+{$IFDEF LINUX64}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
-
-{$IFDEF D6+}
-{$WARN UNIT_PLATFORM OFF}
 {$ENDIF}
+
+{$WARN UNIT_PLATFORM OFF}
 
 interface
 

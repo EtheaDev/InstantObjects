@@ -32,7 +32,11 @@
 
 unit InstantMetadata;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -69,12 +73,11 @@ type
   TInstantMetadata = class(TInstantCollectionItem)
   private
     function GetCollection: TInstantMetadatas;
-    procedure SetCollection(Value: TInstantMetadatas);
-      {$IFDEF D6+}reintroduce; {$ENDIF}
+    procedure SetCollection(Value: TInstantMetadatas); reintroduce;
   protected
     function InternalEquals(const Other: TInstantMetadata): Boolean; virtual;
   public
-    function Equals(const Other: TInstantMetadata): Boolean; {$IFDEF D12+} reintroduce; {$ENDIF} overload;
+    function Equals(const Other: TInstantMetadata): Boolean; reintroduce; overload;
     property Collection: TInstantMetadatas read GetCollection
       write SetCollection;
   end;
@@ -596,9 +599,7 @@ implementation
 
 uses
   SysUtils, TypInfo, InstantPersistence, InstantUtils, InstantValidation,
-{$IFDEF D17+}
   System.Types,
-{$ENDIF}
   InstantStandardValidators {registers the standard validators - do not remove};
 
 const

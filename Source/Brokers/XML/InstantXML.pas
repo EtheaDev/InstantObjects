@@ -28,7 +28,11 @@
 
 unit InstantXML;
 
+{$IFDEF LINUX64}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 {$WARN SYMBOL_PLATFORM OFF}
 
@@ -1027,7 +1031,7 @@ procedure TInstantXMLQuery.CreateIQLCommand;
 var
   LReader: TInstantIQLReader;
 begin
-  LReader := TInstantIQLReader.Create(TStringStream.Create(Command{$IFDEF D12+}, TEncoding.Unicode{$ENDIF}), True);
+  LReader := TInstantIQLReader.Create(TStringStream.Create(Command, TEncoding.Unicode), True);
   try
     LReader.ReadObject(FIQLCommand);
   finally
@@ -1177,8 +1181,37 @@ function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
   const AObject: TInstantObject; const AFileName: string): Boolean;
 var
   strstream: TStringStream;
-  fileStream: TFileStream;
-  DataStr: UTF8String;
+  lPacketTableFile: boolean;
+  DataStr: string;
+
+  //Personalizzazione FinWave: ritorna la stringa S senza il carattere specificato in Ch
+   function KillChar( const S : string; Ch : Char ) : string;
+  var
+    I, Count: integer;
+  begin
+    SetLength( Result, Length(S) ); // imposta la lunghezza per prevenire la riallocazione
+    Count := 0; // numero di caratteri copiati nella stringa risultato
+    for I := 1 to Length(S) do
+    begin
+      if S[I] <> Ch then // il carattere non è fra quelli da eliminare
+      begin
+        // aggiunge il carattere alla stringa risultato
+        Inc(Count);
+        Result[Count] := S[I];
+      end;
+    end;
+    SetLength( Result, Count ); // imposta la lunghezza della stringa con i caratteri effettivamente copiati
+  end;
+
+  function ACapo(const Text, Keyword: string; Before, After: Boolean): string;
+  begin
+    Result := Text;
+    if Before then
+      Result := StringReplace(Result,KeyWord,sLineBreak+KeyWord,[rfReplaceAll]);
+    if After then
+      Result := StringReplace(Result,KeyWord,KeyWord+sLineBreak,[rfReplaceAll]);
+  end;
+
 begin
   if Assigned(FOnCustomSaveToXMLFile) then
     Result := FOnCustomSaveToXMLFile(AObject, AFileName)
@@ -1187,20 +1220,33 @@ begin
     strstream := TStringStream.Create('', TEncoding.UTF8);
     try
       InstantWriteObject(strStream, sfXML, AObject);
-      DataStr := XML_UTF8_HEADER + UTF8String(GetXMLLineBreak) + UTF8String(strStream.DataString);
+      //Personalizzazione FinWave: ristruttura file XML prima di salvarlo per il Dizionario Dati
+      lPacketTableFile := pos('TDictTable.',AFileName) > 0;
+      if lPacketTableFile then
+      begin
+        // manda a capo il file xml solo alcuni TAG
+        DataStr := strstream.DataString;
+        DataStr := ACapo(DataStr, '<TDictTable>',False,True);
+        DataStr := ACapo(DataStr, '</TDictTable>',True,True);
+        DataStr := ACapo(DataStr, '<DictFields>',True,True);
+        DataStr := ACapo(DataStr, '</TDictField>',False,True);
+        DataStr := ACapo(DataStr, '<DictIndexes>',True,True);
+        DataStr := ACapo(DataStr, '</TDictIndex>',False,True);
+        DataStr := ACapo(DataStr, '<DictRelations>',True,True);
+        DataStr := ACapo(DataStr, '</TDictRelation>',False,True);
+        DataStr := ACapo(DataStr, '<DictTriggers>',True,True);
+        DataStr := ACapo(DataStr, '</TDictTrigger>',False,True);
+        strstream.Free;
+        strstream := TStringStream.Create(DataStr, TEncoding.UTF8);
+      end;
+      strstream.SaveToFile(AFileName);
+      Result := True;
     finally
       strStream.Free;
-    end;
-    fileStream := TFileStream.Create(AFileName, fmCreate);
-    try
-      Result := fileStream.Write(DataStr[1], Length(DataStr)) <> 0;
-    finally
-      fileStream.Free;
     end;
   end;
 end;
 
-{$IFDEF UNICODE}
 function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
   const AObject: TInstantObject; const AObjectId, AFileName: string): Boolean;
 var
@@ -1228,43 +1274,6 @@ begin
     end;
   end;
 end;
-{$ELSE}
-function TXMLFilesAccessor.LoadInstantObjectFromXmlFile(
-  const AObject: TInstantObject; const AObjectId, AFileName: string): Boolean;
-var
-  fileStream: TFileStream;
-  strUtf8: string;
-  strstream: TStringStream;
-begin
-  if Assigned(FOnCustomLoadXMLFile) then
-    Result := FOnCustomLoadXMLFile(AObject, AObjectId, AFileName);
-
-  if not Result then
-  
-  begin
-    fileStream := TFileStream.Create(AFileName, fmShareDenyWrite);
-    try
-      SetLength(strUtf8, fileStream.Size);
-      Result := fileStream.Read(strUtf8[1], fileStream.Size) <> 0;
-    finally
-      fileStream.Free;
-    end;
-    {$IFDEF D6+}
-    if FXMLFileFormat = xffUtf8 then
-      strUtf8 := Utf8ToAnsi(strUtf8);
-    {$ENDIF}
-
-    strstream := TStringStream.Create(strUtf8);
-    try try
-      InstantReadObject(strstream, sfXML, AObject);
-    except
-      on E: Exception do raise EInOutError.CreateFmt(SErrorLoadingFile, [AFileName, E.Message]); end;
-    finally
-      strstream.Free;
-    end;
-  end;
-end;
-{$ENDIF}
 
 function TXMLFilesAccessor.LocateInstantObjectXmlFile(const AObjectClassName,
   AObjectId, AFileName: string): Boolean;

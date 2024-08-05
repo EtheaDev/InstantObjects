@@ -3,11 +3,7 @@ unit guitestrunner;
 interface
 
 uses
-{$IFDEF FPC}
-{$mode objfpc}
-{$ELSE}
   Windows, Messages,
-{$ENDIF}
   SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs,
   testreport, fpcunit, testregistry,
@@ -64,19 +60,11 @@ var
 
 implementation
 
-{$IFDEF FPC}
-{$R *.lfm}
-{$ELSE}
 {$R *.dfm}
-{$ENDIF}
 
 function GetSubNode(ANode: TTreeNode; Index: integer): TTreeNode;
 begin
-{$IFDEF FPC}
-  Result := aNode.Items[Index];
-{$ELSE}
   Result := aNode.Item[Index];
-{$ENDIF}
 end;
 
 { TFGuiTestRunner }
@@ -189,6 +177,7 @@ end;
 
 procedure TGUITestRunner.FormCreate(Sender: TObject);
 begin
+  Caption := Application.Title;
   barColor := clGray;
   TestTree.Items.Clear;
   BuildTree(TestTree.Items.AddObject(nil, 'All Tests', GetTestRegistry), GetTestRegistry);

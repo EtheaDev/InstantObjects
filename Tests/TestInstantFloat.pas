@@ -30,7 +30,7 @@
 
 unit TestInstantFloat;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -46,7 +46,7 @@ type
 
   // Test methods for class TInstantFloat
   [TestFixture]
-  TestTInstantFloat = class(TInstantTestCase)
+  TestTInstantFloat = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantFloat: TInstantFloat;
@@ -71,9 +71,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses;
 
 procedure TestTInstantFloat.SetUp;
@@ -140,9 +138,9 @@ end;
 procedure TestTInstantFloat.TestAsString;
 begin
   FInstantFloat.AsString := '1' +
-    {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator + '3';
+    FormatSettings.DecimalSeparator + '3';
   AssertEquals(1.3, FInstantFloat.Value);
-  AssertEquals('1' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+  AssertEquals('1' + FormatSettings.DecimalSeparator +
     '3', FInstantFloat.AsString);
 end;
 
@@ -161,7 +159,7 @@ begin
   AssertEquals(1.3, FInstantFloat.Value);
 
   FInstantFloat.Metadata.DefaultValue := '15' +
-    {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator + '7';
+    FormatSettings.DecimalSeparator + '7';
   FInstantFloat.Reset;
   AssertEquals(15.7, FInstantFloat.Value);
 

@@ -39,7 +39,7 @@ type
 
   // Test methods for class TInstantReference
   [TestFixture]
-  TestTInstantReference = class(TInstantTestCase)
+  TestTInstantReference = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantReference: TInstantReference;

@@ -40,7 +40,7 @@ type
   // For leak testing, run these tests in conjunction 
   // with a memory leak test utility.
   [TestFixture]
-  TestCircularReferences = class(TInstantTestCase)
+  TestCircularReferences = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantReferences: TInstantReferences;

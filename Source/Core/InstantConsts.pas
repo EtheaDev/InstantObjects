@@ -30,7 +30,11 @@
 
 unit InstantConsts;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -81,7 +85,7 @@ const
   InstantLogStatementBefore = 'Before: ';
   InstantLogStatementSelect = 'Select: ';
   InstantLogStatementExecute = 'Execute: ';
-
+  InstantPrologue = '<?xml version="1.0" encoding="UTF-8"?>';
 var
   InstantXMLIndentationSize: Byte = 2;
   InstantJSONIndentationSize: Byte = 2;

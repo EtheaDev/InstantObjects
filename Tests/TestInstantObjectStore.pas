@@ -30,7 +30,7 @@
 
 unit TestInstantObjectStore;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantObjectStore
   [TestFixture]
-  TestTInstantObjectStore = class(TInstantTestCase)
+  TestTInstantObjectStore = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantObjectStore: TInstantObjectStore;
@@ -62,7 +62,7 @@ type
 
   // Test methods for class TInstantObjectStores
   [TestFixture]
-  TestTInstantObjectStores = class(TInstantTestCase)
+  TestTInstantObjectStores = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantObjectStores: TInstantObjectStores;
@@ -80,9 +80,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses, InstantMetadata, InstantTypes;
 
 procedure TestTInstantObjectStore.SetUp;

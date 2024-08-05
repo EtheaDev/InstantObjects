@@ -36,11 +36,7 @@ interface
 
 uses
   Classes,
-  {$IFDEF D6+}
-    DesignIntf, DesignEditors,
-  {$ELSE}
-    DsgnIntf,
-  {$ENDIF}
+  DesignIntf, DesignEditors,
   StrEdit, ColnEdit, InstantPresentation;
 
 type

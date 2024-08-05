@@ -30,13 +30,16 @@
 
 unit InstantTextFiler;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
 uses
-  Classes, InstantClasses
-  {$IFDEF D12+}, Character{$ENDIF};
+  Classes, InstantClasses, Character;
 
 type
   PInstantTextPos = ^TInstantTextPos;
@@ -301,31 +304,12 @@ end;
 
 function TInstantTextReader.IsIdentPrefix(Ch: Char): Boolean;
 begin
-{$IFDEF D18+}
   Result := Ch.IsLetter or  (Ch = '_');
-{$ELSE}
-  {$IFDEF D12+}
-    Result := TCharacter.IsLetter(Ch) or  (Ch = '_');
-  {$ELSE}
-    Result := Ch in ['A'..'Z','a'..'z','_'];
-  {$ENDIF}
-{$ENDIF}
 end;
 
 function TInstantTextReader.IsIdentChar(Ch: Char; AllowDots: boolean): Boolean;
 begin
-{$IFDEF D18+}
   Result := Ch.IsLetterOrDigit or (Ch = '_') or (AllowDots and (Ch = '.'));
-{$ELSE}
-  {$IFDEF D12+}
-     Result := TCharacter.IsLetterOrDigit(Ch) or (Ch = '_') or (AllowDots and (Ch = '.'));
-  {$ELSE}
-    if (AllowDots) then
-      Result := Ch in ['A'..'Z','a'..'z','_','.']
-    else
-      Result := Ch in ['A'..'Z','a'..'z','_'];
-  {$ENDIF}
-{$ENDIF}
 end;
 
 function TInstantTextReader.IsNumericPrefix(Ch: Char): Boolean;

@@ -39,7 +39,7 @@ type
 
   // Test methods for class TInstantMetadata
   [TestFixture]
-  TestTInstantMetadata = class(TInstantTestCase)
+  TestTInstantMetadata = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FInstantMetadata: TInstantMetadata;
   public
@@ -54,7 +54,7 @@ type
 
   // Test methods for class TInstantMetadatas
   [TestFixture]
-  TestTInstantMetadatas = class(TInstantTestCase)
+  TestTInstantMetadatas = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FInstantMetadatas: TInstantMetadatas;
   public

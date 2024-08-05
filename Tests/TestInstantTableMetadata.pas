@@ -30,7 +30,7 @@
 
 unit TestInstantTableMetadata;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantTableMetadata
   [TestFixture]
-  TestTInstantTableMetadata = class(TInstantTestCase)
+  TestTInstantTableMetadata = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FInstantTableMetadata: TInstantTableMetadata;
     FOwner: TInstantScheme;
@@ -64,7 +64,7 @@ type
 
   // Test methods for class TInstantTableMetadatas
   [TestFixture]
-  TestTInstantTableMetadatas = class(TInstantTestCase)
+  TestTInstantTableMetadatas = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FInstantTableMetadatas: TInstantTableMetadatas;
   public
@@ -80,9 +80,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils;
 
 { TestTInstantTableMetadata }

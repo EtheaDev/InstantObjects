@@ -30,7 +30,7 @@
 
 unit TestInstantClasses;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -64,7 +64,7 @@ type
 
   { TTestInstantClasses }
   [TestFixture]
-  TTestInstantClasses = class(TInstantTestCase)
+  TTestInstantClasses = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   published
     [Test]
     procedure TestInstantCollection;
@@ -168,10 +168,18 @@ begin
       iw.WriteFloat(3.14);
       iw.FlushBuffer;
       AssertEquals(11, ms.Position);
+      {$IFNDEF WIN64}
       AssertEquals('5', IntToStr(Ord(ms.DataString[1])));
       AssertEquals('195', IntToStr(Ord(ms.DataString[2])));
       AssertEquals('245', IntToStr(Ord(ms.DataString[3])));
       AssertEquals('40', IntToStr(Ord(ms.DataString[4])));
+      {$ELSE}
+      AssertEquals('5', IntToStr(Ord(ms.DataString[1])));
+      AssertEquals('0', IntToStr(Ord(ms.DataString[2])));
+      AssertEquals('248', IntToStr(Ord(ms.DataString[3])));
+      AssertEquals('40', IntToStr(Ord(ms.DataString[4])));
+      {$ENDIF}
+
     finally
       iw.Free;
     end;
@@ -407,7 +415,7 @@ begin
     c.ConvertToText(ic);
     ic.Producer.eof; //to flush the buffer
     AssertEquals('ConvertToText', '<Age>2</Age>' + LLineBreak + '<Weight>1' +
-      {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+      FormatSettings.DecimalSeparator +
       '123</Weight>' + LLineBreak + '<PigName>Miss piggy</PigName>' + LLineBreak, outs.DataString);
   finally
     ic.Free;
@@ -426,8 +434,9 @@ begin
 
     InstantObjectBinaryToText(ins, outs);
     AssertEquals('InstantObjectBinaryToText',
+      InstantPrologue + LLineBreak +
       '<TInstantGuineaPig>' + LLineBreak + LIndentation + '<Age>2</Age>' + LLineBreak + LIndentation +
-      '<Weight>1' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+      '<Weight>1' + FormatSettings.DecimalSeparator +
         '123</Weight>' + LLineBreak + LIndentation +
       '<PigName>Miss piggy</PigName>' + LLineBreak + '</TInstantGuineaPig>' + LLineBreak,
       outs.DataString);
@@ -458,11 +467,12 @@ begin
   c := TInstantGuineaPig.Create(nil);
   try
     InstantWriteObject(ms, sfXML, c);
-    AssertEquals(102 + (Length(LLineBreak) * 5) + (Length(LIndentation) * 3), ms.Position);
+    AssertEquals(Length(InstantPrologue) + 102 + (Length(LLineBreak) * 6) + (Length(LIndentation) * 3), ms.Position);
 
     AssertEquals('InstantWriteObject(sfXML)',
+      InstantPrologue + LLineBreak +
       '<TInstantGuineaPig>' + LLineBreak + LIndentation + '<Age>2</Age>' + LLineBreak + LIndentation +
-      '<Weight>1' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+      '<Weight>1' + FormatSettings.DecimalSeparator +
         '123</Weight>' + LLineBreak + LIndentation +
       '<PigName>Miss piggy</PigName>' + LLineBreak + '</TInstantGuineaPig>' + LLineBreak,
       ms.DataString);

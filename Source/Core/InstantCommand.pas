@@ -30,7 +30,7 @@
 
 unit InstantCommand;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../InstantDefines.inc'}
 {$ELSE}
 {$I '..\InstantDefines.inc'}
@@ -539,9 +539,7 @@ implementation
 
 uses
   StrUtils,
-{$IFDEF D17+}
   System.Types,
-{$ENDIF}
   InstantPersistence, InstantUtils, InstantConsts, InstantBrokers;
 
 const

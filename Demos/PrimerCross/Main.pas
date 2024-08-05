@@ -11,7 +11,7 @@ uses
   InstantPersistence, BasicView, Stopwatch,
   InstantConnectionManagerFormUnit, InstantConnectionManager,
   System.Actions, //if don't compile, remove this unit
-  WideStrings, SqlExpr;
+  WideStrings, SqlExpr, System.ImageList;
 
 type
   TMainForm = class(TForm)
@@ -130,20 +130,14 @@ uses
   installed all brokers, please remove the missing broker unit(s) from
   the list. }
 
-  {$IFNDEF VER130}
   InstantDBX,
-  {$ENDIF}
   InstantADO,
   //InstantIBX, remove comment if you want to use IbExpress
-  {$IFDEF D19+}
   InstantFireDAC,
-  {$ENDIF}
-  {$IFDEF D14+}
-    // These are required for DBExpress to load the drivers in newer
-    // versions of Delphi. If you get a compilation error it means you
-    // don't have an Enterprise version of Delphi - just remove them.
-    DBXFirebird, DBXInterBase, DBXDB2, DBXMSSql, DBXOracle,
-  {$ENDIF}
+  // These are required for DBExpress to load the drivers in newer
+  // versions of Delphi. If you get a compilation error it means you
+  // don't have an Enterprise version of Delphi - just remove them.
+  DBXFirebird, DBXInterBase, DBXDB2, DBXMSSql, DBXOracle,
   InstantXML, InstantJSON;
 
 {$R *.dfm}
@@ -496,7 +490,7 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  Caption := Application.Title;
+  Caption := StringReplace(Application.Title, sLineBreak, ' - ', [rfReplaceAll]);
 
   LoadMultipleImages(SideBarImages,'MAINSIDEBARIMAGES',HInstance);
   LoadMultipleImages(ActionImages,'MAINACTIONIMAGES',HInstance);

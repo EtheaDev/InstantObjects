@@ -29,15 +29,13 @@
 
 unit InstantXMLCatalog;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
 {$ENDIF}
 
-{$IFDEF D6+}
 {$WARN UNIT_PLATFORM OFF}
-{$ENDIF}
 
 interface
 

@@ -30,7 +30,7 @@
 
 unit TestXMLBroker;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -44,7 +44,7 @@ uses
 
 type
   [TestFixture]
-  TTestXMLBroker = class(TInstantTestCase)
+  TTestXMLBroker = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
   protected
     FConn: TInstantXMLConnector;
@@ -62,9 +62,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, ShellAPI, InstantPersistence, TestModel;
 
 { TTestXMLBroker }

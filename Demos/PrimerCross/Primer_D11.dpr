@@ -32,12 +32,11 @@
 
 program Primer_D11;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../Source/InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
 {$ENDIF}
-
 
 uses
   Forms,
@@ -75,7 +74,9 @@ uses
 
 begin
   Application.Initialize;
-  Application.Title := 'InstantObjects Primer Demo'+sLineBreak+'(Delphi 11 version)';
+  Application.Title := 'InstantObjects Primer Demo '+sLineBreak+
+    {$IFDEF WINLINUX64}'(64 Bit'{$ELSE}'(32 Bit'{$ENDIF}+
+    ' - Delphi 11 version)';
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TMainDataModule, MainDataModule);
   Application.Run;

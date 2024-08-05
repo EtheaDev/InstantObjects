@@ -39,7 +39,7 @@ type
 
   // Test methods for class TInstantBlob
   [TestFixture]
-  TestTInstantBlob = class(TInstantTestCase)
+  TestTInstantBlob = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantBlob: TInstantBlob;
@@ -148,13 +148,8 @@ end;
 procedure TestTInstantBlob.TestAsVariant;
 begin
   FInstantBlob.AsVariant := 'NewString';
-  {$IFDEF VER130}
-  AssertEquals('NewString', VarToStr(FInstantBlob.Value));
-  AssertEquals('NewString', VarToStr(FInstantBlob.AsVariant));
-  {$ELSE}
   AssertEquals('NewString', FInstantBlob.Value);
   AssertEquals('NewString', FInstantBlob.AsVariant);
-  {$ENDIF}
 end;
 
 procedure TestTInstantBlob.TestClear;

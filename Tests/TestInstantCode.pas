@@ -30,7 +30,7 @@
 
 unit TestInstantCode;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../InstantDefines.inc'}
 {$ELSE}
 {$I '..\InstantDefines.inc'}
@@ -44,7 +44,7 @@ uses
 
 type
   [TestFixture]
-  TTestInstantCodeModel = class(TInstantTestCase)
+  TTestInstantCodeModel = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   published
     [Test]
     {

@@ -10,11 +10,9 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0

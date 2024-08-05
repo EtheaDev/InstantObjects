@@ -30,7 +30,7 @@
 
 unit InstantValidation;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../InstantDefines.inc'}
 {$ELSE}
 {$I '..\InstantDefines.inc'}
@@ -92,9 +92,7 @@ implementation
 
 uses
   Classes,
-{$IFDEF D17+}
   System.Types,
-{$ENDIF}
  SysUtils;
 
 var

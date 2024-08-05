@@ -33,24 +33,17 @@ unit InstantPresentation;
 
 interface
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 uses
   Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantTypes,
   InstantMetadata, InstantUtils;
 
 type
-{$IFNDEF D12+}
-  // Replacement for type added in D2009+
-  TRecordBuffer = PChar;
-{$ENDIF}
-{$IFNDEF D18+}
-  TRecBuf = TRecordBuffer;
-{$ENDIF}
-{$IFNDEF D17+}
-  TValueBuffer = Pointer;
-{$ENDIF}
-
   TInstantAddClassFieldDefEvent = procedure (const FieldName : string; var BreakProcess : boolean) of object;
   TInstantChangeType = (ctAppearance, ctData);
   TInstantAccessMode = (amObject, amContent);
@@ -281,7 +274,8 @@ type
     procedure RevertChanges(AExposer: TInstantCustomExposer);
   end;
 
-  TInstantBookmark = record
+  PInstantBookmark = ^TInstantBookmark;
+  TInstantBookmark = packed record
     RecNo: Integer;
     Instance: TObject;
   end;
@@ -292,7 +286,7 @@ type
   TInstantCustomExposer = class(TDataSet)
   private
     FAccessor: TInstantAccessor;
-    FBookmarkOfs, FRecInfoOfs: Word;
+    FBookmarkOfs, FRecInfoOfs: Integer;
     FContainerName: string;
     FContentBuffer: TInstantContentBuffer;
     FContentChanged: Boolean;
@@ -308,7 +302,8 @@ type
     FObjectClassName: string;
     FOptions: TInstantExposerOptions;
     FReadOnly: Boolean;
-    FRecordSize, FRecBufSize: Word;
+    FRecordSize: word;
+    FRecBufSize: Integer;
     FRecNo: Integer;
     FRecordBuffer: TInstantRecordBuffer;
     FRemovedObject: TObject;
@@ -381,13 +376,10 @@ type
   protected
     { IProviderSupport }
     procedure PSGetAttributes(List: TList); override;
-  {$IFDEF D10_OR_D11}
-    function PSGetTableNameW: WideString; override;
-  {$ELSE}
     function PSGetTableName: string; override;
-  {$ENDIF}
     procedure PSReset; override;
     procedure SetUseUnicode(Value: Boolean);
+    function GetFieldClass(FieldType: TFieldType): TFieldClass; override;
   protected
     procedure AddClassFieldDefs(const FieldName: string; AClass: TClass); overload;
     procedure AddClassFieldDefs(const FieldName: string; AClass: TInstantCodeClass); overload;
@@ -398,12 +390,9 @@ type
     function AllocRecordBuffer: TRecordBuffer; override;
     procedure ClearCalcFields(Buffer: TRecordBuffer); override;
     procedure FreeRecordBuffer(var Buffer: TRecordBuffer); override;
-    function FieldDataSize(Field : TField): integer; {$IFDEF SUPPORTS_INLINE} inline; {$ENDIF}
-  {$IFDEF D17+}
+    function FieldDataSize(Field : TField): integer; inline;
     procedure GetBookmarkData(Buffer: TRecBuf; Data: TBookmark); override;
-  {$ELSE}
-    procedure GetBookmarkData(Buffer: TRecordBuffer; Data: Pointer); override;
-  {$ENDIF}
+    procedure GetInstantBookmarkData(Buffer: TRecBuf; PData: PInstantBookmark);
     function GetBookmarkFlag(Buffer: TRecBuf): TBookmarkFlag; override;
     function GetRecord(Buffer: TRecBuf; GetMode: TGetMode;
       DoCheck: Boolean): TGetResult; override;
@@ -411,11 +400,8 @@ type
     procedure InternalInitRecord(Buffer: TRecBuf); override;
     procedure InternalSetToRecord(Buffer: TRecBuf); override;
     procedure ConvertToInstantBookmark(Bookmark : TBookmark; var BookmarkOut : TInstantBookmark);
-  {$IFDEF D17+}
     procedure SetBookmarkData(Buffer: TRecBuf; Data: TBookmark); override;
-  {$ELSE}
-    procedure SetBookmarkData(Buffer: TRecordBuffer; Data: Pointer); override;
-  {$ENDIF}
+    procedure SetInstantBookmarkData(Buffer: TRecBuf; PData: PInstantBookmark);
     procedure SetBookmarkFlag(Buffer: TRecBuf; Value: TBookmarkFlag); override;
     procedure CopyObjectToBuffer(AObject: TObject; Buffer: TRecBuf);
     function FindObjectBuffer(AObject: TObject): TRecBuf;
@@ -428,11 +414,7 @@ type
     function CreateAccessor: TInstantAccessor; virtual;
     procedure CreateFields; override;
     function CreateNestedDataSet(DataSetField: TDataSetField): TDataSet; override;
-  {$IFDEF D16+}
     procedure DataEvent(Event: TDataEvent; Info: NativeInt); override;
-  {$ELSE}
-    procedure DataEvent(Event: TDataEvent; Info: Longint); override;
-  {$ENDIF}
     procedure DestroyAccessor;
     procedure DoAfterDelete; override;
     procedure DoAfterPostField(Field: TField); virtual;
@@ -459,11 +441,7 @@ type
     procedure InitField(Field: TField); virtual;
     procedure InitFieldDef(FieldDef: TFieldDef); virtual;
     function InternalAddObject(AObject: TObject): Integer;
-  {$IFDEF D17+}
     procedure InternalAddRecord(Buffer: TRecBuf; Append: Boolean); override;
-  {$ELSE}
-    procedure InternalAddRecord(Buffer: Pointer; Append: Boolean); override;
-  {$ENDIF}
     procedure InternalCancel; override;
     procedure InternalClose; override;
     procedure InternalDelete; override;
@@ -496,12 +474,7 @@ type
     procedure SaveField(Field: TField); virtual;
     procedure SaveFieldValue(Field: TField; Buffer: Pointer; AObject: TObject);
     procedure SetActive(Value: Boolean); override;
-{$IFDEF D17+}
     procedure SetFieldData(Field: TField; Buffer: TValueBuffer); overload; override;
-{$ENDIF}
-{$IFNDEF NEXTGEN}
-    procedure SetFieldData(Field: TField; Buffer: Pointer); overload; override;
-{$ENDIF}
     procedure SetFiltered(Value: Boolean); override;
     procedure SetRecNo(Value: Integer); override;
     procedure Undo; virtual;
@@ -531,7 +504,7 @@ type
     function AddObject(AObject: TObject): Integer;
     procedure ApplyChanges;
     procedure AssignFieldValue(Field: TField; Value: Variant);
-    function BookmarkValid(Bookmark: TBookmark): Boolean; override;
+    function BookmarkValid(ABookmark: TBookmark): Boolean; override;
     function ChangesDisabled: Boolean;
     procedure Clear;
     function CompareBookmarks(Bookmark1, Bookmark2: TBookmark): Integer; override;
@@ -540,14 +513,8 @@ type
     procedure DeleteObject(Index: Integer);
     procedure DisableChanges;
     procedure EnableChanges;
-{$IFDEF D17+}
-{$IFNDEF NEXTGEN}
     function GetFieldData(Field: TField; Buffer: Pointer): Boolean; overload; override;
-{$ENDIF !NEXTGEN}
-    function GetFieldData(Field: TField; {$IFDEF D18+}var{$ENDIF} Buffer: TValueBuffer): Boolean; overload; override;
-{$ELSE D17+}
-    function GetFieldData(Field: TField; Buffer: Pointer): Boolean; override;
-{$ENDIF D17+}
+    function GetFieldData(Field: TField; var Buffer: TValueBuffer): Boolean; overload; override;
     function GetFieldStrings(Field: TField; Strings: TStrings): Integer;
     function GotoObject(AObject: TObject): Boolean;
     function IndexOfObject(AObject: TObject): Integer;
@@ -623,11 +590,7 @@ type
     FOnMasterDisable: TNotifyEvent;
   protected
     procedure ActiveChanged; override;
-  {$IFDEF D16+}
     procedure DataEvent(Event: TDataEvent; Info: NativeInt); override;
-  {$ELSE}
-    procedure DataEvent(Event: TDataEvent; Info: Longint); override;
-  {$ENDIF}
     procedure DoMasterChange;
     procedure DoMasterDisable;
     function GetDetailDataSet: TDataSet; override;
@@ -656,11 +619,7 @@ type
     procedure SyncWithParent(Field: TDataSetField);
   protected
     procedure SetSubject(Value: TObject); virtual;
-  {$IFDEF D16+}
     procedure DataEvent(Event: TDataEvent; Info: NativeInt); override;
-  {$ELSE}
-    procedure DataEvent(Event: TDataEvent; Info: Longint); override;
-  {$ENDIF}
     function GetSubject: TObject; override;
     procedure MasterChanged(Sender: TObject);
     procedure SetDataSetField(const Value: TDataSetField); override;
@@ -822,28 +781,21 @@ var
 implementation
 
 uses
-{$IFDEF VER130}
-  Forms,
-{$ENDIF}
-  {$IFDEF D6+}
   Variants,
-  {$IFNDEF FPC}MaskUtils,{$ENDIF}
+  MaskUtils,
   FmtBcd,
-{$ENDIF}
-{$IFDEF D17+}
   System.Types,
   Generics.Collections,
-{$ENDIF}
   InstantClasses, AnsiStrings,
   InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors, DbConsts;
 
 type
-  TDetailDataSetList = {$IFDEF D17+}TList<TDataSet>{$ELSE}TList{$ENDIF};
+  TDetailDataSetList = TList<TDataSet>;
 
 const
   SelfFieldName = 'Self';
   DefaultStringDisplayWidth = 12;
-  NullRecBuf = {$IFDEF D18+}0{$ELSE}nil{$ENDIF};
+  NullRecBuf = 0;
 
 var
   AccessorClasses: TList;
@@ -852,14 +804,43 @@ function AttributeTypeToFieldType(
   AttributeType: TInstantAttributeType; UseUnicode: boolean): TFieldType;
 const
   FieldTypes: array[TInstantAttributeType] of TFieldType = (
-    ftUnknown, ftInteger, ftFloat, ftBCD, ftBoolean, ftString, ftDateTime,
-    ftBlob, ftMemo, ftBlob, ftInteger, ftInteger, ftDataSet, ftDataSet,
-    ftDate, ftTime, ftInteger);
+    ftUnknown,        //atUnknown
+    ftInteger,        //atInteger
+    ftFloat,          //atFloat
+    ftBCD,            //atCurrency
+    ftBoolean,        //atBoolean
+    ftString,         //atString
+    ftDateTime,       //atDateTime
+    ftBlob,           //atBlob
+    ftMemo,           //atMemo
+    ftBlob,           //atGraphic
+    IORefFieldType,   //atPart
+    IORefFieldType,   //atReference
+    ftDataSet,        //atParts
+    ftDataSet,        //atReferences
+    ftDate,           //atDate
+    ftTime,           //atTime
+    ftInteger);       //atEnum
 
   UnicodeFieldTypes: array[TInstantAttributeType] of TFieldType = (
-    ftUnknown, ftInteger, ftFloat, ftBCD, ftBoolean, ftWideString, ftDateTime,
-    ftBlob, ftWideMemo, ftBlob, ftInteger, ftInteger, ftDataSet, ftDataSet,
-    ftDate, ftTime, ftInteger);
+    ftUnknown,        //atUnknown
+    ftInteger,        //atInteger
+    ftFloat,          //atFloat
+    ftBCD,            //atCurrency
+    ftBoolean,        //atBoolean
+    ftWideString,     //atString
+    ftDateTime,       //atDateTime
+    ftBlob,           //atBlob
+    ftWideMemo,       //atMemo
+    ftBlob,           //atGraphic
+    IORefFieldType,   //atPart
+    IORefFieldType,   //atReference
+    ftDataSet,        //atParts
+    ftDataSet,        //atReferences
+    ftDate,           //atDate
+    ftTime,           //atTime
+    ftInteger         //atEnum
+    );
 begin
   if UseUnicode then
     Result := UnicodeFieldTypes[AttributeType]
@@ -2189,7 +2170,7 @@ const
       if Prop.TypeValue is TInstantCodeClass then
       begin
         if foObjects in FieldOptions then
-          AddFieldDef(Prefix + Prop.Name, ftInteger, 0, []);
+          AddFieldDef(Prefix + Prop.Name, IORefFieldType, 0, []);
         if foThorough in FieldOptions then
         begin
           Relation := AClass.Name + '.' + Prop.Name;
@@ -2392,7 +2373,7 @@ begin
   case TypeKind of
     tkEnumeration:
       FieldType := EnumerationToFieldType(FieldName);
-    tkString, tkLString{$IFDEF D12+}, tkUString{$ENDIF}:
+    tkString, tkLString, tkUString:
       FieldType := StringFieldType(FieldName);
     tkInteger:
       FieldType := ftInteger;
@@ -2404,7 +2385,7 @@ begin
       else
         FieldType := FloatFieldType;
     tkClass:
-      FieldType := ftInteger;
+      FieldType := IORefFieldType;
     tkSet:
       begin
         if UseUnicode then
@@ -2495,11 +2476,11 @@ begin
       end;
 end;
 
-function TInstantCustomExposer.BookmarkValid(Bookmark: TBookmark): Boolean;
+function TInstantCustomExposer.BookmarkValid(ABookmark: TBookmark): Boolean;
 var
   BM: TInstantBookmark;
 begin
-  ConvertToInstantBookmark(Bookmark,BM);
+  ConvertToInstantBookmark(ABookmark,BM);
   UpdateBookmark(BM);
   Result := BM.RecNo > 0;
 end;
@@ -2541,14 +2522,14 @@ begin
 end;
 
 procedure TInstantCustomExposer.ClearRecord(Buffer: TRecBuf);
+var
+  LRecInfo: PRecInfo;
 begin
   ClearData(Buffer);
-  with GetRecInfo(Buffer)^ do
-  begin
-    RecordNumber := -1;
-    UpdateStatus := usDeleted;
-    BookmarkFlag := bfCurrent;
-  end;
+  LRecInfo := GetRecInfo(Buffer);
+  LRecInfo^.RecordNumber := -1;
+  LRecInfo^.UpdateStatus := usDeleted;
+  LRecInfo^.BookMarkFlag := bfCurrent;
 end;
 
 function TInstantCustomExposer.CompareBookmarks(Bookmark1,
@@ -2577,6 +2558,7 @@ procedure TInstantCustomExposer.CopyBufferToObject(Buffer: TRecBuf;
   AObject: TObject);
 var
   I, Offset: Integer;
+  LField: TField;
 begin
   if not Assigned(AObject) then
     Exit;
@@ -2584,10 +2566,11 @@ begin
   Offset := 0;
   for I := 0 to Pred(FieldCount) do
   begin
-    if not (IsBlobField(Fields[I]) or IsCalcField(Fields[I])) then
+    LField := Fields[I];
+    if not (IsBlobField(LField) or IsCalcField(LField)) then
     begin
-      SaveFieldValue(Fields[I], @TRecordBuffer(Buffer)[Offset], AObject);
-      Inc(Offset, FieldDataSize(Fields[I]));
+      SaveFieldValue(LField, @TRecordBuffer(Buffer)[Offset], AObject);
+      Inc(Offset, FieldDataSize(LField));
     end;
   end;
 end;
@@ -2596,6 +2579,7 @@ procedure TInstantCustomExposer.CopyObjectToBuffer(AObject: TObject;
   Buffer: TRecBuf);
 var
   I, Offset: Integer;
+  LField: TField;
   BM: TInstantBookmark;
 begin
   if not Assigned(AObject) then
@@ -2607,16 +2591,17 @@ begin
   Offset := 0;
   for I := 0 to Pred(FieldCount) do
   begin
-    if not (IsBlobField(Fields[I]) or IsCalcField(Fields[I])) then
+    LField := Fields[I];
+    if not (IsBlobField(LField) or IsCalcField(LField)) then
     begin
-      LoadFieldParams(AObject, Fields[I]);
-      LoadFieldValue(Fields[I], @TRecordBuffer(Buffer)[Offset], AObject);
-      Inc(Offset, FieldDataSize(Fields[I]));
+      LoadFieldParams(AObject, LField);
+      LoadFieldValue(LField, @TRecordBuffer(Buffer)[Offset], AObject);
+      Inc(Offset, FieldDataSize(LField));
     end;
   end;
-  GetBookmarkData(Buffer, TValueBuffer(@BM));
+  GetInstantBookmarkData(Buffer, @BM);
   BM.Instance := AObject;
-  SetBookmarkData(Buffer, TValueBuffer(@BM));
+  SetInstantBookmarkData(Buffer, @BM);
   GetCalcFields(Buffer);
 end;
 
@@ -2679,7 +2664,7 @@ begin
 end;
 
 procedure TInstantCustomExposer.DataEvent(Event: TDataEvent;
-  Info: {$IFDEF D16+}NativeInt{$ELSE}Longint{$ENDIF});
+  Info: NativeInt);
 var
   I: Integer;
   DataSet: TDataSet;
@@ -2831,7 +2816,7 @@ begin
   for I := 0 to Pred(BufferCount) do
   begin
     Result := Buffers[I];
-    GetBookmarkData(Result, TValueBuffer(@BM));
+    GetInstantBookmarkData(Result, @BM);
     if BM.Instance = AObject then
       Exit;
   end;
@@ -2846,21 +2831,10 @@ end;
 
 function TInstantCustomExposer.FieldDataSize(Field : TField): integer;
 begin
-{$IFDEF VER210}
-  // Workaround for DataSize bugs in D2010 RTM (QC 78620 and 78620)
-  if (not Assigned(Field)) or (Field is TBlobField) then
-    Result := 0
-  else
-    if Field is TBCDField then
-      Result := SizeOf(TBcd) // D2010 returns Sizeof(System.Currency)
-    else
-      Result := Field.DataSize;
-{$ELSE}
   if Assigned(Field) then
     Result := Field.DataSize
   else
     Result := 0;
-{$ENDIF}
 end;
 
 function TInstantCustomExposer.GetAccessor: TInstantAccessor;
@@ -2875,22 +2849,10 @@ begin
   Result := eoAutoApply in Options;
 end;
 
-{$IFDEF D17+}
-procedure TInstantCustomExposer.GetBookmarkData(Buffer: TRecBuf; Data: TBookmark);
-begin
-  Move(TRecordBuffer(Buffer)[FBookmarkOfs], Pointer(Data)^, BookmarkSize);
-end;
-{$ELSE}
-procedure TInstantCustomExposer.GetBookmarkData(Buffer: TRecordBuffer; Data: Pointer);
-begin
-  Move(Buffer[FBookmarkOfs], Data^, BookmarkSize);
-end;
-{$ENDIF}
-
 function TInstantCustomExposer.GetBookmarkFlag(
   Buffer: TRecBuf): TBookmarkFlag;
 begin
-  Result := GetRecInfo(Buffer).BookmarkFlag;
+  Result := GetRecInfo(Buffer)^.BookmarkFlag;
 end;
 
 function TInstantCustomExposer.GetCanDispose: Boolean;
@@ -2933,7 +2895,7 @@ begin
     Result := nil
   else if State = dsInsert then
   begin
-    GetBookmarkData(CurrentBuffer, TValueBuffer(@BM));
+    GetInstantBookmarkData(CurrentBuffer, @BM);
     Result := BM.Instance;
   end else if not InContent then
     Result := Subject
@@ -2945,11 +2907,7 @@ end;
 
 function TInstantCustomExposer.GetIsDefaultFields: Boolean;
 begin
-{$IFDEF D18+}
   Result := (inherited FieldOptions.AutoCreateMode <> acExclusive) or not (lcPersistent in Fields.LifeCycles);
-{$ELSE}
-  Result := inherited DefaultFields;
-{$ENDIF}
 end;
 
 function TInstantCustomExposer.GetDesignClass: TInstantCodeClass;
@@ -2960,9 +2918,17 @@ begin
     Result := nil;
 end;
 
-{$IFDEF D17+}
+function TInstantCustomExposer.GetFieldClass(
+  FieldType: TFieldType): TFieldClass;
+begin
+  if FieldType in [ftLargeInt] then
+    Result := TLargeintField
+  else
+    Result := inherited GetFieldClass(FieldType);
+end;
+
 function TInstantCustomExposer.GetFieldData(Field: TField;
-  {$IFDEF D18+}var{$ENDIF} Buffer: TValueBuffer): Boolean;
+  var Buffer: TValueBuffer): Boolean;
 var
   D: TDateTimeRec;
 begin
@@ -2978,7 +2944,6 @@ begin
   end else
     Result := (State in [dsEdit, dsInsert]) or (RecordCount > 0);
 end;
-{$ENDIF D17+}
 
 function TInstantCustomExposer.GetFieldData(Field: TField;
   Buffer: Pointer): Boolean;
@@ -3240,7 +3205,7 @@ procedure TInstantCustomExposer.GotoActiveRecord;
 var
   BM: TInstantBookmark;
 begin
-  GetBookmarkData(ActiveBuffer, TValueBuffer(@BM));
+  GetInstantBookmarkData(ActiveBuffer, @BM);
   if BM.RecNo >= 0 then
     FRecNo := BM.RecNo
   else
@@ -3263,10 +3228,10 @@ begin
   if ARecNo <= 0 then
     Exit;
   FRecNo := ARecNo;
-  GetBookmarkData(ActiveBuffer, TValueBuffer(@BM));
+  GetInstantBookmarkData(ActiveBuffer, @BM);
   BM.RecNo := FRecNo;
   BM.Instance := Accessor.Objects[Pred(FRecNo)];
-  SetBookmarkData(ActiveBuffer, TValueBuffer(@BM));
+  SetInstantBookmarkData(ActiveBuffer, @BM);
   GetRecInfo(ActiveBuffer).RecordNumber := FRecNo;
   Resync([rmExact, rmCenter]);
   DoAfterScroll;
@@ -3436,19 +3401,19 @@ end;
 
 procedure TInstantCustomExposer.InitRecord(Buffer: TRecBuf);
 var
+  LRecInfo: PRecInfo;
   BM: TInstantBookmark;
 begin
   ClearData(Buffer);
   inherited;
-  with GetRecInfo(Buffer)^ do
-  begin
-    RecordNumber := -1;
-    UpdateStatus := usInserted;
-    BookMarkFlag := bfInserted;
-  end;
+
+  LRecInfo := GetRecInfo(Buffer);
+  LRecInfo^.RecordNumber := -1;
+  LRecInfo^.UpdateStatus := usInserted;
+  LRecInfo^.BookMarkFlag := bfInserted;
   BM.RecNo := -1;
   BM.Instance := nil;
-  SetBookmarkData(Buffer, TValueBuffer(@BM));
+  SetInstantBookmarkData(Buffer, @BM);
 end;
 
 procedure TInstantCustomExposer.InsertObject(AObject: TObject);
@@ -3469,11 +3434,7 @@ begin
     FRecNo := Succ(Result);
 end;
 
-{$IFDEF D17+}
 procedure TInstantCustomExposer.InternalAddRecord(Buffer: TRecBuf; Append: Boolean);
-{$ELSE}
-procedure TInstantCustomExposer.InternalAddRecord(Buffer: Pointer; Append: Boolean);
-{$ENDIF}
 begin
   AddNewObject(Buffer, Append);
   GetRecInfo(Buffer)^.RecordNumber := FRecNo;
@@ -3622,7 +3583,7 @@ begin
     Exit;
   end;
   if foObjects in FieldOptions then
-    FieldDefs.Add(SelfFieldName, ftInteger);
+    FieldDefs.Add(SelfFieldName, IORefFieldType);
   if csDesigning in ComponentState then
     AddClassFieldDefs('', DesignClass)
   else
@@ -3677,9 +3638,7 @@ var
   AObject: TObject;
   NewPos: Integer;
 begin
-{$IFDEF D7+}
   inherited;
-{$ENDIF}
   AObject := CurrentObject;
   CopyBufferToObject(ActiveBuffer, AObject);
   if InContent then
@@ -3782,7 +3741,7 @@ procedure TInstantCustomExposer.LoadField(Obj: TObject; Field: TField);
 begin
   LoadFieldParams(Obj, Field);
   LoadFieldValue(Field, @TRecordBuffer(CurrentBuffer)[GetFieldOffset(Field)], Obj);
-  DataEvent(deFieldChange, Longint(Field));
+  DataEvent(deFieldChange, NativeInt(Field));
 end;
 
 procedure TInstantCustomExposer.LoadFieldParams(AObject: TObject;
@@ -3848,6 +3807,7 @@ var
   A_S: AnsiString;
   U_S: string;
   N: Integer;
+  L_N: Largeint;
   F: Double;
   C: Currency;
   Bcd : TBcd;
@@ -3860,7 +3820,7 @@ begin
     Exit;
   try
     if IsSelfField(Field) then
-      Value := Integer(AObject)
+      Value := TIORefValueType(AObject)
     else
       Value := ReadProperty(Field, AObject);
   except
@@ -3911,6 +3871,22 @@ begin
         else
           N := Value;
         Move(N, Buffer^, SizeOf(N));
+      end;
+    ftLargeInt:
+      begin
+        if Empty then
+          L_N := 0
+        else if VarIsStr(Value) then
+        begin
+          LPropInfo := GetPropInfo(PTypeInfo(AObject.ClassInfo), Field.FieldName);
+          if Assigned(LPropInfo) then
+            L_N := GetEnumValue(LPropInfo^.PropType^, Value)
+          else
+            L_N := 0;
+        end
+        else
+          L_N := Value;
+        Move(L_N, Buffer^, SizeOf(L_N));
       end;
     ftFloat:
       begin
@@ -3966,6 +3942,7 @@ var
   BM: TInstantBookmark;
   Obj: TObject;
   LRecno: Integer;
+  LRecInfo: PRecInfo;
 begin
   if (RecNo <= 0) or (RecNo > RecordCount) then
     ClearRecord(Buffer)
@@ -3975,15 +3952,15 @@ begin
     if not Assigned(Obj) then
       raise Exception.CreateFmt('Critical error: object not found at record n.%d!',[LRecno+1]);
     CopyObjectToBuffer(Obj, Buffer);
-    with GetRecInfo(Buffer)^ do
-    begin
-      UpdateStatus := usUnmodified;
-      BookmarkFlag := bfCurrent;
-      RecordNumber := RecNo;
-    end;
+
+    LRecInfo := GetRecInfo(Buffer);
+    LRecInfo^.UpdateStatus := usUnmodified;
+    LRecInfo^.BookmarkFlag := bfCurrent;
+    LRecInfo^.RecordNumber := RecNo;
+
     BM.RecNo := RecNo;
     BM.Instance := Obj;
-    SetBookmarkData(Buffer, TValueBuffer(@BM));
+    SetInstantBookmarkData(Buffer, @BM);
   end;
 end;
 
@@ -4079,11 +4056,7 @@ procedure TInstantCustomExposer.PSGetAttributes(List: TList);
 begin
 end;
 
-{$IFDEF D10_OR_D11}
-function TInstantCustomExposer.PSGetTableNameW: WideString;
-{$ELSE}
 function TInstantCustomExposer.PSGetTableName: string;
-{$ENDIF}
 begin
   Result := ObjectClassName;
 end;
@@ -4104,7 +4077,7 @@ begin
     if Append  or (RecordCount = 0) or (FRecNo > RecordCount) then
       InternalAddObject(AObject)
     else begin
-      GetBookmarkData(Buffer, TValueBuffer(@BM));
+      GetInstantBookmarkData(Buffer, @BM);
       InternalInsertObject(BM.RecNo, AObject);
     end;
     if AObject is TInstantObject then
@@ -4277,6 +4250,7 @@ var
   P_C: PChar;
   U_S: string;
   N: Integer;
+  L_N: LargeInt;
   F: Double;
   C: Currency;
   Bcd : TBcd;
@@ -4290,7 +4264,6 @@ begin
   case Field.DataType of
     ftString:
       begin
-        {$IFDEF D18+}
         P_A := AnsiStrings.AnsiStrAlloc(FieldDataSize(Field));
         try
           AnsiStrings.StrCopy(P_A, Buffer);
@@ -4299,16 +4272,6 @@ begin
         finally
           AnsiStrings.StrDispose(P_A);
         end;
-        {$ELSE}
-        P_A := AnsiStrAlloc(FieldDataSize(Field));
-        try
-          StrCopy(P_A, Buffer);
-          A_S := P_A;
-          Value := A_S;
-        finally
-          StrDispose(P_A);
-        end;
-        {$ENDIF}
       end;
     ftWideString:
       begin
@@ -4325,6 +4288,11 @@ begin
       begin
         Move(Buffer^, N, SizeOf(N));
         Value := N;
+      end;
+    ftLargeInt:
+      begin
+        Move(Buffer^, L_N, SizeOf(L_N));
+        Value := L_N;
       end;
     ftFloat:
       begin
@@ -4389,33 +4357,35 @@ end;
 procedure TInstantCustomExposer.ConvertToInstantBookmark(Bookmark : TBookmark;
   var BookmarkOut : TInstantBookmark);
 begin
-{$IFDEF D12+}
   // TBookmark is a dynamic byte array for D2009+
   if (Length(Bookmark) = BookmarkSize) then
     Move(Bookmark[0], BookmarkOut, BookmarkSize)
   else
     fillchar(BookmarkOut, sizeof(BookmarkOut), 0);
-{$ELSE}
-  if (Assigned(Bookmark)) then
-    BookmarkOut := TInstantBookmark(Bookmark^)
-  else
-    fillchar(BookmarkOut, sizeof(BookmarkOut), 0);
-{$ENDIF}
 end;
 
-{$IFDEF D17+}
 procedure TInstantCustomExposer.SetBookmarkData(Buffer: TRecBuf;
   Data: TBookmark);
 begin
-  Move(Pointer(Data)^, TRecordBuffer(Buffer)[FBookmarkOfs], BookmarkSize);
+  SetInstantBookmarkData(Buffer, PInstantBookmark(Data));
 end;
-{$ELSE}
-procedure TInstantCustomExposer.SetBookmarkData(Buffer: TRecordBuffer;
-  Data: Pointer);
+
+procedure TInstantCustomExposer.SetInstantBookmarkData(Buffer: TRecBuf;
+  PData: PInstantBookmark);
 begin
-  Move(Data^, Buffer[FBookmarkOfs], BookmarkSize);
+  Move(PByte(PData)[0], PByte(Buffer)[FBookmarkOfs], BookmarkSize);
 end;
-{$ENDIF}
+
+procedure TInstantCustomExposer.GetBookmarkData(Buffer: TRecBuf; Data: TBookmark);
+begin
+  GetInstantBookmarkData(Buffer, PInstantBookmark(Data));
+end;
+
+procedure TInstantCustomExposer.GetInstantBookmarkData(Buffer: TRecBuf;
+  PData: PInstantBookmark);
+begin
+  Move(PByte(Buffer)[FBookmarkOfs], PByte(PData)[0], BookmarkSize);
+end;
 
 procedure TInstantCustomExposer.SetBookmarkFlag(Buffer: TRecBuf;
   Value: TBookmarkFlag);
@@ -4433,48 +4403,28 @@ begin
   end;
 end;
 
-{$IFNDEF NEXTGEN}
-procedure TInstantCustomExposer.SetFieldData(Field: TField; Buffer: Pointer);
-begin
-  if Assigned(Buffer) then
-    Move(Buffer^, TRecordBuffer(CurrentBuffer)[GetFieldOffset(Field)], FieldDataSize(Field))
-  else
-    FillChar(TRecordBuffer(CurrentBuffer)[GetFieldOffset(Field)], FieldDataSize(Field), 0);
-  if not (State in [dsCalcFields, dsInternalCalc, dsFilter, dsNewValue]) and
-          not FInSetFieldData then
-  begin
-    FInSetFieldData := True;
-    try
-      PostField(Field);
-      DataEvent(deFieldChange, Longint(Field));
-    finally
-      FInSetFieldData := False;
-    end;
-  end;
-end;
-{$ENDIF}
-
-{$IFDEF D17+}
 procedure TInstantCustomExposer.SetFieldData(Field: TField;
   Buffer: TValueBuffer);
 begin
+  var LSize := FieldDataSize(Field);
+  var LOffset := GetFieldOffset(Field);
+  var RecordBuffer := TRecordBuffer(CurrentBuffer);
   if Assigned(Buffer) then
-    Move(Buffer[0], TRecordBuffer(CurrentBuffer)[GetFieldOffset(Field)], FieldDataSize(Field))
+    Move(Buffer[0], RecordBuffer[LOffset], LSize)
   else
-    FillChar(TRecordBuffer(CurrentBuffer)[GetFieldOffset(Field)], FieldDataSize(Field), 0);
+    FillChar(RecordBuffer[LOffset], LSize, 0);
   if not (State in [dsCalcFields, dsInternalCalc, dsFilter, dsNewValue]) and
           not FInSetFieldData then
   begin
     FInSetFieldData := True;
     try
       PostField(Field);
-      DataEvent(deFieldChange, Longint(Field));
+      DataEvent(deFieldChange, NativeInt(Field));
     finally
       FInSetFieldData := False;
     end;
   end;
 end;
-{$ENDIF}
 
 procedure TInstantCustomExposer.SetFieldOptions(Value: TInstantFieldOptions);
 begin
@@ -4693,7 +4643,7 @@ begin
 end;
 
 procedure TInstantExposerLink.DataEvent(Event: TDataEvent;
-  Info: {$IFDEF D16+}NativeInt{$ELSE}Longint{$ENDIF});
+  Info: NativeInt);
 begin
   inherited;
   if not DetailExposer.Active and (Event = deRecordChange) then
@@ -4736,7 +4686,7 @@ begin
     begin
       Value := InstantGetProperty(Result, MasterProperty);
       if VarType(Value) = VarInteger then
-        Result := TObject(Integer(Value))
+        Result := TObject(TIORefValueType(Value))
       else
         raise EInstantError.CreateFmt(SNotPublishedObjectProperty,
           [MasterProperty]);
@@ -4754,7 +4704,7 @@ end;
 { TInstantExposer }
 
 procedure TInstantExposer.DataEvent(Event: TDataEvent;
-  Info: {$IFDEF D16+}NativeInt{$ELSE}Longint{$ENDIF});
+  Info: NativeInt);
 begin
   case Event of
     deParentScroll:
@@ -4769,7 +4719,7 @@ begin
   // Exposer. This prevents TDataSet.Destroy from causing the Subject
   // be unexpectedly accessed later in the destruction sequence.
   SetSubject(nil);
-  FMasterLink.Free;
+  FreeAndNil(FMasterLink);
   inherited;
 end;
 
@@ -4885,7 +4835,7 @@ begin
       if I > 0 then
       begin
         PropPath := Copy(FieldName, 1, I - 1);
-        AObject := TObject(Integer(InstantGetProperty(AObject, PropPath)));
+        AObject := TObject(TIORefValueType(InstantGetProperty(AObject, PropPath)));
         ContainerName := Copy(FieldName, I + 1, Length(FieldName) - I)
       end else
         ContainerName := FieldName;
@@ -5302,14 +5252,10 @@ begin
   if IsChanged then
   try
     Field.Modified := True;
-    Exposer.DataEvent(deFieldChange, Integer(Field));
+    Exposer.DataEvent(deFieldChange, NativeInt(Field));
   except
-{$IFDEF VER130}
-    Application.HandleException(Self);
-{$ELSE}
     if Assigned(Classes.ApplicationHandleException) then
       Classes.ApplicationHandleException(Self);
-{$ENDIF}
   end;
   inherited Destroy;
 end;

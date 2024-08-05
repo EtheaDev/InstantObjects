@@ -33,12 +33,15 @@ unit InstantDBXConnectionDefEdit;
 
 interface
 
+{$IFDEF LINUX64}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 uses
   Forms, Dialogs, StdCtrls, Controls, ExtCtrls,
   SysUtils, Classes, InstantDBX,
-  {$IFNDEF D11+}DBXpress,{$ENDIF}
   DB, SQLExpr;
 
 type

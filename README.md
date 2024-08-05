@@ -1,8 +1,8 @@
-# **InstantObjects 4.1 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+﻿# **InstantObjects 4.2 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
-Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from 2010 to 11 Alexandria version)
+Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 11 to latest version)
 
 ![Support Delphi](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi.jpg)
 
@@ -40,7 +40,10 @@ InstantObjects source files are released under the Mozilla Public License Versio
 
 **Full DUnitX Tests**
 
-InstantObjects contains over 400 Tests written for DUnitX framework. From 3.0 version is also compatible with TestInsight test framework.
+InstantObjects contains over 400 Unit Tests written for DUnitX and ubMock framework.
+
+From 3.0 version is also compatible with TestInsight test framework.
+
 ![TestInsight Running](/Tests/TestInsightRunning.png)
 
 
@@ -48,6 +51,11 @@ InstantObjects contains over 400 Tests written for DUnitX framework. From 3.0 ve
 
 VERSION HISTORY
 ---------------
+Version 4.2 (4.2.0.0) (2024-08-05)
+- Added support for 64Bit Windows Platform
+- Added define USE_LARGEINT_FIELD_FOR_REF to create LargeIntField at Design-Time
+- Removed old defines for older Delphi Versions
+
 Version 4.1 (4.1.0.0) (2023-10-22)
 - Added support for Delphi 12
 - Renamed packages (for Delphi 11 and Delphi 12)

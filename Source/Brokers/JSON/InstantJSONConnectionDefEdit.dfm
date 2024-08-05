@@ -10,10 +10,8 @@ object InstantJSONConnectionDefEditForm: TInstantJSONConnectionDefEditForm
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = True
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
@@ -34,7 +32,7 @@ object InstantJSONConnectionDefEditForm: TInstantJSONConnectionDefEditForm
     object JSONLabel: TLabel
       Left = 8
       Top = 11
-      Width = 120
+      Width = 126
       Height = 13
       Caption = '&JSON data root directory'
       FocusControl = RootDirEdit
@@ -42,7 +40,7 @@ object InstantJSONConnectionDefEditForm: TInstantJSONConnectionDefEditForm
     object Label1: TLabel
       Left = 8
       Top = 60
-      Width = 73
+      Width = 79
       Height = 13
       Caption = 'JSON &encoding'
       FocusControl = RootDirEdit

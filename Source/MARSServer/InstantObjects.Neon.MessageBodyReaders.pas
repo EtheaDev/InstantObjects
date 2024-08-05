@@ -82,7 +82,7 @@ var
   LInstantObjectClass: TInstantObjectClass;
   LInstantObject: TInstantObject;
   LJSONObject: TJSONObject;
-  LClassName, LIdPropName, LId: string;
+  LClassName, LIdPropName, LIdAltPropName, LId: string;
   LJSONValue: TJSONValue;
   LReader: TNeonDeserializerJSON;
 begin
@@ -103,7 +103,7 @@ begin
         LClassName := TRttiParameter(ADestination).ParamType.Name;
       end;
       if TInstantCustomSerializer.RetrieveInstantObjectClass(LClassName,
-        LIdPropName, LInstantObjectClass) then
+        LIdPropName, LIdAltPropName, LInstantObjectClass) then
       begin
         LJSONValue := LJSONObject.GetValue(LIdPropName);
         if Assigned(LJSONValue) then

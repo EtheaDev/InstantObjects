@@ -39,7 +39,7 @@ type
 
   // Test methods for class TInstantObject
   [TestFixture]
-  TestTInstantObject = class(TInstantTestCase)
+  TestTInstantObject = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantObject: TPerson;
@@ -231,11 +231,7 @@ var
 begin
   vReturnValue := FInstantObject.AttributeByName('Name');
   AssertNotNull('Name', vReturnValue);
-  {$IFDEF VER130}
-  AssertEquals('Name', 'InitPerson', VarToStr(vReturnValue.Value));
-  {$ELSE}
   AssertEquals('Name', 'InitPerson', vReturnValue.Value);
-  {$ENDIF}
   vReturnValue := FInstantObject.AttributeByName('Employer');
   AssertNotNull('Employer', vReturnValue);
   AssertEquals('Employer', 'Employer', vReturnValue.Name);
@@ -355,11 +351,7 @@ var
 begin
   vReturnValue := FInstantObject.FindAttribute('Name');
   AssertNotNull('Name', vReturnValue);
-  {$IFDEF VER130}
-  AssertEquals('InitPerson', VarToStr(vReturnValue.Value));
-  {$ELSE}
   AssertEquals('InitPerson', vReturnValue.Value);
-  {$ENDIF}
   vReturnValue := FInstantObject.FindAttribute('Employer');
   AssertNotNull('Employer', vReturnValue);
   AssertEquals('Employer', 'Employer', vReturnValue.Name);

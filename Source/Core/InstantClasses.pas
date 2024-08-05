@@ -31,7 +31,11 @@
 
 unit InstantClasses;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -62,16 +66,8 @@ type
     property OriginalException: TObject read FOriginalException;
   end;
 
-{$IFDEF FPC}
-  TAbstractWriter = class(TDelphiWriter);
-{$ELSE}
   TAbstractWriter = class(TWriter);
-{$ENDIF}
-{$IFDEF FPC}
-  TAbstractReader = class(TDelphiReader);
-{$ELSE}
   TAbstractReader = class(TReader);
-{$ENDIF}
 
   TInstantReader = class;
   TInstantWriter = class;
@@ -182,10 +178,6 @@ type
     procedure WriteBinary(WriteData: TStreamProc);
     procedure WriteObject(AObject: TPersistent); virtual;
     procedure WriteProperties(AObject: TPersistent);
-    {$IFNDEF UNICODE}
-    procedure WriteString(const Value: string);
-    procedure WriteUTF8Str(const Value: string); {$IFDEF D10+}inline;{$ENDIF}
-    {$ENDIF}
     procedure WriteValue(Value: TValueType);
     property Stream: TStream read FStream;
   end;
@@ -232,20 +224,10 @@ type
     constructor Create(const FileName: string; Mode: Word);
   end;
 
-  {$IFDEF UNICODE}
   TInstantStringStream = class(TStringStream)
   public
     constructor Create(AString: string);
   end;
-  {$ELSE}
-  TInstantStringStream = class(TInstantStream)
-  private
-    function GetDataString: string;
-  public
-    constructor Create(AString: string);
-    property DataString: string read GetDataString;
-  end;
-  {$ENDIF}
 
   TInstantXMLToken = (xtNone, xtStartTag, xtEndTag, xtAnyTag, xtData);
 
@@ -275,6 +257,7 @@ type
     procedure WriteEscapedData(const Data: string);
     procedure WriteData(const Data: string);
     procedure WriteEndTag;
+    procedure WritePrologue;
     procedure WriteStartTag(const Tag: string);
     property CurrentTag: string read GetCurrentTag;
     property Eof: Boolean read GetEof;
@@ -475,7 +458,7 @@ type
     NextRaise: PRaiseFrame;
     ExceptAddr: Pointer;
     ExceptObject: TObject;
-    ExceptionRecord: PExceptionRecord {$IFNDEF VER130}platform{$ENDIF};
+    ExceptionRecord: PExceptionRecord;
   end;
 
 { Global routines }
@@ -523,10 +506,8 @@ function InstantReadObject(Stream: TStream; Format: TInstantStreamFormat;
   AObject: TPersistent = nil): TPersistent;
 var
   MemoryStream: TMemoryStream;
-  {$IFDEF UNICODE}
   StringStream: TStringStream;
   UStringStream: TStringStream;
-  {$ENDIF}
 begin
   if Format = sfBinary then
     Result := InstantReadObjectFromStream(Stream, AObject)
@@ -534,7 +515,6 @@ begin
   begin
     MemoryStream := TMemoryStream.Create;
     try
-      {$IFDEF UNICODE}
       StringStream := TStringStream.Create('', TEncoding.UTF8);
       try
         StringStream.CopyFrom(Stream, Stream.Size);
@@ -550,11 +530,6 @@ begin
       finally
         StringStream.Free;
       end;
-      {$ELSE}
-      InstantObjectTextToBinary(Stream, MemoryStream)
-      MemoryStream.Position := 0;
-      Result := InstantReadObjectFromStream(MemoryStream, AObject);
-      {$ENDIF}
     finally
       MemoryStream.Free;
     end;
@@ -695,17 +670,8 @@ end;
 
 procedure EInstantError.Initialize(E: TObject);
 begin
-  {$IFDEF D6+}
   if ((ExceptObject <> nil) and (ExceptObject = E)) then
     FOriginalException := AcquireExceptionObject;
-  {$ELSE}
-  if Assigned(E) and (RaiseList <> nil) and
-    (PRaiseFrame(RaiseList)^.ExceptObject = E) then
-  begin
-    PRaiseFrame(RaiseList)^.ExceptObject := nil;
-    FOriginalException := E;
-  end;
-  {$ENDIF}
 end;
 
 { TInstantStreamable }
@@ -1108,40 +1074,6 @@ begin
   inherited WriteValue(Value);
 end;
 
-{$IFNDEF UNICODE}
-procedure TInstantWriter.WriteString(const Value: string);
-var
-  L: Integer;
-begin
-  L := Length(Value);
-  if L <= 255 then
-  begin
-    WriteValue(vaString);
-    Write(L, SizeOf(Byte));
-  end else
-  begin
-    WriteValue(vaLString);
-    Write(L, SizeOf(Integer));
-  end;
-  Write(Pointer(Value)^, L);
-end;
-
-procedure TInstantWriter.WriteUTF8Str(const Value: string);
-var
-  U: UTF8String;
-  L: Integer;
-begin
-  // Note: in versions of Delphi that don't have AnsiToUtf8, just use:
-  // WriteStr(Value);
-  // as the body for this function.
-  U := AnsiToUtf8(Value);
-  L := Length(U);
-  if L > 255 then L := 255;
-  Write(L, SizeOf(Byte));
-  Write(U[1], L);
-end;
-{$ENDIF}
-
 { TInstantStream }
 
 procedure TInstantStream.AlignStream;
@@ -1340,36 +1272,8 @@ end;
 
 constructor TInstantStringStream.Create(AString: string);
 begin
-  {$IFDEF UNICODE}
   inherited Create(AString, TEncoding.Unicode);
-  {$ELSE}
-  inherited Create(TMemoryStream.Create, True);
-  if Length(AString) > 0 then
-    Write(AString[1], Length(AString));
-  Position := 0;
-  {$ENDIF}
 end;
-
-{$IFNDEF UNICODE}
-function TInstantStringStream.GetDataString: string;
-var
-  Pos: Integer;
-begin
-  if Size > 0 then
-  begin
-    Pos := Position;
-    try
-      SetLength(Result, Size);
-      Position := 0;
-      Read(Result[1], Size);
-    finally
-      Position := Pos;
-    end;
-  end
-  else
-    Result := '';
-end;
-{$ENDIF}
 
 { TInstantXMLProducer }
 
@@ -1506,6 +1410,11 @@ end;
 procedure TInstantXMLProducer.WriteLineBreak;
 begin
   WriteString(sLineBreak);
+end;
+
+procedure TInstantXMLProducer.WritePrologue;
+begin
+  WriteString(InstantPrologue + sLineBreak);
 end;
 
 procedure TInstantXMLProducer.WriteIndentation;
@@ -1835,9 +1744,16 @@ begin
 end;
 
 procedure TInstantBinaryToTextConverter.InternalConvert;
+var
+  LClass: TPersistentClass;
+  LFirstClass: Boolean;
 begin
-  PushObjectClass(FindClass(Reader.ReadStr));
+  LClass := FindClass(Reader.ReadStr);
+  LFirstClass := ObjectClassList.Count = 0;
+  PushObjectClass(LClass);
   try
+    if LFirstClass then
+      Producer.WritePrologue;
     Producer.WriteStartTag(ObjectClassName);
     if ObjectClass.InheritsFrom(TInstantStreamable) then
       TInstantStreamableClass(ObjectClass).ConvertToText(Self)
@@ -1980,18 +1896,10 @@ procedure TInstantTextToBinaryConverter.DoConvertProperties(
         else
           Writer.WriteFloat(StrToFloat(ValueStr));
       end;
-      {$IFDEF FPC}
-      tkAString:
-        Writer.WriteString(ValueStr);
-      tkBool:
-        Writer.WriteIdent(ValueStr);
-      {$ENDIF}
       tkString, tkLString, tkChar:
         Writer.WriteString(ValueStr);
-      {$IFDEF D12+}
       tkUString:
         Writer.WriteString(ValueStr);
-      {$ENDIF}
       tkEnumeration:
         Writer.WriteIdent(ValueStr);
       tkSet:

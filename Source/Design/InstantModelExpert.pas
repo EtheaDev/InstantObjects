@@ -37,7 +37,7 @@ interface
 uses
   Classes, ToolsAPI, InstantOTA, Menus, ImgList, ExtCtrls, Forms,
   InstantDesignResources, InstantModelExplorer, InstantCode, 
-  InstantConsts, ActnList{$IFDEF D17+}, System.Actions{$ENDIF};
+  InstantConsts, ActnList, System.Actions;
 
 type
   TIOMetaDataCheckState = (mcNeverChecked, mcCheckError, mcCheckCorrect);
@@ -501,17 +501,12 @@ begin
       ExplorerItemClick, 0,
       Menus.ShortCut(Word('M'), [ssCtrl, ssShift]));
 
-{$IFDEF D9+}
     Item := ItemByName(Menu, 'ViewStructureItem');
-{$ELSE}
-    Item := ItemByName(Menu, 'CodeExplorer');
-{$ENDIF}
     if Assigned(Item) then
       Menu.Insert(Item.MenuIndex + 1, FExplorerItem)
     else
       Menu.Add(FExplorerItem);
 
-{$IFDEF D9+}
   { Add Database InstantObjects Builder to View-menu }
     CreateBuilderMenuItem;
     Item := ItemByName(Menu, 'mnuViewDataExplorer');
@@ -519,18 +514,7 @@ begin
       Menu.Insert(Item.MenuIndex + 1, FBuilderItem)
     else
       Menu.Add(FBuilderItem);
-{$ENDIF}
   end;
-
-{$IFNDEF D9+}
-  { Add Database InstantObjects Builder to Database-menu }
-  Menu := ItemByName(MainMenu.Items, 'DatabaseMenu');
-  if Assigned(Menu) then
-  begin
-    CreateBuilderMenuItem;
-    Menu.Add(FBuilderItem);
-  end;
-{$ENDIF}
 
 end;
 
@@ -1091,13 +1075,8 @@ function TInstantModelExpert.LoadModel(Model: TInstantCodeModel;
       Module := Modules[I] as IOTAModule;
       Editor := FIDEInterface.SourceEditor(Module);
 
-{$IFDEF D12+}
       Source := FIDEInterface.ReadEditorSource(Editor);
       Stream := TStringStream.Create(Source, TEncoding.Unicode);
-{$ELSE}
-      Source := FIDEInterface.ReadEditorSource(Editor);
-      Stream := TStringStream.Create(Source);
-{$ENDIF}
 
       try                                    
         Model.LoadModule(Stream, Editor.FileName);

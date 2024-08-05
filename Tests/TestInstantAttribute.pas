@@ -30,7 +30,7 @@
 
 unit TestInstantAttribute;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantAttribute
   [TestFixture]
-  TestTInstantAttribute = class(TInstantTestCase)
+  TestTInstantAttribute = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantAttribute: TInstantString;
@@ -70,9 +70,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses, InstantMetadata;
 
 procedure TestTInstantAttribute.SetUp;

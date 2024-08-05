@@ -31,11 +31,7 @@
 
 unit InstantReg;
 
-{$IFDEF LINUX}
-{$I '../InstantDefines.inc'}
-{$ELSE}
 {$I '..\InstantDefines.inc'}
-{$ENDIF}
 
 interface
 
@@ -43,26 +39,17 @@ procedure Register;
 
 implementation
 
-{$IFDEF LINUX}
-{$R '../iodesimages.res'}
-{$ELSE}
 {$R '..\iodesimages.res'}
-{$ENDIF}
 
-{$IFDEF D9+}
 {$R IOCompsSplash.res}
-{$ENDIF}
 
 uses
   Classes, Graphics, InstantConsts, InstantPersistence, InstantPresentation,
   InstantExplorer, InstantConnectionManager, InstantConnectionManagerFormUnit,
   InstantPump, InstantDBEvolution, InstantDBBuild
-  {$IFDEF D9+}
   , ToolsAPI
-  {$ENDIF}
   ;
 
-{$IFDEF D9+}
 procedure RegisterWithSplashScreen;
 var
   Bmp: TBitmap;
@@ -79,13 +66,10 @@ begin
   end;
 
 end;
-{$ENDIF}
 
 procedure Register;
 begin
-  {$IFDEF D9+}
   RegisterWithSplashScreen;
-  {$ENDIF}
 
   RegisterComponents(InstantPaletteName, [
     TInstantSelector,

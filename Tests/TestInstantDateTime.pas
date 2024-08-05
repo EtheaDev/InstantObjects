@@ -30,7 +30,7 @@
 
 unit TestInstantDateTime;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantDateTime
   [TestFixture]
-  TestTInstantDateTime = class(TInstantTestCase)
+  TestTInstantDateTime = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantDateTime: TInstantDateTime;
@@ -77,9 +77,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses;
 
 procedure TestTInstantDateTime.SetUp;

@@ -30,7 +30,7 @@
 
 unit InstantAccessors;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../InstantDefines.inc'}
 {$ELSE}
 {$I '..\InstantDefines.inc'}
@@ -114,9 +114,7 @@ implementation
 
 uses
   SysUtils,
-{$IFDEF D17+}
   System.Types,
-{$ENDIF}
   Contnrs, InstantClasses, InstantConsts;
 
 { TInstantObjectAccessor }

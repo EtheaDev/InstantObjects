@@ -29,7 +29,11 @@
 
 unit InstantCustomDBEvolverFormUnit;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -37,9 +41,7 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
   ImgList, Menus, ActnList, ExtCtrls, StdActns,
-{$IFDEF D17+}
   System.Actions,
-{$ENDIF}
   InstantPersistence, InstantDBBuild, InstantDBEvolution, InstantPresentation,
   InstantMetadata;
 
@@ -117,10 +119,8 @@ implementation
 
 {$R *.dfm}
 
-{$IFDEF D17+}
 uses
   System.UITypes;
-{$ENDIF}
 
 procedure TInstantCustomDBEvolverForm.ShowSequenceButtonClick(Sender: TObject);
 begin

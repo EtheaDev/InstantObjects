@@ -38,7 +38,7 @@ uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} Ins
 type
   // Test methods for class TInstantObjectReference
   [TestFixture]
-  TestTInstantObjectReference = class(TInstantTestCase)
+  TestTInstantObjectReference = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantObjectReference: TInstantObjectReference;

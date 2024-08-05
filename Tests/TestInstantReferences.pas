@@ -37,7 +37,7 @@ uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} Ins
 
 type
   [TestFixture]
-  TestTInstantEmbReferences = class(TInstantTestCase)
+  TestTInstantEmbReferences = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantReferences: TInstantReferences;
@@ -72,7 +72,7 @@ type
   end;
 
   [TestFixture]
-  TestTInstantExtReferences = class(TInstantTestCase)
+  TestTInstantExtReferences = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantReferences: TInstantReferences;

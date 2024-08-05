@@ -75,7 +75,7 @@ begin
     'See the License for the specific language governing rights and limitations under the License.'+sLineBreak+
     'The Original Code is: Seleqt InstantObjects. The Initial Developer of the Original Code is: Seleqt'+sLineBreak+
     'Portions created by the Initial Developer are Copyright (C) 2001-2003 the Initial Developer.'+sLineBreak+
-    'Portions created by Ethea are Copyright (C) 2006-2023 Ethea S.r.l.'+sLineBreak;
+    'Portions created by Ethea are Copyright (C) 2006-2024 Ethea S.r.l.'+sLineBreak;
   BorderStyle := bsDialog;
   //Fonts and sizes
   TitleLabel.Font.Size := 16;

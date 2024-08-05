@@ -30,7 +30,7 @@
 
 unit TestInstantRtti;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -42,21 +42,14 @@ uses
   Classes, SysUtils,
   InstantRtti,
   {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF}
-  {$IFNDEF FPC}
-    {$IFDEF VER130}
-      Mask,
-    {$ELSE}
-      MaskUtils,
-    {$ENDIF}
-  {$ENDIF}
-  {$IFDEF FPC}InstantFpcUtils,{$ENDIF}
+  MaskUtils,
   DUnitX.TestFramework;
 
 type
 
   { TTestInstantRtti }
   [TestFixture]
-  TTestInstantRtti = class(TInstantTestCase)
+  TTestInstantRtti = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   published
     [Test]
     //procedure TestHexToBin;
@@ -92,10 +85,8 @@ type
 
 implementation
 
-{$IFNDEF VER130}
 uses
   Variants;
-{$ENDIF}
 
 { TTestInstantRtti }
 
@@ -197,8 +188,8 @@ procedure TTestInstantRtti.TestMaskUtils;
 var
   ds, ts : string;
 begin
-  ds := {$IFDEF D15+}FormatSettings.{$ENDIF}DateSeparator;
-  ts := {$IFDEF D15+}FormatSettings.{$ENDIF}TimeSeparator;
+  ds := FormatSettings.DateSeparator;
+  ts := FormatSettings.TimeSeparator;
 
   AssertEquals('123', FormatMaskText('###','1234'));
   AssertEquals('(123)_   -    ', FormatMaskText('(000)_000-0000;0;*','123'));
@@ -216,7 +207,7 @@ begin
   AssertEquals('13'+ds+'02'+ds+'95',FormatMaskText('!99/99/00;0;','130295'));
   AssertEquals('13'+ds+'02'+ds+'1995',FormatMaskText('!99/99/\1\900;0;','130295'));
   AssertEquals('13 Gen 1995',FormatMaskText('!99 >L<LL \1\900;0;','13Gen95'));
-  AssertEquals('21'+ts+'05'+{$IFDEF D15+}FormatSettings.{$ENDIF}TimeSeparator+'15',FormatMaskText('!90:00:00;0;','210515'));
+  AssertEquals('21'+ts+'05'+FormatSettings.TimeSeparator+'15',FormatMaskText('!90:00:00;0;','210515'));
   AssertEquals('13'+ts+'45',FormatMaskText('!90:00;0;','1345'));
 end;
 

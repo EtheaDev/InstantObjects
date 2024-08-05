@@ -30,7 +30,7 @@
 
 unit TestInstantComplex;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantComplex
   [TestFixture]
-  TestTInstantComplex = class(TInstantTestCase)
+  TestTInstantComplex = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantComplex: TInstantPart;
@@ -68,9 +68,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils;
 
 procedure TestTInstantComplex.SetUp;

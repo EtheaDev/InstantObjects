@@ -30,7 +30,7 @@
 
 unit TestInstantFieldMetadata;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -44,7 +44,7 @@ uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} Ins
 type
   // Test methods for class TInstantFieldMetadata
   [TestFixture]
-  TestTInstantFieldMetadata = class(TInstantTestCase)
+  TestTInstantFieldMetadata = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FOwner: TInstantTableMetadata;
     FCollection: TInstantFieldMetadatas;
@@ -66,7 +66,7 @@ type
 
   // Test methods for class TInstantFieldMetadatas
   [TestFixture]
-  TestTInstantFieldMetadatas = class(TInstantTestCase)
+  TestTInstantFieldMetadatas = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FOwner: TInstantTableMetadata;
     FInstantFieldMetadatas: TInstantFieldMetadatas;
@@ -85,9 +85,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, TypInfo, InstantTypes;
 
 procedure TestTInstantFieldMetadata.SetUp;

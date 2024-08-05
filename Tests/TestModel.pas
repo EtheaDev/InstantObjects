@@ -29,10 +29,15 @@
  * ***** END LICENSE BLOCK ***** *)
 unit TestModel;
 
+{$I '..\..\Source\InstantDefines.inc'}
+
 interface
 
 uses
-  InstantPersistence, InstantTypes
+  InstantPersistence
+  , InstantTypes
+  , InstantClasses
+  , System.Classes
   {$IFDEF DELPHI_NEON}
   , Neon.Core.Types
   , Neon.Core.Nullables
@@ -81,6 +86,12 @@ type
     procedure SetState(const Value: string);
     procedure SetStreet(const Value: string);
     procedure SetZip(const Value: string);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TAddress; reintroduce; virtual;
+    {$ENDIF}
   published
     property City: string read GetCity write SetCity;
     {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
@@ -100,6 +111,12 @@ type
   protected
     procedure BeforeStore; override;
     function GetCaption: string; override;
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TCountry; reintroduce; virtual;
+    {$ENDIF}
   published
     property Name: string read GetName write SetName;
   end;
@@ -114,6 +131,12 @@ type
     function GetNumber: string;
     procedure SetName(const Value: string);
     procedure SetNumber(const Value: string);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TPhone; reintroduce; virtual;
+    {$ENDIF}
   published
     property Name: string read GetName write SetName;
     property Number: string read GetNumber write SetNumber;
@@ -126,21 +149,38 @@ type
   private
     function GetAddress: string;
     procedure SetAddress(const Value: string);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TEmail; reintroduce; virtual;
+    {$ENDIF}
   published
     property Address: string read GetAddress write SetAddress;
   end;
 
   TCategory = class(TInstantObject)
   {IOMETADATA stored 'Categories';
-    Name: String(30); }
+    Name: String(30);
+    Value: Integer; }
     _Name: TInstantString;
+    _Value: TInstantInteger;
   private
     function GetName: string;
     procedure SetName(const Value: string);
+    function GetValue: Integer;
+    procedure SetValue(const Value: Integer);
   protected
     function GetCaption: string; override;
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TCategory; reintroduce; virtual;
+    {$ENDIF}
   published
     property Name: string read GetName write SetName;
+    property Value: Integer read GetValue write SetValue;
   end;
 
   TContact = class(TInstantObject)
@@ -192,6 +232,11 @@ type
     procedure BeforeStore; override;
     function GetCaption: string; override;
   public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TContact; reintroduce; virtual;
+    {$ENDIF}
     function AddExternalPart(ExternalPart: TExternalPhone): Integer;
     function AddPhone(Phone: TPhone): Integer;
     function AddProject(Project: TProject): Integer;
@@ -286,6 +331,11 @@ type
   protected
     procedure BeforeDispose; override;
   public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TPerson; reintroduce; virtual;
+    {$ENDIF}
     function AddEmail(Email: TEmail): Integer;
     procedure ClearEmails;
     procedure DeleteEmail(Index: Integer);
@@ -327,6 +377,11 @@ type
     procedure SetNoOfBranches(Value: Integer);
     procedure SetSubsidiaries(Index: Integer; Value: TCompany);
   public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TCompany; reintroduce; virtual;
+    {$ENDIF}
     function AddEmployee(Employee: TPerson): Integer;
     function AddSubsidiary(Subsidiary: TCompany): Integer;
     procedure ClearEmployees;
@@ -382,6 +437,11 @@ type
     procedure SetParticipants(Index: Integer; Value: TContact);
     procedure SetSubProjects(Index: Integer; Value: TProject);
   public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TProject; reintroduce; virtual;
+    {$ENDIF}
     function AddAddress(Address: TExternalAddress): Integer;
     function AddParticipant(Participant: TContact): Integer;
     function AddSubProject(SubProject: TProject): Integer;
@@ -601,6 +661,12 @@ type
     procedure SetMultiLangDesc(const Value: string); virtual;
     procedure SetMultiLangMemo(const Value: string); virtual;
     procedure AfterCreate; override;
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TSampleClass; reintroduce; virtual;
+    {$ENDIF}
   published
     property CharacterListAttribute: string read GetCharacterListAttribute write SetCharacterListAttribute;
     property CharacterFileName: string read GetCharacterFileName write SetCharacterFileName;
@@ -634,6 +700,15 @@ uses
   SysUtils, InstantUtils, InstantMetadata;
 
 { TAddress }
+{$IFDEF WINLINUX64}
+class function TAddress.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TAddress;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TAddress;
+end;
+{$ENDIF}
 
 function TAddress.GetCity: string;
 begin
@@ -687,6 +762,16 @@ end;
 
 { TCountry }
 
+{$IFDEF WINLINUX64}
+class function TCountry.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TCountry;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TCountry;
+end;
+{$ENDIF}
+
 procedure TCountry.BeforeStore;
 begin
   if Id = '' then
@@ -711,10 +796,15 @@ end;
 
 { TPerson }
 
-procedure TExternalPhone.SetNumber(const Value: string);
+{$IFDEF WINLINUX64}
+class function TPerson.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TPerson;
 begin
-  _Number.Value := Value;
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TPerson;
 end;
+{$ENDIF}
 
 function TPerson.AddEmail(Email: TEmail): Integer;
 begin
@@ -927,12 +1017,22 @@ begin
   _Picture.Value := Value;
 end;
 
-{ TPhone }
-
 procedure TPerson.SetSalary(Value: Currency);
 begin
   _Salary.Value := Value;
 end;
+
+{ TPhone }
+
+{$IFDEF WINLINUX64}
+class function TPhone.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TPhone;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TPhone;
+end;
+{$ENDIF}
 
 function TPhone.GetName: string;
 begin
@@ -953,6 +1053,18 @@ procedure TPhone.SetNumber(const Value: string);
 begin
   _Number.Value := Value;
 end;
+
+{ TProject }
+
+{$IFDEF WINLINUX64}
+class function TProject.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TProject;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TProject;
+end;
+{$ENDIF}
 
 function TProject.AddAddress(Address: TExternalAddress): Integer;
 begin
@@ -1121,6 +1233,16 @@ end;
 
 { TEmail }
 
+{$IFDEF WINLINUX64}
+class function TEmail.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TEmail;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TEmail;
+end;
+{$ENDIF}
+
 function TEmail.GetAddress: string;
 begin
   Result := _Address.Value;
@@ -1133,6 +1255,16 @@ end;
 
 { TCategory }
 
+{$IFDEF WINLINUX64}
+class function TCategory.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TCategory;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TCategory;
+end;
+{$ENDIF}
+
 function TCategory.GetCaption: string;
 begin
   Result := Name;
@@ -1143,27 +1275,32 @@ begin
   Result := _Name.Value;
 end;
 
+function TCategory.GetValue: Integer;
+begin
+  Result := _Value.Value;
+end;
+
 procedure TCategory.SetName(const Value: string);
 begin
   _Name.Value := Value;
 end;
 
+procedure TCategory.SetValue(const Value: Integer);
+begin
+  _Value.Value := Value;
+end;
+
 { TContact }
 
-function TCompany.RemoveSubsidiary(Subsidiary: TCompany): Integer;
+{$IFDEF WINLINUX64}
+class function TContact.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TContact;
 begin
-  Result := _Subsidiaries.Remove(Subsidiary);
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TContact;
 end;
-
-procedure TCompany.SetNoOfBranches(Value: Integer);
-begin
-  _NoOfBranches.Value := Value;
-end;
-
-procedure TCompany.SetSubsidiaries(Index: Integer; Value: TCompany);
-begin
-  _Subsidiaries[Index] := Value;
-end;
+{$ENDIF}
 
 function TContact.AddExternalPart(ExternalPart: TExternalPhone): Integer;
 begin
@@ -1185,6 +1322,9 @@ begin
   inherited;
   Id := InstantGenerateId;
   _Category.ReferenceObject(TCategory, 'CAT000');
+  Assert(_Category.HasReference, 'Default Category has Reference');
+  //Category := TCategory.Retrieve('CAT000', False, False, Connector);
+  //Category.Free;
 end;
 
 procedure TContact.BeforeStore;
@@ -1434,6 +1574,31 @@ end;
 
 { TCompany }
 
+{$IFDEF WINLINUX64}
+class function TCompany.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TCompany;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TCompany;
+end;
+{$ENDIF}
+
+function TCompany.RemoveSubsidiary(Subsidiary: TCompany): Integer;
+begin
+  Result := _Subsidiaries.Remove(Subsidiary);
+end;
+
+procedure TCompany.SetNoOfBranches(Value: Integer);
+begin
+  _NoOfBranches.Value := Value;
+end;
+
+procedure TCompany.SetSubsidiaries(Index: Integer; Value: TCompany);
+begin
+  _Subsidiaries[Index] := Value;
+end;
+
 function TCompany.AddEmployee(Employee: TPerson): Integer;
 begin
   Result := _Employees.Add(Employee)
@@ -1547,6 +1712,11 @@ begin
 end;
 
 { TExternalPhone }
+
+procedure TExternalPhone.SetNumber(const Value: string);
+begin
+  _Number.Value := Value;
+end;
 
 function TExternalPhone.GetName: string;
 begin
@@ -1690,6 +1860,17 @@ begin
 end;
 
 { TSampleClass }
+
+{$IFDEF WINLINUX64}
+class function TSampleClass.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TSampleClass;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TSampleClass;
+end;
+{$ENDIF}
+
 function TSampleClass.GetCharacterListAttribute: string;
 begin
   Result := _CharacterListAttribute.Value;

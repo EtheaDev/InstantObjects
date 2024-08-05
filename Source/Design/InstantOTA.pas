@@ -38,17 +38,11 @@ uses
   Classes, ToolsAPI, InstantTypes, Forms;
 
 type
-{$IFDEF D12+}
   InstantOTAString = UTF8String;
-{$ELSE}
-  InstantOTAString = string;
-{$ENDIF}
   PInstantOTAString = ^InstantOTAString;
 
   TInstantOTAIDEInterface = class;
-{$IFDEF D9+}
   TInstantOTAIDENotifier8 = class;
-{$ENDIF}
   TInstantOTAIDENotifier5 = class;
   TInstantOTAModuleNotifier = class;
   TInstantOTAEditorNotifier = class;
@@ -195,7 +189,6 @@ type
         read FOnModuleRenamedNotification write FOnModuleRenamedNotification;
   end;
 
- {$IFDEF D9+}
   TInstantOTAIDENotifier8 = class(TInstantOTAIDENotifier5, IOTANotifier,
       IOTAIDENotifier50, IOTAIDENotifier80)
   protected
@@ -206,7 +199,6 @@ type
     procedure AfterCompile(const Project: IOTAProject; Succeeded: Boolean;
         IsCodeInsight: Boolean); overload;
   end;
-  {$ENDIF}
 
   TInstantOTAModuleNotifier = class(TNotifierObject, IOTANotifier,
       IOTAModuleNotifier, IInstantOTANotifierUninstallation)
@@ -419,11 +411,7 @@ end;
 function TInstantOTAIDEInterface.GetIDENotifier5: TInstantOTAIDENotifier5;
 begin
   if not Assigned(FIDENotifier5) then
-    {$IFDEF D9+}
     FIDENotifier5 := TInstantOTAIDENotifier8.Create(Self);
-    {$ELSE}
-    FIDENotifier5 := TInstantOTAIDENotifier5.Create(Self);
-    {$ENDIF}
   Result := FIDENotifier5;
 end;
 
@@ -769,11 +757,7 @@ begin
     Module := ModuleNotifier.ModuleInterface;
     Assert(Assigned(Module));
 
-    {$IFNDEF D7+}
     Result := AnsiSameText(Module.FileName, AFileName);
-    {$ELSE}
-    Result := SameFileName(Module.FileName, AFileName);
-    {$ENDIF}
     if Result then
       Break;
   end;
@@ -814,13 +798,9 @@ end;
 function TInstantOTAIDENotifier5.IsValidModuleFileName(const AFileName:
     string): Boolean;
 begin
-  {$IFDEF D9+}
   // Ignore the default.htm module (the Welcome Page) in Delphi 8+
   Result := not (SameFileName(AFileName, 'default.htm') or
         SameFileName(AFileName, ('bds:/default.htm')));
-  {$ELSE}
-  Result := True;
-  {$ENDIF}
 end;
 
 procedure TInstantOTAIDENotifier5.ModuleNotification(const FileName: string;
@@ -1075,7 +1055,6 @@ procedure TInstantOTAMessage.ShowHelp;
 begin
 end;
 
-{$IFDEF D9+}
 procedure TInstantOTAIDENotifier8.AfterCompile(const Project: IOTAProject;
     Succeeded: Boolean; IsCodeInsight: Boolean);
 begin
@@ -1088,7 +1067,6 @@ begin
   if Assigned(FOnAfterCompilation) then
     FOnAfterCompilation(Self, Project, Succeeded, IsCodeInsight);
 end;
-{$ENDIF}
 
 constructor TInstantOTAEditorNotifier.Create(AOwner: TInstantOTAModuleNotifier;
     ASourceEditorInterface: IOTASourceEditor);

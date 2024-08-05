@@ -65,7 +65,6 @@ type
     class procedure AssertTrue(ACondition: boolean); overload;
     class procedure AssertFalse(const AMessage: string; ACondition: boolean); overload;
     class procedure AssertFalse(ACondition: boolean); overload;
-    class procedure AssertEqualsXML(const Expected, Actual: string; const msg: string = ''); overload;
     class procedure AssertEquals(const AMessage: string; Expected, Actual: string); overload;
     class procedure AssertEquals(Expected, Actual: string); overload;
     class procedure AssertEquals(const AMessage: string; Expected, Actual: integer); overload;
@@ -83,6 +82,8 @@ type
     class procedure AssertEquals(Expected, Actual: char); overload;
     class procedure AssertEquals(const AMessage: string; Expected, Actual: TClass); overload;
     class procedure AssertEquals(Expected, Actual: TClass); overload;
+    class procedure AssertEqualsString(const expected, actual: string; const msg: string);
+    class procedure AssertEqualsXML(const expected, actual: UnicodeString; const msg: string);
     class procedure AssertSame(const AMessage: string; Expected, Actual: TObject); overload;
     class procedure AssertSame(Expected, Actual: TObject); overload;
     class procedure AssertSame(const AMessage: string; Expected, Actual: Pointer); overload;
@@ -146,7 +147,7 @@ type
     procedure EndTest(ATest: TTest);
   end;
 
-  TInstantTestCase = class(TAssert)
+  TTestCase = class(TAssert)
   private
     FName: string;
     FTestSuiteName: string;
@@ -173,7 +174,7 @@ type
     property TestName: string read GetTestName write SetTestName;
   end;
 
-  TTestCaseClass = class of TInstantTestCase;
+  TTestCaseClass = class of TTestCase;
 
   TTestSuite = class(TTest)
   private
@@ -198,7 +199,7 @@ type
     procedure RunTest(ATest: TTest; AResult: TTestResult); virtual;
     procedure AddTest(ATest: TTest); overload; virtual;
     procedure AddTestSuiteFromClass(ATestClass: TClass); virtual;
-    class function Warning(const aMessage: string): TInstantTestCase;
+    class function Warning(const aMessage: string): TTestCase;
     property Test[Index: integer]: TTest read GetTest; default;
     property TestSuiteName: string read GetTestSuiteName write SetTestSuiteName;
     property TestName: string read GetTestName write SetTestName;
@@ -230,7 +231,7 @@ type
     procedure EndTest(ATest: TTest);
     procedure AddListener(AListener: ITestListener);
     procedure RemoveListener(AListener: ITestListener);
-    procedure Run(ATestCase: TInstantTestCase);
+    procedure Run(ATestCase: TTestCase);
     procedure RunProtected(ATestCase: TTest; protect: TProtect);
     function WasSuccessful: boolean;
   published
@@ -249,7 +250,7 @@ Resourcestring
   SExpectedNotSame = 'expected not same';
   SExceptionCompare = 'Exception %s expected but %s was raised';
   SMethodNotFound = 'Method <%s> not found';
-  SNoValidInheritance = ' does not inherit from TInstantTestCase';
+  SNoValidInheritance = ' does not inherit from TTestCase';
   SNoValidTests = 'No valid tests found in ';
   
   
@@ -260,7 +261,7 @@ uses
 
 type
 
-  TTestWarning = class(TInstantTestCase)
+  TTestWarning = class(TTestCase)
   private
     FMessage: String;
   protected
@@ -383,7 +384,7 @@ end;
 
 class procedure TAssert.AssertEquals(const AMessage: string; Expected, Actual: string);
 begin
-  AssertTrue(AMessage + ComparisonMsg(Expected, Actual), AnsiCompareStr(Expected, Actual) = 0);
+  AssertTrue(AMessage + ComparisonMsg(Expected, Actual), CompareStr(Expected, Actual) = 0);
 end;
 
 class procedure TAssert.AssertEquals(Expected, Actual: string);
@@ -433,24 +434,6 @@ begin
      AssertEquals('', DateToStr(Expected), DateToStr(Actual));
 end;
 
-class procedure TAssert.AssertEqualsXML(const expected, actual: String;
-  const msg: string);
-var
-  LCleanExpected, LCleanActual: string;
-
-  function CleanString(const AValue: string): string;
-  begin
-    Result := AValue;
-    Result := StringReplace(Result, sLineBreak, '', [rfReplaceAll]);
-    Result := StringReplace(Result, ' ', '', [rfReplaceAll]);
-  end;
-
-begin
-  LCleanExpected := CleanString(expected);
-  LCleanActual := CleanString(actual);
-  AssertEquals(msg, LCleanExpected, LCleanActual);
-end;
-
 class procedure TAssert.AssertEquals(const AMessage: string; Expected, Actual, Delta: double);
 begin
   AssertTrue(AMessage + ComparisonMsg(FloatToStr(Expected),FloatToStr(Actual)), 
@@ -495,6 +478,29 @@ end;
 class procedure TAssert.AssertEquals(Expected, Actual: TClass);
 begin
   AssertEquals('', Expected, Actual);
+end;
+
+class procedure TAssert.AssertEqualsString(const expected, actual: string; const msg: string);
+begin
+  AssertEquals(msg,expected,actual);
+end;
+
+class procedure TAssert.AssertEqualsXML(const expected, actual: UnicodeString;
+  const msg: string);
+var
+  LCleanExpected, LCleanActual: string;
+
+  function CleanString(const AValue: string): string;
+  begin
+    Result := AValue;
+    Result := StringReplace(Result, sLineBreak, '', [rfReplaceAll]);
+    Result := StringReplace(Result, ' ', '', [rfReplaceAll]);
+  end;
+
+begin
+  LCleanExpected := CleanString(expected);
+  LCleanActual := CleanString(actual);
+  AssertEqualsString(LCleanExpected, LCleanActual, msg);
 end;
 
 class procedure TAssert.AssertSame(const AMessage: string; Expected, Actual: TObject);
@@ -627,73 +633,73 @@ begin
   AssertException('', AExceptionClass, AMethod);
 end;
 
-constructor TInstantTestCase.Create;
+constructor TTestCase.Create;
 begin
   inherited Create;
 end;   
 
-constructor TInstantTestCase.CreateWithName(const AName: string);
+constructor TTestCase.CreateWithName(const AName: string);
 begin
   Create;
   FName := AName;
 end;
 
-constructor TInstantTestCase.CreateWith(const ATestName: string; const ATestSuiteName: string);
+constructor TTestCase.CreateWith(const ATestName: string; const ATestSuiteName: string);
 begin
   Create;
   FName := ATestName;
   FTestSuiteName := ATestSuiteName;
 end;
 
-function TInstantTestCase.AsString: string;
+function TTestCase.AsString: string;
 begin
   Result := TestName + '(' + ClassName + ')';
 end;
 
-function TInstantTestCase.CountTestCases: integer;
+function TTestCase.CountTestCases: integer;
 begin
   Result := 1;
 end;
 
-function TInstantTestCase.CreateResult: TTestResult;
+function TTestCase.CreateResult: TTestResult;
 begin
   Result := TTestResult.Create;
 end;
 
 
-function TInstantTestCase.GetTestName: string;
+function TTestCase.GetTestName: string;
 begin
   Result := FName;
 end;
 
-function TInstantTestCase.GetTestSuiteName: string;
+function TTestCase.GetTestSuiteName: string;
 begin
   Result := FTestSuiteName;
 end;
 
-procedure TInstantTestCase.SetTestSuiteName(const aName: string);
+procedure TTestCase.SetTestSuiteName(const aName: string);
 begin
   if FTestSuiteName <> aName then
     FTestSuiteName := aName;
 end;
 
-procedure TInstantTestCase.SetTestName(const Value: string);
+procedure TTestCase.SetTestName(const Value: string);
 begin
   FName := Value;
 end;
 
-function TInstantTestCase.CreateResultAndRun: TTestResult;
+function TTestCase.CreateResultAndRun: TTestResult;
 begin
   Result := CreateResult;
   Run(Result);
 end;
 
-procedure TInstantTestCase.Run(AResult: TTestResult);
+procedure TTestCase.Run(AResult: TTestResult);
 begin
   (AResult).Run(Self);
 end;
 
-procedure TInstantTestCase.RunBare;
+procedure TTestCase.RunBare;
 begin
   FLastStep := stSetUp;
   SetUp;
@@ -707,7 +713,7 @@ begin
   FLastStep := stNothing;
 end;
 
-procedure TInstantTestCase.RunTest;
+procedure TTestCase.RunTest;
 var
   m: TMethod;
   RunMethod: TRunMethod;
@@ -728,12 +734,12 @@ begin
     end;
 end;
 
-procedure TInstantTestCase.SetUp;
+procedure TTestCase.SetUp;
 begin
 
 end;
 
-procedure TInstantTestCase.TearDown;
+procedure TTestCase.TearDown;
 begin
 
 end;
@@ -751,7 +757,7 @@ var
   tc: TTestCaseClass;
 begin
   Create(AClass.ClassName);
-  if AClass.InheritsFrom(TInstantTestCase) then
+  if AClass.InheritsFrom(TTestCase) then
   begin
     tc := TTestCaseClass(AClass);
     ml := TStringList.Create;
@@ -862,7 +868,7 @@ begin
   AddTest(TTestSuite.Create(ATestClass));
 end;
 
-class function TTestSuite.Warning(const aMessage: string): TInstantTestCase;
+class function TTestSuite.Warning(const aMessage: string): TTestCase;
 var
   w: TTestWarning;
 begin
@@ -956,10 +962,10 @@ end;
 
 procedure ProtectTest(aTest: TTest; aResult: TTestResult);
 begin
-  TInstantTestCase(aTest).RunBare;
+  TTestCase(aTest).RunBare;
 end;
 
-procedure TTestResult.Run(ATestCase: TInstantTestCase);
+procedure TTestResult.Run(ATestCase: TTestCase);
 begin
   StartTest(ATestCase);
   RunProtected(ATestCase, ProtectTest);

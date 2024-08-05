@@ -30,7 +30,7 @@
 
 unit TestInstantString;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantString
   [TestFixture]
-  TestTInstantString = class(TInstantTestCase)
+  TestTInstantString = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantString: TInstantString;
@@ -75,9 +75,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses;
 
 procedure TestTInstantString.SetUp;
@@ -119,7 +117,7 @@ var
 begin
   vCurr := 23.45;
   FInstantString.AsCurrency := vCurr;
-  AssertEquals('23' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+  AssertEquals('23' + FormatSettings.DecimalSeparator +
     '45', FInstantString.Value);
   AssertEquals(vCurr, FInstantString.AsCurrency);
 end;
@@ -134,7 +132,7 @@ end;
 procedure TestTInstantString.TestAsFloat;
 begin
   FInstantString.AsFloat := 89.45;
-  AssertEquals('89' + {$IFDEF D15+}FormatSettings.{$ENDIF}DecimalSeparator +
+  AssertEquals('89' + FormatSettings.DecimalSeparator +
     '45', FInstantString.Value);
   AssertEquals(89.45, FInstantString.AsFloat);
 end;
@@ -198,13 +196,8 @@ end;
 procedure TestTInstantString.TestAsVariant;
 begin
   FInstantString.AsVariant := 'DifferentString';
-{$IFDEF VER130}
-  AssertEquals('DifferentString', VarToStr(FInstantString.Value));
-  AssertEquals('DifferentString', VarToStr(FInstantString.AsVariant));
-{$ELSE}
   AssertEquals('DifferentString', FInstantString.Value);
   AssertEquals('DifferentString', FInstantString.AsVariant);
-{$ENDIF}
 end;
 
 procedure TestTInstantString.TestName;

@@ -1,6 +1,6 @@
 ﻿(*
  *   InstantObjects Test Suite
- *   TestMockBroker
+ *   TestInstantExposer
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
@@ -32,39 +32,51 @@ unit TestInstantExposer;
 
 interface
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
+{$I '..\InstantDefines.inc'}
+{$ENDIF}
+
 uses
   {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} InstantXML, InstantPresentation, DB,
-  DUnitX.TestFramework;
+  DUnitX.TestFramework, TestModel;
 
 type
   [TestFixture]
-  TTestExposer = class(TInstantTestCase)
+  TTestExposer = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
+    function CreateCategory(const AId, AName: string;
+      const AValue: Integer): TCategory;
     procedure AssignNameField(const Exp: TDataSet);
   protected
     FConn: TInstantXMLConnector;
     FAcc: TXMLFilesAccessor;
     FExp: TInstantExposer;
+    FCategory: TCategory;
     [Setup]
     procedure SetUp; override;
     [TearDown]
     procedure TearDown; override;
   published
     [Test]
+    procedure FieldSetValue;
+    procedure TestBookmarks;
+    procedure TestInstantObjectRefField;
+    procedure TestStoreAndRetrieveCategory;
     procedure TestStoreAndRetrieveContact;
     procedure TestStoreAndRetrievePerson;
     procedure TestStoreAndRetrievePicture;
     procedure TestStoreAndRetrieveContactPhones;
-//    procedure TestOrderBy;
-    procedure FieldSetValue;
   end;
 
 implementation
 
 uses
-  SysUtils, Classes, ShellAPI, InstantPersistence, TestModel, Graphics;
+  SysUtils, Classes, ShellAPI, InstantPersistence, Graphics;
 
 const
+  DEF_CATEG_ID = 'CATEG_ID';
   DEF_NAME = 'AName';
   DEF_NAME_UNICODE = '网站导航';
   DEF_CITY = 'Milan (€)';
@@ -72,7 +84,7 @@ const
   ADDRESS_STREET_UNICODE = '链接';
   DEF_HOME = 'Home';
   DEF_OFFICE = 'Office';
-  DEF_NUM_HOME  = '012 12345678';
+  DEF_NUM_HOME  = '012-123-45678';
   DEF_NUM_OFFICE = '012-234-56781';
 
 { TTestXMLBroker }
@@ -80,7 +92,7 @@ const
 procedure TTestExposer.SetUp;
 begin
   FAcc := TXMLFilesAccessor.Create(nil);
-  FAcc.RootFolder := ExtractFilePath(ParamStr(0)) + 'XMLDB';
+  FAcc.RootFolder := ExtractFilePath(ParamStr(0)) + 'XMLTestData';
   ForceDirectories(FAcc.RootFolder);
   FConn := TInstantXMLConnector.Create(nil);
   FConn.Connection := FAcc;
@@ -91,6 +103,11 @@ begin
   if InstantModel.ClassMetadatas.Count > 0 then
     InstantModel.ClassMetadatas.Clear;
   InstantModel.LoadFromResFile(ChangeFileExt(ParamStr(0), '.mdr'));
+  //Create default Category
+  FCategory := TCategory.Create(FConn);
+  FCategory.Id := 'CAT000';
+  FCategory.Name := 'Default Category';
+  FCategory.Store;
 end;
 
 procedure TTestExposer.TearDown;
@@ -117,6 +134,7 @@ procedure TTestExposer.TearDown;
 
 begin
   inherited;
+  FreeAndNil(FCategory);
   InstantModel.ClassMetadatas.Clear;
   FreeAndNil(FExp);
   FreeAndNil(FConn);
@@ -124,73 +142,189 @@ begin
   FreeAndNil(FAcc);
 end;
 
+procedure TTestExposer.TestBookmarks;
+var
+  LContact: TContact;
+  LPhone1, LPhone2: TPhone;
+  LBookmark: TBookmark;
+  LRecordCount: Integer;
+  LObjectAdded: Integer;
+begin
+  FExp.ObjectClass := TPhone;
+  FExp.Mode := amContent;
+  FExp.ContainerName := 'Phones';
+  LContact := TContact.Create(FConn);
+  try
+    LObjectAdded := 0;
+    FExp.Subject := LContact;
+    LRecordCount := FExp.RecordCount;
+
+    LPhone1 := TPhone.Create(FConn);
+    LPhone1.Name := DEF_HOME;
+    LPhone1.Number := DEF_NUM_HOME;
+    FExp.AddObject(LPhone1);
+    Inc(LObjectAdded);
+    AssertEquals(FExp.RecordCount, LRecordCount+LObjectAdded);
+
+    LPhone2 := TPhone.Create(FConn);
+    LPhone2.Name := DEF_OFFICE;
+    LPhone2.Number := DEF_NUM_OFFICE;
+    FExp.AddObject(LPhone2);
+    Inc(LObjectAdded);
+    AssertEquals(FExp.RecordCount, LRecordCount+LObjectAdded);
+
+    FExp.First;
+    AssertEquals(FExp.RecNo, 1);
+
+    LBookmark := FExp.GetBookmark;
+    FExp.Last;
+    AssertEquals(FExp.RecNo, LRecordCount+LObjectAdded);
+
+    FExp.GotoBookmark(LBookmark);
+    AssertEquals(FExp.RecNo, 1);
+
+    FExp.RemoveObject(LPhone1);
+    Dec(LObjectAdded);
+    AssertEquals(FExp.RecordCount, LRecordCount+LObjectAdded);
+
+    FExp.RemoveObject(LPhone2);
+    Dec(LObjectAdded);
+    AssertEquals(FExp.RecordCount, LRecordCount+LObjectAdded);
+
+    FExp.Close;
+    AssertEquals(FExp.RecordCount, 0);
+  finally
+    LContact.Free;
+  end;
+end;
+
+procedure TTestExposer.TestInstantObjectRefField;
+var
+  LField: TField;
+  LCategory: TCategory;
+begin
+  FExp.ObjectClass := TCategory;
+  LCategory := CreateCategory(DEF_CATEG_ID, 'Default Category', 0);
+  try
+    FExp.FieldOptions := [foThorough, foObjects];
+    FExp.Mode := amObject;
+    FExp.Subject := LCategory;
+    LField := FExp.FindField('Self');
+    AssertNotNull('Field "Self" not found', LField);
+    {$IF DEFINED(WINLINUX64) OR DEFINED(USE_LARGEINT_FIELD_FOR_REF)}
+    AssertEquals(LField.ClassName, 'TLargeintField');
+    {$ELSE}
+    AssertEquals(LField.ClassName, 'TIntegerField');
+    {$IFEND}
+  finally
+    FreeAndNil(LCategory);
+  end;
+end;
+
+procedure TTestExposer.TestStoreAndRetrieveCategory;
+var
+  LCategory: TCategory;
+  old_id: string;
+begin
+  FExp.ObjectClass := TCategory;
+  LCategory := CreateCategory(DEF_CATEG_ID, 'Default Category', 0);
+  try
+    FExp.Mode := amObject;
+    FExp.Subject := LCategory;
+    FExp.Edit;
+    //Test Name (Unicode)
+    AssignNameField(FExp);
+    FExp.Post;
+    old_id := LCategory.id;
+  finally
+    FreeAndNil(LCategory);
+  end;
+  AssertNull(LCategory);
+  LCategory := TCategory.Retrieve(old_id, False, False, FConn);
+  try
+    AssertNotNull('Object not retrieved', LCategory);
+    AssertEquals(old_id, LCategory.Id);
+    AssertEquals(DEF_CATEG_ID, LCategory.Id);
+    if not FConn.UseUnicode then
+    begin
+      AssertEquals(DEF_NAME, LCategory.Name);
+    end
+    else
+    begin
+      AssertEquals(DEF_NAME_UNICODE, LCategory.Name);
+    end;
+  finally
+    FreeAndNil(LCategory);
+  end;
+end;
+
 procedure TTestExposer.TestStoreAndRetrieveContact;
 var
-  c: TContact;
+  LContact: TContact;
   old_id: string;
   Field: TField;
 begin
   FExp.ObjectClass := TContact;
-  c := TContact.Create(FConn);
+  LContact := TContact.Create(FConn);
   try
-    FExp.Subject := c;
+    FExp.Subject := LContact;
     FExp.Edit;
     //Test Name (Unicode)
     AssignNameField(FExp);
     //Test Address.City (Unicode)
     Field := FExp.FieldByName('Address.City');
     Field.Value := DEF_CITY;
-    AssertEquals(DEF_CITY, c.Address.City);
+    AssertEquals(DEF_CITY, LContact.Address.City);
     //Test Address.Street (Unicode)
     Field := FExp.FieldByName('Address.Street');
     if not FConn.UseUnicode then
     begin
       Field.Value := ADDRESS_STREET;
-      AssertEquals(ADDRESS_STREET, c.Address.Street);
+      AssertEquals(ADDRESS_STREET, LContact.Address.Street);
     end
     else
     begin
       Field.Value := ADDRESS_STREET_UNICODE;
-      AssertEquals(ADDRESS_STREET_UNICODE, c.Address.Street);
+      AssertEquals(ADDRESS_STREET_UNICODE, LContact.Address.Street);
     end;
 
     FExp.Post;
     if not FConn.UseUnicode then
     begin
-      AssertEquals(DEF_NAME, c.Name);
-      AssertEquals(DEF_CITY, c.Address.City);
-      AssertEquals(ADDRESS_STREET, c.Address.Street);
+      AssertEquals(DEF_NAME, LContact.Name);
+      AssertEquals(DEF_CITY, LContact.Address.City);
+      AssertEquals(ADDRESS_STREET, LContact.Address.Street);
     end
     else
     begin
-      AssertEquals(DEF_NAME_UNICODE, c.Name);
-      AssertEquals(DEF_CITY, c.Address.City);
-      AssertEquals(ADDRESS_STREET_UNICODE, c.Address.Street);
+      AssertEquals(DEF_NAME_UNICODE, LContact.Name);
+      AssertEquals(DEF_CITY, LContact.Address.City);
+      AssertEquals(ADDRESS_STREET_UNICODE, LContact.Address.Street);
     end;
-    old_id := c.id;
+    old_id := LContact.id;
   finally
-    FreeAndNil(c);
+    FreeAndNil(LContact);
   end;
-  AssertNull(c);
-  c := TContact.Retrieve(old_id, False, False, FConn);
+  AssertNull(LContact);
+  LContact := TContact.Retrieve(old_id, False, False, FConn);
   try
-    AssertNotNull('Object not retrieved', c);
-    AssertEquals(old_id, c.Id);
+    AssertNotNull('Object not retrieved', LContact);
+    AssertEquals(old_id, LContact.Id);
     if not FConn.UseUnicode then
     begin
-      AssertEquals(DEF_NAME, c.Name);
-      AssertEquals(DEF_CITY, c.Address.City);
-      AssertEquals(ADDRESS_STREET, c.Address.Street);
+      AssertEquals(DEF_NAME, LContact.Name);
+      AssertEquals(DEF_CITY, LContact.Address.City);
+      AssertEquals(ADDRESS_STREET, LContact.Address.Street);
     end
     else
     begin
-      AssertEquals(DEF_NAME_UNICODE, c.Name);
-      AssertEquals(DEF_CITY, c.Address.City);
-      AssertEquals(ADDRESS_STREET_UNICODE, c.Address.Street);
+      AssertEquals(DEF_NAME_UNICODE, LContact.Name);
+      AssertEquals(DEF_CITY, LContact.Address.City);
+      AssertEquals(ADDRESS_STREET_UNICODE, LContact.Address.Street);
     end;
-    AssertNotNull(c.Address);
+    AssertNotNull(LContact.Address);
   finally
-    FreeAndNil(c);
+    FreeAndNil(LContact);
   end;
 end;
 
@@ -211,73 +345,87 @@ begin
   end;
 end;
 
+function TTestExposer.CreateCategory(const AId, AName: string;
+  const AValue: Integer): TCategory;
+begin
+  Result := TCategory.Create(FConn);
+  Result.Id := AId;
+  Result.Name := AName;
+  Result.Value := AValue;
+end;
+
 procedure TTestExposer.FieldSetValue;
 var
-  c: TContact;
+  LCategory: TCategory;
 begin
-  FExp.ObjectClass := TContact;
-  c := TContact.Create(FConn);
+  FExp.ObjectClass := TCategory;
+  LCategory := TCategory.Create(FConn);
   try
-    FExp.Subject := c;
+    LCategory.Name := DEF_NAME;
+    FExp.Subject := LCategory;
     FExp.Edit;
     //Test Name (Unicode)
     AssignNameField(FExp);
   finally
-    FreeAndNil(c);
+    FreeAndNil(LCategory);
   end;
 end;
 
 procedure TTestExposer.TestStoreAndRetrieveContactPhones;
 var
-  c: TContact;
+  LContact: TContact;
   old_id: string;
   DataSetField: TDataSetField;
+  Field: TField;
 begin
   FExp.ObjectClass := TContact;
-  c := TContact.Create(FConn);
+  LContact := TContact.Create(FConn);
   try
-    FExp.Subject := c;
+    FExp.Subject := LContact;
     FExp.Edit;
     //Test Name (Unicode)
     AssignNameField(FExp);
     DataSetField := FExp.FieldByName('Phones') as TDataSetField;
     DataSetField.NestedDataSet.Append;
-    DataSetField.NestedDataSet.FieldByName('Name').Value := DEF_HOME;
-    DataSetField.NestedDataSet.FieldByName('Number').Value := DEF_NUM_HOME;
+    Field := DataSetField.NestedDataSet.FieldByName('Name');
+    Field.Value := DEF_HOME;
+    Field := DataSetField.NestedDataSet.FieldByName('Number');
+    Field.Value := DEF_NUM_HOME;
     DataSetField.NestedDataSet.Post;
-    AssertEquals(1, c.PhoneCount);
+    AssertEquals(1, LContact.PhoneCount);
     DataSetField.NestedDataSet.Append;
     DataSetField.NestedDataSet.FieldByName('Name').Value := DEF_OFFICE;
     DataSetField.NestedDataSet.FieldByName('Number').Value := DEF_NUM_OFFICE;
     DataSetField.NestedDataSet.Post;
-    AssertEquals(2, c.PhoneCount);
+    AssertEquals(2, LContact.PhoneCount);
+    FExp.FieldByName('MainPhoneNumber').AsString := DEF_NUM_HOME;
     FExp.Post;
-    AssertEquals(2, c.PhoneCount);
-//  AssertEquals(DEF_HOME, c.Phones[0].Name);
-//  AssertEquals(DEF_NUM_HOME, c.Phones[0].Number);
-//  AssertEquals(DEF_OFFICE, c.Phones[1].Name);
-//  AssertEquals(DEF_NUM_OFFICE, c.Phones[1].Number);
-    old_id := c.id;
+    AssertEquals(2, LContact.PhoneCount);
+    AssertEquals(DEF_HOME, LContact.Phones[0].Name);
+    AssertEquals(DEF_NUM_HOME, LContact.Phones[0].Number);
+    AssertEquals(DEF_OFFICE, LContact.Phones[1].Name);
+    AssertEquals(DEF_NUM_OFFICE, LContact.Phones[1].Number);
+    old_id := LContact.id;
   finally
-    FreeAndNil(c);
+    FreeAndNil(LContact);
   end;
-  AssertNull(c);
-  c := TContact.Retrieve(old_id, False, False, FConn);
+  AssertNull(LContact);
+  LContact := TContact.Retrieve(old_id, False, False, FConn);
   try
-    AssertNotNull('Object not retrieved', c);
-    AssertEquals(old_id, c.Id);
+    AssertNotNull('Object not retrieved', LContact);
+    AssertEquals(old_id, LContact.Id);
     if not FConn.UseUnicode then
-      AssertEquals(DEF_NAME, c.Name)
+      AssertEquals(DEF_NAME, LContact.Name)
     else
-      AssertEquals(DEF_NAME_UNICODE, c.Name);
-    AssertNotNull(c.Address);
-    AssertEquals(2, c.PhoneCount);
-//    AssertEquals(DEF_HOME, c.Phones[0].Name);
-//    AssertEquals(DEF_NUM_HOME, c.Phones[0].Number);
-//    AssertEquals(DEF_OFFICE, c.Phones[1].Name);
-//    AssertEquals(DEF_NUM_OFFICE, c.Phones[1].Number);
+      AssertEquals(DEF_NAME_UNICODE, LContact.Name);
+    AssertNotNull(LContact.Address);
+    AssertEquals(2, LContact.PhoneCount);
+    AssertEquals(DEF_HOME, LContact.Phones[0].Name);
+    AssertEquals(DEF_NUM_HOME, LContact.Phones[0].Number);
+    AssertEquals(DEF_OFFICE, LContact.Phones[1].Name);
+    AssertEquals(DEF_NUM_OFFICE, LContact.Phones[1].Number);
   finally
-    FreeAndNil(c);
+    FreeAndNil(LContact);
   end;
 end;
 
@@ -318,37 +466,37 @@ end;
 
 procedure TTestExposer.TestStoreAndRetrievePicture;
 var
-  c: TPerson;
+  LPerson: TPerson;
   Field: TField;
   BlobContentBefore, BlobContentAfter: string;
 begin
   FExp.ObjectClass := TPerson;
-  c := TPerson.Create(FConn);
+  LPerson := TPerson.Create(FConn);
   try
-    FExp.Subject := c;
+    FExp.Subject := LPerson;
     FExp.Edit;
     Field := FExp.FieldByName('Name');
     if not FConn.UseUnicode then
     begin
       Field.Value := DEF_NAME;
-      AssertEquals(DEF_NAME, c.Name);
+      AssertEquals(DEF_NAME, LPerson.Name);
     end
     else
     begin
       Field.Value := DEF_NAME_UNICODE;
-      AssertEquals(DEF_NAME_UNICODE, c.Name);
+      AssertEquals(DEF_NAME_UNICODE, LPerson.Name);
     end;
     Field := FExp.FieldByName('Picture');
     AssertTrue(Field is TBlobField);
     TBlobField(Field).LoadFromFile(ExtractFilePath(ParamStr(0)) + 'Picture.bmp');
     BlobContentBefore := TBlobField(Field).AsString;
     AssertTrue(BlobContentBefore <> '');
-    c.Picture := BlobContentBefore;
+    LPerson.Picture := BlobContentBefore;
     BlobContentAfter := TBlobField(Field).AsString;
     AssertTrue(BlobContentBefore = BlobContentAfter);
     FExp.Post;
   finally
-    FreeAndNil(c);
+    FreeAndNil(LPerson);
   end;
 end;
 

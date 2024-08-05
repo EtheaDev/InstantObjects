@@ -30,7 +30,11 @@
 
 unit InstantConnectionManagerFormUnit;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -38,10 +42,9 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
   ImgList, Menus, ActnList, ExtCtrls, StdActns,
-{$IFDEF D17+}
   System.Actions,
-{$ENDIF}
-  InstantConnectionManager, InstantClasses, InstantPersistence, InstantMetadata;
+  InstantConnectionManager, InstantClasses, InstantPersistence, InstantMetadata,
+  System.ImageList;
 
 type
   TInstantConnectionManagerForm = class(TForm)
@@ -165,9 +168,7 @@ implementation
 
 uses
   InstantImageUtils, InstantConsts, InstantDBEvolverFormUnit,
-{$IFDEF D17+}
   System.UITypes,
-{$ENDIF}
   InstantDBBuilderFormUnit;
 
 const

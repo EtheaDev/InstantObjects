@@ -21,14 +21,12 @@ object InstantCustomDBEvolverForm: TInstantCustomDBEvolverForm
     FFFFFFFF000000000FFFFF00000000000000000000000000000000000000FFFF
     0000F8230000E0010000C0000000C0000000C0000000C0010000C0030000C007
     0000C0070000C0070000C0070000C0070000E00F0000F83F0000FFFF0000}
-  OldCreateOrder = False
   Position = poScreenCenter
   ShowHint = True
   OnCreate = FormCreate
   DesignSize = (
     585
     331)
-  PixelsPerInch = 96
   TextHeight = 13
   object EvolutionLogLabel: TLabel
     Left = 8

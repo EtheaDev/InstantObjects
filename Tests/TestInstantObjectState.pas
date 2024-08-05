@@ -39,7 +39,7 @@ type
 
   // Test methods for class TInstantObjectState
   [TestFixture]
-  TestTInstantObjectState = class(TInstantTestCase)
+  TestTInstantObjectState = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FInstantObjectState: TInstantObjectState;
   public

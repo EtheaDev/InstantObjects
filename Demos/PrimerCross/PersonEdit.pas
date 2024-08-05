@@ -8,7 +8,7 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
   Grids, DBGrids, Mask, DBCtrls, ComCtrls, Buttons, ToolWin, ImgList,
-  ContactEdit, DB, InstantPresentation, Model;
+  ContactEdit, DB, InstantPresentation, Model, System.ImageList;
 
 type
   TPersonEditForm = class(TContactEditForm)
@@ -161,9 +161,7 @@ procedure TPersonEditForm.FormCreate(Sender: TObject);
 begin
   inherited;
   LoadMultipleImages(EmployerToolImages,'PERSONEMPLOYERTOOLIMAGES',HInstance);
-  {$IFNDEF VER130}
   PictureImage.Proportional := True;
-  {$ENDIF}
 end;
 
 procedure TPersonEditForm.FormShow(Sender: TObject);

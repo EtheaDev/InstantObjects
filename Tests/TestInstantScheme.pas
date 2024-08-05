@@ -30,7 +30,7 @@
 
 unit TestInstantScheme;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantScheme
   [TestFixture]
-  TestTInstantScheme = class(TInstantTestCase)
+  TestTInstantScheme = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FInstantScheme: TInstantScheme;
   public
@@ -66,9 +66,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses, InstantTypes, InstantConsts;
 
 procedure TestTInstantScheme.SetUp;

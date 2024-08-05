@@ -41,7 +41,7 @@ type
   TRunMethodIAClass = procedure(AClass: TInstantAbstractAttributeClass) of object;
 
   // Extended test methods for class TTestCase
-  TTestCaseEx = class(TInstantTestCase)
+  TTestCaseEx = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FTempAttr: TInstantAttribute;
   public
@@ -108,7 +108,7 @@ type
 
   // Test methods for class TInstantAttributeMetadatas
   [TestFixture]
-  TestTInstantAttributeMetadatas = class(TInstantTestCase)
+  TestTInstantAttributeMetadatas = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FOwner: TInstantClassMetadata;
     FInstantAttributeMetadatas: TInstantAttributeMetadatas;

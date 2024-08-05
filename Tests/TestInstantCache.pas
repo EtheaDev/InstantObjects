@@ -30,7 +30,7 @@
 
 unit TestInstantCache;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -48,7 +48,7 @@ type
   // are not tested seperately as they are only used
   // internally by TInstantCache.
   [TestFixture]
-  TestTInstantCache = class(TInstantTestCase)
+  TestTInstantCache = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantCache: TInstantCache;
@@ -68,9 +68,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses;
 
 procedure TestTInstantCache.SetUp;

@@ -30,7 +30,11 @@
 
 unit InstantMock;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -165,13 +169,8 @@ type
     FMock: TUbMockObject;
     procedure SetMock(const Value: TUbMockObject);
   protected
-{$IFDEF D12+}
     function GetRecord(Buffer: TRecordBuffer; GetMode: TGetMode; DoCheck: Boolean):
         TGetResult; override;
-{$ELSE}
-    function GetRecord(Buffer: PChar; GetMode: TGetMode; DoCheck: Boolean):
-        TGetResult; override;
-{$ENDIF}
     procedure InternalClose; override;
     procedure InternalHandleException; override;
     procedure InternalInitFieldDefs; override;
@@ -546,21 +545,12 @@ begin
   inherited;
 end;
 
-{$IFDEF D12+}
 function TInstantMockDataset.GetRecord(Buffer: TRecordBuffer; GetMode: TGetMode;
     DoCheck: Boolean): TGetResult;
 begin
   MockManager.AddExpectation('GetRecord');
   Result := grError;
 end;
-{$ELSE}
-function TInstantMockDataset.GetRecord(Buffer: PChar; GetMode: TGetMode;
-    DoCheck: Boolean): TGetResult;
-begin
-  MockManager.AddExpectation('GetRecord');
-  Result := grError;
-end;
-{$ENDIF}
 
 procedure TInstantMockDataset.InternalClose;
 begin

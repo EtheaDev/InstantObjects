@@ -10,7 +10,7 @@ uses
   ComCtrls, Grids, DBGrids, ExtCtrls, Buttons, ShellApi,
   StdCtrls, ActnList, ToolWin, ImgList, Menus,
   System.Actions,
-  BasicView, Model, InstantPresentation, InstantExplorer;
+  BasicView, Model, InstantPresentation, InstantExplorer, System.ImageList;
 
 type
   TContactViewForm = class(TBasicViewFrame)

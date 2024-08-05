@@ -39,7 +39,7 @@ type
 
   // Test methods for class TInstantAttributeMap
   [TestFixture]
-  TestTInstantAttributeMap = class(TInstantTestCase)
+  TestTInstantAttributeMap = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FClassMetadata: TInstantClassMetadata;
     FInstantAttributeMap: TInstantAttributeMap;
@@ -63,7 +63,7 @@ type
 
   // Test methods for class TInstantAttributeMaps
   [TestFixture]
-  TestTInstantAttributeMaps = class(TInstantTestCase)
+  TestTInstantAttributeMaps = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FClassMetadata: TInstantClassMetadata;
     FInstantAttributeMaps: TInstantAttributeMaps;

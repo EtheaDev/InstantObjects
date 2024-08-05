@@ -31,7 +31,11 @@
 
 unit InstantExplorer;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -212,7 +216,7 @@ type
     procedure UpdateDetails(ForceRefresh: boolean = False);
     function GetAttributesCount(Instance: TInstantObject): integer; virtual;
     function GetAttribute(Instance: TInstantObject; I: integer): TObject; virtual;
-    procedure ChangeScale(M, D: Integer{$IFDEF D20+};  isDpiChange: Boolean{$ENDIF}); override;
+    procedure ChangeScale(M, D: Integer; isDpiChange: Boolean); override;
   public
     procedure SetupContentEditor; virtual;
     constructor Create(AOwner: TComponent); override;
@@ -521,7 +525,7 @@ begin
     FOnChangeNode(Self, Node);
 end;
 
-procedure TInstantExplorer.ChangeScale(M, D: Integer{$IFDEF D20+};  isDpiChange: Boolean{$ENDIF});
+procedure TInstantExplorer.ChangeScale(M, D: Integer; isDpiChange: Boolean);
 begin
   inherited;
   DestroyObjectEditor;
@@ -1037,15 +1041,16 @@ var
   NodeType: TInstantExplorerNodeType;
   SubObject: TObject;
   Value: string;
+  LProperties: TInstantProperties;
 begin
-  with TInstantProperties.Create(Instance) do
+  LProperties := TInstantProperties.Create(Instance);
   try
-    for I := 0 to Pred(Count) do
+    for I := 0 to Pred(LProperties.Count) do
     begin
-      if Types[I] = tkClass then
+      if LProperties.Types[I] = tkClass then
       begin
         NodeType := ntObject;
-        SubObject := TObject(Integer(Values[I]));
+        SubObject := TObject(NativeInt(LProperties.Values[I]));
       end else
       begin
         NodeType := ntProperty;
@@ -1059,13 +1064,13 @@ begin
           if Assigned(SubObject) then
             Value := ''
           else
-            Value := Texts[I];
-          AddNode(NodeType, Node, Names[I], SubObject, Value)
+            Value := LProperties.Texts[I];
+          AddNode(NodeType, Node, LProperties.Names[I], SubObject, Value)
         end;
       end;
     end;
   finally
-    Free;
+    LProperties.Free;
   end;
   if (Instance is TInstantObject) and (ntContainer in NodeTypes) then
     AddContainerNodes(Node, TInstantObject(Instance), ChildCount,

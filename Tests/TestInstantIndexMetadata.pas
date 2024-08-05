@@ -30,7 +30,7 @@
 
 unit TestInstantIndexMetadata;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantIndexMetadata
   [TestFixture]
-  TestTInstantIndexMetadata = class(TInstantTestCase)
+  TestTInstantIndexMetadata = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FCollection: TInstantIndexMetadatas;
     FInstantIndexMetadata: TInstantIndexMetadata;
@@ -66,7 +66,7 @@ type
 
   // Test methods for class TInstantIndexMetadatas
   [TestFixture]
-  TestTInstantIndexMetadatas = class(TInstantTestCase)
+  TestTInstantIndexMetadatas = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FInstantIndexMetadatas: TInstantIndexMetadatas;
     FOwner: TInstantTableMetadata;
@@ -85,9 +85,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, Db;
 
 procedure TestTInstantIndexMetadata.SetUp;

@@ -87,10 +87,8 @@ function InstantStrToTime(const Str: string): TDateTime;
 function InstantUnquote(const Str: string; Quote: Char): string;
 function InstantStrArrayToString(const StrArray: array of string; Delimiter: Char): string;
 
-{$IFDEF D5}
 function DateOf(const AValue: TDateTime): TDateTime;
 function TimeOf(const AValue: TDateTime): TDateTime;
-{$ENDIF}
 
 function InstantCharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean; overload;
 function InstantCharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean; overload;
@@ -100,7 +98,7 @@ implementation
 
 uses
   Windows, ActiveX, ComObj,
-  {$IFDEF D6+}Variants,{$ENDIF} InstantConsts, InstantRtti,
+  Variants, InstantConsts, InstantRtti,
   DateUtils;
 
 
@@ -266,10 +264,8 @@ function InstantCompareValues(V1, V2: Variant;
         Result := CompareNumbers(V1, V2);
       varString, varOleStr:
         Result := CompareStrings(V1, V2);
-      {$IFDEF UNICODE}
       varUString:
         Result := CompareStrings(V1, V2);
-      {$ENDIF}
     else
       Result := 0;
     end
@@ -373,19 +369,8 @@ begin
 end;
 
 function InstantFileAge(const FileName: string; out FileDateTime: TDateTime): boolean;
-{$IFNDEF D10+}
-var
-  LFileAge : integer;
-{$ENDIF}
 begin
-  {$IFDEF D10+} // Single param FileAge deprecated in D2006
-     Result := FileAge(FileName, FileDateTime);
-  {$ELSE}
-    LFileAge := FileAge(FileName);
-    Result := (LFileAge <> -1);
-    if (Result) then
-      FileDateTime := FileDateToDateTime(LFileAge);
-  {$ENDIF}
+  Result := FileAge(FileName, FileDateTime);
 end;
 
 function InstantFileVersionStr(const FileName: string): string;
@@ -683,7 +668,6 @@ begin
       Result := Result + Delimiter + StrArray[I];
 end;
 
-{$IFDEF D5}
 function DateOf(const AValue: TDateTime): TDateTime;
 begin
   Result := Trunc(AValue);
@@ -693,24 +677,15 @@ function TimeOf(const AValue: TDateTime): TDateTime;
 begin
   Result := Frac(AValue);
 end;
-{$ENDIF}
 
 function InstantCharInSet(C: AnsiChar; const CharSet: TSysCharSet): Boolean;
 begin
-{$IFNDEF D12+}
-  Result := C in CharSet;
-{$ELSE}
   Result := CharInSet(C, CharSet);
-{$ENDIF}
 end;
 
 function InstantCharInSet(C: WideChar; const CharSet: TSysCharSet): Boolean;
 begin
-{$IFNDEF D12+}
-  Result := (C < #$0100) and (AnsiChar(C) in CharSet);
-{$ELSE}
   Result := CharInSet(C, CharSet);
-{$ENDIF}
 end;
 
 function InstantSmartConcat(const AArray: array of string; const ADelimiter: string = ' - '): string;

@@ -30,7 +30,7 @@
 
 unit TestInstantInteger;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantInteger
   [TestFixture]
-  TestTInstantInteger = class(TInstantTestCase)
+  TestTInstantInteger = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantInteger: TInstantInteger;
@@ -70,9 +70,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses;
 
 procedure TestTInstantInteger.SetUp;
@@ -104,7 +102,7 @@ begin
   vCurr := 23.45;
   FInstantInteger.AsCurrency := vCurr;
   AssertEquals(23, FInstantInteger.Value);
-  AssertEquals(23.0, FInstantInteger.AsCurrency);
+  AssertEquals(Currency(23.0), FInstantInteger.AsCurrency);
 end;
 
 procedure TestTInstantInteger.TestAsFloat;

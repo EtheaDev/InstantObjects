@@ -39,7 +39,7 @@ uses
 
 type
   [TestFixture]
-  TTestMockBroker = class(TInstantTestCase)
+  TTestMockBroker = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   protected
     FConn: TInstantMockConnector;
   public
@@ -60,7 +60,7 @@ type
   end;
 
   [TestFixture]
-  TTestMockRelationalBroker = class(TInstantTestCase)
+  TTestMockRelationalBroker = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   protected
     FConn: TInstantMockConnector;
   public
@@ -75,7 +75,7 @@ type
   end;
 
   [TestFixture]
-  TTestMockSQLbroker = class(TInstantTestCase)
+  TTestMockSQLbroker = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   protected
     FConn: TInstantMockConnector;
   public

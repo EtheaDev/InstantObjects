@@ -31,12 +31,16 @@
 
 unit InstantCode;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
 uses
-  {$IFDEF D17+}System.Types, {$ENDIF}Classes, Contnrs, SysUtils,
+  System.Types, Classes, Contnrs, SysUtils,
   InstantPersistence, InstantClasses, InstantMetadata, InstantTextFiler,
   InstantTypes, TypInfo;
 
@@ -4469,7 +4473,7 @@ end;
 
 function TInstantCodeAttribute.GetCanHaveExternalStorageName: boolean;
 begin
-  Result := (StorageKind in [skExternal]) and not (AttributeType = atPart);
+  Result := (StorageKind in [skExternal]);
 end;
 
 function TInstantCodeAttribute.GetCanHaveForeignKeyFields: boolean;
@@ -9216,6 +9220,8 @@ begin
       Token := ReadToken;
       if SameText(Token, MetaKeyStored) then
         FMetadata.StorageName := ReadStringValue;
+      if SameText(Token, MetaKeyExternal) then
+        FMetadata.StorageKind := skExternal;
       if SameText(Token, MetaKeyForeignKey) then
       begin
         FMetadata.StorageKind := skForeignKeys;

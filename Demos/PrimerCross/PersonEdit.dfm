@@ -2,7 +2,7 @@ inherited PersonEditForm: TPersonEditForm
   Left = 298
   Top = 244
   Caption = 'Person'
-  ClientHeight = 354
+  ClientHeight = 353
   Icon.Data = {
     0000010001001010100000000000280100001600000028000000100000002000
     00000100040000000000C0000000000000000000000000000000000000000000
@@ -15,29 +15,22 @@ inherited PersonEditForm: TPersonEditForm
     0000FFFF0000FF9F0000F20F0000E0070000F0070000F8070000F8070000F807
     0000FC0F0000FE3F0000FC1F0000FC1F0000FC1F0000FE3F0000FFFF0000}
   OnShow = FormShow
-  ExplicitHeight = 393
-  PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
-    Top = 323
-    ExplicitTop = 323
+    Top = 322
   end
   inherited ClientPanel: TPanel
-    Height = 323
-    ExplicitHeight = 323
+    Height = 322
     inherited PageControl: TPageControl
       Height = 319
-      ExplicitHeight = 319
       inherited DetailsSheet: TTabSheet
-        ExplicitHeight = 309
         inherited MidBevel: TBevel
           Height = 290
-          ExplicitHeight = 290
         end
         object BirthDateLabel: TLabel [8]
           Left = 136
           Top = 184
-          Width = 48
+          Width = 51
           Height = 13
           Caption = '&Birth Date'
           FocusControl = BirthDateEdit
@@ -45,7 +38,7 @@ inherited PersonEditForm: TPersonEditForm
         object EmployerLabel: TLabel [9]
           Left = 8
           Top = 224
-          Width = 44
+          Width = 47
           Height = 13
           Caption = '&Employer'
           FocusControl = EmployerEdit
@@ -53,7 +46,7 @@ inherited PersonEditForm: TPersonEditForm
         object EmailsLabel: TLabel [10]
           Left = 240
           Top = 104
-          Width = 33
+          Width = 36
           Height = 13
           Caption = 'E-&mails'
           FocusControl = EmailsGrid
@@ -68,7 +61,7 @@ inherited PersonEditForm: TPersonEditForm
         object Label1: TLabel [13]
           Left = 136
           Top = 264
-          Width = 44
+          Width = 48
           Height = 13
           Caption = 'BirthTime'
           FocusControl = BirthTimeEdit
@@ -91,7 +84,6 @@ inherited PersonEditForm: TPersonEditForm
         end
         inherited StreetEdit: TDBMemo
           Height = 37
-          ExplicitHeight = 37
         end
         object BirthDateEdit: TDBEdit [20]
           Left = 136
@@ -123,7 +115,7 @@ inherited PersonEditForm: TPersonEditForm
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -11
-          TitleFont.Name = 'Tahoma'
+          TitleFont.Name = 'Segoe UI'
           TitleFont.Style = []
           OnDrawColumnCell = DbGridDrawColumnCellFixW11
           Columns = <

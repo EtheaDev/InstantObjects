@@ -30,17 +30,21 @@
 
 unit InstantFireDAC;
 
+{$IFDEF LINUX64}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 // Supported databases  (only MSSQL, Firebird and Oracle have been tested)
 
-{$DEFINE SYBASE_SUPPORT}
+//{$DEFINE SYBASE_SUPPORT}
 {$DEFINE MSSQL_SUPPORT}
 {$DEFINE IBFB_SUPPORT}
 {$DEFINE ORACLE_SUPPORT}
-{$DEFINE PGSQL_SUPPORT}
-{$DEFINE MYSQL_SUPPORT}
-{$DEFINE SQLITE_SUPPORT}
+//{$DEFINE PGSQL_SUPPORT}
+//{$DEFINE MYSQL_SUPPORT}
+//{$DEFINE SQLITE_SUPPORT}
 
 interface
 
@@ -120,13 +124,8 @@ type
     procedure BeforeConnectionChange; override;
     procedure AssignLoginOptions; override;
     function CreateBroker: TInstantBroker; override;
-    {$IFDEF D22+}
     procedure DoLogin(AConnection: TFDCustomConnection;
       AParams: TFDConnectionDefParams); virtual;
-    {$ELSE}
-    procedure DoLogin(AConnection: TFDCustomConnection;
-      const AConnectionDef: IFDStanConnectionDef); virtual;
-    {$ENDIF}
     function GetConnected: Boolean; override;
     function GetDatabaseExists: Boolean; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
@@ -702,13 +701,8 @@ begin
      [Connection.DriverName]);
 end;
 
-{$IFDEF D22+}
 procedure TInstantFireDACConnector.DoLogin(AConnection: TFDCustomConnection;
   AParams: TFDConnectionDefParams);
-{$ELSE}
-procedure TInstantFireDACConnector.DoLogin(AConnection: TFDCustomConnection;
-  const AConnectionDef: IFDStanConnectionDef);
-{$ENDIF}
 begin
   if (assigned(FOnLogin)) then
     FOnLogin(AConnection, AParams);
@@ -844,14 +838,12 @@ end;
 
 procedure TInstantFireDACBroker.AssignParam(SourceParam: TParam; TargetParam: TFDParam);
 
-{$IFDEF D12+}
 function ConvertBlobData(const Bytes: TBytes): RawByteString;
   begin
     SetLength(Result, Length(Bytes));
     if length(Result) > 0 then
       Move(Bytes[0], Result[1], Length(Bytes))
   end;
-{$ENDIF}
 
 begin
   case SourceParam.DataType of
@@ -860,11 +852,7 @@ begin
         TargetParam.Assign(SourceParam) else
         TargetParam.AsInteger := ord(SourceParam.AsBoolean);
     ftBlob:
-    {$IFDEF D12+}
       TargetParam.AsBlob := ConvertBlobData(SourceParam.AsBlob);
-    {$ELSE}
-      TargetParam.AsBlob := SourceParam.AsBlob;
-    {$ENDIF}
     ftDateTime:
       begin
         TargetParam.DataType := ftTimeStamp;
@@ -925,7 +913,7 @@ begin
   try
     Query.Connection := Connector.Connection;
     Query.SQL.Text := AStatement;
-    Query.FetchOptions.Unidirectional := True;
+    Query.FetchOptions.Unidirectional := False;
     if assigned(AParams) then
       AssignDatasetParams(Query, AParams, OnAssignParamValue);
     Result := Query;

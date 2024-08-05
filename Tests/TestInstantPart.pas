@@ -39,7 +39,7 @@ type
 
   // Test methods for class TInstantPart
   [TestFixture]
-  TestTInstantEmbPart = class(TInstantTestCase)
+  TestTInstantEmbPart = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantPart: TInstantPart;
@@ -63,7 +63,7 @@ type
   end;
 
   [TestFixture]
-  TestTInstantExtPart = class(TInstantTestCase)
+  TestTInstantExtPart = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantPart: TInstantPart;

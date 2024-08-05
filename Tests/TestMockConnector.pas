@@ -41,7 +41,7 @@ uses
 
 type
   [TestFixture]
-  TTestMockConnector = class(TInstantTestCase)
+  TTestMockConnector = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
   public

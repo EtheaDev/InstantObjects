@@ -29,7 +29,11 @@ unit InstantImageUtils;
 
 interface
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 uses
   SysUtils,

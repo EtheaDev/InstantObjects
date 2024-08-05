@@ -27,7 +27,11 @@
 
 unit InstantJSON;
 
+{$IFDEF LINUX64}
+{$I '../../InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\InstantDefines.inc'}
+{$ENDIF}
 
 {$WARN SYMBOL_PLATFORM OFF}
 

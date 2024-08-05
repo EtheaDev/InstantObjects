@@ -31,7 +31,11 @@
 
 unit InstantRtti;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -74,20 +78,16 @@ function InstantGetPropInfo(AClass: TClass; PropPath: string;
 procedure InstantSetProperty(AObject: TObject; PropPath: string; Value: Variant);
 function InstantIsDefaultPropertyValue(Instance: TObject;
   PropInfo: PPropInfo): Boolean;
-function InstantGetPropName(PropInfo: PPropInfo): string; {$IFDEF D10+}{$IFNDEF D12+}inline;{$ENDIF}{$ENDIF}
+function InstantGetPropName(PropInfo: PPropInfo): string; inline;
 
 implementation
 
 uses
-  {$IFDEF D6+}Variants,{$ENDIF}SysUtils;
+  Variants, SysUtils, InstantTypes;
 
 function GetTypeInfo(PropInfo: PPropInfo) : PTypeInfo;
 begin
-{$IFDEF FPC}
-  Result := PropInfo^.PropType;
-{$ELSE}
   Result := PropInfo^.PropType^;
-{$ENDIF}
 end;
 
 function AccessProperty(AObject: TObject; PropPath: string;
@@ -101,7 +101,7 @@ begin
   begin
     if SameText(PropPath, 'Self') then
     begin
-      Result := Integer(AObject);
+      Result := TIORefValueType(AObject);
       Exit;
     end;
     PropInfo := InstantGetPropInfo(AObject.ClassType, PropPath, @AObject);
@@ -113,20 +113,11 @@ begin
       begin
         case GetTypeInfo(PropInfo)^.Kind of
           tkClass:
-            SetObjectProp(AObject, PropInfo, TObject(Integer(Value)));
+            SetObjectProp(AObject, PropInfo, TObject(TIORefValueType(Value)));
           tkEnumeration:
             begin
-              {$IFDEF D6+}
               if VarIsStr(Value) and (VarToStr(Value) = '') then
                 Value := 0;
-              {$ELSE}
-              case VarType(Value) of
-                varString :   if VarToStr(Value) = '' then
-                                Value := 0;
-                varBoolean:   if (VarToStr(Value) <> '0') then
-                                Value := 1;
-              end;
-              {$ENDIF}
               SetPropValue(AObject, InstantGetPropName(PropInfo), Value);
             end;
           tkSet:
@@ -243,15 +234,6 @@ function InstantIsDefaultPropertyValue(Instance: TObject;
     Result := Value = 0;
   end;
 
-  {$IFDEF VER140}
-  function IsDefaultStrProp: Boolean;
-  var
-    Value: WideString;
-  begin
-    Value := GetWideStrProp(Instance, PropInfo);
-    Result := Value = '';
-  end;
-  {$ELSE}
   function IsDefaultStrProp: Boolean;
   var
     Value: string;
@@ -259,18 +241,13 @@ function InstantIsDefaultPropertyValue(Instance: TObject;
     Value := GetStrProp(Instance, PropInfo);
     Result := Value = '';
   end;
-  {$ENDIF}
 
   function IsDefaultVariantProp: Boolean;
   var
     Value: Variant;
   begin
     Value := GetVariantProp(Instance, PropInfo);
-    {$IFDEF VER140}
-    Result := VarIsClear(Value);
-    {$ELSE}
     Result := VarIsEmpty(Value);
-    {$ENDIF}
   end;
 
 begin
@@ -292,11 +269,7 @@ end;
 
 function InstantGetPropName(PropInfo: PPropInfo): string;
 begin
-{$IFNDEF D12+}
-  Result := PropInfo^.Name;
-{$ELSE}
   Result := GetPropName(PropInfo);
-{$ENDIF}
 end;
 
 { TInstantProperties }
@@ -320,12 +293,7 @@ procedure TInstantProperties.CreatePropList(TypeInfo: PTypeInfo);
 const
   TypeKinds = [tkInteger, tkChar, tkEnumeration, tkFloat,
     tkString, tkSet, tkClass, tkWChar, tkLString, tkWString,
-{$IFDEF FPC}
-    tkAString, tkBool,
-{$ENDIF}
-{$IFDEF UNICODE}
     tkUString,
-{$ENDIF}
     tkVariant, tkArray, tkRecord, tkInt64, tkDynArray];
 begin
   DestroyPropList;

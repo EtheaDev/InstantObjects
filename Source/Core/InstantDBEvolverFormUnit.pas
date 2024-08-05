@@ -29,7 +29,11 @@
 
 unit InstantDBEvolverFormUnit;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
@@ -37,7 +41,8 @@ uses
   SysUtils, Classes,
   Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
   ImgList, Menus, ActnList, ExtCtrls, StdActns,
-  InstantCustomDBEvolverFormUnit, InstantDBBuild, InstantDBEvolution;
+  InstantCustomDBEvolverFormUnit, InstantDBBuild, InstantDBEvolution,
+  System.Actions;
 
 type
   TInstantDBEvolverForm = class(TInstantCustomDBEvolverForm)

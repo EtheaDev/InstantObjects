@@ -32,15 +32,17 @@
 
 unit InstantBrokers;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
 {$I '..\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
 uses
   SysUtils, Classes, Db, InstantPersistence, InstantTypes, InstantMetadata,
-  {$IFDEF D17+}
   System.Generics.Collections,
-  {$ENDIF}
   InstantConsts, InstantClasses, Contnrs, InstantCommand;
 
 const
@@ -1123,9 +1125,7 @@ type
   public
     destructor Destroy; override;
     constructor Create(AConnector: TInstantConnector); override;
-    {$IFDEF D17+}
     procedure GetObjectReferenceList(const AList: TList<TInstantObjectReference>); overload;
-    {$ENDIF}
     property ObjectReferenceCount: Integer read GetObjectReferenceCount;
     property ParamsObject: TParams read GetParamsObject;
     property PageCount: integer read FPageCount write FPageCount default -1;
@@ -1163,10 +1163,8 @@ implementation
 
 uses
   Windows,
-{$IFDEF D6+}
   Variants,
   DateUtils,
-{$ENDIF}
   TypInfo, InstantUtils, InstantRtti;
 
 {$IFDEF IO_STATEMENT_LOGGING}
@@ -2053,12 +2051,10 @@ begin
   Assert(Assigned(AConnector));
   Assert(Assigned(AField));
 
-  {$IFDEF D12+}
   if AConnector.BlobStreamFormat = sfBinary then
     Result := TStringStream.Create(AField.AsString)
   else
-  {$ENDIF}
-  Result := TInstantStringStream.Create(AField.AsString);
+    Result := TInstantStringStream.Create(AField.AsString);
 end;
 
 function TInstantCustomResolver.CreateEmbeddedObjectOutputStream(
@@ -2066,14 +2062,10 @@ function TInstantCustomResolver.CreateEmbeddedObjectOutputStream(
 begin
   Assert(Assigned(AConnector));
 
-  {$IFDEF D12+}
   if AConnector.BlobStreamFormat = sfBinary then
     Result := TStringStream.Create
   else
     Result := TStringStream.Create('', TEncoding.UTF8);
-  {$ELSE}
-  Result := TStringStream.Create('');
-  {$ENDIF}
 end;
 
 procedure TInstantCustomResolver.AssignEmbeddedObjectStreamToField(
@@ -2911,11 +2903,7 @@ begin
     if Attribute.IsNull then
       Clear
     else
-{$IFDEF FPC}
-      AsFloat := Attribute.Value;
-{$ELSE}
       AsCurrency := Attribute.Value;
-{$ENDIF}
 end;
 
 procedure TInstantNavigationalResolver.WriteDateTime(
@@ -3115,11 +3103,7 @@ var
     if Attribute.IsNull then
       LParam.Clear
     else
-      {$IFDEF D12+}
       LParam.AsBlob := (Attribute as TInstantBlob).Bytes;
-      {$ELSE}
-      LParam.AsBlob := (Attribute as TInstantBlob).Value;
-      {$ENDIF}
   end;
 
   procedure AddBooleanAttributeParam;
@@ -3389,11 +3373,7 @@ begin
   begin
     LParam := AddParam(AParams, AParamName, ftBlob);
     if AStream.Size > 0 then
-      {$IFDEF D12+}
-        LParam.AsBlob := BytesOf((AStream as TStringStream).DataString);
-      {$ELSE}
-      LParam.AsBlob := (AStream as TStringStream).DataString;
-      {$ENDIF}
+      LParam.AsBlob := BytesOf((AStream as TStringStream).DataString);
   end
   else
   begin
@@ -6668,7 +6648,6 @@ begin
   Result := ObjectReferenceList.Count;
 end;
 
-{$IFDEF D17+}
 procedure TInstantSQLQuery.GetObjectReferenceList(
   const AList: TList<TInstantObjectReference>);
 var
@@ -6677,7 +6656,6 @@ begin
   for I := 0 to Pred(ObjectReferenceCount) do
     AList.Add(ObjectReferenceList.RefItems[I]);
 end;
-{$ENDIF}
 
 function TInstantSQLQuery.GetObjectReferenceList: TInstantObjectReferenceList;
 begin
@@ -7681,7 +7659,7 @@ end;
 
 function TInstantDataSetObjectData.Locate(const AObjectId: string): Boolean;
 begin
-  if not Assigned(FDataSet) or not FDataSet.Active then
+  if not Assigned(FDataSet) or not FDataSet.Active or FDataSet.IsUniDirectional then
     Result := False
   else
   begin

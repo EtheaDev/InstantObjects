@@ -30,7 +30,7 @@
 
 unit TestInstantNumeric;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ type
 
   // Test methods for class TInstantNumeric
   [TestFixture]
-  TestTInstantNumeric = class(TInstantTestCase)
+  TestTInstantNumeric = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantNumeric: TInstantInteger;
@@ -67,9 +67,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses;
 
 procedure TestTInstantNumeric.SetUp;
@@ -147,7 +145,7 @@ begin
 
   FInstantNumeric.Value := 1000;
   FInstantNumeric.Metadata.EditMask := '#,000'; //EditMask don't use ThousandSeparator var
-  AssertEquals('1' + {$IFDEF D15+}FormatSettings.{$ENDIF}ThousandSeparator +
+  AssertEquals('1' + FormatSettings.ThousandSeparator +
     '000', FInstantNumeric.DisplayText);
 end;
 

@@ -45,7 +45,7 @@ type
   TInstantCustomSerializer = class(TCustomSerializer)
   public
     class function RetrieveInstantObjectClass(const AClassName: string;
-      out AIdPropName: string; out AObjectClass: TInstantObjectClass) : boolean;
+      out AIdPropName: string; out AIdAltPropName: string; out AObjectClass: TInstantObjectClass) : boolean;
 
     class function RetrieveInstantObject(const AClassName, AId: string;
       const AConnector: TInstantConnector = nil) : TInstantObject; virtual;
@@ -701,7 +701,7 @@ begin
 end;
 
 class function TInstantCustomSerializer.RetrieveInstantObjectClass(
-  const AClassName: string; out AIdPropName: string;
+  const AClassName: string; out AIdPropName: string; out AIdAltPropName: string;
   out AObjectClass: TInstantObjectClass): boolean;
 var
   LClass: TPersistentClass;
@@ -712,11 +712,13 @@ begin
   begin
     AObjectClass := TInstantObjectClass(LClass);
     AIdPropName := AObjectClass.GetSerializedIdPropertyName;
+    AIdAltPropName := AObjectClass.GetSerializedIdAltPropertyName;
   end
   else
   begin
     AObjectClass := nil;
     AIdPropName := '';
+    AIdAltPropName  := '';
   end;
 end;
 

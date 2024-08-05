@@ -30,7 +30,7 @@
 
 unit TestInstantBoolean;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -45,7 +45,7 @@ Type
 
   // Test methods for class TInstantBoolean
   [TestFixture]
-  TestTInstantBoolean = class(TInstantTestCase)
+  TestTInstantBoolean = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantBoolean: TInstantBoolean;
@@ -75,9 +75,7 @@ Type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, InstantClasses, InstantConsts;
 
 procedure TestTInstantBoolean.SetUp;

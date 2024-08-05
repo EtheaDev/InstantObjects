@@ -29,10 +29,6 @@
 
 unit TestFullModel;
 
-{$IFDEF FPC}
-{$mode objfpc}{$H+}
-{$ENDIF}
-
 interface
 
 uses
@@ -44,7 +40,7 @@ uses
 type
   { TTestFullModel }
   [TestFixture]
-  TTestFullModel = class(TInstantTestCase)
+  TTestFullModel = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     function CompanyFileName(c: TCompany; s: TInstantStreamFormat): string;
     function PersonFileName(p: TPerson; s: TInstantStreamFormat): string;

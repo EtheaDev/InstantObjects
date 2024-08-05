@@ -30,7 +30,7 @@
 
 unit TestInstantClassMetadata;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\InstantDefines.inc'}
@@ -44,7 +44,7 @@ uses {$IFNDEF DUNITX_TESTS}testregistry, fpcunit,{$ELSE}InstantTest,{$ENDIF} Ins
 type
   // Test methods for class TInstantClassMetadata
   [TestFixture]
-  TestTInstantClassMetadata = class(TInstantTestCase)
+  TestTInstantClassMetadata = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantClassMetadata: TInstantClassMetadata;
@@ -71,7 +71,7 @@ type
 
   // Test methods for class TInstantClassMetadatas
   [TestFixture]
-  TestTInstantClassMetadatas = class(TInstantTestCase)
+  TestTInstantClassMetadatas = class({$IFNDEF DUNITX_TESTS}TTestCase{$ELSE}TInstantTestCase{$ENDIF})
   private
     FConn: TInstantMockConnector;
     FInstantClassMetadatas: TInstantClassMetadatas;
@@ -90,9 +90,7 @@ type
 implementation
 
 uses
-  {$IFDEF D17+}
   System.Classes,
-  {$ENDIF}
   SysUtils, TypInfo, InstantTypes;
 
 procedure TestTInstantClassMetadata.SetUp;

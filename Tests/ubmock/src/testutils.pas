@@ -1,5 +1,5 @@
 {
-    $Id: testutils.pas,v 1.1 2005/02/11 22:11:58 decko Exp $
+    $Id: testutils.pas 229 2024-07-24 13:16:29Z cbarazzetta $
     Copyright (c) 2004 by Dean Zobec
 
     Port to Delphi of the JUnit framework.
@@ -38,10 +38,8 @@ procedure GetMethodList( AClass: TClass; AList: TStrings ); overload;
 
 implementation
 
-{$IFDEF D12+}
 uses
   TestFramework;
-{$ENDIF}
 
 function TNoRefCountObject.QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
 begin
@@ -67,7 +65,6 @@ begin
   GetMethodList( AObject.ClassType, AList );
 end;
 
-{$IFDEF D12+}
 procedure GetMethodList(AClass: TClass; AList: TStrings);
 var
   MethodEnumerator: TMethodEnumerator;
@@ -88,46 +85,6 @@ begin
     MethodEnumerator.Free;
   end;
 end;
-{$ELSE}
-procedure GetMethodList(AClass: TClass; AList: TStrings);
-type
-  PPointer = ^Pointer;
-  PMethodRec = ^TMethodRec;
-  TMethodRec = packed record
-    Size: Word;
-    Code: Pointer;
-    Name: ShortString;
-  end;
-var
-  MethodTable: PChar;
-  vmt: TClass;
-  MethodRec: PMethodRec;
-  Count: Word;
-  idx, i: integer;
-begin
-  vmt := AClass;
-  AList.Clear;
-  while vmt <> nil do
-  begin
-    MethodTable := PChar(Pointer(PChar(vmt) + vmtMethodTable)^);
-    if MethodTable <> nil then
-    begin
-      Move(MethodTable^, Count, 2);
-      MethodRec := PMethodRec(MethodTable + 2);
-      for i := 0 to Count - 1 do
-      begin
-        idx := AList.IndexOf(MethodRec^.Name);
-        if (idx <> - 1) then
-	//found overridden method so delete it
-	  aList.Delete(idx);
-        AList.AddObject( MethodRec^.Name, TObject(MethodRec^.Code));
-        MethodRec := PMethodRec(PChar(MethodRec) + MethodRec^.Size);
-      end;
-    end;
-    vmt := vmt.ClassParent;
-  end;
-end;
-{$ENDIF}
 
 procedure FreeObjects(List: TList);
 var
