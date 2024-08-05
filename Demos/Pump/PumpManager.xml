@@ -1,0 +1,5 @@
+<TInstantConnectionDefs><TInstantBDEConnectionDef><Name>ParadoxDB</Name><IsBuilt>TRUE</IsBuilt><BlobStreamFormat>sfXML</BlobStreamFormat><LoginPrompt>FALSE</LoginPrompt><DriverName>STANDARD</DriverName><Parameters>PATH=..\PrimerCross\ParadoxDB
+DEFAULT DRIVER=PARADOX
+ENABLE BCD=TRUE
+</Parameters></TInstantBDEConnectionDef><TInstantIBXConnectionDef><Name>FirebirdDB</Name><IsBuilt>TRUE</IsBuilt><BlobStreamFormat>sfXML</BlobStreamFormat><LoginPrompt>FALSE</LoginPrompt><ConnectionString>..\PrimerCross\FirebirdDB\PRIMERDB.FDB</ConnectionString><Options></Options><Params>user_name=SYSDBA
+password=masterkey</Params></TInstantIBXConnectionDef></TInstantConnectionDefs>

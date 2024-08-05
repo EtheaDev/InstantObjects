@@ -390,7 +390,7 @@ type
     function AllocRecordBuffer: TRecordBuffer; override;
     procedure ClearCalcFields(Buffer: TRecordBuffer); override;
     procedure FreeRecordBuffer(var Buffer: TRecordBuffer); override;
-    function FieldDataSize(Field : TField): integer; inline;
+    function FieldDataSize(Field : TField): Integer; inline;
     procedure GetBookmarkData(Buffer: TRecBuf; Data: TBookmark); override;
     procedure GetInstantBookmarkData(Buffer: TRecBuf; PData: PInstantBookmark);
     function GetBookmarkFlag(Buffer: TRecBuf): TBookmarkFlag; override;
@@ -2829,7 +2829,7 @@ begin
   Buffer := nil;
 end;
 
-function TInstantCustomExposer.FieldDataSize(Field : TField): integer;
+function TInstantCustomExposer.FieldDataSize(Field : TField): Integer;
 begin
   if Assigned(Field) then
     Result := Field.DataSize
@@ -4405,10 +4405,14 @@ end;
 
 procedure TInstantCustomExposer.SetFieldData(Field: TField;
   Buffer: TValueBuffer);
+var
+  LSize: Integer;
+  LOffset: Integer;
+  RecordBuffer: TRecordBuffer;
 begin
-  var LSize := FieldDataSize(Field);
-  var LOffset := GetFieldOffset(Field);
-  var RecordBuffer := TRecordBuffer(CurrentBuffer);
+  LSize := FieldDataSize(Field);
+  LOffset := GetFieldOffset(Field);
+  RecordBuffer := TRecordBuffer(CurrentBuffer);
   if Assigned(Buffer) then
     Move(Buffer[0], RecordBuffer[LOffset], LSize)
   else

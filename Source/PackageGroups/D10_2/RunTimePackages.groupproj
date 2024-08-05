@@ -3,31 +3,31 @@
         <ProjectGuid>{DD57CD8C-1120-486B-A130-3F82DBA22349}</ProjectGuid>
     </PropertyGroup>
     <ItemGroup>
-        <Projects Include="..\..\Core\D10_2\IOCore.dproj">
+        <Projects Include="..\..\Core\D10_2\IOCore_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Catalogs\IBFb\D10_2\IOIBFbCatalog.dproj">
+        <Projects Include="..\..\Catalogs\IBFb\D10_2\IOIBFbCatalog_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Catalogs\MSSql\D10_2\IOMSSqlCatalog.dproj">
+        <Projects Include="..\..\Catalogs\MSSql\D10_2\IOMSSqlCatalog_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Catalogs\MySQL\D10_2\IOMySQLCatalog.dproj">
+        <Projects Include="..\..\Catalogs\MySQL\D10_2\IOMySQLCatalog_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Brokers\ADO\D10_2\IOADO.dproj">
+        <Projects Include="..\..\Brokers\ADO\D10_2\IOADO_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Brokers\DBX\D10_2\IODBX.dproj">
+        <Projects Include="..\..\Brokers\DBX\D10_2\IODBX_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Brokers\IBX\D10_2\IOIBX.dproj">
+        <Projects Include="..\..\Brokers\IBX\D10_2\IOIBX_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Brokers\XML\D10_2\IOXML.dproj">
+        <Projects Include="..\..\Brokers\XML\D10_2\IOXML_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Brokers\FireDAC\D10_2\IOFireDAC.dproj">
+        <Projects Include="..\..\Brokers\FireDAC\D10_2\IOFireDAC_4.dproj">
             <Dependencies/>
         </Projects>
     </ItemGroup>
@@ -38,95 +38,95 @@
             <Default.Personality/>
         </BorlandProject>
     </ProjectExtensions>
-    <Target Name="IOCore">
-        <MSBuild Projects="..\..\Core\D10_2\IOCore.dproj"/>
+    <Target Name="IOCore_4">
+        <MSBuild Projects="..\..\Core\D10_2\IOCore_4.dproj"/>
     </Target>
-    <Target Name="IOCore:Clean">
-        <MSBuild Projects="..\..\Core\D10_2\IOCore.dproj" Targets="Clean"/>
+    <Target Name="IOCore_4:Clean">
+        <MSBuild Projects="..\..\Core\D10_2\IOCore_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IOCore:Make">
-        <MSBuild Projects="..\..\Core\D10_2\IOCore.dproj" Targets="Make"/>
+    <Target Name="IOCore_4:Make">
+        <MSBuild Projects="..\..\Core\D10_2\IOCore_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IOIBFbCatalog">
-        <MSBuild Projects="..\..\Catalogs\IBFb\D10_2\IOIBFbCatalog.dproj"/>
+    <Target Name="IOIBFbCatalog_4">
+        <MSBuild Projects="..\..\Catalogs\IBFb\D10_2\IOIBFbCatalog_4.dproj"/>
     </Target>
-    <Target Name="IOIBFbCatalog:Clean">
-        <MSBuild Projects="..\..\Catalogs\IBFb\D10_2\IOIBFbCatalog.dproj" Targets="Clean"/>
+    <Target Name="IOIBFbCatalog_4:Clean">
+        <MSBuild Projects="..\..\Catalogs\IBFb\D10_2\IOIBFbCatalog_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IOIBFbCatalog:Make">
-        <MSBuild Projects="..\..\Catalogs\IBFb\D10_2\IOIBFbCatalog.dproj" Targets="Make"/>
+    <Target Name="IOIBFbCatalog_4:Make">
+        <MSBuild Projects="..\..\Catalogs\IBFb\D10_2\IOIBFbCatalog_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IOMSSqlCatalog">
-        <MSBuild Projects="..\..\Catalogs\MSSql\D10_2\IOMSSqlCatalog.dproj"/>
+    <Target Name="IOMSSqlCatalog_4">
+        <MSBuild Projects="..\..\Catalogs\MSSql\D10_2\IOMSSqlCatalog_4.dproj"/>
     </Target>
-    <Target Name="IOMSSqlCatalog:Clean">
-        <MSBuild Projects="..\..\Catalogs\MSSql\D10_2\IOMSSqlCatalog.dproj" Targets="Clean"/>
+    <Target Name="IOMSSqlCatalog_4:Clean">
+        <MSBuild Projects="..\..\Catalogs\MSSql\D10_2\IOMSSqlCatalog_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IOMSSqlCatalog:Make">
-        <MSBuild Projects="..\..\Catalogs\MSSql\D10_2\IOMSSqlCatalog.dproj" Targets="Make"/>
+    <Target Name="IOMSSqlCatalog_4:Make">
+        <MSBuild Projects="..\..\Catalogs\MSSql\D10_2\IOMSSqlCatalog_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IOMySQLCatalog">
-        <MSBuild Projects="..\..\Catalogs\MySQL\D10_2\IOMySQLCatalog.dproj"/>
+    <Target Name="IOMySQLCatalog_4">
+        <MSBuild Projects="..\..\Catalogs\MySQL\D10_2\IOMySQLCatalog_4.dproj"/>
     </Target>
-    <Target Name="IOMySQLCatalog:Clean">
-        <MSBuild Projects="..\..\Catalogs\MySQL\D10_2\IOMySQLCatalog.dproj" Targets="Clean"/>
+    <Target Name="IOMySQLCatalog_4:Clean">
+        <MSBuild Projects="..\..\Catalogs\MySQL\D10_2\IOMySQLCatalog_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IOMySQLCatalog:Make">
-        <MSBuild Projects="..\..\Catalogs\MySQL\D10_2\IOMySQLCatalog.dproj" Targets="Make"/>
+    <Target Name="IOMySQLCatalog_4:Make">
+        <MSBuild Projects="..\..\Catalogs\MySQL\D10_2\IOMySQLCatalog_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IOADO">
-        <MSBuild Projects="..\..\Brokers\ADO\D10_2\IOADO.dproj"/>
+    <Target Name="IOADO_4">
+        <MSBuild Projects="..\..\Brokers\ADO\D10_2\IOADO_4.dproj"/>
     </Target>
-    <Target Name="IOADO:Clean">
-        <MSBuild Projects="..\..\Brokers\ADO\D10_2\IOADO.dproj" Targets="Clean"/>
+    <Target Name="IOADO_4:Clean">
+        <MSBuild Projects="..\..\Brokers\ADO\D10_2\IOADO_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IOADO:Make">
-        <MSBuild Projects="..\..\Brokers\ADO\D10_2\IOADO.dproj" Targets="Make"/>
+    <Target Name="IOADO_4:Make">
+        <MSBuild Projects="..\..\Brokers\ADO\D10_2\IOADO_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IODBX">
-        <MSBuild Projects="..\..\Brokers\DBX\D10_2\IODBX.dproj"/>
+    <Target Name="IODBX_4">
+        <MSBuild Projects="..\..\Brokers\DBX\D10_2\IODBX_4.dproj"/>
     </Target>
-    <Target Name="IODBX:Clean">
-        <MSBuild Projects="..\..\Brokers\DBX\D10_2\IODBX.dproj" Targets="Clean"/>
+    <Target Name="IODBX_4:Clean">
+        <MSBuild Projects="..\..\Brokers\DBX\D10_2\IODBX_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IODBX:Make">
-        <MSBuild Projects="..\..\Brokers\DBX\D10_2\IODBX.dproj" Targets="Make"/>
+    <Target Name="IODBX_4:Make">
+        <MSBuild Projects="..\..\Brokers\DBX\D10_2\IODBX_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IOIBX">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_2\IOIBX.dproj"/>
+    <Target Name="IOIBX_4">
+        <MSBuild Projects="..\..\Brokers\IBX\D10_2\IOIBX_4.dproj"/>
     </Target>
-    <Target Name="IOIBX:Clean">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_2\IOIBX.dproj" Targets="Clean"/>
+    <Target Name="IOIBX_4:Clean">
+        <MSBuild Projects="..\..\Brokers\IBX\D10_2\IOIBX_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IOIBX:Make">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_2\IOIBX.dproj" Targets="Make"/>
+    <Target Name="IOIBX_4:Make">
+        <MSBuild Projects="..\..\Brokers\IBX\D10_2\IOIBX_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IOXML">
-        <MSBuild Projects="..\..\Brokers\XML\D10_2\IOXML.dproj"/>
+    <Target Name="IOXML_4">
+        <MSBuild Projects="..\..\Brokers\XML\D10_2\IOXML_4.dproj"/>
     </Target>
-    <Target Name="IOXML:Clean">
-        <MSBuild Projects="..\..\Brokers\XML\D10_2\IOXML.dproj" Targets="Clean"/>
+    <Target Name="IOXML_4:Clean">
+        <MSBuild Projects="..\..\Brokers\XML\D10_2\IOXML_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IOXML:Make">
-        <MSBuild Projects="..\..\Brokers\XML\D10_2\IOXML.dproj" Targets="Make"/>
+    <Target Name="IOXML_4:Make">
+        <MSBuild Projects="..\..\Brokers\XML\D10_2\IOXML_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IOFireDAC">
-        <MSBuild Projects="..\..\Brokers\FireDAC\D10_2\IOFireDAC.dproj"/>
+    <Target Name="IOFireDAC_4">
+        <MSBuild Projects="..\..\Brokers\FireDAC\D10_2\IOFireDAC_4.dproj"/>
     </Target>
-    <Target Name="IOFireDAC:Clean">
-        <MSBuild Projects="..\..\Brokers\FireDAC\D10_2\IOFireDAC.dproj" Targets="Clean"/>
+    <Target Name="IOFireDAC_4:Clean">
+        <MSBuild Projects="..\..\Brokers\FireDAC\D10_2\IOFireDAC_4.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="IOFireDAC:Make">
-        <MSBuild Projects="..\..\Brokers\FireDAC\D10_2\IOFireDAC.dproj" Targets="Make"/>
+    <Target Name="IOFireDAC_4:Make">
+        <MSBuild Projects="..\..\Brokers\FireDAC\D10_2\IOFireDAC_4.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="IOCore;IOIBFbCatalog;IOMSSqlCatalog;IOMySQLCatalog;IOADO;IODBX;IOIBX;IOXML;IOFireDAC"/>
+        <CallTarget Targets="IOCore_4;IOIBFbCatalog_4;IOMSSqlCatalog_4;IOMySQLCatalog_4;IOADO_4;IODBX_4;IOIBX_4;IOXML_4;IOFireDAC_4"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="IOCore:Clean;IOIBFbCatalog:Clean;IOMSSqlCatalog:Clean;IOMySQLCatalog:Clean;IOADO:Clean;IODBX:Clean;IOIBX:Clean;IOXML:Clean;IOFireDAC:Clean"/>
+        <CallTarget Targets="IOCore_4:Clean;IOIBFbCatalog_4:Clean;IOMSSqlCatalog_4:Clean;IOMySQLCatalog_4:Clean;IOADO_4:Clean;IODBX_4:Clean;IOIBX_4:Clean;IOXML_4:Clean;IOFireDAC_4:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="IOCore:Make;IOIBFbCatalog:Make;IOMSSqlCatalog:Make;IOMySQLCatalog:Make;IOADO:Make;IODBX:Make;IOIBX:Make;IOXML:Make;IOFireDAC:Make"/>
+        <CallTarget Targets="IOCore_4:Make;IOIBFbCatalog_4:Make;IOMSSqlCatalog_4:Make;IOMySQLCatalog_4:Make;IOADO_4:Make;IODBX_4:Make;IOIBX_4:Make;IOXML_4:Make;IOFireDAC_4:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 </Project>

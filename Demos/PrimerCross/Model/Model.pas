@@ -790,7 +790,7 @@ end;
 
 function TPerson.GetEmailCount: Integer;
 begin
-  Result := _Emails.Count
+  Result := _Emails.Count;
 end;
 
 function TPerson.GetEmails(Index: Integer): TEmail;
@@ -1051,7 +1051,7 @@ end;
 
 function TContact.GetPhoneCount: Integer;
 begin
-  Result := _Phones.Count
+  Result := _Phones.Count;
 end;
 
 function TContact.GetPhones(Index: Integer): TPhone;

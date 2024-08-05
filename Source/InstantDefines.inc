@@ -7,7 +7,7 @@
 //and want to use always TIntegerField form 'Self' and 'References' fields
 {$DEFINE USE_LARGEINT_FIELD_FOR_REF}
 
-//Activate this directive if you want to use Serialization with Delphi-Neon library
+//Deactivate this directive if you don't want to use Serialization with Delphi-Neon library
 {$DEFINE DELPHI_NEON}
 
 {$A8}

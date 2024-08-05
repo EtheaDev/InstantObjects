@@ -5,10 +5,21 @@
  *)
 unit Model;
 
+{$I '..\..\Source\InstantDefines.inc'}
+
 interface
 
 uses
-  InstantPersistence, InstantTypes;
+  InstantPersistence
+  , InstantTypes
+  , InstantClasses
+  , System.Classes
+  {$IFDEF DELPHI_NEON}
+  , Neon.Core.Types
+  , Neon.Core.Nullables
+  , Neon.Core.Attributes
+  {$ENDIF}
+  ;
 
 type
   TAddress = class;
@@ -20,6 +31,116 @@ type
   TEmail = class;
   TPerson = class;
   TPhone = class;
+  TProfile = class;
+  TUser = class;
+
+  TPhoneType = (ptHome, ptMobile, ptOffice, ptOther);
+
+
+  TProfile = class(TInstantObject)
+  {IOMETADATA stored 'APP_PROFILES';
+    AccessRoles: String(100) stored 'ACCESS_ROLES';}
+    _AccessRoles: TInstantString;
+  private
+    function GetAccessRoles: string;
+    procedure SetAccessRoles(const Value: string);
+  protected
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TProfile; reintroduce; virtual;
+    {$ENDIF}
+  published
+    property AccessRoles: string read GetAccessRoles write SetAccessRoles;
+  end;
+
+  TUser = class(TInstantObject)
+  {IOMETADATA stored 'APP_USERS';
+    Password: String(50) stored 'USER_PASSWORD' width 40;
+    Language: String(2) stored 'USER_LANGUAGE' required;
+    Profile: Reference(TProfile) stored 'USER_PROFILE' required;
+    Administrator: Boolean stored 'IS_ADMINISTRATOR' width 4;
+    System: Boolean stored 'IS_SYSTEM' width 4;
+    LastName: String(40) stored 'LAST_NAME' width 40;
+    FirstName: String(40) stored 'FIRST_NAME' width 40;
+    Email: String(100) stored 'EMAIL_ADDRESS' width 50;
+    PhoneNumber: String(15) stored 'PHONE_NUMBER' width 15;
+    AccessDenied: Boolean stored 'ACCESS_DENIED' width 4;
+    MustChangePassword: Boolean stored 'MUST_CHANGE_PASSWORD' width 4;
+    PrivacyConfirm: Boolean stored 'PRIVACY_CONFIRM' width 4;
+    CreationDate: DateTime stored 'CREATION_DATE' mask '!99/99/9999 99:99;1; ' width 16 usenull;
+    IPAddress: String(50) stored 'IP_ADDRESS' width 50; }
+    _Password: TInstantString;
+    [NeonInclude, NeonProperty('Profile')]
+    _Language: TInstantString;
+    _Profile: TInstantReference;
+    _Administrator: TInstantBoolean;
+    _System: TInstantBoolean;
+    _LastName: TInstantString;
+    _FirstName: TInstantString;
+    _Email: TInstantString;
+    _PhoneNumber: TInstantString;
+    _AccessDenied: TInstantBoolean;
+    _MustChangePassword: TInstantBoolean;
+    _PrivacyConfirm: TInstantBoolean;
+    _CreationDate: TInstantDateTime;
+    _IPAddress: TInstantString;
+  private
+  protected
+    function GetPassword: string; virtual;
+    function GetLanguage: string; virtual;
+    function GetProfile: TProfile; virtual;
+    function GetAdministrator: Boolean; virtual;
+    function GetSystem: Boolean; virtual;
+    function GetLastName: string; virtual;
+    function GetFirstName: string; virtual;
+    function GetEmail: string; virtual;
+    function GetPhoneNumber: string; virtual;
+    function GetAccessDenied: Boolean; virtual;
+    function GetMustChangePassword: Boolean; virtual;
+    function GetPrivacyConfirm: Boolean; virtual;
+    function GetCreationDate: TDateTime; virtual;
+    function GetIPAddress: string; virtual;
+    procedure SetPassword(const Value: string); virtual;
+    procedure SetLanguage(const AValue: string); virtual;
+    procedure SetProfile(Value: TProfile); virtual;
+    procedure SetAdministrator(Value: Boolean); virtual;
+    procedure SetSystem(Value: Boolean); virtual;
+    procedure SetLastName(const Value: string); virtual;
+    procedure SetFirstName(const Value: string); virtual;
+    procedure SetEmail(const Value: string); virtual;
+    procedure SetPhoneNumber(const Value: string); virtual;
+    procedure SetAccessDenied(Value: Boolean); virtual;
+    procedure SetMustChangePassword(Value: Boolean); virtual;
+    procedure SetPrivacyConfirm(Value: Boolean); virtual;
+    procedure SetCreationDate(Value: TDateTime); virtual;
+    procedure SetIPAddress(const Value: string); virtual;
+
+    procedure AfterCreate; override;
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TUser; reintroduce; virtual;
+    {$ENDIF}
+  published
+    property Password: string read GetPassword write SetPassword;
+    property Language: string read GetLanguage write SetLanguage;
+    [NeonIgnore]
+    property Profile: TProfile read GetProfile write SetProfile;
+    property Administrator: Boolean read GetAdministrator write SetAdministrator;
+    property System: Boolean read GetSystem write SetSystem;
+    property LastName: string read GetLastName write SetLastName;
+    property FirstName: string read GetFirstName write SetFirstName;
+    property Email: string read GetEmail write SetEmail;
+    property PhoneNumber: string read GetPhoneNumber write SetPhoneNumber;
+    property AccessDenied: Boolean read GetAccessDenied write SetAccessDenied;
+    property MustChangePassword: Boolean read GetMustChangePassword write SetMustChangePassword;
+    property PrivacyConfirm: Boolean read GetPrivacyConfirm write SetPrivacyConfirm;
+    property CreationDate: TDateTime read GetCreationDate write SetCreationDate;
+    property IPAddress: string read GetIPAddress write SetIPAddress;
+  end;
 
   TAddress = class(TInstantObject)
     {IOMETADATA stored;
@@ -29,6 +150,7 @@ type
     Street: Memo;
     Zip: String(10); }
     _City: TInstantString;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Country')]{$ENDIF}
     _Country: TInstantReference;
     _State: TInstantString;
     _Street: TInstantMemo;
@@ -44,8 +166,15 @@ type
     procedure SetState(const Value: string);
     procedure SetStreet(const Value: string);
     procedure SetZip(const Value: string);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TAddress; reintroduce; virtual;
+    {$ENDIF}
   published
     property City: string read GetCity write SetCity;
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Country: TCountry read GetCountry write SetCountry;
     property State: string read GetState write SetState;
     property Street: string read GetStreet write SetStreet;
@@ -53,7 +182,7 @@ type
   end;
 
   TCountry = class(TInstantObject)
-  {IOMETADATA stored;
+    {IOMETADATA stored;
     Name: String(30); }
     _Name: TInstantString;
   private
@@ -62,6 +191,12 @@ type
   protected
     procedure BeforeStore; override;
     function GetCaption: string; override;
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TCountry; reintroduce; virtual;
+    {$ENDIF}
   published
     property Id;
     property Name: string read GetName write SetName;
@@ -70,17 +205,28 @@ type
   TPhone = class(TInstantObject)
   {IOMETADATA stored;
     Name: String(20);
-    Number: String(20) mask '(000) 000-0000;0;_'; }
+    Number: String(20) mask '(000) 000-0000;0;_';
+    PhoneType: Enum(TPhoneType); }
     _Name: TInstantString;
     _Number: TInstantString;
+    _PhoneType: TInstantEnum;
   private
     function GetName: string;
     function GetNumber: string;
+    function GetPhoneType: TPhoneType;
     procedure SetName(const Value: string);
     procedure SetNumber(const Value: string);
+    procedure SetPhoneType(Value: TPhoneType);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TPhone; reintroduce; virtual;
+    {$ENDIF}
   published
     property Name: string read GetName write SetName;
     property Number: string read GetNumber write SetNumber;
+    property PhoneType: TPhoneType read GetPhoneType write SetPhoneType;
   end;
 
   TEmail = class(TInstantObject)
@@ -90,6 +236,12 @@ type
   private
     function GetAddress: string;
     procedure SetAddress(const Value: string);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TEmail; reintroduce; virtual;
+    {$ENDIF}
   published
     property Address: string read GetAddress write SetAddress;
   end;
@@ -103,6 +255,13 @@ type
     procedure SetName(const Value: string);
   protected
     function GetCaption: string; override;
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TCategory; reintroduce; virtual;
+    {$ENDIF}
+    constructor Create(AConnector: TInstantConnector = nil); override;
   published
     property Name: string read GetName write SetName;
   end;
@@ -115,9 +274,11 @@ type
     Name: String(50) index;
     Phones: Parts(TPhone) external 'Contact_Phones'; }
     _Address: TInstantPart;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Category')]{$ENDIF}
     _Category: TInstantReference;
     _City: TInstantString;
     _Name: TInstantString;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Phones')]{$ENDIF}
     _Phones: TInstantParts;
   private
     function GetAddress: TAddress;
@@ -138,6 +299,11 @@ type
     procedure BeforeStore; override;
     function GetCaption: string; override;
   public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TContact; reintroduce; virtual;
+    {$ENDIF}
     function AddPhone(Phone: TPhone): Integer;
     procedure ClearPhones;
     procedure DeletePhone(Index: Integer);
@@ -148,6 +314,7 @@ type
     property Phones[Index: Integer]: TPhone read GetPhones write SetPhones;
   published
     property Address: TAddress read GetAddress write SetAddress;
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Category: TCategory read GetCategory write SetCategory;
     property City: string read GetCity write SetCity;
     property MainPhoneNumber: string read GetMainPhoneNumber write SetMainPhoneNumber;
@@ -175,8 +342,11 @@ type
     BirthTime: Time; }
     _BirthDate: TInstantDate;
     _BirthTime: TInstantTime;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Emails')]{$ENDIF}
     _Emails: TInstantParts;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Employer')]{$ENDIF}
     _Employer: TInstantReference;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Picture')]{$ENDIF}
     _Picture: TInstantGraphic;
     _Salary: TInstantCurrency;
   private
@@ -197,6 +367,12 @@ type
   protected
     procedure BeforeDispose; override;
   public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TPerson; reintroduce; virtual;
+    {$ENDIF}
+    procedure FreeInstance; override;
     function AddEmail(Email: TEmail): Integer;
     procedure ClearEmails;
     procedure DeleteEmail(Index: Integer);
@@ -207,10 +383,13 @@ type
     property EmailCount: Integer read GetEmailCount;
     property Emails[Index: Integer]: TEmail read GetEmails write SetEmails;
   published
+    [NeonInclude(IncludeIf.NotDefault)]
     property BirthDate: TDate read GetBirthDate write SetBirthDate;
     property BirthTime: TTime read GetBirthTime write SetBirthTime;
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Employer: TCompany read GetEmployer;
     property MainEmailAddress: string read GetMainEmailAddress write SetMainEmailAddress;
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Picture: string read GetPicture write SetPicture;
     property Salary: Currency read GetSalary write SetSalary;
   end;
@@ -218,11 +397,17 @@ type
   TCompany = class(TContact)
   {IOMETADATA stored;
     Employees: References(TPerson) external 'Company_Employees'; }
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Employees')]{$ENDIF}
     _Employees: TInstantReferences;
   private
     function GetEmployeeCount: Integer;
     function GetEmployees(Index: Integer): TPerson;
   public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TCompany; reintroduce; virtual;
+    {$ENDIF}
     function AddEmployee(Employee: TPerson): Integer;
     procedure ClearEmployees;
     procedure DeleteEmployee(Index: Integer);
@@ -238,7 +423,173 @@ implementation
 uses
   SysUtils, InstantUtils, InstantMetadata;
 
+{ TProfile }
+{$IFDEF WINLINUX64}
+class function TProfile.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TProfile;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TProfile;
+end;
+{$ENDIF}
+
+function TProfile.GetAccessRoles: string;
+begin
+  Result := _AccessRoles.Value;
+end;
+procedure TProfile.SetAccessRoles(const Value: string);
+begin
+  _AccessRoles.Value := Value;
+end;
+
+{ TUser }
+{$IFDEF WINLINUX64}
+class function TUser.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TUser;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TUser;
+end;
+{$ENDIF}
+
+function TUser.GetPassword: string;
+begin
+  Result := _Password.Value;
+end;
+function TUser.GetProfile: TProfile;
+begin
+  Result := _Profile.Value as TProfile;
+end;
+function TUser.GetLanguage: string;
+begin
+  Result := _Language.Value;
+end;
+function TUser.GetAdministrator: Boolean;
+begin
+  Result := _Administrator.Value;
+end;
+function TUser.GetSystem: Boolean;
+begin
+  Result := _System.Value;
+end;
+function TUser.GetLastName: string;
+begin
+  Result := _LastName.Value;
+end;
+function TUser.GetFirstName: string;
+begin
+  Result := _FirstName.Value;
+end;
+function TUser.GetEmail: string;
+begin
+  Result := _Email.Value;
+end;
+function TUser.GetPhoneNumber: string;
+begin
+  Result := _PhoneNumber.Value;
+end;
+procedure TUser.AfterCreate;
+begin
+  inherited;
+  CreationDate := Now;
+  MustChangePassword := False;
+end;
+
+function TUser.GetAccessDenied: Boolean;
+begin
+  Result := _AccessDenied.Value;
+end;
+function TUser.GetMustChangePassword: Boolean;
+begin
+  Result := _MustChangePassword.Value;
+end;
+function TUser.GetPrivacyConfirm: Boolean;
+begin
+  Result := _PrivacyConfirm.Value;
+end;
+function TUser.GetCreationDate: TDateTime;
+begin
+  Result := _CreationDate.Value;
+end;
+function TUser.GetIPAddress: string;
+begin
+  Result := _IPAddress.Value;
+end;
+procedure TUser.SetPassword(const Value: string);
+begin
+  _Password.Value := Value;
+end;
+procedure TUser.SetProfile(Value: TProfile);
+begin
+  _Profile.Value := Value;
+  if Assigned(Value) then
+  begin
+    Administrator := Value.Id = 'ADMIN';
+    System := Value.Id = 'SYSTEM';
+  end;
+end;
+procedure TUser.SetLanguage(const AValue: string);
+begin
+  _Language.Value := AValue;
+end;
+procedure TUser.SetAdministrator(Value: Boolean);
+begin
+  _Administrator.Value := Value;
+end;
+procedure TUser.SetSystem(Value: Boolean);
+begin
+  _System.Value := Value;
+end;
+procedure TUser.SetLastName(const Value: string);
+begin
+  _LastName.Value := Value;
+end;
+procedure TUser.SetFirstName(const Value: string);
+begin
+  _FirstName.Value := Value;
+end;
+procedure TUser.SetEmail(const Value: string);
+begin
+  _Email.Value := Value;
+end;
+procedure TUser.SetPhoneNumber(const Value: string);
+begin
+  _PhoneNumber.Value := Value;
+end;
+procedure TUser.SetAccessDenied(Value: Boolean);
+begin
+  _AccessDenied.Value := Value;
+end;
+procedure TUser.SetMustChangePassword(Value: Boolean);
+begin
+  _MustChangePassword.Value := Value;
+end;
+procedure TUser.SetPrivacyConfirm(Value: Boolean);
+begin
+  _PrivacyConfirm.Value := Value;
+end;
+procedure TUser.SetCreationDate(Value: TDateTime);
+begin
+  _CreationDate.Value := Value;
+end;
+
+procedure TUser.SetIPAddress(const Value: string);
+begin
+  _IPAddress.Value := Value;
+end;
+
 { TAddress }
+{$IFDEF WINLINUX64}
+class function TAddress.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TAddress;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TAddress;
+end;
+{$ENDIF}
 
 function TAddress.GetCity: string;
 begin
@@ -292,6 +643,16 @@ end;
 
 { TCountry }
 
+{$IFDEF WINLINUX64}
+class function TCountry.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TCountry;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TCountry;
+end;
+{$ENDIF}
+
 procedure TCountry.BeforeStore;
 begin
   if Id = '' then
@@ -315,6 +676,16 @@ begin
 end;
 
 { TPerson }
+
+{$IFDEF WINLINUX64}
+class function TPerson.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TPerson;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TPerson;
+end;
+{$ENDIF}
 
 function TPerson.AddEmail(Email: TEmail): Integer;
 begin
@@ -396,6 +767,18 @@ begin
     Connector.RollbackTransaction;
     raise;
   end;
+end;
+
+procedure TPerson.FreeInstance;
+begin
+  inherited;
+  //Avoid circular reference of object TCompany:
+  //When releasing TPerson object that is the only reference to
+  //the TCompany object we must dereference TCompany so it can be
+  //freed from memory.
+  if (RefCount <> 0) and (_Employer.Value is TInstantObject) and
+    (TInstantObject(_Employer.Value).RefCount = RefCount) then
+    _Employer.Value := nil;
 end;
 
 function TPerson.GetBirthDate: TDate;
@@ -499,6 +882,16 @@ end;
 
 { TPhone }
 
+{$IFDEF WINLINUX64}
+class function TPhone.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TPhone;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TPhone;
+end;
+{$ENDIF}
+
 function TPhone.GetName: string;
 begin
   Result := _Name.Value;
@@ -507,6 +900,11 @@ end;
 function TPhone.GetNumber: string;
 begin
   Result := _Number.Value;
+end;
+
+function TPhone.GetPhoneType: TPhoneType;
+begin
+  Result := TPhoneType(_PhoneType.Value);
 end;
 
 procedure TPhone.SetName(const Value: string);
@@ -519,7 +917,22 @@ begin
   _Number.Value := Value;
 end;
 
+procedure TPhone.SetPhoneType(Value: TPhoneType);
+begin
+  _PhoneType.Value := Ord(Value);
+end;
+
 { TEmail }
+
+{$IFDEF WINLINUX64}
+class function TEmail.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TEmail;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TEmail;
+end;
+{$ENDIF}
 
 function TEmail.GetAddress: string;
 begin
@@ -532,6 +945,22 @@ begin
 end;
 
 { TCategory }
+
+{$IFDEF WINLINUX64}
+class function TCategory.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TCategory;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TCategory;
+end;
+{$ENDIF}
+
+constructor TCategory.Create(AConnector: TInstantConnector = nil);
+begin
+  inherited;
+  ;
+end;
 
 function TCategory.GetCaption: string;
 begin
@@ -549,6 +978,16 @@ begin
 end;
 
 { TContact }
+
+{$IFDEF WINLINUX64}
+class function TContact.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TContact;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TContact;
+end;
+{$ENDIF}
 
 function TContact.AddPhone(Phone: TPhone): Integer;
 begin
@@ -719,9 +1158,19 @@ end;
 
 { TCompany }
 
+{$IFDEF WINLINUX64}
+class function TCompany.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TCompany;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TCompany;
+end;
+{$ENDIF}
+
 function TCompany.AddEmployee(Employee: TPerson): Integer;
 begin
-  Result := _Employees.Add(Employee)
+  Result := _Employees.Add(Employee);
 end;
 
 procedure TCompany.ClearEmployees;
@@ -736,7 +1185,7 @@ end;
 
 function TCompany.GetEmployeeCount: Integer;
 begin
-  Result := _Employees.Count
+  Result := _Employees.Count;
 end;
 
 function TCompany.GetEmployees(Index: Integer): TPerson;
@@ -769,7 +1218,9 @@ initialization
     TCountry,
     TEmail,
     TPerson,
-    TPhone
+    TPhone,
+    TProfile,
+    TUser
   ]);
 
 end.

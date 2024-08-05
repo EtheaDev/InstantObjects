@@ -1,0 +1,75 @@
+package IOCore_4;
+
+{$I '..\..\InstantDefines.inc'}
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS OFF}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION ON}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO OFF}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES OFF}
+{$TYPEDADDRESS ON}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE RELEASE}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'InstantObjects 4 Run-Time Package'}
+{$LIBSUFFIX '240'}
+{$RUNONLY}
+{$IMPLICITBUILD OFF}
+
+requires
+  {$IFDEF DELPHI_NEON}
+  Neon,
+  {$ENDIF}
+  rtl,
+  vcl,
+  vcldb,
+  vclimg;
+
+contains
+  {$IFDEF DELPHI_NEON}
+  Instant.Neon.Serializers in '..\Instant.Neon.Serializers.pas',
+  {$ENDIF}
+  InstantUtils in '..\InstantUtils.pas',
+  InstantClasses in '..\InstantClasses.pas',
+  InstantConsts in '..\InstantConsts.pas',
+  InstantRtti in '..\InstantRtti.pas',
+  InstantCommand in '..\InstantCommand.pas',
+  InstantPersistence in '..\InstantPersistence.pas',
+  InstantExplorer in '..\InstantExplorer.pas',
+  InstantDesignHook in '..\InstantDesignHook.pas',
+  InstantCode in '..\InstantCode.pas',
+  InstantTextFiler in '..\InstantTextFiler.pas',
+  InstantPresentation in '..\InstantPresentation.pas',
+  InstantAccessors in '..\InstantAccessors.pas',
+  InstantConnectionManagerFormUnit in '..\InstantConnectionManagerFormUnit.pas' {InstantConnectionManagerForm},
+  InstantConnectionManager in '..\InstantConnectionManager.pas',
+  InstantImageUtils in '..\InstantImageUtils.pas',
+  InstantPump in '..\InstantPump.pas',
+  InstantDBBuild in '..\InstantDBBuild.pas',
+  InstantDBEvolution in '..\InstantDBEvolution.pas',
+  InstantCustomDBEvolverFormUnit in '..\InstantCustomDBEvolverFormUnit.pas' {InstantCustomDBEvolverForm},
+  InstantDBEvolverFormUnit in '..\InstantDBEvolverFormUnit.pas' {InstantDBEvolverForm},
+  InstantDBBuilderFormUnit in '..\InstantDBBuilderFormUnit.pas' {InstantDBBuilderForm},
+  InstantTypes in '..\InstantTypes.pas',
+  InstantBrokers in '..\InstantBrokers.pas',
+  InstantMetadata in '..\InstantMetadata.pas',
+  InstantStandardValidators in '..\InstantStandardValidators.pas',
+  InstantValidation in '..\InstantValidation.pas',
+  InstantRttiAttributes in '..\InstantRttiAttributes.pas';
+
+end.

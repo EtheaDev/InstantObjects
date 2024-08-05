@@ -2,7 +2,7 @@
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
-Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 11 to latest version)
+Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 10.1 to latest version)
 
 ![Support Delphi](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi.jpg)
 
@@ -55,6 +55,7 @@ Version 4.2 (4.2.0.0) (2024-08-05)
 - Added support for 64Bit Windows Platform
 - Added define USE_LARGEINT_FIELD_FOR_REF to create LargeIntField at Design-Time
 - Removed old defines for older Delphi Versions
+- Restored support for Delphi 10.1, 10.2, 10.3, 10.4
 
 Version 4.1 (4.1.0.0) (2023-10-22)
 - Added support for Delphi 12

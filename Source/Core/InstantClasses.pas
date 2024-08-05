@@ -441,6 +441,7 @@ implementation
 uses
   TypInfo
   , StrUtils
+  //Deactivate {$DEFINE DELPHI_NEON} directive into InstantDefines.inc if you don't want JSON support
   {$IFDEF DELPHI_NEON}
   , Instant.Neon.Serializers
   {$ENDIF}
