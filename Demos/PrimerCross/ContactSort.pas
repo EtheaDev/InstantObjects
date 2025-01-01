@@ -5,8 +5,15 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
   InstantPersistence;
 
 type
@@ -37,7 +44,11 @@ type
 implementation
 
 uses
-  Model, TypInfo, InstantRtti, InstantPresentation, InstantMetadata,
+  System.TypInfo,
+  Model,
+  InstantRtti,
+  InstantPresentation,
+  InstantMetadata,
   InstantTypes;
 
 {$R *.dfm}

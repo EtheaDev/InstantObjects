@@ -32,7 +32,15 @@ unit InstantADOX;
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers.
 interface
 
-uses Windows, ActiveX, Classes, Graphics, OleServer, OleCtrls, StdVCL;
+uses 
+  WinApi.Windows
+  , WinApi.ActiveX
+  , System.Classes
+  , Vcl.Graphics
+  , Vcl.OleServer
+  , Vcl.OleCtrls
+  , System.Win.StdVCL
+  ;
 
 // *********************************************************************//
 // GUIDS declared in the TypeLibrary. Following prefixes are used:        
@@ -1129,7 +1137,8 @@ type
 
 implementation
 
-uses ComObj;
+uses 
+  System.Win.ComObj;
 
 class function CoTable.Create: _Table;
 begin

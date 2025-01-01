@@ -35,9 +35,17 @@ unit InstantDialog;
 interface
 
 uses
-  SysUtils,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-  Classes;
+  System.SysUtils
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , System.Classes
+  ;
 
 type
   TInstantDialogForm = class(TForm)

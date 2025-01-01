@@ -39,7 +39,11 @@ unit InstantStandardValidators;
 interface
 
 uses
-  Contnrs, InstantClasses, InstantMetadata, InstantValidation;
+  System.Contnrs
+  , InstantClasses
+  , InstantMetadata
+  , InstantValidation
+  ;
 
 type
   // Base class for classes that handle the pieces of a ValidCharsString string.
@@ -97,7 +101,10 @@ type
 implementation
 
 uses
-  Classes, SysUtils, InstantConsts;
+  System.Classes
+  , System.SysUtils
+  , InstantConsts
+  ;
 
 { TInstantCharSetValidator }
 

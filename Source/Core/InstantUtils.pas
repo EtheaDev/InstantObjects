@@ -36,7 +36,13 @@ unit InstantUtils;
 interface
 
 uses
-  Classes, InstantClasses, SysUtils;
+  System.Classes
+  , InstantClasses
+  , System.SysUtils
+  ;
+
+const
+  InstantObjectVersion = '4.2.2';
 
 type
   TInstantCompareOption = (coCaseInsensitive, coPartial);
@@ -86,6 +92,7 @@ procedure InstantStrToList(const Str: string; List: TStrings;
 function InstantStrToTime(const Str: string): TDateTime;
 function InstantUnquote(const Str: string; Quote: Char): string;
 function InstantStrArrayToString(const StrArray: array of string; Delimiter: Char): string;
+function InstantTrimRight(const AValue: string): string;
 
 function DateOf(const AValue: TDateTime): TDateTime;
 function TimeOf(const AValue: TDateTime): TDateTime;
@@ -97,9 +104,14 @@ function InstantSmartConcat(const AArray: array of string; const ADelimiter: str
 implementation
 
 uses
-  Windows, ActiveX, ComObj,
-  Variants, InstantConsts, InstantRtti,
-  DateUtils;
+  WinApi.Windows
+  , WinApi.ActiveX
+  , System.Win.ComObj
+  , System.Variants
+  , InstantConsts
+  , InstantRtti
+  , System.DateUtils
+  ;
 
 
 {$IFDEF IO_MEM_OVERRUN_CHECK}
@@ -666,6 +678,15 @@ begin
       Result := StrArray[I]
     else
       Result := Result + Delimiter + StrArray[I];
+end;
+
+function InstantTrimRight(const AValue: string): string;
+begin
+  {$IFDEF IO_DISABLE_STRING_TRIM}
+  Result := AValue;
+  {$ELSE}
+  Result := TrimRight(AValue);
+  {$ENDIF}
 end;
 
 function DateOf(const AValue: TDateTime): TDateTime;

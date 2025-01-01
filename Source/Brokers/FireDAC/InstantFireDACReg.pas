@@ -37,7 +37,9 @@ procedure Register;
 implementation
 
 uses
-  Classes, InstantFireDAC;
+  System.Classes
+  , InstantFireDAC
+  ;
 
 procedure Register;
 begin

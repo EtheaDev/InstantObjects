@@ -39,9 +39,13 @@ unit InstantConnectionManager;
 interface
 
 uses
-  SysUtils, Classes,
-  Windows,  
-  InstantClasses, InstantPersistence, InstantMetadata;
+  System.SysUtils
+  , System.Classes
+  , WinApi.Windows
+  , InstantClasses
+  , InstantPersistence
+  , InstantMetadata
+  ;
 
 type
   TInstantConnectionManagerActionType = (atNew, atEdit, atDelete, atRename,

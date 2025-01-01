@@ -39,9 +39,20 @@ unit InstantFireDACConnectionDefEdit;
 interface
 
 uses
-  Forms, Dialogs, StdCtrls, Controls, ExtCtrls, SysUtils, Classes,
-  InstantFireDAC, FireDAC.Stan.Option,
-  FireDAC.UI.Intf, FireDAC.VCLUI.Wait, FireDAC.Comp.UI, FireDAC.Stan.Intf;
+  Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.Controls
+  , Vcl.ExtCtrls
+  , System.SysUtils
+  , System.Classes
+  , InstantFireDAC
+  , FireDAC.Stan.Option
+  , FireDAC.UI.Intf
+  , FireDAC.VCLUI.Wait
+  , FireDAC.Comp.UI
+  , FireDAC.Stan.Intf
+  ;
 
 type
   TInstantFireDACConnectionDefEditForm = class(TForm)

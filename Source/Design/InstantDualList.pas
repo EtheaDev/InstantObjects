@@ -35,10 +35,21 @@ unit InstantDualList;
 interface
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls, ActnList,
-  InstantDialog;
+  System.SysUtils
+  , System.Classes
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , Vcl.ComCtrls
+  , Vcl.ActnList
+  , InstantDialog
+  , System.Actions
+  ;
 
 type
   TInstantDualListForm = class(TInstantDialogForm)

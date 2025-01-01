@@ -40,7 +40,9 @@ unit InstantRtti;
 interface
 
 uses
-  Classes, TypInfo;
+  System.Classes
+  , System.TypInfo
+  ;
 
 type
   TInstantProperties = class(TObject)
@@ -83,7 +85,9 @@ function InstantGetPropName(PropInfo: PPropInfo): string; inline;
 implementation
 
 uses
-  Variants, SysUtils, InstantTypes;
+  System.Variants
+  , System.SysUtils
+  , InstantTypes;
 
 function GetTypeInfo(PropInfo: PPropInfo) : PTypeInfo;
 begin

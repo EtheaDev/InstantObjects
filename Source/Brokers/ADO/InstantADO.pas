@@ -39,8 +39,17 @@ unit InstantADO;
 interface
 
 uses
-  Classes, Db, ADODB, SysUtils, InstantPersistence, InstantClasses,
-  InstantCommand, InstantBrokers, InstantMetadata, InstantTypes;
+  System.Classes
+  , Data.DB
+  , Data.Win.ADODB
+  , System.SysUtils
+  , InstantPersistence
+  , InstantClasses
+  , InstantCommand
+  , InstantBrokers
+  , InstantMetadata
+  , InstantTypes
+  ;
 
 type
   TInstantADOProviderType = (ptUnknown, ptMSJet, ptMSSQLServer, ptOracle, ptMySQL, ptIBMDB2);
@@ -219,9 +228,17 @@ type
 implementation
 
 uses
-  ADOInt, ComObj, InstantConsts, InstantUtils, InstantADOX,
-  InstantADOConnectionDefEdit, InstantADOTools, Controls, InstantDBBuild,
-  InstantMSSqlCatalog;
+  Winapi.ADOInt
+  , System.Win.ComObj
+  , InstantConsts
+  , InstantUtils
+  , InstantADOX
+  , InstantADOConnectionDefEdit
+  , InstantADOTools
+  , Vcl.Controls
+  , InstantDBBuild
+  , InstantMSSqlCatalog
+  ;
 
 const
   ADOLinkPrefix = 'FILE NAME=';
@@ -247,7 +264,7 @@ begin
         if Assigned(OnAssignParamValue) then
           OnAssignParamValue(Param);
         Parameter.DataType := Param.DataType;
-        if Param.ParamType = DB.ptUnknown then
+        if Param.ParamType = Data.DB.ptUnknown then
           Parameter.Direction := pdInput
         else
           Parameter.Direction := TParameterDirection(Param.ParamType);

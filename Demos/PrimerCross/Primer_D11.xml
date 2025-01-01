@@ -80,9 +80,4 @@ Prepare SQL=False
 ConnectTimeout=60
 Mars_Connection=True</Params>
   </TInstantDBXConnectionDef>
-  <TInstantJSONConnectionDef>
-    <Name>JSONDB</Name>
-    <IsBuilt>TRUE</IsBuilt>
-    <RootFolder>.\JSONDB</RootFolder>
-  </TInstantJSONConnectionDef>
 </TInstantConnectionDefs>

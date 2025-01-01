@@ -29,7 +29,7 @@ inherited InstantClassEditorForm: TInstantClassEditorForm
         object BaseClassLabel: TLabel
           Left = 16
           Top = 64
-          Width = 52
+          Width = 53
           Height = 13
           Caption = '&Base Class'
           FocusControl = BaseClassEdit

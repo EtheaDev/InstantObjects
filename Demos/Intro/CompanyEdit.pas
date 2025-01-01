@@ -3,9 +3,22 @@ unit CompanyEdit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  ContactEdit, Db, InstantPresentation, StdCtrls, Grids, DBGrids, Mask,
-  DBCtrls;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.Mask,
+  Vcl.DBCtrls,
+  ContactEdit,
+  InstantPresentation;
 
 type
   TCompanyEditForm = class(TContactEditForm)

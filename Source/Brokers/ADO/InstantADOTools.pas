@@ -32,7 +32,9 @@ unit InstantADOTools;
 interface
 
 uses
-  ADODB, InstantADOJRO;
+  Data.Win.ADODB
+  , InstantADOJRO
+  ;
 
 type
   TInstantADOSyncType = (stSend, stReceive, stSendReceive);
@@ -52,7 +54,9 @@ procedure InstantADOSynchronizeDatabases(const Source, Target: string;
 implementation
 
 uses
-  Windows, SysUtils;
+  WinApi.Windows
+  , System.SysUtils
+  ;
   
 const
   SMSJetProvider = 'Microsoft.Jet.OLEDB.4.0';

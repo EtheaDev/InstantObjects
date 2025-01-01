@@ -40,10 +40,11 @@ unit InstantClasses;
 interface
 
 uses
-  Windows
-  , Classes
+  WinApi.Windows
+  , System.Classes
   , InstantConsts
-  , SysUtils;
+  , System.SysUtils
+  ;
 
 const
   InstantBufferSize = 4096;
@@ -439,8 +440,8 @@ procedure InstantWriteObjects(Stream: TStream; Format: TInstantStreamFormat; Obj
 implementation
 
 uses
-  TypInfo
-  , StrUtils
+  System.TypInfo
+  , System.StrUtils
   //Deactivate {$DEFINE DELPHI_NEON} directive into InstantDefines.inc if you don't want JSON support
   {$IFDEF DELPHI_NEON}
   , Instant.Neon.Serializers

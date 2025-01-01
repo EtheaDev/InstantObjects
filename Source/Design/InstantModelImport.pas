@@ -33,8 +33,21 @@
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, InstantDialog, ExtCtrls, StdCtrls, InstantCode, InstantClasses;
+  WinApi.Windows
+  , WinApi.Messages
+  , System.SysUtils
+  , System.Variants
+  , System.Classes
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , InstantDialog
+  , Vcl.ExtCtrls
+  , Vcl.StdCtrls
+  , InstantCode
+  , InstantClasses
+  ;
 
 type
   TInstantModelImportForm = class(TInstantDialogForm)

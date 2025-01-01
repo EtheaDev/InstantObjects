@@ -35,8 +35,13 @@ unit InstantDesignUtils;
 interface
 
 uses
-  DB,
-  Controls, DbCtrls, Graphics, Forms, Dialogs;
+  Data.DB
+  , Vcl.Controls
+  , Vcl.DbCtrls
+  , Vcl.Graphics
+  , Vcl.Forms
+  , Vcl.Dialogs
+  ;
 
 procedure Busy(Enable: Boolean);
 function Confirm(const Msg: string): Boolean;
@@ -47,7 +52,9 @@ function Remove_T_FromClassName(const AClassName: string): string;
 implementation
 
 uses
-  SysUtils, TypInfo;
+  System.SysUtils
+  , System.TypInfo
+  ;
 
 var
   __SaveCursor: TCursor = 0;

@@ -32,7 +32,15 @@ unit InstantADOJRO;
 {$TYPEDADDRESS OFF} // Unit must be compiled without type-checked pointers.
 interface
 
-uses Windows, ActiveX, Classes, Graphics, OleServer, OleCtrls, StdVCL, ADODB;
+uses 
+  WinApi.Windows
+  , WinApi.ActiveX
+  , System.Classes
+  , Vcl.Graphics
+  , Vcl.OleServer
+  , Vcl.OleCtrls
+  , System.Win.StdVCL
+  , Data.Win.ADODB;
 
 // *********************************************************************//
 // GUIDS declared in the TypeLibrary. Following prefixes are used:        
@@ -307,7 +315,8 @@ type
 
 implementation
 
-uses ComObj;
+uses 
+  System.Win.ComObj;
 
 class function CoReplica.Create: IReplica;
 begin

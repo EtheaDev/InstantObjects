@@ -40,10 +40,14 @@ unit InstantXMLCatalog;
 interface
 
 uses
+  InstantPersistence
 {$IFNDEF IO_CONSOLE}
-  FileCtrl,
+  , Vcl.FileCtrl
 {$ENDIF}
-  InstantPersistence, InstantBrokers, InstantMetadata, InstantTypes;
+  , InstantBrokers
+  , InstantMetadata
+  , InstantTypes
+  ;
 
 type
   // A TInstantCatalog that reads catalog information from a XML
@@ -61,7 +65,11 @@ type
 implementation
 
 uses
-  SysUtils, Classes, TypInfo, InstantConsts;
+  System.SysUtils
+  , System.Classes
+  , System.TypInfo
+  , InstantConsts
+  ;
   
 procedure TInstantXMLCatalog.AddTableMetadatas(
   TableMetadatas: TInstantTableMetadatas);

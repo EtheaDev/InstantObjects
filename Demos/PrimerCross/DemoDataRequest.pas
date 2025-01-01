@@ -5,9 +5,16 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
-  Classes;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls;
 
 type
   TDemoDataRequestForm = class(TForm)

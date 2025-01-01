@@ -5,9 +5,16 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  DB, InstantPresentation;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  InstantPresentation;
 
 type
   TMainDataModule = class(TDataModule)

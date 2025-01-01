@@ -3,8 +3,21 @@ unit ContactEdit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Grids, DBGrids, Db, Mask, DBCtrls, InstantPresentation;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.DBCtrls,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.Mask,
+  InstantPresentation;
 
 type
   TContactEditForm = class(TForm)

@@ -3,7 +3,8 @@ unit UBuilder;
 interface
 
 uses
-  InstantPersistence, InstantTypes, Classes;
+  InstantPersistence, InstantTypes
+  , System.Classes;
 
 procedure BuildAndConnect(const ConnectionFileName, ConnectionName : string);
 procedure CreateRandomContacts(Count: Integer; LoadPictures : boolean = False;
@@ -36,7 +37,8 @@ uses
   InstantXML,
 //End Broker inclusion section
 
-  Jpeg, Graphics,
+  Jpeg
+  , Vcl.Graphics,
   InstantConnectionManager, InstantClasses,
   Contnrs,
   DemoData, RandomData, Model;

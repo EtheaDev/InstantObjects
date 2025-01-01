@@ -15,12 +15,10 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
   Font.Name = 'Segoe UI'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnResize = FormResize
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 15
   object AttributeSplitter: TSplitter
     Left = 0
@@ -31,8 +29,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
     Align = alBottom
     Constraints.MinHeight = 4
     Visible = False
-    ExplicitTop = 255
-    ExplicitWidth = 410
   end
   object ModelPanel: TPanel
     Left = 0
@@ -168,8 +164,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
       Font.Style = []
       ParentFont = False
       TabOrder = 1
-      ExplicitTop = 25
-      ExplicitHeight = 218
       inherited AttributesSplitter: TSplitter
         Top = 114
         Width = 410
@@ -187,9 +181,6 @@ object InstantModelExplorerForm: TInstantModelExplorerForm
           Top = 22
           Width = 398
           Height = 78
-          ExplicitTop = 22
-          ExplicitWidth = 394
-          ExplicitHeight = 78
         end
       end
       inherited IntroducedAttributesPanel: TPanel

@@ -53,8 +53,8 @@ object MainForm: TMainForm
       end
       item
         Expanded = False
-        FieldName = 'Phones'
-        Width = 118
+        FieldName = 'Address.Street'
+        Width = 128
         Visible = True
       end>
   end

@@ -2,7 +2,6 @@ inherited InstantModelImportForm: TInstantModelImportForm
   Caption = 'Import Model'
   ClientWidth = 409
   ExplicitWidth = 425
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel [0]
     Left = 8
@@ -13,9 +12,9 @@ inherited InstantModelImportForm: TInstantModelImportForm
     Caption = 'Import to module'
   end
   object Label2: TLabel [1]
-    Left = 8
+    Left = 49
     Top = 46
-    Width = 90
+    Width = 49
     Height = 13
     Alignment = taRightJustify
     Caption = 'File name'

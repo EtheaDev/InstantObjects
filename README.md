@@ -1,4 +1,4 @@
-﻿# **InstantObjects 4.2 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+﻿# **InstantObjects 4.2.2 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
@@ -22,9 +22,17 @@ Even though it is still a bolted-on technology, InstantObjects integrates with t
 
 * Serialization/Deserialization of object using [delphi-neon](https://github.com/paolo-rossi/delphi-neon) library
 
+## New Setup for automatic installation of components
+
+From 4.4.0 version a new "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/SVGIconImageList/releases/latest/download/SVGIconImageList_Setup.exe).
+
+The Installer automatically detect your Delphi versions, install sources, build and install packages and add source paths.
+
+![Setup](./Help/Setup.png)
+
 **Documentation**
 
-Follow the complete manual present in this [wiki section](https://github.com/EtheaDev/InstantObjects/wiki) and look at the PrimerCross demo to find out how to build applications with an Object Persistence Layer very flexible.
+Follow the complete manual present in this [site](https://ethea.it/docs/instantobjects/) and look at the PrimerCross demo to find out how to build applications with an Object Persistence Layer very flexible.
 
 ![Primer demo](https://raw.githubusercontent.com/wiki/EtheaDev/InstantObjects/PrimerDemo.gif)
 
@@ -46,31 +54,40 @@ From 3.0 version is also compatible with TestInsight test framework.
 
 ![TestInsight Running](/Tests/TestInsightRunning.png)
 
-
 **Release Notes**
 
 VERSION HISTORY
 ---------------
-Version 4.2 (4.2.0.0) (2024-08-05)
+Version 4.2.2 (2025-01-01)
+- New [Project Site](https://www.ethea.it/docs/InstantObjects/)
+- New Setup for automatic Installation of Components
+- Fixed some Tests for 64Bit platform
+
+Version 4.2.1 (2024-09-16)
+- Added support for Delphi 12.2
+- Fixed Demos for 64 Bit
+- Added possibility to not trim strings (using IO_DISABLE_STRING_TRIM)
+
+Version 4.2.0 (2024-08-05)
 - Added support for 64Bit Windows Platform
 - Added define USE_LARGEINT_FIELD_FOR_REF to create LargeIntField at Design-Time
 - Removed old defines for older Delphi Versions
 - Restored support for Delphi 10.1, 10.2, 10.3, 10.4
 
-Version 4.1 (4.1.0.0) (2023-10-22)
+Version 4.1.0 (2023-10-22)
 - Added support for Delphi 12
 - Renamed packages (for Delphi 11 and Delphi 12)
 - Support for older Delphi Versions before Delphi 11 discontinued
 - Use Unidirectional cursors for optimize performances
 
-Version 4.0 (4.0.0.0) (2023-07-20)
+Version 4.0.0 (2023-07-20)
 
 - Completed support for etherogeneus Databases (using IsDescription, IsPrimaryKey, ForeignKeys)
 - Refactoring Packages names:
   - **RunTime**: (IOCore_4, IOIBFbCatalog_4, IOMSSqlCatalog_4, IOMySQLCatalog_4, IOADO_4, IODBX_4, IOIBX_4, IOXML_4, IOFireDAC_4, IOJSON_4)
   - **DesignTime**: (dclIOCore_4, dclIOIBFbCatalog_4, dcldclIOMSSqlCatalog_4, dclIOMySQLCatalog_4, dclIOADO_4, dclIODBX_4, dclIOIBX_4, dclIOXML_4, dclIOFireDAC_4, dclIOJSON_4)
 
-Version 3.1 (3.1.0.0) (2023-06-26)
+Version 3.1.0 (2023-06-26)
 
 - Added support for JSON Serialization via delphi-neon, requires: [github.com/paolo-rossi/delphi-neon](https://github.com/paolo-rossi/delphi-neon))
 
@@ -78,13 +95,13 @@ Version 3.1 (3.1.0.0) (2023-06-26)
 
 - Added TInstantJSONBroker, TInstantJSONResolver, TInstantJSONTranslator, TInstantJSONQuery classes
 
-Version 3.0 (3.0.0.0) (2021-08-27)
+Version 3.0.0 (2021-08-27)
 
 - Added support for Delphi 11 Alexandria
 
 - Updated Test Framework to DUnitX / TestInsight (only for D10.2, D10.3, D10.4, D11.0)
 
-Version 2.10 (2.10.0.0) (2021-03-29)
+Version 2.10.0 (2021-03-29)
 
 - Fixed InstantDBX for compilation with IO_CONSOLE directive
 
@@ -94,7 +111,7 @@ Version 2.10 (2.10.0.0) (2021-03-29)
 
 - Added Isolation property to FireDAC Broker
 
-Version 2.9 (2.9.0.0) (2021-01-24)
+Version 2.9.0 (2021-01-24)
 
 - Added support delphi-NEON library
   for serialization/deserialization of objects
@@ -107,7 +124,7 @@ Version 2.9 (2.9.0.0) (2021-01-24)
 
 - Added OnAssignParamValue event for Brokers
 
-Version 2.8 (2.8.0.0) (2020-08-25)
+Version 2.8.0 (2020-08-25)
 
 - Added support for Delphi 10.4 Sydney
 
@@ -115,31 +132,31 @@ Version 2.8 (2.8.0.0) (2020-08-25)
 
 - Editor font updated
 
-Version 2.7 (2.7.0.0) (2018-12-06)
+Version 2.7.0 (2018-12-06)
 
 - Added support for Delphi 10.3 Rio
 
 - Cleaned old LINUX/KYLIX support
 
-Version 2.6 (2.6.0.0) (2017-04-04)
+Version 2.6.0 (2017-04-04)
 
 - Added support for Delphi 10.2 Tokyo
 
-Version 2.5 (2.5.0.0) (2016-05-31)
+Version 2.5.0 (2016-05-31)
 
 - Added support for Delphi 10.1 Berlin
 
-Version 2.4 (2.4.0.0) (2015-09-01)
+Version 2.4.0 (2015-09-01)
 
 - Added support for Delphi 10 Seattle
 
-Version 2.3 (2.3.0.0) (2015-04-08)
+Version 2.3.0 (2015-04-08)
 
 - Added support for Delphi XE8
 
 - Added support for Delphi XE7
 
-Version 2.2 (2.2.0.0) (2014-05-12)
+Version 2.2.0 (2014-05-12)
 
 - Full UNICODE support: based on UseUnicode flag of InstantConnection:
   Exposers uses TWideStringField or TWideMemoField mapping string attributes
@@ -155,7 +172,7 @@ Version 2.2 (2.2.0.0) (2014-05-12)
 
 - Updated UnitTesting for Exposers and Unicode Support
 
-Version 2.1 (2.1.0.0) (2007-02-26)
+Version 2.1.0 (2007-02-26)
 
 - Support for SQL Server 2005; catalog support for SQL Server 7;
   better support for SQL Server in general.
@@ -222,11 +239,11 @@ Version 2.1 (2.1.0.0) (2007-02-26)
   
 - Various fixes and enhancements (see tracker).
 
-Version 2.0 (2.0.0.0) (2006-08-07)
+Version 2.0.1 (2006-08-07)
 
 - All 2.0 RC changes.
 
-Version 2.0 RC 1 (1.9.2.1) (2006-05-07)
+Version 1.9.3 (2006-05-07)
 
 - Help file has been improved.
 
@@ -269,7 +286,7 @@ Version 2.0 RC 1 (1.9.2.1) (2006-05-07)
   for nil needed before trying to clone a TInstantReference
   attribute object.
 
-Version 2.0 Beta 3 (1.9.1.3) (2006-03-31)
+Version 1.9.3 (2006-03-31)
 
 - The IDE menu item "Build Database..." has been changed
   to "Build InstantObjects Database...".
@@ -488,7 +505,7 @@ dialog as there is no checking of available
 - Many small bug fixes and improvements.
 
 
-Version 2.0 Beta 2 (1.9.1.2) (2006-01)
+Version 1.9.2 (2006-01)
 
 - Fixed possible AV in TInstantBrokerCatalog.
 
@@ -518,7 +535,7 @@ Version 2.0 Beta 2 (1.9.1.2) (2006-01)
 - Removal of several memory leaks and sources of AVs.
 
 
-Version 2.0 Beta 1 (1.9.1.1) (2005-11)
+Version 1.9.1 (2005-11)
 
 - Added support for Delphi 2006/Win32 (experimental).
 
@@ -707,7 +724,7 @@ Version 1.6.5 (2004-05-23) UNOFFICIAL
 - XML format for connection file managed by connectionmanager.
 
 
-Version 1.6 (2003-12-19) LAST COMMERCIAL VERSION
+Version 1.6.0 (2003-12-19) LAST COMMERCIAL VERSION
 
 - SQL based broker architecture introduced.
 
@@ -739,7 +756,7 @@ Version 1.6 (2003-12-19) LAST COMMERCIAL VERSION
   persistent fields.
 
 
-Version 1.5 (2003-02-25)
+Version 1.5.0 (2003-02-25)
 
 - Added IProviderSupport to TInstantExposer and TInstantSelector.
 
@@ -824,7 +841,7 @@ Version 1.5 (2003-02-25)
 - Added ADS, DBISAM and FF brokers to Delphi 7 version.
 
 
-Version 1.3 (2002-09-12)
+Version 1.3.0 (2002-09-12)
 
 - FlashFiler broker added.
 
@@ -839,7 +856,7 @@ Version 1.3 (2002-09-12)
 - TInstantAttribute: GetValue/SetValue is now virtual.
 
 
-Version 1.22 (2002-07-30) - Delphi 7 Companion CD
+Version 1.2.2 (2002-07-30) - Delphi 7 Companion CD
 
 - Delphi 7 supported.
 
@@ -867,7 +884,7 @@ Version 1.22 (2002-07-30) - Delphi 7 Companion CD
 - Primer demo: Import/export of multiple objects added.
 
 
-Version 1.21 (2002-06-28)
+Version 1.2.1 (2002-06-28)
 
 - InstantGetClass: Now returns nil instead of raising exception if class is
   not TInstantObject descendant.
@@ -905,7 +922,7 @@ Version 1.21 (2002-06-28)
   long metadata sections.
 
 
-Version 1.2 (2002-05-16)
+Version 1.2.0 (2002-05-16)
 
 - ObjectFoundry enabled.
 
@@ -966,7 +983,7 @@ Version 1.11 (2002-04-22)
   specified classes only.
 
 
-Version 1.1.0.1707 (2002-03-15)
+Version 1.1.1 (2002-03-15)
 
 - DBISAM broker added.
 
@@ -1000,7 +1017,7 @@ Version 1.1.0.1707 (2002-03-15)
   classes not descending from TInstantObject.
 
 
-Version 1.0.0.1706 (2002-02-14)
+Version 1.0.5 (2002-02-14)
 
 - ADO, BDE and IBX brokers are now placed in individual packages.
   The complete source code for the brokers is installed into Source\Brokers 
@@ -1022,7 +1039,7 @@ Version 1.0.0.1706 (2002-02-14)
   to a TInstantIBXConnector with no connection.
 
 
-Version 1.0.0.1705 (2002-02-07)
+Version 1.0.4 (2002-02-07)
 
 - InterBase dialect 3 is now supported.
 
@@ -1047,7 +1064,7 @@ Version 1.0.0.1705 (2002-02-07)
 - About box added to Model Explorer.
 
 
-Version 1.0.0.1704 (2002-01-23)
+Version 1.0.3 (2002-01-23)
 
 - Exposer now refreshes record buffer when exposed objects are refreshed.
 
@@ -1058,7 +1075,7 @@ Version 1.0.0.1704 (2002-01-23)
 - Fixed bug in TInstantObject.Retrieve causing stack problems when returning nil.
 
 
-Version 1.0.0.1703 (2002-01-03)
+Version 1.0.2 (2002-01-03)
 
 - Fixed bug causing exposer/selector fields to be missing at design time.
 
@@ -1066,7 +1083,7 @@ Version 1.0.0.1703 (2002-01-03)
 
 - Fixed bug in InstantObjectBinaryToText when converting boolean values.
 
-Version 1.0.0.1702 (2001-12-23)
+Version 1.0.1 (2001-12-23)
 
 - Fixed infinite loop when compiling immediately after changing model unit
   of large model on slow computers.
@@ -1079,7 +1096,7 @@ Version 1.0.0.1701 (2001-12-07)
 - Fixed bug in code generator causing delete of model unit source code
   when editing class via Model Explorer.
 
-Version 1.0.0.1659 (2001-12-03)
+Version 1.0.0 (2001-12-03)
 
 - First public release.
 

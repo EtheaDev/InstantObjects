@@ -41,9 +41,18 @@ unit InstantBrokers;
 interface
 
 uses
-  SysUtils, Classes, Db, InstantPersistence, InstantTypes, InstantMetadata,
-  System.Generics.Collections,
-  InstantConsts, InstantClasses, Contnrs, InstantCommand;
+  System.SysUtils
+  , System.Classes
+  , Data.DB
+  , InstantPersistence
+  , InstantTypes
+  , InstantMetadata
+  , System.Generics.Collections
+  , InstantConsts
+  , InstantClasses
+  , System.Contnrs
+  , InstantCommand
+  ;
 
 const
   CLASSNAME_PARAM_SIZE = 32;
@@ -1162,10 +1171,13 @@ procedure InstantLogStatement(const Caption, AStatement: string;
 implementation
 
 uses
-  Windows,
-  Variants,
-  DateUtils,
-  TypInfo, InstantUtils, InstantRtti;
+  WinApi.Windows
+  , System.Variants
+  , System.DateUtils
+  , System.TypInfo
+  , InstantUtils
+  , InstantRtti
+  ;
 
 {$IFDEF IO_STATEMENT_LOGGING}
 procedure InstantLogStatement(const Caption, AStatement: string;
@@ -2673,7 +2685,7 @@ end;
 procedure TInstantNavigationalResolver.ReadMemo(Attribute: TInstantMemo);
 begin
   with Attribute do
-    Value := TrimRight(FieldByName(Metadata.FieldName).AsString);
+    Value := InstantTrimRight(FieldByName(Metadata.FieldName).AsString);
 end;
 
 procedure TInstantNavigationalResolver.ReadPart(Attribute: TInstantPart);
@@ -2752,9 +2764,9 @@ begin
   with Attribute do
   begin
     ReferenceObject(
-      TrimRight(
+      InstantTrimRight(
         FieldByName(Metadata.FieldName + InstantClassFieldName).AsString),
-      TrimRight(
+      InstantTrimRight(
         FieldByName(Metadata.FieldName + InstantIdFieldName).AsString));
   end;
 end;
@@ -2798,7 +2810,7 @@ end;
 procedure TInstantNavigationalResolver.ReadString(Attribute: TInstantString);
 begin
   with Attribute do
-    Value := TrimRight(FieldByName(Metadata.FieldName).AsString);
+    Value := InstantTrimRight(FieldByName(Metadata.FieldName).AsString);
 end;
 
 procedure TInstantNavigationalResolver.ResetAttribute(AObject: TInstantObject;
@@ -4329,7 +4341,7 @@ var
 begin
   LField := DataSet.FieldByName(FieldName);
   AWasNull := LField.IsNull;
-  Result := TrimRight(LField.AsString);
+  Result := InstantTrimRight(LField.AsString);
 end;
 
 function TInstantSQLResolver.ReadStringField(DataSet: TDataSet;
@@ -4339,7 +4351,7 @@ var
 begin
   LField := DataSet.FieldByName(FieldName);
   AWasNull := LField.IsNull;
-  Result := TrimRight(LField.AsString);
+  Result := InstantTrimRight(LField.AsString);
 end;
 
 procedure TInstantSQLResolver.RemoveConcurrencyParam(Params: TParams);
@@ -6706,7 +6718,7 @@ var
     else if AField.DataType in [ftTime, ftTimeStampOffset] then
       Result := InstantTimeToStr(AField.AsDateTime)
     else
-      Result := TrimRight(AField.AsString);
+      Result := InstantTrimRight(AField.AsString);
   end;
 
 begin

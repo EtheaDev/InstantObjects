@@ -5,11 +5,29 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, Grids, DBGrids,
-  Mask, DBCtrls, ComCtrls, Menus, ImgList, ActnList, Buttons,
-  ContactEdit, DB, InstantPresentation, Model;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Vcl.DBCtrls,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.Mask,
+  Vcl.ComCtrls,
+  Vcl.Menus,
+  Vcl.ImgList,
+  Vcl.ActnList,
+  Vcl.Buttons,
+  ContactEdit,
+  InstantPresentation,
+  Model;
 
 type
   TCompanyEditForm = class(TContactEditForm)
@@ -59,7 +77,10 @@ implementation
 {$R *.dfm}
 
 uses
-  BasicEdit, Utility, PersonBrowse, InstantImageUtils;
+  BasicEdit,
+  Utility,
+  PersonBrowse,
+  InstantImageUtils;
 
 { TCompanyEditForm }
 

@@ -40,9 +40,17 @@ interface
 {$ENDIF}
 
 uses
-  Forms, Dialogs, StdCtrls, Controls, ExtCtrls,
-  SysUtils, Classes, InstantDBX,
-  DB, SQLExpr;
+  Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.Controls
+  , Vcl.ExtCtrls
+  , System.SysUtils
+  , System.Classes
+  , InstantDBX
+  , Data.DB
+  , Data.SQLExpr
+  ;
 
 type
   TInstantDBXConnectionDefEditForm = class(TForm)

@@ -41,17 +41,20 @@ unit InstantMetadata;
 interface
 
 uses
-  Classes
-  , Contnrs
-  , Db
+  System.Classes
+  , System.Contnrs
+  , Data.Db
   {$IFDEF DELPHI_NEON}
-  , Neon.Core.Types //If don't compile, add ..\..\..\ext\delphi-neon\Source to search path of Project
+  //If don't compile, add source of Delphi-Neon project to search path of Project
+  //ora disable DELPHI_NEON directive inside InstantDefines.inc
+  , Neon.Core.Types
   , Neon.Core.Nullables
   , Neon.Core.Attributes
   {$ENDIF}
   , InstantClasses
   , InstantTypes
-  , InstantConsts;
+  , InstantConsts
+  ;
 
 type
   TInstantAttributeMap = class;
@@ -399,8 +402,8 @@ type
   private
     FClassMetadata: TInstantClassMetadata;
     FName: string;
-    function GetItems(Index: Integer): TInstantAttributeMetadata;
-    procedure SetItems(Index: Integer; Value: TInstantAttributeMetadata);
+    function GetItems(Index: TListSize): TInstantAttributeMetadata;
+    procedure SetItems(Index: TListSize; Value: TInstantAttributeMetadata);
     function GetIsRootMap: Boolean;
   protected
     function GetName: string; override;
@@ -415,16 +418,16 @@ type
     function Remove(Item: TInstantAttributeMetadata): Integer;
     property ClassMetadata: TInstantClassMetadata read FClassMetadata;
     property IsRootMap: Boolean read GetIsRootMap;
-    property Items[Index: Integer]: TInstantAttributeMetadata read GetItems
+    property Items[Index: TListSize]: TInstantAttributeMetadata read GetItems
       write SetItems; default;
   end;
 
   TInstantAttributeMaps = class(TObjectList)
   private
     FClassMetadata: TInstantClassMetadata;
-    function GetItems(Index: Integer): TInstantAttributeMap;
+    function GetItems(Index: TListSize): TInstantAttributeMap;
     function GetRootMap: TInstantAttributeMap;
-    procedure SetItems(Index: Integer; Value: TInstantAttributeMap);
+    procedure SetItems(Index: TListSize; Value: TInstantAttributeMap);
   public
     constructor Create(AClassMetadata: TInstantClassMetadata);
     function Add: TInstantAttributeMap; overload;
@@ -437,7 +440,7 @@ type
     function Remove(Item: TInstantAttributeMap): Integer;
     property ClassMetadata: TInstantClassMetadata read FClassMetadata;
     property RootMap: TInstantAttributeMap read GetRootMap;
-    property Items[Index: Integer]: TInstantAttributeMap read GetItems
+    property Items[Index: TListSize]: TInstantAttributeMap read GetItems
       write SetItems; default;
   end;
 
@@ -598,9 +601,14 @@ type
 implementation
 
 uses
-  SysUtils, TypInfo, InstantPersistence, InstantUtils, InstantValidation,
-  System.Types,
-  InstantStandardValidators {registers the standard validators - do not remove};
+  System.SysUtils
+  , System.TypInfo
+  , InstantPersistence
+  , InstantUtils
+  , InstantValidation
+  , System.Types
+  , InstantStandardValidators {registers the standard validators - do not remove}
+  ;
 
 const
   AttributeClasses: array[TInstantAttributeType] of TInstantAttributeClass = (
@@ -1631,7 +1639,7 @@ begin
 end;
 
 function TInstantAttributeMap.GetItems(
-  Index: Integer): TInstantAttributeMetadata;
+  Index: TListSize): TInstantAttributeMetadata;
 begin
   Result := inherited Items[Index];
 end;
@@ -1657,7 +1665,7 @@ begin
   Result := inherited Remove(Item);
 end;
 
-procedure TInstantAttributeMap.SetItems(Index: Integer;
+procedure TInstantAttributeMap.SetItems(Index: TListSize;
   Value: TInstantAttributeMetadata);
 begin
   inherited Items[Index] := Value;
@@ -1731,7 +1739,7 @@ begin
   Result := nil;
 end;
 
-function TInstantAttributeMaps.GetItems(Index: Integer): TInstantAttributeMap;
+function TInstantAttributeMaps.GetItems(Index: TListSize): TInstantAttributeMap;
 begin
   Result := inherited Items[Index] as TInstantAttributeMap;
 end;
@@ -1766,7 +1774,7 @@ begin
   Result := inherited Remove(Item);
 end;
 
-procedure TInstantAttributeMaps.SetItems(Index: Integer;
+procedure TInstantAttributeMaps.SetItems(Index: TListSize;
   Value: TInstantAttributeMap);
 begin
   inherited Items[Index] := Value;

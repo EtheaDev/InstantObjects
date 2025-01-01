@@ -3,13 +3,39 @@ unit Main;
 interface
 
 uses
-  System.SysUtils, System.Types, System.UITypes, System.Classes, System.Variants,
-  FMX.Types, FMX.Controls, FMX.Forms, FMX.Dialogs, FMX.Layouts,
-  Fmx.Bind.Navigator, InstantPersistence, InstantBrokers, Data.DB,
-  InstantXML, InstantPresentation, Data.Bind.Components, Data.Bind.DBScope,
-  Data.Bind.EngExt, Fmx.Bind.DBEngExt, System.Rtti, System.Bindings.Outputs,
-  Fmx.Bind.Editors, FMX.Grid, Data.Bind.DBLinks, Fmx.Bind.DBLinks, FMX.Objects, FMX.Edit,
-  FMX.Ani, Data.Bind.Controls, FMX.Grid.Style, FMX.StdCtrls, FMX.ScrollBox,
+  System.SysUtils,
+  System.Types,
+  System.UITypes,
+  System.Classes,
+  System.Variants,
+  System.Rtti,
+  System.Bindings.Outputs,
+  Data.DB,
+  Data.Bind.Components,
+  Data.Bind.DBScope,
+  Data.Bind.EngExt,
+  Data.Bind.DBLinks,
+  Data.Bind.Controls,
+  FMX.Types,
+  FMX.Controls,
+  FMX.Forms,
+  FMX.Dialogs,
+  FMX.Layouts,
+  Fmx.Bind.Navigator,
+  InstantPersistence,
+  InstantBrokers,
+  InstantXML,
+  InstantPresentation,
+  Fmx.Bind.DBEngExt,
+  Fmx.Bind.Editors,
+  FMX.Grid,
+  Fmx.Bind.DBLinks,
+  FMX.Objects,
+  FMX.Edit,
+  FMX.Ani,
+  FMX.Grid.Style,
+  FMX.StdCtrls,
+  FMX.ScrollBox,
   FMX.Controls.Presentation;
 
 type
@@ -92,7 +118,9 @@ implementation
 {$R *.fmx}
 
 uses
-  RandomData, DemoData, Model;
+  RandomData,
+  DemoData,
+  Model;
 
 { TfmMain }
 

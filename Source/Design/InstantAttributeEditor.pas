@@ -36,11 +36,27 @@ interface
 {$I '..\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  InstantEdit, DB, InstantCode, TypInfo,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, DBCtrls, Mask, ComCtrls, ImgList,
-  InstantPresentation, InstantTypes;
+  System.SysUtils
+  , System.Classes
+  , InstantEdit
+  , Data.DB
+  , InstantCode
+  , System.TypInfo
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , Vcl.DBCtrls
+  , Vcl.Mask
+  , Vcl.ComCtrls
+  , Vcl.ImgList
+  , InstantPresentation
+  , InstantTypes
+  ;
 
 type
   TInstantStringsEvent = procedure(Sender: TObject; Items: TStrings;

@@ -40,7 +40,7 @@ procedure Register;
 implementation
 
 uses
-  Classes, InstantJSON;
+  System.Classes, InstantJSON;
   
 procedure Register;
 begin

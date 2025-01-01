@@ -42,7 +42,9 @@ procedure Register;
 implementation
 
 uses
-  Classes, InstantADO;
+  System.Classes
+  , InstantADO
+  ;
 
 procedure Register;
 begin

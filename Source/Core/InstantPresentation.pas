@@ -40,8 +40,16 @@ interface
 {$ENDIF}
 
 uses
-  Classes, DB, InstantPersistence, SysUtils, TypInfo, InstantCode, InstantTypes,
-  InstantMetadata, InstantUtils;
+  System.Classes
+  , Data.DB
+  , InstantPersistence
+  , System.SysUtils
+  , System.TypInfo
+  , InstantCode
+  , InstantTypes
+  , InstantMetadata
+  , InstantUtils
+  ;
 
 type
   TInstantAddClassFieldDefEvent = procedure (const FieldName : string; var BreakProcess : boolean) of object;
@@ -781,13 +789,19 @@ var
 implementation
 
 uses
-  Variants,
-  MaskUtils,
-  FmtBcd,
-  System.Types,
-  Generics.Collections,
-  InstantClasses, AnsiStrings,
-  InstantConsts, InstantRtti, InstantDesignHook, InstantAccessors, DbConsts;
+  System.Variants
+  , System.MaskUtils
+  , Data.FmtBcd
+  , System.Types
+  , Generics.Collections
+  , InstantClasses
+  , System.AnsiStrings
+  , InstantConsts
+  , InstantRtti
+  , InstantDesignHook
+  , InstantAccessors
+  , Data.DbConsts
+  ;
 
 type
   TDetailDataSetList = TList<TDataSet>;
@@ -2266,18 +2280,18 @@ function TInstantCustomExposer.AddFieldDef(const Prefix: string;
     ATypeInfo := PropInfo.PropType^;
      
     if GetTypeData(PropInfo^.PropType^).FloatType = ftCurr then
-      Result := DB.ftBcd
+      Result := Data.DB.ftBcd
     else
     if ATypeInfo = TypeInfo(TDateTime) then
-      Result := DB.ftDateTime
+      Result := Data.DB.ftDateTime
     (*
     else if ATypeInfo = TypeInfo(TDate) then
-      Result := DB.ftDate
+      Result := Data.DB.ftDate
     else if ATypeInfo = TypeInfo(TTime) then
-      Result := DB.ftTime
+      Result := Data.DB.ftTime
     *)
     else
-      Result := DB.ftFloat;
+      Result := Data.DB.ftFloat;
   end;
 
   function StringFieldType(const FieldName: string): TFieldType;
@@ -2369,7 +2383,7 @@ begin
   FieldAttribs := [];
   TypeKind := PropInfo^.PropType^^.Kind;
   if not Assigned(PropInfo.SetProc) then
-    Include(FieldAttribs, DB.faReadOnly);
+    Include(FieldAttribs, Data.DB.faReadOnly);
   case TypeKind of
     tkEnumeration:
       FieldType := EnumerationToFieldType(FieldName);
@@ -2379,9 +2393,9 @@ begin
       FieldType := ftInteger;
     tkFloat:
       if PropInfo^.PropType^^.Name = 'TTime' then
-        FieldType := DB.ftTime
+        FieldType := Data.DB.ftTime
       else if PropInfo^.PropType^^.Name = 'TDate' then
-        FieldType := DB.ftDate
+        FieldType := Data.DB.ftDate
       else
         FieldType := FloatFieldType;
     tkClass:
@@ -3807,7 +3821,7 @@ var
   A_S: AnsiString;
   U_S: string;
   N: Integer;
-  L_N: Largeint;
+  L_N: LargeInt;
   F: Double;
   C: Currency;
   Bcd : TBcd;
@@ -3815,6 +3829,7 @@ var
   T: TTimeStamp;
   L: WordBool;
   LPropInfo: PPropInfo;
+  {$IFDEF WINLINUX64}LTypeInfo: PTypeInfo;{$ENDIF}
 begin
   if not Assigned(AObject) or IsBlobField(Field) or IsCalcField(Field) then
     Exit;
@@ -3869,7 +3884,19 @@ begin
             N := 0;
         end
         else
+        begin
+          {$IFDEF WINLINUX64}
+          LPropInfo := GetPropInfo(PTypeInfo(AObject.ClassInfo), Field.FieldName);
+          if Assigned(LPropInfo) then
+          begin
+            LTypeInfo := LPropInfo^.PropType^;
+            if LTypeInfo^.Kind = tkClass then
+              raise Exception.CreateFmt('Exposer Field "%s" of wrong type: Expecting LargeInt Actual Integer',
+                [Field.FieldName]);
+          end;
+          {$ENDIF}
           N := Value;
+        end;
         Move(N, Buffer^, SizeOf(N));
       end;
     ftLargeInt:
@@ -4264,13 +4291,13 @@ begin
   case Field.DataType of
     ftString:
       begin
-        P_A := AnsiStrings.AnsiStrAlloc(FieldDataSize(Field));
+        P_A := System.AnsiStrings.AnsiStrAlloc(FieldDataSize(Field));
         try
-          AnsiStrings.StrCopy(P_A, Buffer);
+          System.AnsiStrings.StrCopy(P_A, Buffer);
           A_S := P_A;
           Value := A_S;
         finally
-          AnsiStrings.StrDispose(P_A);
+          System.AnsiStrings.StrDispose(P_A);
         end;
       end;
     ftWideString:
@@ -5258,8 +5285,8 @@ begin
     Field.Modified := True;
     Exposer.DataEvent(deFieldChange, NativeInt(Field));
   except
-    if Assigned(Classes.ApplicationHandleException) then
-      Classes.ApplicationHandleException(Self);
+    if Assigned(System.Classes.ApplicationHandleException) then
+      System.Classes.ApplicationHandleException(Self);
   end;
   inherited Destroy;
 end;

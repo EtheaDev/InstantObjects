@@ -6,36 +6,39 @@ inherited ContactEditForm: TContactEditForm
   Caption = 'Contact'
   ClientHeight = 295
   ClientWidth = 508
-  OldCreateOrder = True
   ExplicitWidth = 524
   ExplicitHeight = 334
-  PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
     Top = 264
-    Left = 341
     Width = 508
     TabOrder = 1
+    ExplicitLeft = 341
     ExplicitTop = 264
+    ExplicitWidth = 508
     inherited AnchorPanel: TPanel
       Left = 341
+      ExplicitLeft = 341
     end
   end
   inherited ClientPanel: TPanel
     Width = 508
     Height = 264
     TabOrder = 0
+    ExplicitWidth = 508
     ExplicitHeight = 264
     inherited PageControl: TPageControl
       Width = 504
       Height = 260
+      ExplicitWidth = 504
       ExplicitHeight = 260
       inherited DetailsSheet: TTabSheet
+        ExplicitWidth = 496
         ExplicitHeight = 250
         object NameLabel: TLabel
           Left = 8
           Top = 8
-          Width = 27
+          Width = 29
           Height = 13
           Caption = '&Name'
           FocusControl = NameEdit
@@ -59,7 +62,7 @@ inherited ContactEditForm: TContactEditForm
         object ZipLabel: TLabel
           Left = 152
           Top = 104
-          Width = 14
+          Width = 16
           Height = 13
           Caption = '&Zip'
           FocusControl = ZipEdit
@@ -67,7 +70,7 @@ inherited ContactEditForm: TContactEditForm
         object StateLabel: TLabel
           Left = 136
           Top = 144
-          Width = 71
+          Width = 73
           Height = 13
           Caption = 'S&tate/Province'
           FocusControl = StateEdit
@@ -75,7 +78,7 @@ inherited ContactEditForm: TContactEditForm
         object PhonesLabel: TLabel
           Left = 240
           Top = 8
-          Width = 35
+          Width = 38
           Height = 13
           Caption = '&Phones'
           FocusControl = PhonesGrid
@@ -83,7 +86,7 @@ inherited ContactEditForm: TContactEditForm
         object CountryLabel: TLabel
           Left = 8
           Top = 144
-          Width = 39
+          Width = 41
           Height = 13
           Caption = 'C&ountry'
           FocusControl = CountryEdit
@@ -98,7 +101,7 @@ inherited ContactEditForm: TContactEditForm
         object CategoryLabel: TLabel
           Left = 8
           Top = 184
-          Width = 45
+          Width = 46
           Height = 13
           Caption = 'C&ategory'
           FocusControl = CategoryEdit
@@ -159,7 +162,7 @@ inherited ContactEditForm: TContactEditForm
           TitleFont.Charset = DEFAULT_CHARSET
           TitleFont.Color = clWindowText
           TitleFont.Height = -11
-          TitleFont.Name = 'Tahoma'
+          TitleFont.Name = 'Segoe UI'
           TitleFont.Style = []
           OnDrawColumnCell = DbGridDrawColumnCellFixW11
           Columns = <

@@ -1,7 +1,7 @@
 program EvolveTest;
 
 uses
-  Forms,
+  Vcl.Forms,
   FMainEvolveTest in 'FMainEvolveTest.pas' {EvolverTestForm},
   Model in 'Model.pas';
 
@@ -10,6 +10,6 @@ uses
 
 begin
   Application.Initialize;
- Application.CreateForm(TEvolverTestForm, EvolverTestForm);
-   Application.Run;
+  Application.CreateForm(TEvolverTestForm, EvolverTestForm);
+  Application.Run;
 end.

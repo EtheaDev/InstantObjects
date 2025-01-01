@@ -39,8 +39,16 @@ unit InstantFireDACCatalog;
 interface
 
 uses
-  DB, InstantPersistence, InstantFireDAC, InstantBrokers, FireDAC.Stan.Def,
-  InstantMetadata, InstantTypes, FireDAC.Phys.Intf, FireDAC.Stan.Intf;
+  Data.DB
+  , InstantPersistence
+  , InstantFireDAC
+  , InstantBrokers
+  , FireDAC.Stan.Def
+  , InstantMetadata
+  , InstantTypes
+  , FireDAC.Phys.Intf
+  , FireDAC.Stan.Intf
+  ;
 
 type
   //
@@ -68,8 +76,15 @@ type
 implementation
 
 uses
-  {$IFDEF D7+}Types,{$ENDIF} TypInfo, SysUtils, Classes, Variants,
-  InstantClasses, InstantConsts, FireDAC.DatS;
+  System.Types
+  , System.TypInfo
+  , System.SysUtils
+  , System.Classes
+  , System.Variants
+  , InstantClasses
+  , InstantConsts
+  , FireDAC.DatS
+  ;
 
 
 procedure TInstantFireDACCatalog.AddFieldMetadatas(TableMetadata: TInstantTableMetadata;

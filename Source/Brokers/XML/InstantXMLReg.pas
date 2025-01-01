@@ -40,7 +40,7 @@ procedure Register;
 implementation
 
 uses
-  Classes, InstantXML;
+  System.Classes, InstantXML;
   
 procedure Register;
 begin

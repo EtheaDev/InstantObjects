@@ -68,7 +68,12 @@ type
 implementation
 
 uses
-  SysUtils, Classes, DB, InstantConsts, StrUtils;
+  System.SysUtils
+  , System.Classes
+  , Data.DB
+  , InstantConsts
+  , System.StrUtils
+  ;
 
 { TInstantMySQLCatalog }
 

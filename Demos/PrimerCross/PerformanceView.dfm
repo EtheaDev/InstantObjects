@@ -22,11 +22,14 @@ inherited PerformanceViewForm: TPerformanceViewForm
       BevelOuter = bvNone
       Color = clWhite
       TabOrder = 0
+      DesignSize = (
+        745
+        121)
       object TitleLabel: TLabel
         Left = 16
         Top = 4
-        Width = 134
-        Height = 13
+        Width = 143
+        Height = 15
         Caption = 'Database Performance Test'
       end
       object InfoBevel: TBevel
@@ -40,23 +43,23 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object ConnectionLabel: TLabel
         Left = 280
         Top = 4
-        Width = 133
-        Height = 13
+        Width = 149
+        Height = 15
         Caption = 'Connection: Not Connected'
       end
       object ObjectsLabel: TLabel
         Left = 16
         Top = 72
-        Width = 82
-        Height = 13
+        Width = 86
+        Height = 15
         Caption = '&Objects to store:'
         FocusControl = ObjectsEdit
       end
       object CacheSizeLabel: TLabel
         Left = 328
         Top = 72
-        Width = 109
-        Height = 13
+        Width = 116
+        Height = 15
         Caption = 'Statement &Cache Size:'
         FocusControl = CacheSizeEdit
       end
@@ -219,13 +222,11 @@ inherited PerformanceViewForm: TPerformanceViewForm
           ParentShowHint = False
           ShowHint = True
           TabOrder = 0
+          DefaultCanvas = 'TGDIPlusCanvas'
           ColorPaletteIndex = 13
           object TestResultStoreSeries: TBarSeries
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
+            HoverElement = []
             Marks.Style = smsValue
-            Marks.Visible = True
             SeriesColor = clGreen
             Title = 'Store'
             ValueFormat = '#,##0'
@@ -237,11 +238,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 344
           end
           object TestResultRetrieveSeries: TBarSeries
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
+            HoverElement = []
             Marks.Style = smsValue
-            Marks.Visible = True
             SeriesColor = 8454143
             Title = 'Retrieve'
             ValueFormat = '#,##0'
@@ -253,11 +251,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 288
           end
           object Series1: TBarSeries
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
+            HoverElement = []
             Marks.Style = smsValue
-            Marks.Visible = True
             SeriesColor = 16744576
             Title = 'Query'
             ValueFormat = '#,##0'
@@ -269,11 +264,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 224
           end
           object TestResultDisposeSeries: TBarSeries
-            Marks.Arrow.Visible = True
-            Marks.Callout.Brush.Color = clBlack
-            Marks.Callout.Arrow.Visible = True
+            HoverElement = []
             Marks.Style = smsValue
-            Marks.Visible = True
             Title = 'Dispose'
             ValueFormat = '#,##0'
             XValues.Name = 'X'

@@ -1,5 +1,5 @@
 {
-    $Id: testreport.pas,v 1.1 2005/02/11 22:11:57 decko Exp $
+    $Id: testreport.pas 234 2024-08-05 15:04:46Z cbarazzetta $
     Copyright (c) 2004, 2005 by Dean Zobec
 
     an example of a console test runner of FPCUnit tests.
@@ -102,8 +102,15 @@ begin
     if TTest(aSuite.Tests.Items[i]) is TTestSuite then
       Result := Result + TestSuiteAsXML(TTestSuite(aSuite.Tests.Items[i]))
     else
+    begin
+      {$IFNDEF DUNITX_TESTS}
+      if TTest(aSuite.Tests.Items[i]) is TTestCase then
+        Result := Result +'<test>' + TTestCase(aSuite.Tests.Items[i]).TestName + '</test>' + System.sLineBreak;
+      {$ELSE}
       if TTest(aSuite.Tests.Items[i]) is TInstantTestCase then
         Result := Result +'<test>' + TInstantTestCase(aSuite.Tests.Items[i]).TestName + '</test>' + System.sLineBreak;
+      {$ENDIF}
+    end;
   Result := Result + '</TestSuite>' + System.sLineBreak;
 end;
 
@@ -119,8 +126,15 @@ begin
     Result := Result + s.TestSuiteName + System.sLineBreak;
     Result := Result + '\begin{itemize}'+ System.sLineBreak;
     for j := 0 to s.Tests.Count - 1 do
-      if TTest(s.Tests.Items[j]) is TInstantTestCase then
+    begin
+      {$IFNDEF DUNITX_TESTS}
+      if TTest(aSuite.Tests.Items[j]) is TTestCase then
+        Result := Result + '\item[-] ' + TTestCase(s.Tests.Items[j]).TestName  + System.sLineBreak;
+      {$ELSE}
+      if TTest(aSuite.Tests.Items[j]) is TInstantTestCase then
         Result := Result + '\item[-] ' + TInstantTestCase(s.Tests.Items[j]).TestName  + System.sLineBreak;
+      {$ENDIF}
+    end;
     Result := Result +'\end{itemize}' + System.sLineBreak;
   end;
 end;

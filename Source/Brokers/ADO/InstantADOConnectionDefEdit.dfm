@@ -11,11 +11,9 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object BottomBevel: TBevel
     Left = 0
@@ -36,7 +34,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
     object StreamFormatLabel: TLabel
       Left = 32
       Top = 152
-      Width = 60
+      Width = 61
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
@@ -44,7 +42,7 @@ object InstantADOConnectionDefEditForm: TInstantADOConnectionDefEditForm
     object Label1: TLabel
       Left = 134
       Top = 152
-      Width = 63
+      Width = 62
       Height = 13
       Caption = 'Id Data Type'
       FocusControl = IdDataTypeComboBox

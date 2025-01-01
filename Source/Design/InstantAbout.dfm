@@ -207,7 +207,7 @@ inherited InstantAboutForm: TInstantAboutForm
     object TMLabel: TLabel
       Left = 222
       Top = 12
-      Width = 16
+      Width = 15
       Height = 13
       Caption = 'TM'
       Transparent = True

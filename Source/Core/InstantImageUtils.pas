@@ -36,9 +36,12 @@ interface
 {$ENDIF}
 
 uses
-  SysUtils,
-  Graphics, Controls, ImgList,
-  Classes;
+  System.SysUtils
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.ImgList
+  , System.Classes
+  ;
 
 // Loads a bitmap resource and slices it into a number of images which are
 // added to ImageList. If ResourceHandle is passed, then the resource ResourceName

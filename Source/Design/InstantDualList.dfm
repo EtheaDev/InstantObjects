@@ -2,19 +2,13 @@ inherited InstantDualListForm: TInstantDualListForm
   Left = 310
   Caption = 'Dual List'
   ClientHeight = 329
-  ClientWidth = 372
-  OldCreateOrder = True
-  ExplicitWidth = 388
-  ExplicitHeight = 368
-  PixelsPerInch = 96
+  ClientWidth = 384
   TextHeight = 13
   inherited ButtonPanel: TPanel
     Top = 288
-    Width = 372
-    ExplicitTop = 288
-    ExplicitWidth = 372
+    Width = 384
     inherited ButtonBevel: TBevel
-      Width = 372
+      Width = 384
       ExplicitWidth = 377
     end
     object OkButton: TButton

@@ -3,9 +3,19 @@ unit UPumpMain;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  StdCtrls, Forms, Dialogs,
-  InstantConnectionManager, InstantClasses, InstantPersistence;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.StdCtrls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  InstantConnectionManager,
+  InstantClasses,
+  InstantPersistence;
 
 type
   TPumpDemoMain = class(TForm)
@@ -36,22 +46,15 @@ implementation
 {$R *.dfm}
 
 uses
-  Utility,
-{ Note: This demo attempts to include brokers for the data access
+  Utility { Note: This demo attempts to include brokers for the data access
   layers supported natively by Delphi. To include additional brokers,
   please add the broker unit(s) to the following list. If you have not
   installed all brokers, please remove the missing broker unit(s) from
-  the list. }
-{$IFDEF MSWINDOWS}
-  {$IFNDEF VER130}
+  the list. },
   InstantDBX,
-  {$ENDIF}
-  InstantADO, InstantBDE, InstantIBX,
-{$ENDIF}
-{$IFDEF LINUX}
-  InstantDBX,
-{$ENDIF}
-  InstantXML;
+  InstantADO,
+  InstantXML,
+  InstantFireDAC;
 
 procedure TPumpDemoMain.PumpManagerButtonClick(Sender: TObject);
 begin

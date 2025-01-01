@@ -5,9 +5,9 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils,
-  Controls,
-  Classes;
+  System.SysUtils,
+  System.Classes,
+  Vcl.Controls;
 
 type
   TStopwatch = class(TObject)
@@ -39,8 +39,9 @@ type
 implementation
 
 uses
-  Windows, Forms,
-  Contnrs;
+  Winapi.Windows,
+  System.Contnrs,
+  Vcl.Forms;
 
 
 { TStopwatch }

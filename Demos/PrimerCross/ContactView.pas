@@ -5,12 +5,32 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes, DB,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  ComCtrls, Grids, DBGrids, ExtCtrls, Buttons, ShellApi,
-  StdCtrls, ActnList, ToolWin, ImgList, Menus,
+  Winapi.Windows,
+  Winapi.Messages,
+  Winapi.ShellAPI,
+  System.SysUtils,
+  System.Classes,
   System.Actions,
-  BasicView, Model, InstantPresentation, InstantExplorer, System.ImageList;
+  System.ImageList,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ComCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  Vcl.StdCtrls,
+  Vcl.ActnList,
+  Vcl.ToolWin,
+  Vcl.ImgList,
+  Vcl.Menus,
+  BasicView,
+  Model,
+  InstantPresentation,
+  InstantExplorer;
 
 type
   TContactViewForm = class(TBasicViewFrame)
@@ -131,8 +151,15 @@ type
 implementation
 
 uses
-  Utility, BasicEdit, InstantClasses, InstantPersistence,
-  CountryBrowse, MainData, ContactSort, InstantUtils, CategoryBrowse,
+  Utility,
+  BasicEdit,
+  InstantClasses,
+  InstantPersistence,
+  CountryBrowse,
+  MainData,
+  ContactSort,
+  InstantUtils,
+  CategoryBrowse,
   InstantImageUtils;
 
 {$R *.dfm}

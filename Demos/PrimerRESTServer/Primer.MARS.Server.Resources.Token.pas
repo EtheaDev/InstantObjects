@@ -27,25 +27,21 @@ unit Primer.MARS.Server.Resources.Token;
 interface
 
 uses
-  //Delphi
-  Classes
-  , SysUtils
-  , Generics.Collections
-  //MARS
-  , MARS.Core.Registry
-  , MARS.Core.Attributes
-  , MARS.Core.MediaType
-  , MARS.Core.JSON
-  , MARS.Core.MessageBodyWriters
-  , MARS.Core.MessageBodyReaders
-  , MARS.Core.Token.Resource
-  , MARS.Core.RequestAndResponse.Interfaces
-  //InstantObjects
-  , InstantObjects.MARS.Data
-  , InstantPersistence
-  , InstantObjects.MARS.Server.Consts
-  , Model
-;
+  System.Classes,
+  System.SysUtils,
+  System.Generics.Collections,
+  MARS.Core.Registry,
+  MARS.Core.Attributes,
+  MARS.Core.MediaType,
+  MARS.Core.JSON,
+  MARS.Core.MessageBodyWriters,
+  MARS.Core.MessageBodyReaders,
+  MARS.Core.Token.Resource,
+  MARS.Core.RequestAndResponse.Interfaces,
+  InstantObjects.MARS.Data,
+  InstantPersistence,
+  InstantObjects.MARS.Server.Consts,
+  Model;
 
 const
   CLAIM_ENVIRONMENT   = 'ENVIRONMENT';
@@ -72,19 +68,18 @@ type
 implementation
 
 uses
-  System.StrUtils
-  , System.Hash
-  , System.JSON
-  , MARS.Core.Response
-  , MARS.Core.Exceptions
-  , InstantObjects.MARS.Server.Exceptions
-  , InstantFireDAC
-  , InstantClasses
-  , InstantMetaData
-  , TypInfo
-  , Variants
-  , InstantObjects.MARS.Server.Resources.Base
-  ;
+  System.StrUtils,
+  System.Hash,
+  System.JSON,
+  System.TypInfo,
+  System.Variants,
+  MARS.Core.Response,
+  MARS.Core.Exceptions,
+  InstantObjects.MARS.Server.Exceptions,
+  InstantFireDAC,
+  InstantClasses,
+  InstantMetaData,
+  InstantObjects.MARS.Server.Resources.Base;
 
 { TJWTTokenResource }
 

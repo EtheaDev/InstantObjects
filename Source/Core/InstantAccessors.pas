@@ -39,7 +39,10 @@ unit InstantAccessors;
 interface
 
 uses
-  InstantPersistence, InstantPresentation, Classes;
+  InstantPersistence
+  , InstantPresentation
+  , System.Classes
+  ;
 
 type
   TInstantObjectAccessor = class(TInstantAccessor)
@@ -113,9 +116,12 @@ type
 implementation
 
 uses
-  SysUtils,
-  System.Types,
-  Contnrs, InstantClasses, InstantConsts;
+  System.SysUtils
+  , System.Types
+  , System.Contnrs
+  , InstantClasses
+  , InstantConsts
+  ;
 
 { TInstantObjectAccessor }
 

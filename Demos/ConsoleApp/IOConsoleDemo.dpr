@@ -71,19 +71,19 @@ begin
 
       for i := 0 to 100 do
       begin
-        WriteLn('Storing Object.');
         SimpleClass := TSimpleClass.Create;
         Try
           SimpleClass.StringProperty := IntToStr(Random(MaxInt));
           SimpleClass.Store;
           Id := SimpleClass.Id;
+        WriteLn(Format('Stoed Object: Id="%s"', [Id]));
         Finally
           SimpleClass.Free;
         End;
 
-        WriteLn('Retrieving and changing Object.');
         SimpleClass := TSimpleClass.Retrieve(Id);
         Try
+        WriteLn(Format('Retrieving and changing Object: Id="%s"', [Id]));
           SimpleClass.StringProperty := IntToStr(Random(MaxInt));
           SimpleClass.Store;
         Finally
@@ -101,6 +101,9 @@ begin
       end;
       WriteLn('Disconnecting from Database.');
       Connector.Disconnect;
+
+      WriteLn('Console Demo ended. Press "Enter" to exit.');
+      readLn;
     Finally
       Connector.Free;
       Connection.Free;

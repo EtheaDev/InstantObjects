@@ -5,10 +5,17 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-  ShellApi,
-  Classes;
+  Winapi.Windows,
+  Winapi.Messages,
+  Winapi.ShellAPI,
+  System.SysUtils,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls;
 
 type
   TWelcomeForm = class(TForm)

@@ -39,8 +39,19 @@ unit InstantIBX;
 interface
 
 uses
-  Classes, Db, IBDatabase, IBTable, IBQuery, SysUtils, InstantPersistence,
-  InstantBrokers, InstantClasses, InstantCommand, InstantMetadata, InstantTypes;
+  System.Classes
+  , Data.DB
+  , IBX.IBDatabase
+  , IBX.IBTable
+  , IBX.IBQuery
+  , System.SysUtils
+  , InstantPersistence
+  , InstantBrokers
+  , InstantClasses
+  , InstantCommand
+  , InstantMetadata
+  , InstantTypes
+  ;
 
 type
   TInstantIBXOption = (ibxUseDelimitedIdents);
@@ -143,8 +154,14 @@ type
 implementation
 
 uses
-  Controls, InstantConsts, InstantIBXConnectionDefEdit, InstantUtils,
-  IB, InstantIBFbCatalog, InstantDBBuild;
+  Vcl.Controls
+  , InstantConsts
+  , InstantIBXConnectionDefEdit
+  , InstantUtils
+  , IBX.IB
+  , InstantIBFbCatalog
+  , InstantDBBuild
+  ;
 
 { TInstantIBXConnectionDef }
 
@@ -453,6 +470,7 @@ function TInstantIBXBroker.Execute(const AStatement: string;
 var
   LQuery: TIBQuery;
 begin
+  {$if CompilerVersion < 32}Result := 0;{$endif}
   LQuery := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TIBQuery;
   try try
     LQuery.ExecSQL;

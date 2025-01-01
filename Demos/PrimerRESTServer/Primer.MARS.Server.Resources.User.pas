@@ -27,28 +27,21 @@ unit Primer.MARS.Server.Resources.User;
 interface
 
 uses
-  //Delphi
-  Classes
-  , SysUtils
-  , Generics.Collections
-  , System.JSON
-  //MARS
-  , MARS.Core.Registry
-  , MARS.Core.Attributes
-  , MARS.Core.MediaType
-  , MARS.Core.JSON
-  , MARS.Core.MessageBodyWriters
-  , MARS.Core.MessageBodyReaders
-  //MARS Server
-  , InstantObjects.MARS.Server.Consts
-  , InstantObjects.MARS.Server.Resources
-  //InstantObjects + MARS
-  , InstantObjects.MARS.Data
-  //InstantObjects
-  , InstantPersistence
-  //Model Units
-  , Model
-;
+  System.Classes,
+  System.SysUtils,
+  System.Generics.Collections,
+  System.JSON,
+  MARS.Core.Registry,
+  MARS.Core.Attributes,
+  MARS.Core.MediaType,
+  MARS.Core.JSON,
+  MARS.Core.MessageBodyWriters,
+  MARS.Core.MessageBodyReaders,
+  InstantObjects.MARS.Server.Consts,
+  InstantObjects.MARS.Server.Resources,
+  InstantObjects.MARS.Data,
+  InstantPersistence,
+  Model;
 
 type
 
@@ -123,23 +116,18 @@ function CheckPassword(const APassword: string; out EMsg: string): boolean;
 implementation
 
 uses
-  //Delphi
-  System.StrUtils
-  , System.TypInfo
-  , System.Variants
-  , System.RegularExpressions
-  , System.Hash
-  //MARS
-  , MARS.Core.Exceptions
-  , MARS.Data.FireDAC
-  //MARS Server
-  , InstantObjects.MARS.Server.Exceptions
-  , InstantObjects.MARS.Server.Resources.Utils
-  //InstantObject
-  , InstantFireDAC
-  , InstantClasses
-  , InstantMetaData
-  ;
+  System.StrUtils,
+  System.TypInfo,
+  System.Variants,
+  System.RegularExpressions,
+  System.Hash,
+  MARS.Core.Exceptions,
+  MARS.Data.FireDAC,
+  InstantObjects.MARS.Server.Exceptions,
+  InstantObjects.MARS.Server.Resources.Utils,
+  InstantFireDAC,
+  InstantClasses,
+  InstantMetaData;
 
 
 function CheckPassword(const APassword: string; out EMsg: string): boolean;

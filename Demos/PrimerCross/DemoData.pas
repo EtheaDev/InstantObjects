@@ -5,7 +5,10 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  Classes, Model, InstantPersistence, RandomData;
+  System.Classes,
+  Model,
+  InstantPersistence,
+  RandomData;
 
 const
   ProfileIds: array[0..3] of string = ('READONLY', 'USER', 'ADMIN', 'SYSTEM');
@@ -33,8 +36,8 @@ function CreateRandomAddress: TAddress;
 implementation
 
 uses
-  SysUtils,
-  Windows,
+  Winapi.Windows,
+  System.SysUtils,
   InstantUtils;
 
 procedure CreateProfiles;

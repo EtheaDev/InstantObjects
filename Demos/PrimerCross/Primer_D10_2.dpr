@@ -32,19 +32,20 @@
 
 program Primer_D10_2;
 
-{$IFDEF LINUX}
+{$IFDEF LINUX64}
 {$I '../../Source/InstantDefines.inc'}
 {$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
 {$ENDIF}
 
-
 uses
-  Forms,
+  Vcl.Forms,
+  Vcl.Themes,
+  Vcl.Styles,
   Main in 'Main.pas' {MainForm},
   Model in 'Model\Model.pas',
   ContactView in 'ContactView.pas' {ContactViewForm: TFrame},
-  BasicView in 'BasicView.pas' {BasicViewForm: TFrame},
+  BasicView in 'BasicView.pas' {BasicViewFrame: TFrame},
   BasicEdit in 'BasicEdit.pas' {BasicEditForm},
   ContactEdit in 'ContactEdit.pas' {ContactEditForm},
   PersonEdit in 'PersonEdit.pas' {PersonEditForm},
@@ -66,16 +67,16 @@ uses
   QueryView in 'QueryView.pas' {QueryViewForm: TFrame},
   RandomData in 'RandomData.pas',
   Stopwatch in 'Stopwatch.pas',
-  Utility in 'Utility.pas',
-  Vcl.Themes,
-  Vcl.Styles;
+  Utility in 'Utility.pas';
 
 {$R *.res}
 {$R *.mdr} {Model}
 
 begin
   Application.Initialize;
-  Application.Title := 'InstantObjects Primer Demo'+sLineBreak+'(Delphi 10.2 Tokyo version)';
+  Application.Title := 'InstantObjects Primer Demo '+sLineBreak+
+    {$IFDEF WINLINUX64}'(64 Bit'{$ELSE}'(32 Bit'{$ENDIF}+
+    ' - Delphi 10.2 version)';
   Application.CreateForm(TMainForm, MainForm);
   Application.CreateForm(TMainDataModule, MainDataModule);
   Application.Run;

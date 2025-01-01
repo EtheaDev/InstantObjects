@@ -44,28 +44,131 @@ implementation
 {$R IOCompsSplash.res}
 
 uses
-  Classes, Graphics, InstantConsts, InstantPersistence, InstantPresentation,
-  InstantExplorer, InstantConnectionManager, InstantConnectionManagerFormUnit,
-  InstantPump, InstantDBEvolution, InstantDBBuild
+  System.Classes
+  {$IF (CompilerVersion >= 27.0)}, BrandingAPI{$IFEND}
+  , Vcl.Graphics
+  , InstantConsts
+  , InstantPersistence
+  , InstantPresentation
+  , InstantExplorer
+  , InstantConnectionManager
+  , InstantConnectionManagerFormUnit
+  , InstantPump
+  , InstantDBEvolution
+  , InstantDBBuild
   , ToolsAPI
+  , Vcl.Imaging.PngImage
+  , Winapi.Windows
+  , System.SysUtils
+  , InstantUtils
   ;
+
+const
+  {$IF (CompilerVersion >= 35.0)}
+  ABOUT_RES_NAME = 'IOSPLASH48PNG';
+  SPLASH_RES_NAME = 'IOSPLASH48PNG';
+  {$ELSE}
+  ABOUT_RES_NAME = 'IOSPLASH24BMP';
+  SPLASH_RES_NAME = 'IOSPLASH24BMP';
+  {$IFEND}
+  RsAboutTitle = 'Ethea InstantObjects';
+  RsAboutDescription = 'Ethea - InstantObjects - https://github.com/EtheaDev/InstantObjects/' + sLineBreak +
+    'Pupular OOP-OPF Library and components for Delphi';
+  RsAboutLicense = 'Mozilla 2.0 (Free/Opensource)';
+var
+  AboutBoxServices: IOTAAboutBoxServices = nil;
+  AboutBoxIndex: Integer;
+
+{$IF (CompilerVersion >= 35.0)}
+function CreateBitmapFromPngRes(const AResName: string): Vcl.Graphics.TBitmap;
+var
+  LPngImage: TPngImage;
+  LResStream: TResourceStream;
+begin
+  LPngImage := nil;
+  try
+    Result := Vcl.Graphics.TBitmap.Create;
+    LPngImage := TPngImage.Create;
+    LResStream := TResourceStream.Create(HInstance, AResName, RT_RCDATA);
+    try
+      LPngImage.LoadFromStream(LResStream);
+      Result.Assign(LPngImage);
+    finally
+      LResStream.Free;
+    end;
+  finally
+    LPngImage.Free;
+  end;
+end;
+
+procedure RegisterAboutBox;
+var
+  LBitmap: Vcl.Graphics.TBitmap;
+begin
+  Supports(BorlandIDEServices,IOTAAboutBoxServices, AboutBoxServices);
+  LBitmap := CreateBitmapFromPngRes(ABOUT_RES_NAME);
+  try
+    AboutBoxIndex := AboutBoxServices.AddPluginInfo(
+      RsAboutTitle+' '+InstantObjectVersion,
+      RsAboutDescription, LBitmap.Handle, False, RsAboutLicense);
+  finally
+    LBitmap.Free;
+  end;
+end;
+
+procedure UnregisterAboutBox;
+begin
+  if (AboutBoxIndex <> 0) and Assigned(AboutBoxServices) then
+  begin
+    AboutBoxServices.RemovePluginInfo(AboutBoxIndex);
+    AboutBoxIndex := 0;
+    AboutBoxServices := nil;
+  end;
+end;
 
 procedure RegisterWithSplashScreen;
 var
-  Bmp: TBitmap;
+  LBitmap: Vcl.Graphics.TBitmap;
 begin
-  // Register IO Splash Icon on Delphi Splash Screen
-  Bmp := TBitmap.Create;
-  Bmp.LoadFromResourceName(HInstance, 'IOCOMPSSPLASH');
-
+  LBitmap := CreateBitmapFromPngRes(SPLASH_RES_NAME);
   try
-    SplashScreenServices.AddPluginBitmap(SSplashScreenTitle,
-            Bmp.Handle, False, '', '');
+    SplashScreenServices.AddPluginBitmap(
+      RsAboutTitle+' '+InstantObjectVersion,
+      LBitmap.Handle, False, RsAboutLicense, '');
   finally
-    Bmp.Free;
+    LBitmap.Free;
   end;
-
 end;
+{$ELSE}
+procedure RegisterAboutBox;
+var
+  ProductImage: HBITMAP;
+begin
+  Supports(BorlandIDEServices,IOTAAboutBoxServices, AboutBoxServices);
+  ProductImage := LoadBitmap(FindResourceHInstance(HInstance), ABOUT_RES_NAME);
+  AboutBoxIndex := AboutBoxServices.AddPluginInfo(RsAboutTitle+' '+InstantObjectVersion,
+    RsAboutDescription, ProductImage, False, RsAboutLicense);
+end;
+
+procedure UnregisterAboutBox;
+begin
+  if (AboutBoxIndex <> 0) and Assigned(AboutBoxServices) then
+  begin
+    AboutBoxServices.RemovePluginInfo(AboutBoxIndex);
+    AboutBoxIndex := 0;
+    AboutBoxServices := nil;
+  end;
+end;
+
+procedure RegisterWithSplashScreen;
+var
+  ProductImage: HBITMAP;
+begin
+  ProductImage := LoadBitmap(FindResourceHInstance(HInstance), SPLASH_RES_NAME);
+  SplashScreenServices.AddPluginBitmap(RsAboutTitle, ProductImage,
+    False, RsAboutLicense);
+end;
+{$IFEND}
 
 procedure Register;
 begin
@@ -81,5 +184,11 @@ begin
     TInstantDBBuilder
   ]);
 end;
+
+initialization
+  RegisterAboutBox;
+
+finalization
+  UnRegisterAboutBox;
 
 end.

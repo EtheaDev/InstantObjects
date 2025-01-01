@@ -5,8 +5,20 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes, DB, DBGrids, Grids,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, ExtCtrls, StdCtrls, ComCtrls,
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.DBGrids,
+  Vcl.Grids,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
   InstantPresentation;
 
 type
@@ -49,7 +61,7 @@ implementation
 {$R *.dfm}
 
 uses
-  Themes;
+  Vcl.Themes;
 
 var
   EditFormClasses: TList;

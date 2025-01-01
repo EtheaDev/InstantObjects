@@ -38,11 +38,26 @@ unit InstantDBEvolverFormUnit;
 interface
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
-  ImgList, Menus, ActnList, ExtCtrls, StdActns,
-  InstantCustomDBEvolverFormUnit, InstantDBBuild, InstantDBEvolution,
-  System.Actions;
+  System.SysUtils
+  , System.Classes
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ComCtrls
+  , Vcl.ImgList
+  , Vcl.Menus
+  , Vcl.ActnList
+  , Vcl.ExtCtrls
+  , Vcl.StdActns
+  , InstantCustomDBEvolverFormUnit
+  , InstantDBBuild
+  , InstantDBEvolution
+  , System.Actions
+  ;
 
 type
   TInstantDBEvolverForm = class(TInstantCustomDBEvolverForm)

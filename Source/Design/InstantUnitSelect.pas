@@ -35,10 +35,24 @@ unit InstantUnitSelect;
 interface
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  ComCtrls, StdCtrls, ExtCtrls, ImgList, ActnList,
-  InstantDualList, InstantImageUtils;
+  System.SysUtils
+  , System.Classes
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.ComCtrls
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , Vcl.ImgList
+  , Vcl.ActnList
+  , InstantDualList
+  , InstantImageUtils
+  , System.ImageList
+  , System.Actions
+  ;
 
 type
   TInstantUnitSelectForm = class(TInstantDualListForm)

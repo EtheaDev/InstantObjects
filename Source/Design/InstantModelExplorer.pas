@@ -36,11 +36,29 @@ unit InstantModelExplorer;
 interface
 
 uses
-  SysUtils, Classes, IniFiles,
-  Windows, Messages, ExtCtrls, ComCtrls, ImgList, DockForm,
-  ToolWin, Graphics, Controls, Forms, Dialogs, Menus, StdCtrls, ActnList,
-  InstantCode, InstantAttributeView, System.Actions, System.ImageList,
-  Vcl.Samples.Spin;
+  System.SysUtils
+  , System.Classes
+  , System.IniFiles
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.ExtCtrls
+  , Vcl.ComCtrls
+  , Vcl.ImgList
+  , DockForm
+  , Vcl.ToolWin
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.Menus
+  , Vcl.StdCtrls
+  , Vcl.ActnList
+  , InstantCode
+  , InstantAttributeView
+  , System.Actions
+  , System.ImageList
+  , Vcl.Samples.Spin
+  ;
 
 type
   TInstantModelStyle = (msInheritance, msRelations);
@@ -210,12 +228,26 @@ var
 implementation
 
 uses
-  TypInfo, InstantClassEditor, InstantClasses, DeskUtil,
-  InstantModelExpert,
-  InstantDesignUtils, InstantPersistence, InstantDesignHook, InstantAbout,
-  InstantImageUtils, InstantMetadata, InstantModelImport, Registry,
-  Vcl.Themes, ToolsAPI, BrandingAPI
-  {$IF (CompilerVersion >= 32.0)}, IDETheme.Utils{$IFEND};
+  System.TypInfo
+  , InstantClassEditor
+  , InstantClasses
+  , DeskUtil
+  , InstantModelExpert
+  , InstantDesignUtils
+  , InstantPersistence
+  , InstantDesignHook
+  , InstantAbout
+  , InstantImageUtils
+  , InstantMetadata
+  , InstantModelImport
+  , System.Win.Registry
+  , Vcl.Themes
+  , ToolsAPI
+  , BrandingAPI
+  {$IF (CompilerVersion >= 32.0)}
+  , IDETheme.Utils
+  {$IFEND}
+  ;
 
 resourcestring
   SDeleteClass = 'Delete Class ''%s''?';

@@ -10,10 +10,8 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
   Font.Height = -11
   Font.Name = 'Segoe UI'
   Font.Style = []
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object TopPanel: TPanel
     Left = 0
@@ -41,7 +39,7 @@ object InstantCommandEditorForm: TInstantCommandEditorForm
     object CommandTextLabel: TLabel
       Left = 8
       Top = 72
-      Width = 75
+      Width = 74
       Height = 13
       Caption = '&Command Text'
       FocusControl = CommandTextEdit

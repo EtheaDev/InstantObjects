@@ -36,11 +36,32 @@ unit InstantAttributeView;
 interface
 
 uses
-  SysUtils, Classes, DB, Contnrs, InstantPresentation,
-  InstantPersistence, InstantCode, InstantEdit,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ComCtrls, ExtCtrls, Mask, DBCtrls,
-  ImgList, ActnList, Menus, Buttons;
+  System.SysUtils
+  , System.Classes
+  , Data.DB
+  , System.Contnrs
+  , InstantPresentation
+  , InstantPersistence
+  , InstantCode
+  , InstantEdit
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ComCtrls
+  , Vcl.ExtCtrls
+  , Vcl.Mask
+  , Vcl.DBCtrls
+  , Vcl.ImgList
+  , Vcl.ActnList
+  , Vcl.Menus
+  , Vcl.Buttons
+  , System.Actions
+  , System.ImageList
+  ;
 
 type
   TInstantAttributeViewFrame = class(TFrame)
@@ -119,7 +140,11 @@ implementation
 
 uses
   InstantAttributeEditor, InstantDesignUtils, InstantConsts, InstantRtti,
-  TypInfo, InstantImageUtils, InstantTypes, Registry;
+  System.TypInfo
+  , InstantImageUtils
+  , InstantTypes
+  , System.Win.Registry
+  ;
 
 {$R *.dfm}
 

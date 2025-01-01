@@ -3,8 +3,6 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
   Top = 485
   Caption = 'Attribute Editor'
   ClientWidth = 302
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
   inherited EditPanel: TPanel
     Width = 298
@@ -21,32 +19,32 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object NameLabel: TLabel
           Left = 8
           Top = 8
-          Width = 32
-          Height = 15
+          Width = 29
+          Height = 13
           Caption = '&Name'
           FocusControl = NameEdit
         end
         object TypeLabel: TLabel
           Left = 8
           Top = 48
-          Width = 24
-          Height = 15
+          Width = 22
+          Height = 13
           Caption = '&Type'
           FocusControl = TypeEdit
         end
         object ObjectClassLabel: TLabel
           Left = 8
           Top = 88
-          Width = 65
-          Height = 15
+          Width = 63
+          Height = 13
           Caption = 'Object &Class'
           FocusControl = ObjectClassEdit
         end
         object StorageNameLabel: TLabel
           Left = 8
           Top = 176
-          Width = 75
-          Height = 15
+          Width = 72
+          Height = 13
           Caption = '&Storage Name'
           FocusControl = StorageNameEdit
         end
@@ -54,39 +52,39 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Left = 208
           Top = 48
           Width = 20
-          Height = 15
+          Height = 13
           Caption = 'Si&ze'
           FocusControl = SizeEdit
         end
         object ExternalStorageNameLabel: TLabel
           Left = 8
           Top = 262
-          Width = 120
-          Height = 15
+          Width = 116
+          Height = 13
           Caption = '&External Storage Name'
           FocusControl = ExternalStorageNameEdit
         end
         object StorageKindLabel: TLabel
           Left = 8
           Top = 216
-          Width = 67
-          Height = 15
+          Width = 66
+          Height = 13
           Caption = 'Storage &Kind'
           FocusControl = StorageKindEdit
         end
         object EnumeratedTypeLabel: TLabel
           Left = 7
           Top = 132
-          Width = 90
-          Height = 15
+          Width = 87
+          Height = 13
           Caption = '&Enumerated type'
           FocusControl = EnumeratedTypeEdit
         end
         object ForeignKeyFieldsLabel: TLabel
           Left = 8
           Top = 308
-          Width = 95
-          Height = 15
+          Width = 93
+          Height = 13
           Caption = '&Foreign Key Fields'
           FocusControl = ForeignKeyFieldsEdit
         end
@@ -105,7 +103,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Left = 7
           Top = 64
           Width = 192
-          Height = 23
+          Height = 21
           Style = csDropDownList
           DataField = 'AttributeType'
           DataSource = SubjectSource
@@ -117,7 +115,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Left = 7
           Top = 104
           Width = 271
-          Height = 23
+          Height = 21
           DataField = 'Metadata.ObjectClassName'
           DataSource = SubjectSource
           Sorted = True
@@ -158,7 +156,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Left = 7
           Top = 232
           Width = 271
-          Height = 23
+          Height = 21
           Style = csDropDownList
           DataField = 'StorageKind'
           DataSource = SubjectSource
@@ -180,7 +178,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Left = 7
           Top = 149
           Width = 271
-          Height = 23
+          Height = 21
           DataField = 'Metadata.EnumName'
           DataSource = SubjectSource
           TabOrder = 4
@@ -204,24 +202,24 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object VisibilityLabel: TLabel
           Left = 8
           Top = 8
-          Width = 44
-          Height = 15
+          Width = 43
+          Height = 13
           Caption = '&Visibility'
           FocusControl = VisibilityEdit
         end
         object SingularNameLabel: TLabel
           Left = 148
           Top = 8
-          Width = 78
-          Height = 15
+          Width = 75
+          Height = 13
           Caption = '&Singular Name'
           FocusControl = SingularNameEdit
         end
         object IndexNameLabel: TLabel
           Left = 7
           Top = 261
-          Width = 64
-          Height = 15
+          Width = 60
+          Height = 13
           Caption = 'Index Name'
           FocusControl = IndexNameEdit
         end
@@ -229,7 +227,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Left = 8
           Top = 24
           Width = 130
-          Height = 23
+          Height = 21
           Style = csDropDownList
           DataField = 'Visibility'
           DataSource = SubjectSource
@@ -389,32 +387,32 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
         object EdtMaskLabel: TLabel
           Left = 8
           Top = 8
-          Width = 51
-          Height = 15
+          Width = 50
+          Height = 13
           Caption = 'Edit &Mask'
           FocusControl = EditMaskEdit
         end
         object DisplayWidthLabel: TLabel
           Left = 8
           Top = 100
-          Width = 73
-          Height = 15
+          Width = 72
+          Height = 13
           Caption = 'Display &Width'
           FocusControl = DisplayWidthEdit
         end
         object DisplayLabelLabel: TLabel
           Left = 8
           Top = 146
-          Width = 69
-          Height = 15
+          Width = 67
+          Height = 13
           Caption = 'Display &Label'
           FocusControl = DisplayLabelEdit
         end
         object ValidCharsLabel: TLabel
           Left = 8
           Top = 54
-          Width = 84
-          Height = 15
+          Width = 82
+          Height = 13
           Caption = '&Valid Characters'
           FocusControl = ValidCharsEdit
         end
@@ -422,7 +420,7 @@ inherited InstantAttributeEditorForm: TInstantAttributeEditorForm
           Left = 8
           Top = 192
           Width = 69
-          Height = 15
+          Height = 13
           Caption = '&Default Value'
           FocusControl = DefaultValueEdit
         end

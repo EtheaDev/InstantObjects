@@ -2,8 +2,17 @@ unit Model;
 
 interface
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
+{$I '..\InstantDefines.inc'}
+{$ENDIF}
+
 uses
-  InstantPersistence;
+  System.Classes,
+  InstantPersistence,
+  InstantTypes,
+  InstantClasses;
 
 type
   TAddress = class;
@@ -42,6 +51,7 @@ type
     function GetNumber: string;
     procedure SetName(const Value: string);
     procedure SetNumber(const Value: string);
+  public
   published
     property Name: string read GetName write SetName;
     property Number: string read GetNumber write SetNumber;
@@ -72,6 +82,7 @@ type
     function RemovePhone(Phone: TPhone): Integer;
     property PhoneCount: Integer read GetPhoneCount;
     property Phones[Index: Integer]: TPhone read GetPhones write SetPhones;
+  public
   published
     property Address: TAddress read GetAddress write SetAddress;
     property Name: string read GetName write SetName;
@@ -84,6 +95,12 @@ type
   private
     function GetDateOfBirth: TDateTime;
     procedure SetDateOfBirth(Value: TDateTime);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TPerson; reintroduce; virtual;
+    {$ENDIF}
   published
     property DateOfBirth: TDateTime read GetDateOfBirth write SetDateOfBirth;
   end;
@@ -95,11 +112,20 @@ type
   private
     function GetContactPerson: TPerson;
     procedure SetContactPerson(Value: TPerson);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TCompany; reintroduce; virtual;
+    {$ENDIF}
   published
     property ContactPerson: TPerson read GetContactPerson write SetContactPerson;
   end;
 
 implementation
+
+uses
+  InstantMetadata;
 
 { TAddress }
 
@@ -224,6 +250,16 @@ end;
 
 { TPerson }
 
+{$IFDEF WINLINUX64}
+class function TPerson.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TPerson;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TPerson;
+end;
+{$ENDIF}
+
 function TPerson.GetDateOfBirth: TDateTime;
 begin
   Result := _DateOfBirth.Value;
@@ -235,6 +271,16 @@ begin
 end;
 
 { TCompany }
+
+{$IFDEF WINLINUX64}
+class function TCompany.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TCompany;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TCompany;
+end;
+{$ENDIF}
 
 function TCompany.GetContactPerson: TPerson;
 begin

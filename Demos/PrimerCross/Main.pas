@@ -5,13 +5,32 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
-  Menus, ExtCtrls, ComCtrls, ToolWin, Grids, DBGrids, ImgList, ActnList,
-  InstantPersistence, BasicView, Stopwatch,
-  InstantConnectionManagerFormUnit, InstantConnectionManager,
-  System.Actions, //if don't compile, remove this unit
-  WideStrings, SqlExpr, System.ImageList;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  System.Actions,
+  System.WideStrings,
+  System.ImageList,
+  Data.SqlExpr,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Menus,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  Vcl.ToolWin,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ImgList,
+  Vcl.ActnList,
+  InstantPersistence,
+  BasicView,
+  Stopwatch,
+  InstantConnectionManagerFormUnit,
+  InstantConnectionManager;
 
 type
   TMainForm = class(TForm)
@@ -118,27 +137,41 @@ var
 implementation
 
 uses
-  Contnrs, Model, Welcome, MainData, RandomData, DemoData, Utility, ContactView,
+  System.Contnrs,
+  Data.DbxFirebird,
+  Data.DBXInterbase,
+  Data.DbxDb2,
+  Data.DBXMSSQL,
+  Data.DbxOracle,
+  Vcl.Imaging.jpeg,
+  Model,
+  Welcome,
+  MainData,
+  RandomData,
+  DemoData,
+  Utility,
+  ContactView,
   PerformanceView,
-  HelpView, JPeg,
-  DemoDataRequest, InstantPresentation, InstantClasses,
-  QueryView, InstantImageUtils, InstantTypes,
-
-{ Note: This demo attempts to include brokers for the data access
+  HelpView,
+  DemoDataRequest,
+  InstantPresentation,
+  InstantClasses,
+  QueryView,
+  InstantImageUtils,
+  InstantTypes { Note: This demo attempts to include brokers for the data access
   layers supported natively by Delphi. To include additional brokers,
   please add the broker unit(s) to the following list. If you have not
   installed all brokers, please remove the missing broker unit(s) from
-  the list. }
-
+  the list. },
   InstantDBX,
   InstantADO,
-  //InstantIBX, remove comment if you want to use IbExpress
+  InstantIBX,
   InstantFireDAC,
-  // These are required for DBExpress to load the drivers in newer
-  // versions of Delphi. If you get a compilation error it means you
-  // don't have an Enterprise version of Delphi - just remove them.
-  DBXFirebird, DBXInterBase, DBXDB2, DBXMSSql, DBXOracle,
-  InstantXML, InstantJSON;
+  InstantXML
+  {$IFDEF DELPHI_NEON}
+  , InstantJSON
+  {$ENDIF}
+  ;
 
 {$R *.dfm}
 

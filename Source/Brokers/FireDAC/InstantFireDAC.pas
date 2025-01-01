@@ -49,7 +49,8 @@ unit InstantFireDAC;
 interface
 
 uses
-  Classes, Db, InstantPersistence, InstantCommand, InstantDBBuild,
+  System.Classes
+  , Data.DB, InstantPersistence, InstantCommand, InstantDBBuild,
   InstantBrokers, InstantMetadata, InstantTypes, FireDAC.Comp.Client,
   {$IFDEF IBFB_SUPPORT}FireDAC.Phys.IBBase, FireDAC.Phys.FB, FireDAC.Phys.IB,{$ENDIF}
   {$IFDEF MSSQL_SUPPORT}FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLMeta,{$ENDIF}
@@ -60,7 +61,8 @@ uses
   {$IFDEF SQLITE_SUPPORT}FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteWrapper,{$ENDIF}
   FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Intf, FireDAC.Phys.Intf,
   FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet
-  {$IFDEF D10+}, Variants, DBCommonTypes{$ENDIF}, System.Typinfo;
+  {$IFDEF D10+}, Variants
+  , Data.DBCommonTypes{$ENDIF}, System.Typinfo;
 
 type
   TInstantFireDACConnectionDef = class(TInstantConnectionBasedConnectionDef)
@@ -318,11 +320,20 @@ procedure AssignFireDACIsolation(Strings: TStrings);
 implementation
 
 uses
-  SysUtils, Types, StrUtils,
-  {$IFNDEF IO_CONSOLE}Controls, InstantFireDACConnectionDefEdit, FireDAC.VCLUI.Login,{$ENDIF}
-  InstantConsts, InstantClasses,
-  InstantFireDACCatalog, InstantUtils,
-  FireDAC.Stan.Consts;
+  System.SysUtils
+  , System.Types
+  , System.StrUtils
+  {$IFNDEF IO_CONSOLE}
+  , Vcl.Controls
+  , InstantFireDACConnectionDefEdit
+  , FireDAC.VCLUI.Login
+  {$ENDIF}
+  , InstantConsts
+  , InstantClasses
+  , InstantFireDACCatalog
+  , InstantUtils
+  , FireDAC.Stan.Consts
+  ;
 
 resourcestring
   SInvalidDatabasePageSize = 'Invalid database PageSize value: "%s"';
@@ -971,6 +982,7 @@ function TInstantFireDACBroker.Execute(const AStatement: string;
 var
   LQuery: TFDQuery;
 begin
+  {$if CompilerVersion < 32}Result := 0;{$endif}
   LQuery := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TFDQuery;
   try try
     LQuery.ExecSQL;

@@ -5,10 +5,26 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, Mask,
-  Grids, DBGrids, StdCtrls, ExtCtrls, ActnList, Menus, Buttons,
-  BasicView, Db, InstantPresentation, ComCtrls;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Mask,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.ActnList,
+  Vcl.Menus,
+  Vcl.Buttons,
+  Vcl.ComCtrls,
+  BasicView,
+  InstantPresentation;
 
 type
   TQueryViewFrame = class(TBasicViewFrame)
@@ -62,7 +78,10 @@ implementation
 {$R *.dfm}
 
 uses
-  InstantPersistence, InstantBrokers, InstantConsts, InstantTypes;
+  InstantPersistence,
+  InstantBrokers,
+  InstantConsts,
+  InstantTypes;
   
 const
   Examples: array[0..11, 0..1] of string = (

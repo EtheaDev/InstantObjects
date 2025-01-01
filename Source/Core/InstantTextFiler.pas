@@ -39,7 +39,10 @@ unit InstantTextFiler;
 interface
 
 uses
-  Classes, InstantClasses, Character;
+  System.Classes
+  , InstantClasses
+  , System.Character
+  ;
 
 type
   PInstantTextPos = ^TInstantTextPos;
@@ -127,7 +130,10 @@ procedure DescendTextPos(var Pos: TInstantTextPos; Ch: Char);
 implementation
 
 uses
-  SysUtils, InstantUtils, InstantConsts;
+  System.SysUtils
+  , InstantUtils
+  , InstantConsts
+  ;
 
 procedure AdvanceTextPos(var Pos: TInstantTextPos; Ch: Char);
 begin

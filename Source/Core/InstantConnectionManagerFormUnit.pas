@@ -39,12 +39,28 @@ unit InstantConnectionManagerFormUnit;
 interface
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
-  ImgList, Menus, ActnList, ExtCtrls, StdActns,
-  System.Actions,
-  InstantConnectionManager, InstantClasses, InstantPersistence, InstantMetadata,
-  System.ImageList;
+  System.SysUtils
+  , System.Classes
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ComCtrls
+  , Vcl.ImgList
+  , Vcl.Menus
+  , Vcl.ActnList
+  , Vcl.ExtCtrls
+  , Vcl.StdActns
+  , System.Actions
+  , InstantConnectionManager
+  , InstantClasses
+  , InstantPersistence
+  , InstantMetadata
+  , System.ImageList
+  ;
 
 type
   TInstantConnectionManagerForm = class(TForm)
@@ -475,8 +491,8 @@ begin
   ConnectionView.HideSelection := False;
   ConnectionView.SortType := stText;
   ConnectionView.SmallImages := ConnectionImages;
-  ConnectionView.Columns[0].Width := 225;
-  ConnectionView.Columns[1].Width := 80;
+  ConnectionView.Columns[0].Width := Round(320 * ScaleFactor);
+  ConnectionView.Columns[1].Width := Round(100 * ScaleFactor);
   UpdateMenu;
 end;
 

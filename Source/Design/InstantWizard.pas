@@ -35,9 +35,19 @@ unit InstantWizard;
 interface
 
 uses
-  SysUtils, Classes, InstantDialog,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, ComCtrls;
+  System.SysUtils
+  , System.Classes
+  , InstantDialog
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , Vcl.ComCtrls
+  ;
 
 type
   TInstantWizardForm = class(TInstantDialogForm)

@@ -47,15 +47,23 @@ uses
   Vcl.Imaging.GIFImg,
   Vcl.Imaging.pngimage,
   {$ENDIF}
-  Classes, Contnrs, SysUtils, DB, InstantClasses, InstantCommand, InstantConsts,
-  InstantMetadata, InstantTypes
+  System.Classes
+  , System.Contnrs
+  , System.SysUtils
+  , Data.DB
+  , InstantClasses
+  , InstantCommand
+  , InstantConsts
+  , InstantMetadata
+  , InstantTypes
   {$IFDEF DELPHI_NEON}
   , Neon.Core.Types
   , Neon.Core.Nullables
   , Neon.Core.Attributes
   {$ENDIF}
   , System.Generics.Collections
-  , AnsiStrings;
+  , System.AnsiStrings
+  ;
 
 const
   IO_SER_CLASSNAME = 'ClassName';
@@ -1712,14 +1720,18 @@ const
 implementation
 
 uses
-  Windows,
-  TypInfo,
-  MaskUtils,
-  Variants,
-  DateUtils,
-  RTTI, InstantRttiAttributes,
-  System.Types,
-  InstantUtils, InstantDesignHook, InstantCode;
+  WinApi.Windows
+  , System.TypInfo
+  , System.MaskUtils
+  , System.Variants
+  , System.DateUtils
+  , System.RTTI
+  , InstantRttiAttributes
+  , System.Types
+  , InstantUtils
+  , InstantDesignHook
+  , InstantCode
+  ;
 
 var
   ConnectorClasses: TList;
@@ -2118,7 +2130,7 @@ end;
 
 procedure InstantRegisterClass(AClass: TInstantObjectClass);
 begin
-  Classes.RegisterClass(AClass);
+  System.Classes.RegisterClass(AClass);
   if ClassList.IndexOf(AClass) = -1 then
     ClassList.Add(AClass);
 end;
@@ -2133,7 +2145,7 @@ end;
 
 procedure InstantUnregisterClass(AClass: TInstantObjectClass);
 begin
-  Classes.UnregisterClass(AClass);
+  System.Classes.UnregisterClass(AClass);
   ClassList.Remove(AClass);
 end;
 
@@ -3968,7 +3980,7 @@ var
 
 begin
   SetLength(LValue, Count + 1);
-  AnsiStrings.StrLCopy(PAnsiChar(LValue), PAnsiChar(@Buffer), Count);
+  System.AnsiStrings.StrLCopy(PAnsiChar(LValue), PAnsiChar(@Buffer), Count);
   Validate(string(LValue));
 
   if not CompareBuffers then
@@ -4107,27 +4119,31 @@ var
   LValue: String;
 begin
   //Don't call inherited: Text streaming is different by UseUnicode
-  if not UseUnicode then
+  //Change content of Memo only when different
+  if Value <> AValue then
   begin
-    LAnsiValue := AnsiString(AValue);
-    L := Length(LAnsiValue) * SizeOf(AnsiChar);
-  end
-  else
-  begin
-    LValue := AValue;
-    L := Length(LValue) * SizeOf(Char);
-  end;
-  if L > 0 then
-  begin
-    Stream.Clear;
     if not UseUnicode then
-      WriteBuffer(LAnsiValue[1], 0, L)
+    begin
+      LAnsiValue := AnsiString(AValue);
+      L := Length(LAnsiValue) * SizeOf(AnsiChar);
+    end
     else
-      WriteBuffer(LValue[1], 0, L);
-    Stream.Size := L;
-  end
-  else
-    Clear;
+    begin
+      LValue := AValue;
+      L := Length(LValue) * SizeOf(Char);
+    end;
+    if L > 0 then
+    begin
+      Stream.Clear;
+      if not UseUnicode then
+        WriteBuffer(LAnsiValue[1], 0, L)
+      else
+        WriteBuffer(LValue[1], 0, L);
+      Stream.Size := L;
+    end
+    else
+      Clear;
+  end;
 end;
 
 procedure TInstantMemo.WriteObject(Writer: TInstantWriter);

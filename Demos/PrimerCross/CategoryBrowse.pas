@@ -5,11 +5,26 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  ImgList, Menus, ActnList, Grids, DBGrids, ExtCtrls, StdCtrls,
-  ComCtrls, ToolWin,
-  BasicBrowse, InstantPresentation, DB;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ImgList,
+  Vcl.Menus,
+  Vcl.ActnList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.ToolWin,
+  BasicBrowse,
+  InstantPresentation;
 
 type
   TCategoryBrowseForm = class(TBasicBrowseForm)

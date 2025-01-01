@@ -39,8 +39,16 @@ unit InstantDBBuild;
 interface
 
 uses
-  SysUtils, Classes, Contnrs, InstantClasses, InstantPersistence, InstantConsts,
-  InstantTypes, InstantBrokers, InstantMetadata;
+  System.SysUtils
+  , System.Classes
+  , System.Contnrs
+  , InstantClasses
+  , InstantPersistence
+  , InstantConsts
+  , InstantTypes
+  , InstantBrokers
+  , InstantMetadata
+  ;
   
 type
   TInstantDBBuildCommandSequence = class;
@@ -391,7 +399,8 @@ type
 implementation
 
 uses
-  DB;
+  Data.DB
+  ;
   
 const
   STmpFieldSuffix = '_XYZ_';

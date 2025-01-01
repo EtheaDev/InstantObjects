@@ -39,8 +39,18 @@ unit InstantIBXConnectionDefEdit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ExtCtrls, InstantIBX;
+  WinApi.Windows
+  , WinApi.Messages
+  , System.SysUtils
+  , System.Classes
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , InstantIBX
+  ;
 
 type
   TInstantIBXConnectionDefEditForm = class(TForm)
@@ -95,7 +105,12 @@ implementation
 {$R *.DFM}
 
 uses
-  IB, InstantPersistence, InstantClasses, InstantTypes, InstantConsts;
+  IBX.IB
+  , InstantPersistence
+  , InstantClasses
+  , InstantTypes
+  , InstantConsts
+  ;
 
 { TInstantIBXConnectionDefEditForm }
 

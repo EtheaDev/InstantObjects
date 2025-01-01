@@ -38,7 +38,9 @@ unit InstantJSON;
 interface
 
 uses
-  Classes, DB, Contnrs, Types, InstantPersistence, InstantBrokers, InstantCommand,
+  System.Classes
+  , Data.DB, Contnrs
+  , System.Types, InstantPersistence, InstantBrokers, InstantCommand,
   InstantMetadata, InstantTypes, InstantClasses;
 
 const
@@ -157,6 +159,8 @@ type
     property UseTransactions default False;
     property LoginPrompt default False;
     property UseUnicode default False;
+    //change InstantDefins.inc to activate $DEFINE DELPHI_NEON if you want JSON support
+    //or remove IOJSON_4 from Package Group
     property BlobStreamFormat default sfJSON;
     property ReadObjectListWithNoLock default true;
   end;
@@ -340,7 +344,8 @@ uses
   TypInfo, InstantJSONCatalog, InstantUtils,
 {$IFNDEF INSTANTOBJECTS_FMX}
 {$IFNDEF IO_CONSOLE}
-InstantJSONConnectionDefEdit, FileCtrl, Controls,
+InstantJSONConnectionDefEdit, FileCtrl
+  , Vcl.Controls,
 {$ENDIF}
 {$ENDIF}
   Windows;

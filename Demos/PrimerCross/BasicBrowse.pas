@@ -5,9 +5,24 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes, DB,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls,
-  Grids, DBGrids, ExtCtrls, ToolWin, ComCtrls, ImgList, Menus, ActnList,
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ExtCtrls,
+  Vcl.ToolWin,
+  Vcl.ComCtrls,
+  Vcl.ImgList,
+  Vcl.Menus,
+  Vcl.ActnList,
   InstantPresentation;
 
 const
@@ -80,8 +95,11 @@ implementation
 {$R *.dfm}
 
 uses
-  BasicEdit, Utility, InstantPersistence, InstantImageUtils,
-  Themes;
+  Vcl.Themes,
+  BasicEdit,
+  Utility,
+  InstantPersistence,
+  InstantImageUtils;
 
 { TBasicBrowseForm }
 

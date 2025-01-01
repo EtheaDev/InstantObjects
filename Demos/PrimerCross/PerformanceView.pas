@@ -5,11 +5,31 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, ToolWin, Menus,
-  ExtCtrls, StdCtrls, Contnrs, ComCtrls, TeEngine, Mask,
-  Series, TeeProcs, Chart,
-  InstantPersistence, InstantPresentation, InstantClasses, Stopwatch, DB, BasicView,
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  System.Contnrs,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ToolWin,
+  Vcl.Menus,
+  Vcl.ExtCtrls,
+  Vcl.StdCtrls,
+  Vcl.ComCtrls,
+  Vcl.Mask,
+  VclTee.TeEngine,
+  VclTee.Series,
+  VclTee.TeeProcs,
+  VclTee.Chart,
+  InstantPersistence,
+  InstantPresentation,
+  InstantClasses,
+  Stopwatch,
+  BasicView,
   VclTee.TeeGDIPlus;
 
 type
@@ -153,7 +173,12 @@ implementation
 {$R *.dfm}
 
 uses
-  InstantBrokers, Model, DemoData, IniFiles, Utility, UITypes;
+  System.IniFiles,
+  System.UITypes,
+  InstantBrokers,
+  Model,
+  DemoData,
+  Utility;
 
 { TTestResult }
 

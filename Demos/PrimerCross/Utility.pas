@@ -11,9 +11,11 @@ function Confirm(const Text: string): Boolean;
 implementation
 
 uses
-  Forms, Dialogs, Controls,
   System.UITypes,
-  SysUtils;
+  System.SysUtils,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Controls;
 
 var
   BusySaveCursor: TCursor;

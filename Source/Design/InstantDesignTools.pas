@@ -35,9 +35,13 @@ unit InstantDesignTools;
 interface
 
 uses
-  Classes,
-  DesignIntf, DesignEditors,
-  StrEdit, ColnEdit, InstantPresentation;
+  System.Classes
+  , DesignIntf
+  , DesignEditors
+  , StrEdit
+  , ColnEdit
+  , InstantPresentation
+  ;
 
 type
   TInstantSelectorEditor = class(TComponentEditor)
@@ -70,7 +74,11 @@ procedure Register;
 implementation
 
 uses
-  Controls, Db, InstantCommandEditor, InstantDesignHook;
+  Vcl.Controls
+  , Data.DB
+  , InstantCommandEditor
+  , InstantDesignHook
+  ;
 
 procedure Register;
 begin

@@ -5,10 +5,27 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, ToolWin, StdCtrls,
-  Menus, ImgList, ActnList, Grids, DBGrids, ExtCtrls, ComCtrls,
-  BasicBrowse, DB, InstantPresentation, Model;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.ToolWin,
+  Vcl.StdCtrls,
+  Vcl.Menus,
+  Vcl.ImgList,
+  Vcl.ActnList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  BasicBrowse,
+  InstantPresentation,
+  Model;
   
 type
   TContactBrowseForm = class(TBasicBrowseForm)

@@ -35,9 +35,20 @@ unit InstantEdit;
 interface
 
 uses
-  SysUtils, Classes, DB,
-  Windows, Messages, Graphics, StdCtrls, ExtCtrls, Controls, Forms, Dialogs,
-  InstantPresentation;
+  System.SysUtils
+  , System.Classes
+  , Data.DB
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , InstantPresentation
+  ;
+
 type
   TInstantEditForm = class(TForm)
     SubjectExposer: TInstantExposer;

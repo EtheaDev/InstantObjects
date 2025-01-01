@@ -8,7 +8,8 @@ unit Model;
 interface
 
 uses
-  InstantPersistence, InstantTypes;
+  InstantPersistence,
+  InstantTypes;
 
 type
   TAddress = class;
@@ -235,7 +236,9 @@ type
 implementation
 
 uses
-  SysUtils, InstantUtils, InstantMetadata;
+  System.SysUtils,
+  InstantUtils,
+  InstantMetadata;
 
 { TAddress }
 

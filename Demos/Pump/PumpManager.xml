@@ -1,5 +1,83 @@
-<TInstantConnectionDefs><TInstantBDEConnectionDef><Name>ParadoxDB</Name><IsBuilt>TRUE</IsBuilt><BlobStreamFormat>sfXML</BlobStreamFormat><LoginPrompt>FALSE</LoginPrompt><DriverName>STANDARD</DriverName><Parameters>PATH=..\PrimerCross\ParadoxDB
-DEFAULT DRIVER=PARADOX
-ENABLE BCD=TRUE
-</Parameters></TInstantBDEConnectionDef><TInstantIBXConnectionDef><Name>FirebirdDB</Name><IsBuilt>TRUE</IsBuilt><BlobStreamFormat>sfXML</BlobStreamFormat><LoginPrompt>FALSE</LoginPrompt><ConnectionString>..\PrimerCross\FirebirdDB\PRIMERDB.FDB</ConnectionString><Options></Options><Params>user_name=SYSDBA
-password=masterkey</Params></TInstantIBXConnectionDef></TInstantConnectionDefs>
+<?xml version="1.0" encoding="UTF-8"?>
+<TInstantConnectionDefs>
+  <TInstantXMLConnectionDef>
+    <Name>XmlDB</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <RootFolder>.\XmlDB</RootFolder>
+  </TInstantXMLConnectionDef>
+  <TInstantDBXConnectionDef>
+    <Name>DBX_Firebird</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <ConnectionName>FBConnection</ConnectionName>
+    <DriverName>Firebird</DriverName>
+    <Params>DriverName=Firebird
+Database=PRIMERDB
+RoleName=RoleName
+User_Name=sysdba
+Password=masterkey
+ServerCharSet=
+SQLDialect=3
+ErrorResourceFile=
+LocaleCode=0000
+BlobSize=-1
+CommitRetain=False
+WaitOnLocks=True
+IsolationLevel=ReadCommitted
+Trim Char=False
+</Params>
+  </TInstantDBXConnectionDef>
+  <TInstantFireDACConnectionDef>
+    <Name>FireDAC_Firebird</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <Database>PRIMERDB</Database>
+    <HostName>127.0.0.1</HostName>
+    <Password>masterkey</Password>
+    <DriverId>FB</DriverId>
+    <User_Name>SYSDBA</User_Name>
+  </TInstantFireDACConnectionDef>
+  <TInstantFireDACConnectionDef>
+    <Name>FireDac_MSSQL</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <DefaultStatementCacheCapacity>10</DefaultStatementCacheCapacity>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <ReadObjectListWithNoLock>TRUE</ReadObjectListWithNoLock>
+    <Database>PRIMERDB</Database>
+    <HostName>.\SQLEXPRESS</HostName>
+    <AdditionalParams>MetaDefSchema=dbo</AdditionalParams>
+    <DriverId>MSSQL</DriverId>
+    <UseDelimitedIdents>TRUE</UseDelimitedIdents>
+    <OSAuthent>TRUE</OSAuthent>
+  </TInstantFireDACConnectionDef>
+  <TInstantADOConnectionDef>
+    <Name>ADO_MSSQL</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <ConnectionString>Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=PRIMERDB;Data Source=.\SQLEXPRESS</ConnectionString>
+  </TInstantADOConnectionDef>
+  <TInstantDBXConnectionDef>
+    <Name>DBX_MSSQL</Name>
+    <IsBuilt>TRUE</IsBuilt>
+    <BlobStreamFormat>sfXML</BlobStreamFormat>
+    <LoginPrompt>FALSE</LoginPrompt>
+    <ConnectionName>MSSQLConnection</ConnectionName>
+    <DriverName>MSSQL</DriverName>
+    <Params>SchemaOverride=sa.dbo
+DriverName=MSSQL
+HostName=.\SQLEXPRESS
+DataBase=PRIMERDB
+BlobSize=-1
+ErrorResourceFile=
+LocaleCode=0000
+IsolationLevel=ReadCommitted
+OS Authentication=True
+Prepare SQL=False
+ConnectTimeout=60
+Mars_Connection=True</Params>
+  </TInstantDBXConnectionDef>
+</TInstantConnectionDefs>

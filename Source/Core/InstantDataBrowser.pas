@@ -3,7 +3,9 @@ unit InstantDataBrowser;
 interface
 
 uses
-  SysUtils, Classes, DB, DBClient,
+  SysUtils, System.Classes,
+ DB
+  , Data.DBClient,
   InstantPersistence;
 
 type

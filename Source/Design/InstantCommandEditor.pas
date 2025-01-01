@@ -35,9 +35,19 @@ unit InstantCommandEditor;
 interface
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-  InstantCode, InstantCommand;
+  System.SysUtils
+  , System.Classes
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , InstantCode
+  , InstantCommand
+  ;
 
 type
   TInstantCommandEditorForm = class(TForm)

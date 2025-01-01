@@ -8,7 +8,10 @@
 {$DEFINE USE_LARGEINT_FIELD_FOR_REF}
 
 //Deactivate this directive if you don't want to use Serialization with Delphi-Neon library
-{$DEFINE DELPHI_NEON}
+{.$DEFINE DELPHI_NEON}
+
+//Activate this directive if you want to not trim right spaces in attributes values
+{.$DEFINE IO_DISABLE_STRING_TRIM}
 
 {$A8}
 {$B-,C+,D+,E-,F-,G+,H+,I+,J-,K-,L+,M-,N+,O+,P+,Q-,R-,S-,T+,U-,V+,W-,X+,Y+,Z1}

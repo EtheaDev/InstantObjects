@@ -43,6 +43,12 @@ type
   private
     function GetStringProperty: string;
     procedure SetStringProperty(const Value: string);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TSimpleClass; reintroduce; virtual;
+    {$ENDIF}
   published
     property Id;
     property StringProperty: string read GetStringProperty write SetStringProperty;
@@ -95,6 +101,16 @@ begin
 end;
 
 { TSimpleClass }
+
+{$IFDEF WINLINUX64}
+class function TSimpleClass.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TSimpleClass;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TSimpleClass;
+end;
+{$ENDIF}
 
 function TSimpleClass.GetStringProperty: string;
 begin

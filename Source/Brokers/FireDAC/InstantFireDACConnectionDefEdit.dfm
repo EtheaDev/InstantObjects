@@ -82,7 +82,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     object StreamFormatLabel: TLabel
       Left = 207
       Top = 144
-      Width = 60
+      Width = 61
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
@@ -90,7 +90,7 @@ object InstantFireDACConnectionDefEditForm: TInstantFireDACConnectionDefEditForm
     object IdDataTypeLabel: TLabel
       Left = 207
       Top = 184
-      Width = 63
+      Width = 62
       Height = 13
       Caption = 'Id Data Type'
       FocusControl = IdDataTypeComboBox

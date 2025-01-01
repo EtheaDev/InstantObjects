@@ -33,7 +33,9 @@ unit InstantRttiAttributes;
 interface
 
 uses
-  InstantPersistence, Rtti;
+  InstantPersistence
+  , System.Rtti
+  ;
 
 type
   TInstantRttiAttribute = class(TCustomAttribute)

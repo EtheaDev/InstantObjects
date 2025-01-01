@@ -8,18 +8,16 @@ object EvolverTestForm: TEvolverTestForm
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Segoe UI'
   Font.Style = []
   Menu = MainMenu
-  OldCreateOrder = False
   Position = poScreenCenter
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object DBGrid1: TDBGrid
     Left = 0
     Top = 29
-    Width = 623
+    Width = 615
     Height = 164
     Align = alTop
     DataSource = MCDataSource
@@ -27,7 +25,7 @@ object EvolverTestForm: TEvolverTestForm
     TitleFont.Charset = DEFAULT_CHARSET
     TitleFont.Color = clWindowText
     TitleFont.Height = -11
-    TitleFont.Name = 'MS Sans Serif'
+    TitleFont.Name = 'Segoe UI'
     TitleFont.Style = []
     Columns = <
       item
@@ -94,19 +92,19 @@ object EvolverTestForm: TEvolverTestForm
   object ToolBar1: TToolBar
     Left = 0
     Top = 0
-    Width = 623
+    Width = 615
     Height = 29
     Caption = 'ToolBar1'
     Images = ImageList
     TabOrder = 1
     object ToolButton13: TToolButton
       Left = 0
-      Top = 2
+      Top = 0
       Action = acntConnectionManager
     end
     object ToolButton12: TToolButton
       Left = 23
-      Top = 2
+      Top = 0
       Width = 8
       Caption = 'ToolButton12'
       ImageIndex = 36
@@ -114,61 +112,61 @@ object EvolverTestForm: TEvolverTestForm
     end
     object ToolButton1: TToolButton
       Left = 31
-      Top = 2
+      Top = 0
       Action = DataSetFirst1
     end
     object ToolButton2: TToolButton
       Left = 54
-      Top = 2
+      Top = 0
       Action = DataSetPrior1
     end
     object ToolButton3: TToolButton
       Left = 77
-      Top = 2
+      Top = 0
       Action = DataSetNext1
     end
     object ToolButton4: TToolButton
       Left = 100
-      Top = 2
+      Top = 0
       Action = DataSetLast1
     end
     object ToolButton7: TToolButton
       Left = 123
-      Top = 2
+      Top = 0
       Width = 8
       ImageIndex = 6
       Style = tbsSeparator
     end
     object ToolButton5: TToolButton
       Left = 131
-      Top = 2
+      Top = 0
       Action = DataSetInsert1
     end
     object ToolButton6: TToolButton
       Left = 154
-      Top = 2
+      Top = 0
       Action = DataSetEdit1
     end
     object ToolButton8: TToolButton
       Left = 177
-      Top = 2
+      Top = 0
       Action = DataSetDelete1
     end
     object ToolButton10: TToolButton
       Left = 200
-      Top = 2
+      Top = 0
       Width = 8
       ImageIndex = 4
       Style = tbsSeparator
     end
     object ToolButton9: TToolButton
       Left = 208
-      Top = 2
+      Top = 0
       Action = DatasetPost1
     end
     object ToolButton11: TToolButton
       Left = 231
-      Top = 2
+      Top = 0
       Action = DataSetCancel1
     end
   end

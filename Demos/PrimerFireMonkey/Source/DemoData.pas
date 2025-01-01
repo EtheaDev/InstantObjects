@@ -5,8 +5,14 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  Classes, Model, InstantPersistence,
-  {$IFDEF INSTANTOBJECTS_FMX}FMX.Objects,{$ELSE}Graphics,{$ENDIF}
+  System.Classes,
+  Model,
+  InstantPersistence,
+  {$IFDEF INSTANTOBJECTS_FMX}
+  FMX.Objects,
+  {$ELSE}
+  Graphics,
+  {$ENDIF}
   RandomData;
 
 
@@ -19,7 +25,8 @@ procedure CreateRandomContacts(Count: Integer; LoadPictures : boolean);
 implementation
 
 uses
-  SysUtils, Contnrs,
+  System.SysUtils,
+  System.Contnrs,
   InstantUtils;
 
 procedure AssignRandomPicture(Male : boolean; InstantBlob : TInstantBlob);

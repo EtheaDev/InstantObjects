@@ -3,8 +3,8 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   Top = 280
   BorderIcons = [biSystemMenu]
   Caption = 'Connection Manager'
-  ClientHeight = 242
-  ClientWidth = 334
+  ClientHeight = 278
+  ClientWidth = 431
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -30,17 +30,17 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   object ConnectionView: TListView
     Left = 0
     Top = 0
-    Width = 334
-    Height = 210
+    Width = 431
+    Height = 246
     Align = alClient
     Columns = <
       item
-        AutoSize = True
         Caption = 'Connection'
+        Width = 320
       end
       item
         Caption = 'Type'
-        Width = 80
+        Width = 100
       end>
     PopupMenu = ConnectionMenu
     TabOrder = 0
@@ -49,8 +49,8 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
   end
   object BottomPanel: TPanel
     Left = 0
-    Top = 210
-    Width = 334
+    Top = 246
+    Width = 431
     Height = 32
     Align = alBottom
     TabOrder = 1
@@ -63,7 +63,7 @@ object InstantConnectionManagerForm: TInstantConnectionManagerForm
       TabOrder = 0
     end
     object ButtonsPanel: TPanel
-      Left = 172
+      Left = 269
       Top = 1
       Width = 161
       Height = 30

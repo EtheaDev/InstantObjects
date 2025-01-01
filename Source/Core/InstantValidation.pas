@@ -39,7 +39,11 @@ unit InstantValidation;
 interface
 
 uses
-  Contnrs, InstantClasses, InstantMetadata, InstantPersistence;
+  System.Contnrs
+  , InstantClasses
+  , InstantMetadata
+  , InstantPersistence
+  ;
 
 type
   TInstantValidatorListValidationMode = (vmAll, vmAny);
@@ -91,9 +95,10 @@ function InstantValidatorFactory: TInstantValidatorFactory;
 implementation
 
 uses
-  Classes,
-  System.Types,
- SysUtils;
+  System.Classes
+  , System.Types
+  , System.SysUtils
+  ;
 
 var
   _InstantValidatorFactory: TInstantValidatorFactory;

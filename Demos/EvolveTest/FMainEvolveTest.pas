@@ -3,10 +3,29 @@ unit FMainEvolveTest;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, InstantConnectionManager, Menus, ActnList, InstantPersistence,
-  DB, InstantPresentation, Grids, DBGrids, DBActns, ImgList, ComCtrls,
-  ToolWin;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  System.ImageList,
+  System.Actions,
+  Data.DB,
+  Vcl.DBActns,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.Menus,
+  Vcl.ActnList,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ImgList,
+  Vcl.ComCtrls,
+  Vcl.ToolWin,
+  InstantConnectionManager,
+  InstantPersistence,
+  InstantPresentation;
 
 type
   TEvolverTestForm = class(TForm)
@@ -98,10 +117,9 @@ implementation
 {$R *.dfm}
 
 uses
-  InstantIBX,
-  InstantUIB,
   InstantDBX,
   InstantADO,
+  InstantFireDAC,
   InstantConnectionManagerFormUnit;
 
 var

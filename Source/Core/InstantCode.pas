@@ -40,9 +40,17 @@ unit InstantCode;
 interface
 
 uses
-  System.Types, Classes, Contnrs, SysUtils,
-  InstantPersistence, InstantClasses, InstantMetadata, InstantTextFiler,
-  InstantTypes, TypInfo;
+  System.Types
+  , System.Classes
+  , System.Contnrs
+  , System.SysUtils
+  , InstantPersistence
+  , InstantClasses
+  , InstantMetadata
+  , InstantTextFiler
+  , InstantTypes
+  , System.TypInfo
+  ;
 
 type
   TInstantCodePos = TInstantTextPos;
@@ -987,15 +995,15 @@ type
 
   TInstantCodeClassList = class(TList)
   private
-    function GetItem(Index: Integer): TInstantCodeClass;
-    procedure SetItem(Index: Integer; const Value: TInstantCodeClass);
+    function GetItem(Index: TListSize): TInstantCodeClass;
+    procedure SetItem(Index: TListSize; const Value: TInstantCodeClass);
   public
     function Add(Item: TInstantCodeClass): Integer;
     procedure Insert(Index: Integer; Item: TInstantCodeClass);
 
     procedure SortByBaseClass;
 
-    property Items[Index: Integer]: TInstantCodeClass read GetItem write SetItem; default;
+    property Items[Index: TListSize]: TInstantCodeClass read GetItem write SetItem; default;
   end;
 
   TInstantCodeClassRef = class(TInstantCodeType)
@@ -1521,7 +1529,11 @@ const
 implementation
 
 uses
-  InstantRtti, InstantConsts, InstantUtils, DB;
+  InstantRtti
+  , InstantConsts
+  , InstantUtils
+  , Data.DB
+  ;
 
 type
   TTypeProcessor = class(TObject)
@@ -5743,12 +5755,12 @@ begin
   Sort(CompareCodeClasses);
 end;
 
-function TInstantCodeClassList.GetItem(Index: Integer): TInstantCodeClass;
+function TInstantCodeClassList.GetItem(Index: TListSize): TInstantCodeClass;
 begin
   Result := inherited Items[Index];
 end;
 
-procedure TInstantCodeClassList.SetItem(Index: Integer;
+procedure TInstantCodeClassList.SetItem(Index: TListSize;
   const Value: TInstantCodeClass);
 begin
   inherited Items[Index] := Value;

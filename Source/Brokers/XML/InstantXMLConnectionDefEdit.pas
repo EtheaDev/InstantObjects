@@ -38,8 +38,13 @@ unit InstantXMLConnectionDefEdit;
 interface
 
 uses
-  Classes, InstantXML,
-  Forms, StdCtrls, Controls, ExtCtrls;
+  System.Classes
+  , InstantXML
+  , Vcl.Forms
+  , Vcl.StdCtrls
+  , Vcl.Controls
+  , Vcl.ExtCtrls
+  ;
 
 type
   TInstantXMLConnectionDefEditForm = class(TForm)
@@ -67,8 +72,9 @@ implementation
 {$R *.dfm}
 
 uses
-  TypInfo,
-  FileCtrl;
+  System.TypInfo
+  , Vcl.FileCtrl
+  ;
 
 { TInstantXMLConnectionDefEditForm }
 

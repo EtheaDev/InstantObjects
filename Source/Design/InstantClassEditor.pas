@@ -36,11 +36,30 @@ unit InstantClassEditor;
 interface
 
 uses
-  SysUtils, Classes, DB, Contnrs, InstantPresentation,
-  InstantPersistence, InstantCode, InstantEdit,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, ComCtrls, ExtCtrls, Mask, DBCtrls,
-  ImgList, ActnList, Menus, InstantAttributeView;
+  System.SysUtils
+  , System.Classes
+  , Data.DB
+  , System.Contnrs
+  , InstantPresentation
+  , InstantPersistence
+  , InstantCode
+  , InstantEdit
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ComCtrls
+  , Vcl.ExtCtrls
+  , Vcl.Mask
+  , Vcl.DBCtrls
+  , Vcl.ImgList
+  , Vcl.ActnList
+  , Vcl.Menus
+  , InstantAttributeView
+  ;
 
 type
   TInstantClassEditorForm = class(TInstantEditForm)
@@ -99,8 +118,14 @@ type
 implementation
 
 uses
-  InstantAttributeEditor, InstantDesignUtils, InstantConsts, InstantRtti,
-  TypInfo, InstantImageUtils, InstantTypes;
+  InstantAttributeEditor
+  , InstantDesignUtils
+  , InstantConsts
+  , InstantRtti
+  , System.TypInfo
+  , InstantImageUtils
+  , InstantTypes
+  ;
 
 {$R *.dfm}
 

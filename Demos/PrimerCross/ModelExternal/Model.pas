@@ -10,16 +10,15 @@ unit Model;
 interface
 
 uses
-  InstantPersistence
-  , InstantTypes
-  , InstantClasses
-  , System.Classes
+  System.Classes,
+  InstantPersistence,
+  InstantTypes,
+  InstantClasses,
   {$IFDEF DELPHI_NEON}
-  , Neon.Core.Types
-  , Neon.Core.Nullables
-  , Neon.Core.Attributes
+  Neon.Core.Types,
+  Neon.Core.Nullables,
+  Neon.Core.Attributes;
   {$ENDIF}
-  ;
 
 type
   TAddress = class;
@@ -421,7 +420,9 @@ type
 implementation
 
 uses
-  SysUtils, InstantUtils, InstantMetadata;
+  System.SysUtils,
+  InstantUtils,
+  InstantMetadata;
 
 { TProfile }
 {$IFDEF WINLINUX64}

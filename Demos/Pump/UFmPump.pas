@@ -3,8 +3,20 @@ unit UFmPump;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, InstantPersistence, InstantIBX, DB, IBDatabase, StdCtrls,
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Variants,
+  System.Classes,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  InstantPersistence,
+  InstantIBX,
+  IBDatabase,
   InstantPump;
 
 type

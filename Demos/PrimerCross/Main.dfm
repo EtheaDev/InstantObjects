@@ -2,8 +2,8 @@ object MainForm: TMainForm
   Left = 254
   Top = 225
   Caption = 'InstantObjects Primer'
-  ClientHeight = 618
-  ClientWidth = 1067
+  ClientHeight = 617
+  ClientWidth = 1063
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object MainForm: TMainForm
   object SideBarSplitter: TSplitter
     Left = 88
     Top = 26
-    Height = 573
+    Height = 572
     ResizeStyle = rsLine
     ExplicitHeight = 139
   end

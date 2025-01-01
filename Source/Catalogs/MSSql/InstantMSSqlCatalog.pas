@@ -72,7 +72,11 @@ type
 implementation
 
 uses
-  SysUtils, Classes, DB, InstantConsts;
+  System.SysUtils
+  , System.Classes
+  , Data.DB
+  , InstantConsts
+  ;
 
 { TInstantMSSqlCatalog }
 

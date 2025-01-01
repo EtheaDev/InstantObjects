@@ -35,12 +35,22 @@ unit InstantXML;
 {$ENDIF}
 
 {$WARN SYMBOL_PLATFORM OFF}
+{$WARN UNIT_PLATFORM OFF}
 
 interface
 
 uses
-  Classes, DB, Contnrs, Types, InstantPersistence, InstantBrokers, InstantCommand,
-  InstantMetadata, InstantTypes, InstantClasses;
+  System.Classes
+  , Data.DB
+  , System.Contnrs
+  , System.Types
+  , InstantPersistence
+  , InstantBrokers
+  , InstantCommand
+  , InstantMetadata
+  , InstantTypes
+  , InstantClasses
+  ;
 
 const
   XML_UTF8_HEADER = '<?xml version="1.0" encoding="UTF-8"?>';
@@ -337,14 +347,20 @@ function GetXMLLineBreak: string;
 implementation
 
 uses
-  SysUtils, InstantConsts,
-  TypInfo, InstantXMLCatalog, InstantUtils,
+  System.SysUtils
+  , InstantConsts
+  , System.TypInfo
+  , InstantXMLCatalog
+  , InstantUtils
 {$IFNDEF INSTANTOBJECTS_FMX}
 {$IFNDEF IO_CONSOLE}
-InstantXMLConnectionDefEdit, FileCtrl, Controls,
+  , InstantXMLConnectionDefEdit
+  , Vcl.FileCtrl
+  , Vcl.Controls
 {$ENDIF}
 {$ENDIF}
-  Windows;
+  , WinApi.Windows
+  ;
 
 resourcestring
   SCannotCreateDirectory = 'Cannot create directory %s';
@@ -366,15 +382,15 @@ begin
   else
     PathWithWildCards := IncludeTrailingPathDelimiter(Path) + XML_WILDCARD;
   //Find the first file
-  R := SysUtils.FindFirst(PathWithWildCards, faAnyFile, SearchRec);
+  R := System.SysUtils.FindFirst(PathWithWildCards, faAnyFile, SearchRec);
   try
     while R = 0 do // file found!
     begin
       FileList.Append(SearchRec.Name); // Add file to list
-      R := SysUtils.FindNext(SearchRec); // Find next file
+      R := System.SysUtils.FindNext(SearchRec); // Find next file
     end;
   finally
-    SysUtils.FindClose(SearchRec);
+    System.SysUtils.FindClose(SearchRec);
   end;
 end;
 
@@ -706,8 +722,8 @@ end;
 procedure TInstantXMLConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
   CheckConnection;
-  if not SysUtils.DirectoryExists(Connection.RootFolder) and
-      not SysUtils.ForceDirectories(Connection.RootFolder) then
+  if not System.SysUtils.DirectoryExists(Connection.RootFolder) and
+      not System.SysUtils.ForceDirectories(Connection.RootFolder) then
     raise EInOutError.CreateFmt(SCannotCreateDirectory,
       [Connection.RootFolder]);
 end;
@@ -1181,37 +1197,6 @@ function TXMLFilesAccessor.SaveInstantObjectToXmlFile(
   const AObject: TInstantObject; const AFileName: string): Boolean;
 var
   strstream: TStringStream;
-  lPacketTableFile: boolean;
-  DataStr: string;
-
-  //Personalizzazione FinWave: ritorna la stringa S senza il carattere specificato in Ch
-   function KillChar( const S : string; Ch : Char ) : string;
-  var
-    I, Count: integer;
-  begin
-    SetLength( Result, Length(S) ); // imposta la lunghezza per prevenire la riallocazione
-    Count := 0; // numero di caratteri copiati nella stringa risultato
-    for I := 1 to Length(S) do
-    begin
-      if S[I] <> Ch then // il carattere non è fra quelli da eliminare
-      begin
-        // aggiunge il carattere alla stringa risultato
-        Inc(Count);
-        Result[Count] := S[I];
-      end;
-    end;
-    SetLength( Result, Count ); // imposta la lunghezza della stringa con i caratteri effettivamente copiati
-  end;
-
-  function ACapo(const Text, Keyword: string; Before, After: Boolean): string;
-  begin
-    Result := Text;
-    if Before then
-      Result := StringReplace(Result,KeyWord,sLineBreak+KeyWord,[rfReplaceAll]);
-    if After then
-      Result := StringReplace(Result,KeyWord,KeyWord+sLineBreak,[rfReplaceAll]);
-  end;
-
 begin
   if Assigned(FOnCustomSaveToXMLFile) then
     Result := FOnCustomSaveToXMLFile(AObject, AFileName)
@@ -1220,25 +1205,6 @@ begin
     strstream := TStringStream.Create('', TEncoding.UTF8);
     try
       InstantWriteObject(strStream, sfXML, AObject);
-      //Personalizzazione FinWave: ristruttura file XML prima di salvarlo per il Dizionario Dati
-      lPacketTableFile := pos('TDictTable.',AFileName) > 0;
-      if lPacketTableFile then
-      begin
-        // manda a capo il file xml solo alcuni TAG
-        DataStr := strstream.DataString;
-        DataStr := ACapo(DataStr, '<TDictTable>',False,True);
-        DataStr := ACapo(DataStr, '</TDictTable>',True,True);
-        DataStr := ACapo(DataStr, '<DictFields>',True,True);
-        DataStr := ACapo(DataStr, '</TDictField>',False,True);
-        DataStr := ACapo(DataStr, '<DictIndexes>',True,True);
-        DataStr := ACapo(DataStr, '</TDictIndex>',False,True);
-        DataStr := ACapo(DataStr, '<DictRelations>',True,True);
-        DataStr := ACapo(DataStr, '</TDictRelation>',False,True);
-        DataStr := ACapo(DataStr, '<DictTriggers>',True,True);
-        DataStr := ACapo(DataStr, '</TDictTrigger>',False,True);
-        strstream.Free;
-        strstream := TStringStream.Create(DataStr, TEncoding.UTF8);
-      end;
       strstream.SaveToFile(AFileName);
       Result := True;
     finally
@@ -1284,7 +1250,7 @@ end;
 function TXMLFilesAccessor.DeleteInstantObjectXmlFile(
   const AObject: TInstantObject; const AFileName: string): Boolean;
 begin
-  Result := SysUtils.DeleteFile(AFileName);
+  Result := System.SysUtils.DeleteFile(AFileName);
 end;
 
 function TXMLFilesAccessor.ReadInstantObject(const AObject: TInstantObject;
@@ -1365,10 +1331,10 @@ procedure TXMLFilesAccessor.CreateStorageDir(const AStorageName: string);
 var
   LPath: string;
 begin
-  if not SysUtils.DirectoryExists(RootFolder) then
+  if not System.SysUtils.DirectoryExists(RootFolder) then
     MkDir(RootFolder);
   LPath := IncludeTrailingBackslash(RootFolder) + AStorageName;
-  if not SysUtils.DirectoryExists(LPath) then
+  if not System.SysUtils.DirectoryExists(LPath) then
     MkDir(LPath);
 end;
 
@@ -1409,7 +1375,7 @@ end;
 
 procedure TXMLFilesAccessor.DoConnect;
 begin
-  if not SysUtils.DirectoryExists(RootFolder) then
+  if not System.SysUtils.DirectoryExists(RootFolder) then
     MkDir(RootFolder);
   FConnected := True;
 end;
@@ -1500,8 +1466,8 @@ begin
   Connector.CheckConnection;
   vDatabaseName := Connector.DatabaseName;
 
-  if not SysUtils.DirectoryExists(vDatabaseName) and
-      not SysUtils.ForceDirectories(vDatabaseName) then
+  if not System.SysUtils.DirectoryExists(vDatabaseName) and
+      not System.SysUtils.ForceDirectories(vDatabaseName) then
     raise EInOutError.CreateFmt(SCannotCreateDirectory, [vDatabaseName]);
 
   // No need to create the class-specific folders, which will be created
@@ -1525,21 +1491,21 @@ begin
 
   // Delete subFolder for the "storage name"
   vTableName := vDatabaseName + TableMetadata.Name;
-  if SysUtils.DirectoryExists(vTableName) then
+  if System.SysUtils.DirectoryExists(vTableName) then
   begin
     if FindFirst(vTableName + '\*.*', faAnyFile, sr) = 0 then
     begin
       repeat
-        SysUtils.DeleteFile(vTableName + '\' + sr.Name);
+        System.SysUtils.DeleteFile(vTableName + '\' + sr.Name);
       until FindNext(sr) <> 0;
-      SysUtils.FindClose(sr);
+      System.SysUtils.FindClose(sr);
     end;
     RemoveDir(vTableName);
   end;
 end;
 
 initialization
-  Classes.RegisterClass(TInstantXMLConnectionDef);
+  System.Classes.RegisterClass(TInstantXMLConnectionDef);
   TInstantXMLConnector.RegisterClass;
 
 finalization

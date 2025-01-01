@@ -35,9 +35,16 @@ unit InstantDesignResources;
 interface
 
 uses
-  SysUtils,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, ImgList,
-  Classes;
+  System.SysUtils
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.ImgList
+  , System.Classes
+  , System.ImageList;
 
 type
   TInstantDesignResourceModule = class(TDataModule)

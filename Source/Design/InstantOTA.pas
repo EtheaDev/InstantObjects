@@ -35,7 +35,11 @@ interface
 {$I '..\InstantDefines.inc'}
 
 uses
-  Classes, ToolsAPI, InstantTypes, Forms;
+  System.Classes
+  , ToolsAPI
+  , InstantTypes
+  , Vcl.Forms
+  ;
 
 type
   InstantOTAString = UTF8String;
@@ -310,7 +314,11 @@ type
 implementation
 
 uses
-  Windows, SysUtils, Dialogs, Controls;
+  WinApi.Windows
+  , System.SysUtils
+  , Vcl.Dialogs
+  , Vcl.Controls
+  ;
 
 type
   // Use the PNoRefCnt type to assign interface instances without invoking

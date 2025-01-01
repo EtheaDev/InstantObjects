@@ -5,8 +5,16 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, DBGrids, Grids,
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.DBGrids,
+  Vcl.Grids,
   InstantPersistence;
 
 
@@ -46,9 +54,10 @@ implementation
 {$R *.dfm}
 
 uses
-  Main, Themes;
+  Vcl.Themes,
+  Main;
 
-{ TBasicViewForm }
+{ TBasicViewFrame }
 
 procedure TBasicViewFrame.DbGridDrawColumnCellFixW11(Sender: TObject;
   const Rect: TRect; DataCol: Integer; Column: TColumn; State: TGridDrawState);

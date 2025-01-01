@@ -27,7 +27,8 @@ unit InstantObjects.Neon.MessageBodyReaders;
 interface
 
 uses
-  Classes, SysUtils, Rtti
+  System.Classes
+  , System.SysUtils, Rtti
 
   , MARS.Core.Attributes
   , MARS.Core.Declarations

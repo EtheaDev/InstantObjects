@@ -10,10 +10,10 @@ unit Model;
 interface
 
 uses
-  InstantPersistence
-  , InstantTypes
-  , InstantClasses
-  , System.Classes
+  System.Classes,
+  InstantPersistence,
+  InstantTypes,
+  InstantClasses
   {$IFDEF DELPHI_NEON}
   , Neon.Core.Types
   , Neon.Core.Nullables
@@ -72,8 +72,8 @@ type
     CreationDate: DateTime stored 'CREATION_DATE' mask '!99/99/9999 99:99;1; ' width 16 usenull;
     IPAddress: String(50) stored 'IP_ADDRESS' width 50; }
     _Password: TInstantString;
-    [NeonInclude, NeonProperty('Profile')]
     _Language: TInstantString;
+    {$IFDEF DELPHI_NEON}[NeonInclude, NeonProperty('Profile')]{$ENDIF}
     _Profile: TInstantReference;
     _Administrator: TInstantBoolean;
     _System: TInstantBoolean;
@@ -127,7 +127,7 @@ type
   published
     property Password: string read GetPassword write SetPassword;
     property Language: string read GetLanguage write SetLanguage;
-    [NeonIgnore]
+    {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
     property Profile: TProfile read GetProfile write SetProfile;
     property Administrator: Boolean read GetAdministrator write SetAdministrator;
     property System: Boolean read GetSystem write SetSystem;
@@ -380,7 +380,7 @@ type
     property EmailCount: Integer read GetEmailCount;
     property Emails[Index: Integer]: TEmail read GetEmails write SetEmails;
   published
-    [NeonInclude(IncludeIf.NotDefault)]
+    {$IFDEF DELPHI_NEON}[NeonInclude(IncludeIf.NotDefault)]{$ENDIF}
     property BirthDate: TDate read GetBirthDate write SetBirthDate;
     property BirthTime: TTime read GetBirthTime write SetBirthTime;
     {$IFDEF DELPHI_NEON}[NeonIgnore]{$ENDIF}
@@ -418,7 +418,9 @@ type
 implementation
 
 uses
-  SysUtils, InstantUtils, InstantMetadata;
+  System.SysUtils,
+  InstantUtils,
+  InstantMetadata;
 
 { TProfile }
 {$IFDEF WINLINUX64}

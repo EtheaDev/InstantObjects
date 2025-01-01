@@ -35,9 +35,18 @@ unit InstantAbout;
 interface
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ExtCtrls,
-  InstantDialog;
+  System.SysUtils
+  , System.Classes
+  , WinApi.Windows
+  , WinApi.Messages
+  , Vcl.Graphics
+  , Vcl.Controls
+  , Vcl.Forms
+  , Vcl.Dialogs
+  , Vcl.StdCtrls
+  , Vcl.ExtCtrls
+  , InstantDialog
+  ;
 
 type
   TInstantAboutForm = class(TInstantDialogForm)
@@ -58,7 +67,9 @@ type
 implementation
 
 uses
-  ShellAPI, InstantUtils;
+  WinApi.ShellAPI
+  , InstantUtils
+  ;
 
 {$R *.dfm}
 
@@ -67,6 +78,7 @@ begin
   inherited;
   LicenseMemo.Text :=
     'InstantObjects Object Persistence Framework'+sLineBreak+
+    'Version: '+InstantObjectVersion+sLineBreak+
     'Mozilla Public License 2.0 Edition'+sLineBreak+
     'This product is subject to the Mozilla Public License Version 2.0 (the "License");'+sLineBreak+
     'you may not use this product except in compliance with the License.'+sLineBreak+

@@ -59,7 +59,7 @@ object InstantDBXConnectionDefEditForm: TInstantDBXConnectionDefEditForm
     object StreamFormatLabel: TLabel
       Left = 16
       Top = 228
-      Width = 60
+      Width = 61
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox

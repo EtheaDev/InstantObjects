@@ -36,7 +36,7 @@ procedure Register;
 implementation
 
 uses
-  Classes, InstantIBX;
+  System.Classes, InstantIBX;
 
 procedure Register;
 begin

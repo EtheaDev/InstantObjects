@@ -2,8 +2,17 @@ unit Model;
 
 interface
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
+{$I '..\InstantDefines.inc'}
+{$ENDIF}
+
 uses
-  InstantPersistence;
+  System.Classes,
+  InstantPersistence,
+  InstantTypes,
+  InstantClasses;
 
 type
   TSimpleClass = class(TInstantObject)
@@ -13,6 +22,12 @@ type
   private
     function GetStringProperty: string;
     procedure SetStringProperty(const Value: string);
+  public
+    {$IFDEF WINLINUX64}
+    class function Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+      ARefresh: Boolean = False; AConnector: TComponent = nil;
+      const AObjectData: TInstantAbstractObjectData = nil): TSimpleClass; reintroduce; virtual;
+    {$ENDIF}
   published
     property StringProperty: string read GetStringProperty write SetStringProperty;
   end;
@@ -22,7 +37,7 @@ procedure CreateInstantModel;
 implementation
 
 uses
-  InstantMetadata, InstantTypes;
+  InstantMetadata;
 
 procedure CreateInstantModel;
 var
@@ -65,6 +80,16 @@ begin
 end;
 
 { TSimpleClass }
+
+{$IFDEF WINLINUX64}
+class function TSimpleClass.Retrieve(const AObjectId: string; CreateIfMissing: Boolean = False;
+  ARefresh: Boolean = False; AConnector: TComponent = nil;
+  const AObjectData: TInstantAbstractObjectData = nil): TSimpleClass;
+begin
+  Result := inherited Retrieve(AObjectId,
+    CreateIfMissing, ARefresh, AConnector, AObjectData) as TSimpleClass;
+end;
+{$ENDIF}
 
 function TSimpleClass.GetStringProperty: string;
 begin

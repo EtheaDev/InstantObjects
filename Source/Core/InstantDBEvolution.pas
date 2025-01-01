@@ -38,7 +38,11 @@ unit InstantDBEvolution;
 interface
 
 uses
-  Classes, InstantPersistence, InstantDBBuild, InstantMetadata;
+  System.Classes
+  , InstantPersistence
+  , InstantDBBuild
+  , InstantMetadata
+  ;
 
 type
   // Builds a TInstantDBBuildCommandSequence that upgrades a database schema to
@@ -57,7 +61,10 @@ type
 implementation
 
 uses
-  SysUtils, DB, InstantTypes;
+  System.SysUtils
+  , Data.DB
+  , InstantTypes
+  ;
   
 { TInstantDBEvolver }
 

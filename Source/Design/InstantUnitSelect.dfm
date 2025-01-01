@@ -1,6 +1,5 @@
 inherited InstantUnitSelectForm: TInstantUnitSelectForm
   Caption = 'Select Model Units'
-  PixelsPerInch = 96
   TextHeight = 13
   inherited ClientPanel: TPanel
     inherited LeftPanel: TPanel

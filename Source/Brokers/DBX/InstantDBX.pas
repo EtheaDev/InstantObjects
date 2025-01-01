@@ -39,11 +39,17 @@ interface
 {$ENDIF}
 
 uses
-  Controls,
-  Classes, DB,
-  DBXCommon,
-  SqlExpr, InstantPersistence, InstantCommand,
-  InstantBrokers, InstantMetadata, InstantTypes;
+  Vcl.Controls
+  , System.Classes
+  , Data.DB
+  , Data.DBXCommon
+  , Data.SqlExpr
+  , InstantPersistence
+  , InstantCommand
+  , InstantBrokers
+  , InstantMetadata
+  , InstantTypes
+  ;
 
 type
   TInstantDBXConnectionDef = class(TInstantConnectionBasedConnectionDef)
@@ -285,9 +291,17 @@ type
 implementation
 
 uses
-  SysUtils, InstantDBXConnectionDefEdit, InstantUtils, InstantConsts, Math, InstantClasses,
-  InstantDBBuild,
-  InstantIBFbCatalog, InstantMSSqlCatalog, InstantMySQLCatalog;
+  System.SysUtils
+  , InstantDBXConnectionDefEdit
+  , InstantUtils
+  , InstantConsts
+  , System.Math
+  , InstantClasses
+  , InstantDBBuild
+  , InstantIBFbCatalog
+  , InstantMSSqlCatalog
+  , InstantMySQLCatalog
+  ;
 
 { TInstantDBXConnector }
 
@@ -571,6 +585,7 @@ function TInstantDBXBroker.Execute(const AStatement: string;
 var
   LQuery: TSQLQuery;
 begin
+  {$if CompilerVersion < 32}Result := 0;{$endif}
   LQuery := AcquireDataSet(AStatement, AParams, OnAssignParamValue) as TSQLQuery;
   try try
     Result := LQuery.ExecSQL;

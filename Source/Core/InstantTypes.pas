@@ -41,7 +41,9 @@ unit InstantTypes;
 interface
 
 uses
-  Sysutils, DB; // TBytes
+  System.Sysutils,
+  Data.DB
+  ;
 
 const
   {$IF DEFINED(WINLINUX64) OR DEFINED(USE_LARGEINT_FIELD_FOR_REF)}
@@ -51,6 +53,7 @@ const
   {$IFEND}
 
 type
+  {$IF (CompilerVersion >= 36)}TListSize = NativeInt;{$ELSE}TListSize = Integer;{$IFEND}
   TIORefValueType = {$IFDEF WINLINUX64}NativeInt{$ELSE}Integer{$ENDIF};
 
   TInstantSQLEngine = (seGenericSQL, seMSSQL, seOracle, seFirebird, seInterbase,

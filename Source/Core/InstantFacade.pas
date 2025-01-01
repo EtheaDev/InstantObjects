@@ -11,7 +11,8 @@ unit InstantFacade;
 interface
 
 uses
-  Classes, InstantClasses, InstantPersistence;
+  System.Classes,
+ InstantClasses, InstantPersistence;
 
 type
   TInstantFacade = class(TPersistent)

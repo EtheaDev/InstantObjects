@@ -37,68 +37,48 @@
         <Cfg_1>true</Cfg_1>
         <Base>true</Base>
     </PropertyGroup>
+    <PropertyGroup Condition="('$(Platform)'=='Win64' and '$(Cfg_1)'=='true') or '$(Cfg_1_Win64)'!=''">
+        <Cfg_1_Win64>true</Cfg_1_Win64>
+        <CfgParent>Cfg_1</CfgParent>
+        <Cfg_1>true</Cfg_1>
+        <Base>true</Base>
+    </PropertyGroup>
     <PropertyGroup Condition="'$(Config)'=='Debug' or '$(Cfg_2)'!=''">
         <Cfg_2>true</Cfg_2>
         <CfgParent>Base</CfgParent>
-        <Base>true</Base>
-    </PropertyGroup>
-    <PropertyGroup Condition="('$(Platform)'=='Win32' and '$(Cfg_2)'=='true') or '$(Cfg_2_Win32)'!=''">
-        <Cfg_2_Win32>true</Cfg_2_Win32>
-        <CfgParent>Cfg_2</CfgParent>
-        <Cfg_2>true</Cfg_2>
         <Base>true</Base>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <Icon_MainIcon>PrimerIcon.ico</Icon_MainIcon>
         <SanitizedProjectName>Primer_D11</SanitizedProjectName>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Winapi;VCLTee;IBX;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <VerInfo_Keys>CompanyName=InstantObjects.org;FileDescription=Primer Demo;FileVersion=2.0.0.0;InternalName=;LegalCopyright=MPL public license;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=2.0;Comments=</VerInfo_Keys>
         <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Brokers\FireDAC;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;..\..\Source\Catalogs\Oracle;..\..\Source\Catalogs\DB2;..\..\Source\Brokers\JSON;..\..\..\ext\delphi-neon\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <DCC_UsePackage>vcl;rtl;vclx;dbrtl;vcldb;bdertl;vclimg;vclactnband;adortl;vcldbx;dbexpress;DbxCommonDriver;DataSnapIndy10ServerTransport;DataSnapProviderClient;vclie;xmlrtl;inet;dsnap;inetdb;IndySystem;IndyCore;IndyProtocols;DbxClientDriver;inetdbxpress;inetdbbde;DataSnapServer;dbxcds;DBXInterBaseDriver;DBXMySQLDriver;DBXFirebirdDriver;DBXSybaseASEDriver;DBXSybaseASADriver;DBXOracleDriver;DBXMSSQLDriver;DBXInformixDriver;DBXDb2Driver;vclib;ibxpress;intrawebdb_100_140;Intraweb_100_140;dsnapcon;vclribbon;VclSmp;soaprtl;TeeUI;TeeDB;Tee;vcltouch;webdsnap;websnap;rbRIDE1114;rbIDE1114;rbRAP1114;rbRCL1114;dclRBADO1114;rbADO1114;rbDB1114;rbDAD1114;dclRBBDE1114;rbDBDE1114;rbBDE1114;dclRBDBE1114;rbDBE1114;dclRBE1114;rbCIDE1114;dclRBIBE1114;rbIBE1114;rbUSERDesign1114;rbUSER1114;ActionBandExtensionsD2010;UniSynEdit_R2010;wPDF3_D2010;WPViewPDF_D2010;IOCore;Jcl;JclVcl;JvCoreD14R;JvSystemD14R;JvStdCtrlsD14R;JvAppFrmD14R;JvBandsD14R;JvDBD14R;JvDlgsD14R;JvBDED14R;JvCmpD14R;JvCryptD14R;JvCtrlsD14R;JvCustomD14R;JvDockingD14R;JvDotNetCtrlsD14R;JvEDID14R;JvGlobusD14R;JvHMID14R;JvInterpreterD14R;JvJansD14R;JvManagedThreadsD14R;JvMMD14R;JvNetD14R;JvPageCompsD14R;JvPluginD14R;JvPrintPreviewD14R;JvRuntimeDesignD14R;JvTimeFrameworkD14R;JvValidatorsD14R;JvWizardD14R;JvXPCtrlsD14R;rbDIDE1114;IOIBX;IOXML;IODBX;IOBDE;IOADO;ISRtl5;ISVcl5;ISOpenOffice5;ISFLib5;$(DCC_UsePackage)</DCC_UsePackage>
-        <DCC_DependencyCheckOutputName>Primer_DXE.exe</DCC_DependencyCheckOutputName>
-        <DCC_Define>DELPHI_NEON;$(DCC_Define)</DCC_Define>
         <DCC_DcuOutput>..\Dcu\$(Platform)</DCC_DcuOutput>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
-        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
-        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
-        <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
-        <BT_BuildType>Debug</BT_BuildType>
-        <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
-        <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
-        <Version>7.0</Version>
-        <DCC_DebugInformation>0</DCC_DebugInformation>
-        <DCC_LocalDebugSymbols>False</DCC_LocalDebugSymbols>
-        <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
-        <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_ResourcePath)</DCC_ResourcePath>
-        <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_ObjPath)</DCC_ObjPath>
-        <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_IncludePath)</DCC_IncludePath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_2)'!=''">
-        <DCC_DebugDCUs>true</DCC_DebugDCUs>
-        <Version>7.0</Version>
-        <DCC_Define>DEBUG;NO_IO_STATEMENT_LOGGING;$(DCC_Define)</DCC_Define>
-        <DCC_ResourcePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_ResourcePath)</DCC_ResourcePath>
-        <DCC_ObjPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_ObjPath)</DCC_ObjPath>
-        <DCC_IncludePath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\BDE;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;$(DCC_IncludePath)</DCC_IncludePath>
-    </PropertyGroup>
-    <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
+    <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <BT_BuildType>Debug</BT_BuildType>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Cfg_2)'!=''">
+        <DCC_Define>DEBUG;NO_IO_STATEMENT_LOGGING;$(DCC_Define)</DCC_Define>
+        <DCC_DebugDCUs>true</DCC_DebugDCUs>
+        <DCC_IntegerOverflowCheck>true</DCC_IntegerOverflowCheck>
+        <DCC_RangeChecking>true</DCC_RangeChecking>
     </PropertyGroup>
     <ProjectExtensions>
         <Borland.Personality>Delphi.Personality.12</Borland.Personality>
@@ -122,22 +102,21 @@
                     <VersionInfo Name="CodePage">1252</VersionInfo>
                 </VersionInfo>
                 <VersionInfoKeys>
-                    <VersionInfoKeys Name="CompanyName">InstantObjects.org</VersionInfoKeys>
+                    <VersionInfoKeys Name="CompanyName">Ethea S.r.l.</VersionInfoKeys>
                     <VersionInfoKeys Name="FileDescription">Primer Demo</VersionInfoKeys>
                     <VersionInfoKeys Name="FileVersion">2.0.0.0</VersionInfoKeys>
                     <VersionInfoKeys Name="InternalName"/>
                     <VersionInfoKeys Name="LegalCopyright">MPL public license</VersionInfoKeys>
                     <VersionInfoKeys Name="LegalTrademarks"/>
                     <VersionInfoKeys Name="OriginalFilename"/>
-                    <VersionInfoKeys Name="ProductName"/>
+                    <VersionInfoKeys Name="ProductName">InstantObjects</VersionInfoKeys>
                     <VersionInfoKeys Name="ProductVersion">2.0</VersionInfoKeys>
                     <VersionInfoKeys Name="Comments"/>
                 </VersionInfoKeys>
                 <Source>
                     <Source Name="MainSource">Primer_D11.dpr</Source>
                 </Source>
-                <Excluded_Packages>
-                </Excluded_Packages>
+                <Excluded_Packages/>
             </Delphi.Personality>
             <ModelSupport>False</ModelSupport>
             <Platforms>

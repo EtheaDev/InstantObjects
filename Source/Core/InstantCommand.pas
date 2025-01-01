@@ -39,8 +39,14 @@ unit InstantCommand;
 interface
 
 uses
-  Classes, SysUtils, Contnrs, InstantClasses, InstantTextFiler, InstantMetadata,
-  InstantTypes;
+  System.Classes
+  , System.SysUtils
+  , System.Contnrs
+  , InstantClasses
+  , InstantTextFiler
+  , InstantMetadata
+  , InstantTypes
+  ;
 
 type
   TInstantIQLObject = class;
@@ -538,9 +544,13 @@ type
 implementation
 
 uses
-  StrUtils,
-  System.Types,
-  InstantPersistence, InstantUtils, InstantConsts, InstantBrokers;
+  System.StrUtils
+  , System.Types
+  , InstantPersistence
+  , InstantUtils
+  , InstantConsts
+  , InstantBrokers
+  ;
 
 const
   OperatorInTokens: array[TInstantIQLOperatorType] of string = ('=', '>', '<',

@@ -63,7 +63,8 @@ type
 implementation
 
 uses
-  SysUtils, Classes, TypInfo, InstantConsts;
+  SysUtils
+  , System.Classes, TypInfo, InstantConsts;
   
 procedure TInstantJSONCatalog.AddTableMetadatas(
   TableMetadatas: TInstantTableMetadatas);

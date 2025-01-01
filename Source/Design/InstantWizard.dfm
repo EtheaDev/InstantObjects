@@ -1,9 +1,5 @@
 inherited InstantWizardForm: TInstantWizardForm
   Caption = 'Wizard'
-  OldCreateOrder = True
-  ExplicitWidth = 410
-  ExplicitHeight = 292
-  PixelsPerInch = 96
   TextHeight = 13
   inherited ButtonPanel: TPanel
     TabOrder = 1
@@ -64,14 +60,14 @@ inherited InstantWizardForm: TInstantWizardForm
         object StartInfoLabel: TLabel
           Left = 16
           Top = 16
-          Width = 160
+          Width = 179
           Height = 13
           Caption = 'The following steps will help you...'
         end
         object StartContinueLabel: TLabel
           Left = 16
           Top = 40
-          Width = 107
+          Width = 116
           Height = 13
           Caption = 'Click Next to continue.'
         end
@@ -105,7 +101,7 @@ inherited InstantWizardForm: TInstantWizardForm
     object HeaderCaptionLabel: TLabel
       Left = 48
       Top = 8
-      Width = 89
+      Width = 81
       Height = 13
       Caption = 'Header Caption'
       Font.Charset = DEFAULT_CHARSET
@@ -118,7 +114,7 @@ inherited InstantWizardForm: TInstantWizardForm
     object HeaderHintLabel: TLabel
       Left = 48
       Top = 24
-      Width = 60
+      Width = 65
       Height = 13
       Caption = 'Header Hint.'
     end

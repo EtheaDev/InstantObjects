@@ -3,10 +3,23 @@ unit InstantPumpConnectionManagerFormUnit;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, InstantPersistence, DB, StdCtrls, ActnList, Menus, ImgList,
-  ExtCtrls, ComCtrls,
-  InstantConnectionManager, InstantConnectionManagerFormUnit, InstantPump;
+  WinApi.Windows,
+ Messages
+  , System.SysUtils, Variants, System.Classes,
+ Graphics
+  , Vcl.Controls
+  , Vcl.Forms,
+  Dialogs
+  , Data.DB
+  , Vcl.StdCtrls
+  , Vcl.ActnList
+  , Vcl.Menus, ImgList,
+  ExtCtrls, ComCtrls, System.Actions, System.ImageList
+  , InstantConnectionManager
+  , InstantConnectionManagerFormUnit
+  , InstantPersistence
+  , InstantPump
+  , InstantMetadata;
 
 type
   TInstantPumpConnectionManagerForm = class(TInstantConnectionManagerForm)

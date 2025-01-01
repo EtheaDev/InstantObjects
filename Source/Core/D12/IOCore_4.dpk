@@ -18,7 +18,7 @@ package IOCore_4;
 {$REFERENCEINFO OFF}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
-{$TYPEDADDRESS ON}
+{$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
@@ -31,13 +31,11 @@ package IOCore_4;
 {$IMPLICITBUILD OFF}
 
 requires
-  Neon,
   rtl,
   vcl,
   vcldb;
 
 contains
-  Instant.Neon.Serializers in '..\Instant.Neon.Serializers.pas',
   InstantUtils in '..\InstantUtils.pas',
   InstantClasses in '..\InstantClasses.pas',
   InstantConsts in '..\InstantConsts.pas',

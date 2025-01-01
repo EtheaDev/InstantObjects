@@ -40,8 +40,19 @@ unit InstantExplorer;
 interface
 
 uses
-  Controls, Forms, ComCtrls, ExtCtrls, DbGrids, ImgList,
-  Classes, DB, TypInfo, InstantPersistence, InstantPresentation, DbCtrls;
+  Vcl.Controls
+  , Vcl.Forms
+  , Vcl.ComCtrls
+  , Vcl.ExtCtrls
+  , Vcl.DbGrids
+  , Vcl.ImgList
+  , System.Classes
+  , Data.DB
+  , System.TypInfo
+  , InstantPersistence
+  , InstantPresentation
+  , Vcl.DbCtrls
+  ;
 
 type
   TInstantExplorer = class;
@@ -273,9 +284,17 @@ procedure InstantExploreObject(AObject: TObject);
 implementation
 
 uses
-  SysUtils, Messages, Math,
-  InstantClasses, InstantRtti, InstantMetadata, InstantTypes,
-  Graphics, StdCtrls, Windows;
+  System.SysUtils
+  , WinApi.Messages
+  , System.Math
+  , InstantClasses
+  , InstantRtti
+  , InstantMetadata
+  , InstantTypes
+  , Vcl.Graphics
+  , Vcl.StdCtrls
+  , WinApi.Windows
+  ;
 
 const
   NotLoaded = Pointer(-1);

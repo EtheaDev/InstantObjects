@@ -5,10 +5,25 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  SysUtils, Classes,
-  Windows, Messages, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Grids, DBGrids, Mask, DBCtrls, ExtCtrls, ComCtrls,
-  ContactEdit, DB, InstantPresentation, Model;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Vcl.DBCtrls,
+  Data.DB,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.Mask,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  ContactEdit,
+  InstantPresentation,
+  Model;
 
 type
   TContactFilterEditForm = class(TContactEditForm)

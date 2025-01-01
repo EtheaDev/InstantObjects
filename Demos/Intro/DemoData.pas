@@ -5,7 +5,10 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  Classes, Model, InstantPersistence, RandomData;
+  System.Classes,
+  Model,
+  InstantPersistence,
+  RandomData;
 
 function CreateRandomCompany(ContactPerson: TPerson): TCompany;
 function CreateRandomPerson: TPerson;
@@ -13,8 +16,8 @@ function CreateRandomPerson: TPerson;
 implementation
 
 uses
-  SysUtils,
-  Windows,
+  Winapi.Windows,
+  System.SysUtils,
   InstantUtils;
 
 function CreateRandomAddress: TAddress;

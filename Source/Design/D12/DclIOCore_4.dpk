@@ -24,12 +24,11 @@ package DclIOCore_4;
 {$REFERENCEINFO OFF}
 {$SAFEDIVIDE OFF}
 {$STACKFRAMES OFF}
-{$TYPEDADDRESS ON}
+{$TYPEDADDRESS OFF}
 {$VARSTRINGCHECKS ON}
 {$WRITEABLECONST OFF}
 {$MINENUMSIZE 1}
 {$IMAGEBASE $400000}
-{$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
 {$DESCRIPTION 'InstantObjects 4 Design-Time Package'}
 {$LIBSUFFIX AUTO}
@@ -38,12 +37,8 @@ package DclIOCore_4;
 
 requires
   designide,
-  vcldb,
-  rtl,
-  vcl,
-  dbrtl,
-  VclSmp,
-  IOCore_4;
+  IOCore_4,
+  VclSmp;
 
 contains
   InstantWizard in '..\InstantWizard.pas',

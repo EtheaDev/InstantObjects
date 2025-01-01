@@ -82,7 +82,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
     object StreamFormatLabel: TLabel
       Left = 16
       Top = 240
-      Width = 60
+      Width = 61
       Height = 13
       Caption = 'Blob &format'
       FocusControl = StreamFormatComboBox
@@ -90,7 +90,7 @@ object InstantIBXConnectionDefEditForm: TInstantIBXConnectionDefEditForm
     object IdDataTypeLabel: TLabel
       Left = 136
       Top = 240
-      Width = 63
+      Width = 62
       Height = 13
       Caption = 'Id &Data Type'
       FocusControl = IdDataTypeComboBox

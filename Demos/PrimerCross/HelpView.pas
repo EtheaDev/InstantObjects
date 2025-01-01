@@ -5,8 +5,20 @@ interface
 {$I '..\..\Source\InstantDefines.inc'}
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  BasicView, OleCtrls, SHDocVw, StdCtrls, ExtCtrls, ComCtrls;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.OleCtrls,
+  Vcl.StdCtrls,
+  Vcl.ExtCtrls,
+  Vcl.ComCtrls,
+  BasicView,
+  SHDocVw;
 
 type
   THelpViewForm = class(TBasicViewFrame)

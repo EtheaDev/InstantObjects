@@ -35,9 +35,20 @@ unit InstantModelExpert;
 interface
 
 uses
-  Classes, ToolsAPI, InstantOTA, Menus, ImgList, ExtCtrls, Forms,
-  InstantDesignResources, InstantModelExplorer, InstantCode, 
-  InstantConsts, ActnList, System.Actions;
+  System.Classes
+  , ToolsAPI
+  , InstantOTA
+  , Vcl.Menus
+  , Vcl.ImgList
+  , Vcl.ExtCtrls
+  , Vcl.Forms
+  , InstantDesignResources
+  , InstantModelExplorer
+  , InstantCode
+  , InstantConsts
+  , Vcl.ActnList
+  , System.Actions
+  ;
 
 type
   TIOMetaDataCheckState = (mcNeverChecked, mcCheckError, mcCheckCorrect);
@@ -165,8 +176,15 @@ procedure Register;
 implementation
 
 uses
-  SysUtils, TypInfo, InstantDesignUtils, InstantUtils, InstantUnitSelect,
-  InstantConnectionManager, Dialogs, Graphics;
+  System.SysUtils
+  , System.TypInfo
+  , InstantDesignUtils
+  , InstantUtils
+  , InstantUnitSelect
+  , InstantConnectionManager
+  , Vcl.Dialogs
+  , Vcl.Graphics
+  ;
 
 const
   SIOIdeMenuCategory = 'InstantObjects';
@@ -474,7 +492,7 @@ procedure TInstantModelExpert.AttachMenus;
       SBuilderItemActionName,
       SBuilderItemCaption,
       BuilderItemClick, 1,
-      Menus.ShortCut(Word('B'), [ssCtrl, ssShift]));
+      Vcl.Menus.ShortCut(Word('B'), [ssCtrl, ssShift]));
   end;
 
 var
@@ -499,7 +517,7 @@ begin
       SExplorerItemActionName,
       SExplorerItemCaption,
       ExplorerItemClick, 0,
-      Menus.ShortCut(Word('M'), [ssCtrl, ssShift]));
+      Vcl.Menus.ShortCut(Word('M'), [ssCtrl, ssShift]));
 
     Item := ItemByName(Menu, 'ViewStructureItem');
     if Assigned(Item) then

@@ -3,9 +3,26 @@ unit Main;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
-  StdCtrls, Db, InstantPresentation, InstantPersistence, Grids, DBGrids,
-  ExtCtrls, DBCtrls, Model, InstantBrokers, InstantXML, Buttons;
+  Winapi.Windows,
+  Winapi.Messages,
+  System.SysUtils,
+  System.Classes,
+  Data.DB,
+  Vcl.DBCtrls,
+  Vcl.Graphics,
+  Vcl.Controls,
+  Vcl.Forms,
+  Vcl.Dialogs,
+  Vcl.StdCtrls,
+  Vcl.Grids,
+  Vcl.DBGrids,
+  Vcl.ExtCtrls,
+  Vcl.Buttons,
+  InstantPresentation,
+  InstantPersistence,
+  Model,
+  InstantBrokers,
+  InstantXML;
 
 type
   TMainForm = class(TForm)
@@ -40,8 +57,14 @@ var
 
 implementation
 
-uses CompanyEdit, ContactEdit, PersonEdit, InstantExplorer,
-  RandomData, Contnrs, DemoData;
+uses
+  System.Contnrs,
+  CompanyEdit,
+  ContactEdit,
+  PersonEdit,
+  InstantExplorer,
+  RandomData,
+  DemoData;
 
 {$R *.DFM}
 
@@ -123,7 +146,7 @@ procedure TMainForm.GenerateDataButtonClick(Sender: TObject);
 var
   LValue: string;
 begin
-  LValue := '10';
+  LValue := '30';
   if InputQuery('Generate Random Data', 'How many contacts do you want to generate?', LValue) then
     GenerateRandomData(StrToInt(LValue));
 end;
