@@ -368,13 +368,12 @@ with circular references.</p>
 </li>
 <li><p>Added another test procedure to TestInstantReferences.pas
 to facilitate memory leak testing for object structures
-with circular references:
-A -> B -> C -> A
-|</p>
-<ul>
-<li>-> D -> E
-then delete E.</li>
-</ul>
+with circular references:</p>
+<pre><code class="">A -&gt; B -&gt; C -&gt; A
+   |
+   + -&gt; D -&gt; E
+then delete E.
+</code></pre>
 </li>
 <li><p>Test case to demostrate the infinite loop in
 FreeCircularReferences.</p>
@@ -707,8 +706,10 @@ see [RFC]_IO-001_Database_Structure_Evolution.txt
 until more complete docs are available.</p>
 </li>
 <li><p>Many bug fixes and small improvements. Please see our trackers:</p>
-<p>http://sourceforge.net/tracker/?group_id=94747&amp;atid=608935
-http://sourceforge.net/tracker/?group_id=94747&amp;atid=608938</p>
+</li>
+<li><p>http://sourceforge.net/tracker/?group_id=94747&amp;atid=608935</p>
+</li>
+<li><p>http://sourceforge.net/tracker/?group_id=94747&amp;atid=608938</p>
 </li>
 </ul>
 <p>Version 1.6.7 (2004-11-17) UNOFFICIAL</p>

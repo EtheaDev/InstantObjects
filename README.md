@@ -64,7 +64,7 @@ Version 4.2.3 (2025-04-10)
 - Fixed compilation with Neon Library
 
 Version 4.2.2 (2025-01-01)
-- New [Project Site](https://www.ethea.it/docs/InstantObjects/)
+- New [Project Site](https://www.ethea.it/docs/instantobjects/)
 - New Setup for automatic Installation of Components
 - Fixed some Tests for 64Bit platform
 
