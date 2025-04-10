@@ -43,7 +43,7 @@ interface
 
 uses
 {$IFNDEF IO_CONSOLE}
-  FileCtrl,
+  Vcl.FileCtrl,
 {$ENDIF}
   InstantPersistence, InstantBrokers, InstantMetadata, InstantTypes;
 
@@ -63,8 +63,10 @@ type
 implementation
 
 uses
-  SysUtils
-  , System.Classes, TypInfo, InstantConsts;
+  System.SysUtils
+  , System.Classes
+  , System.TypInfo
+  , InstantConsts;
   
 procedure TInstantJSONCatalog.AddTableMetadatas(
   TableMetadatas: TInstantTableMetadatas);

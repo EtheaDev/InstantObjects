@@ -3,7 +3,8 @@ unit UBuilder;
 interface
 
 uses
-  InstantPersistence, InstantTypes
+  InstantPersistence
+  , InstantTypes
   , System.Classes;
 
 procedure BuildAndConnect(const ConnectionFileName, ConnectionName : string);
@@ -29,15 +30,12 @@ uses
   the list. }
 
 //Begin Broker inclusion section
-  {$IFNDEF VER130}
   InstantDBX,
-  {$ENDIF}
-  InstantADO, InstantBDE, InstantIBX,
-{$ENDIF}
-  InstantXML,
+  InstantADO, 
+  InstantIBX,
+  InstantXML
 //End Broker inclusion section
-
-  Jpeg
+  , Jpeg
   , Vcl.Graphics,
   InstantConnectionManager, InstantClasses,
   Contnrs,

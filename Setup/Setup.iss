@@ -3,7 +3,7 @@
 {                                                                        }
 { Ethea InnoSetup Tools Library                                          }
 {                                                                        }
-{ Copyright (c) 2024 Ethea S.r.l.                                        }
+{ Copyright (c) 2025 Ethea S.r.l.                                        }
 {                                                                        }
 { Original Code is Copyright (c) 2021-2024 Skia4Delphi Project.          }
 {                                                                        }
@@ -62,9 +62,9 @@
 
 #define LibraryName "InstantObjects"
 #define SetupName "InstantObjects"
-#define LibraryVersion "4.2.2"
+#define LibraryVersion "4.2.3"
 #define LibraryPublisher "Ethea S.r.l."
-#define LibraryCopyright "Copyright (c) 2001-2024 Ethea S.r.l."
+#define LibraryCopyright "Copyright (c) 2001-2025 Ethea S.r.l."
 #define LibraryURL "https://ethea.it/docs/instantobjects/"
 #define LibrarySamplesFolder "Demos"
 #define LibraryPackagesFolder "Source"
@@ -82,6 +82,7 @@
 //#define VclStyle "Windows11.Dark.vsf"
 
 [Setup]
+WizardSizePercent=120
 AllowCancelDuringInstall=yes
 AppCopyright={#LibraryCopyright}
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -164,7 +165,7 @@ Name: "{group}\Uninstall"; Filename: "{uninstallexe}"
 
 [Run]
 Filename: "{app}\{#LibrarySamplesFolder}"; Description: "{cm:SetupOpenSamplesFolder}"; Flags: shellexec runasoriginaluser postinstall;
-Filename: "{#LibraryDocumentationURL}"; Description: "{cm:SetupViewOnlineDocumentation}"; Flags: shellexec runasoriginaluser postinstall unchecked;
+Filename: "{#LibraryDocumentationURL}"; Description: "{cm:SetupViewOnlineDocumentation}"; Flags: shellexec runasoriginaluser postinstall;
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}\Demos\*";

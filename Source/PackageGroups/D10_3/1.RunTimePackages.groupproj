@@ -21,9 +21,6 @@
         <Projects Include="..\..\Brokers\DBX\D10_3\IODBX_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Brokers\IBX\D10_3\IOIBX_4.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\..\Brokers\XML\D10_3\IOXML_4.dproj">
             <Dependencies/>
         </Projects>
@@ -92,15 +89,6 @@
     <Target Name="IODBX_4:Make">
         <MSBuild Projects="..\..\Brokers\DBX\D10_3\IODBX_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="IOIBX_4">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_3\IOIBX_4.dproj"/>
-    </Target>
-    <Target Name="IOIBX_4:Clean">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_3\IOIBX_4.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="IOIBX_4:Make">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_3\IOIBX_4.dproj" Targets="Make"/>
-    </Target>
     <Target Name="IOXML_4">
         <MSBuild Projects="..\..\Brokers\XML\D10_3\IOXML_4.dproj"/>
     </Target>
@@ -120,13 +108,13 @@
         <MSBuild Projects="..\..\Brokers\FireDAC\D10_3\IOFireDAC_4.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="IOCore_4;IOIBFbCatalog_4;IOMSSqlCatalog_4;IOMySQLCatalog_4;IOADO_4;IODBX_4;IOIBX_4;IOXML_4;IOFireDAC_4"/>
+        <CallTarget Targets="IOCore_4;IOIBFbCatalog_4;IOMSSqlCatalog_4;IOMySQLCatalog_4;IOADO_4;IODBX_4;IOXML_4;IOFireDAC_4"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="IOCore_4:Clean;IOIBFbCatalog_4:Clean;IOMSSqlCatalog_4:Clean;IOMySQLCatalog_4:Clean;IOADO_4:Clean;IODBX_4:Clean;IOIBX_4:Clean;IOXML_4:Clean;IOFireDAC_4:Clean"/>
+        <CallTarget Targets="IOCore_4:Clean;IOIBFbCatalog_4:Clean;IOMSSqlCatalog_4:Clean;IOMySQLCatalog_4:Clean;IOADO_4:Clean;IODBX_4:Clean;IOXML_4:Clean;IOFireDAC_4:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="IOCore_4:Make;IOIBFbCatalog_4:Make;IOMSSqlCatalog_4:Make;IOMySQLCatalog_4:Make;IOADO_4:Make;IODBX_4:Make;IOIBX_4:Make;IOXML_4:Make;IOFireDAC_4:Make"/>
+        <CallTarget Targets="IOCore_4:Make;IOIBFbCatalog_4:Make;IOMSSqlCatalog_4:Make;IOMySQLCatalog_4:Make;IOADO_4:Make;IODBX_4:Make;IOXML_4:Make;IOFireDAC_4:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
     <ItemGroup Condition="'$(BuildGroup)'=='ALL'">

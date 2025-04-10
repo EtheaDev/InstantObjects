@@ -34,7 +34,10 @@ uses
   Web.WebReq,
 
   //LoggerPro Support
+  {$IFDEF LOGGERPRO}
   LoggerPro,
+  InstantObjects.MARS.Server.LoggerPro.Config in '..\..\Source\MARSServer\InstantObjects.MARS.Server.LoggerPro.Config.pas',
+  {$ENDIF}
   //InstantObjects Units
   Instant.Neon.Serializers in '..\..\Source\Core\Instant.Neon.Serializers.pas',
 
@@ -47,7 +50,6 @@ uses
   InstantObjects.MARS.Server.Exceptions in '..\..\Source\MARSServer\InstantObjects.MARS.Server.Exceptions.pas',
   InstantObjects.MARS.Server.Resources.Utils in '..\..\Source\MARSServer\InstantObjects.MARS.Server.Resources.Utils.pas',
   InstantObjects.MARS.Server.Resources.Config in '..\..\Source\MARSServer\InstantObjects.MARS.Server.Resources.Config.pas',
-  InstantObjects.MARS.Server.LoggerPro.Config in '..\..\Source\MARSServer\InstantObjects.MARS.Server.LoggerPro.Config.pas',
   InstantObjects.Neon.MessageBodyWriters in '..\..\Source\MARSServer\InstantObjects.Neon.MessageBodyWriters.pas',
   InstantObjects.Neon.MessageBodyReaders in '..\..\Source\MARSServer\InstantObjects.Neon.MessageBodyReaders.pas',
   InstantObjects.MARS.Data in '..\..\Source\MARSServer\InstantObjects.MARS.Data.pas',

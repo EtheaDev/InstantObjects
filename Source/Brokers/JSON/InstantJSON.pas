@@ -39,9 +39,16 @@ interface
 
 uses
   System.Classes
-  , Data.DB, Contnrs
-  , System.Types, InstantPersistence, InstantBrokers, InstantCommand,
-  InstantMetadata, InstantTypes, InstantClasses;
+  , Data.DB
+  , System.Contnrs
+  , System.Types
+  , InstantPersistence
+  , InstantBrokers
+  , InstantCommand
+  , InstantMetadata
+  , InstantTypes
+  , InstantClasses
+  ;
 
 const
   JSON_EXT = 'json';
@@ -340,15 +347,20 @@ function GetJSONLineBreak: string;
 implementation
 
 uses
-  SysUtils, InstantConsts,
-  TypInfo, InstantJSONCatalog, InstantUtils,
+  System.SysUtils
+  , InstantConsts
+  , System.TypInfo
+  , InstantJSONCatalog
+  , InstantUtils
 {$IFNDEF INSTANTOBJECTS_FMX}
 {$IFNDEF IO_CONSOLE}
-InstantJSONConnectionDefEdit, FileCtrl
-  , Vcl.Controls,
+  , InstantJSONConnectionDefEdit
+  , Vcl.FileCtrl
+  , Vcl.Controls
 {$ENDIF}
 {$ENDIF}
-  Windows;
+  , WinApi.Windows
+  ;
 
 resourcestring
   SCannotCreateDirectory = 'Cannot create directory %s';
@@ -370,15 +382,15 @@ begin
   else
     PathWithWildCards := IncludeTrailingPathDelimiter(Path) + JSON_WILDCARD;
   //Find the first file
-  R := SysUtils.FindFirst(PathWithWildCards, faAnyFile, SearchRec);
+  R := System.SysUtils.FindFirst(PathWithWildCards, faAnyFile, SearchRec);
   try
     while R = 0 do // file found!
     begin
       FileList.Append(SearchRec.Name); // Add file to list
-      R := SysUtils.FindNext(SearchRec); // Find next file
+      R := System.SysUtils.FindNext(SearchRec); // Find next file
     end;
   finally
-    SysUtils.FindClose(SearchRec);
+    System.SysUtils.FindClose(SearchRec);
   end;
 end;
 
@@ -710,8 +722,8 @@ end;
 procedure TInstantJSONConnector.InternalBuildDatabase(Scheme: TInstantScheme);
 begin
   CheckConnection;
-  if not SysUtils.DirectoryExists(Connection.RootFolder) and
-      not SysUtils.ForceDirectories(Connection.RootFolder) then
+  if not System.SysUtils.DirectoryExists(Connection.RootFolder) and
+      not System.SysUtils.ForceDirectories(Connection.RootFolder) then
     raise EInOutError.CreateFmt(SCannotCreateDirectory,
       [Connection.RootFolder]);
 end;
@@ -1283,7 +1295,7 @@ end;
 function TJSONFilesAccessor.DeleteInstantObjectJSONFile(
   const AObject: TInstantObject; const AFileName: string): Boolean;
 begin
-  Result := SysUtils.DeleteFile(AFileName);
+  Result := System.SysUtils.DeleteFile(AFileName);
 end;
 
 function TJSONFilesAccessor.ReadInstantObject(const AObject: TInstantObject;
@@ -1364,10 +1376,10 @@ procedure TJSONFilesAccessor.CreateStorageDir(const AStorageName: string);
 var
   LPath: string;
 begin
-  if not SysUtils.DirectoryExists(RootFolder) then
+  if not System.SysUtils.DirectoryExists(RootFolder) then
     MkDir(RootFolder);
   LPath := IncludeTrailingBackslash(RootFolder) + AStorageName;
-  if not SysUtils.DirectoryExists(LPath) then
+  if not System.SysUtils.DirectoryExists(LPath) then
     MkDir(LPath);
 end;
 
@@ -1408,7 +1420,7 @@ end;
 
 procedure TJSONFilesAccessor.DoConnect;
 begin
-  if not SysUtils.DirectoryExists(RootFolder) then
+  if not System.SysUtils.DirectoryExists(RootFolder) then
     MkDir(RootFolder);
   FConnected := True;
 end;
@@ -1499,8 +1511,8 @@ begin
   Connector.CheckConnection;
   vDatabaseName := Connector.DatabaseName;
 
-  if not SysUtils.DirectoryExists(vDatabaseName) and
-      not SysUtils.ForceDirectories(vDatabaseName) then
+  if not System.SysUtils.DirectoryExists(vDatabaseName) and
+      not System.SysUtils.ForceDirectories(vDatabaseName) then
     raise EInOutError.CreateFmt(SCannotCreateDirectory, [vDatabaseName]);
 
   // No need to create the class-specific folders, which will be created
@@ -1524,21 +1536,21 @@ begin
 
   // Delete subFolder for the "storage name"
   vTableName := vDatabaseName + TableMetadata.Name;
-  if SysUtils.DirectoryExists(vTableName) then
+  if System.SysUtils.DirectoryExists(vTableName) then
   begin
     if FindFirst(vTableName + '\*.*', faAnyFile, sr) = 0 then
     begin
       repeat
-        SysUtils.DeleteFile(vTableName + '\' + sr.Name);
+        System.SysUtils.DeleteFile(vTableName + '\' + sr.Name);
       until FindNext(sr) <> 0;
-      SysUtils.FindClose(sr);
+      System.SysUtils.FindClose(sr);
     end;
     RemoveDir(vTableName);
   end;
 end;
 
 initialization
-  Classes.RegisterClass(TInstantJSONConnectionDef);
+  System.Classes.RegisterClass(TInstantJSONConnectionDef);
   TInstantJSONConnector.RegisterClass;
 
 finalization

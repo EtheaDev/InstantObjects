@@ -5,15 +5,19 @@
  *)
 unit Model;
 
+{$IFDEF LINUX64}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
 uses
-  System.Classes,
-  InstantPersistence,
-  InstantTypes,
-  InstantClasses
+  System.Classes
+  , InstantPersistence
+  , InstantTypes
+  , InstantClasses
   {$IFDEF DELPHI_NEON}
   , Neon.Core.Types
   , Neon.Core.Nullables

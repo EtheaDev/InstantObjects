@@ -95,7 +95,9 @@ uses
   InstantObjects.MARS.Server.Exceptions,
   InstantObjects.MARS.Server.Consts,
   InstantObjects.MARS.Server.Resources.Utils,
+  {$IFDEF LOGGERPRO}
   InstantObjects.MARS.Server.LoggerPro.Config,
+  {$ENDIF}
   Primer.MARS.Server.Resources.Token,
   Primer.MARS.Server.Resources.User;
 
@@ -180,6 +182,7 @@ begin
         {$ENDIF}
 
         LQueryParams := AActivation.Request.GetQueryString;
+        {$IFDEF LOGGERPRO}
         if LQueryParams <> '' then
           Log.Info('Request [Environment: %s] [Method: %s] [Url: %s]',
                   [LEnvironment,
@@ -190,6 +193,7 @@ begin
                   [LEnvironment,
                    AActivation.Request.Method,
                    AActivation.Request.RawPath], '');
+        {$ENDIF}
 
         if (SameText(AActivation.Request.method, 'PUT')) or
           (SameText(AActivation.Request.method, 'POST')) then

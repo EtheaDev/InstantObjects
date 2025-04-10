@@ -42,7 +42,7 @@ uses
   ;
 
 const
-  InstantObjectVersion = '4.2.2';
+  InstantObjectVersion = '4.2.4';
 
 type
   TInstantCompareOption = (coCaseInsensitive, coPartial);
@@ -224,6 +224,8 @@ end;
 
 function InstantCompareValues(V1, V2: Variant;
   Options: TInstantCompareOptions): Integer;
+var
+  LVarType1, LVarType2: TVarType;
 
   function IsStrVar(V: Variant): Boolean;
   begin
@@ -270,7 +272,7 @@ function InstantCompareValues(V1, V2: Variant;
   function CompareValues(V1, V2: Variant): Integer;
   begin
     case VarType(V1) of
-      varInteger, varByte,
+      varInteger, varInt64, varByte,
       varSingle, varDouble, varCurrency,
       varDate:
         Result := CompareNumbers(V1, V2);
@@ -284,8 +286,13 @@ function InstantCompareValues(V1, V2: Variant;
   end;
 
 begin
-  if (VarType(V1) = VarType(V2)) then
+  LVarType1 := VarType(V1);
+  LVarType2 := VarType(V2);
+  if (LVarType1 = LVarType2) then
     Result := CompareValues(V1, V2)
+  //Fix for compare Integers values Signed and Unsigned (using TLargeIntField for Objects)
+  else if IsVarTypeInteger(LVarType1) and IsVarTypeInteger(LVarType2) then
+    Result := CompareNumbers(V1, V2)
   else if IsStrVar(V1) and IsStrVar(V2) then
     Result := CompareStrings(V1, V2)
   else if IsBlankVar(V1) then
@@ -293,7 +300,14 @@ begin
   else if IsBlankVar(V2) then
     Result := CompareValues(V1, V2)
   else
+  begin
+    {$IFDEF DEBUG}
+    raise EInstantError.CreateFmt('Error Comparing Values "%s" - "%s"',
+      [VarToStr(V1), VarToStr(V2)]);
+    {$ELSE}
     Result := 0;
+    {$ENDIF}
+  end;
 end;
 
 function InstantCompareText(const S1, S2: string; IgnoreCase: Boolean): Integer;
@@ -314,6 +328,7 @@ begin
     with AValues[I] do begin
       case VType of
         vtInteger: Result[I] := VInteger;
+        vtInt64: Result[I] := VInteger;
         vtBoolean: Result[I] := VBoolean;
         vtChar: Result[I] := VChar;
         vtExtended: Result[I] := VExtended^;

@@ -38,12 +38,8 @@ package DclIOCore_4;
 
 requires
   designide,
-  vcldb,
-  rtl,
-  vcl,
-  dbrtl,
-  VclSmp,
-  IOCore_4;
+  IOCore_4,
+  VclSmp;
 
 contains
   InstantWizard in '..\InstantWizard.pas',

@@ -5,20 +5,25 @@
  *)
 unit Model;
 
+{$IFDEF LINUX64}
+{$I '../../Source/InstantDefines.inc'}
+{$ELSE}
 {$I '..\..\Source\InstantDefines.inc'}
+{$ENDIF}
 
 interface
 
 uses
-  System.Classes,
-  InstantPersistence,
-  InstantTypes,
-  InstantClasses,
+  InstantPersistence
+  , InstantTypes
+  , InstantClasses
+  , System.Classes
   {$IFDEF DELPHI_NEON}
-  Neon.Core.Types,
-  Neon.Core.Nullables,
-  Neon.Core.Attributes;
+  , Neon.Core.Types
+  , Neon.Core.Nullables
+  , Neon.Core.Attributes
   {$ENDIF}
+  ;
 
 type
   TAddress = class;

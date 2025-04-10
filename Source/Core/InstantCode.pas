@@ -247,7 +247,7 @@ type
   private
     FItems: TStringList;
     function GetCount: Integer;
-    function GetItems(Index: Integer): string;
+    function GetItems(Index: TListSize): string;
   protected
     procedure InternalRead(Reader: TInstantCodeReader); override;
     procedure InternalWrite(Writer: TInstantCodeWriter); override;
@@ -256,7 +256,7 @@ type
     destructor Destroy; override;
     class function Identifier: string; override;
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: string read GetItems; default;
+    property Items[Index: TListSize]: string read GetItems; default;
   end;
 
   TInstantCodeSet = class(TInstantCodeType)
@@ -348,7 +348,7 @@ type
   TInstantCodeParameters = class(TInstantCodeObject)
   protected
     function GetCount: Integer;
-    function GetItems(Index: Integer): TInstantCodeParameter;
+    function GetItems(Index: TListSize): TInstantCodeParameter;
     procedure InternalRead(Reader: TInstantCodeReader); override;
     procedure InternalWrite(Writer: TInstantCodeWriter); override;
   public
@@ -357,7 +357,7 @@ type
       AOptions: TInstantCodeParameterOptions): TInstantCodeParameter;
     procedure Assign(Source: TPersistent); override;
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: TInstantCodeParameter read GetItems; default;
+    property Items[Index: TListSize]: TInstantCodeParameter read GetItems; default;
   end;
 
   TInstantCodeVisibility = (viDefault, viPrivate, viProtected, viPublic, viPublished);
@@ -388,7 +388,7 @@ type
     function GetOwner: TInstantCodeClass; reintroduce;
   protected
     function GetCount: Integer;
-    function GetItems(Index: Integer): TInstantCodeMember;
+    function GetItems(Index: TListSize): TInstantCodeMember;
     class function InternalAtInstance(Reader: TInstantCodeReader;
       out Name: string): Boolean; override;
     procedure InternalRead(Reader: TInstantCodeReader); override;
@@ -396,7 +396,7 @@ type
   public
     procedure Sort; override;
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: TInstantCodeMember read GetItems; default;
+    property Items[Index: TListSize]: TInstantCodeMember read GetItems; default;
     property Owner: TInstantCodeClass read GetOwner;
   end;
 
@@ -1042,7 +1042,7 @@ type
   TInstantCodeUsesClause = class(TInstantCodeParagraph)
   protected
     function GetCount: Integer;
-    function GetItems(Index: Integer): TInstantCodeUses;
+    function GetItems(Index: TListSize): TInstantCodeUses;
     procedure InternalRead(Reader: TInstantCodeReader); override;
     procedure InternalWrite(Writer: TInstantCodeWriter); override;
   public
@@ -1050,20 +1050,20 @@ type
     function Find(const Name: string): TInstantCodeUses;
     class function Identifier: string; override;
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: TInstantCodeUses read GetItems; default;
+    property Items[Index: TListSize]: TInstantCodeUses read GetItems; default;
   end;
 
   TInstantCodeTypes = class(TInstantCodeParagraph)
   protected
     function GetCount: Integer;
-    function GetItems(Index: Integer): TInstantCodeType;
+    function GetItems(Index: TListSize): TInstantCodeType;
     procedure InternalRead(Reader: TInstantCodeReader); override;
   public
     function AddClass(AClass: TInstantCodeClass = nil): TInstantCodeClass;
     function AddEnum: TInstantCodeEnum;
     class function Identifier: string; override;
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: TInstantCodeType read GetItems; default;
+    property Items[Index: TListSize]: TInstantCodeType read GetItems; default;
   end;
 
   TInstantCodeSymbols = class(TInstantCodeParagraph)
@@ -1076,28 +1076,28 @@ type
   TInstantCodeConsts = class(TInstantCodeSymbols)
   protected
     function AddItem: TInstantCodeObject; override;
-    function GetItems(Index: Integer): TInstantCodeConst;
+    function GetItems(Index: TListSize): TInstantCodeConst;
   public
     class function Identifier: string; override;
-    property Items[Index: Integer]: TInstantCodeConst read GetItems; default;
+    property Items[Index: TListSize]: TInstantCodeConst read GetItems; default;
   end;
 
   TInstantCodeVars = class(TInstantCodeSymbols)
   protected
     function AddItem: TInstantCodeObject; override;
-    function GetItems(Index: Integer): TInstantCodeVar;
+    function GetItems(Index: TListSize): TInstantCodeVar;
   public
     class function Identifier: string; override;
-    property Items[Index: Integer]: TInstantCodeVar read GetItems; default;
+    property Items[Index: TListSize]: TInstantCodeVar read GetItems; default;
   end;
 
   TInstantCodeResStrings = class(TInstantCodeSymbols)
   protected
     function AddItem: TInstantCodeObject; override;
-    function GetItems(Index: Integer): TInstantCodeResString;
+    function GetItems(Index: TListSize): TInstantCodeResString;
   public
     class function Identifier: string; override;
-    property Items[Index: Integer]: TInstantCodeResString read GetItems; default;
+    property Items[Index: TListSize]: TInstantCodeResString read GetItems; default;
   end;
 
   TInstantCodeProcOption = (poClass, poConstructor, poDestructor);
@@ -1188,14 +1188,14 @@ type
   private
     function GetCount: Integer;
   protected
-    function GetItems(Index: Integer): TInstantCodeProc;
+    function GetItems(Index: TListSize): TInstantCodeProc;
     class function InternalAtInstance(Reader: TInstantCodeReader; out Name: string): Boolean; override;
     procedure InternalRead(Reader: TInstantCodeReader); override;
   public
     function Add: TInstantCodeProc;
     function Find(const Name: string): TInstantCodeProc;
     property Count: Integer read GetCount;
-    property Items[Index: Integer]: TInstantCodeProc read GetItems; default;
+    property Items[Index: TListSize]: TInstantCodeProc read GetItems; default;
   end;
 
   TInstantCodeSectionClass = class of TInstantCodeSection;
@@ -2620,7 +2620,7 @@ begin
   Result := FItems.Count;
 end;
 
-function TInstantCodeEnum.GetItems(Index: Integer): string;
+function TInstantCodeEnum.GetItems(Index: TListSize): string;
 begin
   Result := FItems[Index];
 end;
@@ -2884,7 +2884,7 @@ begin
   Result := ObjectCount;
 end;
 
-function TInstantCodeMembers.GetItems(Index: Integer): TInstantCodeMember;
+function TInstantCodeMembers.GetItems(Index: TListSize): TInstantCodeMember;
 begin
   Result := Objects[Index] as TInstantCodeMember;
 end;
@@ -5863,7 +5863,7 @@ begin
   Result := ObjectCount;
 end;
 
-function TInstantCodeUsesClause.GetItems(Index: Integer): TInstantCodeUses;
+function TInstantCodeUsesClause.GetItems(Index: TListSize): TInstantCodeUses;
 begin
   Result := Objects[Index] as TInstantCodeUses;
 end;
@@ -5951,7 +5951,7 @@ begin
   Result := ObjectCount;
 end;
 
-function TInstantCodeTypes.GetItems(Index: Integer): TInstantCodeType;
+function TInstantCodeTypes.GetItems(Index: TListSize): TInstantCodeType;
 begin
   Result := Objects[Index] as TInstantCodeType;
 end;
@@ -5978,7 +5978,7 @@ begin
   Result := TInstantCodeVar.Create(Self);
 end;
 
-function TInstantCodeVars.GetItems(Index: Integer): TInstantCodeVar;
+function TInstantCodeVars.GetItems(Index: TListSize): TInstantCodeVar;
 begin
   Result := Objects[Index] as TInstantCodeVar;
 end;
@@ -6022,7 +6022,7 @@ begin
   Result := TInstantCodeConst.Create(Self);
 end;
 
-function TInstantCodeConsts.GetItems(Index: Integer): TInstantCodeConst;
+function TInstantCodeConsts.GetItems(Index: TListSize): TInstantCodeConst;
 begin
   Result := Objects[Index] as TInstantCodeConst;
 end;
@@ -6055,7 +6055,7 @@ begin
   Result := TInstantCodeResString.Create(Self);
 end;
 
-function TInstantCodeResStrings.GetItems(Index: Integer): TInstantCodeResString;
+function TInstantCodeResStrings.GetItems(Index: TListSize): TInstantCodeResString;
 begin
   Result := Objects[Index] as TInstantCodeResString;
 end;
@@ -6103,7 +6103,7 @@ begin
   Result := ObjectCount;
 end;
 
-function TInstantCodeParameters.GetItems(Index: Integer): TInstantCodeParameter;
+function TInstantCodeParameters.GetItems(Index: TListSize): TInstantCodeParameter;
 begin
   Result := Objects[Index] as TInstantCodeParameter;
 end;
@@ -6513,7 +6513,7 @@ begin
   Result := ObjectCount;
 end;
 
-function TInstantCodeProcs.GetItems(Index: Integer): TInstantCodeProc;
+function TInstantCodeProcs.GetItems(Index: TListSize): TInstantCodeProc;
 begin
   Result := Objects[Index] as TInstantCodeProc;
 end;

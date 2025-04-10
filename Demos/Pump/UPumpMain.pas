@@ -46,13 +46,15 @@ implementation
 {$R *.dfm}
 
 uses
-  Utility { Note: This demo attempts to include brokers for the data access
+  Utility,
+{ Note: This demo attempts to include brokers for the data access
   layers supported natively by Delphi. To include additional brokers,
   please add the broker unit(s) to the following list. If you have not
   installed all brokers, please remove the missing broker unit(s) from
-  the list. },
+  the list. }
   InstantDBX,
   InstantADO,
+//  InstantIBX,
   InstantXML,
   InstantFireDAC;
 

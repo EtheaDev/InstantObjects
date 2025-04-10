@@ -12,9 +12,6 @@
         <Projects Include="..\..\Brokers\DBX\D10_4\DclIODBX_4.dproj">
             <Dependencies/>
         </Projects>
-        <Projects Include="..\..\Brokers\IBX\D10_4\DclIOIBX_4.dproj">
-            <Dependencies/>
-        </Projects>
         <Projects Include="..\..\Brokers\XML\D10_4\DclIOXML_4.dproj">
             <Dependencies/>
         </Projects>
@@ -56,15 +53,6 @@
     <Target Name="DclIODBX_4:Make">
         <MSBuild Projects="..\..\Brokers\DBX\D10_4\DclIODBX_4.dproj" Targets="Make"/>
     </Target>
-    <Target Name="DclIOIBX_4">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_4\DclIOIBX_4.dproj"/>
-    </Target>
-    <Target Name="DclIOIBX_4:Clean">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_4\DclIOIBX_4.dproj" Targets="Clean"/>
-    </Target>
-    <Target Name="DclIOIBX_4:Make">
-        <MSBuild Projects="..\..\Brokers\IBX\D10_4\DclIOIBX_4.dproj" Targets="Make"/>
-    </Target>
     <Target Name="DclIOXML_4">
         <MSBuild Projects="..\..\Brokers\XML\D10_4\DclIOXML_4.dproj"/>
     </Target>
@@ -84,13 +72,13 @@
         <MSBuild Projects="..\..\Brokers\FireDAC\D10_4\DclIOFireDAC_4.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
-        <CallTarget Targets="DclIOCore_4;DclIOADO_4;DclIODBX_4;DclIOIBX_4;DclIOXML_4;DclIOFireDAC_4;DclIOJSON_4"/>
+        <CallTarget Targets="DclIOCore_4;DclIOADO_4;DclIODBX_4;DclIOXML_4;DclIOFireDAC_4"/>
     </Target>
     <Target Name="Clean">
-        <CallTarget Targets="DclIOCore_4:Clean;DclIOADO_4:Clean;DclIODBX_4:Clean;DclIOIBX_4:Clean;DclIOXML_4:Clean;DclIOFireDAC_4:Clean;DclIOJSON_4:Clean"/>
+        <CallTarget Targets="DclIOCore_4:Clean;DclIOADO_4:Clean;DclIODBX_4:Clean;DclIOXML_4:Clean;DclIOFireDAC_4:Clean"/>
     </Target>
     <Target Name="Make">
-        <CallTarget Targets="DclIOCore_4:Make;DclIOADO_4:Make;DclIODBX_4:Make;DclIOIBX_4:Make;DclIOXML_4:Make;DclIOFireDAC_4:Make;DclIOJSON_4:Make"/>
+        <CallTarget Targets="DclIOCore_4:Make;DclIOADO_4:Make;DclIODBX_4:Make;DclIOXML_4:Make;DclIOFireDAC_4:Make"/>
     </Target>
     <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
     <ItemGroup Condition="'$(BuildGroup)'=='ALL'">

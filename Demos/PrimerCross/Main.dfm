@@ -122,7 +122,7 @@ object MainForm: TMainForm
       object WorkTitleLabel: TLabel
         Left = 6
         Top = 5
-        Width = 22
+        Width = 21
         Height = 13
         Caption = 'Title'
       end

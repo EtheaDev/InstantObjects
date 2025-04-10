@@ -1,10 +1,10 @@
-﻿# **InstantObjects 4.2.2 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+﻿# **InstantObjects 4.2.3 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 10.1 to latest version)
 
-![Support Delphi](https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi.jpg)
+![Support Delphi](/docs/SupportingDelphi.jpg)
 
 Related links: https://www.embarcadero.com/ - https://learndelphi.org/
 
@@ -24,7 +24,7 @@ Even though it is still a bolted-on technology, InstantObjects integrates with t
 
 ## New Setup for automatic installation of components
 
-From 4.4.0 version a new "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/SVGIconImageList/releases/latest/download/SVGIconImageList_Setup.exe).
+From 4.2.2 version a new "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/SVGIconImageList/releases/latest/download/SVGIconImageList_Setup.exe).
 
 The Installer automatically detect your Delphi versions, install sources, build and install packages and add source paths.
 
@@ -42,7 +42,7 @@ The project is still managed by [Ethea S.r.l.](https://www.ethea.it), an italian
 
 You can find more information about this Open-Source project in the wiki section.
 
-InstantObjects source files are released under the Mozilla Public License Version 2.0. You may obtain a copy of the License at 
+InstantObjects source files are released under the Mozilla Public License Version 2.0. You may obtain a copy of the License at
 
 [www.mozilla.org/en-US/MPL/2.0/](https://www.mozilla.org/en-US/MPL/2.0/)
 
@@ -58,6 +58,11 @@ From 3.0 version is also compatible with TestInsight test framework.
 
 VERSION HISTORY
 ---------------
+Version 4.2.3 (2025-04-10)
+- Added support for Delphi 12.3 - 64bit IDE
+- Fixed comparison of Objects using LargeIntFields
+- Fixed compilation with Neon Library
+
 Version 4.2.2 (2025-01-01)
 - New [Project Site](https://www.ethea.it/docs/InstantObjects/)
 - New Setup for automatic Installation of Components
@@ -65,6 +70,7 @@ Version 4.2.2 (2025-01-01)
 
 Version 4.2.1 (2024-09-16)
 - Added support for Delphi 12.2
+- Changed all uses with Namespace
 - Fixed Demos for 64 Bit
 - Added possibility to not trim strings (using IO_DISABLE_STRING_TRIM)
 

@@ -40,11 +40,13 @@ unit InstantJSONConnectionDefEdit;
 interface
 
 uses
-  System.Classes, InstantJSON,
-  Forms
+  System.Classes
+  , InstantJSON
+  , Vcl.Forms
   , Vcl.StdCtrls
   , Vcl.Controls
-  , Vcl.ExtCtrls;
+  , Vcl.ExtCtrls
+  ;
 
 type
   TInstantJSONConnectionDefEditForm = class(TForm)
@@ -72,8 +74,9 @@ implementation
 {$R *.dfm}
 
 uses
-  TypInfo,
-  FileCtrl;
+  System.TypInfo
+  , Vcl.FileCtrl
+  ;
 
 { TInstantJSONConnectionDefEditForm }
 

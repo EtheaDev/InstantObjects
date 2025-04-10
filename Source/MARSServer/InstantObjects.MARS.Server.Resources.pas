@@ -28,8 +28,7 @@ interface
 
 uses
   //Delphi
-  Classes
-  
+  System.Classes
   , System.SysUtils
   , Generics.Collections
   , System.JSON

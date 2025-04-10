@@ -4718,6 +4718,8 @@ begin
       Value := InstantGetProperty(Result, MasterProperty);
       if VarType(Value) = VarInteger then
         Result := TObject(TIORefValueType(Value))
+      else if VarType(Value) = VarInt64 then
+        Result := TObject(TIORefValueType(Value))
       else
         raise EInstantError.CreateFmt(SNotPublishedObjectProperty,
           [MasterProperty]);

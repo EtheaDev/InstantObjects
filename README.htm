@@ -29,10 +29,10 @@ td{
   border:1px solid;
 }
 </style>
-<h1><strong>InstantObjects 4.2.2 for Delphi</strong> <a href="https://www.mozilla.org/en-US/MPL/2.0/"><img src="https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg" alt="License"/></a></h1>
+<h1><strong>InstantObjects 4.2.3 for Delphi</strong> <a href="https://www.mozilla.org/en-US/MPL/2.0/"><img src="https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg" alt="License"/></a></h1>
 <p><img src="https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif" alt="InstantObject Logo"/></p>
 <p>Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 10.1 to latest version)</p>
-<p><img src="https://github.com/EtheaDev/InstantObjects/wiki/SupportingDelphi.jpg" alt="Support Delphi"/></p>
+<p><img src="/docs/SupportingDelphi.jpg" alt="Support Delphi"/></p>
 <p>Related links: https://www.embarcadero.com/ - https://learndelphi.org/</p>
 <p>InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-market, and helps keep business focus.</p>
 <p>Even though it is still a bolted-on technology, InstantObjects integrates with the Delphi IDE and Object Pascal in a simple, flexible and intuitive manner. There are no sophisticated environments that have to be comprehended before application development can begin.</p>
@@ -48,7 +48,7 @@ td{
 </li>
 </ul>
 <h2>New Setup for automatic installation of components</h2>
-<p>From 4.4.0 version a new &ldquo;Installer&rdquo; read-to-use is located in the Release area: <a href="https://github.com/EtheaDev/SVGIconImageList/releases/latest/download/SVGIconImageList_Setup.exe">Download the Installer</a>.</p>
+<p>From 4.2.4 version a new &ldquo;Installer&rdquo; read-to-use is located in the Release area: <a href="https://github.com/EtheaDev/SVGIconImageList/releases/latest/download/SVGIconImageList_Setup.exe">Download the Installer</a>.</p>
 <p>The Installer automatically detect your Delphi versions, install sources, build and install packages and add source paths.</p>
 <p><img src="./Help/Setup.png" alt="Setup"/></p>
 <p><strong>Documentation</strong></p>
@@ -65,6 +65,12 @@ td{
 <p><img src="/Tests/TestInsightRunning.png" alt="TestInsight Running"/></p>
 <p><strong>Release Notes</strong></p>
 <h2>VERSION HISTORY</h2>
+<p>Version 4.2.3 (2025-04-10)</p>
+<ul>
+<li>Added support for Delphi 12.3 - 64bit IDE</li>
+<li>Fixed comparison of Objects using LargeIntFields</li>
+<li>Fixed compilation with Neon Library</li>
+</ul>
 <p>Version 4.2.2 (2025-01-01)</p>
 <ul>
 <li>New <a href="https://www.ethea.it/docs/InstantObjects/">Project Site</a></li>
@@ -74,6 +80,7 @@ td{
 <p>Version 4.2.1 (2024-09-16)</p>
 <ul>
 <li>Added support for Delphi 12.2</li>
+<li>Changed all uses with Namespace</li>
 <li>Fixed Demos for 64 Bit</li>
 <li>Added possibility to not trim strings (using IO_DISABLE_STRING_TRIM)</li>
 </ul>

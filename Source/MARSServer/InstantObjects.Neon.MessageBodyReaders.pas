@@ -28,8 +28,8 @@ interface
 
 uses
   System.Classes
-  , System.SysUtils, Rtti
-
+  , System.SysUtils
+  , System.Rtti
   , MARS.Core.Attributes
   , MARS.Core.Declarations
   , MARS.Core.MediaType
@@ -93,6 +93,7 @@ begin
   if not Assigned(LJSONObject) then
     Exit;
   try
+    LId := '';
     //Retrieve ClassName and Id from JSON
     LJSonValue := LJSONObject.GetValue(IO_SER_CLASSNAME);
     try
@@ -109,6 +110,12 @@ begin
         LJSONValue := LJSONObject.GetValue(LIdPropName);
         if Assigned(LJSONValue) then
           LId := LJSONValue.Value;
+        if (LId = '') or (LId = '0') then
+        begin
+          LJSONValue := LJSONObject.GetValue(LIdAltPropName);
+          if Assigned(LJSONValue) then
+            LId := 'A'+LJSONValue.Value;
+        end;
         if (LClassName <> '') then
         begin
            LMARSInstantObjects := TMARSInstantObjects.Create(AActivation);
