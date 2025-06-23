@@ -4,7 +4,7 @@
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+ * Version: MPL 2.0
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -73,8 +73,6 @@ type
     , Produces(TMediaType.TEXT_PLAIN)
     {$IFNDEF BYPASS_TOKEN}, RolesAllowed('standard'){$ENDIF}
     ]
- //   function UserChangePassword([BodyParam] AChangePassword: TChangePassword): TUser;
-
     function UserChangePassword(
       [FormParam('oldpassword')] const AOldPassword: string;
       [FormParam('newpassword')] const ANewPassword: string): string;

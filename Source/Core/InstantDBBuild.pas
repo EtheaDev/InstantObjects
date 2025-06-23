@@ -4,7 +4,7 @@
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+ * Version: MPL 2.0
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -455,7 +455,7 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
-    {$IFNDEF MARS_FIREDAC}
+    {$IFNDEF IO_NO_DEFAULT_CONNECTOR}
     Result := InstantDefaultConnector;
     {$ELSE}
     raise Exception.Create(SDefaultConnectorNotAvailable);
@@ -792,7 +792,7 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
-    {$IFNDEF MARS_FIREDAC}
+    {$IFNDEF IO_NO_DEFAULT_CONNECTOR}
     Result := InstantDefaultConnector;
     {$ELSE}
     raise Exception.Create(SDefaultConnectorNotAvailable);

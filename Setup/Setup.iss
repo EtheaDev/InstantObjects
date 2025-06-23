@@ -62,7 +62,7 @@
 
 #define LibraryName "InstantObjects"
 #define SetupName "InstantObjects"
-#define LibraryVersion "4.2.3"
+#define LibraryVersion "4.3.0"
 #define LibraryPublisher "Ethea S.r.l."
 #define LibraryCopyright "Copyright (c) 2001-2025 Ethea S.r.l."
 #define LibraryURL "https://ethea.it/docs/instantobjects/"

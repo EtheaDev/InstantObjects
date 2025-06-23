@@ -4,7 +4,7 @@
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+ * Version: MPL 2.0
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -1047,7 +1047,7 @@ procedure TInstantJSONQuery.CreateIQLCommand;
 var
   LReader: TInstantIQLReader;
 begin
-  LReader := TInstantIQLReader.Create(TStringStream.Create(Command{$IFDEF D12+}, TEncoding.Unicode{$ENDIF}), True);
+  LReader := TInstantIQLReader.Create(TStringStream.Create(Command, TEncoding.Unicode), True);
   try
     LReader.ReadObject(FIQLCommand);
   finally

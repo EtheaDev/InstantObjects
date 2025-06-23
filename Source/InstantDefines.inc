@@ -1,5 +1,13 @@
 {$IF DEFINED(WIN64) OR DEFINED(LINUX64)}
   {$DEFINE WINLINUX64}
+{$IFEND}
+
+{$IFDEF MARS_FIREDAC}
+  {$DEFINE IO_NO_DEFAULT_CONNECTOR}
+{$ENDIF}
+
+{$IFDEF WIRL_FIREDAC}
+  {$DEFINE IO_NO_DEFAULT_CONNECTOR}
 {$ENDIF}
 
 //Used to force Selector/Exposers to create TLargeintField, also at Design-Time

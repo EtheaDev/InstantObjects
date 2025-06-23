@@ -104,7 +104,7 @@ object MainForm: TMainForm
     object WorkTitleSpacer: TBevel
       Left = 0
       Top = 27
-      Width = 976
+      Width = 972
       Height = 4
       Align = alTop
       Shape = bsSpacer

@@ -4,7 +4,7 @@
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+ * Version: MPL 2.0
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -34,25 +34,27 @@ uses
   System.Rtti,
   System.ZLib,
   System.StrUtils,
-  MARS.Core.Engine;
+  MARS.Core.Engine,
+  MARS.Core.Engine.Interfaces
+  ;
 
 const
   ENGINE_NAME = 'PrimerApi';
   APP_NAME = 'PrimerApp';
   APP_API_PATH = 'rest';
-  APP_BASE_URL = 'primer';
+  APP_BASE_PATH = 'primer';
   REST_API_NAME = 'Primer API';
   REST_API_COPYRIGHT = 'Copyright © - Ethea S.r.l.';
 
 type
   TServerEngine=class
   private
-    class var FEngine: TMARSEngine;
+    class var FEngine: IMARSEngine;
     class var FAvailableConnectionDefs: TArray<string>;
   public
     class constructor CreateEngine;
     class destructor DestroyEngine;
-    class property Default: TMARSEngine read FEngine;
+    class property Default: IMARSEngine read FEngine;
   end;
 
 
@@ -114,11 +116,11 @@ begin
   try
     // Default port to 8080
     FEngine.Parameters.Values['Port'] := 8080;
-    FEngine.BasePath := '/'+APP_API_PATH;
+    FEngine.SetBasePath('/'+APP_API_PATH);
     // Engine configuration
     FEngine.Parameters.LoadFromIniFile;
     // Application configuration
-    FEngine.AddApplication(APP_NAME, APP_BASE_URL, [
+    FEngine.AddApplication(APP_NAME, APP_BASE_PATH, [
       'InstantObjects.MARS.Server.Resources.*',
       'Primer.MARS.Server.Resources.*',
       'MARS.Metadata.*'
@@ -140,10 +142,9 @@ begin
 {$ENDIF}
 {$REGION 'BeforeHandleRequest'}
     FEngine.BeforeHandleRequest :=
-      function (const AEngine: TMARSEngine;
+      function (const AEngine: IMARSEngine;
         const AURL: TMARSURL; const ARequest: IMARSRequest; const AResponse: IMARSResponse;
-        var Handled: Boolean
-      ): Boolean
+        var Handled: Boolean): Boolean
       begin
         Result := True;
         // skip favicon requests (browser)
@@ -198,11 +199,13 @@ begin
         if (SameText(AActivation.Request.method, 'PUT')) or
           (SameText(AActivation.Request.method, 'POST')) then
         begin
+          {$IFDEF LOGGERPRO}
           Log.Info('Body:%s%s',
                   [
                     sLineBreak,
                     AActivation.Request.Content
                   ], '');
+          {$ENDIF}
         end;
         if LEnvironment <> '' then
         begin
@@ -210,15 +213,24 @@ begin
           if AActivation.HasToken and AActivation.Token.IsVerified then
           begin
             LTokenEnvironment := AActivation.Token.Claims.Values[CLAIM_ENVIRONMENT].ToString;
+            {$IFDEF LOGGERPRO}
             Log.Info('User [UserName: %s]',
                 [
                   AActivation.Token.UserName
                 ], '');
-            //Verifico che l'environment passato sia congruente con quello del Token
+            {$ENDIF}
+            //check that the Request environment param is the same stored in Auth Token
             if not SameText(LTokenEnvironment,LEnvironment) then
               raise EMARSServerException.CreateError(http_406_NotAcceptable,
                 Format('%s header param %s not equal to token.environment %s.',
                  [PARAM_ENVIRONMENT, LEnvironment, LTokenEnvironment]));
+            (*
+              //check that the Request servicekey param is the same stored in Auth Token
+              if not SameText(LTokenServiceKey,LServiceKey) then
+                raise EWiRLServerException.CreateError(http_406_NotAcceptable,
+                  Format('%s header param %s not equal to token.servicekey %s.',
+                   [PARAM_SERVICEKEY, LServiceKey, LTokenServiceKey]));
+            *)
           end;
           {$ENDIF}
         end
@@ -237,9 +249,10 @@ begin
           //In Prod environment accept only hash MD5 of "backofficeYYYYMMDD" or "frontendYYYYMMDD" string
           LHashBackoffice := THashMD5.GetHashString('backoffice'+DateTimeToYYYYMMDD(Date()));
           LHashFrontend := THashMD5.GetHashString('frontend'+DateTimeToYYYYMMDD(Date()));
+          (*
           LServiceKeyPassed :=
             (SameText(LServiceKeyId,LHashBackoffice) or SameText(LServiceKeyId,LHashFrontend)) or
-            (SameText(LEnvironment,'dev') and
+            (SameText(LEnvironment,'test') and
              (SameText(LServiceKeyId,'backoffice') or SameText(LServiceKeyId,'frontend')));
           if not LServiceKeyPassed then
           begin
@@ -247,6 +260,7 @@ begin
               Format('Invalid %s header param for service [%s] %s.',
               [PARAM_SERVICEKEY, AActivation.Request.Method, AActivation.Request.RawPath]));
           end;
+          *)
         end
         else if not LRequestSwagger then
         begin
@@ -297,11 +311,13 @@ begin
           else
             AActivation.Response.Content := EMARSServerException.ComposeErrorJSONContent(
               AActivation.Response.StatusCode, AException.Message);
+          {$IFDEF LOGGERPRO}
           Log.Error('Request Error (an exception will be raised) [STATUS: %d][BODY: %s]',
                 [
                   AActivation.Response.StatusCode,
                   AException.Message
                 ], '');
+          {$ENDIF}
           AHandled := True;
         end;
       end
@@ -310,11 +326,13 @@ begin
   except
     on E : Exception do
     begin
+      {$IFDEF LOGGERPRO}
       Log.Error('Error (an exception will be raised) [Message: %s]',
             [
               E.Message
             ], '');
-      FreeAndNil(FEngine);
+      {$ENDIF}
+      //FreeAndNil(FEngine);
       raise;
     end;
   end;
@@ -322,9 +340,9 @@ end;
 
 class destructor TServerEngine.DestroyEngine;
 begin
-{$IFDEF MARS_FIREDAC}
+{$IFDEF IO_NO_DEFAULT_CONNECTOR}
   TMARSFireDAC.CloseConnectionDefs(FAvailableConnectionDefs);
 {$ENDIF}
-  FreeAndNil(FEngine);
+  //FreeAndNil(FEngine);
 end;
 end.

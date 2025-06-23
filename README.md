@@ -1,4 +1,4 @@
-﻿# **InstantObjects 4.2.3 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+﻿# **InstantObjects 4.3.0 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
 ![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
 
@@ -58,6 +58,12 @@ From 3.0 version is also compatible with TestInsight test framework.
 
 VERSION HISTORY
 ---------------
+Version 4.3.0 (2025-06-23)
+- Added support form WiRL REST Server
+- Added Source\WiRLServer units
+- Added Demos\PrimerWiRLServer
+- Update License to MPL 2.0
+
 Version 4.2.3 (2025-04-10)
 - Added support for Delphi 12.3 - 64bit IDE
 - Fixed comparison of Objects using LargeIntFields
@@ -345,10 +351,12 @@ Version 1.9.3 (2006-03-31)
 - Added another test procedure to TestInstantReferences.pas
   to facilitate memory leak testing for object structures
   with circular references:
+  ```
   A -> B -> C -> A
        |
        + -> D -> E
   then delete E.
+  ```
 
 - Test case to demostrate the infinite loop in
   FreeCircularReferences.

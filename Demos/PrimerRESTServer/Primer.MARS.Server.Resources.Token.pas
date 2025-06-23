@@ -4,7 +4,7 @@
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+ * Version: MPL 2.0
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -54,6 +54,7 @@ const
   CLAIM_LAST_NAME     = 'LAST_NAME';
   CLAIM_FIRST_NAME    = 'FIRST_NAME';
   CLAIM_EMAIL_ADDRESS = 'EMAIL_ADDRESS';
+  CLAIM_SERVICE_KEY   = 'CLAIM_SERVICE_KEY';
 type
   [Path('token'), Produces(TMediaType.APPLICATION_JSON)]
   TJWTTokenResource = class(TMARSTokenResource)
@@ -106,6 +107,7 @@ var
   LUser: TUser;
   LPasswordHash: string;
 begin
+  Result := False;
   InstantObject.ConnectToDatabase;
   LUser := TUser.Retrieve(AUserName, false, false, InstantObject.Connector);
   try
@@ -123,35 +125,32 @@ begin
          WRONG_AUTH,
          'UserName/Password');
     end;
-    Result := True;
-
-    if Result then
-    begin
-      Token.UserName := AUserName;
-      if LUser.Administrator and LUser.System then
-        Token.Roles := TArray<string>.Create('reader', 'standard', 'admin', 'system')
-      else if LUser.Administrator then
-        Token.Roles := TArray<string>.Create('reader', 'standard', 'admin')
-      else if LUser.System then
-        Token.Roles := TArray<string>.Create('reader', 'standard', 'system')
-      else if LUser.Profile.Id = 'READONLY' then
-        Token.Roles := TArray<string>.Create('reader')
-      else
-        Token.Roles := TArray<string>.Create('reader', 'standard');
-      //Al token aggiunto l'environment che verrà verificato ad ogni chiamata
-      Token.Claims.Values[CLAIM_ENVIRONMENT] := Request.GetHeaderParamValue(PARAM_ENVIRONMENT);
-      Token.Claims.Values[CLAIM_PROFILE_ID] := LUser.Profile.Id;
-      if LUser.Language <> '' then
-        Token.Claims.Values[CLAIM_LANGUAGE_ID] := LUser.Language
-      else
-        Token.Claims.Values[CLAIM_LANGUAGE_ID] := 'IT';
-      Token.Claims.Values[CLAIM_LAST_NAME] := LUser.LastName;
-      Token.Claims.Values[CLAIM_FIRST_NAME] := LUser.FirstName;
-      Token.Claims.Values[CLAIM_EMAIL_ADDRESS] := LUser.Email;
-    end;
+    Token.UserName := AUserName;
+    if LUser.System then
+      Token.Roles := TArray<string>.Create('reader', 'standard', 'admin', 'system')
+    else if LUser.Administrator then
+      Token.Roles := TArray<string>.Create('reader', 'standard', 'admin')
+    else if LUser.System then
+      Token.Roles := TArray<string>.Create('reader', 'standard', 'system')
+    else if LUser.Profile.Id = 'READONLY' then
+      Token.Roles := TArray<string>.Create('reader')
+    else
+      Token.Roles := TArray<string>.Create('reader', 'standard');
+    //Al token aggiunto l'environment che verrà verificato ad ogni chiamata
+    Token.Claims.Values[CLAIM_ENVIRONMENT] := Request.GetHeaderParamValue(PARAM_ENVIRONMENT);
+    Token.Claims.Values[CLAIM_SERVICE_KEY] := Request.GetHeaderParamValue(PARAM_SERVICEKEY);
+    Token.Claims.Values[CLAIM_PROFILE_ID] := LUser.Profile.Id;
+    if LUser.Language <> '' then
+      Token.Claims.Values[CLAIM_LANGUAGE_ID] := LUser.Language
+    else
+      Token.Claims.Values[CLAIM_LANGUAGE_ID] := 'en';
+    Token.Claims.Values[CLAIM_LAST_NAME] := LUser.LastName;
+    Token.Claims.Values[CLAIM_FIRST_NAME] := LUser.FirstName;
+    Token.Claims.Values[CLAIM_EMAIL_ADDRESS] := LUser.Email;
   finally
     LUser.Free;
   end;
+  Result := True;
 end;
 
 procedure TJWTTokenResource.BeforeLogin(const AUserName,

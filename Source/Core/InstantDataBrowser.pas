@@ -1,5 +1,11 @@
 unit InstantDataBrowser;
 
+{$IFDEF LINUX64}
+{$I '../InstantDefines.inc'}
+{$ELSE}
+{$I '..\InstantDefines.inc'}
+{$ENDIF}
+
 interface
 
 uses
@@ -95,7 +101,7 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
-  {$IFNDEF MARS_FIREDAC}
+  {$IFNDEF IO_NO_DEFAULT_CONNECTOR}
     Result := InstantDefaultConnector;
   {$ELSE}
     Result := nil;

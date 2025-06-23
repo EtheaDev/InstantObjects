@@ -34,7 +34,7 @@ Trim Char=False
     <BlobStreamFormat>sfXML</BlobStreamFormat>
     <LoginPrompt>FALSE</LoginPrompt>
     <Database>PRIMERDB</Database>
-    <HostName>127.0.0.1</HostName>
+    <HostName>127.0.0.1, 1435</HostName>
     <Password>masterkey</Password>
     <DriverId>FB</DriverId>
     <User_Name>SYSDBA</User_Name>
@@ -47,7 +47,7 @@ Trim Char=False
     <LoginPrompt>FALSE</LoginPrompt>
     <ReadObjectListWithNoLock>TRUE</ReadObjectListWithNoLock>
     <Database>PRIMERDB</Database>
-    <HostName>.\SQLEXPRESS</HostName>
+    <HostName>127.0.0.1, 1435</HostName>
     <AdditionalParams>MetaDefSchema=dbo</AdditionalParams>
     <DriverId>MSSQL</DriverId>
     <UseDelimitedIdents>TRUE</UseDelimitedIdents>
@@ -58,7 +58,7 @@ Trim Char=False
     <IsBuilt>TRUE</IsBuilt>
     <BlobStreamFormat>sfXML</BlobStreamFormat>
     <LoginPrompt>FALSE</LoginPrompt>
-    <ConnectionString>Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=PRIMERDB;Data Source=.\SQLEXPRESS</ConnectionString>
+    <ConnectionString>Provider=SQLOLEDB.1;Integrated Security=SSPI;Persist Security Info=False;Initial Catalog=PRIMERDB;Data Source=127.0.0.1, 1435</ConnectionString>
   </TInstantADOConnectionDef>
   <TInstantDBXConnectionDef>
     <Name>DBX_MSSQL</Name>
@@ -69,7 +69,7 @@ Trim Char=False
     <DriverName>MSSQL</DriverName>
     <Params>SchemaOverride=sa.dbo
 DriverName=MSSQL
-HostName=.\SQLEXPRESS
+HostName=127.0.0.1, 1435
 DataBase=PRIMERDB
 BlobSize=-1
 ErrorResourceFile=

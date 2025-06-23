@@ -75,6 +75,11 @@ begin
     RunServer();
   except
     on E:Exception do
+    begin
+      {$IFDEF LOGGERPRO}
       Log.ErrorFmt('%s (%s)',[E.Message, E.Classname], '');
+      {$ENDIF}
+      Halt(1);
+    end;
   end;
 end.

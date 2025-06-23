@@ -4,7 +4,7 @@
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+ * Version: MPL 2.0
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -3207,7 +3207,7 @@ end;
 function TInstantCustomExposer.GetUseUnicode: Boolean;
 begin
   if Assigned(Accessor) and Assigned(Accessor.Connector) then
-    FUseUnicode := Accessor.Connector.UseUnicode{$IFDEF MARS_FIREDAC};
+    FUseUnicode := Accessor.Connector.UseUnicode{$IFDEF IO_NO_DEFAULT_CONNECTOR};
   {$ELSE}
   else if InstantDefaultConnector <> nil then
     FUseUnicode := InstantDefaultConnector.UseUnicode;
@@ -4594,7 +4594,7 @@ begin
   Try
     if Assigned(FAccessor) and Assigned(FAccessor.Connector) then
       LUseUnicodeOk := (FAccessor.Connector.UseUnicode = Value)
-    {$IFNDEF MARS_FIREDAC}
+    {$IFNDEF IO_NO_DEFAULT_CONNECTOR}
     else if InstantDefaultConnector <> nil then
       LUseUnicodeOk := (InstantDefaultConnector.UseUnicode = Value)
     {$ENDIF}
@@ -5058,7 +5058,7 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
-  {$IFNDEF MARS_FIREDAC}
+  {$IFNDEF IO_NO_DEFAULT_CONNECTOR}
     Result := InstantDefaultConnector;
   {$ELSE}
     Result := nil;

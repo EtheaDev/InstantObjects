@@ -4,7 +4,7 @@
  *)
 
 (* ***** BEGIN LICENSE BLOCK *****
- * Version: MPL 1.1
+ * Version: MPL 2.0
  *
  * The contents of this file are subject to the Mozilla Public License Version
  * 1.1 (the "License"); you may not use this file except in compliance with
@@ -1671,7 +1671,7 @@ procedure InstantCheckConnection(Connection: TCustomConnection);
 function InstantCheckConnector(var Connector: TInstantConnector): TInstantConnector;
 function InstantClassNameToName(const ClassName: string): string;
 function InstantCreateStorageMaps(Metadatas: TInstantClassMetadatas = nil): TInstantAttributeMaps;
-{$IFNDEF MARS_FIREDAC}
+{$IFNDEF IO_NO_DEFAULT_CONNECTOR}
 function InstantDefaultConnector: TInstantConnector;
 {$ENDIF}
 procedure InstantDisableNotifiers;
@@ -1998,7 +1998,7 @@ begin
   end;
 end;
 
-{$IFNDEF MARS_FIREDAC}
+{$IFNDEF IO_NO_DEFAULT_CONNECTOR}
 function InstantDefaultConnector: TInstantConnector;
 begin
   Result := DefaultConnector;
@@ -3951,7 +3951,7 @@ function TInstantBlob.UseUnicode: boolean;
 begin
   if Assigned(Owner) and Assigned(Owner.Connector) then
     Result := Owner.Connector.UseUnicode
-  {$IFNDEF MARS_FIREDAC}
+  {$IFNDEF IO_NO_DEFAULT_CONNECTOR}
   else if InstantDefaultConnector <> nil then
     Result := InstantDefaultConnector.UseUnicode
   {$ENDIF}
@@ -8854,7 +8854,7 @@ begin
   if Assigned(FConnector) then
     Result := FConnector
   else
-  {$IFNDEF MARS_FIREDAC}
+  {$IFNDEF IO_NO_DEFAULT_CONNECTOR}
     Result := InstantDefaultConnector;
   {$ELSE}
     Result := nil;

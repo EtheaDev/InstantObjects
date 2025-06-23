@@ -5,12 +5,12 @@
         <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
         <DCC_DCCCompiler>DCC32</DCC_DCCCompiler>
         <DCC_DependencyCheckOutputName>Primer.exe</DCC_DependencyCheckOutputName>
-        <ProjectVersion>20.2</ProjectVersion>
+        <ProjectVersion>20.3</ProjectVersion>
         <Config Condition="'$(Config)'==''">Release</Config>
         <Base>True</Base>
         <AppType>Application</AppType>
         <FrameworkType>VCL</FrameworkType>
-        <Platform Condition="'$(Platform)'==''">Win64</Platform>
+        <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <ProjectName Condition="'$(ProjectName)'==''">Primer_D12</ProjectName>
     </PropertyGroup>
@@ -59,6 +59,7 @@
         <VerInfo_Keys>CompanyName=InstantObjects.org;FileDescription=Primer Demo;FileVersion=2.0.0.0;InternalName=;LegalCopyright=MPL public license;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=2.0;Comments=</VerInfo_Keys>
         <DCC_UnitSearchPath>..\..\Source\Core;..\..\Source\Brokers\ADO;..\..\Source\Brokers\DBX;..\..\Source\Brokers\IBX;..\..\Source\Brokers\XML;..\..\Source\Brokers\FireDAC;..\..\Source\Catalogs\IBFb;..\..\Source\Catalogs\MSSql;..\..\Source\Catalogs\MySql;..\..\Source\Catalogs\Oracle;..\..\Source\Catalogs\DB2;..\..\Source\Brokers\JSON;..\..\..\ext\delphi-neon\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_DcuOutput>..\Dcu\$(Platform)</DCC_DcuOutput>
+        <DCC_Define>DELPHI_NEON;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -117,7 +118,28 @@
                 <Source>
                     <Source Name="MainSource">Primer_D12.dpr</Source>
                 </Source>
-                <Excluded_Packages/>
+                <Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dclISFLib8_6290.bpl">Ethea InstantSolutions 8.6 Framework Library</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dclISRtl7_7290.bpl">Ethea InstantSolutions 7.7 Rtl Library</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dclISVcl7_7290.bpl">Ethea InstantSolutions 7.7 Vcl Library</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dclISOpenOffice7_7290.bpl">Ethea InstantSolutions 7.7 LibreOffice/OpenOffice Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dclISFLib7_7290.bpl">Ethea InstantSolutions 7.7 Framework Library</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbie290.bpl">Embarcadero C++Builder Internet Explorer Components Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcboffice2k290.bpl">Embarcadero C++Builder Office 2000 Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\bcbofficexp290.bpl">Embarcadero C++Builder Office XP Servers Package</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dclISReportBuilder8_6290.bpl">Ethea InstantSolutions 8.6 ReportBuilder Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dclLiscorVCL_D12.bpl">*** Liscor VCL Design Package for D12 ***</Excluded_Packages>
+                    <Excluded_Packages Name="D:\ETHEA\FGX Native\Libs\290\Win32\Release\FGXNative.Registration.290.bpl">FGX Native - Designtime Registration</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\QR506DesignDXE12.bpl">QuickReport 5.06 Components</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dclshlctrls290.bpl">Shell Control Property and Component Editors</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\kbmMemDesD120Std.bpl">kbmMemTable Standard Edition - High performance memory table - RAD Studio 12 for Win32 - Designtime - www.Components4Developers.com</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\DCLPsRBD12.bpl">Pragnaan ReportBuilder Export Devices</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\QImport2DTD12.bpl">EMS Advanced Import Component Suite</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\QExport3DTD12.bpl">EMS Advanced Export Component Suite</Excluded_Packages>
+                    <Excluded_Packages Name="C:\Users\Public\Documents\Embarcadero\Studio\23.0\Bpl\dGXOutD7.bpl">GExperts Outlookbar design time package</Excluded_Packages>
+                    <Excluded_Packages Name="D:\ETHEA\FGX Native\Libs\290\Win32\Release\FGXNative.Extension.Zint.290.bpl">FGX Native Extension - Zint Barcode</Excluded_Packages>
+                </Excluded_Packages>
             </Delphi.Personality>
             <ModelSupport>False</ModelSupport>
             <Platforms>
