@@ -172,9 +172,8 @@ begin
         LTokenEnvironment: string;
         {$ENDIF}
       begin
-        //Metodo invocato ad ogni chiamata prima di qualsiasi operazione
-        //Faccio le verifiche di accesso (service_key) e ambiente (environment)
-        //Check for Environment
+        //Method invoked on every call before any operation
+        //Perform access (service_key) and environment (environment) checks.
         LRequestSwagger := Pos('swagger/', AActivation.Request.RawPath) > 0;
         LEnvironment := string(AActivation.Request.GetHeaderParamValue(PARAM_ENVIRONMENT));
         {$IFDEF DEBUG}
@@ -332,7 +331,6 @@ begin
               E.Message
             ], '');
       {$ENDIF}
-      //FreeAndNil(FEngine);
       raise;
     end;
   end;
@@ -343,6 +341,5 @@ begin
 {$IFDEF IO_NO_DEFAULT_CONNECTOR}
   TMARSFireDAC.CloseConnectionDefs(FAvailableConnectionDefs);
 {$ENDIF}
-  //FreeAndNil(FEngine);
 end;
 end.

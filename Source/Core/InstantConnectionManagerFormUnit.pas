@@ -491,8 +491,8 @@ begin
   ConnectionView.HideSelection := False;
   ConnectionView.SortType := stText;
   ConnectionView.SmallImages := ConnectionImages;
-  ConnectionView.Columns[0].Width := Round(320 * ScaleFactor);
-  ConnectionView.Columns[1].Width := Round(100 * ScaleFactor);
+  ConnectionView.Columns[0].Width := Round(320{$if compilerversion > 33} * ScaleFactor{$ifend});
+  ConnectionView.Columns[1].Width := Round(100{$if compilerversion > 33} * ScaleFactor{$ifend});
   UpdateMenu;
 end;
 

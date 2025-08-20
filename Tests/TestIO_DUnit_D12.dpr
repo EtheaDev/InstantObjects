@@ -1,4 +1,4 @@
-program TestIO_DUnit_D12;
+program TestIO_DUnit_D13;
 
 {$I '..\Source\InstantDefines.inc'}
 

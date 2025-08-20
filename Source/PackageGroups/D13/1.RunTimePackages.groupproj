@@ -1,0 +1,170 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{7563E90D-0088-401E-B07E-B9E53951079D}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="..\..\Core\D13\IOCore_4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\Catalogs\IBFb\D13\IOIBFbCatalog_4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\Catalogs\MSSql\D13\IOMSSqlCatalog_4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\Catalogs\MySQL\D13\IOMySQLCatalog_4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\Brokers\ADO\D13\IOADO_4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\Brokers\DBX\D13\IODBX_4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\Brokers\XML\D13\IOXML_4.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="..\..\Brokers\FireDAC\D13\IOFireDAC_4.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="IOCore_4">
+        <MSBuild Projects="..\..\Core\D13\IOCore_4.dproj"/>
+    </Target>
+    <Target Name="IOCore_4:Clean">
+        <MSBuild Projects="..\..\Core\D13\IOCore_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IOCore_4:Make">
+        <MSBuild Projects="..\..\Core\D13\IOCore_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IOIBFbCatalog_4">
+        <MSBuild Projects="..\..\Catalogs\IBFb\D13\IOIBFbCatalog_4.dproj"/>
+    </Target>
+    <Target Name="IOIBFbCatalog_4:Clean">
+        <MSBuild Projects="..\..\Catalogs\IBFb\D13\IOIBFbCatalog_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IOIBFbCatalog_4:Make">
+        <MSBuild Projects="..\..\Catalogs\IBFb\D13\IOIBFbCatalog_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IOMSSqlCatalog_4">
+        <MSBuild Projects="..\..\Catalogs\MSSql\D13\IOMSSqlCatalog_4.dproj"/>
+    </Target>
+    <Target Name="IOMSSqlCatalog_4:Clean">
+        <MSBuild Projects="..\..\Catalogs\MSSql\D13\IOMSSqlCatalog_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IOMSSqlCatalog_4:Make">
+        <MSBuild Projects="..\..\Catalogs\MSSql\D13\IOMSSqlCatalog_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IOMySQLCatalog_4">
+        <MSBuild Projects="..\..\Catalogs\MySQL\D13\IOMySQLCatalog_4.dproj"/>
+    </Target>
+    <Target Name="IOMySQLCatalog_4:Clean">
+        <MSBuild Projects="..\..\Catalogs\MySQL\D13\IOMySQLCatalog_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IOMySQLCatalog_4:Make">
+        <MSBuild Projects="..\..\Catalogs\MySQL\D13\IOMySQLCatalog_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IOADO_4">
+        <MSBuild Projects="..\..\Brokers\ADO\D13\IOADO_4.dproj"/>
+    </Target>
+    <Target Name="IOADO_4:Clean">
+        <MSBuild Projects="..\..\Brokers\ADO\D13\IOADO_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IOADO_4:Make">
+        <MSBuild Projects="..\..\Brokers\ADO\D13\IOADO_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IODBX_4">
+        <MSBuild Projects="..\..\Brokers\DBX\D13\IODBX_4.dproj"/>
+    </Target>
+    <Target Name="IODBX_4:Clean">
+        <MSBuild Projects="..\..\Brokers\DBX\D13\IODBX_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IODBX_4:Make">
+        <MSBuild Projects="..\..\Brokers\DBX\D13\IODBX_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IOXML_4">
+        <MSBuild Projects="..\..\Brokers\XML\D13\IOXML_4.dproj"/>
+    </Target>
+    <Target Name="IOXML_4:Clean">
+        <MSBuild Projects="..\..\Brokers\XML\D13\IOXML_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IOXML_4:Make">
+        <MSBuild Projects="..\..\Brokers\XML\D13\IOXML_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="IOFireDAC_4">
+        <MSBuild Projects="..\..\Brokers\FireDAC\D13\IOFireDAC_4.dproj"/>
+    </Target>
+    <Target Name="IOFireDAC_4:Clean">
+        <MSBuild Projects="..\..\Brokers\FireDAC\D13\IOFireDAC_4.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="IOFireDAC_4:Make">
+        <MSBuild Projects="..\..\Brokers\FireDAC\D13\IOFireDAC_4.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="IOCore_4;IOIBFbCatalog_4;IOMSSqlCatalog_4;IOMySQLCatalog_4;IOADO_4;IODBX_4;IOXML_4;IOFireDAC_4"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="IOCore_4:Clean;IOIBFbCatalog_4:Clean;IOMSSqlCatalog_4:Clean;IOMySQLCatalog_4:Clean;IOADO_4:Clean;IODBX_4:Clean;IOXML_4:Clean;IOFireDAC_4:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="IOCore_4:Make;IOIBFbCatalog_4:Make;IOMSSqlCatalog_4:Make;IOMySQLCatalog_4:Make;IOADO_4:Make;IODBX_4:Make;IOXML_4:Make;IOFireDAC_4:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+    <ItemGroup Condition="'$(BuildGroup)'=='ALL'">
+        <BuildGroupProject Include="..\..\Core\D13\IOCore_4.dproj">
+            <ProjectGuid>{1BFC638F-A56E-4EDA-B95B-A6B4E8308C08}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="..\..\Catalogs\IBFb\D13\IOIBFbCatalog_4.dproj">
+            <ProjectGuid>{2EE03F6B-E352-4C4C-82D4-E9F292FAE6B3}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="..\..\Catalogs\MySQL\D13\IOMySQLCatalog_4.dproj">
+            <ProjectGuid>{E48D3E2D-DF86-4DD0-AEB4-B187F4048486}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="..\..\Catalogs\MSSql\D13\IOMSSqlCatalog_4.dproj">
+            <ProjectGuid>{1528FD73-50D6-42B2-9389-4A08C46813E1}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="..\..\Brokers\ADO\D13\IOADO_4.dproj">
+            <ProjectGuid>{9BFA7E64-922B-4736-A46C-AACF0977EA3A}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="..\..\Brokers\XML\D13\IOXML_4.dproj">
+            <ProjectGuid>{F0937A9E-5FA3-4F83-9094-F8876E49597A}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="..\..\Brokers\FireDAC\D13\IOFireDAC_4.dproj">
+            <ProjectGuid>{ECFFBD63-6292-488B-A8F5-9307B18559C7}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+        <BuildGroupProject Include="..\..\Brokers\DBX\D13\IODBX_4.dproj">
+            <ProjectGuid>{FCE6FB4B-FD7F-4F02-8EBF-ED70B88B7E0F}</ProjectGuid>
+            <Configurations>Release</Configurations>
+            <Platforms>Win32;Win64</Platforms>
+            <Enabled>True</Enabled>
+        </BuildGroupProject>
+    </ItemGroup>
+</Project>

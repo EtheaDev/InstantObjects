@@ -1,12 +1,14 @@
-﻿# **InstantObjects 4.3.0 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+﻿# **InstantObjects 4.3.1 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
-![InstantObject Logo](https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif)
+![InstantObject Logo](/docs/instantobjects_logo.gif)
 
 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 10.1 to latest version)
 
 ![Support Delphi](/docs/SupportingDelphi.jpg)
 
-Related links: https://www.embarcadero.com/ - https://learndelphi.org/
+[www.embarcadero.com](https://www.embarcadero.com/) - [learndelphi.org](https://learndelphi.org/)
+
+## What is InstantObjects
 
 InstantObjects is a RAD technology that enables creation of applications based on persistent business objects. It simplifies the process of realizing ideas into products; shortens time-to-market, and helps keep business focus.
 
@@ -14,15 +16,12 @@ Even though it is still a bolted-on technology, InstantObjects integrates with t
 
 **InstantObjects offers:**
 
-* Model realization in the Delphi IDE via integrated two-way tools (from editor to code)
-
-* Object persistence in the most common relational databases or flat XML-based files (also with FireDAC Broker)
-
-* Object presentation via standard data-aware controls.
-
-* Serialization/Deserialization of object using [delphi-neon](https://github.com/paolo-rossi/delphi-neon) library
-
-## New Setup for automatic installation of components
+1. Model realization in the Delphi IDE via integrated two-way tools (from editor to code)
+1. Object persistence in the most common relational databases or flat XML-based files (also with FireDAC Broker)
+1. Object presentation via standard data-aware controls.
+1. Serialization/Deserialization of object using [delphi-neon](https://github.com/paolo-rossi/delphi-neon) library
+1. Rest Server of object using [WiRL](https://wirl.delphiblocks.dev/) library
+1. Rest Server of object using [MARS Curiosity](https://github.com/andrea-magni/MARS) library
 
 From 4.2.2 version a new "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/SVGIconImageList/releases/latest/download/SVGIconImageList_Setup.exe).
 
@@ -58,6 +57,9 @@ From 3.0 version is also compatible with TestInsight test framework.
 
 VERSION HISTORY
 ---------------
+Version 4.3.1 (2025-08-19)
+- Added support for Delphi 13 Florence
+
 Version 4.3.0 (2025-06-23)
 - Added support form WiRL REST Server
 - Added Source\WiRLServer units
@@ -676,9 +678,8 @@ Version 2.0 Alpha 1 (1.9.0.1) (2005-07)
   until more complete docs are available.
 
 - Many bug fixes and small improvements. Please see our trackers:
-
-  http://sourceforge.net/tracker/?group_id=94747&atid=608935
-  http://sourceforge.net/tracker/?group_id=94747&atid=608938
+  - http://sourceforge.net/tracker/?group_id=94747&atid=608935
+  - http://sourceforge.net/tracker/?group_id=94747&atid=608938
 
 
 Version 1.6.7 (2004-11-17) UNOFFICIAL

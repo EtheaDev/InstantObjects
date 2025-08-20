@@ -1523,7 +1523,7 @@ function InstantAttributeTypeToPropertyType(
 function InstantPropertyTypeToAttributeType(
   const PropType: string): TInstantAttributeType;
 
-const
+var
   InstantCodeReaderIdle: TInstantCodeReaderIdle = nil;
 
 implementation
