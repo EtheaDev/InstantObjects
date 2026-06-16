@@ -59,7 +59,6 @@ uses
   , InstantClasses
   , InstantPersistence
   , InstantMetadata
-  , System.ImageList
   ;
 
 type

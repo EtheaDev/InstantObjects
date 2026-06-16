@@ -50,6 +50,12 @@
         <DCC_E>false</DCC_E>
         <DCC_DcuOutput>..\..\..\..\Lib\D10_1\$(Platform)\$(Config)</DCC_DcuOutput>
     </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win32)'!=''">
+        <DCC_UsePackage>IOXML_4;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Base_Win64)'!=''">
+        <DCC_UsePackage>IOXML_4;$(DCC_UsePackage)</DCC_UsePackage>
+    </PropertyGroup>
     <ItemGroup>
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
@@ -57,15 +63,15 @@
         <DCCReference Include="..\InstantXML.dcr"/>
         <DCCReference Include="IOXML_4.dcp"/>
         <DCCReference Include="..\InstantXMLReg.pas"/>
+        <BuildConfiguration Include="Debug">
+            <Key>Cfg_2</Key>
+            <CfgParent>Base</CfgParent>
+        </BuildConfiguration>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
         <BuildConfiguration Include="Release">
             <Key>Cfg_1</Key>
-            <CfgParent>Base</CfgParent>
-        </BuildConfiguration>
-        <BuildConfiguration Include="Debug">
-            <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
         </BuildConfiguration>
     </ItemGroup>

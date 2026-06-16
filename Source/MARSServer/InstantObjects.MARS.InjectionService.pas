@@ -2,7 +2,7 @@
 {                                                                   }
 {   InstantSolutions Framework - MARS Server                        }
 {                                                                   }
-{   Copyright (c) 2005-2025 Ethea S.r.l.                            }
+{   Copyright (c) 2005-2026 Ethea S.r.l.                            }
 {   ALL RIGHTS RESERVED / TUTTI I DIRITTI RISERVATI                 }
 {                                                                   }
 {*******************************************************************}

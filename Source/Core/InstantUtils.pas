@@ -66,7 +66,8 @@ function InstantDateTimeToStr(DateTime: TDateTime): string;
 function InstantDateToStr(DateTime: TDateTime): string;
 function InstantTimeToStr(ADate: TDateTime): string;
 function InstantDateTimeToJStr(ADate: TDateTime): string;
-function InstantEmbrace(const S, Delimiters: string): string;
+function InstantEmbrace(const S, Delimiters: string;
+  const UseLowerCase: Boolean = False): string;
 function InstantFileAge(const FileName: string; out FileDateTime: TDateTime): boolean;
 function InstantFileVersionValue(const FileName, ValueName: string): string;
 function InstantFileVersion(const FileName: string): TInstantVersion;
@@ -373,7 +374,8 @@ begin
   Result := Format(SDateFormat, [y, mo, d, h, mi, se, ms]);
 end;
 
-function InstantEmbrace(const S, Delimiters: string): string;
+function InstantEmbrace(const S, Delimiters: string;
+  const UseLowerCase: Boolean = False): string;
 
   function LeftDelimiter: string;
   begin
@@ -392,7 +394,10 @@ function InstantEmbrace(const S, Delimiters: string): string;
   end;
 
 begin
-  Result := LeftDelimiter + S + RightDelimiter;
+  if UseLowerCase then
+    Result := LeftDelimiter + LowerCase(S) + RightDelimiter
+  else
+    Result := LeftDelimiter + S + RightDelimiter;
 end;
 
 function InstantFileAge(const FileName: string; out FileDateTime: TDateTime): boolean;

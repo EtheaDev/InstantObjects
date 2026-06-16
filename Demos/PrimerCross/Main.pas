@@ -11,7 +11,6 @@ uses
   System.Classes,
   System.Actions,
   System.WideStrings,
-  System.ImageList,
   Data.SqlExpr,
   Vcl.Graphics,
   Vcl.Controls,
@@ -647,6 +646,7 @@ var
   LLoadPictures: boolean;
   LInstantQuery:  TInstantQuery;
   LCountry: TCountry;
+  I: Integer;
 begin
   with TDemoDataRequestForm.Create(nil) do
   try
@@ -661,7 +661,7 @@ begin
           //Create Countries
           LInstantQuery.Command := 'SELECT * FROM TCountry';
           LInstantQuery.Open;
-          for var I := 0 to LInstantQuery.ObjectCount - 1 do
+          for I := 0 to LInstantQuery.ObjectCount - 1 do
           begin
             LCountry := LInstantQuery.Objects[I] as TCountry;
             LCountry.Name := Uppercase(LCountry.Name);

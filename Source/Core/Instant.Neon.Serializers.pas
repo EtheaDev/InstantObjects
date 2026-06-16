@@ -387,7 +387,7 @@ begin
       //The Reference present in JSON don't link to any Object
       //Remove the reference if it's present
       if LReference.HasReference then
-        LReference := nil;
+        LReference.Value := nil;
       Result := LReference;
     end;
   end
@@ -396,7 +396,7 @@ begin
     //The Reference present in JSON don't link to any Object
     //Remove the reference if it's present
     if LReference.HasReference then
-      LReference := nil;
+      LReference.Value := nil;
     Result := LReference;
   end;
 end;

@@ -111,15 +111,15 @@ end;
 procedure TestTInstantCurrency.TestAsFloat;
 begin
   FInstantCurrency.AsFloat := 89.45;
-  AssertEquals(Currency(89.45), FInstantCurrency.Value);
-  AssertEquals(Double(89.45), FInstantCurrency.AsFloat);
+  AssertEquals(89.45, FInstantCurrency.Value);
+  AssertEquals(89.45, FInstantCurrency.AsFloat);
 end;
 
 procedure TestTInstantCurrency.TestAsInteger;
 begin
   FInstantCurrency.AsInteger := 89;
-  AssertEquals(Currency(89.0), FInstantCurrency.Value);
-  AssertEquals(Double(89.0), FInstantCurrency.AsInteger);
+  AssertEquals(89.0, FInstantCurrency.Value);
+  AssertEquals(89.0, FInstantCurrency.AsInteger);
 end;
 
 procedure TestTInstantCurrency.TestAssign;
@@ -127,7 +127,7 @@ var
   vSource: TInstantCurrency;
   vCurr: Currency;
 begin
-  AssertEquals(Currency(1.3), FInstantCurrency.Value);
+  AssertEquals(1.3, FInstantCurrency.Value);
   vSource := TInstantCurrency.Create;
   try
     vCurr := 4.3;
@@ -143,7 +143,7 @@ procedure TestTInstantCurrency.TestAsString;
 begin
   FInstantCurrency.AsString := '15' +
     FormatSettings.DecimalSeparator + '7';
-  AssertEquals(Currency(15.7), FInstantCurrency.Value);
+  AssertEquals(15.7, FInstantCurrency.Value);
   AssertEquals('15' + FormatSettings.DecimalSeparator +
     '7', FInstantCurrency.AsString);
 end;
@@ -151,8 +151,8 @@ end;
 procedure TestTInstantCurrency.TestAsVariant;
 begin                                           
   FInstantCurrency.AsVariant := 15.1;
-  AssertEquals(Currency(15.1), FInstantCurrency.Value);
-  AssertEquals(Currency(15.1), FInstantCurrency.AsVariant);
+  AssertEquals(15.1, FInstantCurrency.Value);
+  AssertEquals(15.1, FInstantCurrency.AsVariant);
 end;
 
 procedure TestTInstantCurrency.TestReset;
@@ -160,24 +160,24 @@ begin
   AssertNotNull(FInstantCurrency.Metadata);
   // Metadata.DefaultValue is '';
   FInstantCurrency.Reset;
-  AssertEquals(Currency(1.3), FInstantCurrency.Value);
+  AssertEquals(1.3, FInstantCurrency.Value);
 
   FInstantCurrency.Metadata.DefaultValue := '15' +
     FormatSettings.DecimalSeparator + '7';
   FInstantCurrency.Reset;
-  AssertEquals(Currency(15.7), FInstantCurrency.Value);
+  AssertEquals(15.7, FInstantCurrency.Value);
 
   FInstantCurrency.Metadata := nil;
   AssertNull(FInstantCurrency.Metadata);
   FInstantCurrency.Reset;
-  AssertEquals(Currency(0.0), FInstantCurrency.Value);
+  AssertEquals(0.0, FInstantCurrency.Value);
 end;
 
 procedure TestTInstantCurrency.TestValue;
 var
   vCurr: Currency;
 begin
-  AssertEquals(Currency(1.3), FInstantCurrency.Value);
+  AssertEquals(1.3, FInstantCurrency.Value);
 
   vCurr := 123456789012.12345;
   FInstantCurrency.AsCurrency := vCurr;

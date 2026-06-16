@@ -11,7 +11,6 @@ uses
   System.SysUtils,
   System.Classes,
   System.Actions,
-  System.ImageList,
   Data.DB,
   Vcl.Graphics,
   Vcl.Controls,

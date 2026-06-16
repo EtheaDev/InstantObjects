@@ -60,7 +60,6 @@ uses
   , Vcl.Menus
   , Vcl.Buttons
   , System.Actions
-  , System.ImageList
   ;
 
 type

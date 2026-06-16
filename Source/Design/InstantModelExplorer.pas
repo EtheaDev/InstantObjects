@@ -56,7 +56,6 @@ uses
   , InstantCode
   , InstantAttributeView
   , System.Actions
-  , System.ImageList
   , Vcl.Samples.Spin
   ;
 

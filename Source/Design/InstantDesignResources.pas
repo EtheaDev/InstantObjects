@@ -44,7 +44,7 @@ uses
   , Vcl.Dialogs
   , Vcl.ImgList
   , System.Classes
-  , System.ImageList;
+  ;
 
 type
   TInstantDesignResourceModule = class(TDataModule)

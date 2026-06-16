@@ -226,6 +226,7 @@ type
     function FindResolver(AMap: TInstantAttributeMap): TInstantSQLResolver;
     function GetParamsStr(AParams: TParams): string;
     class function GeneratorClass: TInstantSQLGeneratorClass; virtual;
+    function UseLowerCaseDelimitedIdents: Boolean; virtual;
     property Generator: TInstantSQLGenerator read GetGenerator;
     property ResolverCount: Integer read GetResolverCount;
     property Resolvers[Index: Integer]: TInstantSQLResolver read GetResolvers;
@@ -530,7 +531,7 @@ type
     function ReadCurrencyField(DataSet: TDataSet; const FieldName: string;
       out AWasNull: boolean): Currency; virtual;
     function ReadIntegerField(DataSet: TDataSet; const FieldName: string;
-      out AWasNull: boolean): Integer; virtual;
+      out AWasNull: boolean): NativeInt; virtual;
     function ReadMemoField(DataSet: TDataSet; const FieldName: string;
       out AWasNull: boolean): string; virtual;
     function ReadStringField(DataSet: TDataSet; const FieldName: string;
@@ -888,6 +889,7 @@ type
     FRequestedLoadMode: TInstantLoadMode;
     FActualLoadMode: TInstantLoadMode;
     FTableWithNoLockDirective: string;
+    FUseLowerCaseDelimitedIdents: Boolean;
     FUseStdFields: Boolean;
     procedure AddJoin(const FromPath, FromField, ToPath, ToField: string;
       const IsOuter: Boolean);
@@ -983,6 +985,8 @@ type
     property TableWithNoLockDirective: string read FTableWithNoLockDirective write FTableWithNoLockDirective;
     // Property to ask for use of standard Class and Id Fields
     property UseStdFields: boolean read FUseStdFields write FUseStdFields;
+    // Property to convert table/field names to lowercase when using delimited identifiers (for PostgreSQL)
+    property UseLowerCaseDelimitedIdents: Boolean read FUseLowerCaseDelimitedIdents write FUseLowerCaseDelimitedIdents;
   end;
 
   TInstantRelationalTranslator = class(TInstantQueryTranslator)
@@ -1821,6 +1825,11 @@ function TInstantSQLBroker.GetResolvers(
   Index: Integer): TInstantSQLResolver;
 begin
   Result := ResolverList[Index] as TInstantSQLResolver;
+end;
+
+function TInstantSQLBroker.UseLowerCaseDelimitedIdents: Boolean;
+begin
+  Result := False;
 end;
 
 procedure TInstantSQLBroker.InternalBuildDatabase(Scheme: TInstantScheme);
@@ -3188,9 +3197,14 @@ var
   var
     LParam: TParam;
   begin
-    LParam := AddIntegerParam(Params, FieldName, (Attribute as TInstantInteger).Value);
+    // Use ftLargeInt + AsLargeInt to preserve the full NativeInt range of
+    // TInstantInteger.Value (which on Win64 is Int64, for BIGINT support).
+    // FireDAC adapts the value to 32-bit columns when needed.
+    LParam := AddParam(Params, FieldName, ftLargeInt);
     if Attribute.IsNull then
-      LParam.Clear;
+      LParam.Clear
+    else
+      LParam.AsLargeInt := (Attribute as TInstantInteger).Value;
   end;
 
   procedure AddMemoAttributeParam;
@@ -4325,13 +4339,13 @@ begin
 end;
 
 function TInstantSQLResolver.ReadIntegerField(DataSet: TDataSet;
-  const FieldName: string; out AWasNull: boolean): Integer;
+  const FieldName: string; out AWasNull: boolean): NativeInt;
 var
   LField: TField;
 begin
   LField := DataSet.FieldByName(FieldName);
   AWasNull := LField.IsNull;
-  Result := LField.AsInteger;
+  Result := LField.AsLargeInt; // full 64-bit read to feed TInstantInteger.Value (NativeInt)
 end;
 
 function TInstantSQLResolver.ReadMemoField(DataSet: TDataSet;
@@ -5290,12 +5304,12 @@ end;
 
 function TInstantSQLGenerator.EmbraceField(const FieldName: string): string;
 begin
-  Result := InstantEmbrace(FieldName, Delimiters);
+  Result := InstantEmbrace(FieldName, Delimiters, Broker.UseLowerCaseDelimitedIdents);
 end;
 
 function TInstantSQLGenerator.EmbraceTable(const TableName: string): string;
 begin
-  Result := InstantEmbrace(TableName, Delimiters);
+  Result := InstantEmbrace(TableName, Delimiters, Broker.UseLowerCaseDelimitedIdents);
 end;
 
 function TInstantSQLGenerator.GenerateAddFieldSQL(
@@ -5852,6 +5866,8 @@ begin
     Connector.Broker.AutoGenerateStdFields, Quote,
     Delimiters, Connector.IdDataType, RequestedLoadMode);
   SetActualLoadMode(FContext.ActualLoadMode);
+  if Connector.Broker is TInstantSQLBroker then
+    FContext.UseLowerCaseDelimitedIdents := TInstantSQLBroker(Connector.Broker).UseLowerCaseDelimitedIdents;
   if (Connector is TInstantRelationalConnector) and
     TInstantRelationalConnector(Connector).ReadObjectListWithNoLock then
     FContext.TableWithNoLockDirective := GetTableNoLockDirective(TInstantRelationalConnector(Connector).SQLEngine);
@@ -7023,6 +7039,7 @@ begin
   // are used for other things.
   Result := TInstantTranslationContext.Create(AStatement, UseStdFields, Quote, Delimiters,
     IdDataType, lmKeysFirst, Self);
+  Result.UseLowerCaseDelimitedIdents := UseLowerCaseDelimitedIdents;
 end;
 
 destructor TInstantTranslationContext.Destroy;
@@ -7553,7 +7570,7 @@ function TInstantTranslationContext.Qualify(const TablePath,
   FieldName: string): string;
 begin
   Result := Format('%s.%s', [TablePathToAlias(TablePath),
-    InstantEmbrace(FieldName, Delimiters)]);
+    InstantEmbrace(FieldName, Delimiters, UseLowerCaseDelimitedIdents)]);
 end;
 
 function TInstantTranslationContext.QualifyPath(const PathText: string): string;
@@ -7642,7 +7659,7 @@ begin
       Writer.WriteString(' JOIN ');
     end;
     LTablePathName := Format('%s %s',[InstantEmbrace(
-      ExtractTarget(TablePaths[I]), Delimiters), TablePathAliases[I]]);
+      ExtractTarget(TablePaths[I]), Delimiters, UseLowerCaseDelimitedIdents), TablePathAliases[I]]);
     Writer.WriteString(LTablePathName);
     Writer.WriteString(TableWithNoLockDirective);
     if (I > 0) and (TablePathList[I].Count > 0) then begin

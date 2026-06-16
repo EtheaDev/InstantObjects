@@ -28,8 +28,8 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object TitleLabel: TLabel
         Left = 16
         Top = 4
-        Width = 143
-        Height = 15
+        Width = 134
+        Height = 13
         Caption = 'Database Performance Test'
       end
       object InfoBevel: TBevel
@@ -43,23 +43,23 @@ inherited PerformanceViewForm: TPerformanceViewForm
       object ConnectionLabel: TLabel
         Left = 280
         Top = 4
-        Width = 149
-        Height = 15
+        Width = 133
+        Height = 13
         Caption = 'Connection: Not Connected'
       end
       object ObjectsLabel: TLabel
         Left = 16
         Top = 72
-        Width = 86
-        Height = 15
+        Width = 82
+        Height = 13
         Caption = '&Objects to store:'
         FocusControl = ObjectsEdit
       end
       object CacheSizeLabel: TLabel
         Left = 328
         Top = 72
-        Width = 116
-        Height = 15
+        Width = 109
+        Height = 13
         Caption = 'Statement &Cache Size:'
         FocusControl = CacheSizeEdit
       end
@@ -225,7 +225,6 @@ inherited PerformanceViewForm: TPerformanceViewForm
           DefaultCanvas = 'TGDIPlusCanvas'
           ColorPaletteIndex = 13
           object TestResultStoreSeries: TBarSeries
-            HoverElement = []
             Marks.Style = smsValue
             SeriesColor = clGreen
             Title = 'Store'
@@ -238,7 +237,6 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 344
           end
           object TestResultRetrieveSeries: TBarSeries
-            HoverElement = []
             Marks.Style = smsValue
             SeriesColor = 8454143
             Title = 'Retrieve'
@@ -251,7 +249,6 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 288
           end
           object Series1: TBarSeries
-            HoverElement = []
             Marks.Style = smsValue
             SeriesColor = 16744576
             Title = 'Query'
@@ -264,7 +261,6 @@ inherited PerformanceViewForm: TPerformanceViewForm
             Top = 224
           end
           object TestResultDisposeSeries: TBarSeries
-            HoverElement = []
             Marks.Style = smsValue
             Title = 'Dispose'
             ValueFormat = '#,##0'

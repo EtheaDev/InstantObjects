@@ -42,7 +42,7 @@ unit InstantFireDAC;
 {$DEFINE MSSQL_SUPPORT}
 {$DEFINE IBFB_SUPPORT}
 {$DEFINE ORACLE_SUPPORT}
-//{$DEFINE PGSQL_SUPPORT}
+{$DEFINE PGSQL_SUPPORT}
 //{$DEFINE MYSQL_SUPPORT}
 //{$DEFINE SQLITE_SUPPORT}
 
@@ -127,7 +127,7 @@ type
     procedure AssignLoginOptions; override;
     function CreateBroker: TInstantBroker; override;
     procedure DoLogin(AConnection: TFDCustomConnection;
-      AParams: TFDConnectionDefParams); virtual;
+      {$IF CompilerVersion >= 29.0}AParams: TFDConnectionDefParams{$else}const AConnectionDef: IFDStanConnectionDef{$endif}); virtual;
     function GetConnected: Boolean; override;
     function GetDatabaseExists: Boolean; override;
     procedure InternalBuildDatabase(Scheme: TInstantScheme); override;
@@ -246,6 +246,8 @@ type
   protected
     function InternalDataTypeToColumnType(DataType: TInstantDataType): string; override;
     function UseBooleanFields: Boolean; override;
+  public
+    function UseLowerCaseDelimitedIdents: Boolean; override;
   end;
   {$ENDIF}
 
@@ -715,10 +717,14 @@ begin
 end;
 
 procedure TInstantFireDACConnector.DoLogin(AConnection: TFDCustomConnection;
-  AParams: TFDConnectionDefParams);
+  {$IF CompilerVersion >= 29.0}AParams: TFDConnectionDefParams{$else}const AConnectionDef: IFDStanConnectionDef{$endif});
 begin
   if (assigned(FOnLogin)) then
+    {$IF CompilerVersion >= 29.0}
     FOnLogin(AConnection, AParams);
+    {$else}
+    FOnLogin(AConnection, AConnectionDef);
+    {$endif}
 end;
 
 function TInstantFireDACConnector.GetBroker: TInstantFireDACBroker;
@@ -1296,6 +1302,11 @@ begin
 end;
 
 function TInstantFireDACPgSQLBroker.UseBooleanFields: Boolean;
+begin
+  Result := True;
+end;
+
+function TInstantFireDACPgSQLBroker.UseLowerCaseDelimitedIdents: Boolean;
 begin
   Result := True;
 end;

@@ -1,4 +1,4 @@
-﻿# **InstantObjects 4.3.1 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+﻿# **InstantObjects 4.3.2 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
 ![InstantObject Logo](/docs/instantobjects_logo.gif)
 
@@ -57,6 +57,11 @@ From 3.0 version is also compatible with TestInsight test framework.
 
 VERSION HISTORY
 ---------------
+Version 4.3.2 (2026-06-16)
+- Added support for PostgreSQL
+- Updated packages for Delphi 13.1
+- Added support for Delphi XE6, XE7, XE8
+
 Version 4.3.1 (2025-08-19)
 - Added support for Delphi 13 Florence
 

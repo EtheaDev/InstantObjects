@@ -1,4 +1,7 @@
 <style type="text/css">
+body{
+  font-family: Arial, Helvetica, sans-serif;
+}
 code{
   font-family: "Consolas", monospace;
 }
@@ -29,8 +32,8 @@ td{
   border:1px solid;
 }
 </style>
-<h1><strong>InstantObjects 4.3.1 for Delphi</strong> <a href="https://www.mozilla.org/en-US/MPL/2.0/"><img src="https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg" alt="License"/></a></h1>
-<p><img src="https://github.com/EtheaDev/InstantObjects/wiki/instantobjects_logo.gif" alt="InstantObject Logo"/></p>
+<h1><strong>InstantObjects 4.3.2 for Delphi</strong> <a href="https://www.mozilla.org/en-US/MPL/2.0/"><img src="https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg" alt="License"/></a></h1>
+<p><img src="/docs/instantobjects_logo.gif" alt="InstantObject Logo"/></p>
 <p>Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 10.1 to latest version)</p>
 <p><img src="/docs/SupportingDelphi.jpg" alt="Support Delphi"/></p>
 <p><a href="https://www.embarcadero.com/">www.embarcadero.com</a> - <a href="https://learndelphi.org/">learndelphi.org</a></p>
@@ -43,9 +46,9 @@ td{
 <li>Object persistence in the most common relational databases or flat XML-based files (also with FireDAC Broker)</li>
 <li>Object presentation via standard data-aware controls.</li>
 <li>Serialization/Deserialization of object using <a href="https://github.com/paolo-rossi/delphi-neon">delphi-neon</a> library</li>
-<li>REST Server &ldquo;ready-to-use&rdquo; using MARS or WiRL REST Libraries.</li>
+<li>Rest Server of object using <a href="https://wirl.delphiblocks.dev/">WiRL</a> library</li>
+<li>Rest Server of object using <a href="https://github.com/andrea-magni/MARS">MARS Curiosity</a> library</li>
 </ol>
-<h2>New Setup for automatic installation of components</h2>
 <p>From 4.2.2 version a new &ldquo;Installer&rdquo; read-to-use is located in the Release area: <a href="https://github.com/EtheaDev/SVGIconImageList/releases/latest/download/SVGIconImageList_Setup.exe">Download the Installer</a>.</p>
 <p>The Installer automatically detect your Delphi versions, install sources, build and install packages and add source paths.</p>
 <p><img src="./Help/Setup.png" alt="Setup"/></p>
@@ -63,6 +66,12 @@ td{
 <p><img src="/Tests/TestInsightRunning.png" alt="TestInsight Running"/></p>
 <p><strong>Release Notes</strong></p>
 <h2>VERSION HISTORY</h2>
+<p>Version 4.3.2 (2026-06-16)</p>
+<ul>
+<li>Added support for PostgreSQL</li>
+<li>Updated packages for Delphi 13.1</li>
+<li>Added support for Delphi XE6, XE7, XE8</li>
+</ul>
 <p>Version 4.3.1 (2025-08-19)</p>
 <ul>
 <li>Added support for Delphi 13 Florence</li>
@@ -378,11 +387,10 @@ with circular references.</p>
 <li><p>Added another test procedure to TestInstantReferences.pas
 to facilitate memory leak testing for object structures
 with circular references:</p>
-<pre><code class="">A -&gt; B -&gt; C -&gt; A
+<pre style="background-color:#FFFFFF;color:#000000;"><code>A -&gt; B -&gt; C -&gt; A
    |
    + -&gt; D -&gt; E
-then delete E.
-</code></pre>
+then delete E.</code></pre>
 </li>
 <li><p>Test case to demostrate the infinite loop in
 FreeCircularReferences.</p>

@@ -102,7 +102,7 @@ begin
   vCurr := 23.45;
   FInstantInteger.AsCurrency := vCurr;
   AssertEquals(23, FInstantInteger.Value);
-  AssertEquals(Currency(23.0), FInstantInteger.AsCurrency);
+  AssertEquals(23.0, FInstantInteger.AsCurrency);
 end;
 
 procedure TestTInstantInteger.TestAsFloat;

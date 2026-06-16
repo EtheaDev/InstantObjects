@@ -9,7 +9,6 @@ uses
   Winapi.Messages,
   System.SysUtils,
   System.Classes,
-  System.ImageList,
   Vcl.DBCtrls,
   Data.DB,
   Vcl.Graphics,

@@ -50,7 +50,6 @@ uses
   , Vcl.ActnList
   , InstantDualList
   , InstantImageUtils
-  , System.ImageList
   , System.Actions
   ;
 

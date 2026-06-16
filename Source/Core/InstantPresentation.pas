@@ -3895,7 +3895,10 @@ begin
                 [Field.FieldName]);
           end;
           {$ENDIF}
-          N := Value;
+          if VarType(Value) = varInt64 then
+            N := Integer(Int64(Value))  // explicit truncation
+          else
+            N := Value;
         end;
         Move(N, Buffer^, SizeOf(N));
       end;

@@ -286,29 +286,33 @@ type
     procedure SetAsDateTime(AValue: TDateTime); override;
   end;
 
+  // FValue uses NativeInt so that on 64-bit platforms TInstantInteger can hold
+  // a BIGINT (Int64) value end-to-end. On Win32 NativeInt == Integer (32-bit),
+  // so BIGINT values > 2^31 are truncated. The legacy AsInteger accessor remains
+  // 32-bit for API back-compat; use Value (NativeInt) for the full range.
   TInstantInteger = class(TInstantNumeric)
   private
-    FValue: Integer;
+    FValue: NativeInt;
   protected
     class function AttributeType: TInstantAttributeType; override;
     function GetAsFloat: Double; override;
     function GetAsInteger: Integer; override;
     function GetAsString: string; override;
     function GetAsVariant: Variant; override;
-    function GetValue: Integer; virtual;
+    function GetValue: NativeInt; virtual;
     procedure Initialize; override;
     procedure ReadObject(Reader: TInstantReader); override;
     procedure SetAsFloat(AValue: Double); override;
     procedure SetAsInteger(AValue: Integer); override;
     procedure SetAsString(const AValue: string); override;
     procedure SetAsVariant(AValue: Variant); override;
-    procedure SetValue(AValue: Integer); virtual;
+    procedure SetValue(AValue: NativeInt); virtual;
     procedure WriteObject(Writer: TInstantWriter); override;
   public
     procedure Assign(Source: TPersistent); override;
     procedure Reset; override;
   published
-    property Value: Integer read GetValue write SetValue;
+    property Value: NativeInt read GetValue write SetValue;
   end;
 
   TInstantFloat = class(TInstantNumeric)
@@ -1660,6 +1664,20 @@ type
     function GetEnumerator: TInstantObjectListEnumerator;
   end;
 
+
+  TInstantObjectPageList = class
+  private
+    FCount: Integer;
+    FTotal: Integer;
+    FPage: Integer;
+    FData: TInstantObjectList<TInstantObject>;
+  published
+    property Count: Integer read FCount write FCount;
+    property Total: Integer read FTotal write FTotal;
+    property Page: Integer  read FPage write FPage;
+    property Data: TInstantObjectList<TInstantObject> read FData write FData;
+  end;
+
 function StoreAllInstantObjects(const ARootObject: TInstantObject;
   const AUseTransaction: Boolean = True;
   const ARecursionPath: string = ''): Integer;
@@ -2950,7 +2968,7 @@ end;
 
 function TInstantInteger.GetAsInteger: Integer;
 begin
-  Result := Value;
+  Result := Integer(Value); // truncates on Win64 if FValue exceeds 32-bit range
 end;
 
 function TInstantInteger.GetAsString: string;
@@ -2963,7 +2981,7 @@ begin
   Result := Value;
 end;
 
-function TInstantInteger.GetValue: Integer;
+function TInstantInteger.GetValue: NativeInt;
 begin
   Result := FValue;
 end;
@@ -2972,7 +2990,7 @@ procedure TInstantInteger.Initialize;
 begin
   if Assigned(Metadata) and (Metadata.DefaultValue <> '') then
     try
-      FValue := StrToInt(Metadata.DefaultValue);
+      FValue := StrToInt64(Metadata.DefaultValue);
     except
       on E: Exception do
         raise ConversionError(E);
@@ -2984,7 +3002,9 @@ end;
 procedure TInstantInteger.ReadObject(Reader: TInstantReader);
 begin
   ReadName(Reader);
-  Value := Reader.ReadInteger;
+  // ReadInt64 promotes any integer marker (vaInt8/16/32/64) to Int64,
+  // so on Win64 we keep full precision; on Win32 NativeInt truncates as usual.
+  Value := Reader.ReadInt64;
 end;
 
 procedure TInstantInteger.Reset;
@@ -3009,7 +3029,7 @@ end;
 procedure TInstantInteger.SetAsString(const AValue: string);
 begin
   try
-    Value := StrToInt(AValue);
+    Value := StrToInt64(AValue);
   except
     on E: Exception do
       raise ConversionError(E);
@@ -3026,7 +3046,7 @@ begin
   end;
 end;
 
-procedure TInstantInteger.SetValue(AValue: Integer);
+procedure TInstantInteger.SetValue(AValue: NativeInt);
 begin
   if AValue <> FValue then
   begin
