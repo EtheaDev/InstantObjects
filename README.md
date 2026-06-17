@@ -1,10 +1,10 @@
-﻿# **InstantObjects 4.3.2 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+# **InstantObjects 4.3.2 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
 
-![InstantObject Logo](/docs/instantobjects_logo.gif)
+![InstantObject Logo](https://raw.githubusercontent.com/EtheaDev/InstantObjects/refs/heads/master/Docs/instantobjects_logo.gif)
 
 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 10.1 to latest version)
 
-![Support Delphi](/docs/SupportingDelphi.jpg)
+![Support Delphi](https://raw.githubusercontent.com/EtheaDev/InstantObjects/refs/heads/master/Docs/SupportingDelphi.jpg)
 
 [www.embarcadero.com](https://www.embarcadero.com/) - [learndelphi.org](https://learndelphi.org/)
 
@@ -23,7 +23,7 @@ Even though it is still a bolted-on technology, InstantObjects integrates with t
 1. Rest Server of object using [WiRL](https://wirl.delphiblocks.dev/) library
 1. Rest Server of object using [MARS Curiosity](https://github.com/andrea-magni/MARS) library
 
-From 4.2.2 version a new "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/SVGIconImageList/releases/latest/download/SVGIconImageList_Setup.exe).
+From 4.2.2 version a new "Installer" read-to-use is located in the Release area: [Download the Installer](https://github.com/EtheaDev/InstantObjects/releases/latest/download/InstantObjects_Setup.exe).
 
 The Installer automatically detect your Delphi versions, install sources, build and install packages and add source paths.
 
@@ -1076,7 +1076,7 @@ Version 1.0.4 (2002-02-07)
 - Length of inherited string attributes is now correct when exposing objects of 
   descendant classes.
 
-- Fixed design time Access Violation when removing connection component that 
+- Fixed design time Access Violation when removing connection component that
   is attached to a connector.
 
 - Visibility scope of some exposer/accessor methods have changed.
