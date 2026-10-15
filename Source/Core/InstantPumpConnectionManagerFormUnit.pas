@@ -13,8 +13,11 @@ uses
   , Data.DB
   , Vcl.StdCtrls
   , Vcl.ActnList
-  , Vcl.Menus, ImgList,
-  ExtCtrls, ComCtrls, System.Actions, System.ImageList
+  , Vcl.Menus
+  , ImgList
+  , ExtCtrls
+  , ComCtrls
+  , System.Actions
   , InstantConnectionManager
   , InstantConnectionManagerFormUnit
   , InstantPersistence

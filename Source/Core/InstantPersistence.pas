@@ -8788,13 +8788,13 @@ end;
 
 procedure LoadClassMetadatas;
 
-  function HasModelResource(AInstance: Cardinal): Boolean;
+  function HasModelResource(AInstance: HINST): Boolean;
   begin
     Result := (AInstance <> 0) and (FindResource(AInstance,
       PChar(InstantModelResourceName), RT_RCDATA) <> 0);
   end;
 
-  procedure LoadModelFromResource(AInstance: Cardinal);
+  procedure LoadModelFromResource(AInstance: HINST);
   begin
     with TInstantResourceStream.Create(AInstance, InstantModelResourceName,
       RT_RCDATA) do
@@ -8806,7 +8806,7 @@ procedure LoadClassMetadatas;
   end;
 
 var
-  Instance: Cardinal;
+  Instance: HINST;
   LibModule: PLibModule;
 begin
   if HasModelResource(HInstance)then

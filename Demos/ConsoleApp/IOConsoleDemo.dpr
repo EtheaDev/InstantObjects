@@ -71,6 +71,7 @@ begin
 
       for i := 0 to 100 do
       begin
+        WriteLn('Storing Object.');
         SimpleClass := TSimpleClass.Create;
         Try
           SimpleClass.StringProperty := IntToStr(Random(MaxInt));
@@ -81,6 +82,7 @@ begin
           SimpleClass.Free;
         End;
 
+        WriteLn('Retrieving and changing Object.');
         SimpleClass := TSimpleClass.Retrieve(Id);
         Try
         WriteLn(Format('Retrieving and changing Object: Id="%s"', [Id]));

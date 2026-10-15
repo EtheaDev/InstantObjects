@@ -1,10 +1,15 @@
-# **InstantObjects 4.3.2 for Delphi** [![License](https://img.shields.io/badge/License-Mozilla%202.0-yellowgreen.svg)](https://www.mozilla.org/en-US/MPL/2.0/)
+﻿# **InstantObjects 4.3.3 for Delphi**
+
+<!-- badges -->
+[![License: MPL 2.0](https://img.shields.io/badge/License-MPL%202.0-green.svg)](LICENSE)
+[![Latest release](https://img.shields.io/github/v/release/EtheaDev/InstantObjects?label=release&color=blue)](https://github.com/EtheaDev/InstantObjects/releases)
+[![Delphi XE6+](https://img.shields.io/badge/Delphi-XE6%2B-e62329.svg)](https://www.embarcadero.com/products/delphi)
 
 ![InstantObject Logo](https://raw.githubusercontent.com/EtheaDev/InstantObjects/refs/heads/master/Docs/instantobjects_logo.gif)
 
 Welcome to InstantObjects, the integrated framework for developing object-oriented business solutions in Delphi (from Delphi 10.1 to latest version)
 
-![Support Delphi](https://raw.githubusercontent.com/EtheaDev/InstantObjects/refs/heads/master/Docs/SupportingDelphi.jpg)
+![Support Delphi](./docs/SupportingDelphi.jpg)
 
 [www.embarcadero.com](https://www.embarcadero.com/) - [learndelphi.org](https://learndelphi.org/)
 
@@ -57,6 +62,11 @@ From 3.0 version is also compatible with TestInsight test framework.
 
 VERSION HISTORY
 ---------------
+Version 4.3.3 (2026-10-14)
+- Fixed procedure LoadClassMetadatas; use HINST instead of Cardinal
+- Fixed ChangeScale for old Delphi versions
+- Removed System.ImageList when not used
+
 Version 4.3.2 (2026-06-16)
 - Added support for PostgreSQL
 - Updated packages for Delphi 13.1
